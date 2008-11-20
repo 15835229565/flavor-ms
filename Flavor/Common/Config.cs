@@ -528,6 +528,11 @@ namespace Flavor
             {
                 foreach (PreciseEditorData ped in Config.PreciseData)
                 {
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/front", ped.pNumber + 1)).InnerText = ped.Width.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
                     {
                         temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
