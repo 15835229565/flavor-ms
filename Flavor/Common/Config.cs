@@ -632,10 +632,18 @@ namespace Flavor
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
+                    bool allFilled = ((sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") &&
+                                      (sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") &&
+                                      (sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") &&
+                                      (sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != ""));
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText), byte.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText), (float)0);
+                        temp = new PreciseEditorData((byte)(i - 1),
+                                                     ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText),
+                                                     byte.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText),
+                                                     ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText),
+                                                     ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText),
+                                                     (float)0);
 
                         foreach (XmlNode pntNode in sf.SelectNodes("/sense/region{0}/p"))
                         {
@@ -865,11 +873,19 @@ namespace Flavor
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
+                    bool allFilled = ((pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") &&
+                                      (pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") &&
+                                      (pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") &&
+                                      (pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != ""));
 
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText), byte.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText), (float)0);
+                        temp = new PreciseEditorData((byte)(i - 1),
+                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText),
+                                                     byte.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText),
+                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText),
+                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText),
+                                                     (float)0);
                     }
                 }
                 catch (NullReferenceException)
@@ -889,23 +905,25 @@ namespace Flavor
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
+                    bool allFilled = ((_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText != "") &&
+                                      (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText != "") &&
+                                      (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText != "") &&
+                                      (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText != ""));
 
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText), byte.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText), (float)0);
-                        //temp.Step = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText);
-                        //temp.Iterations = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText);
-                        //temp.Width = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText);
-                        //temp.Precision = float.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText);
-                        //temp.Collector = byte.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText);
+                        temp = new PreciseEditorData((byte)(i - 1),
+                                                     ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText),
+                                                     byte.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText),
+                                                     ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText),
+                                                     ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText),
+                                                     (float)0);
                     }
                 }
                 catch (NullReferenceException)
                 {
                     System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
                 }
-                //temp.pNumber = (byte)i;
                 if (temp != null) PreciseData.Add(temp);
             }
         }
