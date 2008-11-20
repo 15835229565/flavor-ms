@@ -98,7 +98,7 @@ namespace Flavor
             this.PerformLayout();
 
             rareModeCheckBox.Checked = Commander.notRareModeRequested;
-            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure))
+            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage))
             {
                 applyButton.Enabled = true;
                 applyButton.Visible = true;
@@ -184,28 +184,85 @@ namespace Flavor
             switch (Commander.pState)
             {
                 case Commander.programStates.Start:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = false;
+                    this.applyButton.Visible = false;
+                    this.rareModeCheckBox.Enabled = true;
+                    //this.cancel_butt.Enabled = true;
                     break;
                 case Commander.programStates.WaitInit:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = false;
+                    this.applyButton.Visible = false;
+                    this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Init:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = false;
+                    this.applyButton.Visible = false;
+                    this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.WaitHighVoltage:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = true;
+                    this.applyButton.Visible = true;
+                    this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Ready:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = true;
+                    this.applyButton.Visible = true;
+                    this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Measure:
-                    this.Enabled = false;
+                    this.groupBox1.Enabled = false;
+                    this.groupBox2.Enabled = false;
+                    this.savePreciseEditorToFileButton.Enabled = false;
+                    this.loadPreciseEditorFromFileButton.Enabled = false;
+                    this.clearButton.Enabled = false;
+                    this.applyButton.Enabled = false;
+                    this.applyButton.Visible = true;
+                    this.rareModeCheckBox.Enabled = false;
                     break;
                 case Commander.programStates.WaitShutdown:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = false;
+                    this.applyButton.Visible = false;
+                    this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Shutdown:
-                    this.Enabled = true;
+                    this.groupBox1.Enabled = true;
+                    this.groupBox2.Enabled = true;
+                    this.savePreciseEditorToFileButton.Enabled = true;
+                    this.loadPreciseEditorFromFileButton.Enabled = true;
+                    this.clearButton.Enabled = true;
+                    this.applyButton.Enabled = false;
+                    this.applyButton.Visible = false;
+                    this.rareModeCheckBox.Enabled = true;
                     break;
             }
         }

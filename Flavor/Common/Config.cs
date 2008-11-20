@@ -5,9 +5,9 @@ using System.Xml;
 
 namespace Flavor
 {
-    public class PreciseEditorData 
+    public class PreciseEditorData
     {
-        public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) 
+        public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr)
         {
             pointNumber = pn;
             step = st;
@@ -16,7 +16,7 @@ namespace Flavor
             width = wi;
             precision = pr;
         }
-        
+
         byte pointNumber;
         ushort step;
         byte collector;
@@ -30,7 +30,7 @@ namespace Flavor
             get { return associatedPoints; }
             set { associatedPoints = value; }
         }
-        
+
         public byte pNumber
         {
             get { return pointNumber; }
@@ -67,7 +67,7 @@ namespace Flavor
             //set { precision = value; }
         }
     }
-    
+
     static class Config
     {
         private static XmlDocument _conf = new XmlDocument();
@@ -81,7 +81,7 @@ namespace Flavor
 
         private static ushort startPoint;
         private static ushort endPoint;
-        
+
         private static ushort expTime;
         private static ushort idleTime;
         private static ushort ionizationVoltage;
@@ -90,10 +90,10 @@ namespace Flavor
         private static ushort emissionCurrent;
         private static ushort focusVoltage1;
         private static ushort focusVoltage2;
-        private static List <PreciseEditorData> preciseData = new List<PreciseEditorData>();
-        private static List <PreciseEditorData> preciseDataLoaded = new List<PreciseEditorData>();
-        
-        public static List <PreciseEditorData> PreciseData
+        private static List<PreciseEditorData> preciseData = new List<PreciseEditorData>();
+        private static List<PreciseEditorData> preciseDataLoaded = new List<PreciseEditorData>();
+
+        public static List<PreciseEditorData> PreciseData
         {
             get { return preciseData; }
             //set { preciseData = value; }
@@ -139,13 +139,13 @@ namespace Flavor
             get { return expTime; }
             set { expTime = value; }
         }
-        
+
         public static ushort eTimeReal
         {
             get { return (ushort)(eTime * 5); }
             set
             {
-                eTime = (ushort)(value/5);
+                eTime = (ushort)(value / 5);
             }
         }
 
@@ -170,7 +170,7 @@ namespace Flavor
             set { ionizationVoltage = value; }
         }
 
-        public static double iVoltageReal 
+        public static double iVoltageReal
         {
             get { return iVoltageConvert(ionizationVoltage); }
             set
@@ -343,7 +343,7 @@ namespace Flavor
             initialDir = System.IO.Directory.GetCurrentDirectory();
             confName = initialDir + "\\config.xml";
         }
-        
+
         public static void LoadConfig()
         {
             try
@@ -378,7 +378,7 @@ namespace Flavor
             }
             //LoadPreciseEditorData();
         }
-        
+
         public static void SaveScanOptions()
         {
             _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
@@ -444,7 +444,7 @@ namespace Flavor
             Config.SaveScanOptions();
         }
 
-        internal static void SaveSpecterFile(string p, bool isFromFile) 
+        internal static void SaveSpecterFile(string p, bool isFromFile)
         {
             XmlDocument sf = new XmlDocument();
             XmlNode temp;
@@ -461,16 +461,16 @@ namespace Flavor
             {
                 foreach (ZedGraph.PointPair pp in Graph.pointListLoaded1)
                 {
-                    temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "step", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "count", "")).InnerText = pp.Y.ToString();
+                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                     sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
                 }
                 foreach (ZedGraph.PointPair pp in Graph.pointListLoaded2)
                 {
-                    temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "step", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "count", "")).InnerText = pp.Y.ToString();
+                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                     sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
                 }
             }
@@ -478,22 +478,22 @@ namespace Flavor
             {
                 foreach (ZedGraph.PointPair pp in Graph.pointList1)
                 {
-                    temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "step", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "count", "")).InnerText = pp.Y.ToString();
+                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                     sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
                 }
                 foreach (ZedGraph.PointPair pp in Graph.pointList2)
                 {
-                    temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "step", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "count", "")).InnerText = pp.Y.ToString();
+                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                     sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
                 }
             }
             sf.Save(p);
         }
-        
+
         internal static void SavePreciseSpecterFile(string p, bool isFromFile)
         {
             XmlDocument sf = new XmlDocument();
@@ -507,7 +507,7 @@ namespace Flavor
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "peak", ""));
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "col", ""));
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "front", ""));
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "width", ""));
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "error", ""));
                 sf.SelectSingleNode(string.Format("sense")).AppendChild(temp);
             }
@@ -517,9 +517,9 @@ namespace Flavor
                 {
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
                     {
-                        temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "step", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "count", "")).InnerText = pp.Y.ToString();
+                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                         sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
                     }
                 }
@@ -530,14 +530,14 @@ namespace Flavor
                 {
                     sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
                     sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/front", ped.pNumber + 1)).InnerText = ped.Width.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/width", ped.pNumber + 1)).InnerText = ped.Width.ToString();
                     sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
                     sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
                     {
-                        temp = sf.CreateNode(XmlNodeType.Element, "pnt", "");
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "step", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "count", "")).InnerText = pp.Y.ToString();
+                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                         sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
                     }
                 }
@@ -576,7 +576,7 @@ namespace Flavor
             sf.Close();
         }
         */
-        internal static void OpenSpecterFile(string p) 
+        internal static void OpenSpecterFile(string p)
         {
             XmlDocument sf = new XmlDocument();
             ushort X = 0;
@@ -592,16 +592,16 @@ namespace Flavor
             try
             {
                 Graph.ResetLoadedPointLists();
-                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/pnt"))
+                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
                 {
-                    X = ushort.Parse(pntNode.SelectSingleNode("step").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("count").InnerText);
+                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
                     Graph.updateLoaded1Graph(X, Y);
                 }
-                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/pnt"))
+                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/p"))
                 {
-                    X = ushort.Parse(pntNode.SelectSingleNode("step").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("count").InnerText);
+                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
                     Graph.updateLoaded2Graph(X, Y);
                 }
                 Graph.updateLoaded();
@@ -632,15 +632,15 @@ namespace Flavor
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/front", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
+                    bool allFilled = ((sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") && (sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText), byte.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/front", i)).InnerText), (float)0);
+                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText), byte.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText), ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText), (float)0);
 
-                        foreach (XmlNode pntNode in sf.SelectNodes("/sense/region{0}/pnt"))
+                        foreach (XmlNode pntNode in sf.SelectNodes("/sense/region{0}/p"))
                         {
-                            X = ushort.Parse(pntNode.SelectSingleNode("step").InnerText);
-                            Y = int.Parse(pntNode.SelectSingleNode("count").InnerText);
+                            X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                            Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
                             temp.AssociatedPoints.Add(X, Y);
                         }
                     }
@@ -768,7 +768,7 @@ namespace Flavor
             SaveSpecterFile(@filename, false);
         }
 
-        internal static void SavePreciseOptions(List <PreciseEditorData> ped, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real)
+        internal static void SavePreciseOptions(List<PreciseEditorData> ped, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real)
         {
             preciseData = ped;
 
@@ -776,7 +776,7 @@ namespace Flavor
             {
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText = "";
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText = "";
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/front", i)).InnerText = "";
+                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText = "";
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText = "";
                 if (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)) == null)
                 {
@@ -793,11 +793,11 @@ namespace Flavor
             {
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", p.pNumber + 1)).InnerText = p.Step.ToString();
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", p.pNumber + 1)).InnerText = p.Iterations.ToString();
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/front", p.pNumber + 1)).InnerText = p.Width.ToString();
+                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", p.pNumber + 1)).InnerText = p.Width.ToString();
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
             }
-            
+
             Config.eTimeReal = eTimeReal;
             Config.iTimeReal = mTimeReal;
             Config.iVoltageReal = iVoltageReal;
@@ -821,7 +821,7 @@ namespace Flavor
             SavePreciseSpecterFile(@filename, false);
         }
 
-        internal static void SavePreciseOptions(List <PreciseEditorData> ped, string pedConfName)
+        internal static void SavePreciseOptions(List<PreciseEditorData> ped, string pedConfName)
         {
             XmlDocument pedConf = new XmlDocument();
             pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
@@ -833,7 +833,7 @@ namespace Flavor
                 tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "peak", ""));
                 tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "col", ""));
                 tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "front", ""));
+                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "width", ""));
                 tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "error", ""));
                 pedConf.SelectSingleNode(string.Format("sense")).AppendChild(tempRegion);
             }
@@ -841,7 +841,7 @@ namespace Flavor
             {
                 pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", p.pNumber + 1)).InnerText = p.Step.ToString();
                 pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", p.pNumber + 1)).InnerText = p.Iterations.ToString();
-                pedConf.SelectSingleNode(string.Format("/sense/region{0}/front", p.pNumber + 1)).InnerText = p.Width.ToString();
+                pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", p.pNumber + 1)).InnerText = p.Width.ToString();
                 pedConf.SelectSingleNode(string.Format("/sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
                 pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
             }
@@ -865,11 +865,11 @@ namespace Flavor
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/front", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
+                    bool allFilled = ((pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") && (pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
 
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText), byte.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/front", i)).InnerText), (float)0);
+                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText), byte.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText), ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText), (float)0);
                     }
                 }
                 catch (NullReferenceException)
@@ -889,14 +889,14 @@ namespace Flavor
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/front", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
+                    bool allFilled = ((_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText != "") && (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText != "")/* && (precTextBoxes[i].Text != "")*/);
 
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText), byte.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/front", i)).InnerText), (float)0);
+                        temp = new PreciseEditorData((byte)(i - 1), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText), byte.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText), ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText), (float)0);
                         //temp.Step = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText);
                         //temp.Iterations = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText);
-                        //temp.Width = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/front", i)).InnerText);
+                        //temp.Width = ushort.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText);
                         //temp.Precision = float.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText);
                         //temp.Collector = byte.Parse(pedConf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText);
                     }

@@ -778,7 +778,7 @@ namespace Flavor
             // loadPreciseEditorFromFileDialog
             // 
             this.loadPreciseEditorFromFileDialog.DefaultExt = "ped";
-            this.loadPreciseEditorFromFileDialog.Filter = "Precise Editor Data Files (*.ped)|*.ped";
+            this.loadPreciseEditorFromFileDialog.Filter = "Precise editor data files (*.ped)|*.ped|Precise specter files (*.psf)|*.psf";
             // 
             // clearButton
             // 
@@ -808,7 +808,6 @@ namespace Flavor
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
