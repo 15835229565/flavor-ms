@@ -226,6 +226,10 @@ namespace Flavor
                 scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.lastPoint));
                 detector1CountsLabel.Text = Device.Detector1.ToString();
                 detector2CountsLabel.Text = Device.Detector2.ToString();
+                if (Commander.isSenseMeasure)
+                {
+                    peakNumberLabel.Text = Graph.curPeak.pNumber.ToString();
+                }
             }
         }
 

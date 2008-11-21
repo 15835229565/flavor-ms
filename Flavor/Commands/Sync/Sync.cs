@@ -252,6 +252,7 @@ namespace Flavor
             Detector1 = value1;
             Detector2 = value2;
             CurPoint = Commander.Point;
+            --CurPoint;//!!!
         }
 
         #region IUpdateDevice Members
@@ -272,7 +273,7 @@ namespace Flavor
             {
                 Graph.updateGraph(Detector1, Detector2, CurPoint);
             }
-            else Graph.updateGraph(CurPoint);
+            else Graph.updateGraph(CurPoint, Commander.SenseModePeak);
         }
 
         #endregion

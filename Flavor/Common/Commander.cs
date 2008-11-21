@@ -68,6 +68,11 @@ namespace Flavor
         
         private static byte senseModePeak = 0;
 
+        public static PreciseEditorData SenseModePeak 
+        {
+            get { return senseModePoints[senseModePeak]; }
+        }
+
         private static ushort[] senseModePeakIteration;
 
         private static ushort smpiSum;
@@ -120,13 +125,13 @@ namespace Flavor
                 }
             }
         }
-
+        
         public static ushort Point
         {
             get { return PointValue; }
             set { PointValue = value; }
         }
-
+        
         private static byte Try = 0;
 
         private static Queue<ISend> ToSend = new Queue<ISend>();
@@ -376,7 +381,7 @@ namespace Flavor
                                         }
                                         else
                                         {
-                                            --senseModePeakIteration[senseModePeak];
+                                            --(senseModePeakIteration[senseModePeak]);
                                             --smpiSum;
                                             if (smpiSum > 0)
                                             {
@@ -384,7 +389,7 @@ namespace Flavor
                                                 {
                                                     ++senseModePeak;
                                                     if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
-                                                    if (senseModePoints[senseModePeak].Iterations != 0) break;
+                                                    if (senseModePeakIteration[senseModePeak] > 0) break;
                                                 }
                                                 Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
                                                 Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));

@@ -191,6 +191,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = false;
                     this.applyButton.Visible = false;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     //this.cancel_butt.Enabled = true;
                     break;
@@ -202,6 +203,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = false;
                     this.applyButton.Visible = false;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Init:
@@ -212,6 +214,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = false;
                     this.applyButton.Visible = false;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.WaitHighVoltage:
@@ -222,6 +225,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = true;
                     this.applyButton.Visible = true;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Ready:
@@ -232,6 +236,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = true;
                     this.applyButton.Visible = true;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Measure:
@@ -242,6 +247,7 @@ namespace Flavor
                     this.clearButton.Enabled = false;
                     this.applyButton.Enabled = false;
                     this.applyButton.Visible = true;
+                    this.ok_butt.Enabled = false;
                     this.rareModeCheckBox.Enabled = false;
                     break;
                 case Commander.programStates.WaitShutdown:
@@ -252,6 +258,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = false;
                     this.applyButton.Visible = false;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Shutdown:
@@ -262,6 +269,7 @@ namespace Flavor
                     this.clearButton.Enabled = true;
                     this.applyButton.Enabled = false;
                     this.applyButton.Visible = false;
+                    this.ok_butt.Enabled = true;
                     this.rareModeCheckBox.Enabled = true;
                     break;
             }

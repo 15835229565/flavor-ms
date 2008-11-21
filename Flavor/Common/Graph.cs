@@ -23,6 +23,7 @@ namespace Flavor
         public static PointPairList pointListLoaded2 = new PointPairList();
         
         public static ushort lastPoint;
+        public static PreciseEditorData curPeak;
 
         public static void updateGraph(int y1, int y2, ushort pnt)
         {
@@ -126,9 +127,10 @@ namespace Flavor
             OnNewGraphData(true, true);
         }
 
-        internal static void updateGraph(ushort pnt)
+        internal static void updateGraph(ushort pnt, PreciseEditorData curped)
         {
             lastPoint = pnt;
+            curPeak = curped;
             OnNewGraphData(false, false);
         }
     }
