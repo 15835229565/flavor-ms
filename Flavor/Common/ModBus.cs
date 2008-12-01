@@ -470,7 +470,7 @@ namespace Flavor
                         case CommandCode.VacuumReady:
                             if (raw_command.Length == 2)
                             {
-                                return new updateVacuumState();
+                                return new confirmVacuumReady();
                             }
                             return new ServicePacket();
                         case CommandCode.SystemShutdowned:

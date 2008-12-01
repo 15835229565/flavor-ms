@@ -275,8 +275,9 @@ namespace Flavor
                 if (Command is SystemReseted)
                 {
                     Console.WriteLine("Система переинициализировалась");
+                    Commander.OnAsyncReply("Система переинициализировалась");
                 }
-                if (Command is updateVacuumState)
+                if (Command is confirmVacuumReady)
                 {
                     if (Commander.hBlock)
                     {
@@ -303,7 +304,7 @@ namespace Flavor
                         Commander.pState = Commander.programStates.Ready;
                         Commander.pStatePrev = Commander.pState;
                     }
-                    Commander.AddToSend(new sendIVoltage());
+                    Commander.AddToSend(new sendIVoltage());// и остальные напряжения затем
                 }
             }
             if (Command is SyncErrorReply)
@@ -343,6 +344,34 @@ namespace Flavor
                                 Console.WriteLine("Запрос на отключение подтвержден");
                                 Commander.pState = Commander.programStates.Shutdown;
                                 Commander.pStatePrev = Commander.pState;
+                                Console.WriteLine(Commander.pState);
+                            }
+                            if ((Commander.pState == Commander.programStates.Start)&&(Command is updateStatus))
+                            {
+                                switch (Device.sysState)
+                                {
+                                    case (byte)Device.DeviceStates.Ready:
+                                        Commander.hBlock = false;
+                                        Commander.pState = Commander.programStates.Ready;
+                                        Commander.pStatePrev = Commander.pState;
+                                        break;
+                                    case (byte)Device.DeviceStates.WaitHighVoltage:
+                                        Commander.hBlock = true;
+                                        Commander.pState = Commander.programStates.WaitHighVoltage;
+                                        Commander.pStatePrev = Commander.pState;
+                                        break;
+                                    //!!!!
+                                    case (byte)Device.DeviceStates.Measured:
+                                        Commander.hBlock = false;
+                                        Commander.pState = Commander.programStates.Ready;
+                                        Commander.pStatePrev = Commander.pState;
+                                        break;
+                                    case (byte)Device.DeviceStates.Measuring:
+                                        Commander.hBlock = false;
+                                        Commander.pState = Commander.programStates.Ready;
+                                        Commander.pStatePrev = Commander.pState;
+                                        break;
+                                }
                                 Console.WriteLine(Commander.pState);
                             }
                             if (Command is updateCounts)
@@ -563,13 +592,15 @@ namespace Flavor
         {
             if (Commander.pState == programStates.Measure)
             {
+                Commander.measureCancelRequested = true;
+                /*                
                 if (!Commander.isSenseMeasure)
                 {
-                    Commander.measureCancelRequested = true;
                 }
                 else
                 {
                 }
+                */
             }
             Commander.AddToSend(new enableHighVoltage(Commander.hBlock));
         }

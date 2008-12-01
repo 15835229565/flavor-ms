@@ -31,6 +31,7 @@ namespace Flavor
             Graph.OnNewGraphData += new GraphEventHandler(InvokeRefreshGraph);
             
             Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeRefreshButtons);
+            //Commander.OnAsyncReply +=new AsyncReplyHandler(InvokeRefreshUserMessage);
             Commander.pState = Commander.programStates.Start;
             Commander.pStatePrev = Commander.pState;
         }

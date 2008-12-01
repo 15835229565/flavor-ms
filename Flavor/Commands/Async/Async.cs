@@ -18,7 +18,7 @@ namespace Flavor
         #endregion
     }
     
-    class updateVacuumState : AsyncReply, IUpdateDevice
+    class confirmVacuumReady : AsyncReply, IUpdateDevice
     {
         #region IUpdateDevice Members
         public void UpdateDevice()

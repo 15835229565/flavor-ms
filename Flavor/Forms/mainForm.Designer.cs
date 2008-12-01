@@ -116,6 +116,8 @@ namespace Flavor
             this.label6 = new System.Windows.Forms.Label();
             this.hCurrent_label = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
+            this.peakNumberLabel = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
             this.stepNumberLabel = new System.Windows.Forms.Label();
             this.label36 = new System.Windows.Forms.Label();
             this.cancelScanButton = new System.Windows.Forms.Button();
@@ -147,8 +149,6 @@ namespace Flavor
             this.label23 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
-            this.peakNumberLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -1093,6 +1093,26 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
+            // peakNumberLabel
+            // 
+            this.peakNumberLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.peakNumberLabel.ForeColor = System.Drawing.Color.Green;
+            this.peakNumberLabel.Location = new System.Drawing.Point(9, 454);
+            this.peakNumberLabel.Name = "peakNumberLabel";
+            this.peakNumberLabel.Size = new System.Drawing.Size(200, 13);
+            this.peakNumberLabel.TabIndex = 47;
+            this.peakNumberLabel.Text = "*";
+            this.peakNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(9, 431);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(119, 13);
+            this.label37.TabIndex = 46;
+            this.label37.Text = "Номер текущего пика";
+            // 
             // stepNumberLabel
             // 
             this.stepNumberLabel.BackColor = System.Drawing.SystemColors.Control;
@@ -1401,26 +1421,6 @@ namespace Flavor
             this.label25.Size = new System.Drawing.Size(122, 13);
             this.label25.TabIndex = 9;
             this.label25.Text = "Коэффициент деления";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(9, 431);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(119, 13);
-            this.label37.TabIndex = 46;
-            this.label37.Text = "Номер текущего пика";
-            // 
-            // peakNumberLabel
-            // 
-            this.peakNumberLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.peakNumberLabel.ForeColor = System.Drawing.Color.Green;
-            this.peakNumberLabel.Location = new System.Drawing.Point(9, 454);
-            this.peakNumberLabel.Name = "peakNumberLabel";
-            this.peakNumberLabel.Size = new System.Drawing.Size(200, 13);
-            this.peakNumberLabel.TabIndex = 47;
-            this.peakNumberLabel.Text = "*";
-            this.peakNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // mainForm
             // 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Flavor
 {
-    abstract class AsyncErrorReply: ServicePacket//, IUpdateUserMessage
+    abstract class AsyncErrorReply : ServicePacket//, IUpdateUserMessage
     {
         public virtual string errorMessage
         {
