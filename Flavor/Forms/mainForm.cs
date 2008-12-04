@@ -230,6 +230,29 @@ namespace Flavor
                 if (Commander.isSenseMeasure)
                 {
                     peakNumberLabel.Text = Graph.curPeak.pNumber.ToString();
+                    peakCenterLabel.Text = Graph.curPeak.Step.ToString();
+                    peakWidthLabel.Text = Graph.curPeak.Width.ToString();
+                    if (Graph.curPeak.Collector == 1)
+                    {
+                        detector1CountsLabel.Visible = true;
+                        label15.Visible = true;
+                        detector2CountsLabel.Visible = false;
+                        label15.Visible = false;
+                    }
+                    else
+                    {
+                        detector1CountsLabel.Visible = false;
+                        label15.Visible = false;
+                        detector2CountsLabel.Visible = true;
+                        label15.Visible = true;
+                    }
+                }
+                else 
+                {
+                    detector1CountsLabel.Visible = true;
+                    label15.Visible = true;
+                    detector2CountsLabel.Visible = true;
+                    label15.Visible = true;
                 }
             }
         }
