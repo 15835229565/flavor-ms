@@ -31,7 +31,6 @@ namespace Flavor
             Graph.OnNewGraphData += new GraphEventHandler(InvokeRefreshGraph);
             
             Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeRefreshButtons);
-            //Commander.OnAsyncReply +=new AsyncReplyHandler(InvokeRefreshUserMessage);
             Commander.pState = Commander.programStates.Start;
             Commander.pStatePrev = Commander.pState;
         }
@@ -72,7 +71,6 @@ namespace Flavor
             PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
             pForm.UpLevel = this;
             pForm.Show();
-            //if (pForm.ShowDialog() == DialogResult.OK) RefreshButtons();
         }
 
         private void initSys_butt_Click(object sender, EventArgs e)
@@ -237,14 +235,14 @@ namespace Flavor
                         detector1CountsLabel.Visible = true;
                         label15.Visible = true;
                         detector2CountsLabel.Visible = false;
-                        label15.Visible = false;
+                        label16.Visible = false;
                     }
                     else
                     {
                         detector1CountsLabel.Visible = false;
                         label15.Visible = false;
                         detector2CountsLabel.Visible = true;
-                        label15.Visible = true;
+                        label16.Visible = true;
                     }
                 }
                 else 
