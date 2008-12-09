@@ -43,7 +43,8 @@ namespace Flavor
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Commander.pState == Commander.programStates.Start)
+            mainForm.ActiveForm.Close();
+            /*if (Commander.pState == Commander.programStates.Start)
             {
                 if (Commander.deviceIsConnected) Commander.Disconnect();
                 mainForm.ActiveForm.Close();
@@ -51,7 +52,7 @@ namespace Flavor
             else
             {
                 MessageBox.Show("Необходимо дождаться отключения системы.");
-            }
+            }*/
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -766,12 +767,13 @@ namespace Flavor
         {
             if (Commander.pState != Commander.programStates.Start)
             {
-                MessageBox.Show("Необходимо дождаться отключения системы.");
-                e.Cancel = true;
+                if (new ClosureDialog().ShowDialog() != DialogResult.OK)
+                    e.Cancel = true;
+                //MessageBox.Show("Необходимо дождаться отключения системы.");
             }
             else 
             {
-                Commander.Disconnect();
+                if (Commander.deviceIsConnected) Commander.Disconnect();
             }
         }
 

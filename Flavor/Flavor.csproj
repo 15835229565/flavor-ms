@@ -62,6 +62,12 @@
     <Compile Include="Controls\ZedGraphControlPlus.Designer.cs">
       <DependentUpon>ZedGraphControlPlus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ClosureDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClosureDialog.Designer.cs">
+      <DependentUpon>ClosureDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ConnectOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +103,10 @@
     <EmbeddedResource Include="Controls\ZedGraphControlPlus.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ZedGraphControlPlus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ClosureDialog.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ClosureDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConnectOptionsForm.resx">
       <SubType>Designer</SubType>

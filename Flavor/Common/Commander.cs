@@ -32,6 +32,7 @@ namespace Flavor
         private static bool scanning = false;
         private static bool notRareMode = false;
         private static bool isConnected = false;
+        private static bool onTheFly = true;
 
         public static System.Timers.Timer DeviceStatusCheckTimer;
         public static System.Timers.Timer TurboPumpCheckTimer;
@@ -346,7 +347,7 @@ namespace Flavor
                                 Commander.pStatePrev = Commander.pState;
                                 Console.WriteLine(Commander.pState);
                             }
-                            if ((Commander.pState == Commander.programStates.Start)&&(Command is updateStatus))
+                            if (onTheFly && (Commander.pState == Commander.programStates.Start)&&(Command is updateStatus))
                             {
                                 switch (Device.sysState)
                                 {
@@ -373,6 +374,7 @@ namespace Flavor
                                         break;
                                 }
                                 Console.WriteLine(Commander.pState);
+                                onTheFly = false;
                             }
                             if (Command is updateCounts)
                             {
@@ -647,6 +649,7 @@ namespace Flavor
                         Commander.ToSend.Clear();
                     }*/
                     Commander.deviceIsConnected = false;
+                    onTheFly = true;// надо ли здесь???
                     break;
                 case ModBus.PortStates.Closed:
                     Commander.deviceIsConnected = false;
