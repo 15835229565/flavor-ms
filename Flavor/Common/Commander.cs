@@ -394,6 +394,7 @@ namespace Flavor
                                             Commander.pStatePrev = Commander.pState;
                                             Commander.pState = Commander.programStates.Ready;
                                             Commander.pStatePrev = Commander.pState;
+                                            Commander.measureCancelRequested = false;
                                             Config.AutoSaveSpecterFile();
                                         }
                                     }
@@ -443,6 +444,7 @@ namespace Flavor
                                         Commander.pStatePrev = Commander.pState;
                                         Commander.pState = Commander.programStates.Ready;
                                         Commander.pStatePrev = Commander.pState;
+                                        Commander.measureCancelRequested = false;
                                     }
                                 }
                             }
@@ -573,6 +575,7 @@ namespace Flavor
                     Commander.isSenseMeasure = true;
                     Graph.ResetPointLists();
                     if (!Commander.notRareModeRequested) Commander.StartScanStatusCheck();
+                    Commander.measureCancelRequested = false;
                     Commander.AddToSend(new sendIVoltage());
                 }
                 else {
