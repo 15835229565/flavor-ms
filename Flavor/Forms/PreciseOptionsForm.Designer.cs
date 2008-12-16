@@ -80,6 +80,10 @@ namespace Flavor
             this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.clearButton = new System.Windows.Forms.Button();
+            this.saveFileButton = new System.Windows.Forms.Button();
+            this.loadFileButton = new System.Windows.Forms.Button();
+            this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
@@ -355,8 +359,11 @@ namespace Flavor
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox1.Controls.Add(this.label31);
+            this.groupBox1.Controls.Add(this.clearButton);
             this.groupBox1.Controls.Add(this.label30);
+            this.groupBox1.Controls.Add(this.loadPreciseEditorFromFileButton);
             this.groupBox1.Controls.Add(this.label29);
+            this.groupBox1.Controls.Add(this.savePreciseEditorToFileButton);
             this.groupBox1.Controls.Add(this.label28);
             this.groupBox1.Controls.Add(this.label27);
             this.groupBox1.Controls.Add(this.label26);
@@ -381,7 +388,7 @@ namespace Flavor
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(312, 356);
+            this.groupBox1.Size = new System.Drawing.Size(312, 385);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Редактор областей сканирования";
@@ -399,6 +406,8 @@ namespace Flavor
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.loadFileButton);
+            this.groupBox2.Controls.Add(this.saveFileButton);
             this.groupBox2.Controls.Add(this.fV2NumericUpDown);
             this.groupBox2.Controls.Add(this.fV1NumericUpDown);
             this.groupBox2.Controls.Add(this.hCurrentNumericUpDown);
@@ -417,7 +426,7 @@ namespace Flavor
             this.groupBox2.Controls.Add(this.label41);
             this.groupBox2.Location = new System.Drawing.Point(330, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(270, 233);
+            this.groupBox2.Size = new System.Drawing.Size(270, 257);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Общие параметры";
@@ -712,7 +721,7 @@ namespace Flavor
             // rareModeCheckBox
             // 
             this.rareModeCheckBox.AutoSize = true;
-            this.rareModeCheckBox.Location = new System.Drawing.Point(330, 251);
+            this.rareModeCheckBox.Location = new System.Drawing.Point(330, 275);
             this.rareModeCheckBox.Name = "rareModeCheckBox";
             this.rareModeCheckBox.Size = new System.Drawing.Size(287, 17);
             this.rareModeCheckBox.TabIndex = 6;
@@ -721,9 +730,9 @@ namespace Flavor
             // 
             // applyButton
             // 
-            this.applyButton.Location = new System.Drawing.Point(364, 274);
+            this.applyButton.Location = new System.Drawing.Point(330, 374);
             this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(75, 23);
+            this.applyButton.Size = new System.Drawing.Size(72, 23);
             this.applyButton.TabIndex = 9;
             this.applyButton.Text = "Применить";
             this.applyButton.UseVisualStyleBackColor = true;
@@ -732,9 +741,9 @@ namespace Flavor
             // cancel_butt
             // 
             this.cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel_butt.Location = new System.Drawing.Point(526, 274);
+            this.cancel_butt.Location = new System.Drawing.Point(540, 374);
             this.cancel_butt.Name = "cancel_butt";
-            this.cancel_butt.Size = new System.Drawing.Size(75, 23);
+            this.cancel_butt.Size = new System.Drawing.Size(57, 23);
             this.cancel_butt.TabIndex = 8;
             this.cancel_butt.Text = "Отмена";
             this.cancel_butt.UseVisualStyleBackColor = true;
@@ -742,9 +751,9 @@ namespace Flavor
             // 
             // ok_butt
             // 
-            this.ok_butt.Location = new System.Drawing.Point(445, 274);
+            this.ok_butt.Location = new System.Drawing.Point(408, 374);
             this.ok_butt.Name = "ok_butt";
-            this.ok_butt.Size = new System.Drawing.Size(75, 23);
+            this.ok_butt.Size = new System.Drawing.Size(69, 23);
             this.ok_butt.TabIndex = 7;
             this.ok_butt.Text = "Сохранить";
             this.ok_butt.UseVisualStyleBackColor = true;
@@ -752,9 +761,9 @@ namespace Flavor
             // 
             // savePreciseEditorToFileButton
             // 
-            this.savePreciseEditorToFileButton.Location = new System.Drawing.Point(12, 374);
+            this.savePreciseEditorToFileButton.Location = new System.Drawing.Point(6, 356);
             this.savePreciseEditorToFileButton.Name = "savePreciseEditorToFileButton";
-            this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(113, 23);
+            this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(106, 23);
             this.savePreciseEditorToFileButton.TabIndex = 10;
             this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
             this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
@@ -767,9 +776,9 @@ namespace Flavor
             // 
             // loadPreciseEditorFromFileButton
             // 
-            this.loadPreciseEditorFromFileButton.Location = new System.Drawing.Point(131, 374);
+            this.loadPreciseEditorFromFileButton.Location = new System.Drawing.Point(118, 356);
             this.loadPreciseEditorFromFileButton.Name = "loadPreciseEditorFromFileButton";
-            this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(118, 23);
+            this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(120, 23);
             this.loadPreciseEditorFromFileButton.TabIndex = 11;
             this.loadPreciseEditorFromFileButton.Text = "Загрузить из файла";
             this.loadPreciseEditorFromFileButton.UseVisualStyleBackColor = true;
@@ -782,13 +791,43 @@ namespace Flavor
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(255, 374);
+            this.clearButton.Location = new System.Drawing.Point(244, 356);
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(69, 23);
+            this.clearButton.Size = new System.Drawing.Size(62, 23);
             this.clearButton.TabIndex = 12;
             this.clearButton.Text = "Очистить";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
+            // saveFileButton
+            // 
+            this.saveFileButton.Location = new System.Drawing.Point(9, 228);
+            this.saveFileButton.Name = "saveFileButton";
+            this.saveFileButton.Size = new System.Drawing.Size(111, 23);
+            this.saveFileButton.TabIndex = 13;
+            this.saveFileButton.Text = "Сохранить в файл";
+            this.saveFileButton.UseVisualStyleBackColor = true;
+            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
+            // 
+            // loadFileButton
+            // 
+            this.loadFileButton.Location = new System.Drawing.Point(126, 228);
+            this.loadFileButton.Name = "loadFileButton";
+            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
+            this.loadFileButton.TabIndex = 34;
+            this.loadFileButton.Text = "Загрузить из файла";
+            this.loadFileButton.UseVisualStyleBackColor = true;
+            this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
+            // 
+            // openCommonDataFileDialog
+            // 
+            this.openCommonDataFileDialog.DefaultExt = "cdf";
+            this.openCommonDataFileDialog.Filter = "Common data files|*.cdf";
+            // 
+            // saveCommonDataFileDialog
+            // 
+            this.saveCommonDataFileDialog.DefaultExt = "cdf";
+            this.saveCommonDataFileDialog.Filter = "Common data files|*.cdf";
             // 
             // PreciseOptionsForm
             // 
@@ -797,9 +836,6 @@ namespace Flavor
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel_butt;
             this.ClientSize = new System.Drawing.Size(609, 409);
-            this.Controls.Add(this.clearButton);
-            this.Controls.Add(this.loadPreciseEditorFromFileButton);
-            this.Controls.Add(this.savePreciseEditorToFileButton);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.cancel_butt);
             this.Controls.Add(this.ok_butt);
@@ -884,5 +920,9 @@ namespace Flavor
         private System.Windows.Forms.Button loadPreciseEditorFromFileButton;
         private System.Windows.Forms.OpenFileDialog loadPreciseEditorFromFileDialog;
         private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.Button saveFileButton;
+        private System.Windows.Forms.Button loadFileButton;
+        private System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
+        private System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
     }
 }

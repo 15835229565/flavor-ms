@@ -109,60 +109,7 @@ namespace Flavor
                 applyButton.Visible = false;
             }
 
-            decimal temp;
-
-            temp = (decimal)(Config.eTimeReal);
-            if (temp < expTimeNumericUpDown.Minimum) temp = expTimeNumericUpDown.Minimum;
-            if (temp > expTimeNumericUpDown.Maximum) temp = expTimeNumericUpDown.Maximum;
-            expTimeNumericUpDown.Value = temp;
-
-            temp = (decimal)(Config.iTimeReal);
-            if (temp < idleTimeNumericUpDown.Minimum) temp = idleTimeNumericUpDown.Minimum;
-            if (temp > idleTimeNumericUpDown.Maximum) temp = idleTimeNumericUpDown.Maximum;
-            idleTimeNumericUpDown.Value = temp;
-
-            iVoltageNumericUpDown.Minimum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)20)));
-            iVoltageNumericUpDown.Maximum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)150)));
-            temp = (decimal)(Config.iVoltageReal);
-            if (temp < iVoltageNumericUpDown.Minimum) temp = iVoltageNumericUpDown.Minimum;
-            if (temp > iVoltageNumericUpDown.Maximum) temp = iVoltageNumericUpDown.Maximum;
-            iVoltageNumericUpDown.Value = temp;
-
-            CPNumericUpDown.Minimum = (decimal)(Config.CPConvert(Config.CPConvert((double)10)));
-            CPNumericUpDown.Maximum = (decimal)(Config.CPConvert(Config.CPConvert((double)12)));
-            temp = (decimal)(Config.CPReal);
-            if (temp < CPNumericUpDown.Minimum) temp = CPNumericUpDown.Minimum;
-            if (temp > CPNumericUpDown.Maximum) temp = CPNumericUpDown.Maximum;
-            CPNumericUpDown.Value = temp;
-
-            eCurrentNumericUpDown.Minimum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)0)));
-            eCurrentNumericUpDown.Maximum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)50)));
-            temp = (decimal)(Config.eCurrentReal);
-            if (temp < eCurrentNumericUpDown.Minimum) temp = eCurrentNumericUpDown.Minimum;
-            if (temp > eCurrentNumericUpDown.Maximum) temp = eCurrentNumericUpDown.Maximum;
-            eCurrentNumericUpDown.Value = temp;
-
-            hCurrentNumericUpDown.Minimum = (decimal)(Config.hCurrentConvert(Config.hCurrentConvert((double)0)));
-            hCurrentNumericUpDown.Maximum = (decimal)(Config.hCurrentConvert(Config.hCurrentConvert((double)1)));
-            temp = (decimal)(Config.hCurrentReal);
-            if (temp < hCurrentNumericUpDown.Minimum) temp = hCurrentNumericUpDown.Minimum;
-            if (temp > hCurrentNumericUpDown.Maximum) temp = hCurrentNumericUpDown.Maximum;
-            hCurrentNumericUpDown.Value = temp;
-
-            fV1NumericUpDown.Minimum = (decimal)(Config.fV1Convert(Config.fV1Convert((double)20)));
-            fV1NumericUpDown.Maximum = (decimal)(Config.fV1Convert(Config.fV1Convert((double)150)));
-            temp = (decimal)(Config.fV1Real);
-            if (temp < fV1NumericUpDown.Minimum) temp = fV1NumericUpDown.Minimum;
-            if (temp > fV1NumericUpDown.Maximum) temp = fV1NumericUpDown.Maximum;
-            fV1NumericUpDown.Value = temp;
-
-            fV2NumericUpDown.Minimum = (decimal)(Config.fV2Convert(Config.fV2Convert((double)20)));
-            fV2NumericUpDown.Maximum = (decimal)(Config.fV2Convert(Config.fV2Convert((double)150)));
-            temp = (decimal)(Config.fV2Real);
-            if (temp < fV2NumericUpDown.Minimum) temp = fV2NumericUpDown.Minimum;
-            if (temp > fV2NumericUpDown.Maximum) temp = fV2NumericUpDown.Maximum;
-            fV2NumericUpDown.Value = temp;
-
+            loadCommonData();
             Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeEnableForm);
         }
 
@@ -289,6 +236,69 @@ namespace Flavor
                     precTextBoxes[p.pNumber].Text = p.Precision.ToString();
                 }
             }
+        }
+
+        private void loadCommonData(string fn)
+        {
+            Config.loadCommonOptions(fn);
+            loadCommonData();
+        }
+        
+        private void loadCommonData()
+        {
+            decimal temp;
+
+            temp = (decimal)(Config.eTimeReal);
+            if (temp < expTimeNumericUpDown.Minimum) temp = expTimeNumericUpDown.Minimum;
+            if (temp > expTimeNumericUpDown.Maximum) temp = expTimeNumericUpDown.Maximum;
+            expTimeNumericUpDown.Value = temp;
+
+            temp = (decimal)(Config.iTimeReal);
+            if (temp < idleTimeNumericUpDown.Minimum) temp = idleTimeNumericUpDown.Minimum;
+            if (temp > idleTimeNumericUpDown.Maximum) temp = idleTimeNumericUpDown.Maximum;
+            idleTimeNumericUpDown.Value = temp;
+
+            iVoltageNumericUpDown.Minimum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)20)));
+            iVoltageNumericUpDown.Maximum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)150)));
+            temp = (decimal)(Config.iVoltageReal);
+            if (temp < iVoltageNumericUpDown.Minimum) temp = iVoltageNumericUpDown.Minimum;
+            if (temp > iVoltageNumericUpDown.Maximum) temp = iVoltageNumericUpDown.Maximum;
+            iVoltageNumericUpDown.Value = temp;
+
+            CPNumericUpDown.Minimum = (decimal)(Config.CPConvert(Config.CPConvert((double)10)));
+            CPNumericUpDown.Maximum = (decimal)(Config.CPConvert(Config.CPConvert((double)12)));
+            temp = (decimal)(Config.CPReal);
+            if (temp < CPNumericUpDown.Minimum) temp = CPNumericUpDown.Minimum;
+            if (temp > CPNumericUpDown.Maximum) temp = CPNumericUpDown.Maximum;
+            CPNumericUpDown.Value = temp;
+
+            eCurrentNumericUpDown.Minimum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)0)));
+            eCurrentNumericUpDown.Maximum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)50)));
+            temp = (decimal)(Config.eCurrentReal);
+            if (temp < eCurrentNumericUpDown.Minimum) temp = eCurrentNumericUpDown.Minimum;
+            if (temp > eCurrentNumericUpDown.Maximum) temp = eCurrentNumericUpDown.Maximum;
+            eCurrentNumericUpDown.Value = temp;
+
+            hCurrentNumericUpDown.Minimum = (decimal)(Config.hCurrentConvert(Config.hCurrentConvert((double)0)));
+            hCurrentNumericUpDown.Maximum = (decimal)(Config.hCurrentConvert(Config.hCurrentConvert((double)1)));
+            temp = (decimal)(Config.hCurrentReal);
+            if (temp < hCurrentNumericUpDown.Minimum) temp = hCurrentNumericUpDown.Minimum;
+            if (temp > hCurrentNumericUpDown.Maximum) temp = hCurrentNumericUpDown.Maximum;
+            hCurrentNumericUpDown.Value = temp;
+
+            fV1NumericUpDown.Minimum = (decimal)(Config.fV1Convert(Config.fV1Convert((double)20)));
+            fV1NumericUpDown.Maximum = (decimal)(Config.fV1Convert(Config.fV1Convert((double)150)));
+            temp = (decimal)(Config.fV1Real);
+            if (temp < fV1NumericUpDown.Minimum) temp = fV1NumericUpDown.Minimum;
+            if (temp > fV1NumericUpDown.Maximum) temp = fV1NumericUpDown.Maximum;
+            fV1NumericUpDown.Value = temp;
+
+            fV2NumericUpDown.Minimum = (decimal)(Config.fV2Convert(Config.fV2Convert((double)20)));
+            fV2NumericUpDown.Maximum = (decimal)(Config.fV2Convert(Config.fV2Convert((double)150)));
+            temp = (decimal)(Config.fV2Real);
+            if (temp < fV2NumericUpDown.Minimum) temp = fV2NumericUpDown.Minimum;
+            if (temp > fV2NumericUpDown.Maximum) temp = fV2NumericUpDown.Maximum;
+            fV2NumericUpDown.Value = temp;
         }
 
         private void cancel_butt_Click(object sender, EventArgs e)
@@ -477,6 +487,24 @@ namespace Flavor
         {
             instance = null;
             upLevel.InvokeRefreshButtons();
+        }
+
+        private void saveFileButton_Click(object sender, EventArgs e)
+        {
+            if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Config.saveCommonOptions(saveCommonDataFileDialog.FileName, (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
+                                         (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
+            }
+
+        }
+
+        private void loadFileButton_Click(object sender, EventArgs e)
+        {
+            if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                loadCommonData(openCommonDataFileDialog.FileName);
+            }
         }
     }
 }

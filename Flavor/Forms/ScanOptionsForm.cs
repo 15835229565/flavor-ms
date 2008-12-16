@@ -25,10 +25,19 @@ namespace Flavor
                 applyButton.Enabled = false;
                 applyButton.Visible = false;
             }
+            loadCommonData();
+        }
+
+        private void loadCommonData(string fn)
+        {
+            Config.loadCommonOptions(fn);
+            loadCommonData();
+        }
+
+        private void loadCommonData()
+        {
             decimal temp;
-            startScanNumericUpDown.Value = Config.sPoint;
-            endScanNumericUpDown.Value = Config.ePoint;
-            
+
             temp = (decimal)(Config.eTimeReal);
             if (temp < expTimeNumericUpDown.Minimum) temp = expTimeNumericUpDown.Minimum;
             if (temp > expTimeNumericUpDown.Maximum) temp = expTimeNumericUpDown.Maximum;
@@ -38,7 +47,7 @@ namespace Flavor
             if (temp < idleTimeNumericUpDown.Minimum) temp = idleTimeNumericUpDown.Minimum;
             if (temp > idleTimeNumericUpDown.Maximum) temp = idleTimeNumericUpDown.Maximum;
             idleTimeNumericUpDown.Value = temp;
-            
+
             iVoltageNumericUpDown.Minimum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)20)));
             iVoltageNumericUpDown.Maximum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)150)));
             temp = (decimal)(Config.iVoltageReal);
@@ -117,6 +126,20 @@ namespace Flavor
             {
                 startScanNumericUpDown.BackColor = Color.Red;
                 endScanNumericUpDown.BackColor = Color.Red;
+            }
+        }
+
+        private void saveFileButton_Click(object sender, EventArgs e)
+        {
+            Config.saveCommonOptions(saveCommonDataFileDialog.FileName, (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
+                                     (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
+        }
+
+        private void loadFileButton_Click(object sender, EventArgs e)
+        {
+            if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                loadCommonData(openCommonDataFileDialog.FileName);
             }
         }
     }

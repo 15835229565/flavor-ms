@@ -54,6 +54,10 @@ namespace Flavor
             this.cancel_butt = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
+            this.saveFileButton = new System.Windows.Forms.Button();
+            this.loadFileButton = new System.Windows.Forms.Button();
+            this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.scan_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.endScanNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.startScanNumericUpDown)).BeginInit();
@@ -134,6 +138,8 @@ namespace Flavor
             // 
             // params_groupBox
             // 
+            this.params_groupBox.Controls.Add(this.loadFileButton);
+            this.params_groupBox.Controls.Add(this.saveFileButton);
             this.params_groupBox.Controls.Add(this.fV2NumericUpDown);
             this.params_groupBox.Controls.Add(this.fV1NumericUpDown);
             this.params_groupBox.Controls.Add(this.hCurrentNumericUpDown);
@@ -152,7 +158,7 @@ namespace Flavor
             this.params_groupBox.Controls.Add(this.label2);
             this.params_groupBox.Location = new System.Drawing.Point(10, 85);
             this.params_groupBox.Name = "params_groupBox";
-            this.params_groupBox.Size = new System.Drawing.Size(270, 233);
+            this.params_groupBox.Size = new System.Drawing.Size(270, 253);
             this.params_groupBox.TabIndex = 1;
             this.params_groupBox.TabStop = false;
             this.params_groupBox.Text = "Общие параметры";
@@ -446,9 +452,9 @@ namespace Flavor
             // 
             // ok_butt
             // 
-            this.ok_butt.Location = new System.Drawing.Point(125, 367);
+            this.ok_butt.Location = new System.Drawing.Point(91, 367);
             this.ok_butt.Name = "ok_butt";
-            this.ok_butt.Size = new System.Drawing.Size(75, 23);
+            this.ok_butt.Size = new System.Drawing.Size(72, 23);
             this.ok_butt.TabIndex = 2;
             this.ok_butt.Text = "Сохранить";
             this.ok_butt.UseVisualStyleBackColor = true;
@@ -457,9 +463,9 @@ namespace Flavor
             // cancel_butt
             // 
             this.cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel_butt.Location = new System.Drawing.Point(206, 367);
+            this.cancel_butt.Location = new System.Drawing.Point(226, 367);
             this.cancel_butt.Name = "cancel_butt";
-            this.cancel_butt.Size = new System.Drawing.Size(75, 23);
+            this.cancel_butt.Size = new System.Drawing.Size(54, 23);
             this.cancel_butt.TabIndex = 3;
             this.cancel_butt.Text = "Отмена";
             this.cancel_butt.UseVisualStyleBackColor = true;
@@ -467,9 +473,9 @@ namespace Flavor
             // 
             // applyButton
             // 
-            this.applyButton.Location = new System.Drawing.Point(44, 367);
+            this.applyButton.Location = new System.Drawing.Point(12, 367);
             this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(75, 23);
+            this.applyButton.Size = new System.Drawing.Size(73, 23);
             this.applyButton.TabIndex = 4;
             this.applyButton.Text = "Применить";
             this.applyButton.UseVisualStyleBackColor = true;
@@ -478,12 +484,41 @@ namespace Flavor
             // rareModeCheckBox
             // 
             this.rareModeCheckBox.AutoSize = true;
-            this.rareModeCheckBox.Location = new System.Drawing.Point(10, 324);
+            this.rareModeCheckBox.Location = new System.Drawing.Point(10, 344);
             this.rareModeCheckBox.Name = "rareModeCheckBox";
             this.rareModeCheckBox.Size = new System.Drawing.Size(287, 17);
             this.rareModeCheckBox.TabIndex = 5;
             this.rareModeCheckBox.Text = "Без уменьшения частоты запроса статуса прибора";
             this.rareModeCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // saveFileButton
+            // 
+            this.saveFileButton.Location = new System.Drawing.Point(9, 224);
+            this.saveFileButton.Name = "saveFileButton";
+            this.saveFileButton.Size = new System.Drawing.Size(112, 23);
+            this.saveFileButton.TabIndex = 6;
+            this.saveFileButton.Text = "Сохранить в файл";
+            this.saveFileButton.UseVisualStyleBackColor = true;
+            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
+            // 
+            // loadFileButton
+            // 
+            this.loadFileButton.Location = new System.Drawing.Point(127, 224);
+            this.loadFileButton.Name = "loadFileButton";
+            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
+            this.loadFileButton.TabIndex = 34;
+            this.loadFileButton.Text = "Загрузить из файла";
+            this.loadFileButton.UseVisualStyleBackColor = true;
+            // 
+            // openCommonDataFileDialog
+            // 
+            this.openCommonDataFileDialog.DefaultExt = "cdf";
+            this.openCommonDataFileDialog.Filter = "Common data files|*.cdf";
+            // 
+            // saveCommonDataFileDialog
+            // 
+            this.saveCommonDataFileDialog.DefaultExt = "cdf";
+            this.saveCommonDataFileDialog.Filter = "Common data files|*.cdf";
             // 
             // ScanOptionsForm
             // 
@@ -552,5 +587,9 @@ namespace Flavor
         private System.Windows.Forms.NumericUpDown fV2NumericUpDown;
         private System.Windows.Forms.Button applyButton;
         private System.Windows.Forms.CheckBox rareModeCheckBox;
+        private System.Windows.Forms.Button saveFileButton;
+        private System.Windows.Forms.Button loadFileButton;
+        private System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
+        private System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
     }
 }

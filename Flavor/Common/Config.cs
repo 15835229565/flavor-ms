@@ -328,9 +328,9 @@ namespace Flavor
         public static ushort scanVoltage(ushort step)
         {
             if (step > 1056) step = 1056;
-            return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), step));
-            //if (step <= 456) return (ushort)(4095 - 5 * step);
-            //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
+            //return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), step));
+            if (step <= 456) return (ushort)(4095 - 5 * step);
+            return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
 
         public static double scanVoltageReal(ushort step)
@@ -588,6 +588,7 @@ namespace Flavor
             catch (Exception Error)
             {
                 System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла спектра");
+                return;
             }
             try
             {
@@ -609,6 +610,7 @@ namespace Flavor
             catch (NullReferenceException)
             {
                 System.Windows.Forms.MessageBox.Show("Ошибка чтения файла спектра", "Ошибка структуры файла");
+                return;
             }
         }
 
@@ -625,8 +627,8 @@ namespace Flavor
             catch (Exception Error)
             {
                 System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионного спектра");
+                return;
             }
-            Graph.ResetLoadedPointLists();
             for (int i = 1; i <= 20; ++i)
             {
                 PreciseEditorData temp = null;
@@ -656,9 +658,11 @@ namespace Flavor
                 catch (NullReferenceException)
                 {
                     System.Windows.Forms.MessageBox.Show("Ошибка чтения файла прецизионного спектра", "Ошибка структуры файла");
+                    return;
                 }
                 if (temp != null) peds.Add(temp);
             }
+            Graph.ResetLoadedPointLists();
             Graph.updateGraph(peds);
         }
         /*
@@ -867,6 +871,7 @@ namespace Flavor
             catch (Exception Error)
             {
                 System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионных точек");
+                return null;
             }
             for (int i = 1; i <= 20; ++i)
             {
@@ -926,6 +931,73 @@ namespace Flavor
                 }
                 if (temp != null) PreciseData.Add(temp);
             }
+        }
+
+        internal static void saveCommonOptions(string fn, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
+        {
+            XmlDocument cdConf = new XmlDocument();
+            cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
+            cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.Element, "common", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "header", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "exptime", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "meastime", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ivoltage", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "cp", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ecurrent", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "hcurrent", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus1", ""));
+            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus2", ""));
+
+            cdConf.SelectSingleNode("common/exptime").InnerText = eT.ToString();
+            cdConf.SelectSingleNode("common/meastime").InnerText = iT.ToString();
+            cdConf.SelectSingleNode("common/ivoltage").InnerText = iV.ToString();
+            cdConf.SelectSingleNode("common/cp").InnerText = cp.ToString();
+            cdConf.SelectSingleNode("common/ecurrent").InnerText = eC.ToString();
+            cdConf.SelectSingleNode("common/hcurrent").InnerText = hC.ToString();
+            cdConf.SelectSingleNode("common/focus1").InnerText = fv1.ToString();
+            cdConf.SelectSingleNode("common/focus2").InnerText = fv2.ToString();
+            
+            cdConf.Save(fn);
+        }
+
+        internal static void loadCommonOptions(string cdConfName)
+        {
+            XmlDocument cdConf = new XmlDocument();
+            try
+            {
+                cdConf.Load(cdConfName);
+            }
+            catch (Exception Error)
+            {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла общих настроек");
+                return;
+            }
+            ushort eT, iT;
+            double iV, cp, eC, hC, fv1, fv2;
+            try
+            {
+                eT = ushort.Parse(cdConf.SelectSingleNode("common/exptime").InnerText);
+                iT = ushort.Parse(cdConf.SelectSingleNode("common/meastime").InnerText);
+                iV = ushort.Parse(cdConf.SelectSingleNode("common/ivoltage").InnerText);
+                cp = ushort.Parse(cdConf.SelectSingleNode("common/cp").InnerText);
+                eC = ushort.Parse(cdConf.SelectSingleNode("common/ecurrent").InnerText);
+                hC = ushort.Parse(cdConf.SelectSingleNode("common/hcurrent").InnerText);
+                fv1 = ushort.Parse(cdConf.SelectSingleNode("common/focus1").InnerText);
+                fv2 = ushort.Parse(cdConf.SelectSingleNode("common/focus2").InnerText);
+            }
+            catch (NullReferenceException)
+            {
+                System.Windows.Forms.MessageBox.Show("Ошибка чтения файла общих настроек", "Ошибка структуры файла");
+                return;
+            }
+            eTime = eT;
+            iTime = iT;
+            iVoltageReal = iV;
+            CPReal = cp;
+            eCurrentReal = eC;
+            hCurrentReal = hC;
+            fV1Real = fv1;
+            fV2Real = fv2;
         }
     }
 }
