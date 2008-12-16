@@ -33,6 +33,7 @@ namespace Flavor
             // ZedGraphControlPlus
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.IsShowPointValues = true;
             this.Name = "ZedGraphControlPlus";
             this.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
             this.ResumeLayout(false);

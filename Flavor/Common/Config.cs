@@ -647,12 +647,14 @@ namespace Flavor
                                                      ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText),
                                                      (float)0);
 
-                        foreach (XmlNode pntNode in sf.SelectNodes("/sense/region{0}/p"))
+                        ZedGraph.PointPairList tempPntLst = new ZedGraph.PointPairList();
+                        foreach (XmlNode pntNode in sf.SelectNodes(string.Format("/sense/region{0}/p", i)))
                         {
                             X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
                             Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
-                            temp.AssociatedPoints.Add(X, Y);
+                            tempPntLst.Add(X, Y);
                         }
+                        temp.AssociatedPoints = tempPntLst;
                     }
                 }
                 catch (NullReferenceException)
@@ -662,7 +664,7 @@ namespace Flavor
                 }
                 if (temp != null) peds.Add(temp);
             }
-            Graph.ResetLoadedPointLists();
+            //Graph.ResetLoadedPointLists();
             Graph.updateGraph(peds);
         }
         /*
@@ -948,14 +950,23 @@ namespace Flavor
             cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus1", ""));
             cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus2", ""));
 
-            cdConf.SelectSingleNode("common/exptime").InnerText = eT.ToString();
-            cdConf.SelectSingleNode("common/meastime").InnerText = iT.ToString();
-            cdConf.SelectSingleNode("common/ivoltage").InnerText = iV.ToString();
-            cdConf.SelectSingleNode("common/cp").InnerText = cp.ToString();
-            cdConf.SelectSingleNode("common/ecurrent").InnerText = eC.ToString();
-            cdConf.SelectSingleNode("common/hcurrent").InnerText = hC.ToString();
-            cdConf.SelectSingleNode("common/focus1").InnerText = fv1.ToString();
-            cdConf.SelectSingleNode("common/focus2").InnerText = fv2.ToString();
+            Config.eTimeReal = eT;
+            Config.iTimeReal = iT;
+            Config.iVoltageReal = iV;
+            Config.CPReal = cp;
+            Config.eCurrentReal = eC;
+            Config.hCurrentReal = hC;
+            Config.fV1Real = fv1;
+            Config.fV2Real = fv2;
+
+            cdConf.SelectSingleNode("common/exptime").InnerText = Config.eTime.ToString();
+            cdConf.SelectSingleNode("common/meastime").InnerText = Config.iTime.ToString();
+            cdConf.SelectSingleNode("common/ivoltage").InnerText = Config.iVoltage.ToString();
+            cdConf.SelectSingleNode("common/cp").InnerText = Config.CP.ToString();
+            cdConf.SelectSingleNode("common/ecurrent").InnerText = Config.eCurrent.ToString();
+            cdConf.SelectSingleNode("common/hcurrent").InnerText = Config.hCurrent.ToString();
+            cdConf.SelectSingleNode("common/focus1").InnerText = Config.fV1.ToString();
+            cdConf.SelectSingleNode("common/focus2").InnerText = Config.fV2.ToString();
             
             cdConf.Save(fn);
         }
@@ -972,18 +983,17 @@ namespace Flavor
                 System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла общих настроек");
                 return;
             }
-            ushort eT, iT;
-            double iV, cp, eC, hC, fv1, fv2;
+            ushort eT, iT, iV, cp, eC, hC, fv1, fv2;
             try
             {
-                eT = ushort.Parse(cdConf.SelectSingleNode("common/exptime").InnerText);
-                iT = ushort.Parse(cdConf.SelectSingleNode("common/meastime").InnerText);
-                iV = ushort.Parse(cdConf.SelectSingleNode("common/ivoltage").InnerText);
-                cp = ushort.Parse(cdConf.SelectSingleNode("common/cp").InnerText);
-                eC = ushort.Parse(cdConf.SelectSingleNode("common/ecurrent").InnerText);
-                hC = ushort.Parse(cdConf.SelectSingleNode("common/hcurrent").InnerText);
-                fv1 = ushort.Parse(cdConf.SelectSingleNode("common/focus1").InnerText);
-                fv2 = ushort.Parse(cdConf.SelectSingleNode("common/focus2").InnerText);
+                eT = ushort.Parse(cdConf.SelectSingleNode("/common/exptime").InnerText);
+                iT = ushort.Parse(cdConf.SelectSingleNode("/common/meastime").InnerText);
+                iV = ushort.Parse(cdConf.SelectSingleNode("/common/ivoltage").InnerText);
+                cp = ushort.Parse(cdConf.SelectSingleNode("/common/cp").InnerText);
+                eC = ushort.Parse(cdConf.SelectSingleNode("/common/ecurrent").InnerText);
+                hC = ushort.Parse(cdConf.SelectSingleNode("/common/hcurrent").InnerText);
+                fv1 = ushort.Parse(cdConf.SelectSingleNode("/common/focus1").InnerText);
+                fv2 = ushort.Parse(cdConf.SelectSingleNode("/common/focus2").InnerText);
             }
             catch (NullReferenceException)
             {
@@ -992,12 +1002,12 @@ namespace Flavor
             }
             eTime = eT;
             iTime = iT;
-            iVoltageReal = iV;
-            CPReal = cp;
-            eCurrentReal = eC;
-            hCurrentReal = hC;
-            fV1Real = fv1;
-            fV2Real = fv2;
+            iVoltage = iV;
+            CP = cp;
+            eCurrent = eC;
+            hCurrent = hC;
+            fV1 = fv1;
+            fV2 = fv2;
         }
     }
 }

@@ -34,6 +34,8 @@ namespace Flavor
             this.label1 = new System.Windows.Forms.Label();
             this.startScan = new System.Windows.Forms.Label();
             this.params_groupBox = new System.Windows.Forms.GroupBox();
+            this.loadFileButton = new System.Windows.Forms.Button();
+            this.saveFileButton = new System.Windows.Forms.Button();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.fV1NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.hCurrentNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -54,8 +56,6 @@ namespace Flavor
             this.cancel_butt = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
-            this.saveFileButton = new System.Windows.Forms.Button();
-            this.loadFileButton = new System.Windows.Forms.Button();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.scan_groupBox.SuspendLayout();
@@ -162,6 +162,26 @@ namespace Flavor
             this.params_groupBox.TabIndex = 1;
             this.params_groupBox.TabStop = false;
             this.params_groupBox.Text = "Общие параметры";
+            // 
+            // loadFileButton
+            // 
+            this.loadFileButton.Location = new System.Drawing.Point(127, 224);
+            this.loadFileButton.Name = "loadFileButton";
+            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
+            this.loadFileButton.TabIndex = 34;
+            this.loadFileButton.Text = "Загрузить из файла";
+            this.loadFileButton.UseVisualStyleBackColor = true;
+            this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
+            // 
+            // saveFileButton
+            // 
+            this.saveFileButton.Location = new System.Drawing.Point(9, 224);
+            this.saveFileButton.Name = "saveFileButton";
+            this.saveFileButton.Size = new System.Drawing.Size(112, 23);
+            this.saveFileButton.TabIndex = 6;
+            this.saveFileButton.Text = "Сохранить в файл";
+            this.saveFileButton.UseVisualStyleBackColor = true;
+            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
             // 
             // fV2NumericUpDown
             // 
@@ -490,25 +510,6 @@ namespace Flavor
             this.rareModeCheckBox.TabIndex = 5;
             this.rareModeCheckBox.Text = "Без уменьшения частоты запроса статуса прибора";
             this.rareModeCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // saveFileButton
-            // 
-            this.saveFileButton.Location = new System.Drawing.Point(9, 224);
-            this.saveFileButton.Name = "saveFileButton";
-            this.saveFileButton.Size = new System.Drawing.Size(112, 23);
-            this.saveFileButton.TabIndex = 6;
-            this.saveFileButton.Text = "Сохранить в файл";
-            this.saveFileButton.UseVisualStyleBackColor = true;
-            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
-            // 
-            // loadFileButton
-            // 
-            this.loadFileButton.Location = new System.Drawing.Point(127, 224);
-            this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
-            this.loadFileButton.TabIndex = 34;
-            this.loadFileButton.Text = "Загрузить из файла";
-            this.loadFileButton.UseVisualStyleBackColor = true;
             // 
             // openCommonDataFileDialog
             // 

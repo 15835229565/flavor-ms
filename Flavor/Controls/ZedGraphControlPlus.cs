@@ -19,6 +19,7 @@ namespace Flavor
         public ZedGraphControlPlus(): base()
         {
             InitializeComponent();
+            //this.IsShowPointValues = true;
         }
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState)

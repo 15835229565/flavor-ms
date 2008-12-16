@@ -70,10 +70,11 @@ namespace Flavor
 
         internal static void updateGraph(int[][] senseModeCounts, PreciseEditorData[] peds)
         {
-            pointList1.Clear();
+            ResetPointLists();
+            /*pointList1.Clear();
             pointList2.Clear();
             pointLists1.Clear();
-            pointLists2.Clear();
+            pointLists2.Clear();*/
             for (int i = 0; i < peds.Length; ++i)
             {
                 PointPairList temp = new PointPairList();
@@ -100,28 +101,31 @@ namespace Flavor
 
         internal static void updateGraph(List <PreciseEditorData> peds)
         {
-            pointListLoaded1.Clear();
+            ResetLoadedPointLists();
+            /*pointListLoaded1.Clear();
             pointListLoaded2.Clear();
             pointListsLoaded1.Clear();
-            pointListsLoaded2.Clear();
+            pointListsLoaded2.Clear();*/
             foreach (PreciseEditorData ped in peds)
             {
-                PointPairList temp = new PointPairList();
+                //PointPairList temp = new PointPairList();
                 if (ped.Collector == 1)
                 {
-                    foreach (PointPair pp in ped.AssociatedPoints)
+                    pointListsLoaded1.Add(ped.AssociatedPoints);
+                    /*foreach (PointPair pp in ped.AssociatedPoints)
                     {
                         temp.Add(pp);
                     }
-                    pointLists1.Add(temp);
+                    pointLists1.Add(temp);*/
                 }
                 else
                 {
-                    foreach (PointPair pp in ped.AssociatedPoints)
+                    pointListsLoaded2.Add(ped.AssociatedPoints);
+                    /*foreach (PointPair pp in ped.AssociatedPoints)
                     {
                         temp.Add(pp);
                     }
-                    pointLists2.Add(temp);
+                    pointLists2.Add(temp);*/
                 }
             }
             OnNewGraphData(true, true);
