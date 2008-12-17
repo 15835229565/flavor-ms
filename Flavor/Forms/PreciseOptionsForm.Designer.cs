@@ -54,7 +54,12 @@ namespace Flavor
             this.label30 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label31 = new System.Windows.Forms.Label();
+            this.clearButton = new System.Windows.Forms.Button();
+            this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
+            this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.loadFileButton = new System.Windows.Forms.Button();
+            this.saveFileButton = new System.Windows.Forms.Button();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.fV1NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.hCurrentNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -75,13 +80,8 @@ namespace Flavor
             this.applyButton = new System.Windows.Forms.Button();
             this.cancel_butt = new System.Windows.Forms.Button();
             this.ok_butt = new System.Windows.Forms.Button();
-            this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.clearButton = new System.Windows.Forms.Button();
-            this.saveFileButton = new System.Windows.Forms.Button();
-            this.loadFileButton = new System.Windows.Forms.Button();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.groupBox1.SuspendLayout();
@@ -404,6 +404,36 @@ namespace Flavor
             this.label31.Text = "20";
             this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // clearButton
+            // 
+            this.clearButton.Location = new System.Drawing.Point(244, 356);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(62, 23);
+            this.clearButton.TabIndex = 12;
+            this.clearButton.Text = "Очистить";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
+            // loadPreciseEditorFromFileButton
+            // 
+            this.loadPreciseEditorFromFileButton.Location = new System.Drawing.Point(118, 356);
+            this.loadPreciseEditorFromFileButton.Name = "loadPreciseEditorFromFileButton";
+            this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(120, 23);
+            this.loadPreciseEditorFromFileButton.TabIndex = 11;
+            this.loadPreciseEditorFromFileButton.Text = "Загрузить из файла";
+            this.loadPreciseEditorFromFileButton.UseVisualStyleBackColor = true;
+            this.loadPreciseEditorFromFileButton.Click += new System.EventHandler(this.loadPreciseEditorFromFileButton_Click);
+            // 
+            // savePreciseEditorToFileButton
+            // 
+            this.savePreciseEditorToFileButton.Location = new System.Drawing.Point(6, 356);
+            this.savePreciseEditorToFileButton.Name = "savePreciseEditorToFileButton";
+            this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(106, 23);
+            this.savePreciseEditorToFileButton.TabIndex = 10;
+            this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
+            this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
+            this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.loadFileButton);
@@ -430,6 +460,26 @@ namespace Flavor
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Общие параметры";
+            // 
+            // loadFileButton
+            // 
+            this.loadFileButton.Location = new System.Drawing.Point(126, 228);
+            this.loadFileButton.Name = "loadFileButton";
+            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
+            this.loadFileButton.TabIndex = 34;
+            this.loadFileButton.Text = "Загрузить из файла";
+            this.loadFileButton.UseVisualStyleBackColor = true;
+            this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
+            // 
+            // saveFileButton
+            // 
+            this.saveFileButton.Location = new System.Drawing.Point(9, 228);
+            this.saveFileButton.Name = "saveFileButton";
+            this.saveFileButton.Size = new System.Drawing.Size(111, 23);
+            this.saveFileButton.TabIndex = 13;
+            this.saveFileButton.Text = "Сохранить в файл";
+            this.saveFileButton.UseVisualStyleBackColor = true;
+            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
             // 
             // fV2NumericUpDown
             // 
@@ -603,6 +653,11 @@ namespace Flavor
             0,
             0});
             this.idleTimeNumericUpDown.Location = new System.Drawing.Point(195, 45);
+            this.idleTimeNumericUpDown.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
             this.idleTimeNumericUpDown.Minimum = new decimal(new int[] {
             10,
             0,
@@ -759,75 +814,25 @@ namespace Flavor
             this.ok_butt.UseVisualStyleBackColor = true;
             this.ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
             // 
-            // savePreciseEditorToFileButton
-            // 
-            this.savePreciseEditorToFileButton.Location = new System.Drawing.Point(6, 356);
-            this.savePreciseEditorToFileButton.Name = "savePreciseEditorToFileButton";
-            this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(106, 23);
-            this.savePreciseEditorToFileButton.TabIndex = 10;
-            this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
-            this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
-            this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
-            // 
             // savePreciseEditorToFileDialog
             // 
             this.savePreciseEditorToFileDialog.DefaultExt = "ped";
             this.savePreciseEditorToFileDialog.Filter = "Precise Editor Data Files (*.ped)|*.ped";
-            // 
-            // loadPreciseEditorFromFileButton
-            // 
-            this.loadPreciseEditorFromFileButton.Location = new System.Drawing.Point(118, 356);
-            this.loadPreciseEditorFromFileButton.Name = "loadPreciseEditorFromFileButton";
-            this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(120, 23);
-            this.loadPreciseEditorFromFileButton.TabIndex = 11;
-            this.loadPreciseEditorFromFileButton.Text = "Загрузить из файла";
-            this.loadPreciseEditorFromFileButton.UseVisualStyleBackColor = true;
-            this.loadPreciseEditorFromFileButton.Click += new System.EventHandler(this.loadPreciseEditorFromFileButton_Click);
             // 
             // loadPreciseEditorFromFileDialog
             // 
             this.loadPreciseEditorFromFileDialog.DefaultExt = "ped";
             this.loadPreciseEditorFromFileDialog.Filter = "Precise editor data files (*.ped)|*.ped|Precise specter files (*.psf)|*.psf";
             // 
-            // clearButton
-            // 
-            this.clearButton.Location = new System.Drawing.Point(244, 356);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(62, 23);
-            this.clearButton.TabIndex = 12;
-            this.clearButton.Text = "Очистить";
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
-            // 
-            // saveFileButton
-            // 
-            this.saveFileButton.Location = new System.Drawing.Point(9, 228);
-            this.saveFileButton.Name = "saveFileButton";
-            this.saveFileButton.Size = new System.Drawing.Size(111, 23);
-            this.saveFileButton.TabIndex = 13;
-            this.saveFileButton.Text = "Сохранить в файл";
-            this.saveFileButton.UseVisualStyleBackColor = true;
-            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
-            // 
-            // loadFileButton
-            // 
-            this.loadFileButton.Location = new System.Drawing.Point(126, 228);
-            this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
-            this.loadFileButton.TabIndex = 34;
-            this.loadFileButton.Text = "Загрузить из файла";
-            this.loadFileButton.UseVisualStyleBackColor = true;
-            this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
-            // 
             // openCommonDataFileDialog
             // 
             this.openCommonDataFileDialog.DefaultExt = "cdf";
-            this.openCommonDataFileDialog.Filter = "Common data files|*.cdf";
+            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
             // saveCommonDataFileDialog
             // 
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
-            this.saveCommonDataFileDialog.Filter = "Common data files|*.cdf";
+            this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
             // PreciseOptionsForm
             // 

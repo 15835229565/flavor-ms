@@ -355,6 +355,11 @@ namespace Flavor
             0,
             0});
             this.idleTimeNumericUpDown.Location = new System.Drawing.Point(195, 45);
+            this.idleTimeNumericUpDown.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
             this.idleTimeNumericUpDown.Minimum = new decimal(new int[] {
             10,
             0,
@@ -514,12 +519,12 @@ namespace Flavor
             // openCommonDataFileDialog
             // 
             this.openCommonDataFileDialog.DefaultExt = "cdf";
-            this.openCommonDataFileDialog.Filter = "Common data files|*.cdf";
+            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
             // saveCommonDataFileDialog
             // 
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
-            this.saveCommonDataFileDialog.Filter = "Common data files|*.cdf";
+            this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
             // ScanOptionsForm
             // 
