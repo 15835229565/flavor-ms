@@ -7,6 +7,49 @@ namespace Flavor
 {
     delegate void GraphEventHandler(bool fromFile, bool recreate);
 
+    class pListScaled
+    {
+        public PointPairList Step 
+        {
+            get {return step;}
+        }
+
+        public PointPairList Voltage
+        {
+            get { return voltage; }
+        }
+
+        public PointPairList Mass
+        {
+            get { return mass; }
+        }
+
+        PointPairList step;
+        PointPairList voltage;
+        PointPairList mass;
+
+        public void Add(int count, ushort pnt)
+        {
+            step.Add(pnt, count);
+            voltage.Add(Config.scanVoltage(pnt), count);
+            mass.Add(pnt, count);
+        }
+
+        public void Clear()
+        {
+            step.Clear();
+            voltage.Clear();
+            mass.Clear();
+        }
+
+        pListScaled()
+        {
+            step = new PointPairList();
+            voltage = new PointPairList();
+            mass = new PointPairList();
+        }
+    }
+
     static class Graph
     {
         public static event GraphEventHandler OnNewGraphData;

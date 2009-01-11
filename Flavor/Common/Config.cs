@@ -328,7 +328,7 @@ namespace Flavor
         public static ushort scanVoltage(ushort step)
         {
             if (step > 1056) step = 1056;
-            return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), step));
+            return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
