@@ -469,7 +469,7 @@ namespace Flavor
                                     {
                                         if (Config.PreciseData.Count > 0)
                                         {
-                                            //Sort in decreased order
+                                            //Sort in increased order
                                             Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
                                             senseModePoints = Config.PreciseData.ToArray();
                                             senseModePeakIteration = new ushort[senseModePoints.Length];
@@ -677,20 +677,20 @@ namespace Flavor
        
         private static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) 
         {
-            //Backward sort
+            //Forward sort
             if (ped1 == null)
             {
                 if (ped2 == null)
                     return 0;
                 else
-                    return 1;
+                    return -1;
             }
             else
             {
                 if (ped2 == null)
-                    return -1;
+                    return 1;
                 else
-                    return (int)(ped2.Step - ped1.Step);
+                    return (int)(ped1.Step - ped2.Step);
             }
         }
     }
