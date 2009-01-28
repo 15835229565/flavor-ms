@@ -277,6 +277,14 @@ namespace Flavor
                 {
                     Console.WriteLine("Система переинициализировалась");
                     Commander.OnAsyncReply("Система переинициализировалась");
+                    if (Commander.pState != Commander.programStates.Start)
+                    {
+                        if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                        Commander.pState = Commander.programStates.Start;
+                        Commander.pStatePrev = Commander.pState;
+                        scanning = false;
+                        Commander.measureCancelRequested = false;
+                    }
                 }
                 if (Command is confirmVacuumReady)
                 {
@@ -461,6 +469,8 @@ namespace Flavor
                                     {
                                         if (Config.PreciseData.Count > 0)
                                         {
+                                            //Sort in decreased order
+                                            Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
                                             senseModePoints = Config.PreciseData.ToArray();
                                             senseModePeakIteration = new ushort[senseModePoints.Length];
                                             smpiSum = 0;
@@ -662,6 +672,25 @@ namespace Flavor
                 default:
                     // фигня
                     break;
+            }
+        }
+       
+        private static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) 
+        {
+            //Backward sort
+            if (ped1 == null)
+            {
+                if (ped2 == null)
+                    return 0;
+                else
+                    return 1;
+            }
+            else
+            {
+                if (ped2 == null)
+                    return -1;
+                else
+                    return (int)(ped2.Step - ped1.Step);
             }
         }
     }

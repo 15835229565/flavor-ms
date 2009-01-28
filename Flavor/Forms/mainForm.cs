@@ -587,8 +587,8 @@ namespace Flavor
                     }
 
                     initSys_butt.Enabled = Commander.deviceIsConnected;//true;
-                    shutSys_butt.Enabled = false;
-                    unblock_butt.Enabled = false;
+                    shutSys_butt.Enabled = Commander.deviceIsConnected;//false;
+                    unblock_butt.Enabled = Commander.deviceIsConnected && !Commander.hBlock;//false;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
                     
