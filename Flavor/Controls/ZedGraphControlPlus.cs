@@ -16,6 +16,10 @@ namespace Flavor
 {
     public partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
+        private CurveItem curveReference;
+        private int pointIndex;
+        //private bool addToPE = false;
+        
         public ZedGraphControlPlus(): base()
         {
             InitializeComponent();
@@ -23,31 +27,52 @@ namespace Flavor
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState)
         {
-            /*
-            foreach (ToolStripMenuItem item in menuStrip.Items)
+            GraphPane pane = this.MasterPane.FindChartRect(mousePt);
+            CurveItem nearestCurve;
+            int iNearest;
+            if (pane.FindNearestPoint(mousePt, out nearestCurve, out iNearest))
             {
-                if ((string)item.Tag == "set_default")
+                /*foreach (ToolStripMenuItem it in menuStrip.Items)
                 {
-                    // remove the menu item
-                    menuStrip.Items.Remove(item);
-                    // or, just disable the item with this
-                    //item.Enabled = false; 
+                    if ((string)it.Tag == "set_default")
+                    {
+                        // remove the menu item
+                        menuStrip.Items.Remove(it);
+                        // or, just disable the item with this
+                        //item.Enabled = false; 
 
-                    break;
-                }
+                        break;
+                    }
+                }*/
+                // create a new menu item for point
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                // This is the user-defined Tag so you can find this menu item later if necessary
+                item.Name = "point_add";
+                item.Tag = "point_add";
+                // This is the text that will show up in the menu
+                item.Text = "Add point to precise editor";
+                
+                curveReference = nearestCurve;
+                pointIndex = iNearest;
+                // Add a handler that will respond when that menu item is selected
+                item.Click += new System.EventHandler(AddPointToPreciseEditor);
+                // Add the menu item to the menu
+                menuStrip.Items.Add(item);
             }
-            */
-            // create a new menu item
-            ToolStripMenuItem item = new ToolStripMenuItem();
-            // This is the user-defined Tag so you can find this menu item later if necessary
-            item.Name = "custom_zoom";
-            item.Tag = "custom_zoom";
-            // This is the text that will show up in the menu
-            item.Text = "Do Something Special";
-            // Add a handler that will respond when that menu item is selected
-            item.Click += new System.EventHandler(CustomZoom);
-            // Add the menu item to the menu
-            menuStrip.Items.Add(item);
+            else
+            {
+                // create a new general menu item
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                // This is the user-defined Tag so you can find this menu item later if necessary
+                item.Name = "custom_zoom";
+                item.Tag = "custom_zoom";
+                // This is the text that will show up in the menu
+                item.Text = "Do Something Special";
+                // Add a handler that will respond when that menu item is selected
+                item.Click += new System.EventHandler(CustomZoom);
+                // Add the menu item to the menu
+                menuStrip.Items.Add(item);
+            }
         }
 
         private void CustomZoom(object sender, EventArgs e)
@@ -84,6 +109,10 @@ namespace Flavor
                     Refresh();
                 }
             }
+        }
+        private void AddPointToPreciseEditor(object sender, EventArgs e) 
+        {
+            MessageBox.Show(pointIndex.ToString(), curveReference.NPts.ToString());
         }
     }
 }
