@@ -235,6 +235,7 @@ namespace Flavor
                     peakCenterLabel.Visible = true;
                     label41.Visible = true;
                     peakWidthLabel.Text = Graph.curPeak.Width.ToString();
+                    peakWidthLabel.Visible = true;
                     if (Graph.curPeak.Collector == 1)
                     {
                         detector1CountsLabel.Visible = true;
@@ -260,6 +261,7 @@ namespace Flavor
                     label39.Visible = false;
                     peakCenterLabel.Visible = false;
                     label41.Visible = false;
+                    peakWidthLabel.Visible = false;
                 }
             }
         }

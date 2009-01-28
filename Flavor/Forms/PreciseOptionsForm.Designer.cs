@@ -84,6 +84,7 @@ namespace Flavor
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
@@ -102,35 +103,37 @@ namespace Flavor
             this.label1.BackColor = System.Drawing.SystemColors.Control;
             this.label1.Location = new System.Drawing.Point(6, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 26);
+            this.label1.Size = new System.Drawing.Size(41, 26);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Номер\r\nобласти\r\n";
+            this.label1.Text = "Номер\r\nпика";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.SystemColors.Control;
-            this.label8.Location = new System.Drawing.Point(53, 16);
+            this.label8.Location = new System.Drawing.Point(55, 16);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(60, 26);
             this.label8.TabIndex = 1;
             this.label8.Text = "Ступенька\r\n(<=1056)";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Location = new System.Drawing.Point(128, 16);
+            this.label9.Location = new System.Drawing.Point(130, 29);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(66, 26);
+            this.label9.Size = new System.Drawing.Size(52, 13);
             this.label9.TabIndex = 2;
-            this.label9.Text = "Количество\r\nпроходов";
+            this.label9.Text = "Проходы";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(200, 16);
+            this.label10.Location = new System.Drawing.Point(182, 29);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(46, 13);
             this.label10.TabIndex = 3;
@@ -140,7 +143,7 @@ namespace Flavor
             // 
             this.label11.AutoSize = true;
             this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(252, 16);
+            this.label11.Location = new System.Drawing.Point(232, 29);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(54, 13);
             this.label11.TabIndex = 4;
@@ -358,6 +361,7 @@ namespace Flavor
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label31);
             this.groupBox1.Controls.Add(this.clearButton);
             this.groupBox1.Controls.Add(this.label30);
@@ -834,6 +838,15 @@ namespace Flavor
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
             this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(105, 29);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.TabIndex = 126;
+            this.label2.Text = "Кол.";
+            // 
             // PreciseOptionsForm
             // 
             this.AcceptButton = this.ok_butt;
@@ -929,5 +942,6 @@ namespace Flavor
         private System.Windows.Forms.Button loadFileButton;
         private System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         private System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
+        private System.Windows.Forms.Label label2;
     }
 }
