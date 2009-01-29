@@ -165,6 +165,21 @@ namespace Flavor
     
     class sendMeasure : UserRequest
     {
+        private ushort itime;
+        private ushort etime;
+
+        public sendMeasure()
+        {
+            itime = Config.iTime;
+            etime = Config.eTime;
+        }
+
+        public sendMeasure(ushort iT, ushort eT)
+        {
+            itime = iT;
+            etime = eT;
+        }
+
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Measure; }
@@ -174,7 +189,8 @@ namespace Flavor
         public override void Send()
         {
             Console.WriteLine("Измеряем в течение {0}+{1}", Config.iTimeReal, Config.eTimeReal);
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, Config.iTime, Config.eTime)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, itime, etime)));
+            //ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, Config.iTime, Config.eTime)));
         }
         #endregion
     }

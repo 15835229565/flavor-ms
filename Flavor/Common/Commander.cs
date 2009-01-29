@@ -33,6 +33,7 @@ namespace Flavor
         private static bool notRareMode = false;
         private static bool isConnected = false;
         private static bool onTheFly = true;
+        private static sendMeasure customMeasure = null;
 
         public static System.Timers.Timer DeviceStatusCheckTimer;
         public static System.Timers.Timer TurboPumpCheckTimer;
@@ -125,6 +126,11 @@ namespace Flavor
                     OnProgramStateChanged();
                 }
             }
+        }
+
+        public static sendMeasure CustomMeasure
+        {
+            get { return customMeasure; }
         }
         
         public static ushort Point
@@ -386,6 +392,7 @@ namespace Flavor
                             }
                             if (Command is updateCounts)
                             {
+                                customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
                                 if (!Commander.isSenseMeasure)
                                 {
                                     if (!Commander.measureCancelRequested && (Commander.Point <= Config.ePoint))
@@ -431,8 +438,22 @@ namespace Flavor
                                                     if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
                                                     if (senseModePeakIteration[senseModePeak] > 0) break;
                                                 }
-                                                Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                                Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
+                                                ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                                                if (Commander.Point > nextPoint) 
+                                                {
+                                                    //case of backward voltage change
+                                                    customMeasure = new sendMeasure((ushort)(Config.iTime * 5), Config.eTime);
+                                                }
+                                                else 
+                                                {
+                                                    //case of forward voltage change
+                                                    customMeasure = new sendMeasure((ushort)(Config.iTime * 2), Config.eTime);
+                                                }
+                                                Commander.Point = nextPoint;
+                                                Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                                                //old code:
+                                                //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                                                //Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
                                             }
                                             else
                                             {

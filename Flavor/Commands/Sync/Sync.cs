@@ -211,7 +211,10 @@ namespace Flavor
 
         public void AutomatedReply()
         {
-            Commander.AddToSend(new sendMeasure());
+            if (Commander.CustomMeasure == null)
+                Commander.AddToSend(new sendMeasure());
+            else
+                Commander.AddToSend(Commander.CustomMeasure);
         }
 
         #endregion
