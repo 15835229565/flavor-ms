@@ -263,8 +263,17 @@ namespace Flavor
         {
             if (Command is AsyncErrorReply)
             {
-                Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 CheckInterfaces(Command);
+                Console.WriteLine("Бяда: {0}", ((AsyncErrorReply)Command).errorMessage);
+                Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
+                if (Commander.pState != Commander.programStates.Start)
+                {
+                    if (scanning & !Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                    Commander.pState = Commander.programStates.Start;
+                    Commander.pStatePrev = Commander.pState;
+                    scanning = false;
+                    Commander.measureCancelRequested = false;
+                }
             }
             if (Command is AsyncReply)
             {
@@ -285,7 +294,7 @@ namespace Flavor
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start)
                     {
-                        if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                        if (scanning & !Commander.notRareModeRequested) Commander.StopScanStatusCheck();
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
                         scanning = false;

@@ -13,6 +13,7 @@ namespace Flavor
         #region IReply Members
         public void AutomatedReply()
         {
+            //хорошо бы сюда на автомате очистку Commander.CustomMeasure...
             Commander.AddToSend(new getCounts());
         }
         #endregion
