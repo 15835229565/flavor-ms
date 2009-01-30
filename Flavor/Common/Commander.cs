@@ -451,12 +451,12 @@ namespace Flavor
                                                 if (Commander.Point > nextPoint) 
                                                 {
                                                     //case of backward voltage change
-                                                    customMeasure = new sendMeasure((ushort)(Config.iTime * 5), Config.eTime);
+                                                    customMeasure = new sendMeasure((ushort)150, Config.eTime);
                                                 }
                                                 else 
                                                 {
                                                     //case of forward voltage change
-                                                    customMeasure = new sendMeasure((ushort)(Config.iTime * 2), Config.eTime);
+                                                    customMeasure = new sendMeasure((ushort)20, Config.eTime);
                                                 }
                                                 Commander.Point = nextPoint;
                                                 Commander.AddToSend(new sendSVoltage(Commander.Point++));
@@ -490,6 +490,8 @@ namespace Flavor
                             {
                                 if (Commander.pState == programStates.Measure)
                                 {
+                                    //first measure point with increased idle time
+                                    customMeasure = new sendMeasure((ushort)150, Config.eTime);
                                     if (!Commander.isSenseMeasure)
                                     {
                                         Commander.Point = Config.sPoint;
