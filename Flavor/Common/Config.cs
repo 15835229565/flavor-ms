@@ -592,6 +592,7 @@ namespace Flavor
             }
             try
             {
+                //Commander.isSenseMeasure = false;//!!!!!
                 Graph.ResetLoadedPointLists();
                 foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
                 {
@@ -665,6 +666,7 @@ namespace Flavor
                 if (temp != null) peds.Add(temp);
             }
             //Graph.ResetLoadedPointLists();
+            //Commander.isSenseMeasure = true;//!!!!!!!
             Graph.updateGraph(peds);
         }
         /*

@@ -21,21 +21,24 @@ namespace Flavor
 
         public bool specterOpeningEnabled
         {
-            set { openSpecterFileToolStripMenuItem.Enabled = value; }
+            set 
+            {
+                openSpecterFileToolStripMenuItem.Enabled = value;
+            }
         }
         
         public GraphForm()
         {
             InitializeComponent();
-            Commander.OnProgramStateChanged += new ProgramEventHandler(ChangeSpecterType);
+            //Commander.OnProgramStateChanged += new ProgramEventHandler(ChangeSpecterType);
         }
-
+/*
         private void ChangeSpecterType()
         {
             if (Commander.pState == Commander.programStates.Measure) 
                 preciseSpecterDisplayed = Commander.isSenseMeasure;
         }
-        
+*/        
         private void GraphForm_Load(object sender, EventArgs e)
         {
             CreateGraph(collect1_graph, collect2_graph);
@@ -60,7 +63,14 @@ namespace Flavor
         {
             isFromFile = false;
             string modeText = "(скан.)";
-            if (Commander.isSenseMeasure) modeText = "(прециз.)"; 
+            preciseSpecterDisplayed = false;
+            if (Commander.isSenseMeasure)
+            {
+                modeText = "(прециз.)";
+                preciseSpecterDisplayed = true;
+            }
+            prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
+            closeSpecterFileToolStripMenuItem.Enabled = false;
 
             GraphPane myPane1 = zgc1.GraphPane;
             GraphPane myPane2 = zgc2.GraphPane;
@@ -118,10 +128,10 @@ namespace Flavor
             myPane2.YAxis.Scale.Max = 10000;
 
             myPane1.XAxis.Scale.Min = 0;
-            myPane1.XAxis.Scale.Max = 1000;
+            myPane1.XAxis.Scale.Max = 1056;
 
             myPane2.XAxis.Scale.Min = 0;
-            myPane2.XAxis.Scale.Max = 1000;
+            myPane2.XAxis.Scale.Max = 1056;
 
 
             // Calculate the Axis Scale Ranges
@@ -141,7 +151,7 @@ namespace Flavor
         {
             isFromFile = true;
             string modeText = "(скан.)";
-            if (Commander.isSenseMeasure) modeText = "(прециз.)"; 
+            if (preciseSpecterDisplayed) modeText = "(прециз.)"; 
             GraphPane myPane1 = zgc1.GraphPane;
             GraphPane myPane2 = zgc2.GraphPane;
 
@@ -202,10 +212,10 @@ namespace Flavor
             myPane2.YAxis.Scale.Max = 10000;
 
             myPane1.XAxis.Scale.Min = 0;
-            myPane1.XAxis.Scale.Max = 1000;
+            myPane1.XAxis.Scale.Max = 1056;
 
             myPane2.XAxis.Scale.Min = 0;
-            myPane2.XAxis.Scale.Max = 1000;
+            myPane2.XAxis.Scale.Max = 1056;
 
 
             // Calculate the Axis Scale Ranges

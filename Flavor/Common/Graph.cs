@@ -82,7 +82,7 @@ namespace Flavor
             pointList2.Clear();
             pointLists1.Clear();
             pointLists2.Clear();
-            OnNewGraphData(true, true);
+            OnNewGraphData(true, true);//!!!!!!!!
         }
 
         public static void updateLoaded1Graph(ushort pnt, int y)
@@ -99,7 +99,7 @@ namespace Flavor
 
         public static void updateLoaded() 
         {
-            OnNewGraphData(true, true);
+            OnNewGraphData(true, false);
         }
         
         internal static void ResetLoadedPointLists()
@@ -171,7 +171,7 @@ namespace Flavor
                     pointLists2.Add(temp);*/
                 }
             }
-            OnNewGraphData(true, true);
+            OnNewGraphData(true, false);
         }
 
         internal static void updateGraph(ushort pnt, PreciseEditorData curped)

@@ -188,7 +188,7 @@ namespace Flavor
         #region ISend Members
         public override void Send()
         {
-            Console.WriteLine("Измеряем в течение {0}+{1}", Config.iTimeReal, Config.eTimeReal);
+            Console.WriteLine("Измеряем в течение {0}+{1}", itime*5, etime*5);
             ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, itime, etime)));
             //ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, Config.iTime, Config.eTime)));
         }

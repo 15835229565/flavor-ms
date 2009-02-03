@@ -36,6 +36,9 @@ namespace Flavor
 
         private void loadCommonData()
         {
+            startScanNumericUpDown.Value = (decimal)(Config.sPoint);
+            endScanNumericUpDown.Value = (decimal)(Config.ePoint);
+
             decimal temp;
 
             temp = (decimal)(Config.eTimeReal);

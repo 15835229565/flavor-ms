@@ -347,13 +347,15 @@ namespace Flavor
             // 
             // collect2_graph
             // 
-            this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.Left;
+            this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
+            this.collect2_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
+            this.collect2_graph.IsShowPointValues = true;
             this.collect2_graph.Location = new System.Drawing.Point(12, 210);
             this.collect2_graph.Name = "collect2_graph";
             this.collect2_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect2_graph.ScrollGrace = 0;
-            this.collect2_graph.ScrollMaxX = 0;
-            this.collect2_graph.ScrollMaxY = 0;
+            this.collect2_graph.ScrollMaxX = 1056;
+            this.collect2_graph.ScrollMaxY = 2000000;
             this.collect2_graph.ScrollMaxY2 = 0;
             this.collect2_graph.ScrollMinX = 0;
             this.collect2_graph.ScrollMinY = 0;
@@ -363,15 +365,17 @@ namespace Flavor
             // 
             // collect1_graph
             // 
-            this.collect1_graph.EditButtons = System.Windows.Forms.MouseButtons.Left;
+            this.collect1_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
+            this.collect1_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
+            this.collect1_graph.IsShowPointValues = true;
             this.collect1_graph.Location = new System.Drawing.Point(12, 12);
             this.collect1_graph.Name = "collect1_graph";
             this.collect1_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect1_graph.ScrollGrace = 0;
-            this.collect1_graph.ScrollMaxX = 1000;
+            this.collect1_graph.ScrollMaxX = 1056;
             this.collect1_graph.ScrollMaxY = 2000000;
             this.collect1_graph.ScrollMaxY2 = 0;
-            this.collect1_graph.ScrollMinX = 1;
+            this.collect1_graph.ScrollMinX = 0;
             this.collect1_graph.ScrollMinY = 0;
             this.collect1_graph.ScrollMinY2 = 0;
             this.collect1_graph.Size = new System.Drawing.Size(281, 192);
