@@ -82,7 +82,7 @@ namespace Flavor
             pointList2.Clear();
             pointLists1.Clear();
             pointLists2.Clear();
-            OnNewGraphData(true, true);//!!!!!!!!
+            OnNewGraphData(false, true);//!!!!!!!!
         }
 
         public static void updateLoaded1Graph(ushort pnt, int y)

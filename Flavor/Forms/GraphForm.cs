@@ -31,6 +31,10 @@ namespace Flavor
         {
             InitializeComponent();
             //Commander.OnProgramStateChanged += new ProgramEventHandler(ChangeSpecterType);
+            this.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
+            this.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
+            this.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
+            this.collect2_graph.GraphPane.XAxis.Scale.Max = 1056;
         }
 /*
         private void ChangeSpecterType()
@@ -127,11 +131,11 @@ namespace Flavor
             myPane2.YAxis.Scale.Min = 0;
             myPane2.YAxis.Scale.Max = 10000;
 
-            myPane1.XAxis.Scale.Min = 0;
-            myPane1.XAxis.Scale.Max = 1056;
+            //myPane1.XAxis.Scale.Min = 0;
+            //myPane1.XAxis.Scale.Max = 1056;
 
-            myPane2.XAxis.Scale.Min = 0;
-            myPane2.XAxis.Scale.Max = 1056;
+            //myPane2.XAxis.Scale.Min = 0;
+            //myPane2.XAxis.Scale.Max = 1056;
 
 
             // Calculate the Axis Scale Ranges

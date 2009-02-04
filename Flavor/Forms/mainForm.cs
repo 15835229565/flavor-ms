@@ -126,7 +126,7 @@ namespace Flavor
             //openSpecterFileToolStripMenuItem.Enabled = false;
 
             Graph.ResetLoadedPointLists();
-            Graph.ResetPointLists();
+            //Graph.ResetPointLists();
             this.gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph); 
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Min = Config.sPoint;
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = Config.ePoint;
@@ -170,8 +170,12 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            Graph.ResetPointLists();
+            //Graph.ResetPointLists();
             //this.gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph);
+            this.gForm.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
+            this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
+            this.gForm.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
+            this.gForm.collect2_graph.GraphPane.XAxis.Scale.Max = 1056;
             Commander.OnScanCancelled += new ProgramEventHandler(InvokeCancelScan);
             Commander.Sense();
         }
@@ -220,48 +224,50 @@ namespace Flavor
                 if (recreate)
                     gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph);
                 else
-                    gForm.RefreshGraph();
-                scanProgressBar.PerformStep();
-                stepNumberLabel.Text = Graph.lastPoint.ToString();
-                scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.lastPoint));
-                detector1CountsLabel.Text = Device.Detector1.ToString();
-                detector2CountsLabel.Text = Device.Detector2.ToString();
-                if (Commander.isSenseMeasure)
                 {
-                    peakNumberLabel.Text = Graph.curPeak.pNumber.ToString();
-                    peakNumberLabel.Visible = true;
-                    label39.Visible = true;
-                    peakCenterLabel.Text = Graph.curPeak.Step.ToString();
-                    peakCenterLabel.Visible = true;
-                    label41.Visible = true;
-                    peakWidthLabel.Text = Graph.curPeak.Width.ToString();
-                    peakWidthLabel.Visible = true;
-                    if (Graph.curPeak.Collector == 1)
+                    gForm.RefreshGraph();
+                    scanProgressBar.PerformStep();
+                    stepNumberLabel.Text = Graph.lastPoint.ToString();
+                    scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.lastPoint));
+                    detector1CountsLabel.Text = Device.Detector1.ToString();
+                    detector2CountsLabel.Text = Device.Detector2.ToString();
+                    if (Commander.isSenseMeasure)
                     {
-                        detector1CountsLabel.Visible = true;
-                        label15.Visible = true;
-                        detector2CountsLabel.Visible = false;
-                        label16.Visible = false;
+                        peakNumberLabel.Text = Graph.curPeak.pNumber.ToString();
+                        peakNumberLabel.Visible = true;
+                        label39.Visible = true;
+                        peakCenterLabel.Text = Graph.curPeak.Step.ToString();
+                        peakCenterLabel.Visible = true;
+                        label41.Visible = true;
+                        peakWidthLabel.Text = Graph.curPeak.Width.ToString();
+                        peakWidthLabel.Visible = true;
+                        if (Graph.curPeak.Collector == 1)
+                        {
+                            detector1CountsLabel.Visible = true;
+                            label15.Visible = true;
+                            detector2CountsLabel.Visible = false;
+                            label16.Visible = false;
+                        }
+                        else
+                        {
+                            detector1CountsLabel.Visible = false;
+                            label15.Visible = false;
+                            detector2CountsLabel.Visible = true;
+                            label16.Visible = true;
+                        }
                     }
                     else
                     {
-                        detector1CountsLabel.Visible = false;
-                        label15.Visible = false;
+                        detector1CountsLabel.Visible = true;
+                        label15.Visible = true;
                         detector2CountsLabel.Visible = true;
                         label16.Visible = true;
+                        peakNumberLabel.Visible = false;
+                        label39.Visible = false;
+                        peakCenterLabel.Visible = false;
+                        label41.Visible = false;
+                        peakWidthLabel.Visible = false;
                     }
-                }
-                else 
-                {
-                    detector1CountsLabel.Visible = true;
-                    label15.Visible = true;
-                    detector2CountsLabel.Visible = true;
-                    label15.Visible = true;
-                    peakNumberLabel.Visible = false;
-                    label39.Visible = false;
-                    peakCenterLabel.Visible = false;
-                    label41.Visible = false;
-                    peakWidthLabel.Visible = false;
                 }
             }
         }

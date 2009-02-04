@@ -451,7 +451,7 @@ namespace Flavor
                                                 if (Commander.Point > nextPoint) 
                                                 {
                                                     //case of backward voltage change
-                                                    customMeasure = new sendMeasure((ushort)150, Config.eTime);
+                                                    customMeasure = new sendMeasure((ushort)1000, Config.eTime);
                                                 }
                                                 else 
                                                 {
@@ -491,7 +491,7 @@ namespace Flavor
                                 if (Commander.pState == programStates.Measure)
                                 {
                                     //first measure point with increased idle time
-                                    customMeasure = new sendMeasure((ushort)150, Config.eTime);
+                                    customMeasure = new sendMeasure((ushort)1000, Config.eTime);
                                     if (!Commander.isSenseMeasure)
                                     {
                                         Commander.Point = Config.sPoint;
