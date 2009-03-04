@@ -121,6 +121,7 @@ namespace Flavor
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Enabled = false;
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.saveToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
@@ -395,9 +396,9 @@ namespace Flavor
             this.Name = "GraphForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Коллекторы";
-            this.Resize += new System.EventHandler(this.GraphForm_Resize);
-            this.Validating += new System.ComponentModel.CancelEventHandler(this.GraphForm_Validating);
             this.Load += new System.EventHandler(this.GraphForm_Load);
+            this.Validating += new System.ComponentModel.CancelEventHandler(this.GraphForm_Validating);
+            this.Resize += new System.EventHandler(this.GraphForm_Resize);
             this.graphFormMenuStrip.ResumeLayout(false);
             this.graphFormMenuStrip.PerformLayout();
             this.graphContextMenuStrip.ResumeLayout(false);

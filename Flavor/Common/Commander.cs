@@ -90,6 +90,7 @@ namespace Flavor
                 if (handleBlock != value)
                 {
                     handleBlock = value;
+                    OnProgramStateChanged();
                 };
             }
         }
@@ -271,6 +272,7 @@ namespace Flavor
                     if (scanning & !Commander.notRareModeRequested) Commander.StopScanStatusCheck();
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
+                    Commander.hBlock = true;//!!!
                     scanning = false;
                     Commander.measureCancelRequested = false;
                 }
@@ -297,6 +299,7 @@ namespace Flavor
                         if (scanning & !Commander.notRareModeRequested) Commander.StopScanStatusCheck();
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
+                        Commander.hBlock = true;//!!!
                         scanning = false;
                         Commander.measureCancelRequested = false;
                     }
@@ -317,7 +320,7 @@ namespace Flavor
                 if (Command is confirmHighVoltageOff)
                 {
                     Commander.hBlock = true;
-                    Commander.pState = Commander.programStates.WaitHighVoltage;
+                    Commander.pState = Commander.programStates.WaitHighVoltage;//???
                     Commander.pStatePrev = Commander.pState;
                 }
                 if (Command is confirmHighVoltageOn)
@@ -640,14 +643,6 @@ namespace Flavor
             if (Commander.pState == programStates.Measure)
             {
                 Commander.measureCancelRequested = true;
-                /*                
-                if (!Commander.isSenseMeasure)
-                {
-                }
-                else
-                {
-                }
-                */
             }
             Commander.AddToSend(new enableHighVoltage(Commander.hBlock));
         }

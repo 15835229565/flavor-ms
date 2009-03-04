@@ -26,6 +26,14 @@ namespace Flavor
                 openSpecterFileToolStripMenuItem.Enabled = value;
             }
         }
+
+        public bool specterSavingEnabled
+        {
+            set
+            {
+                saveToolStripMenuItem.Enabled = value;
+            }
+        }
         
         public GraphForm()
         {
@@ -65,6 +73,7 @@ namespace Flavor
 
         public void CreateGraph(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
         {
+            specterSavingEnabled = false;
             isFromFile = false;
             string modeText = "(скан.)";
             preciseSpecterDisplayed = false;
@@ -101,15 +110,21 @@ namespace Flavor
 
             foreach (PointPairList ppl in Graph.pointLists1)
             {
+                if (ppl.Count > 0)
+                    specterSavingEnabled = true;
                 LineItem temp1 = myPane1.AddCurve("My Curve", ppl, Color.Blue, SymbolType.None);
                 temp1.Symbol.Fill = new Fill(Color.White);
             }
             foreach (PointPairList ppl in Graph.pointLists2)
             {
+                if (ppl.Count > 0)
+                    specterSavingEnabled = true;
                 LineItem temp2 = myPane2.AddCurve("My Curve", ppl, Color.Red, SymbolType.None);
                 temp2.Symbol.Fill = new Fill(Color.White);
             }
-            
+
+            if (Graph.pointList1.Count > 0 || Graph.pointList2.Count > 0)
+                specterSavingEnabled = true;
             LineItem myCurve1 = myPane1.AddCurve("My Curve", Graph.pointList1, Color.Blue, SymbolType.None);
             LineItem myCurve2 = myPane2.AddCurve("My Curve", Graph.pointList2, Color.Red, SymbolType.None);
 
@@ -143,6 +158,8 @@ namespace Flavor
             zgc2.AxisChange();
 
             RefreshGraph();
+            //if (myPane1.CurveList.Count > 0 || myPane2.CurveList.Count > 0)
+            //    specterSavingEnabled = true;
         }
 
         public void RefreshGraph()
@@ -153,6 +170,7 @@ namespace Flavor
 
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2, string fileName) 
         {
+            specterSavingEnabled = false;
             isFromFile = true;
             string modeText = "(скан.)";
             if (preciseSpecterDisplayed) modeText = "(прециз.)"; 
@@ -182,15 +200,21 @@ namespace Flavor
 
             foreach (PointPairList ppl in Graph.pointListsLoaded1)
             {
+                if (ppl.Count > 0)
+                    specterSavingEnabled = true;
                 LineItem temp1 = myPane1.AddCurve("My Curve", ppl, Color.Blue, SymbolType.None);
                 temp1.Symbol.Fill = new Fill(Color.White);
             }
             foreach (PointPairList ppl in Graph.pointListsLoaded2)
             {
+                if (ppl.Count > 0)
+                    specterSavingEnabled = true;
                 LineItem temp2 = myPane2.AddCurve("My Curve", ppl, Color.Red, SymbolType.None);
                 temp2.Symbol.Fill = new Fill(Color.White);
             }
-            
+
+            if (Graph.pointListLoaded1.Count > 0 || Graph.pointListLoaded2.Count > 0)
+                specterSavingEnabled = true;
             LineItem myCurve1 = myPane1.AddCurve("My Curve", Graph.pointListLoaded1, Color.Blue, SymbolType.None);
             LineItem myCurve2 = myPane2.AddCurve("My Curve", Graph.pointListLoaded2, Color.Red, SymbolType.None);
 
@@ -227,6 +251,8 @@ namespace Flavor
             zgc2.AxisChange();
 
             RefreshGraph();
+            //if (myPane1.CurveList.Count > 0 || myPane2.CurveList.Count > 0)
+            //    specterSavingEnabled = true;
         }
         
         private void GraphForm_Validating(object sender, CancelEventArgs e)

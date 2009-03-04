@@ -368,7 +368,8 @@ namespace Flavor
             highVoltageOn = Convert.ToBoolean(value & 1 << 4);
             hCurrentEnable = Convert.ToBoolean(value & 1 << 5);
             turboReplyFault = Convert.ToBoolean(value & 1 << 6);
-            
+
+            Commander.hBlock = !highVoltageOn;//!!!
             //eCurrentEnable = Convert.ToBoolean(value2 & 1 << 4);
             OnDeviceStatusChanged();
         }

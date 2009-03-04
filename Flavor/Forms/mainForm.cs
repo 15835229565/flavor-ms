@@ -96,7 +96,18 @@ namespace Flavor
         {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
-            
+
+            //Elements are not visible until first real information is ready
+            peakNumberLabel.Visible = false;
+            label39.Visible = false;
+            peakCenterLabel.Visible = false;
+            label41.Visible = false;
+            peakWidthLabel.Visible = false;
+            detector1CountsLabel.Visible = false;
+            label15.Visible = false;
+            detector2CountsLabel.Visible = false;
+            label16.Visible = false;
+
             measurePanelToolStripMenuItem.Enabled = true;
             measurePanelToolStripMenuItem.Checked = true;
 
@@ -140,7 +151,18 @@ namespace Flavor
         {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
-            
+
+            //Elements are not visible until first real information is ready
+            peakNumberLabel.Visible = false;
+            label39.Visible = false;
+            peakCenterLabel.Visible = false;
+            label41.Visible = false;
+            peakWidthLabel.Visible = false;
+            detector1CountsLabel.Visible = false;
+            label15.Visible = false;
+            detector2CountsLabel.Visible = false;
+            label16.Visible = false;
+
             measurePanelToolStripMenuItem.Enabled = true;
             measurePanelToolStripMenuItem.Checked = true;
 
@@ -258,6 +280,8 @@ namespace Flavor
                     }
                     else
                     {
+                        gForm.specterSavingEnabled = true;
+                        
                         detector1CountsLabel.Visible = true;
                         label15.Visible = true;
                         detector2CountsLabel.Visible = true;
@@ -596,7 +620,7 @@ namespace Flavor
 
                     initSys_butt.Enabled = Commander.deviceIsConnected;//true;
                     shutSys_butt.Enabled = Commander.deviceIsConnected;//false;
-                    unblock_butt.Enabled = Commander.deviceIsConnected && !Commander.hBlock;//false;
+                    unblock_butt.Enabled = Commander.deviceIsConnected && !Commander.hBlock;//разрешено для включения блокировки
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
                     
@@ -785,7 +809,6 @@ namespace Flavor
             {
                 if (new ClosureDialog().ShowDialog() != DialogResult.OK)
                     e.Cancel = true;
-                //MessageBox.Show("Необходимо дождаться отключения системы.");
             }
             else 
             {
