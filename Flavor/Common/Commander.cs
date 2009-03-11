@@ -34,7 +34,7 @@ namespace Flavor
         private static bool isConnected = false;
         private static bool onTheFly = true;
         private static sendMeasure customMeasure = null;
-
+        private static bool doMeasure = true;
         public static System.Timers.Timer DeviceStatusCheckTimer;
         public static System.Timers.Timer TurboPumpCheckTimer;
 
@@ -133,7 +133,13 @@ namespace Flavor
         {
             get { return customMeasure; }
         }
-        
+
+        public static bool DoMeasure
+        {
+            get { return doMeasure; }
+            set { doMeasure = value; }
+        }
+
         public static ushort Point
         {
             get { return PointValue; }
@@ -331,6 +337,7 @@ namespace Flavor
                         Commander.pState = Commander.programStates.Ready;
                         Commander.pStatePrev = Commander.pState;
                     }
+                    Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                     Commander.AddToSend(new sendIVoltage());// и остальные напряжения затем
                 }
             }
@@ -417,6 +424,7 @@ namespace Flavor
                                         {
                                             if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
                                             scanning = false;
+                                            Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                                             OnScanCancelled();
                                             Commander.pStatePrev = Commander.pState;
                                             Commander.pState = Commander.programStates.Ready;
@@ -453,12 +461,12 @@ namespace Flavor
                                                 ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
                                                 if (Commander.Point > nextPoint) 
                                                 {
-                                                    //case of backward voltage change
-                                                    customMeasure = new sendMeasure((ushort)1000, Config.eTime);
+                                                    //!!!case of backward voltage change
+                                                    customMeasure = new sendMeasure((ushort)20, Config.eTime);
                                                 }
                                                 else 
                                                 {
-                                                    //case of forward voltage change
+                                                    //!!!case of forward voltage change
                                                     customMeasure = new sendMeasure((ushort)20, Config.eTime);
                                                 }
                                                 Commander.Point = nextPoint;
@@ -470,6 +478,7 @@ namespace Flavor
                                             else
                                             {
                                                 if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                                                Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                                                 Commander.pStatePrev = Commander.pState;
                                                 Commander.pState = Commander.programStates.Ready;
                                                 Commander.pStatePrev = Commander.pState;
@@ -482,6 +491,7 @@ namespace Flavor
                                     {
                                         Graph.updateGraph(senseModeCounts, senseModePoints);
                                         if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                                        Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                                         Commander.pStatePrev = Commander.pState;
                                         Commander.pState = Commander.programStates.Ready;
                                         Commander.pStatePrev = Commander.pState;
@@ -494,7 +504,7 @@ namespace Flavor
                                 if (Commander.pState == programStates.Measure)
                                 {
                                     //first measure point with increased idle time
-                                    customMeasure = new sendMeasure((ushort)1000, Config.eTime);
+                                    customMeasure = new sendMeasure((ushort)20, Config.eTime);
                                     if (!Commander.isSenseMeasure)
                                     {
                                         Commander.Point = Config.sPoint;

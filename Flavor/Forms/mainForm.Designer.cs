@@ -46,8 +46,6 @@ namespace Flavor
             this.measureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.senseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -149,6 +147,7 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
+            this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -207,6 +206,7 @@ namespace Flavor
             this.toolBarToolStripMenuItem,
             this.ParameterToolStripMenuItem,
             this.statusBarToolStripMenuItem,
+            this.GraphWindowToolStripMenuItem,
             this.measurePanelToolStripMenuItem});
             this.viewMenu.Name = "viewMenu";
             this.viewMenu.Size = new System.Drawing.Size(38, 20);
@@ -259,9 +259,7 @@ namespace Flavor
             this.saveConfigFileToolStripMenuItem,
             this.toolStripSeparator1,
             this.connectToolStripMenuItem,
-            this.measureToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.GraphWindowToolStripMenuItem});
+            this.measureToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
             this.optionsToolStripMenuItem.Text = "&Настройки";
@@ -314,21 +312,6 @@ namespace Flavor
             this.senseToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.senseToolStripMenuItem.Text = "Точный режим";
             this.senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(258, 6);
-            // 
-            // GraphWindowToolStripMenuItem
-            // 
-            this.GraphWindowToolStripMenuItem.Checked = true;
-            this.GraphWindowToolStripMenuItem.CheckOnClick = true;
-            this.GraphWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
-            this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
-            this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
             // 
             // helpMenu
             // 
@@ -1416,6 +1399,16 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
+            // GraphWindowToolStripMenuItem
+            // 
+            this.GraphWindowToolStripMenuItem.Checked = true;
+            this.GraphWindowToolStripMenuItem.CheckOnClick = true;
+            this.GraphWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
+            this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
+            this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1432,8 +1425,8 @@ namespace Flavor
             this.Name = "mainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Управление масс-спектрометром";
-            this.Load += new System.EventHandler(this.mainForm_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
+            this.Load += new System.EventHandler(this.mainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -1471,7 +1464,6 @@ namespace Flavor
         private System.Windows.Forms.ToolStripMenuItem overviewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem senseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileMenu;
-        private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewMenu;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
@@ -1536,7 +1528,6 @@ namespace Flavor
         private System.Windows.Forms.ToolStripMenuItem openConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton connectToolStripButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label f2_label;
@@ -1576,6 +1567,7 @@ namespace Flavor
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label peakWidthLabel;
         private System.Windows.Forms.Panel measurePanel;
+        private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
     }
 }
 

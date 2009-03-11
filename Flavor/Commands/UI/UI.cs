@@ -126,8 +126,16 @@ namespace Flavor
         public sendSVoltage(ushort step)
         {
             SVoltage = Config.scanVoltage(step);
+            Commander.DoMeasure = true;
         }
-/*
+
+        public sendSVoltage(ushort step, bool doMeasure)
+        {
+            SVoltage = Config.scanVoltage(step);
+            Commander.DoMeasure = doMeasure;
+        }
+        
+        /*
         public sendSVoltage(ushort step, bool isSenseMeasure)
         {
             if (isSenseMeasure)
@@ -135,7 +143,7 @@ namespace Flavor
                 else SVoltage = step;
             else SVoltage = Config.scanVoltage(step);
         }
-*/
+        */
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetScanVoltage; }

@@ -255,7 +255,7 @@ namespace Flavor
                     detector2CountsLabel.Text = Device.Detector2.ToString();
                     if (Commander.isSenseMeasure)
                     {
-                        peakNumberLabel.Text = Graph.curPeak.pNumber.ToString();
+                        peakNumberLabel.Text = (Graph.curPeak.pNumber + 1).ToString();
                         peakNumberLabel.Visible = true;
                         label39.Visible = true;
                         peakCenterLabel.Text = Graph.curPeak.Step.ToString();
