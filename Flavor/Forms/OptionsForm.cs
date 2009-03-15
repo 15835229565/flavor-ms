@@ -36,9 +36,6 @@ namespace Flavor
 
         protected void loadCommonData()
         {
-            //startScanNumericUpDown.Value = (decimal)(Config.sPoint);
-            //endScanNumericUpDown.Value = (decimal)(Config.ePoint);
-
             decimal temp;
 
             temp = (decimal)(Config.eTimeReal);
@@ -66,7 +63,7 @@ namespace Flavor
             CPNumericUpDown.Value = temp;
 
             eCurrentNumericUpDown.Minimum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)0)));
-            eCurrentNumericUpDown.Maximum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)50)));
+            eCurrentNumericUpDown.Maximum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)10)));
             temp = (decimal)(Config.eCurrentReal);
             if (temp < eCurrentNumericUpDown.Minimum) temp = eCurrentNumericUpDown.Minimum;
             if (temp > eCurrentNumericUpDown.Maximum) temp = eCurrentNumericUpDown.Maximum;

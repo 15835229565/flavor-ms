@@ -1259,9 +1259,9 @@ namespace Flavor
             this.label24.AutoSize = true;
             this.label24.Location = new System.Drawing.Point(6, 180);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(133, 13);
+            this.label24.Size = new System.Drawing.Size(127, 13);
             this.label24.TabIndex = 10;
-            this.label24.Text = "Ток эмиссии (0-40 мк. А)";
+            this.label24.Text = "Ток эмиссии (0-10 мкА)";
             // 
             // label25
             // 
