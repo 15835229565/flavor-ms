@@ -9,13 +9,11 @@ using System.Xml;
 
 namespace Flavor
 {
-    public partial class ScanOptionsForm : OptionsForm
+    public partial class OptionsForm : Form
     {
-        public ScanOptionsForm(): base()
+        protected OptionsForm()
         {
-            //base();
             InitializeComponent();
-            /*
             rareModeCheckBox.Checked = Commander.notRareModeRequested;
             if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure))
             {
@@ -28,26 +26,18 @@ namespace Flavor
                 applyButton.Visible = false;
             }
             loadCommonData();
-            */
-            loadStartEndData();
         }
-        /*
-        private void loadCommonData(string fn)
+
+        protected void loadCommonData(string fn)
         {
             Config.loadCommonOptions(fn);
             loadCommonData();
         }
-        */
-        private void loadStartEndData()
+
+        protected void loadCommonData()
         {
-            startScanNumericUpDown.Value = (decimal)(Config.sPoint);
-            endScanNumericUpDown.Value = (decimal)(Config.ePoint);
-        }
-        /*
-        private void loadCommonData()
-        {
-            startScanNumericUpDown.Value = (decimal)(Config.sPoint);
-            endScanNumericUpDown.Value = (decimal)(Config.ePoint);
+            //startScanNumericUpDown.Value = (decimal)(Config.sPoint);
+            //endScanNumericUpDown.Value = (decimal)(Config.ePoint);
 
             decimal temp;
 
@@ -104,53 +94,28 @@ namespace Flavor
             fV2NumericUpDown.Value = temp;
         }
 
-        private void cancel_butt_Click(object sender, EventArgs e)
+        protected void cancel_butt_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
-        */
-        new private void ok_butt_Click(object sender, EventArgs e)
+
+        protected void ok_butt_Click(object sender, EventArgs e)
         {
-            if ((ushort)(startScanNumericUpDown.Value) <= (ushort)(endScanNumericUpDown.Value))
-            {
-                /*
-                Config.SaveScanOptions((ushort)(startScanNumericUpDown.Value), (ushort)(endScanNumericUpDown.Value), (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
-                                       (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
-                Commander.notRareModeRequested = rareModeCheckBox.Checked;
-                this.Close();
-                */
-                Config.saveScanOptions((ushort)(startScanNumericUpDown.Value), (ushort)(endScanNumericUpDown.Value));
-                base.ok_butt_Click(sender, e);
-            }
-            else 
-            {
-                startScanNumericUpDown.BackColor = Color.Red;
-                endScanNumericUpDown.BackColor = Color.Red;
-            }
+            Config.saveCommonOptions((ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
+                                   (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
+            Commander.notRareModeRequested = rareModeCheckBox.Checked;
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
 
-        new private void applyButton_Click(object sender, EventArgs e)
+        protected void applyButton_Click(object sender, EventArgs e)
         {
-            if ((ushort)(startScanNumericUpDown.Value) <= (ushort)(endScanNumericUpDown.Value))
-            {
-                /*
-                Config.SaveScanOptions((ushort)(startScanNumericUpDown.Value), (ushort)(endScanNumericUpDown.Value), (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
-                                       (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
-                Commander.notRareModeRequested = rareModeCheckBox.Checked;
-                Commander.AddToSend(new sendIVoltage());
-                this.Close();
-                */
-                Config.saveScanOptions((ushort)(startScanNumericUpDown.Value), (ushort)(endScanNumericUpDown.Value));
-                base.applyButton_Click(sender, e);
-            }
-            else
-            {
-                startScanNumericUpDown.BackColor = Color.Red;
-                endScanNumericUpDown.BackColor = Color.Red;
-            }
+            Commander.AddToSend(new sendIVoltage());
+            ok_butt_Click(sender, e);
         }
-        /*
-        private void saveFileButton_Click(object sender, EventArgs e)
+
+        protected void saveFileButton_Click(object sender, EventArgs e)
         {
             if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -159,13 +124,12 @@ namespace Flavor
             }
         }
 
-        private void loadFileButton_Click(object sender, EventArgs e)
+        protected void loadFileButton_Click(object sender, EventArgs e)
         {
             if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK)
             {
                 loadCommonData(openCommonDataFileDialog.FileName);
             }
         }
-        */
     }
 }

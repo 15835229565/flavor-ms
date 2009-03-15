@@ -37,6 +37,7 @@ namespace Flavor
             this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measurePanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openConfigFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,6 +64,10 @@ namespace Flavor
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ParameterPanel = new System.Windows.Forms.Panel();
             this.turboPumpBox = new System.Windows.Forms.GroupBox();
+            this.operationTimeLabel = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.pwmLabel = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
             this.driveTemperatureLabel = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.pumpTemperatureLabel = new System.Windows.Forms.Label();
@@ -147,7 +152,6 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
-            this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -241,6 +245,16 @@ namespace Flavor
             this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
             this.statusBarToolStripMenuItem.Text = "Строка &состояния";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
+            // 
+            // GraphWindowToolStripMenuItem
+            // 
+            this.GraphWindowToolStripMenuItem.Checked = true;
+            this.GraphWindowToolStripMenuItem.CheckOnClick = true;
+            this.GraphWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
+            this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
+            this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
+            this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
             // 
             // measurePanelToolStripMenuItem
             // 
@@ -473,6 +487,10 @@ namespace Flavor
             // 
             // turboPumpBox
             // 
+            this.turboPumpBox.Controls.Add(this.operationTimeLabel);
+            this.turboPumpBox.Controls.Add(this.label31);
+            this.turboPumpBox.Controls.Add(this.pwmLabel);
+            this.turboPumpBox.Controls.Add(this.label28);
             this.turboPumpBox.Controls.Add(this.driveTemperatureLabel);
             this.turboPumpBox.Controls.Add(this.label30);
             this.turboPumpBox.Controls.Add(this.pumpTemperatureLabel);
@@ -483,10 +501,52 @@ namespace Flavor
             this.turboPumpBox.Controls.Add(this.label26);
             this.turboPumpBox.Location = new System.Drawing.Point(3, 583);
             this.turboPumpBox.Name = "turboPumpBox";
-            this.turboPumpBox.Size = new System.Drawing.Size(228, 129);
+            this.turboPumpBox.Size = new System.Drawing.Size(228, 244);
             this.turboPumpBox.TabIndex = 38;
             this.turboPumpBox.TabStop = false;
             this.turboPumpBox.Text = "Турбонасос";
+            // 
+            // operationTimeLabel
+            // 
+            this.operationTimeLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.operationTimeLabel.ForeColor = System.Drawing.Color.Green;
+            this.operationTimeLabel.Location = new System.Drawing.Point(9, 159);
+            this.operationTimeLabel.Name = "operationTimeLabel";
+            this.operationTimeLabel.Size = new System.Drawing.Size(200, 13);
+            this.operationTimeLabel.TabIndex = 34;
+            this.operationTimeLabel.Text = "*";
+            this.operationTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label31
+            // 
+            this.label31.BackColor = System.Drawing.SystemColors.Control;
+            this.label31.Location = new System.Drawing.Point(6, 146);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(216, 13);
+            this.label31.TabIndex = 33;
+            this.label31.Text = "Время работы";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pwmLabel
+            // 
+            this.pwmLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.pwmLabel.ForeColor = System.Drawing.Color.Green;
+            this.pwmLabel.Location = new System.Drawing.Point(9, 133);
+            this.pwmLabel.Name = "pwmLabel";
+            this.pwmLabel.Size = new System.Drawing.Size(200, 13);
+            this.pwmLabel.TabIndex = 32;
+            this.pwmLabel.Text = "*";
+            this.pwmLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label28
+            // 
+            this.label28.BackColor = System.Drawing.SystemColors.Control;
+            this.label28.Location = new System.Drawing.Point(6, 120);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(216, 13);
+            this.label28.TabIndex = 31;
+            this.label28.Text = "pwm";
+            this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // driveTemperatureLabel
             // 
@@ -1399,16 +1459,6 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
-            // GraphWindowToolStripMenuItem
-            // 
-            this.GraphWindowToolStripMenuItem.Checked = true;
-            this.GraphWindowToolStripMenuItem.CheckOnClick = true;
-            this.GraphWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
-            this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
-            this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
-            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1425,8 +1475,8 @@ namespace Flavor
             this.Name = "mainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Управление масс-спектрометром";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             this.Load += new System.EventHandler(this.mainForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -1568,6 +1618,10 @@ namespace Flavor
         private System.Windows.Forms.Label peakWidthLabel;
         private System.Windows.Forms.Panel measurePanel;
         private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label pwmLabel;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.Label operationTimeLabel;
     }
 }
 

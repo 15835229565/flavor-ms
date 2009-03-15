@@ -28,6 +28,7 @@ namespace Flavor
         /// </summary>
         private void InitializeComponent()
         {
+            
             this.label1 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -52,12 +53,14 @@ namespace Flavor
             this.label28 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label31 = new System.Windows.Forms.Label();
+            
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            /*
+            this.params_groupBox = new System.Windows.Forms.GroupBox();
             this.loadFileButton = new System.Windows.Forms.Button();
             this.saveFileButton = new System.Windows.Forms.Button();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -80,13 +83,16 @@ namespace Flavor
             this.applyButton = new System.Windows.Forms.Button();
             this.cancel_butt = new System.Windows.Forms.Button();
             this.ok_butt = new System.Windows.Forms.Button();
-            this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.label2 = new System.Windows.Forms.Label();
+            */
+            this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.colNumLabel = new System.Windows.Forms.Label();
+            
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.params_groupBox.SuspendLayout();
+            /*
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
@@ -95,6 +101,7 @@ namespace Flavor
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
+            */
             this.SuspendLayout();
             // 
             // label1
@@ -361,7 +368,7 @@ namespace Flavor
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.colNumLabel);
             this.groupBox1.Controls.Add(this.label31);
             this.groupBox1.Controls.Add(this.clearButton);
             this.groupBox1.Controls.Add(this.label30);
@@ -437,63 +444,73 @@ namespace Flavor
             this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
             this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
             this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
+            
             // 
-            // groupBox2
+            // params_groupBox
             // 
-            this.groupBox2.Controls.Add(this.loadFileButton);
-            this.groupBox2.Controls.Add(this.saveFileButton);
-            this.groupBox2.Controls.Add(this.fV2NumericUpDown);
-            this.groupBox2.Controls.Add(this.fV1NumericUpDown);
-            this.groupBox2.Controls.Add(this.hCurrentNumericUpDown);
-            this.groupBox2.Controls.Add(this.eCurrentNumericUpDown);
-            this.groupBox2.Controls.Add(this.CPNumericUpDown);
-            this.groupBox2.Controls.Add(this.iVoltageNumericUpDown);
-            this.groupBox2.Controls.Add(this.idleTimeNumericUpDown);
-            this.groupBox2.Controls.Add(this.expTimeNumericUpDown);
-            this.groupBox2.Controls.Add(this.label34);
-            this.groupBox2.Controls.Add(this.label35);
-            this.groupBox2.Controls.Add(this.label36);
-            this.groupBox2.Controls.Add(this.label37);
-            this.groupBox2.Controls.Add(this.label38);
-            this.groupBox2.Controls.Add(this.label39);
-            this.groupBox2.Controls.Add(this.label40);
-            this.groupBox2.Controls.Add(this.label41);
-            this.groupBox2.Location = new System.Drawing.Point(330, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(270, 257);
-            this.groupBox2.TabIndex = 5;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Общие параметры";
+            /*
+            this.params_groupBox.Controls.Add(this.loadFileButton);
+            this.params_groupBox.Controls.Add(this.saveFileButton);
+            this.params_groupBox.Controls.Add(this.fV2NumericUpDown);
+            this.params_groupBox.Controls.Add(this.fV1NumericUpDown);
+            this.params_groupBox.Controls.Add(this.hCurrentNumericUpDown);
+            this.params_groupBox.Controls.Add(this.eCurrentNumericUpDown);
+            this.params_groupBox.Controls.Add(this.CPNumericUpDown);
+            this.params_groupBox.Controls.Add(this.iVoltageNumericUpDown);
+            this.params_groupBox.Controls.Add(this.idleTimeNumericUpDown);
+            this.params_groupBox.Controls.Add(this.expTimeNumericUpDown);
+            this.params_groupBox.Controls.Add(this.label34);
+            this.params_groupBox.Controls.Add(this.label35);
+            this.params_groupBox.Controls.Add(this.label36);
+            this.params_groupBox.Controls.Add(this.label37);
+            this.params_groupBox.Controls.Add(this.label38);
+            this.params_groupBox.Controls.Add(this.label39);
+            this.params_groupBox.Controls.Add(this.label40);
+            this.params_groupBox.Controls.Add(this.label41);
+            */
+            this.params_groupBox.Location = new System.Drawing.Point(330, 12);
+            //this.params_groupBox.Name = "params_groupBox";
+            //this.params_groupBox.Size = new System.Drawing.Size(270, 257);
+            //this.params_groupBox.TabIndex = 5;
+            //this.params_groupBox.TabStop = false;
+            //this.params_groupBox.Text = "Общие параметры";
             // 
             // loadFileButton
             // 
             this.loadFileButton.Location = new System.Drawing.Point(126, 228);
+            /*
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(120, 23);
             this.loadFileButton.TabIndex = 34;
             this.loadFileButton.Text = "Загрузить из файла";
             this.loadFileButton.UseVisualStyleBackColor = true;
             this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
+            */
             // 
             // saveFileButton
             // 
             this.saveFileButton.Location = new System.Drawing.Point(9, 228);
+            /*
             this.saveFileButton.Name = "saveFileButton";
             this.saveFileButton.Size = new System.Drawing.Size(111, 23);
             this.saveFileButton.TabIndex = 13;
             this.saveFileButton.Text = "Сохранить в файл";
             this.saveFileButton.UseVisualStyleBackColor = true;
             this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
+            */
             // 
             // fV2NumericUpDown
             // 
+            /*
             this.fV2NumericUpDown.DecimalPlaces = 1;
             this.fV2NumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
             0,
             65536});
+            */
             this.fV2NumericUpDown.Location = new System.Drawing.Point(195, 201);
+            /*
             this.fV2NumericUpDown.Maximum = new decimal(new int[] {
             150,
             0,
@@ -522,7 +539,9 @@ namespace Flavor
             0,
             0,
             65536});
+            */
             this.fV1NumericUpDown.Location = new System.Drawing.Point(195, 175);
+            /*
             this.fV1NumericUpDown.Maximum = new decimal(new int[] {
             150,
             0,
@@ -551,7 +570,9 @@ namespace Flavor
             0,
             0,
             131072});
+            */
             this.hCurrentNumericUpDown.Location = new System.Drawing.Point(195, 149);
+            /*
             this.hCurrentNumericUpDown.Maximum = new decimal(new int[] {
             1,
             0,
@@ -575,7 +596,9 @@ namespace Flavor
             0,
             0,
             65536});
+            */
             this.eCurrentNumericUpDown.Location = new System.Drawing.Point(195, 123);
+            /*
             this.eCurrentNumericUpDown.Maximum = new decimal(new int[] {
             50,
             0,
@@ -599,7 +622,9 @@ namespace Flavor
             0,
             0,
             196608});
+            */
             this.CPNumericUpDown.Location = new System.Drawing.Point(195, 97);
+            /*
             this.CPNumericUpDown.Maximum = new decimal(new int[] {
             12,
             0,
@@ -628,7 +653,9 @@ namespace Flavor
             0,
             0,
             65536});
+            */
             this.iVoltageNumericUpDown.Location = new System.Drawing.Point(195, 71);
+            /*
             this.iVoltageNumericUpDown.Maximum = new decimal(new int[] {
             150,
             0,
@@ -656,7 +683,9 @@ namespace Flavor
             0,
             0,
             0});
+            */
             this.idleTimeNumericUpDown.Location = new System.Drawing.Point(195, 45);
+            /*
             this.idleTimeNumericUpDown.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -684,7 +713,9 @@ namespace Flavor
             0,
             0,
             0});
+            */
             this.expTimeNumericUpDown.Location = new System.Drawing.Point(195, 19);
+            /*
             this.expTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -708,7 +739,9 @@ namespace Flavor
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(6, 203);
+            */
+            this.label33.Location = new System.Drawing.Point(6, 203);
+            /*
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(184, 13);
             this.label34.TabIndex = 25;
@@ -717,7 +750,9 @@ namespace Flavor
             // label35
             // 
             this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(6, 177);
+            */
+            this.label32.Location = new System.Drawing.Point(6, 177);
+            /*
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(184, 13);
             this.label35.TabIndex = 24;
@@ -726,7 +761,9 @@ namespace Flavor
             // label36
             // 
             this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(6, 151);
+            */
+            this.label7.Location = new System.Drawing.Point(6, 151);
+            /*
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(104, 13);
             this.label36.TabIndex = 11;
@@ -735,7 +772,9 @@ namespace Flavor
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(6, 125);
+            */
+            this.label6.Location = new System.Drawing.Point(6, 125);
+            /*
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(127, 13);
             this.label37.TabIndex = 10;
@@ -744,7 +783,9 @@ namespace Flavor
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(6, 99);
+            */
+            this.label5.Location = new System.Drawing.Point(6, 99);
+            /*
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(122, 13);
             this.label38.TabIndex = 9;
@@ -753,7 +794,9 @@ namespace Flavor
             // label39
             // 
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(6, 73);
+            */
+            this.label4.Location = new System.Drawing.Point(6, 73);
+            /*
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(180, 13);
             this.label39.TabIndex = 8;
@@ -762,7 +805,9 @@ namespace Flavor
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(6, 47);
+            */
+            this.label3.Location = new System.Drawing.Point(6, 47);
+            /*
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(149, 13);
             this.label40.TabIndex = 7;
@@ -771,7 +816,9 @@ namespace Flavor
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(6, 21);
+            */
+            this.label2.Location = new System.Drawing.Point(6, 21);
+            /*
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(174, 13);
             this.label41.TabIndex = 6;
@@ -780,7 +827,9 @@ namespace Flavor
             // rareModeCheckBox
             // 
             this.rareModeCheckBox.AutoSize = true;
+            */
             this.rareModeCheckBox.Location = new System.Drawing.Point(330, 275);
+            /*
             this.rareModeCheckBox.Name = "rareModeCheckBox";
             this.rareModeCheckBox.Size = new System.Drawing.Size(287, 17);
             this.rareModeCheckBox.TabIndex = 6;
@@ -788,8 +837,10 @@ namespace Flavor
             this.rareModeCheckBox.UseVisualStyleBackColor = true;
             // 
             // applyButton
-            // 
+            //
+            */
             this.applyButton.Location = new System.Drawing.Point(330, 374);
+            /*
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(72, 23);
             this.applyButton.TabIndex = 9;
@@ -800,23 +851,28 @@ namespace Flavor
             // cancel_butt
             // 
             this.cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            */
             this.cancel_butt.Location = new System.Drawing.Point(540, 374);
+            /*
             this.cancel_butt.Name = "cancel_butt";
             this.cancel_butt.Size = new System.Drawing.Size(57, 23);
             this.cancel_butt.TabIndex = 8;
             this.cancel_butt.Text = "Отмена";
             this.cancel_butt.UseVisualStyleBackColor = true;
             this.cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
+            */
             // 
             // ok_butt
             // 
             this.ok_butt.Location = new System.Drawing.Point(408, 374);
+            /*
             this.ok_butt.Name = "ok_butt";
             this.ok_butt.Size = new System.Drawing.Size(69, 23);
             this.ok_butt.TabIndex = 7;
             this.ok_butt.Text = "Сохранить";
             this.ok_butt.UseVisualStyleBackColor = true;
             this.ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
+            */
             // 
             // savePreciseEditorToFileDialog
             // 
@@ -830,38 +886,39 @@ namespace Flavor
             // 
             // openCommonDataFileDialog
             // 
-            this.openCommonDataFileDialog.DefaultExt = "cdf";
-            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
+            //this.openCommonDataFileDialog.DefaultExt = "cdf";
+            //this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
             // saveCommonDataFileDialog
             // 
-            this.saveCommonDataFileDialog.DefaultExt = "cdf";
-            this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
+            //this.saveCommonDataFileDialog.DefaultExt = "cdf";
+            //this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
-            // label2
+            // colNumLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(105, 29);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 126;
-            this.label2.Text = "Кол.";
+            this.colNumLabel.AutoSize = true;
+            this.colNumLabel.Location = new System.Drawing.Point(105, 29);
+            this.colNumLabel.Name = "colNumLabel";
+            this.colNumLabel.Size = new System.Drawing.Size(29, 13);
+            this.colNumLabel.TabIndex = 126;
+            this.colNumLabel.Text = "Кол.";
             // 
             // PreciseOptionsForm
             // 
-            this.AcceptButton = this.ok_butt;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancel_butt;
+            //this.AcceptButton = this.ok_butt;
+            //this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            //this.CancelButton = this.cancel_butt;
             this.ClientSize = new System.Drawing.Size(609, 409);
-            this.Controls.Add(this.applyButton);
-            this.Controls.Add(this.cancel_butt);
-            this.Controls.Add(this.ok_butt);
-            this.Controls.Add(this.rareModeCheckBox);
-            this.Controls.Add(this.groupBox2);
+            //this.Controls.Add(this.applyButton);
+            //this.Controls.Add(this.cancel_butt);
+            //this.Controls.Add(this.ok_butt);
+            //this.Controls.Add(this.rareModeCheckBox);
+            //this.Controls.Add(this.params_groupBox);
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-            this.MaximizeBox = false;
+            //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            //this.MaximizeBox = false;
+            this.MinimizeBox = true;
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -869,8 +926,9 @@ namespace Flavor
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PreciseOptionsForm_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.params_groupBox.ResumeLayout(false);
+            this.params_groupBox.PerformLayout();
+            /*
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).EndInit();
@@ -879,14 +937,16 @@ namespace Flavor
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
+            */
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
+        
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label colNumLabel;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
@@ -910,9 +970,11 @@ namespace Flavor
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.GroupBox groupBox2;
+        
+        private System.Windows.Forms.GroupBox groupBox1;
+        //private System.Windows.Forms.GroupBox params_groupBox;
+        /*
         private System.Windows.Forms.NumericUpDown fV2NumericUpDown;
         private System.Windows.Forms.NumericUpDown fV1NumericUpDown;
         private System.Windows.Forms.NumericUpDown hCurrentNumericUpDown;
@@ -929,19 +991,22 @@ namespace Flavor
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.Label label41;
+        
         private System.Windows.Forms.CheckBox rareModeCheckBox;
         private System.Windows.Forms.Button applyButton;
         private System.Windows.Forms.Button cancel_butt;
         private System.Windows.Forms.Button ok_butt;
+        */
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.SaveFileDialog savePreciseEditorToFileDialog;
         private System.Windows.Forms.Button loadPreciseEditorFromFileButton;
         private System.Windows.Forms.OpenFileDialog loadPreciseEditorFromFileDialog;
         private System.Windows.Forms.Button clearButton;
+        /*
         private System.Windows.Forms.Button saveFileButton;
         private System.Windows.Forms.Button loadFileButton;
         private System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         private System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
-        private System.Windows.Forms.Label label2;
+        */
     }
 }

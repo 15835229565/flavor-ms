@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Flavor
 {
-    public partial class PreciseOptionsForm : Form
+    public partial class PreciseOptionsForm : OptionsForm
     {
         private mainForm upLevel;
         public mainForm UpLevel
@@ -30,7 +30,7 @@ namespace Flavor
             return instance;
         }
         
-        private PreciseOptionsForm()
+        private PreciseOptionsForm(): base()
         {
             InitializeComponent();
             this.SuspendLayout();
@@ -96,7 +96,7 @@ namespace Flavor
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            /*
             rareModeCheckBox.Checked = Commander.notRareModeRequested;
             if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage))
             {
@@ -110,6 +110,7 @@ namespace Flavor
             }
 
             loadCommonData();
+            */
             Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeEnableForm);
         }
 
@@ -132,7 +133,7 @@ namespace Flavor
             {
                 case Commander.programStates.Start:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -144,7 +145,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.WaitInit:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -155,7 +156,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.Init:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -166,7 +167,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.WaitHighVoltage:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -177,7 +178,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.Ready:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -188,7 +189,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.Measure:
                     this.groupBox1.Enabled = false;
-                    this.groupBox2.Enabled = false;
+                    this.params_groupBox.Enabled = false;
                     this.savePreciseEditorToFileButton.Enabled = false;
                     this.loadPreciseEditorFromFileButton.Enabled = false;
                     this.clearButton.Enabled = false;
@@ -199,7 +200,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.WaitShutdown:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -210,7 +211,7 @@ namespace Flavor
                     break;
                 case Commander.programStates.Shutdown:
                     this.groupBox1.Enabled = true;
-                    this.groupBox2.Enabled = true;
+                    this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
                     this.clearButton.Enabled = true;
@@ -237,7 +238,7 @@ namespace Flavor
                 }
             }
         }
-
+        /*
         private void loadCommonData(string fn)
         {
             Config.loadCommonOptions(fn);
@@ -306,16 +307,17 @@ namespace Flavor
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
-
-        private void ok_butt_Click(object sender, EventArgs e)
+        */
+        new private void ok_butt_Click(object sender, EventArgs e)
         {
             if (checkTextBoxes())
             {
-                Config.SavePreciseOptions(data, (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
-                       (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
-                Commander.notRareModeRequested = rareModeCheckBox.Checked;
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                //!!!!!!!
+                Config.SavePreciseOptions(data);
+                //Commander.notRareModeRequested = rareModeCheckBox.Checked;
+                //this.DialogResult = DialogResult.OK;
+                //this.Close();
+                base.ok_butt_Click(sender, e);
             }
         }
 
@@ -370,16 +372,17 @@ namespace Flavor
             return exitFlag;
         }
         
-        private void applyButton_Click(object sender, EventArgs e)
+        new private void applyButton_Click(object sender, EventArgs e)
         {
             if (checkTextBoxes())
             {
-                Config.SavePreciseOptions(data, (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
-                       (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
-                Commander.notRareModeRequested = rareModeCheckBox.Checked;
-                Commander.AddToSend(new sendIVoltage());
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                //!!!!!!
+                Config.SavePreciseOptions(data);
+                //Commander.notRareModeRequested = rareModeCheckBox.Checked;
+                //Commander.AddToSend(new sendIVoltage());
+                //this.DialogResult = DialogResult.OK;
+                //this.Close();
+                base.applyButton_Click(sender, e);
             }
         }
 
@@ -488,7 +491,7 @@ namespace Flavor
             instance = null;
             upLevel.InvokeRefreshButtons();
         }
-
+        /*
         private void saveFileButton_Click(object sender, EventArgs e)
         {
             if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK)
@@ -505,5 +508,6 @@ namespace Flavor
                 loadCommonData(openCommonDataFileDialog.FileName);
             }
         }
+        */
     }
 }

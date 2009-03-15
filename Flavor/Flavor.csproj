@@ -74,6 +74,12 @@
     <Compile Include="Forms\ConnectOptionsForm.Designer.cs">
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\OptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OptionsForm.Designer.cs">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CustomZoomOptions.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -111,6 +117,10 @@
     <EmbeddedResource Include="Forms\ConnectOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OptionsForm.resx">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CustomZoomOptions.resx">
       <SubType>Designer</SubType>

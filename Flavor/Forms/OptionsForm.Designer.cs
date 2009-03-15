@@ -1,6 +1,6 @@
 namespace Flavor
 {
-    partial class ScanOptionsForm
+    partial class OptionsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,12 +28,6 @@ namespace Flavor
         /// </summary>
         private void InitializeComponent()
         {
-            this.scan_groupBox = new System.Windows.Forms.GroupBox();
-            this.endScanNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.startScanNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.startScan = new System.Windows.Forms.Label();
-            /*
             this.params_groupBox = new System.Windows.Forms.GroupBox();
             this.loadFileButton = new System.Windows.Forms.Button();
             this.saveFileButton = new System.Windows.Forms.Button();
@@ -59,11 +53,6 @@ namespace Flavor
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
-            */
-            this.scan_groupBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.endScanNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.startScanNumericUpDown)).BeginInit();
-            /*
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
@@ -73,73 +62,7 @@ namespace Flavor
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
-            */
             this.SuspendLayout();
-            // 
-            // scan_groupBox
-            // 
-            this.scan_groupBox.Controls.Add(this.endScanNumericUpDown);
-            this.scan_groupBox.Controls.Add(this.startScanNumericUpDown);
-            this.scan_groupBox.Controls.Add(this.label1);
-            this.scan_groupBox.Controls.Add(this.startScan);
-            this.scan_groupBox.Location = new System.Drawing.Point(10, 10);
-            this.scan_groupBox.Margin = new System.Windows.Forms.Padding(0);
-            this.scan_groupBox.Name = "scan_groupBox";
-            this.scan_groupBox.Padding = new System.Windows.Forms.Padding(0);
-            this.scan_groupBox.Size = new System.Drawing.Size(270, 72);
-            this.scan_groupBox.TabIndex = 0;
-            this.scan_groupBox.TabStop = false;
-            this.scan_groupBox.Text = "Интервал сканирования (0...1056)";
-            // 
-            // endScanNumericUpDown
-            // 
-            this.endScanNumericUpDown.Location = new System.Drawing.Point(195, 42);
-            this.endScanNumericUpDown.Maximum = new decimal(new int[] {
-            1056,
-            0,
-            0,
-            0});
-            this.endScanNumericUpDown.Name = "endScanNumericUpDown";
-            this.endScanNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.endScanNumericUpDown.TabIndex = 4;
-            this.endScanNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.endScanNumericUpDown.Value = new decimal(new int[] {
-            1056,
-            0,
-            0,
-            0});
-            // 
-            // startScanNumericUpDown
-            // 
-            this.startScanNumericUpDown.Location = new System.Drawing.Point(195, 16);
-            this.startScanNumericUpDown.Maximum = new decimal(new int[] {
-            1056,
-            0,
-            0,
-            0});
-            this.startScanNumericUpDown.Name = "startScanNumericUpDown";
-            this.startScanNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.startScanNumericUpDown.TabIndex = 3;
-            this.startScanNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 44);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(118, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Последняя ступенька";
-            // 
-            // startScan
-            // 
-            this.startScan.AutoSize = true;
-            this.startScan.Location = new System.Drawing.Point(3, 18);
-            this.startScan.Name = "startScan";
-            this.startScan.Size = new System.Drawing.Size(100, 13);
-            this.startScan.TabIndex = 0;
-            this.startScan.Text = "Первая ступенька";
-            /*
             // 
             // params_groupBox
             // 
@@ -163,7 +86,7 @@ namespace Flavor
             this.params_groupBox.Controls.Add(this.label2);
             this.params_groupBox.Location = new System.Drawing.Point(10, 85);
             this.params_groupBox.Name = "params_groupBox";
-            this.params_groupBox.Size = new System.Drawing.Size(270, 253);
+            this.params_groupBox.Size = new System.Drawing.Size(270, 257);
             this.params_groupBox.TabIndex = 1;
             this.params_groupBox.TabStop = false;
             this.params_groupBox.Text = "Общие параметры";
@@ -531,7 +454,7 @@ namespace Flavor
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
             this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
-            // ScanOptionsForm
+            // OptionsForm
             // 
             this.AcceptButton = this.ok_butt;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -546,17 +469,10 @@ namespace Flavor
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            */
-            this.Controls.Add(this.scan_groupBox);
-            this.Name = "ScanOptionsForm";
-            this.Text = "Настройки обзорного режима";
-            //this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            //this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.scan_groupBox.ResumeLayout(false);
-            this.scan_groupBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.endScanNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.startScanNumericUpDown)).EndInit();
-            /*
+            this.Name = "OptionsForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Настройки";
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
@@ -567,7 +483,6 @@ namespace Flavor
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
-            */
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -575,37 +490,30 @@ namespace Flavor
 
         #endregion
 
-        private System.Windows.Forms.GroupBox scan_groupBox;
-        private System.Windows.Forms.Label startScan;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown startScanNumericUpDown;
-        private System.Windows.Forms.NumericUpDown endScanNumericUpDown;
-        /*
-        private System.Windows.Forms.GroupBox params_groupBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button ok_butt;
-        private System.Windows.Forms.Button cancel_butt;
-        private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.NumericUpDown fV1NumericUpDown;
-        private System.Windows.Forms.NumericUpDown hCurrentNumericUpDown;
-        private System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
-        private System.Windows.Forms.NumericUpDown CPNumericUpDown;
-        private System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
-        private System.Windows.Forms.NumericUpDown idleTimeNumericUpDown;
-        private System.Windows.Forms.NumericUpDown expTimeNumericUpDown;
-        private System.Windows.Forms.NumericUpDown fV2NumericUpDown;
-        private System.Windows.Forms.Button applyButton;
-        private System.Windows.Forms.CheckBox rareModeCheckBox;
-        private System.Windows.Forms.Button saveFileButton;
-        private System.Windows.Forms.Button loadFileButton;
-        private System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
-        private System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
-        */
+        protected System.Windows.Forms.GroupBox params_groupBox;
+        protected System.Windows.Forms.Label label2;
+        protected System.Windows.Forms.Label label3;
+        protected System.Windows.Forms.Label label4;
+        protected System.Windows.Forms.Label label5;
+        protected System.Windows.Forms.Label label6;
+        protected System.Windows.Forms.Label label7;
+        protected System.Windows.Forms.Button ok_butt;
+        protected System.Windows.Forms.Button cancel_butt;
+        protected System.Windows.Forms.Label label33;
+        protected System.Windows.Forms.Label label32;
+        protected System.Windows.Forms.NumericUpDown fV1NumericUpDown;
+        protected System.Windows.Forms.NumericUpDown hCurrentNumericUpDown;
+        protected System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
+        protected System.Windows.Forms.NumericUpDown CPNumericUpDown;
+        protected System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
+        protected System.Windows.Forms.NumericUpDown idleTimeNumericUpDown;
+        protected System.Windows.Forms.NumericUpDown expTimeNumericUpDown;
+        protected System.Windows.Forms.NumericUpDown fV2NumericUpDown;
+        protected System.Windows.Forms.Button applyButton;
+        protected System.Windows.Forms.CheckBox rareModeCheckBox;
+        protected System.Windows.Forms.Button saveFileButton;
+        protected System.Windows.Forms.Button loadFileButton;
+        protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
+        protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
     }
 }

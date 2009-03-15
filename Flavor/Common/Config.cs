@@ -71,6 +71,7 @@ namespace Flavor
     static class Config
     {
         private static XmlDocument _conf = new XmlDocument();
+        private static string mainConfigPrefix = "/control/";
 
         private static string initialDir;
         private static string confName;
@@ -91,20 +92,20 @@ namespace Flavor
         private static ushort focusVoltage1;
         private static ushort focusVoltage2;
         private static List<PreciseEditorData> preciseData = new List<PreciseEditorData>();
-        private static List<PreciseEditorData> preciseDataLoaded = new List<PreciseEditorData>();
+        //private static List<PreciseEditorData> preciseDataLoaded = new List<PreciseEditorData>();
 
         public static List<PreciseEditorData> PreciseData
         {
             get { return preciseData; }
             //set { preciseData = value; }
         }
-
+        /*
         public static List<PreciseEditorData> PreciseDataLoaded
         {
             get { return preciseDataLoaded; }
             //set { preciseData = value; }
         }
-
+        */
         public static string Port
         {
             get { return SerialPort; }
@@ -338,13 +339,13 @@ namespace Flavor
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
 
-        public static void getInitialDirectory()
+        internal static void getInitialDirectory()
         {
             initialDir = System.IO.Directory.GetCurrentDirectory();
             confName = initialDir + "\\config.xml";
         }
 
-        public static void LoadConfig()
+        internal static void LoadConfig()
         {
             try
             {
@@ -379,10 +380,12 @@ namespace Flavor
             //LoadPreciseEditorData();
         }
 
-        public static void SaveScanOptions()
+        internal static void saveScanOptions()
         {
+            
             _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
             _conf.SelectSingleNode("/control/overview/end").InnerText = ePoint.ToString();
+            /*
             _conf.SelectSingleNode("/control/common/exptime").InnerText = eTime.ToString();
             _conf.SelectSingleNode("/control/common/meastime").InnerText = iTime.ToString();
             _conf.SelectSingleNode("/control/common/ivoltage").InnerText = iVoltage.ToString();
@@ -391,14 +394,22 @@ namespace Flavor
             _conf.SelectSingleNode("/control/common/hcurrent").InnerText = hCurrent.ToString();
             _conf.SelectSingleNode("/control/common/focus1").InnerText = fV1.ToString();
             _conf.SelectSingleNode("/control/common/focus2").InnerText = fV2.ToString();
-
+            */
             _conf.Save(confName);
         }
 
+        internal static void saveScanOptions(ushort sPointReal, ushort ePointReal)
+        {
+            Config.sPoint = sPointReal;//!!!
+            Config.ePoint = ePointReal;//!!!
+            Config.saveScanOptions();
+        }
+        /*
         public static void SaveScanOptions(ushort sPointReal, ushort ePointReal, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real)
         {
             Config.sPoint = sPointReal;//!!!
             Config.ePoint = ePointReal;//!!!
+            
             Config.eTimeReal = eTimeReal;
             Config.iTimeReal = mTimeReal;
             Config.iVoltageReal = iVoltageReal;
@@ -407,9 +418,11 @@ namespace Flavor
             Config.hCurrentReal = hCurrentReal;
             Config.fV1Real = fV1Real;
             Config.fV2Real = fV2Real;
+            
             Config.SaveScanOptions();
+            saveCommonOptions(eTimeReal, mTimeReal, iVoltageReal, CPReal, eCurrentReal, hCurrentReal, fV1Real, fV2Real);
         }
-
+        */
         private static void SaveConnectOptions()
         {
             try
@@ -431,7 +444,7 @@ namespace Flavor
             _conf.Save(@confName);
         }
 
-        public static void SaveConnectOptions(string port, ushort baudrate)
+        internal static void SaveConnectOptions(string port, ushort baudrate)
         {
             Config.Port = port;
             Config.BaudRate = baudrate;
@@ -441,7 +454,8 @@ namespace Flavor
         internal static void SaveAll()
         {
             Config.SaveConnectOptions();
-            Config.SaveScanOptions();
+            Config.saveScanOptions();
+            Config.saveCommonOptions();
         }
 
         internal static void SaveSpecterFile(string p, bool isFromFile)
@@ -513,7 +527,7 @@ namespace Flavor
             }
             if (isFromFile)
             {
-                foreach (PreciseEditorData ped in Config.PreciseDataLoaded)
+                foreach (PreciseEditorData ped in Config.PreciseData/*Loaded*/)
                 {
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
                     {
@@ -784,10 +798,12 @@ namespace Flavor
             SaveSpecterFile(@filename, false);
         }
 
-        internal static void SavePreciseOptions(List<PreciseEditorData> ped, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real)
+        internal static void SavePreciseOptions(List<PreciseEditorData> ped/*, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real*/)
         {
             preciseData = ped;
-
+            SavePreciseOptions(ped, confName);
+            /*
+            return;
             for (int i = 1; i <= 20; ++i)
             {
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText = "";
@@ -813,7 +829,7 @@ namespace Flavor
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
                 _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
             }
-
+            
             Config.eTimeReal = eTimeReal;
             Config.iTimeReal = mTimeReal;
             Config.iVoltageReal = iVoltageReal;
@@ -823,6 +839,7 @@ namespace Flavor
             Config.fV1Real = fV1Real;
             Config.fV2Real = fV2Real;
             Config.SaveScanOptions();
+            */
         }
 
         internal static void AutoSavePreciseSpecterFile()
@@ -839,67 +856,110 @@ namespace Flavor
 
         internal static void SavePreciseOptions(List<PreciseEditorData> ped, string pedConfName)
         {
-            XmlDocument pedConf = new XmlDocument();
-            pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-            pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "sense", ""));
-            pedConf.SelectSingleNode("sense").AppendChild(pedConf.CreateNode(XmlNodeType.Element, "header", ""));
-            for (int i = 1; i <= 20; ++i)
+            XmlDocument pedConf;
+            string mainConfPrefix = "";
+
+            if (!pedConfName.Equals(confName))
             {
-                XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "peak", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "col", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "width", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "error", ""));
-                pedConf.SelectSingleNode(string.Format("sense")).AppendChild(tempRegion);
+                pedConf = new XmlDocument();
+                pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
+                pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "sense", ""));
+                pedConf.SelectSingleNode("sense").AppendChild(pedConf.CreateNode(XmlNodeType.Element, "header", ""));
+                for (int i = 1; i <= 20; ++i)
+                {
+                    XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "peak", ""));
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "col", ""));
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "iteration", ""));
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "width", ""));
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "error", ""));
+                    pedConf.SelectSingleNode(string.Format("sense")).AppendChild(tempRegion);
+                }
             }
+            else
+            {
+                for (int i = 1; i <= 20; ++i)
+                {
+                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText = "";
+                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText = "";
+                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText = "";
+                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText = "";
+                    if (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)) == null)
+                    {
+                        XmlNode temp = _conf.CreateNode(XmlNodeType.Element, string.Format("col", i), "");
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(temp);
+                    }
+                    else
+                    {
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText = "";
+                    }
+                }
+
+                pedConf = _conf;
+                mainConfPrefix = mainConfigPrefix;
+            }
+
             foreach (PreciseEditorData p in ped)
             {
-                pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", p.pNumber + 1)).InnerText = p.Step.ToString();
-                pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", p.pNumber + 1)).InnerText = p.Iterations.ToString();
-                pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", p.pNumber + 1)).InnerText = p.Width.ToString();
-                pedConf.SelectSingleNode(string.Format("/sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
-                pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", p.pNumber + 1)).InnerText = p.Step.ToString();
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", p.pNumber + 1)).InnerText = p.Iterations.ToString();
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", p.pNumber + 1)).InnerText = p.Width.ToString();
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
             }
             pedConf.Save(pedConfName);
         }
 
         internal static List<PreciseEditorData> LoadPreciseEditorData(string pedConfName)
         {
-            XmlDocument pedConf = new XmlDocument();
             List<PreciseEditorData> ped = new List<PreciseEditorData>();
-            try
+            XmlDocument pedConf;
+            string mainConfPrefix = "";
+
+            if (!pedConfName.Equals(confName))
             {
-                pedConf.Load(pedConfName);
+                pedConf = new XmlDocument();
+                try
+                {
+                    pedConf.Load(pedConfName);
+                }
+                catch (Exception Error)
+                {
+                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионных точек");
+                    return null;
+                }
             }
-            catch (Exception Error)
+            else 
             {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионных точек");
-                return null;
+                pedConf = _conf;
+                mainConfPrefix = mainConfigPrefix;
             }
             for (int i = 1; i <= 20; ++i)
             {
                 PreciseEditorData temp = null;
                 try
                 {
-                    bool allFilled = ((pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") &&
-                                      (pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") &&
-                                      (pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") &&
-                                      (pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != ""));
+                    bool allFilled = ((pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText != "") &&
+                                      (pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText != "") &&
+                                      (pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText != "") &&
+                                      (pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText != ""));
 
                     if (allFilled)
                     {
                         temp = new PreciseEditorData((byte)(i - 1),
-                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText),
-                                                     byte.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText),
-                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText),
-                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText),
+                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText),
+                                                     byte.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText),
+                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText),
+                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText),
                                                      (float)0);
                     }
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.Forms.MessageBox.Show("Ошибка чтения файла прецизионных точек", "Ошибка структуры файла");
+                    if (!pedConfName.Equals(confName))
+                        System.Windows.Forms.MessageBox.Show("Ошибка чтения файла прецизионных точек", "Ошибка структуры файла");
+                    else
+                        System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
                     return null;
                 }
                 if (temp != null) ped.Add(temp);
@@ -909,6 +969,14 @@ namespace Flavor
 
         internal static void LoadPreciseEditorData()
         {
+            List<PreciseEditorData> pedl = LoadPreciseEditorData(confName);
+            if ((pedl != null) && (pedl.Count > 0)) 
+            { 
+                PreciseData.Clear();
+                PreciseData.AddRange(pedl); 
+            }
+            /*
+            return;
             for (int i = 1; i <= 20; ++i)
             {
                 PreciseEditorData temp = null;
@@ -935,23 +1003,21 @@ namespace Flavor
                 }
                 if (temp != null) PreciseData.Add(temp);
             }
+            */
+        }
+
+        internal static void saveCommonOptions()
+        {
+            saveCommonOptions(confName);
+        }
+
+        internal static void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
+        {
+            saveCommonOptions(confName, eT, iT, iV, cp, eC, hC, fv1, fv2);
         }
 
         internal static void saveCommonOptions(string fn, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
         {
-            XmlDocument cdConf = new XmlDocument();
-            cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-            cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.Element, "common", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "header", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "exptime", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "meastime", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ivoltage", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "cp", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ecurrent", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "hcurrent", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus1", ""));
-            cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus2", ""));
-
             Config.eTimeReal = eT;
             Config.iTimeReal = iT;
             Config.iVoltageReal = iV;
@@ -961,45 +1027,95 @@ namespace Flavor
             Config.fV1Real = fv1;
             Config.fV2Real = fv2;
 
-            cdConf.SelectSingleNode("common/exptime").InnerText = Config.eTime.ToString();
-            cdConf.SelectSingleNode("common/meastime").InnerText = Config.iTime.ToString();
-            cdConf.SelectSingleNode("common/ivoltage").InnerText = Config.iVoltage.ToString();
-            cdConf.SelectSingleNode("common/cp").InnerText = Config.CP.ToString();
-            cdConf.SelectSingleNode("common/ecurrent").InnerText = Config.eCurrent.ToString();
-            cdConf.SelectSingleNode("common/hcurrent").InnerText = Config.hCurrent.ToString();
-            cdConf.SelectSingleNode("common/focus1").InnerText = Config.fV1.ToString();
-            cdConf.SelectSingleNode("common/focus2").InnerText = Config.fV2.ToString();
+            saveCommonOptions(fn);
+        }
+
+        internal static void saveCommonOptions(string fn)
+        {
+            XmlDocument cdConf;
+            string mainConfPrefix = "";
+
+            if (!fn.Equals(confName))
+            {
+                cdConf = new XmlDocument();
+                cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
+                cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.Element, "common", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "header", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "exptime", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "meastime", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ivoltage", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "cp", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ecurrent", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "hcurrent", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus1", ""));
+                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus2", ""));
+            }
+            else 
+            {
+                cdConf = _conf;
+                mainConfPrefix = mainConfigPrefix;
+            }
+            
+            cdConf.SelectSingleNode(mainConfPrefix + "common/exptime").InnerText = Config.eTime.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/meastime").InnerText = Config.iTime.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/ivoltage").InnerText = Config.iVoltage.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/cp").InnerText = Config.CP.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/ecurrent").InnerText = Config.eCurrent.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/hcurrent").InnerText = Config.hCurrent.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/focus1").InnerText = Config.fV1.ToString();
+            cdConf.SelectSingleNode(mainConfPrefix + "common/focus2").InnerText = Config.fV2.ToString();
             
             cdConf.Save(fn);
         }
 
+        internal static void loadCommonOptions() 
+        {
+            loadCommonOptions(confName);
+        }
+
         internal static void loadCommonOptions(string cdConfName)
         {
-            XmlDocument cdConf = new XmlDocument();
-            try
+            XmlDocument cdConf;
+            string mainConfPrefix = "";
+
+            if (!cdConfName.Equals(confName))
             {
-                cdConf.Load(cdConfName);
+                cdConf = new XmlDocument();
+                try
+                {
+                    cdConf.Load(cdConfName);
+                }
+                catch (Exception Error)
+                {
+                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла общих настроек");
+                    return;
+                }
             }
-            catch (Exception Error)
+            else
             {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла общих настроек");
-                return;
+                cdConf = _conf;
+                mainConfPrefix = mainConfigPrefix;
             }
+            
+
             ushort eT, iT, iV, cp, eC, hC, fv1, fv2;
             try
             {
-                eT = ushort.Parse(cdConf.SelectSingleNode("/common/exptime").InnerText);
-                iT = ushort.Parse(cdConf.SelectSingleNode("/common/meastime").InnerText);
-                iV = ushort.Parse(cdConf.SelectSingleNode("/common/ivoltage").InnerText);
-                cp = ushort.Parse(cdConf.SelectSingleNode("/common/cp").InnerText);
-                eC = ushort.Parse(cdConf.SelectSingleNode("/common/ecurrent").InnerText);
-                hC = ushort.Parse(cdConf.SelectSingleNode("/common/hcurrent").InnerText);
-                fv1 = ushort.Parse(cdConf.SelectSingleNode("/common/focus1").InnerText);
-                fv2 = ushort.Parse(cdConf.SelectSingleNode("/common/focus2").InnerText);
+                eT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/exptime").InnerText);
+                iT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/meastime").InnerText);
+                iV = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/ivoltage").InnerText);
+                cp = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/cp").InnerText);
+                eC = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/ecurrent").InnerText);
+                hC = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/hcurrent").InnerText);
+                fv1 = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/focus1").InnerText);
+                fv2 = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/focus2").InnerText);
             }
             catch (NullReferenceException)
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка чтения файла общих настроек", "Ошибка структуры файла");
+                if (!cdConfName.Equals(confName))
+                    System.Windows.Forms.MessageBox.Show("Ошибка чтения файла общих настроек", "Ошибка структуры файла");
+                else
+                    System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
                 return;
             }
             eTime = eT;

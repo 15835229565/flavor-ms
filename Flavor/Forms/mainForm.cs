@@ -381,10 +381,10 @@ namespace Flavor
         {
             this.turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
             this.turboCurrentLabel.Text = string.Format("{0:f0}", Device.TurboPump.Current);
-            //this.pwmLabel.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
+            this.pwmLabel.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
             this.pumpTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.PumpTemperature);
             this.driveTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.DriveTemperature);
-            //this.operationTimeLabel.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
+            this.operationTimeLabel.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
         }
 
         public void InvokeRefreshDeviceStatus()
