@@ -38,7 +38,7 @@ namespace Flavor
         private void mainForm_Load(object sender, EventArgs e)
         {
             Config.LoadConfig();
-            Config.LoadPreciseEditorData();
+            //Config.LoadPreciseEditorData();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

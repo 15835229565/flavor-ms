@@ -97,7 +97,7 @@ namespace Flavor
             this.Close();
         }
 
-        protected void ok_butt_Click(object sender, EventArgs e)
+        protected virtual void ok_butt_Click(object sender, EventArgs e)
         {
             Config.saveCommonOptions((ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
                                    (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
@@ -106,7 +106,7 @@ namespace Flavor
             this.Close();
         }
 
-        protected void applyButton_Click(object sender, EventArgs e)
+        protected virtual void applyButton_Click(object sender, EventArgs e)
         {
             Commander.AddToSend(new sendIVoltage());
             ok_butt_Click(sender, e);

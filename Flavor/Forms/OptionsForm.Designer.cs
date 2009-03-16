@@ -365,7 +365,7 @@ namespace Flavor
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(127, 13);
             this.label6.TabIndex = 10;
-            this.label6.Text = "Ток эмиссии (0-50 мкА)";
+            this.label6.Text = "Ток эмиссии (0-10 мкА)";
             // 
             // label5
             // 

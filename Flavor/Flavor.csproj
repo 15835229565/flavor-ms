@@ -101,9 +101,6 @@
     <Compile Include="Forms\ScanOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ScanOptionsForm.Designer.cs">
-      <DependentUpon>ScanOptionsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Controls\ZedGraphControlPlus.resx">
@@ -162,9 +159,6 @@
     </Compile>
     <Compile Include="Forms\PreciseOptionsForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PreciseOptionsForm.Designer.cs">
-      <DependentUpon>PreciseOptionsForm.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -354,7 +354,6 @@ namespace Flavor
             catch (Exception Error)
             {
                 System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения конфигурационного файла");
-                //throw new System.IO.FileNotFoundException();            
             }
 
             try
@@ -364,20 +363,14 @@ namespace Flavor
                 SendTry = byte.Parse(_conf.SelectSingleNode("/control/connect/try").InnerText);
                 sPoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/start").InnerText);
                 ePoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/end").InnerText);
-                eTime = ushort.Parse(_conf.SelectSingleNode("/control/common/exptime").InnerText);
-                iTime = ushort.Parse(_conf.SelectSingleNode("/control/common/meastime").InnerText);
-                iVoltage = ushort.Parse(_conf.SelectSingleNode("/control/common/ivoltage").InnerText);
-                CP = ushort.Parse(_conf.SelectSingleNode("/control/common/cp").InnerText);
-                eCurrent = ushort.Parse(_conf.SelectSingleNode("/control/common/ecurrent").InnerText);
-                hCurrent = ushort.Parse(_conf.SelectSingleNode("/control/common/hcurrent").InnerText);
-                fV1 = ushort.Parse(_conf.SelectSingleNode("/control/common/focus1").InnerText);
-                fV2 = ushort.Parse(_conf.SelectSingleNode("/control/common/focus2").InnerText);
             }
             catch (NullReferenceException)
             {
                 System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры конфигурационного файла");
             }
-            //LoadPreciseEditorData();
+
+            loadCommonOptions();
+            LoadPreciseEditorData();
         }
 
         internal static void saveScanOptions()
@@ -385,16 +378,6 @@ namespace Flavor
             
             _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
             _conf.SelectSingleNode("/control/overview/end").InnerText = ePoint.ToString();
-            /*
-            _conf.SelectSingleNode("/control/common/exptime").InnerText = eTime.ToString();
-            _conf.SelectSingleNode("/control/common/meastime").InnerText = iTime.ToString();
-            _conf.SelectSingleNode("/control/common/ivoltage").InnerText = iVoltage.ToString();
-            _conf.SelectSingleNode("/control/common/cp").InnerText = CP.ToString();
-            _conf.SelectSingleNode("/control/common/ecurrent").InnerText = eCurrent.ToString();
-            _conf.SelectSingleNode("/control/common/hcurrent").InnerText = hCurrent.ToString();
-            _conf.SelectSingleNode("/control/common/focus1").InnerText = fV1.ToString();
-            _conf.SelectSingleNode("/control/common/focus2").InnerText = fV2.ToString();
-            */
             _conf.Save(confName);
         }
 
@@ -404,25 +387,7 @@ namespace Flavor
             Config.ePoint = ePointReal;//!!!
             Config.saveScanOptions();
         }
-        /*
-        public static void SaveScanOptions(ushort sPointReal, ushort ePointReal, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real)
-        {
-            Config.sPoint = sPointReal;//!!!
-            Config.ePoint = ePointReal;//!!!
-            
-            Config.eTimeReal = eTimeReal;
-            Config.iTimeReal = mTimeReal;
-            Config.iVoltageReal = iVoltageReal;
-            Config.CPReal = CPReal;
-            Config.eCurrentReal = eCurrentReal;
-            Config.hCurrentReal = hCurrentReal;
-            Config.fV1Real = fV1Real;
-            Config.fV2Real = fV2Real;
-            
-            Config.SaveScanOptions();
-            saveCommonOptions(eTimeReal, mTimeReal, iVoltageReal, CPReal, eCurrentReal, hCurrentReal, fV1Real, fV2Real);
-        }
-        */
+        
         private static void SaveConnectOptions()
         {
             try
@@ -456,6 +421,7 @@ namespace Flavor
             Config.SaveConnectOptions();
             Config.saveScanOptions();
             Config.saveCommonOptions();
+            Config.SavePreciseOptions();
         }
 
         internal static void SaveSpecterFile(string p, bool isFromFile)
@@ -558,38 +524,7 @@ namespace Flavor
             }
             sf.Save(p);
         }
-        /*
-        internal static void SaveSpecterFile(string p, bool isFromFile)
-        {
-            System.IO.StreamWriter sf = new System.IO.StreamWriter(@p);
-            sf.WriteLine(":header");
-            sf.WriteLine(":col1");
-            if (isFromFile) {
-                foreach (ZedGraph.PointPair pp in Graph.pointListLoaded1)
-                {
-                    sf.WriteLine("{0:g} {1:g}", pp.X, pp.Y);
-                }
-                sf.WriteLine(":col2");
-                foreach (ZedGraph.PointPair pp in Graph.pointListLoaded2)
-                {
-                    sf.WriteLine("{0:g} {1:g}", pp.X, pp.Y);
-                }
-            }
-            else {
-                foreach (ZedGraph.PointPair pp in Graph.pointList1)
-                {
-                    sf.WriteLine("{0:g} {1:g}", pp.X, pp.Y);
-                }
-                sf.WriteLine(":col2");
-                foreach (ZedGraph.PointPair pp in Graph.pointList2)
-                {
-                    sf.WriteLine("{0:g} {1:g}", pp.X, pp.Y);
-                }
-            }
-            sf.WriteLine(":eof");
-            sf.Close();
-        }
-        */
+
         internal static void OpenSpecterFile(string p)
         {
             XmlDocument sf = new XmlDocument();
@@ -683,109 +618,7 @@ namespace Flavor
             //Commander.isSenseMeasure = true;//!!!!!!!
             Graph.updateGraph(peds);
         }
-        /*
-        internal static void OpenSpecterFile(string p)
-        {
-            char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-            string tempstr;
-            string outputString = "";
-            bool readingX;
-            ushort X = 0;
-            int Y = 0;
-            //int tempint;
-            System.IO.StreamReader sf = new System.IO.StreamReader(@p);
-            try
-            {
-                tempstr = sf.ReadLine();
-                while (tempstr != ":col1")
-                {
-                    if (tempstr == null)
-                    {
-                        //Wrong format
-                        return;
-                    }
-                    //process header?
-                    tempstr = sf.ReadLine();
-                }
-                Graph.ResetLoadedPointLists();
-                tempstr = sf.ReadLine();
-                while (tempstr != ":col2")
-                {
-                    if (tempstr == null)
-                    {
-                        //Wrong format
-                        return;
-                    }
-                    //process col1
-                    readingX = true;
-                    foreach (char ch in tempstr.ToCharArray())
-                    {
-                        if (readingX && (ch == ' '))
-                        {
-                            readingX = false;
-                            X = Convert.ToUInt16(outputString);
-                            outputString = "";
-                        }
-                        else
-                        {
-                            foreach (char compareChar in numbers)
-                            {
-                                if (ch == compareChar)
-                                {
-                                    outputString += ch;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    Y = Convert.ToInt32(outputString);
-                    outputString = "";
-                    Graph.updateLoaded1Graph(X, Y);
-                    tempstr = sf.ReadLine();
-                }
-                tempstr = sf.ReadLine();
-                while (tempstr != ":eof")
-                {
-                    if (tempstr == null)
-                    {
-                        //Wrong format
-                        return;
-                    }
-                    //process col2
-                    readingX = true;
-                    foreach (char ch in tempstr.ToCharArray())
-                    {
-                        if (readingX && (ch == ' '))
-                        {
-                            readingX = false;
-                            X = Convert.ToUInt16(outputString);
-                            outputString = "";
-                        }
-                        else
-                        {
-                            foreach (char compareChar in numbers)
-                            {
-                                if (ch == compareChar)
-                                {
-                                    outputString += ch;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    Y = Convert.ToInt32(outputString);
-                    outputString = "";
-                    Graph.updateLoaded2Graph(X, Y);
-                    tempstr = sf.ReadLine();
-                }
-                Graph.updateLoaded();
-            }
-            catch (System.IO.IOException)
-            {
-            }
-            return;
-        }
-        */
+
         internal static void AutoSaveSpecterFile()
         {
             string filename;
@@ -852,6 +685,11 @@ namespace Flavor
             { System.IO.Directory.CreateDirectory(@dirname); }
             filename = dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.psf", now.Hour, now.Minute, now.Second, now.Millisecond);
             SavePreciseSpecterFile(@filename, false);
+        }
+
+        internal static void SavePreciseOptions() 
+        {
+            SavePreciseOptions(Config.PreciseData, confName);
         }
 
         internal static void SavePreciseOptions(List<PreciseEditorData> ped, string pedConfName)
@@ -975,35 +813,6 @@ namespace Flavor
                 PreciseData.Clear();
                 PreciseData.AddRange(pedl); 
             }
-            /*
-            return;
-            for (int i = 1; i <= 20; ++i)
-            {
-                PreciseEditorData temp = null;
-                try
-                {
-                    bool allFilled = ((_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText != "") &&
-                                      (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText != "") &&
-                                      (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText != "") &&
-                                      (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText != ""));
-
-                    if (allFilled)
-                    {
-                        temp = new PreciseEditorData((byte)(i - 1),
-                                                     ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText),
-                                                     byte.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText),
-                                                     ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText),
-                                                     ushort.Parse(_conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText),
-                                                     (float)0);
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
-                }
-                if (temp != null) PreciseData.Add(temp);
-            }
-            */
         }
 
         internal static void saveCommonOptions()
