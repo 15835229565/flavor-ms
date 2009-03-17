@@ -16,6 +16,7 @@ namespace Flavor
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
+        /*
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
@@ -36,7 +37,7 @@ namespace Flavor
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Label label31;
-
+        */
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.SaveFileDialog savePreciseEditorToFileDialog;
@@ -50,11 +51,13 @@ namespace Flavor
             //get { return upLevel; }
             set { upLevel = value; }
         }
-        public TextBox[] stepTextBoxes = new TextBox[20];
-        public TextBox[] colTextBoxes = new TextBox[20];
-        public TextBox[] lapsTextBoxes = new TextBox[20];
-        public TextBox[] widthTextBoxes = new TextBox[20];
-        public TextBox[] precTextBoxes = new TextBox[20];
+        
+        private Label[] peakNumberLabels = new Label[20];
+        private TextBox[] stepTextBoxes = new TextBox[20];
+        private TextBox[] colTextBoxes = new TextBox[20];
+        private TextBox[] lapsTextBoxes = new TextBox[20];
+        private TextBox[] widthTextBoxes = new TextBox[20];
+        private TextBox[] precTextBoxes = new TextBox[20];
         private List<PreciseEditorData> data = new List<PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
@@ -88,34 +91,13 @@ namespace Flavor
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-
+            this.colNumLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.colNumLabel = new System.Windows.Forms.Label();
 
             this.groupBox1.SuspendLayout();
             this.params_groupBox.SuspendLayout();
@@ -162,203 +144,12 @@ namespace Flavor
             this.label11.Size = new System.Drawing.Size(54, 13);
             this.label11.TabIndex = 4;
             this.label11.Text = "Точность";
-            // label12
-            this.label12.AutoSize = true;
-            this.label12.BackColor = System.Drawing.SystemColors.Control;
-            this.label12.Location = new System.Drawing.Point(21, 42);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(13, 13);
-            this.label12.TabIndex = 106;
-            this.label12.Text = "1";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label13
-            this.label13.AutoSize = true;
-            this.label13.BackColor = System.Drawing.SystemColors.Control;
-            this.label13.Location = new System.Drawing.Point(21, 57);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(13, 13);
-            this.label13.TabIndex = 107;
-            this.label13.Text = "2";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label14
-            this.label14.AutoSize = true;
-            this.label14.BackColor = System.Drawing.SystemColors.Control;
-            this.label14.Location = new System.Drawing.Point(21, 72);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(13, 13);
-            this.label14.TabIndex = 108;
-            this.label14.Text = "3";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label15
-            this.label15.AutoSize = true;
-            this.label15.BackColor = System.Drawing.SystemColors.Control;
-            this.label15.Location = new System.Drawing.Point(21, 87);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(13, 13);
-            this.label15.TabIndex = 109;
-            this.label15.Text = "4";
-            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label16
-            this.label16.AutoSize = true;
-            this.label16.BackColor = System.Drawing.SystemColors.Control;
-            this.label16.Location = new System.Drawing.Point(21, 102);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(13, 13);
-            this.label16.TabIndex = 110;
-            this.label16.Text = "5";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label17
-            this.label17.AutoSize = true;
-            this.label17.BackColor = System.Drawing.SystemColors.Control;
-            this.label17.Location = new System.Drawing.Point(21, 117);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(13, 13);
-            this.label17.TabIndex = 111;
-            this.label17.Text = "6";
-            this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label18
-            this.label18.AutoSize = true;
-            this.label18.BackColor = System.Drawing.SystemColors.Control;
-            this.label18.Location = new System.Drawing.Point(21, 132);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(13, 13);
-            this.label18.TabIndex = 112;
-            this.label18.Text = "7";
-            this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label19
-            this.label19.AutoSize = true;
-            this.label19.BackColor = System.Drawing.SystemColors.Control;
-            this.label19.Location = new System.Drawing.Point(21, 147);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(13, 13);
-            this.label19.TabIndex = 113;
-            this.label19.Text = "8";
-            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label20
-            this.label20.AutoSize = true;
-            this.label20.BackColor = System.Drawing.SystemColors.Control;
-            this.label20.Location = new System.Drawing.Point(21, 162);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(13, 13);
-            this.label20.TabIndex = 114;
-            this.label20.Text = "9";
-            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // label21
-            this.label21.AutoSize = true;
-            this.label21.BackColor = System.Drawing.SystemColors.Control;
-            this.label21.Location = new System.Drawing.Point(21, 177);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(19, 13);
-            this.label21.TabIndex = 115;
-            this.label21.Text = "10";
-            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label22
-            this.label22.AutoSize = true;
-            this.label22.BackColor = System.Drawing.SystemColors.Control;
-            this.label22.Location = new System.Drawing.Point(21, 192);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(19, 13);
-            this.label22.TabIndex = 116;
-            this.label22.Text = "11";
-            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label23
-            this.label23.AutoSize = true;
-            this.label23.BackColor = System.Drawing.SystemColors.Control;
-            this.label23.Location = new System.Drawing.Point(21, 207);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(19, 13);
-            this.label23.TabIndex = 117;
-            this.label23.Text = "12";
-            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label24
-            this.label24.AutoSize = true;
-            this.label24.BackColor = System.Drawing.SystemColors.Control;
-            this.label24.Location = new System.Drawing.Point(21, 222);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(19, 13);
-            this.label24.TabIndex = 118;
-            this.label24.Text = "13";
-            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label25
-            this.label25.AutoSize = true;
-            this.label25.BackColor = System.Drawing.SystemColors.Control;
-            this.label25.Location = new System.Drawing.Point(21, 237);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(19, 13);
-            this.label25.TabIndex = 119;
-            this.label25.Text = "14";
-            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label26
-            this.label26.AutoSize = true;
-            this.label26.BackColor = System.Drawing.SystemColors.Control;
-            this.label26.Location = new System.Drawing.Point(21, 252);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(19, 13);
-            this.label26.TabIndex = 120;
-            this.label26.Text = "15";
-            this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label27
-            this.label27.AutoSize = true;
-            this.label27.BackColor = System.Drawing.SystemColors.Control;
-            this.label27.Location = new System.Drawing.Point(21, 267);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(19, 13);
-            this.label27.TabIndex = 121;
-            this.label27.Text = "16";
-            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label28
-            this.label28.AutoSize = true;
-            this.label28.BackColor = System.Drawing.SystemColors.Control;
-            this.label28.Location = new System.Drawing.Point(21, 282);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(19, 13);
-            this.label28.TabIndex = 122;
-            this.label28.Text = "17";
-            this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label29
-            this.label29.AutoSize = true;
-            this.label29.BackColor = System.Drawing.SystemColors.Control;
-            this.label29.Location = new System.Drawing.Point(21, 297);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(19, 13);
-            this.label29.TabIndex = 123;
-            this.label29.Text = "18";
-            this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label30
-            this.label30.AutoSize = true;
-            this.label30.BackColor = System.Drawing.SystemColors.Control;
-            this.label30.Location = new System.Drawing.Point(21, 312);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(19, 13);
-            this.label30.TabIndex = 124;
-            this.label30.Text = "19";
-            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // groupBox1
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox1.Controls.Add(this.colNumLabel);
-            this.groupBox1.Controls.Add(this.label31);
             this.groupBox1.Controls.Add(this.clearButton);
-            this.groupBox1.Controls.Add(this.label30);
             this.groupBox1.Controls.Add(this.loadPreciseEditorFromFileButton);
-            this.groupBox1.Controls.Add(this.label29);
             this.groupBox1.Controls.Add(this.savePreciseEditorToFileButton);
-            this.groupBox1.Controls.Add(this.label28);
-            this.groupBox1.Controls.Add(this.label27);
-            this.groupBox1.Controls.Add(this.label26);
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Controls.Add(this.label24);
-            this.groupBox1.Controls.Add(this.label23);
-            this.groupBox1.Controls.Add(this.label22);
-            this.groupBox1.Controls.Add(this.label21);
-            this.groupBox1.Controls.Add(this.label20);
-            this.groupBox1.Controls.Add(this.label19);
-            this.groupBox1.Controls.Add(this.label18);
-            this.groupBox1.Controls.Add(this.label17);
-            this.groupBox1.Controls.Add(this.label16);
-            this.groupBox1.Controls.Add(this.label15);
-            this.groupBox1.Controls.Add(this.label14);
-            this.groupBox1.Controls.Add(this.label13);
-            this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.label9);
@@ -370,15 +161,6 @@ namespace Flavor
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Редактор областей сканирования";
-            // label31
-            this.label31.AutoSize = true;
-            this.label31.BackColor = System.Drawing.SystemColors.Control;
-            this.label31.Location = new System.Drawing.Point(21, 327);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(19, 13);
-            this.label31.TabIndex = 125;
-            this.label31.Text = "20";
-            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // clearButton
             this.clearButton.Location = new System.Drawing.Point(244, 356);
             this.clearButton.Name = "clearButton";
@@ -476,6 +258,14 @@ namespace Flavor
 
             for (int i = 0; i < 20; ++i)
             {
+                this.peakNumberLabels[i] = new Label();
+                this.peakNumberLabels[i].AutoSize = true;
+                this.peakNumberLabels[i].BackColor = System.Drawing.SystemColors.Control;
+                this.peakNumberLabels[i].Location = new System.Drawing.Point(21, 42 + 15 * i);
+                this.peakNumberLabels[i].Size = new System.Drawing.Size(19, 13);
+                this.peakNumberLabels[i].Text = string.Format("{0}", i + 1);
+                this.peakNumberLabels[i].TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                
                 this.stepTextBoxes[i] = new TextBox();
                 this.stepTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
                 this.stepTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -524,6 +314,7 @@ namespace Flavor
                 this.precTextBoxes[i].TabIndex = 106 + i;
                 this.precTextBoxes[i].TextChanged += new System.EventHandler(this.positiveNumericTextbox_TextChanged);
 
+                this.groupBox1.Controls.Add(peakNumberLabels[i]);
                 this.groupBox1.Controls.Add(stepTextBoxes[i]);
                 this.groupBox1.Controls.Add(colTextBoxes[i]);
                 this.groupBox1.Controls.Add(lapsTextBoxes[i]);

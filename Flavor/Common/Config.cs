@@ -91,6 +91,7 @@ namespace Flavor
         private static ushort emissionCurrent;
         private static ushort focusVoltage1;
         private static ushort focusVoltage2;
+        
         private static List<PreciseEditorData> preciseData = new List<PreciseEditorData>();
         //private static List<PreciseEditorData> preciseDataLoaded = new List<PreciseEditorData>();
 
@@ -140,7 +141,6 @@ namespace Flavor
             get { return expTime; }
             set { expTime = value; }
         }
-
         public static ushort eTimeReal
         {
             get { return (ushort)(eTime * 5); }
@@ -155,7 +155,6 @@ namespace Flavor
             get { return idleTime; }
             set { idleTime = value; }
         }
-
         public static ushort iTimeReal
         {
             get { return (ushort)(5 * iTime); }
@@ -170,7 +169,6 @@ namespace Flavor
             get { return ionizationVoltage; }
             set { ionizationVoltage = value; }
         }
-
         public static double iVoltageReal
         {
             get { return iVoltageConvert(ionizationVoltage); }
@@ -179,12 +177,10 @@ namespace Flavor
                 ionizationVoltage = iVoltageConvert(value);
             }
         }
-
         public static double iVoltageConvert(ushort voltage)
         {
             return (double)(150 * (double)voltage / 4096);
         }
-
         public static ushort iVoltageConvert(double voltage)
         {
             ushort x = (ushort)((voltage / 150) * 4096);
@@ -197,7 +193,6 @@ namespace Flavor
             get { return CPVoltage; }
             set { CPVoltage = value; }
         }
-
         public static double CPReal
         {
             get { return CPConvert(CPVoltage); }
@@ -206,12 +201,10 @@ namespace Flavor
                 CPVoltage = CPConvert(value);
             }
         }
-
         public static double CPConvert(ushort coeff)
         {
             return (double)((10 / (double)coeff) * 4096);
         }
-
         public static ushort CPConvert(double coeff)
         {
             ushort x = (ushort)((10 / coeff) * 4096);
@@ -224,7 +217,6 @@ namespace Flavor
             get { return emissionCurrent; }
             set { emissionCurrent = value; }
         }
-
         public static double eCurrentReal
         {
             get { return eCurrentConvert(emissionCurrent); }
@@ -233,12 +225,10 @@ namespace Flavor
                 emissionCurrent = eCurrentConvert(value);
             }
         }
-
         public static double eCurrentConvert(ushort current)
         {
             return (double)((50 * (double)current) / 4096);
         }
-
         public static ushort eCurrentConvert(double current)
         {
             ushort x = (ushort)((current / 50) * 4096);
@@ -251,7 +241,6 @@ namespace Flavor
             get { return heatCurrent; }
             set { heatCurrent = value; }
         }
-
         public static double hCurrentReal
         {
             get { return hCurrentConvert(heatCurrent); }
@@ -260,12 +249,10 @@ namespace Flavor
                 heatCurrent = hCurrentConvert(value);
             }
         }
-
         public static double hCurrentConvert(ushort current)
         {
             return (double)((double)current / 4096);
         }
-
         public static ushort hCurrentConvert(double current)
         {
             ushort x = (ushort)(current * 4096);
@@ -278,7 +265,6 @@ namespace Flavor
             get { return focusVoltage1; }
             set { focusVoltage1 = value; }
         }
-
         public static double fV1Real
         {
             get { return fV1Convert(focusVoltage1); }
@@ -287,12 +273,10 @@ namespace Flavor
                 focusVoltage1 = fV1Convert(value);
             }
         }
-
         public static double fV1Convert(ushort voltage)
         {
             return (double)(150 * (double)voltage / 4096);
         }
-
         public static ushort fV1Convert(double voltage)
         {
             ushort x = (ushort)((voltage / 150) * 4096);
@@ -305,7 +289,6 @@ namespace Flavor
             get { return focusVoltage2; }
             set { focusVoltage2 = value; }
         }
-
         public static double fV2Real
         {
             get { return fV2Convert(focusVoltage2); }
@@ -318,7 +301,6 @@ namespace Flavor
         {
             return (double)(150 * (double)voltage / 4096);
         }
-
         public static ushort fV2Convert(double voltage)
         {
             ushort x = (ushort)((voltage / 150) * 4096);
@@ -333,7 +315,6 @@ namespace Flavor
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
-
         public static double scanVoltageReal(ushort step)
         {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
@@ -368,19 +349,16 @@ namespace Flavor
             {
                 System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры конфигурационного файла");
             }
-
             loadCommonOptions();
             LoadPreciseEditorData();
         }
 
-        internal static void saveScanOptions()
+        private static void saveScanOptions()
         {
-            
             _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
             _conf.SelectSingleNode("/control/overview/end").InnerText = ePoint.ToString();
             _conf.Save(confName);
         }
-
         internal static void saveScanOptions(ushort sPointReal, ushort ePointReal)
         {
             Config.sPoint = sPointReal;//!!!
@@ -408,7 +386,6 @@ namespace Flavor
             }
             _conf.Save(@confName);
         }
-
         internal static void SaveConnectOptions(string port, ushort baudrate)
         {
             Config.Port = port;
@@ -424,6 +401,54 @@ namespace Flavor
             Config.SavePreciseOptions();
         }
 
+        private static string genAutoSaveFilename(string extension)
+        {
+            string dirname;
+            DateTime now = System.DateTime.Now;
+            dirname = initialDir + string.Format("\\{0}-{1}-{2}", now.Year, now.Month, now.Day);
+            if (!System.IO.Directory.Exists(@dirname))
+                System.IO.Directory.CreateDirectory(@dirname);
+            return dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension;
+        }
+        
+        internal static void OpenSpecterFile(string p)
+        {
+            XmlDocument sf = new XmlDocument();
+            ushort X = 0;
+            int Y = 0;
+            try
+            {
+                sf.Load(p);
+            }
+            catch (Exception Error)
+            {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла спектра");
+                return;
+            }
+            try
+            {
+                //Commander.isSenseMeasure = false;//!!!!!
+                Graph.ResetLoadedPointLists();
+                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
+                {
+                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                    Graph.updateLoaded1Graph(X, Y);
+                }
+                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/p"))
+                {
+                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                    Graph.updateLoaded2Graph(X, Y);
+                }
+                Graph.updateLoaded();
+            }
+            catch (NullReferenceException)
+            {
+                System.Windows.Forms.MessageBox.Show("Ошибка чтения файла спектра", "Ошибка структуры файла");
+                return;
+            }
+        }
         internal static void SaveSpecterFile(string p, bool isFromFile)
         {
             XmlDocument sf = new XmlDocument();
@@ -473,95 +498,9 @@ namespace Flavor
             }
             sf.Save(p);
         }
-
-        internal static void SavePreciseSpecterFile(string p, bool isFromFile)
+        internal static void AutoSaveSpecterFile()
         {
-            XmlDocument sf = new XmlDocument();
-            XmlNode temp;
-            sf.AppendChild(sf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-            sf.AppendChild(sf.CreateNode(XmlNodeType.Element, "sense", ""));
-            sf.SelectSingleNode("sense").AppendChild(sf.CreateNode(XmlNodeType.Element, "header", ""));
-            for (int i = 1; i <= 20; ++i)
-            {
-                temp = sf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "peak", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "col", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "width", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "error", ""));
-                sf.SelectSingleNode(string.Format("sense")).AppendChild(temp);
-            }
-            if (isFromFile)
-            {
-                foreach (PreciseEditorData ped in Config.PreciseData/*Loaded*/)
-                {
-                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
-                    {
-                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                        sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
-                    }
-                }
-            }
-            else
-            {
-                foreach (PreciseEditorData ped in Config.PreciseData)
-                {
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/width", ped.pNumber + 1)).InnerText = ped.Width.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();
-                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
-                    {
-                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                        sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
-                    }
-                }
-            }
-            sf.Save(p);
-        }
-
-        internal static void OpenSpecterFile(string p)
-        {
-            XmlDocument sf = new XmlDocument();
-            ushort X = 0;
-            int Y = 0;
-            try
-            {
-                sf.Load(p);
-            }
-            catch (Exception Error)
-            {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла спектра");
-                return;
-            }
-            try
-            {
-                //Commander.isSenseMeasure = false;//!!!!!
-                Graph.ResetLoadedPointLists();
-                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
-                {
-                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
-                    Graph.updateLoaded1Graph(X, Y);
-                }
-                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/p"))
-                {
-                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
-                    Graph.updateLoaded2Graph(X, Y);
-                }
-                Graph.updateLoaded();
-            }
-            catch (NullReferenceException)
-            {
-                System.Windows.Forms.MessageBox.Show("Ошибка чтения файла спектра", "Ошибка структуры файла");
-                return;
-            }
+            SaveSpecterFile(@genAutoSaveFilename("sdf"), false);
         }
 
         internal static void OpenPreciseSpecterFile(string p)
@@ -618,80 +557,70 @@ namespace Flavor
             //Commander.isSenseMeasure = true;//!!!!!!!
             Graph.updateGraph(peds);
         }
-
-        internal static void AutoSaveSpecterFile()
+        internal static void SavePreciseSpecterFile(string p, bool isFromFile)
         {
-            string filename;
-            string dirname;
-            DateTime now = System.DateTime.Now;
-            dirname = initialDir + string.Format("\\{0}-{1}-{2}", now.Year, now.Month, now.Day);
-            if (!System.IO.Directory.Exists(@dirname))
-            { System.IO.Directory.CreateDirectory(@dirname); }
-            filename = dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.sdf", now.Hour, now.Minute, now.Second, now.Millisecond);
-            SaveSpecterFile(@filename, false);
-        }
-
-        internal static void SavePreciseOptions(List<PreciseEditorData> ped/*, ushort eTimeReal, ushort mTimeReal, double iVoltageReal, double CPReal, double eCurrentReal, double hCurrentReal, double fV1Real, double fV2Real*/)
-        {
-            preciseData = ped;
-            SavePreciseOptions(ped, confName);
-            /*
-            return;
+            XmlDocument sf = new XmlDocument();
+            XmlNode temp;
+            sf.AppendChild(sf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
+            sf.AppendChild(sf.CreateNode(XmlNodeType.Element, "sense", ""));
+            sf.SelectSingleNode("sense").AppendChild(sf.CreateNode(XmlNodeType.Element, "header", ""));
             for (int i = 1; i <= 20; ++i)
             {
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText = "";
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText = "";
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText = "";
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText = "";
-                if (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)) == null)
-                {
-                    XmlNode temp = _conf.CreateNode(XmlNodeType.Element, string.Format("col", i), "");
-                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(temp);
-                }
-                else
-                {
-                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText = "";
-                }
+                temp = sf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "peak", ""));
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "col", ""));
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "iteration", ""));
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "width", ""));
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "error", ""));
+                sf.SelectSingleNode(string.Format("sense")).AppendChild(temp);
             }
-
-            foreach (PreciseEditorData p in ped)
+            if (isFromFile)
             {
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", p.pNumber + 1)).InnerText = p.Step.ToString();
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", p.pNumber + 1)).InnerText = p.Iterations.ToString();
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", p.pNumber + 1)).InnerText = p.Width.ToString();
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
-                _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
+                foreach (PreciseEditorData ped in Config.PreciseData/*Loaded*/)
+                {
+                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
+                    {
+                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                        sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
+                    }
+                }
             }
-            
-            Config.eTimeReal = eTimeReal;
-            Config.iTimeReal = mTimeReal;
-            Config.iVoltageReal = iVoltageReal;
-            Config.CPReal = CPReal;
-            Config.eCurrentReal = eCurrentReal;
-            Config.hCurrentReal = hCurrentReal;
-            Config.fV1Real = fV1Real;
-            Config.fV2Real = fV2Real;
-            Config.SaveScanOptions();
-            */
+            else
+            {
+                foreach (PreciseEditorData ped in Config.PreciseData)
+                {
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/width", ped.pNumber + 1)).InnerText = ped.Width.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();
+                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
+                    {
+                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                        sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
+                    }
+                }
+            }
+            sf.Save(p);
         }
-
         internal static void AutoSavePreciseSpecterFile()
         {
-            string filename;
-            string dirname;
-            DateTime now = System.DateTime.Now;
-            dirname = initialDir + string.Format("\\{0}-{1}-{2}", now.Year, now.Month, now.Day);
-            if (!System.IO.Directory.Exists(@dirname))
-            { System.IO.Directory.CreateDirectory(@dirname); }
-            filename = dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.psf", now.Hour, now.Minute, now.Second, now.Millisecond);
-            SavePreciseSpecterFile(@filename, false);
+            SavePreciseSpecterFile(@genAutoSaveFilename("psf"), false);
         }
 
         internal static void SavePreciseOptions() 
         {
             SavePreciseOptions(Config.PreciseData, confName);
         }
-
+        internal static void SavePreciseOptions(List<PreciseEditorData> ped)
+        {
+            preciseData = ped;
+            SavePreciseOptions(ped, confName);
+        }
         internal static void SavePreciseOptions(List<PreciseEditorData> ped, string pedConfName)
         {
             XmlDocument pedConf;
@@ -804,7 +733,6 @@ namespace Flavor
             }
             return ped;
         }
-
         internal static void LoadPreciseEditorData()
         {
             List<PreciseEditorData> pedl = LoadPreciseEditorData(confName);
@@ -819,12 +747,10 @@ namespace Flavor
         {
             saveCommonOptions(confName);
         }
-
         internal static void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
         {
             saveCommonOptions(confName, eT, iT, iV, cp, eC, hC, fv1, fv2);
         }
-
         internal static void saveCommonOptions(string fn, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
         {
             Config.eTimeReal = eT;
@@ -838,7 +764,6 @@ namespace Flavor
 
             saveCommonOptions(fn);
         }
-
         internal static void saveCommonOptions(string fn)
         {
             XmlDocument cdConf;
@@ -881,7 +806,6 @@ namespace Flavor
         {
             loadCommonOptions(confName);
         }
-
         internal static void loadCommonOptions(string cdConfName)
         {
             XmlDocument cdConf;
@@ -905,8 +829,6 @@ namespace Flavor
                 cdConf = _conf;
                 mainConfPrefix = mainConfigPrefix;
             }
-            
-
             ushort eT, iT, iV, cp, eC, hC, fv1, fv2;
             try
             {
@@ -935,6 +857,14 @@ namespace Flavor
             hCurrent = hC;
             fV1 = fv1;
             fV2 = fv2;
+        }
+
+        internal static double pointToMass(ushort pnt, bool isFirstCollector)
+        {
+            //!!! Requires real law !!!
+            double coeff = 3.0;
+            if (isFirstCollector) coeff = 2.0;
+            return pnt * coeff;
         }
     }
 }

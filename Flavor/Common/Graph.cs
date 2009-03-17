@@ -7,46 +7,63 @@ namespace Flavor
 {
     delegate void GraphEventHandler(bool fromFile, bool recreate);
 
-    class pListScaled
+    public class pListScaled
     {
+        public enum DisplayValue
+        {
+            Step = 0,
+            Voltage = 1,
+            Mass = 2
+        }
+        
         public PointPairList Step 
         {
-            get {return step;}
+            get {return points[(int)DisplayValue.Step];}
         }
 
         public PointPairList Voltage
         {
-            get { return voltage; }
+            get { return points[(int)DisplayValue.Voltage]; }
         }
 
         public PointPairList Mass
         {
-            get { return mass; }
+            get { return points[(int)DisplayValue.Mass]; }
         }
 
-        PointPairList step;
-        PointPairList voltage;
-        PointPairList mass;
+        public bool isEmpty
+        {
+            get { return (points[(int)DisplayValue.Step].Count == 0); }
+        }
+
+        private bool collector;
+        private PointPairList[] points = new PointPairList[3];
 
         public void Add(int count, ushort pnt)
         {
-            step.Add(pnt, count);
-            voltage.Add(Config.scanVoltage(pnt), count);
-            mass.Add(pnt, count);
+            points[(int)DisplayValue.Step].Add(pnt, count);
+            points[(int)DisplayValue.Voltage].Add(Config.scanVoltage(pnt), count);
+            points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
         }
 
         public void Clear()
         {
-            step.Clear();
-            voltage.Clear();
-            mass.Clear();
+            points[(int)DisplayValue.Step].Clear();
+            points[(int)DisplayValue.Voltage].Clear();
+            points[(int)DisplayValue.Mass].Clear();
         }
 
-        pListScaled()
+        public PointPairList Points(DisplayValue which)
         {
-            step = new PointPairList();
-            voltage = new PointPairList();
-            mass = new PointPairList();
+            return points[(int)which];
+        }
+
+        public pListScaled(bool isFirstCollector)
+        {
+            collector = isFirstCollector;
+            points[(int)DisplayValue.Step] = new PointPairList();
+            points[(int)DisplayValue.Voltage] = new PointPairList();
+            points[(int)DisplayValue.Mass] = new PointPairList();
         }
     }
 
@@ -54,12 +71,64 @@ namespace Flavor
     {
         public static event GraphEventHandler OnNewGraphData;
 
+        private static pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
+        private static List<pListScaled>[] collectors = new List<pListScaled>[2];
+        private static List<pListScaled>[] loadedSpectra = new List<pListScaled>[2];
+        public static List<PointPairList> Collector1
+        {
+            get 
+            {
+                List<PointPairList> temp = new List<PointPairList>();
+                foreach (pListScaled pLS in collectors[0])
+                {
+                    temp.Add(pLS.Points(axisMode));
+                }
+                return temp;
+            }
+        }
+        public static List<PointPairList> Collector2
+        {
+            get
+            {
+                List<PointPairList> temp = new List<PointPairList>();
+                foreach (pListScaled pLS in collectors[1])
+                {
+                    temp.Add(pLS.Points(axisMode));
+                }
+                return temp;
+            }
+        }
+        public static List<PointPairList> LoadedSpectra1
+        {
+            get
+            {
+                List<PointPairList> temp = new List<PointPairList>();
+                foreach (pListScaled pLS in loadedSpectra[0])
+                {
+                    temp.Add(pLS.Points(axisMode));
+                }
+                return temp;
+            }
+        }
+        public static List<PointPairList> LoadedSpectra2
+        {
+            get
+            {
+                List<PointPairList> temp = new List<PointPairList>();
+                foreach (pListScaled pLS in loadedSpectra[1])
+                {
+                    temp.Add(pLS.Points(axisMode));
+                }
+                return temp;
+            }
+        }
+
         public static List<PointPairList> pointLists1 = new List<PointPairList>();
         public static List<PointPairList> pointListsLoaded1 = new List<PointPairList>();
 
         public static List<PointPairList> pointLists2 = new List<PointPairList>();
         public static List<PointPairList> pointListsLoaded2 = new List<PointPairList>();
-        
+
         public static PointPairList pointList1 = new PointPairList();
         public static PointPairList pointList2 = new PointPairList();
         public static PointPairList pointListLoaded1 = new PointPairList();
@@ -67,6 +136,19 @@ namespace Flavor
         
         public static ushort lastPoint;
         public static PreciseEditorData curPeak;
+
+        static Graph()
+        {
+            //Generating blank scan spectra for either collector
+            collectors[0] = new List<pListScaled>();
+            collectors[0].Add(new pListScaled(true));
+            collectors[1] = new List<pListScaled>();
+            collectors[1].Add(new pListScaled(false));
+            loadedSpectra[0] = new List<pListScaled>();
+            loadedSpectra[0].Add(new pListScaled(true));
+            loadedSpectra[1] = new List<pListScaled>();
+            loadedSpectra[1].Add(new pListScaled(false));
+        }
 
         public static void updateGraph(int y1, int y2, ushort pnt)
         {
