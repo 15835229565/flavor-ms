@@ -464,14 +464,16 @@ namespace Flavor
             sf.SelectSingleNode("/overview/end").InnerText = ePoint.ToString();
             if (isFromFile)
             {
-                foreach (ZedGraph.PointPair pp in Graph.pointListLoaded1)
+                //foreach (ZedGraph.PointPair pp in Graph.pointListLoaded1)
+                foreach (ZedGraph.PointPair pp in Graph.LoadedSpectra1Steps[0])
                 {
                     temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                     sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
                 }
-                foreach (ZedGraph.PointPair pp in Graph.pointListLoaded2)
+                //foreach (ZedGraph.PointPair pp in Graph.pointListLoaded2)
+                foreach (ZedGraph.PointPair pp in Graph.LoadedSpectra2Steps[0])
                 {
                     temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
@@ -481,14 +483,16 @@ namespace Flavor
             }
             else
             {
-                foreach (ZedGraph.PointPair pp in Graph.pointList1)
+                //foreach (ZedGraph.PointPair pp in Graph.pointList1)
+                foreach (ZedGraph.PointPair pp in Graph.Collector1Steps[0])
                 {
                     temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
                     sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
                 }
-                foreach (ZedGraph.PointPair pp in Graph.pointList2)
+                //foreach (ZedGraph.PointPair pp in Graph.pointList2)
+                foreach (ZedGraph.PointPair pp in Graph.Collector2Steps[0])
                 {
                     temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
