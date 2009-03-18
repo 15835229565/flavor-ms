@@ -14,6 +14,7 @@ namespace Flavor
     public partial class GraphForm : Form
     {
         private bool isFromFile = false;
+        private string displayedFileName = "";
 
         private bool preciseSpecterDisplayed = false;
 
@@ -38,11 +39,24 @@ namespace Flavor
         public GraphForm()
         {
             InitializeComponent();
+            Graph.OnAxisModeChanged += new AxisModeEventHandler(Graph_OnAxisModeChanged);
             //Commander.OnProgramStateChanged += new ProgramEventHandler(ChangeSpecterType);
             this.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
             this.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
             this.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
             this.collect2_graph.GraphPane.XAxis.Scale.Max = 1056;
+        }
+
+        private void Graph_OnAxisModeChanged()
+        {
+            if (isFromFile)
+            {
+                DisplayLoadedSpectrum(this.collect1_graph, this.collect2_graph, displayedFileName);
+            }
+            else
+            {
+                CreateGraph(this.collect1_graph, this.collect2_graph);
+            }
         }
 /*
         private void ChangeSpecterType()
@@ -73,6 +87,12 @@ namespace Flavor
 
         public void CreateGraph(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
         {
+            displayedFileName = "";
+            isFromFile = false;
+            closeSpecterFileToolStripMenuItem.Enabled = false;
+            ZedGraphRebirth(zgc1, Graph.Collector1, "Первый коллектор");
+            ZedGraphRebirth(zgc2, Graph.Collector2, "Второй коллектор");
+            /*
             specterSavingEnabled = false;
             isFromFile = false;
             string modeText = "(скан.)";
@@ -98,15 +118,6 @@ namespace Flavor
 
             myPane1.CurveList.Clear();
             myPane2.CurveList.Clear();
-            /*
-            BarItem myBar1 = myPane1.AddBar("My Bar", Graph.pointList1, Color.Blue);
-            BarItem myBar2 = myPane2.AddBar("My Bar", Graph.pointList2, Color.Red);
-
-            myBar1.Bar.Border.Color = Color.Blue;
-            myBar1.Bar.Fill.Type = FillType.Solid;
-
-            myBar2.Bar.Border.Color = Color.Red;
-            myBar2.Bar.Fill.Type = FillType.Solid;*/
 
             foreach (PointPairList ppl in Graph.pointLists1)
             {
@@ -160,6 +171,7 @@ namespace Flavor
             RefreshGraph();
             //if (myPane1.CurveList.Count > 0 || myPane2.CurveList.Count > 0)
             //    specterSavingEnabled = true;
+            */
         }
 
         public void RefreshGraph()
@@ -170,6 +182,12 @@ namespace Flavor
 
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2, string fileName) 
         {
+            displayedFileName = fileName;
+            isFromFile = true;
+            ZedGraphRebirth(zgc1, Graph.LoadedSpectra1, "Первый коллектор");
+            ZedGraphRebirth(zgc2, Graph.LoadedSpectra2, "Второй коллектор");
+            closeSpecterFileToolStripMenuItem.Enabled = true;
+            /*
             specterSavingEnabled = false;
             isFromFile = true;
             string modeText = "(скан.)";
@@ -187,16 +205,6 @@ namespace Flavor
 
             myPane1.CurveList.Clear();
             myPane2.CurveList.Clear();
-            /*
-            BarItem myBar1 = myPane1.AddBar("My Bar", Graph.pointListLoaded1, Color.Blue);
-            BarItem myBar2 = myPane2.AddBar("My Bar", Graph.pointListLoaded2, Color.Red);
-
-            myBar1.Bar.Border.Color = Color.Blue;
-            myBar1.Bar.Fill.Type = FillType.Solid;
-            
-            myBar2.Bar.Border.Color = Color.Red;
-            myBar2.Bar.Fill.Type = FillType.Solid;
-            */
 
             foreach (PointPairList ppl in Graph.pointListsLoaded1)
             {
@@ -253,6 +261,7 @@ namespace Flavor
             RefreshGraph();
             //if (myPane1.CurveList.Count > 0 || myPane2.CurveList.Count > 0)
             //    specterSavingEnabled = true;
+            */
         }
         
         private void GraphForm_Validating(object sender, CancelEventArgs e)
@@ -307,6 +316,64 @@ namespace Flavor
                     Config.SaveSpecterFile(saveSpecterFileDialog.FileName, isFromFile);
                 }
             }
+        }
+
+        private void ZedGraphRebirth(ZedGraphControlPlus zgc, List<PointPairList> dataPoints, string title)
+        {
+            GraphPane myPane = zgc.GraphPane;
+            
+            string modeText = " (прециз.)";
+            preciseSpecterDisplayed = true;
+            if (dataPoints.Count == 1)
+            {
+                modeText = " (скан.)";
+                preciseSpecterDisplayed = false;
+            }
+            prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
+
+            myPane.Title.Text = title + modeText;
+            myPane.YAxis.Title.Text = "Интенсивность";
+
+            if (!(displayedFileName == ""))
+                myPane.Title.Text += ":\n" + displayedFileName;
+
+            switch (Graph.AxisDisplayMode)
+            {
+                case pListScaled.DisplayValue.Step:
+                    myPane.XAxis.Title.Text = "Ступени";
+                    break;
+                case pListScaled.DisplayValue.Voltage:
+                    myPane.XAxis.Title.Text = "Напряжение";
+                    break;
+                case pListScaled.DisplayValue.Mass:
+                    myPane.XAxis.Title.Text = "Масса";
+                    break;
+            }
+
+            myPane.CurveList.Clear();
+            
+            specterSavingEnabled = false;
+            foreach (PointPairList ppl in dataPoints)
+            {
+                if (ppl.Count > 0)
+                    specterSavingEnabled = true;
+                LineItem temp = myPane.AddCurve("My Curve", ppl, Color.Blue, SymbolType.None);
+                temp.Symbol.Fill = new Fill(Color.White);
+            }
+
+            myPane.Legend.IsVisible = false;
+
+            // Fill the axis background with a color gradient
+            myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
+            // Fill the pane background with a color gradient
+            myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
+            myPane.YAxis.Scale.Min = 0;
+            myPane.YAxis.Scale.Max = 10000;
+
+            // Calculate the Axis Scale Ranges
+            zgc.AxisChange();
+
+            RefreshGraph();
         }
 
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)

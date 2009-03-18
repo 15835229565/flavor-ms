@@ -61,55 +61,74 @@ namespace Flavor
             }
             else
             {
+                ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
+                ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
+                ToolStripMenuItem massViewItem = new ToolStripMenuItem();
+
+                switch (Graph.AxisDisplayMode)
+                {
+                    case pListScaled.DisplayValue.Step:
+                        stepViewItem.Checked = true;
+                        break;
+                    case pListScaled.DisplayValue.Voltage:
+                        voltageViewItem.Checked = true;
+                        break;
+                    case pListScaled.DisplayValue.Mass:
+                        massViewItem.Checked = true;
+                        break;
+                }
+                
+                stepViewItem.Name = "axis_mode_step";
+                stepViewItem.Tag = "axis_mode_step";
+                stepViewItem.Text = "Ступени";
+                stepViewItem.CheckOnClick = true;
+                stepViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+
+                voltageViewItem.Name = "axis_mode_voltage";
+                voltageViewItem.Tag = "axis_mode_voltage";
+                voltageViewItem.Text = "Напряжение";
+                voltageViewItem.CheckOnClick = true;
+                voltageViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+
+                massViewItem.Name = "axis_mode_mass";
+                massViewItem.Tag = "axis_mode_mass";
+                massViewItem.Text = "Масса";
+                massViewItem.CheckOnClick = true;
+                massViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+                
                 // create a new general menu item
-                ToolStripMenuItem item = new ToolStripMenuItem();
+                ToolStripMenuItem item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
                 // This is the user-defined Tag so you can find this menu item later if necessary
-                item.Name = "custom_zoom";
-                item.Tag = "custom_zoom";
+                item.Name = "axis_mode";
+                item.Tag = "axis_mode";
                 // This is the text that will show up in the menu
-                item.Text = "Do Something Special";
+                item.Text = "Выбрать шкалу";
+                
                 // Add a handler that will respond when that menu item is selected
-                item.Click += new System.EventHandler(CustomZoom);
+                //item.Click += new System.EventHandler(CustomZoom);
                 // Add the menu item to the menu
                 menuStrip.Items.Add(item);
             }
         }
 
-        private void CustomZoom(object sender, EventArgs e)
+        private void ViewItemCheckStateChanged(object sender, EventArgs e)
         {
-            //ContextMenuStrip temp1 = (ContextMenuStrip)((ToolStripMenuItem)sender).GetCurrentParent();
-            //object temp2 = temp1.GetContainerControl();
-            //this.GraphPane.Title = "Changed!";
-            (new CustomZoomOptions(this)).ShowDialog();
-            if (this.MasterPane != null)
+            switch (((ToolStripMenuItem)sender).Name) 
             {
-                GraphPane gpane = this.GraphPane;
-                if (gpane != null && !gpane.ZoomStack.IsEmpty)
-                {
-                    ZoomState.StateType type = gpane.ZoomStack.Top.Type;
-
-                    ZoomState oldState = new ZoomState(gpane, type);
-                    ZoomState newState = null;
-                    if (this.IsSynchronizeXAxes || this.IsSynchronizeYAxes)
-                    {
-                        foreach (GraphPane pane in this.MasterPane.PaneList)
-                        {
-                            ZoomState state = pane.ZoomStack.Pop(pane);
-                            if (pane == gpane)
-                                newState = state;
-                        }
-                    }
-                    else
-                        newState = gpane.ZoomStack.Pop(gpane);
-
-                    // Provide Callback to notify the user of zoom events
-                    //if (this.ZoomEvent != null)
-                    //    this.ZoomEvent(this, oldState, newState);
-
-                    Refresh();
-                }
+                case "axis_mode_step":
+                    Graph.AxisDisplayMode = pListScaled.DisplayValue.Step;
+                    break;
+                case "axis_mode_voltage":
+                    Graph.AxisDisplayMode = pListScaled.DisplayValue.Voltage;
+                    break;
+                case "axis_mode_mass":
+                    Graph.AxisDisplayMode = pListScaled.DisplayValue.Mass;
+                    break;
+                default:
+                    break;
             }
         }
+        
         private void AddPointToPreciseEditor(object sender, EventArgs e) 
         {
             MessageBox.Show(pointIndex.ToString(), curveReference.NPts.ToString());

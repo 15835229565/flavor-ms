@@ -6,6 +6,7 @@ using ZedGraph;
 namespace Flavor
 {
     delegate void GraphEventHandler(bool fromFile, bool recreate);
+    delegate void AxisModeEventHandler();
 
     public class pListScaled
     {
@@ -88,8 +89,24 @@ namespace Flavor
     static class Graph
     {
         public static event GraphEventHandler OnNewGraphData;
+        public static event AxisModeEventHandler OnAxisModeChanged;
 
         private static pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
+        public static pListScaled.DisplayValue AxisDisplayMode 
+        {
+            get
+            {
+                return axisMode;
+            }
+            set
+            {
+                if (axisMode != value)
+                {
+                    axisMode = value;
+                    OnAxisModeChanged();
+                }
+            }
+        }
         private static List<pListScaled>[] collectors = new List<pListScaled>[2];
         private static List<pListScaled>[] loadedSpectra = new List<pListScaled>[2];
         public static List<PointPairList> Collector1Steps
@@ -153,7 +170,7 @@ namespace Flavor
             List<PointPairList> temp = new List<PointPairList>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
             if (useAxisMode) am = axisMode;
-            foreach (pListScaled pLS in which[col])
+            foreach (pListScaled pLS in which[col - 1])
             {
                 temp.Add(pLS.Points(am));
             }
