@@ -38,21 +38,11 @@ namespace Flavor
         private void mainForm_Load(object sender, EventArgs e)
         {
             Config.LoadConfig();
-            //Config.LoadPreciseEditorData();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mainForm.ActiveForm.Close();
-            /*if (Commander.pState == Commander.programStates.Start)
-            {
-                if (Commander.deviceIsConnected) Commander.Disconnect();
-                mainForm.ActiveForm.Close();
-            }
-            else
-            {
-                MessageBox.Show("Необходимо дождаться отключения системы.");
-            }*/
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -134,10 +124,7 @@ namespace Flavor
             cancelScanButton.Enabled = true;
             cancelScanButton.Visible = true;
 
-            //openSpecterFileToolStripMenuItem.Enabled = false;
-
             Graph.ResetLoadedPointLists();
-            //Graph.ResetPointLists();
             this.gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph); 
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Min = Config.sPoint;
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = Config.ePoint;
@@ -192,8 +179,6 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            //Graph.ResetPointLists();
-            //this.gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph);
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
             this.gForm.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
@@ -597,12 +582,6 @@ namespace Flavor
                     unblock_butt.ForeColor = Color.Red;
                     break;
             }
-            /*
-            if (Commander.pStatePrev == Commander.programStates.Measure)
-            {
-                //Graph.OnNewGraphData -= new NewGraphDataEventHandler(InvokeRefreshGraph);
-            }
-            */
             switch (Commander.pState)
             {
                 case Commander.programStates.Start:
@@ -675,7 +654,6 @@ namespace Flavor
                     unblock_butt.Enabled = true;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
-                    //unblock_butt.Text = "Снять блокировку";
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -693,7 +671,6 @@ namespace Flavor
                     unblock_butt.Enabled = true;
                     overview_button.Enabled = true & !Commander.hBlock;
                     sensmeasure_button.Enabled = true & !Commander.hBlock & precPointsExist;
-                    //unblock_butt.Text = "Включить блокировку";
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -711,12 +688,10 @@ namespace Flavor
                     unblock_butt.Enabled = true;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
-                    //unblock_butt.Text = "Включить блокировку";
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = false;
 
-                    //scanPanelToolStripMenuItem.Checked = true;
                     measurePanelToolStripMenuItem.Enabled = true;
 
                     gForm.specterOpeningEnabled = false;
@@ -831,7 +806,6 @@ namespace Flavor
             cancelScanButton.Enabled = false;
             Commander.measureCancelRequested = true;
             gForm.specterOpeningEnabled = true;
-            //scanPanelToolStripMenuItem.Checked = false;
             //!!!
         }
 

@@ -176,18 +176,7 @@ namespace Flavor
             }
             return temp;
         }
-        /*
-        public static List<PointPairList> pointLists1 = new List<PointPairList>();
-        public static List<PointPairList> pointListsLoaded1 = new List<PointPairList>();
-
-        public static List<PointPairList> pointLists2 = new List<PointPairList>();
-        public static List<PointPairList> pointListsLoaded2 = new List<PointPairList>();
-
-        public static PointPairList pointList1 = new PointPairList();
-        public static PointPairList pointList2 = new PointPairList();
-        public static PointPairList pointListLoaded1 = new PointPairList();
-        public static PointPairList pointListLoaded2 = new PointPairList();
-        */
+        
         public static ushort lastPoint;
         public static PreciseEditorData curPeak;
 
@@ -208,8 +197,6 @@ namespace Flavor
         {
             (collectors[0])[0].Add(pnt, y1);
             (collectors[1])[0].Add(pnt, y2);
-            //pointList1.Add(pnt, y1);
-            //pointList2.Add(pnt, y2);
             lastPoint = pnt;
             OnNewGraphData(false, false);
         }
@@ -220,25 +207,17 @@ namespace Flavor
             collectors[0].Add(new pListScaled(true));
             collectors[1].Clear();
             collectors[1].Add(new pListScaled(false));
-            //pointList1.Clear();
-            //pointList2.Clear();
-            //pointLists1.Clear();
-            //pointLists2.Clear();
             OnNewGraphData(false, true);//!!!!!!!!
         }
 
         internal static void updateLoaded1Graph(ushort pnt, int y)
         {
             (loadedSpectra[0])[0].Add(pnt, y);
-            //pointListLoaded1.Add(pnt, y);
-            //OnNewGraphData(true);
         }
 
         internal static void updateLoaded2Graph(ushort pnt, int y)
         {
             (loadedSpectra[1])[0].Add(pnt, y);
-            //pointListLoaded2.Add(pnt, y);
-            //OnNewGraphData(true);
         }
 
         internal static void updateLoaded() 
@@ -252,10 +231,6 @@ namespace Flavor
             loadedSpectra[0].Add(new pListScaled(true));
             loadedSpectra[1].Clear();
             loadedSpectra[1].Add(new pListScaled(false));
-            //pointListLoaded1.Clear();
-            //pointListLoaded2.Clear();
-            //pointListsLoaded1.Clear();
-            //pointListsLoaded2.Clear();
             OnNewGraphData(true, true);
         }
 
@@ -265,30 +240,11 @@ namespace Flavor
             for (int i = 0; i < peds.Length; ++i)
             {
                 pListScaled temp = new pListScaled(peds[i].Collector == 1);
-                //PointPairList temp = new PointPairList();
                 for (int j = 0; j < senseModeCounts[i].Length; ++j)
                 {
                     temp.Add((ushort)(peds[i].Step - peds[i].Width + j), senseModeCounts[i][j]);
                 }
                 collectors[peds[i].Collector - 1].Add(temp);
-                /*
-                if (peds[i].Collector == 1)
-                {
-                    for (int j = 0; j < senseModeCounts[i].Length; ++j)
-                    {
-                        temp.Add(peds[i].Step - peds[i].Width + j, senseModeCounts[i][j]);
-                    }
-                    //pointLists1.Add(temp);
-                }
-                else
-                {
-                    for (int j = 0; j < senseModeCounts[i].Length; ++j)
-                    {
-                        temp.Add(peds[i].Step - peds[i].Width + j, senseModeCounts[i][j]);
-                    }
-                    //pointLists2.Add(temp);
-                }
-                */
                 peds[i].AssociatedPoints = temp.Step;
             }
             OnNewGraphData(false, true);
@@ -299,18 +255,6 @@ namespace Flavor
             ResetLoadedPointLists();
             foreach (PreciseEditorData ped in peds)
                 loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-            /*
-            {
-                if (ped.Collector == 1)
-                {
-                    pointListsLoaded1.Add(ped.AssociatedPoints);
-                }
-                else
-                {
-                    pointListsLoaded2.Add(ped.AssociatedPoints);
-                }
-            }
-            */
             OnNewGraphData(true, false);
         }
 
