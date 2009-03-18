@@ -16,28 +16,6 @@ namespace Flavor
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
-        /*
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label label31;
-        */
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.SaveFileDialog savePreciseEditorToFileDialog;
@@ -186,45 +164,9 @@ namespace Flavor
             this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
             this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
             // params_groupBox
-            this.params_groupBox.Location = new System.Drawing.Point(330, 12);
-            // loadFileButton
-            this.loadFileButton.Location = new System.Drawing.Point(126, 228);
-            // saveFileButton
-            this.saveFileButton.Location = new System.Drawing.Point(9, 228);
-            // fV2NumericUpDown
-            this.fV2NumericUpDown.Location = new System.Drawing.Point(195, 201);
-            // fV1NumericUpDown
-            this.fV1NumericUpDown.Location = new System.Drawing.Point(195, 175);
-            // hCurrentNumericUpDown
-            this.hCurrentNumericUpDown.Location = new System.Drawing.Point(195, 149);
-            // eCurrentNumericUpDown
-            this.eCurrentNumericUpDown.Location = new System.Drawing.Point(195, 123);
-            // CPNumericUpDown
-            this.CPNumericUpDown.Location = new System.Drawing.Point(195, 97);
-            // iVoltageNumericUpDown
-            this.iVoltageNumericUpDown.Location = new System.Drawing.Point(195, 71);
-            // idleTimeNumericUpDown
-            this.idleTimeNumericUpDown.Location = new System.Drawing.Point(195, 45);
-            // expTimeNumericUpDown
-            this.expTimeNumericUpDown.Location = new System.Drawing.Point(195, 19);
-            // label34
-            this.label33.Location = new System.Drawing.Point(6, 203);
-            // label35
-            this.label32.Location = new System.Drawing.Point(6, 177);
-            // label36
-            this.label7.Location = new System.Drawing.Point(6, 151);
-            // label37
-            this.label6.Location = new System.Drawing.Point(6, 125);
-            // label38
-            this.label5.Location = new System.Drawing.Point(6, 99);
-            // label39
-            this.label4.Location = new System.Drawing.Point(6, 73);
-            // label40
-            this.label3.Location = new System.Drawing.Point(6, 47);
-            // label41
-            this.label2.Location = new System.Drawing.Point(6, 21);
+            this.params_groupBox.Location = new System.Drawing.Point(this.params_groupBox.Location.X + 320, this.params_groupBox.Location.Y - 73);
             // rareModeCheckBox
-            this.rareModeCheckBox.Location = new System.Drawing.Point(330, 275);
+            this.rareModeCheckBox.Location = new System.Drawing.Point(this.rareModeCheckBox.Location.X + 320, this.rareModeCheckBox.Location.Y - 73);
             // applyButton
             this.applyButton.Location = new System.Drawing.Point(330, 374);
             // cancel_butt
