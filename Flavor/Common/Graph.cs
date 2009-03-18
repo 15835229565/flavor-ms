@@ -43,7 +43,7 @@ namespace Flavor
         public void Add(ushort pnt, int count)
         {
             points[(int)DisplayValue.Step].Add(pnt, count);
-            points[(int)DisplayValue.Voltage].Add(Config.scanVoltage(pnt), count);
+            points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
             points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
         }
 
@@ -77,7 +77,7 @@ namespace Flavor
 
         private void xToVoltage(PointPair pp)
         {
-            pp.X = Config.scanVoltage((ushort)pp.X);
+            pp.X = Config.scanVoltageReal((ushort)pp.X);
         }
 
         private void xToMass(PointPair pp)

@@ -868,7 +868,7 @@ namespace Flavor
             //!!! Requires real law !!!
             double coeff = 3.0;
             if (isFirstCollector) coeff = 2.0;
-            return pnt * coeff;
+            return coeff / Math.Sqrt(Config.scanVoltageReal(pnt));
         }
     }
 }
