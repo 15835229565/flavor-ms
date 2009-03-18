@@ -128,5 +128,13 @@ namespace Flavor
                 loadCommonData(openCommonDataFileDialog.FileName);
             }
         }
+
+        private void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            CPNumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
+            fV1NumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
+            fV2NumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
+            hCurrentNumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
+        }
     }
 }

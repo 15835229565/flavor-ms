@@ -53,6 +53,7 @@ namespace Flavor
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.adjustSettingsCheckBox = new System.Windows.Forms.CheckBox();
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
@@ -66,6 +67,7 @@ namespace Flavor
             // 
             // params_groupBox
             // 
+            this.params_groupBox.Controls.Add(this.adjustSettingsCheckBox);
             this.params_groupBox.Controls.Add(this.loadFileButton);
             this.params_groupBox.Controls.Add(this.saveFileButton);
             this.params_groupBox.Controls.Add(this.fV2NumericUpDown);
@@ -86,14 +88,14 @@ namespace Flavor
             this.params_groupBox.Controls.Add(this.label2);
             this.params_groupBox.Location = new System.Drawing.Point(10, 85);
             this.params_groupBox.Name = "params_groupBox";
-            this.params_groupBox.Size = new System.Drawing.Size(270, 257);
+            this.params_groupBox.Size = new System.Drawing.Size(270, 283);
             this.params_groupBox.TabIndex = 1;
             this.params_groupBox.TabStop = false;
             this.params_groupBox.Text = "Общие параметры";
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(127, 224);
+            this.loadFileButton.Location = new System.Drawing.Point(135, 250);
             this.loadFileButton.Name = "loadFileButton";
             this.loadFileButton.Size = new System.Drawing.Size(120, 23);
             this.loadFileButton.TabIndex = 34;
@@ -103,7 +105,7 @@ namespace Flavor
             // 
             // saveFileButton
             // 
-            this.saveFileButton.Location = new System.Drawing.Point(9, 224);
+            this.saveFileButton.Location = new System.Drawing.Point(9, 250);
             this.saveFileButton.Name = "saveFileButton";
             this.saveFileButton.Size = new System.Drawing.Size(112, 23);
             this.saveFileButton.TabIndex = 6;
@@ -114,6 +116,7 @@ namespace Flavor
             // fV2NumericUpDown
             // 
             this.fV2NumericUpDown.DecimalPlaces = 1;
+            this.fV2NumericUpDown.Enabled = false;
             this.fV2NumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -143,6 +146,7 @@ namespace Flavor
             // fV1NumericUpDown
             // 
             this.fV1NumericUpDown.DecimalPlaces = 1;
+            this.fV1NumericUpDown.Enabled = false;
             this.fV1NumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -172,6 +176,7 @@ namespace Flavor
             // hCurrentNumericUpDown
             // 
             this.hCurrentNumericUpDown.DecimalPlaces = 2;
+            this.hCurrentNumericUpDown.Enabled = false;
             this.hCurrentNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -220,6 +225,7 @@ namespace Flavor
             // CPNumericUpDown
             // 
             this.CPNumericUpDown.DecimalPlaces = 3;
+            this.CPNumericUpDown.Enabled = false;
             this.CPNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -405,7 +411,7 @@ namespace Flavor
             // 
             // ok_butt
             // 
-            this.ok_butt.Location = new System.Drawing.Point(91, 367);
+            this.ok_butt.Location = new System.Drawing.Point(89, 397);
             this.ok_butt.Name = "ok_butt";
             this.ok_butt.Size = new System.Drawing.Size(72, 23);
             this.ok_butt.TabIndex = 2;
@@ -416,7 +422,7 @@ namespace Flavor
             // cancel_butt
             // 
             this.cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel_butt.Location = new System.Drawing.Point(226, 367);
+            this.cancel_butt.Location = new System.Drawing.Point(226, 397);
             this.cancel_butt.Name = "cancel_butt";
             this.cancel_butt.Size = new System.Drawing.Size(54, 23);
             this.cancel_butt.TabIndex = 3;
@@ -426,7 +432,7 @@ namespace Flavor
             // 
             // applyButton
             // 
-            this.applyButton.Location = new System.Drawing.Point(12, 367);
+            this.applyButton.Location = new System.Drawing.Point(10, 397);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(73, 23);
             this.applyButton.TabIndex = 4;
@@ -437,7 +443,7 @@ namespace Flavor
             // rareModeCheckBox
             // 
             this.rareModeCheckBox.AutoSize = true;
-            this.rareModeCheckBox.Location = new System.Drawing.Point(10, 344);
+            this.rareModeCheckBox.Location = new System.Drawing.Point(10, 374);
             this.rareModeCheckBox.Name = "rareModeCheckBox";
             this.rareModeCheckBox.Size = new System.Drawing.Size(287, 17);
             this.rareModeCheckBox.TabIndex = 5;
@@ -454,13 +460,24 @@ namespace Flavor
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
             this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
             // 
+            // adjustSettingsCheckBox
+            // 
+            this.adjustSettingsCheckBox.AutoSize = true;
+            this.adjustSettingsCheckBox.Location = new System.Drawing.Point(9, 227);
+            this.adjustSettingsCheckBox.Name = "adjustSettingsCheckBox";
+            this.adjustSettingsCheckBox.Size = new System.Drawing.Size(211, 17);
+            this.adjustSettingsCheckBox.TabIndex = 35;
+            this.adjustSettingsCheckBox.Text = "Активировать настройки юстировки";
+            this.adjustSettingsCheckBox.UseVisualStyleBackColor = true;
+            this.adjustSettingsCheckBox.CheckedChanged += new System.EventHandler(this.adjustSettingsCheckBox_CheckedChanged);
+            // 
             // OptionsForm
             // 
             this.AcceptButton = this.ok_butt;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel_butt;
-            this.ClientSize = new System.Drawing.Size(292, 402);
+            this.ClientSize = new System.Drawing.Size(292, 432);
             this.Controls.Add(this.rareModeCheckBox);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.cancel_butt);
@@ -515,5 +532,6 @@ namespace Flavor
         protected System.Windows.Forms.Button loadFileButton;
         protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
+        private System.Windows.Forms.CheckBox adjustSettingsCheckBox;
     }
 }

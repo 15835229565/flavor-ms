@@ -866,9 +866,9 @@ namespace Flavor
         internal static double pointToMass(ushort pnt, bool isFirstCollector)
         {
             //!!! Requires real law !!!
-            double coeff = 3.0;
-            if (isFirstCollector) coeff = 2.0;
-            return coeff / Math.Sqrt(Config.scanVoltageReal(pnt));
+            double coeff = 896.5 * 18;
+            if (isFirstCollector) coeff = 2770 * 28;
+            return coeff / Config.scanVoltageReal(pnt);
         }
     }
 }
