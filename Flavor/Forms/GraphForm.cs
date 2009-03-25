@@ -39,7 +39,7 @@ namespace Flavor
         public GraphForm()
         {
             InitializeComponent();
-            Graph.OnAxisModeChanged += new AxisModeEventHandler(Graph_OnAxisModeChanged);
+            Graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
             this.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
             this.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
             this.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
@@ -150,13 +150,13 @@ namespace Flavor
 
             switch (Graph.AxisDisplayMode)
             {
-                case pListScaled.DisplayValue.Step:
+                case Graph.pListScaled.DisplayValue.Step:
                     myPane.XAxis.Title.Text = "Ступени";
                     break;
-                case pListScaled.DisplayValue.Voltage:
+                case Graph.pListScaled.DisplayValue.Voltage:
                     myPane.XAxis.Title.Text = "Напряжение";
                     break;
-                case pListScaled.DisplayValue.Mass:
+                case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = "Масса";
                     break;
             }

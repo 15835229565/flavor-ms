@@ -5,84 +5,6 @@ using System.Xml;
 
 namespace Flavor
 {
-    public class PreciseEditorData
-    {
-        public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr)
-        {
-            pointNumber = pn;
-            step = st;
-            collector = co;
-            iterations = it;
-            width = wi;
-            precision = pr;
-        }
-        public PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
-        {
-            usethis = useit;
-            pointNumber = pn;
-            step = st;
-            collector = co;
-            iterations = it;
-            width = wi;
-            precision = pr;
-            comment = comm;
-        }
-        private bool usethis = true;
-        private byte pointNumber;
-        private ushort step;
-        private byte collector;
-        private ushort iterations;
-        private ushort width;
-        private float precision;
-        private string comment = "";
-        ZedGraph.PointPairList associatedPoints;
-        public ZedGraph.PointPairList AssociatedPoints
-        {
-            get { return associatedPoints; }
-            set { associatedPoints = value; }
-        }
-        public bool Use
-        {
-            get { return usethis; }
-            //set { usethis = value; }
-        }
-        public byte pNumber
-        {
-            get { return pointNumber; }
-            //set { pointNumber = value; }
-        }
-        public ushort Step
-        {
-            get { return step; }
-            //set { step = value; }
-        }
-        public byte Collector
-        {
-            get { return collector; }
-            //set { collector = value; }
-        }
-        public ushort Iterations
-        {
-            get { return iterations; }
-            //set { iterations = value; }
-        }
-        public ushort Width
-        {
-            get { return width; }
-            //set { width = value; }
-        }
-        public float Precision
-        {
-            get { return precision; }
-            //set { precision = value; }
-        }
-        public string Comment
-        {
-            get { return comment; }
-            //set { comment = value; }
-        }
-    }
-
     static class Config
     {
         private static XmlDocument _conf = new XmlDocument();
@@ -107,16 +29,16 @@ namespace Flavor
         private static ushort focusVoltage1;
         private static ushort focusVoltage2;
         
-        private static List<PreciseEditorData> preciseData = new List<PreciseEditorData>();
-        //private static List<PreciseEditorData> preciseDataLoaded = new List<PreciseEditorData>();
+        private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
+        //private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
 
-        public static List<PreciseEditorData> PreciseData
+        public static List<Utility.PreciseEditorData> PreciseData
         {
             get { return preciseData; }
             //set { preciseData = value; }
         }
         /*
-        public static List<PreciseEditorData> PreciseDataLoaded
+        public static List<Utility.PreciseEditorData> PreciseDataLoaded
         {
             get { return preciseDataLoaded; }
             //set { preciseData = value; }
@@ -534,7 +456,7 @@ namespace Flavor
         internal static void OpenPreciseSpecterFile(string p)
         {
             XmlDocument sf = new XmlDocument();
-            List<PreciseEditorData> peds = new List<PreciseEditorData>();
+            List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
             ushort X = 0;
             int Y = 0;
             try
@@ -548,7 +470,7 @@ namespace Flavor
             }
             for (int i = 1; i <= 20; ++i)
             {
-                PreciseEditorData temp = null;
+                Utility.PreciseEditorData temp = null;
                 try
                 {
                     bool allFilled = ((sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") &&
@@ -557,7 +479,7 @@ namespace Flavor
                                       (sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != ""));
                     if (allFilled)
                     {
-                        temp = new PreciseEditorData((byte)(i - 1),
+                        temp = new Utility.PreciseEditorData((byte)(i - 1),
                                                      ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText),
                                                      byte.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText),
                                                      ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText),
@@ -602,7 +524,7 @@ namespace Flavor
             }
             if (isFromFile)
             {
-                foreach (PreciseEditorData ped in Config.PreciseData/*Loaded*/)
+                foreach (Utility.PreciseEditorData ped in Config.PreciseData/*Loaded*/)
                 {
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
                     {
@@ -615,7 +537,7 @@ namespace Flavor
             }
             else
             {
-                foreach (PreciseEditorData ped in Config.PreciseData)
+                foreach (Utility.PreciseEditorData ped in Config.PreciseData)
                 {
                     sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
                     sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
@@ -642,12 +564,12 @@ namespace Flavor
         {
             SavePreciseOptions(Config.PreciseData, confName);
         }
-        internal static void SavePreciseOptions(List<PreciseEditorData> ped)
+        internal static void SavePreciseOptions(List<Utility.PreciseEditorData> ped)
         {
             preciseData = ped;
             SavePreciseOptions(ped, confName);
         }
-        internal static void SavePreciseOptions(List<PreciseEditorData> ped, string pedConfName)
+        internal static void SavePreciseOptions(List<Utility.PreciseEditorData> ped, string pedConfName)
         {
             XmlDocument pedConf;
             string mainConfPrefix = "";
@@ -709,7 +631,7 @@ namespace Flavor
                 mainConfPrefix = mainConfigPrefix;
             }
 
-            foreach (PreciseEditorData p in ped)
+            foreach (Utility.PreciseEditorData p in ped)
             {
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", p.pNumber + 1)).InnerText = p.Step.ToString();
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", p.pNumber + 1)).InnerText = p.Iterations.ToString();
@@ -722,9 +644,9 @@ namespace Flavor
             pedConf.Save(@pedConfName);
         }
 
-        internal static List<PreciseEditorData> LoadPreciseEditorData(string pedConfName)
+        internal static List<Utility.PreciseEditorData> LoadPreciseEditorData(string pedConfName)
         {
-            List<PreciseEditorData> ped = new List<PreciseEditorData>();
+            List<Utility.PreciseEditorData> ped = new List<Utility.PreciseEditorData>();
             XmlDocument pedConf;
             string mainConfPrefix = "";
 
@@ -748,7 +670,7 @@ namespace Flavor
             }
             for (int i = 1; i <= 20; ++i)
             {
-                PreciseEditorData temp = null;
+                Utility.PreciseEditorData temp = null;
                 string peak, iter, width, col;
                 try
                 {
@@ -785,7 +707,7 @@ namespace Flavor
                     catch (FormatException) { }
                     try
                     {
-                        temp = new PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
+                        temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
                                                      byte.Parse(col), ushort.Parse(iter),
                                                      ushort.Parse(width), (float)0, comment);
                     }
@@ -807,7 +729,7 @@ namespace Flavor
         }
         internal static void LoadPreciseEditorData()
         {
-            List<PreciseEditorData> pedl = LoadPreciseEditorData(confName);
+            List<Utility.PreciseEditorData> pedl = LoadPreciseEditorData(confName);
             if ((pedl != null) && (pedl.Count > 0)) 
             { 
                 PreciseData.Clear();
@@ -968,47 +890,6 @@ namespace Flavor
             double coeff = 896.5 * 18;
             if (isFirstCollector) coeff = 2770 * 28;
             return coeff / Config.scanVoltageReal(pnt);
-        }
-        //Comparers and predicate for sorting and finding PreciseEditorData objects in List
-        internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
-        {
-            //Forward sort
-            if (ped1 == null)
-            {
-                if (ped2 == null)
-                    return 0;
-                else
-                    return -1;
-            }
-            else
-            {
-                if (ped2 == null)
-                    return 1;
-                else
-                    return (int)(ped1.Step - ped2.Step);
-            }
-        }
-        internal static int ComparePreciseEditorDataByUseFlagAndPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
-        {
-            //Forward sort
-            if ((ped1 == null) || !ped1.Use)
-            {
-                if ((ped2 == null) || !ped2.Use)
-                    return 0;
-                else
-                    return -1;
-            }
-            else
-            {
-                if ((ped2 == null) || !ped2.Use)
-                    return 1;
-                else
-                    return (int)(ped1.Step - ped2.Step);
-            }
-        }
-        internal static bool PeakIsUsed(PreciseEditorData ped)
-        {
-            return ped.Use;
         }
     }
 }

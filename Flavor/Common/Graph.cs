@@ -5,89 +5,88 @@ using ZedGraph;
 
 namespace Flavor
 {
-    delegate void GraphEventHandler(bool fromFile, bool recreate);
-    delegate void AxisModeEventHandler();
-
-    public class pListScaled
-    {
-        public enum DisplayValue
-        {
-            Step = 0,
-            Voltage = 1,
-            Mass = 2
-        }
-        
-        public PointPairList Step 
-        {
-            get {return points[(int)DisplayValue.Step];}
-        }
-
-        public PointPairList Voltage
-        {
-            get { return points[(int)DisplayValue.Voltage]; }
-        }
-
-        public PointPairList Mass
-        {
-            get { return points[(int)DisplayValue.Mass]; }
-        }
-
-        public bool isEmpty
-        {
-            get { return (points[(int)DisplayValue.Step].Count == 0); }
-        }
-
-        private bool collector;
-        private PointPairList[] points = new PointPairList[3];
-
-        public void Add(ushort pnt, int count)
-        {
-            points[(int)DisplayValue.Step].Add(pnt, count);
-            points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
-            points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
-        }
-
-        public void Clear()
-        {
-            points[(int)DisplayValue.Step].Clear();
-            points[(int)DisplayValue.Voltage].Clear();
-            points[(int)DisplayValue.Mass].Clear();
-        }
-
-        public PointPairList Points(DisplayValue which)
-        {
-            return points[(int)which];
-        }
-
-        public pListScaled(bool isFirstCollector)
-        {
-            collector = isFirstCollector;
-            points[(int)DisplayValue.Step] = new PointPairList();
-            points[(int)DisplayValue.Voltage] = new PointPairList();
-            points[(int)DisplayValue.Mass] = new PointPairList();
-        }
-
-        public pListScaled(bool isFirstCollector, PointPairList dataPoints)
-        {
-            collector = isFirstCollector;
-            points[(int)DisplayValue.Step] = new PointPairList(dataPoints);
-            (points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints)).ForEach(xToVoltage);
-            (points[(int)DisplayValue.Mass] = new PointPairList(dataPoints)).ForEach(xToMass);
-        }
-
-        private void xToVoltage(PointPair pp)
-        {
-            pp.X = Config.scanVoltageReal((ushort)pp.X);
-        }
-
-        private void xToMass(PointPair pp)
-        {
-            pp.X = Config.pointToMass((ushort)pp.X, collector);
-        }
-    }
-
     static class Graph
     {
+        public class pListScaled
+        {
+            public enum DisplayValue
+            {
+                Step = 0,
+                Voltage = 1,
+                Mass = 2
+            }
+
+            public PointPairList Step
+            {
+                get { return points[(int)DisplayValue.Step]; }
+            }
+
+            public PointPairList Voltage
+            {
+                get { return points[(int)DisplayValue.Voltage]; }
+            }
+
+            public PointPairList Mass
+            {
+                get { return points[(int)DisplayValue.Mass]; }
+            }
+
+            public bool isEmpty
+            {
+                get { return (points[(int)DisplayValue.Step].Count == 0); }
+            }
+
+            private bool collector;
+            private PointPairList[] points = new PointPairList[3];
+
+            public void Add(ushort pnt, int count)
+            {
+                points[(int)DisplayValue.Step].Add(pnt, count);
+                points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
+                points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
+            }
+
+            public void Clear()
+            {
+                points[(int)DisplayValue.Step].Clear();
+                points[(int)DisplayValue.Voltage].Clear();
+                points[(int)DisplayValue.Mass].Clear();
+            }
+
+            public PointPairList Points(DisplayValue which)
+            {
+                return points[(int)which];
+            }
+
+            public pListScaled(bool isFirstCollector)
+            {
+                collector = isFirstCollector;
+                points[(int)DisplayValue.Step] = new PointPairList();
+                points[(int)DisplayValue.Voltage] = new PointPairList();
+                points[(int)DisplayValue.Mass] = new PointPairList();
+            }
+
+            public pListScaled(bool isFirstCollector, PointPairList dataPoints)
+            {
+                collector = isFirstCollector;
+                points[(int)DisplayValue.Step] = new PointPairList(dataPoints);
+                (points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints)).ForEach(xToVoltage);
+                (points[(int)DisplayValue.Mass] = new PointPairList(dataPoints)).ForEach(xToMass);
+            }
+
+            private void xToVoltage(PointPair pp)
+            {
+                pp.X = Config.scanVoltageReal((ushort)pp.X);
+            }
+
+            private void xToMass(PointPair pp)
+            {
+                pp.X = Config.pointToMass((ushort)pp.X, collector);
+            }
+        }
+        public delegate void GraphEventHandler(bool fromFile, bool recreate);
+        public delegate void AxisModeEventHandler();
+
         public static event GraphEventHandler OnNewGraphData;
         public static event AxisModeEventHandler OnAxisModeChanged;
 
@@ -178,7 +177,7 @@ namespace Flavor
         }
         
         public static ushort lastPoint;
-        public static PreciseEditorData curPeak;
+        public static Utility.PreciseEditorData curPeak;
 
         static Graph()
         {
@@ -234,7 +233,7 @@ namespace Flavor
             OnNewGraphData(true, true);
         }
 
-        internal static void updateGraph(int[][] senseModeCounts, PreciseEditorData[] peds)
+        internal static void updateGraph(int[][] senseModeCounts, Utility.PreciseEditorData[] peds)
         {
             ResetPointLists();
             for (int i = 0; i < peds.Length; ++i)
@@ -250,15 +249,15 @@ namespace Flavor
             OnNewGraphData(false, true);
         }
 
-        internal static void updateGraph(List <PreciseEditorData> peds)
+        internal static void updateGraph(List <Utility.PreciseEditorData> peds)
         {
             ResetLoadedPointLists();
-            foreach (PreciseEditorData ped in peds)
+            foreach (Utility.PreciseEditorData ped in peds)
                 loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             OnNewGraphData(true, false);
         }
 
-        internal static void updateGraph(ushort pnt, PreciseEditorData curped)
+        internal static void updateGraph(ushort pnt, Utility.PreciseEditorData curped)
         {
             lastPoint = pnt;
             curPeak = curped;

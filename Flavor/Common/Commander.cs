@@ -64,13 +64,13 @@ namespace Flavor
         
         private static ushort PointValue = 0;
 
-        private static PreciseEditorData[] senseModePoints;
+        private static Utility.PreciseEditorData[] senseModePoints;
 
         private static int[][] senseModeCounts;
         
         private static byte senseModePeak = 0;
 
-        public static PreciseEditorData SenseModePeak 
+        public static Utility.PreciseEditorData SenseModePeak 
         {
             get { return senseModePoints[senseModePeak]; }
         }
@@ -518,8 +518,8 @@ namespace Flavor
                                             //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
                                             //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
                                             //senseModePoints = Config.PreciseData.ToArray();
-                                            List<PreciseEditorData> temp = Config.PreciseData.FindAll(Config.PeakIsUsed);
-                                            temp.Sort(Config.ComparePreciseEditorDataByPeakValue);
+                                            List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
+                                            temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
                                             senseModePoints = temp.ToArray();
                                             senseModePeakIteration = new ushort[senseModePoints.Length];
                                             smpiSum = 0;
@@ -655,7 +655,7 @@ namespace Flavor
         internal static bool somePointsUsed()
         {
             if (Config.PreciseData.Count > 0)
-                foreach (PreciseEditorData ped in Config.PreciseData)
+                foreach (Utility.PreciseEditorData ped in Config.PreciseData)
                     if (ped.Use) return true;
             return false;
         }

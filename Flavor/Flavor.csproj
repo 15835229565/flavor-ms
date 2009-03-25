@@ -56,11 +56,18 @@
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
     <Compile Include="Common\ModBus.cs" />
+    <Compile Include="Common\Utility.cs" />
     <Compile Include="Controls\ZedGraphControlPlus.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ZedGraphControlPlus.Designer.cs">
       <DependentUpon>ZedGraphControlPlus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddPointForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddPointForm.Designer.cs">
+      <DependentUpon>AddPointForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ClosureDialog.cs">
       <SubType>Form</SubType>

@@ -41,7 +41,7 @@ namespace Flavor
         private TextBox[] precTextBoxes = new TextBox[20];
         private TextBox[] commentTextBoxes = new TextBox[20];
         private Button[] clearPeakButtons = new Button[20];
-        private List<PreciseEditorData> data = new List<PreciseEditorData>();
+        private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
         public static PreciseOptionsForm getInstance(){
@@ -229,7 +229,7 @@ namespace Flavor
                 this.stepTextBoxes[i].MaxLength = 4;
                 this.stepTextBoxes[i].Size = new System.Drawing.Size(50, 13);
                 this.stepTextBoxes[i].TabIndex = 26 + i;
-                this.stepTextBoxes[i].TextChanged += new System.EventHandler(this.integralTextbox_TextChanged);
+                this.stepTextBoxes[i].TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
 
                 this.colTextBoxes[i] = new TextBox();
                 this.colTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -239,7 +239,7 @@ namespace Flavor
                 this.colTextBoxes[i].MaxLength = 1;
                 this.colTextBoxes[i].Size = new System.Drawing.Size(20, 13);
                 this.colTextBoxes[i].TabIndex = 46 + i;
-                this.colTextBoxes[i].TextChanged += new System.EventHandler(this.oneDigitTextbox_TextChanged);
+                this.colTextBoxes[i].TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
 
                 this.lapsTextBoxes[i] = new TextBox();
                 this.lapsTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -248,7 +248,7 @@ namespace Flavor
                 this.lapsTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
                 this.lapsTextBoxes[i].Size = new System.Drawing.Size(50, 13);
                 this.lapsTextBoxes[i].TabIndex = 66 + i;
-                this.lapsTextBoxes[i].TextChanged += new System.EventHandler(this.integralTextbox_TextChanged);
+                this.lapsTextBoxes[i].TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
 
                 this.widthTextBoxes[i] = new TextBox();
                 this.widthTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -258,7 +258,7 @@ namespace Flavor
                 this.widthTextBoxes[i].MaxLength = 4;
                 this.widthTextBoxes[i].Size = new System.Drawing.Size(50, 13);
                 this.widthTextBoxes[i].TabIndex = 86 + i;
-                this.widthTextBoxes[i].TextChanged += new System.EventHandler(this.integralTextbox_TextChanged);
+                this.widthTextBoxes[i].TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
 
                 this.precTextBoxes[i] = new TextBox();
                 this.precTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -267,7 +267,7 @@ namespace Flavor
                 this.precTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
                 this.precTextBoxes[i].Size = new System.Drawing.Size(50, 13);
                 this.precTextBoxes[i].TabIndex = 106 + i;
-                this.precTextBoxes[i].TextChanged += new System.EventHandler(this.positiveNumericTextbox_TextChanged);
+                this.precTextBoxes[i].TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
 
                 this.commentTextBoxes[i] = new TextBox();
                 this.commentTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -437,12 +437,12 @@ namespace Flavor
             }
         }
 
-        private void loadPreciseEditorData(List<PreciseEditorData> ped)
+        private void loadPreciseEditorData(List<Utility.PreciseEditorData> ped)
         {
             if (ped != null)
             {
                 clearPreciseEditorData();
-                foreach (PreciseEditorData p in ped)
+                foreach (Utility.PreciseEditorData p in ped)
                 {
                     usePeakCheckBoxes[p.pNumber].Checked = p.Use;
                     stepTextBoxes[p.pNumber].Text = p.Step.ToString();
@@ -467,7 +467,7 @@ namespace Flavor
         private bool checkTextBoxes()
         {
             bool exitFlag = true;
-            data = new List<PreciseEditorData>();
+            data = new List<Utility.PreciseEditorData>();
             for (int i = 0; i < 20; ++i)
             {
                 bool somethingFilled = ((lapsTextBoxes[i].Text != "") || (stepTextBoxes[i].Text != "") || (colTextBoxes[i].Text != "") || (widthTextBoxes[i].Text != "") /*|| (precTextBoxes[i].Text != "")*/);
@@ -509,7 +509,7 @@ namespace Flavor
                 }
                 if (allFilled & exitFlag)
                 {
-                    data.Add(new PreciseEditorData(usePeakCheckBoxes[i].Checked, (byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/, commentTextBoxes[i].Text));
+                    data.Add(new Utility.PreciseEditorData(usePeakCheckBoxes[i].Checked, (byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/, commentTextBoxes[i].Text));
                 }
             }
             return exitFlag;
@@ -522,71 +522,6 @@ namespace Flavor
                 Config.SavePreciseOptions(data);
                 base.applyButton_Click(sender, e);
             }
-        }
-
-        private void oneDigitTextbox_TextChanged(object sender, EventArgs e)
-        {
-            char[] numbers = { '1', '2' };
-            char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
-            string outputString = "";
-            foreach (char ch in tempCharArray)
-            {
-                foreach (char compareChar in numbers)
-                {
-                    if (ch == compareChar)
-                    {
-                        outputString += ch;
-                        ((TextBox)sender).Text = outputString;
-                        return;
-                    }
-                }
-            }
-            ((TextBox)sender).Text = outputString;
-        }
-
-        private void integralTextbox_TextChanged(object sender, EventArgs e)
-        {
-            char[] numbers = {'0','1','2','3','4','5','6','7','8','9'};
-            char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
-            string outputString = "";
-            foreach (char ch in tempCharArray) 
-            {
-                foreach (char compareChar in numbers)
-                {
-                    if (ch == compareChar)
-                    {
-                        outputString += ch;
-                        break;
-                    }
-                }
-            }
-            ((TextBox)sender).Text = outputString;
-        }
-
-        private void positiveNumericTextbox_TextChanged(object sender, EventArgs e)
-        {
-            char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-            bool waitFirstDot = true;
-            char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
-            string outputString = "";
-            foreach (char ch in tempCharArray)
-            {
-                if (waitFirstDot && (ch == '.'))
-                {
-                    waitFirstDot = false;
-                    outputString += ch;
-                    continue;
-                }
-                foreach (char compareChar in numbers)
-                {
-                    if (ch == compareChar)
-                    {
-                        outputString += ch;
-                        break;
-                    }
-                }
-            }
-            ((TextBox)sender).Text = outputString;
         }
 
         private void savePreciseEditorToFileButton_Click(object sender, EventArgs e)

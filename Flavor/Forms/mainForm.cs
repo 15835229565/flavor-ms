@@ -28,7 +28,7 @@ namespace Flavor
             Device.OnTurboPumpStatusChanged += new DeviceEventHandler(InvokeRefreshTurboPumpStatus);
             Device.Init();
 
-            Graph.OnNewGraphData += new GraphEventHandler(InvokeRefreshGraph);
+            Graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             
             Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeRefreshButtons);
             Commander.pState = Commander.programStates.Start;
@@ -170,7 +170,7 @@ namespace Flavor
             f2_label.Text = string.Format("{0:f3}", Config.fV2Real);
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = 0;
-            foreach (PreciseEditorData ped in Config.PreciseData)
+            foreach (Utility.PreciseEditorData ped in Config.PreciseData)
             {
                 if (ped.Use)
                     scanProgressBar.Maximum += (2 * ped.Width + 1) * ped.Iterations;
@@ -210,7 +210,7 @@ namespace Flavor
         {
             if (this.InvokeRequired)
             {
-                GraphEventHandler InvokeDelegate = new GraphEventHandler(RefreshGraph);
+                Graph.GraphEventHandler InvokeDelegate = new Graph.GraphEventHandler(RefreshGraph);
                 this.Invoke(InvokeDelegate, fromFile, recreate);
             }
             else

@@ -67,13 +67,13 @@ namespace Flavor
 
                 switch (Graph.AxisDisplayMode)
                 {
-                    case pListScaled.DisplayValue.Step:
+                    case Graph.pListScaled.DisplayValue.Step:
                         stepViewItem.Checked = true;
                         break;
-                    case pListScaled.DisplayValue.Voltage:
+                    case Graph.pListScaled.DisplayValue.Voltage:
                         voltageViewItem.Checked = true;
                         break;
-                    case pListScaled.DisplayValue.Mass:
+                    case Graph.pListScaled.DisplayValue.Mass:
                         massViewItem.Checked = true;
                         break;
                 }
@@ -116,13 +116,13 @@ namespace Flavor
             switch (((ToolStripMenuItem)sender).Name) 
             {
                 case "axis_mode_step":
-                    Graph.AxisDisplayMode = pListScaled.DisplayValue.Step;
+                    Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
                     break;
                 case "axis_mode_voltage":
-                    Graph.AxisDisplayMode = pListScaled.DisplayValue.Voltage;
+                    Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
                     break;
                 case "axis_mode_mass":
-                    Graph.AxisDisplayMode = pListScaled.DisplayValue.Mass;
+                    Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
                     break;
                 default:
                     break;
