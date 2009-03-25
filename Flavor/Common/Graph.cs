@@ -106,6 +106,22 @@ namespace Flavor
                 }
             }
         }
+        private static bool isFromFile = false;
+        public static bool IsFromFile
+        {
+            get
+            {
+                return isFromFile;
+            }
+            set
+            {
+                if (isFromFile != value)
+                {
+                    isFromFile = value;
+                }
+            }
+        }
+
         private static List<pListScaled>[] collectors = new List<pListScaled>[2];
         private static List<pListScaled>[] loadedSpectra = new List<pListScaled>[2];
         public static List<PointPairList> Collector1Steps

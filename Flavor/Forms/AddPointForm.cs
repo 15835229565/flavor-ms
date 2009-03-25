@@ -12,11 +12,13 @@ namespace Flavor
     {
         private Utility.PreciseEditorRow oneRow;
         
-        public AddPointForm()
+        public AddPointForm(ushort step, byte col): base()
         {
             InitializeComponent();
 
             this.oneRow = new Utility.PreciseEditorRow(13, 50);
+            this.oneRow.StepText = step.ToString();
+            this.oneRow.ColText = col.ToString();
             this.Controls.AddRange(oneRow.getControls());
         }
     }

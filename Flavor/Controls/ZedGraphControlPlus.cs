@@ -131,7 +131,37 @@ namespace Flavor
         
         private void AddPointToPreciseEditor(object sender, EventArgs e) 
         {
-            //new AddPointForm(pointIndex, curveReference).ShowDialog();
+            byte collector = 0;
+            int curveIndex;
+            PointPair pp = null;
+            if (Graph.IsFromFile)
+            {
+                if (-1 != (curveIndex = Graph.LoadedSpectra1.IndexOf((PointPairList)(curveReference.Points))))
+                {
+                    collector = 1;
+                    pp = (Graph.LoadedSpectra1Steps[curveIndex])[pointIndex];
+                }
+                else if (-1 != (curveIndex = Graph.LoadedSpectra2.IndexOf((PointPairList)(curveReference.Points))))
+                {
+                    collector = 2;
+                    pp = (Graph.LoadedSpectra2Steps[curveIndex])[pointIndex];
+                }
+            }
+            else 
+            {
+                if (-1 != (curveIndex = Graph.Collector1.IndexOf((PointPairList)(curveReference.Points))))
+                {
+                    collector = 1;
+                    pp = (Graph.Collector1Steps[curveIndex])[pointIndex];
+                }
+                else if (-1 != (curveIndex = Graph.Collector2.IndexOf((PointPairList)(curveReference.Points))))
+                {
+                    collector = 2;
+                    pp = (Graph.Collector2Steps[curveIndex])[pointIndex];
+                }
+            }
+            if ((pp != null) && (collector != 0))
+                new AddPointForm((ushort)(pp.X), collector).ShowDialog();
             //MessageBox.Show(pointIndex.ToString(), curveReference.NPts.ToString());
         }
     }

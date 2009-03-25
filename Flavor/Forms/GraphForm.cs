@@ -13,7 +13,6 @@ namespace Flavor
     
     public partial class GraphForm : Form
     {
-        private bool isFromFile = false;
         private string displayedFileName = "";
 
         private bool preciseSpecterDisplayed = false;
@@ -48,7 +47,7 @@ namespace Flavor
 
         private void Graph_OnAxisModeChanged()
         {
-            if (isFromFile)
+            if (Graph.IsFromFile)
             {
                 DisplayLoadedSpectrum(this.collect1_graph, this.collect2_graph, displayedFileName);
             }
@@ -81,7 +80,7 @@ namespace Flavor
         public void CreateGraph(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
         {
             displayedFileName = "";
-            isFromFile = false;
+            Graph.IsFromFile = false;
             closeSpecterFileToolStripMenuItem.Enabled = false;
             ZedGraphRebirth(zgc1, Graph.Collector1, "Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.Collector2, "Второй коллектор");
@@ -96,7 +95,7 @@ namespace Flavor
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2, string fileName) 
         {
             displayedFileName = fileName;
-            isFromFile = true;
+            Graph.IsFromFile = true;
             ZedGraphRebirth(zgc1, Graph.LoadedSpectra1, "Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.LoadedSpectra2, "Второй коллектор");
             closeSpecterFileToolStripMenuItem.Enabled = true;
@@ -115,7 +114,7 @@ namespace Flavor
                 saveSpecterFileDialog.DefaultExt = "psf";
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, isFromFile);
+                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, Graph.IsFromFile);
                 }
             }
             else
@@ -124,7 +123,7 @@ namespace Flavor
                 saveSpecterFileDialog.DefaultExt = "sdf";
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Config.SaveSpecterFile(saveSpecterFileDialog.FileName, isFromFile);
+                    Config.SaveSpecterFile(saveSpecterFileDialog.FileName, Graph.IsFromFile);
                 }
             }
         }
