@@ -131,18 +131,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>mainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ScanOptionsForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ScanOptionsForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PreciseOptionsForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PreciseOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
