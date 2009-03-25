@@ -9,9 +9,9 @@ using System.Resources;
 [assembly: AssemblyTitle("Flavor")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Sapere Aude")]
+[assembly: AssemblyCompany("MSLab")]
 [assembly: AssemblyProduct("Flavor")]
-[assembly: AssemblyCopyright("Copyright © Sapere Aude 2008")]
+[assembly: AssemblyCopyright("Copyright © Dmitrii Lebedev 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
