@@ -172,7 +172,8 @@ namespace Flavor
             scanProgressBar.Maximum = 0;
             foreach (PreciseEditorData ped in Config.PreciseData)
             {
-                scanProgressBar.Maximum += (2 * ped.Width + 1) * ped.Iterations;
+                if (ped.Use)
+                    scanProgressBar.Maximum += (2 * ped.Width + 1) * ped.Iterations;
             }
             scanProgressBar.Step = 1;
             cancelScanButton.Enabled = true;
@@ -570,7 +571,8 @@ namespace Flavor
 
         public void RefreshButtons()
         {
-            bool precPointsExist = (Config.PreciseData.Count != 0);
+            //bool precPointsExist = (Config.PreciseData.Count != 0);
+            bool precPointsExist = Commander.somePointsUsed();
             switch (Commander.hBlock) 
             {
                 case true:

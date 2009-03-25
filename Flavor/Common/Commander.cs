@@ -515,8 +515,12 @@ namespace Flavor
                                         if (Config.PreciseData.Count > 0)
                                         {
                                             //Sort in increased order
-                                            Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
-                                            senseModePoints = Config.PreciseData.ToArray();
+                                            //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
+                                            //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
+                                            //senseModePoints = Config.PreciseData.ToArray();
+                                            List<PreciseEditorData> temp = Config.PreciseData.FindAll(Config.PeakIsUsed);
+                                            temp.Sort(Config.ComparePreciseEditorDataByPeakValue);
+                                            senseModePoints = temp.ToArray();
                                             senseModePeakIteration = new ushort[senseModePoints.Length];
                                             smpiSum = 0;
                                             senseModeCounts = new int[senseModePoints.Length][];
@@ -623,7 +627,7 @@ namespace Flavor
         {
             if (pState == Commander.programStates.Ready)
             {
-                if (Config.PreciseData.Count > 0)
+                if (somePointsUsed())
                 {
                     pStatePrev = pState;
                     pState = Commander.programStates.Measure;
@@ -646,6 +650,14 @@ namespace Flavor
                 Commander.AddToSend(new sendF2Voltage());
                 */
             }
+        }
+
+        internal static bool somePointsUsed()
+        {
+            if (Config.PreciseData.Count > 0)
+                foreach (PreciseEditorData ped in Config.PreciseData)
+                    if (ped.Use) return true;
+            return false;
         }
 
         internal static void Unblock()
@@ -709,25 +721,6 @@ namespace Flavor
                 default:
                     // фигня
                     break;
-            }
-        }
-       
-        private static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) 
-        {
-            //Forward sort
-            if (ped1 == null)
-            {
-                if (ped2 == null)
-                    return 0;
-                else
-                    return -1;
-            }
-            else
-            {
-                if (ped2 == null)
-                    return 1;
-                else
-                    return (int)(ped1.Step - ped2.Step);
             }
         }
     }

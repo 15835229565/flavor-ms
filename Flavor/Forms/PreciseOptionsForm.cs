@@ -16,6 +16,7 @@ namespace Flavor
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label commentLabel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.SaveFileDialog savePreciseEditorToFileDialog;
@@ -29,13 +30,17 @@ namespace Flavor
             //get { return upLevel; }
             set { upLevel = value; }
         }
-        
+
+        private ToolTip clearRowToolTip = new ToolTip();
         private Label[] peakNumberLabels = new Label[20];
+        private CheckBox[] usePeakCheckBoxes = new CheckBox[20];
         private TextBox[] stepTextBoxes = new TextBox[20];
         private TextBox[] colTextBoxes = new TextBox[20];
         private TextBox[] lapsTextBoxes = new TextBox[20];
         private TextBox[] widthTextBoxes = new TextBox[20];
         private TextBox[] precTextBoxes = new TextBox[20];
+        private TextBox[] commentTextBoxes = new TextBox[20];
+        private Button[] clearPeakButtons = new Button[20];
         private List<PreciseEditorData> data = new List<PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
@@ -65,11 +70,12 @@ namespace Flavor
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
+            this.colNumLabel = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.colNumLabel = new System.Windows.Forms.Label();
+            this.commentLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
@@ -86,16 +92,20 @@ namespace Flavor
             this.label1.Location = new System.Drawing.Point(6, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 26);
-            this.label1.TabIndex = 0;
             this.label1.Text = "Номер\r\nпика";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // colNumLabel
+            this.colNumLabel.AutoSize = true;
+            this.colNumLabel.Location = new System.Drawing.Point(105, 29);
+            this.colNumLabel.Name = "colNumLabel";
+            this.colNumLabel.Size = new System.Drawing.Size(29, 13);
+            this.colNumLabel.Text = "Кол.";
             // label8
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.SystemColors.Control;
             this.label8.Location = new System.Drawing.Point(55, 16);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(60, 26);
-            this.label8.TabIndex = 1;
             this.label8.Text = "Ступенька\r\n(<=1056)";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // label9
@@ -104,7 +114,6 @@ namespace Flavor
             this.label9.Location = new System.Drawing.Point(130, 29);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(52, 13);
-            this.label9.TabIndex = 2;
             this.label9.Text = "Проходы";
             // label10
             this.label10.AutoSize = true;
@@ -112,7 +121,6 @@ namespace Flavor
             this.label10.Location = new System.Drawing.Point(182, 29);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(46, 13);
-            this.label10.TabIndex = 3;
             this.label10.Text = "Ширина";
             // label11
             this.label11.AutoSize = true;
@@ -120,8 +128,14 @@ namespace Flavor
             this.label11.Location = new System.Drawing.Point(232, 29);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(54, 13);
-            this.label11.TabIndex = 4;
             this.label11.Text = "Точность";
+            // commentLabel
+            this.commentLabel.AutoSize = true;
+            this.commentLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.commentLabel.Location = new System.Drawing.Point(288, 29);
+            this.commentLabel.Name = "commentLabel";
+            this.commentLabel.Size = new System.Drawing.Size(54, 13);
+            this.commentLabel.Text = "Комментарий";
             // groupBox1
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox1.Controls.Add(this.colNumLabel);
@@ -133,9 +147,10 @@ namespace Flavor
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.commentLabel);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(312, 385);
+            this.groupBox1.Size = new System.Drawing.Size(312 + 2 + 100, 385);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Редактор областей сканирования";
@@ -164,30 +179,23 @@ namespace Flavor
             this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
             this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
             // params_groupBox
-            this.params_groupBox.Location = new System.Drawing.Point(this.params_groupBox.Location.X + 320, this.params_groupBox.Location.Y - 73);
+            this.params_groupBox.Location = new System.Drawing.Point(this.params_groupBox.Location.X + 320 + 2 + 100, this.params_groupBox.Location.Y - 73);
             // rareModeCheckBox
-            this.rareModeCheckBox.Location = new System.Drawing.Point(this.rareModeCheckBox.Location.X + 320, this.rareModeCheckBox.Location.Y - 73);
+            this.rareModeCheckBox.Location = new System.Drawing.Point(this.rareModeCheckBox.Location.X + 320 + 2 + 100, this.rareModeCheckBox.Location.Y - 73);
             // applyButton
-            this.applyButton.Location = new System.Drawing.Point(330, 374);
+            this.applyButton.Location = new System.Drawing.Point(330 + 2 + 100, 374);
             // cancel_butt
-            this.cancel_butt.Location = new System.Drawing.Point(540, 374);
+            this.cancel_butt.Location = new System.Drawing.Point(540 + 2 + 100, 374);
             // ok_butt
-            this.ok_butt.Location = new System.Drawing.Point(408, 374);
+            this.ok_butt.Location = new System.Drawing.Point(408 + 2 + 100, 374);
             // savePreciseEditorToFileDialog
             this.savePreciseEditorToFileDialog.DefaultExt = "ped";
             this.savePreciseEditorToFileDialog.Filter = "Precise Editor Data Files (*.ped)|*.ped";
             // loadPreciseEditorFromFileDialog
             this.loadPreciseEditorFromFileDialog.DefaultExt = "ped";
             this.loadPreciseEditorFromFileDialog.Filter = "Precise editor data files (*.ped)|*.ped|Precise specter files (*.psf)|*.psf";
-            // colNumLabel
-            this.colNumLabel.AutoSize = true;
-            this.colNumLabel.Location = new System.Drawing.Point(105, 29);
-            this.colNumLabel.Name = "colNumLabel";
-            this.colNumLabel.Size = new System.Drawing.Size(29, 13);
-            this.colNumLabel.TabIndex = 126;
-            this.colNumLabel.Text = "Кол.";
             // PreciseOptionsForm
-            this.ClientSize = new System.Drawing.Size(609, 409);
+            this.ClientSize = new System.Drawing.Size(609 + 2 + 100, 409);
             this.Controls.Add(this.groupBox1);
             this.MinimizeBox = true;
             this.Name = "PreciseOptionsForm";
@@ -204,9 +212,14 @@ namespace Flavor
                 this.peakNumberLabels[i].AutoSize = true;
                 this.peakNumberLabels[i].BackColor = System.Drawing.SystemColors.Control;
                 this.peakNumberLabels[i].Location = new System.Drawing.Point(21, 42 + 15 * i);
-                this.peakNumberLabels[i].Size = new System.Drawing.Size(19, 13);
+                this.peakNumberLabels[i].Size = new System.Drawing.Size(16, 13);
                 this.peakNumberLabels[i].Text = string.Format("{0}", i + 1);
                 this.peakNumberLabels[i].TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
+                this.usePeakCheckBoxes[i] = new CheckBox();
+                this.usePeakCheckBoxes[i].Location = new System.Drawing.Point(43, 42 + 15 * i);
+                this.usePeakCheckBoxes[i].Size = new System.Drawing.Size(13, 13);
+                this.usePeakCheckBoxes[i].Text = "";
                 
                 this.stepTextBoxes[i] = new TextBox();
                 this.stepTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -256,12 +269,31 @@ namespace Flavor
                 this.precTextBoxes[i].TabIndex = 106 + i;
                 this.precTextBoxes[i].TextChanged += new System.EventHandler(this.positiveNumericTextbox_TextChanged);
 
+                this.commentTextBoxes[i] = new TextBox();
+                this.commentTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
+                this.commentTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
+                this.commentTextBoxes[i].Location = new System.Drawing.Point(288, 42 + 15 * i);
+                this.commentTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
+                this.commentTextBoxes[i].Size = new System.Drawing.Size(100, 13);
+                this.commentTextBoxes[i].TabIndex = 126 + i;
+
+                this.clearPeakButtons[i] = new Button();
+                this.clearPeakButtons[i].Location = new System.Drawing.Point(390, 42 + 15 * i);
+                this.clearPeakButtons[i].Size = new System.Drawing.Size(13, 13);
+                this.clearPeakButtons[i].TabIndex = 146 + i;
+                this.clearPeakButtons[i].Margin = new Padding(0);
+                this.clearPeakButtons[i].MouseHover += new EventHandler(clearPeakButtons_MouseHover);
+                this.clearPeakButtons[i].Click += new EventHandler(clearPeakButtons_Click);
+
                 this.groupBox1.Controls.Add(peakNumberLabels[i]);
+                this.groupBox1.Controls.Add(usePeakCheckBoxes[i]);
                 this.groupBox1.Controls.Add(stepTextBoxes[i]);
                 this.groupBox1.Controls.Add(colTextBoxes[i]);
                 this.groupBox1.Controls.Add(lapsTextBoxes[i]);
                 this.groupBox1.Controls.Add(widthTextBoxes[i]);
                 this.groupBox1.Controls.Add(precTextBoxes[i]);
+                this.groupBox1.Controls.Add(commentTextBoxes[i]);
+                this.groupBox1.Controls.Add(clearPeakButtons[i]);
             }
             
             this.groupBox1.ResumeLayout(false);
@@ -270,7 +302,20 @@ namespace Flavor
             this.PerformLayout();
         }
 
-        private PreciseOptionsForm(): base()
+        private void clearPeakButtons_MouseHover(object sender, EventArgs e)
+        {
+            this.clearRowToolTip.Show("Очистить строку", (IWin32Window)sender);
+        }
+
+        private void clearPeakButtons_Click(object sender, EventArgs e)
+        {
+            int i;
+            for (i = 0; this.clearPeakButtons[i] != (Button)sender; ++i);//not safe!!!
+            clearRowData(i);
+        }
+
+        private PreciseOptionsForm()
+            : base()
         {
             InitializeComponent();
             this.SuspendLayout();
@@ -399,11 +444,13 @@ namespace Flavor
                 clearPreciseEditorData();
                 foreach (PreciseEditorData p in ped)
                 {
+                    usePeakCheckBoxes[p.pNumber].Checked = p.Use;
                     stepTextBoxes[p.pNumber].Text = p.Step.ToString();
                     colTextBoxes[p.pNumber].Text = p.Collector.ToString();
                     lapsTextBoxes[p.pNumber].Text = p.Iterations.ToString();
                     widthTextBoxes[p.pNumber].Text = p.Width.ToString();
                     precTextBoxes[p.pNumber].Text = p.Precision.ToString();
+                    commentTextBoxes[p.pNumber].Text = p.Comment;
                 }
             }
         }
@@ -462,7 +509,7 @@ namespace Flavor
                 }
                 if (allFilled & exitFlag)
                 {
-                    data.Add(new PreciseEditorData((byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/));
+                    data.Add(new PreciseEditorData(usePeakCheckBoxes[i].Checked, (byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/, commentTextBoxes[i].Text));
                 }
             }
             return exitFlag;
@@ -568,13 +615,17 @@ namespace Flavor
 
         private void clearPreciseEditorData()
         {
-            for (int i = 0; i < 20; ++i) {
-                stepTextBoxes[i].Text = "";
-                colTextBoxes[i].Text = "";
-                lapsTextBoxes[i].Text = "";
-                widthTextBoxes[i].Text = "";
-                precTextBoxes[i].Text = "";
-            }
+            for (int i = 0; i < 20; ++i)
+                clearRowData(i);
+        }
+
+        private void clearRowData(int i)
+        {
+            stepTextBoxes[i].Text = "";
+            colTextBoxes[i].Text = "";
+            lapsTextBoxes[i].Text = "";
+            widthTextBoxes[i].Text = "";
+            precTextBoxes[i].Text = "";
         }
 
         private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e)

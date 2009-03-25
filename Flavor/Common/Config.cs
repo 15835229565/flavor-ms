@@ -16,55 +16,70 @@ namespace Flavor
             width = wi;
             precision = pr;
         }
-
-        byte pointNumber;
-        ushort step;
-        byte collector;
-        ushort iterations;
-        ushort width;
-        float precision;
+        public PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+        {
+            usethis = useit;
+            pointNumber = pn;
+            step = st;
+            collector = co;
+            iterations = it;
+            width = wi;
+            precision = pr;
+            comment = comm;
+        }
+        private bool usethis = true;
+        private byte pointNumber;
+        private ushort step;
+        private byte collector;
+        private ushort iterations;
+        private ushort width;
+        private float precision;
+        private string comment = "";
         ZedGraph.PointPairList associatedPoints;
-
         public ZedGraph.PointPairList AssociatedPoints
         {
             get { return associatedPoints; }
             set { associatedPoints = value; }
         }
-
+        public bool Use
+        {
+            get { return usethis; }
+            //set { usethis = value; }
+        }
         public byte pNumber
         {
             get { return pointNumber; }
             //set { pointNumber = value; }
         }
-
         public ushort Step
         {
             get { return step; }
             //set { step = value; }
         }
-
         public byte Collector
         {
             get { return collector; }
             //set { collector = value; }
         }
-
         public ushort Iterations
         {
             get { return iterations; }
             //set { iterations = value; }
         }
-
         public ushort Width
         {
             get { return width; }
             //set { width = value; }
         }
-
         public float Precision
         {
             get { return precision; }
             //set { precision = value; }
+        }
+        public string Comment
+        {
+            get { return comment; }
+            //set { comment = value; }
         }
     }
 
@@ -637,6 +652,8 @@ namespace Flavor
                     tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "iteration", ""));
                     tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "width", ""));
                     tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "error", ""));
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "comment", ""));
+                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "use", ""));
                     pedConf.SelectSingleNode(string.Format("sense")).AppendChild(tempRegion);
                 }
             }
@@ -648,14 +665,29 @@ namespace Flavor
                     _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText = "";
                     _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText = "";
                     _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText = "";
-                    if (_conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)) == null)
-                    {
-                        XmlNode temp = _conf.CreateNode(XmlNodeType.Element, string.Format("col", i), "");
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(temp);
-                    }
-                    else
+                    try
                     {
                         _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText = "";
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(_conf.CreateNode(XmlNodeType.Element, "col", ""));
+                    }
+                    try 
+                    {
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}/comment", i)).InnerText = "";
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(_conf.CreateNode(XmlNodeType.Element, "comment", ""));
+                    }
+                    try
+                    {
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}/use", i)).InnerText = "";
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(_conf.CreateNode(XmlNodeType.Element, "use", ""));
                     }
                 }
 
@@ -670,6 +702,8 @@ namespace Flavor
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", p.pNumber + 1)).InnerText = p.Width.ToString();
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/error", p.pNumber + 1)).InnerText = p.Precision.ToString();
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", p.pNumber + 1)).InnerText = p.Collector.ToString();
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/comment", p.pNumber + 1)).InnerText = p.Comment;
+                pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/use", p.pNumber + 1)).InnerText = p.Use.ToString();
             }
             pedConf.Save(pedConfName);
         }
@@ -701,30 +735,51 @@ namespace Flavor
             for (int i = 1; i <= 20; ++i)
             {
                 PreciseEditorData temp = null;
+                string peak, iter, width, col;
                 try
                 {
-                    bool allFilled = ((pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText != "") &&
-                                      (pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText != "") &&
-                                      (pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText != "") &&
-                                      (pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText != ""));
-
-                    if (allFilled)
-                    {
-                        temp = new PreciseEditorData((byte)(i - 1),
-                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText),
-                                                     byte.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText),
-                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText),
-                                                     ushort.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText),
-                                                     (float)0);
-                    }
+                    peak = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText;
+                    col = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText;
+                    iter = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText;
+                    width = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText;
                 }
                 catch (NullReferenceException)
                 {
                     if (!pedConfName.Equals(confName))
-                        System.Windows.Forms.MessageBox.Show("Ошибка чтения файла прецизионных точек", "Ошибка структуры файла");
+                        System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионных точек");
                     else
-                        System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
+                        System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения конфигурационного файла");
                     return null;
+                }
+                if ((peak != "") && (iter != "") && (width != "") && (col != ""))
+                {
+                    string comment = "";
+                    try
+                    {
+                        comment = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/comment", i)).InnerText;
+                    }
+                    catch (NullReferenceException) { }
+                    bool use = true;
+                    try
+                    {
+                        use = bool.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/use", i)).InnerText);
+                    }
+                    catch (NullReferenceException) { }
+                    catch (FormatException) { }
+                    try
+                    {
+                        temp = new PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
+                                                     byte.Parse(col), ushort.Parse(iter),
+                                                     ushort.Parse(width), (float)0, comment);
+                    }
+                    catch (FormatException)
+                    {
+                        if (!pedConfName.Equals(confName))
+                            System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионных точек");
+                        else
+                            System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения конфигурационного файла");
+                        return null;
+                    }
                 }
                 if (temp != null) ped.Add(temp);
             }
@@ -862,6 +917,47 @@ namespace Flavor
             double coeff = 896.5 * 18;
             if (isFirstCollector) coeff = 2770 * 28;
             return coeff / Config.scanVoltageReal(pnt);
+        }
+        //Comparers and predicate for sorting and finding PreciseEditorData objects in List
+        internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
+        {
+            //Forward sort
+            if (ped1 == null)
+            {
+                if (ped2 == null)
+                    return 0;
+                else
+                    return -1;
+            }
+            else
+            {
+                if (ped2 == null)
+                    return 1;
+                else
+                    return (int)(ped1.Step - ped2.Step);
+            }
+        }
+        internal static int ComparePreciseEditorDataByUseFlagAndPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
+        {
+            //Forward sort
+            if ((ped1 == null) || !ped1.Use)
+            {
+                if ((ped2 == null) || !ped2.Use)
+                    return 0;
+                else
+                    return -1;
+            }
+            else
+            {
+                if ((ped2 == null) || !ped2.Use)
+                    return 1;
+                else
+                    return (int)(ped1.Step - ped2.Step);
+            }
+        }
+        internal static bool PeakIsUsed(PreciseEditorData ped)
+        {
+            return ped.Use;
         }
     }
 }
