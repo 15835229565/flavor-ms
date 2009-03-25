@@ -362,7 +362,7 @@ namespace Flavor
             }
             catch (NullReferenceException)
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры конфигурационного файла");
+                System.Windows.Forms.MessageBox.Show("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла");
             }
             loadCommonOptions();
             LoadPreciseEditorData();
@@ -370,9 +370,23 @@ namespace Flavor
 
         private static void saveScanOptions()
         {
-            _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
-            _conf.SelectSingleNode("/control/overview/end").InnerText = ePoint.ToString();
-            _conf.Save(confName);
+            try
+            {
+                _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
+            }
+            catch (NullReferenceException)
+            {
+                System.Windows.Forms.MessageBox.Show("Невозможно найти начальное значение напряжения развертки при сканировании", "Ошибка структуры конфигурационного файла");
+            }
+            try
+            {
+                _conf.SelectSingleNode("/control/overview/end").InnerText = ePoint.ToString();
+            }
+            catch (NullReferenceException)
+            {
+                System.Windows.Forms.MessageBox.Show("Невозможно найти конечное значение напряжения развертки при сканировании", "Ошибка структуры конфигурационного файла");
+            }
+            _conf.Save(@confName);
         }
         internal static void saveScanOptions(ushort sPointReal, ushort ePointReal)
         {
@@ -459,7 +473,7 @@ namespace Flavor
             }
             catch (NullReferenceException)
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка чтения файла спектра", "Ошибка структуры файла");
+                System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
                 return;
             }
         }
@@ -510,11 +524,11 @@ namespace Flavor
                     sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
                 }
             }
-            sf.Save(p);
+            sf.Save(@p);
         }
         internal static void AutoSaveSpecterFile()
         {
-            SaveSpecterFile(@genAutoSaveFilename("sdf"), false);
+            SaveSpecterFile(genAutoSaveFilename("sdf"), false);
         }
 
         internal static void OpenPreciseSpecterFile(string p)
@@ -562,7 +576,7 @@ namespace Flavor
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.Forms.MessageBox.Show("Ошибка чтения файла прецизионного спектра", "Ошибка структуры файла");
+                    System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра");
                     return;
                 }
                 if (temp != null) peds.Add(temp);
@@ -617,11 +631,11 @@ namespace Flavor
                     }
                 }
             }
-            sf.Save(p);
+            sf.Save(@p);
         }
         internal static void AutoSavePreciseSpecterFile()
         {
-            SavePreciseSpecterFile(@genAutoSaveFilename("psf"), false);
+            SavePreciseSpecterFile(genAutoSaveFilename("psf"), false);
         }
 
         internal static void SavePreciseOptions() 
@@ -705,7 +719,7 @@ namespace Flavor
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/comment", p.pNumber + 1)).InnerText = p.Comment;
                 pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/use", p.pNumber + 1)).InnerText = p.Use.ToString();
             }
-            pedConf.Save(pedConfName);
+            pedConf.Save(@pedConfName);
         }
 
         internal static List<PreciseEditorData> LoadPreciseEditorData(string pedConfName)
@@ -745,10 +759,13 @@ namespace Flavor
                 }
                 catch (NullReferenceException)
                 {
+                    structureErrorOnLoadPrecise(pedConfName);
+                    /*
                     if (!pedConfName.Equals(confName))
                         System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионных точек");
                     else
                         System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения конфигурационного файла");
+                    */
                     return null;
                 }
                 if ((peak != "") && (iter != "") && (width != "") && (col != ""))
@@ -774,10 +791,13 @@ namespace Flavor
                     }
                     catch (FormatException)
                     {
+                        wrongFormatOnLoadPrecise(confName);
+                        /*
                         if (!pedConfName.Equals(confName))
                             System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионных точек");
                         else
                             System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения конфигурационного файла");
+                        */
                         return null;
                     }
                 }
@@ -895,10 +915,13 @@ namespace Flavor
             }
             catch (NullReferenceException)
             {
+                structureErrorOnLoadCommonData(cdConfName);
+                /*
                 if (!cdConfName.Equals(confName))
                     System.Windows.Forms.MessageBox.Show("Ошибка чтения файла общих настроек", "Ошибка структуры файла");
                 else
                     System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
+                */
                 return;
             }
             eTime = eT;
@@ -909,6 +932,34 @@ namespace Flavor
             hCurrent = hC;
             fV1 = fv1;
             fV2 = fv2;
+        }
+        //Error messages on loading different configs
+        private static void wrongFormatOnLoadPrecise(string configName)
+        {
+            wrongFormatOnLoad(configName, "Ошибка чтения файла прецизионных точек");
+        }
+        private static void wrongFormatOnLoad(string configName, string errorFile)
+        {
+            errorOnLoad(configName, errorFile, "Неверный формат данных");
+        }
+        private static void structureErrorOnLoadCommonData(string configName)
+        {
+            structureErrorOnLoad(configName, "Ошибка чтения файла общих настроек");
+        }
+        private static void structureErrorOnLoadPrecise(string configName)
+        {
+            structureErrorOnLoad(configName, "Ошибка чтения файла прецизионных точек");
+        }
+        private static void structureErrorOnLoad(string configName, string errorFile)
+        {
+            errorOnLoad(configName, errorFile, "Ошибка структуры файла");
+        }
+        private static void errorOnLoad(string configName, string errorFile, string errorMessage)
+        {
+            if (!configName.Equals(confName))
+                System.Windows.Forms.MessageBox.Show(errorMessage, errorFile);
+            else
+                System.Windows.Forms.MessageBox.Show(errorMessage, "Ошибка чтения конфигурационного файла");
         }
 
         internal static double pointToMass(ushort pnt, bool isFirstCollector)
