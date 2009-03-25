@@ -131,7 +131,8 @@ namespace Flavor
         
         private void AddPointToPreciseEditor(object sender, EventArgs e) 
         {
-            MessageBox.Show(pointIndex.ToString(), curveReference.NPts.ToString());
+            //new AddPointForm(pointIndex, curveReference).ShowDialog();
+            //MessageBox.Show(pointIndex.ToString(), curveReference.NPts.ToString());
         }
     }
 }

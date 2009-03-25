@@ -5,9 +5,6 @@ using System.Timers;
 
 namespace Flavor
 {
-    delegate void ProgramEventHandler();
-    delegate void AsyncReplyHandler(string msg);
-    
     static class Commander
     {
         public enum programStates : byte
@@ -21,6 +18,9 @@ namespace Flavor
             WaitInit,
             WaitShutdown
         }
+
+        public delegate void ProgramEventHandler();
+        public delegate void AsyncReplyHandler(string msg);
 
         public static event ProgramEventHandler OnProgramStateChanged;
         public static event ProgramEventHandler OnScanCancelled;

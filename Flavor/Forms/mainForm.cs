@@ -30,7 +30,7 @@ namespace Flavor
 
             Graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             
-            Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeRefreshButtons);
+            Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeRefreshButtons);
             Commander.pState = Commander.programStates.Start;
             Commander.pStatePrev = Commander.pState;
         }
@@ -130,7 +130,7 @@ namespace Flavor
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = Config.ePoint;
             this.gForm.collect2_graph.GraphPane.XAxis.Scale.Min = Config.sPoint;
             this.gForm.collect2_graph.GraphPane.XAxis.Scale.Max = Config.ePoint;
-            Commander.OnScanCancelled += new ProgramEventHandler(InvokeCancelScan);
+            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Scan();
         }
 
@@ -184,7 +184,7 @@ namespace Flavor
             this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
             this.gForm.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
             this.gForm.collect2_graph.GraphPane.XAxis.Scale.Max = 1056;
-            Commander.OnScanCancelled += new ProgramEventHandler(InvokeCancelScan);
+            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Sense();
         }
 
@@ -192,7 +192,7 @@ namespace Flavor
         {
             if (this.InvokeRequired)
             {
-                AsyncReplyHandler InvokeDelegate = new AsyncReplyHandler(RefreshUserMessage);
+                Commander.AsyncReplyHandler InvokeDelegate = new Commander.AsyncReplyHandler(RefreshUserMessage);
                 this.Invoke(InvokeDelegate, msg);
             }
             else
@@ -560,7 +560,7 @@ namespace Flavor
         {
             if (this.InvokeRequired)
             {
-                ProgramEventHandler InvokeDelegate = new ProgramEventHandler(RefreshButtons);
+                Commander.ProgramEventHandler InvokeDelegate = new Commander.ProgramEventHandler(RefreshButtons);
                 this.Invoke(InvokeDelegate);
             }
             else 
@@ -739,7 +739,7 @@ namespace Flavor
         {
             if (this.InvokeRequired)
             {
-                ProgramEventHandler InvokeDelegate = new ProgramEventHandler(CancelScan);
+                Commander.ProgramEventHandler InvokeDelegate = new Commander.ProgramEventHandler(CancelScan);
                 this.Invoke(InvokeDelegate);
             }
             else
@@ -750,7 +750,7 @@ namespace Flavor
 
         private void CancelScan()
         {
-            Commander.OnScanCancelled -= new ProgramEventHandler(InvokeCancelScan);
+            Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             cancelScanButton.Enabled = false;
             cancelScanButton.Visible = false;
         }
@@ -816,11 +816,11 @@ namespace Flavor
             if (Commander.deviceIsConnected)
             {
                 Commander.Disconnect();
-                Commander.OnAsyncReply -= new AsyncReplyHandler(InvokeRefreshUserMessage);
+                Commander.OnAsyncReply -= new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
             }
             else
             {
-                Commander.OnAsyncReply += new AsyncReplyHandler(InvokeRefreshUserMessage);
+                Commander.OnAsyncReply += new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
                 Commander.Connect();
             }
         }

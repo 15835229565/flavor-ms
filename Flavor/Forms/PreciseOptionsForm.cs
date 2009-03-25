@@ -31,7 +31,9 @@ namespace Flavor
             set { upLevel = value; }
         }
 
-        private ToolTip clearRowToolTip = new ToolTip();
+        private Utility.PreciseEditorRowPlus[] PErows = new Utility.PreciseEditorRowPlus[20];
+        //private ToolTip clearRowToolTip = new ToolTip();
+        /*
         private Label[] peakNumberLabels = new Label[20];
         private CheckBox[] usePeakCheckBoxes = new CheckBox[20];
         private TextBox[] stepTextBoxes = new TextBox[20];
@@ -41,6 +43,7 @@ namespace Flavor
         private TextBox[] precTextBoxes = new TextBox[20];
         private TextBox[] commentTextBoxes = new TextBox[20];
         private Button[] clearPeakButtons = new Button[20];
+        */
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
@@ -208,6 +211,10 @@ namespace Flavor
 
             for (int i = 0; i < 20; ++i)
             {
+                this.PErows[i] = new Utility.PreciseEditorRowPlus(21, 42 + 15 * i);
+                this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
+                this.groupBox1.Controls.AddRange(PErows[i].getControls());
+                /*
                 this.peakNumberLabels[i] = new Label();
                 this.peakNumberLabels[i].AutoSize = true;
                 this.peakNumberLabels[i].BackColor = System.Drawing.SystemColors.Control;
@@ -294,6 +301,7 @@ namespace Flavor
                 this.groupBox1.Controls.Add(precTextBoxes[i]);
                 this.groupBox1.Controls.Add(commentTextBoxes[i]);
                 this.groupBox1.Controls.Add(clearPeakButtons[i]);
+                */
             }
             
             this.groupBox1.ResumeLayout(false);
@@ -301,7 +309,7 @@ namespace Flavor
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
+        /*
         private void clearPeakButtons_MouseHover(object sender, EventArgs e)
         {
             this.clearRowToolTip.Show("Очистить строку", (IWin32Window)sender);
@@ -313,7 +321,7 @@ namespace Flavor
             for (i = 0; this.clearPeakButtons[i] != (Button)sender; ++i);//not safe!!!
             clearRowData(i);
         }
-
+        */
         private PreciseOptionsForm()
             : base()
         {
@@ -325,7 +333,7 @@ namespace Flavor
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-            Commander.OnProgramStateChanged += new ProgramEventHandler(InvokeEnableForm);
+            Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeEnableForm);
         }
 
         private void InvokeEnableForm()
@@ -444,6 +452,14 @@ namespace Flavor
                 clearPreciseEditorData();
                 foreach (Utility.PreciseEditorData p in ped)
                 {
+                    PErows[p.pNumber].UseChecked = p.Use;
+                    PErows[p.pNumber].StepText = p.Step.ToString();
+                    PErows[p.pNumber].ColText = p.Collector.ToString();
+                    PErows[p.pNumber].LapsText = p.Iterations.ToString();
+                    PErows[p.pNumber].WidthText = p.Width.ToString();
+                    PErows[p.pNumber].PrecText = p.Precision.ToString();
+                    PErows[p.pNumber].CommentText = p.Comment;
+                    /*
                     usePeakCheckBoxes[p.pNumber].Checked = p.Use;
                     stepTextBoxes[p.pNumber].Text = p.Step.ToString();
                     colTextBoxes[p.pNumber].Text = p.Collector.ToString();
@@ -451,6 +467,7 @@ namespace Flavor
                     widthTextBoxes[p.pNumber].Text = p.Width.ToString();
                     precTextBoxes[p.pNumber].Text = p.Precision.ToString();
                     commentTextBoxes[p.pNumber].Text = p.Comment;
+                    */
                 }
             }
         }
@@ -470,8 +487,17 @@ namespace Flavor
             data = new List<Utility.PreciseEditorData>();
             for (int i = 0; i < 20; ++i)
             {
-                bool somethingFilled = ((lapsTextBoxes[i].Text != "") || (stepTextBoxes[i].Text != "") || (colTextBoxes[i].Text != "") || (widthTextBoxes[i].Text != "") /*|| (precTextBoxes[i].Text != "")*/);
-                bool allFilled = ((lapsTextBoxes[i].Text != "") && (stepTextBoxes[i].Text != "") && (colTextBoxes[i].Text != "") && (widthTextBoxes[i].Text != "")/* && (precTextBoxes[i].Text != "")*/);
+                if (exitFlag &= PErows[i].checkTextBoxes())
+                    data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
+                                                           Convert.ToUInt16(PErows[i].StepText),
+                                                           Convert.ToByte(PErows[i].ColText),
+                                                           Convert.ToUInt16(PErows[i].LapsText),
+                                                           Convert.ToUInt16(PErows[i].WidthText),
+                                                           (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/,
+                                                           PErows[i].CommentText));
+                /*
+                bool somethingFilled = ((lapsTextBoxes[i].Text != "") || (stepTextBoxes[i].Text != "") || (colTextBoxes[i].Text != "") || (widthTextBoxes[i].Text != "") );
+                bool allFilled = ((lapsTextBoxes[i].Text != "") && (stepTextBoxes[i].Text != "") && (colTextBoxes[i].Text != "") && (widthTextBoxes[i].Text != ""));
                 stepTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
                 colTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
                 lapsTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
@@ -509,8 +535,9 @@ namespace Flavor
                 }
                 if (allFilled & exitFlag)
                 {
-                    data.Add(new Utility.PreciseEditorData(usePeakCheckBoxes[i].Checked, (byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/, commentTextBoxes[i].Text));
+                    data.Add(new Utility.PreciseEditorData(usePeakCheckBoxes[i].Checked, (byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0, commentTextBoxes[i].Text));
                 }
+                */
             }
             return exitFlag;
         }
@@ -551,9 +578,10 @@ namespace Flavor
         private void clearPreciseEditorData()
         {
             for (int i = 0; i < 20; ++i)
-                clearRowData(i);
+                PErows[i].Clear();
+                //clearRowData(i);
         }
-
+        /*
         private void clearRowData(int i)
         {
             stepTextBoxes[i].Text = "";
@@ -562,7 +590,7 @@ namespace Flavor
             widthTextBoxes[i].Text = "";
             precTextBoxes[i].Text = "";
         }
-
+        */
         private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             instance = null;

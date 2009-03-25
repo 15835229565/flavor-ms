@@ -114,6 +114,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>ZedGraphControlPlus.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddPointForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AddPointForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ClosureDialog.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ClosureDialog.cs</DependentUpon>
