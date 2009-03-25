@@ -18,7 +18,6 @@ namespace Flavor
     {
         private CurveItem curveReference;
         private int pointIndex;
-        //private bool addToPE = false;
         
         public ZedGraphControlPlus(): base()
         {
@@ -50,7 +49,7 @@ namespace Flavor
                 item.Name = "point_add";
                 item.Tag = "point_add";
                 // This is the text that will show up in the menu
-                item.Text = "Add point to precise editor";
+                item.Text = "Добавить точку в редактор";
                 
                 curveReference = nearestCurve;
                 pointIndex = iNearest;
@@ -162,7 +161,8 @@ namespace Flavor
             }
             if ((pp != null) && (collector != 0))
                 new AddPointForm((ushort)(pp.X), collector).ShowDialog();
-            //MessageBox.Show(pointIndex.ToString(), curveReference.NPts.ToString());
+            else
+                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
         }
     }
 }

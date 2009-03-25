@@ -11,8 +11,8 @@ namespace Flavor
     public class PreciseOptionsForm : OptionsForm
     {
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label colNumLabel;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label colNumLabel;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
@@ -32,18 +32,6 @@ namespace Flavor
         }
 
         private Utility.PreciseEditorRowPlus[] PErows = new Utility.PreciseEditorRowPlus[20];
-        //private ToolTip clearRowToolTip = new ToolTip();
-        /*
-        private Label[] peakNumberLabels = new Label[20];
-        private CheckBox[] usePeakCheckBoxes = new CheckBox[20];
-        private TextBox[] stepTextBoxes = new TextBox[20];
-        private TextBox[] colTextBoxes = new TextBox[20];
-        private TextBox[] lapsTextBoxes = new TextBox[20];
-        private TextBox[] widthTextBoxes = new TextBox[20];
-        private TextBox[] precTextBoxes = new TextBox[20];
-        private TextBox[] commentTextBoxes = new TextBox[20];
-        private Button[] clearPeakButtons = new Button[20];
-        */
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
@@ -73,8 +61,8 @@ namespace Flavor
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.colNumLabel = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.colNumLabel = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -97,12 +85,6 @@ namespace Flavor
             this.label1.Size = new System.Drawing.Size(41, 26);
             this.label1.Text = "Номер\r\nпика";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // colNumLabel
-            this.colNumLabel.AutoSize = true;
-            this.colNumLabel.Location = new System.Drawing.Point(105, 29);
-            this.colNumLabel.Name = "colNumLabel";
-            this.colNumLabel.Size = new System.Drawing.Size(29, 13);
-            this.colNumLabel.Text = "Кол.";
             // label8
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.SystemColors.Control;
@@ -111,6 +93,12 @@ namespace Flavor
             this.label8.Size = new System.Drawing.Size(60, 26);
             this.label8.Text = "Ступенька\r\n(<=1056)";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // colNumLabel
+            this.colNumLabel.AutoSize = true;
+            this.colNumLabel.Location = new System.Drawing.Point(105, 29);
+            this.colNumLabel.Name = "colNumLabel";
+            this.colNumLabel.Size = new System.Drawing.Size(29, 13);
+            this.colNumLabel.Text = "Кол.";
             // label9
             this.label9.AutoSize = true;
             this.label9.BackColor = System.Drawing.SystemColors.Control;
@@ -214,94 +202,6 @@ namespace Flavor
                 this.PErows[i] = new Utility.PreciseEditorRowPlus(21, 42 + 15 * i);
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
                 this.groupBox1.Controls.AddRange(PErows[i].getControls());
-                /*
-                this.peakNumberLabels[i] = new Label();
-                this.peakNumberLabels[i].AutoSize = true;
-                this.peakNumberLabels[i].BackColor = System.Drawing.SystemColors.Control;
-                this.peakNumberLabels[i].Location = new System.Drawing.Point(21, 42 + 15 * i);
-                this.peakNumberLabels[i].Size = new System.Drawing.Size(16, 13);
-                this.peakNumberLabels[i].Text = string.Format("{0}", i + 1);
-                this.peakNumberLabels[i].TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
-                this.usePeakCheckBoxes[i] = new CheckBox();
-                this.usePeakCheckBoxes[i].Location = new System.Drawing.Point(43, 42 + 15 * i);
-                this.usePeakCheckBoxes[i].Size = new System.Drawing.Size(13, 13);
-                this.usePeakCheckBoxes[i].Text = "";
-                
-                this.stepTextBoxes[i] = new TextBox();
-                this.stepTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                this.stepTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.stepTextBoxes[i].Location = new System.Drawing.Point(58, 42 + 15 * i);
-                this.stepTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
-                this.stepTextBoxes[i].MaxLength = 4;
-                this.stepTextBoxes[i].Size = new System.Drawing.Size(50, 13);
-                this.stepTextBoxes[i].TabIndex = 26 + i;
-                this.stepTextBoxes[i].TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-
-                this.colTextBoxes[i] = new TextBox();
-                this.colTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                this.colTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.colTextBoxes[i].Location = new System.Drawing.Point(110, 42 + 15 * i);
-                this.colTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
-                this.colTextBoxes[i].MaxLength = 1;
-                this.colTextBoxes[i].Size = new System.Drawing.Size(20, 13);
-                this.colTextBoxes[i].TabIndex = 46 + i;
-                this.colTextBoxes[i].TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
-
-                this.lapsTextBoxes[i] = new TextBox();
-                this.lapsTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                this.lapsTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.lapsTextBoxes[i].Location = new System.Drawing.Point(132, 42 + 15 * i);
-                this.lapsTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
-                this.lapsTextBoxes[i].Size = new System.Drawing.Size(50, 13);
-                this.lapsTextBoxes[i].TabIndex = 66 + i;
-                this.lapsTextBoxes[i].TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-
-                this.widthTextBoxes[i] = new TextBox();
-                this.widthTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                this.widthTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.widthTextBoxes[i].Location = new System.Drawing.Point(184, 42 + 15 * i);
-                this.widthTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
-                this.widthTextBoxes[i].MaxLength = 4;
-                this.widthTextBoxes[i].Size = new System.Drawing.Size(50, 13);
-                this.widthTextBoxes[i].TabIndex = 86 + i;
-                this.widthTextBoxes[i].TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-
-                this.precTextBoxes[i] = new TextBox();
-                this.precTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                this.precTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.precTextBoxes[i].Location = new System.Drawing.Point(236, 42 + 15 * i);
-                this.precTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
-                this.precTextBoxes[i].Size = new System.Drawing.Size(50, 13);
-                this.precTextBoxes[i].TabIndex = 106 + i;
-                this.precTextBoxes[i].TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
-
-                this.commentTextBoxes[i] = new TextBox();
-                this.commentTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                this.commentTextBoxes[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.commentTextBoxes[i].Location = new System.Drawing.Point(288, 42 + 15 * i);
-                this.commentTextBoxes[i].Margin = new System.Windows.Forms.Padding(1);
-                this.commentTextBoxes[i].Size = new System.Drawing.Size(100, 13);
-                this.commentTextBoxes[i].TabIndex = 126 + i;
-
-                this.clearPeakButtons[i] = new Button();
-                this.clearPeakButtons[i].Location = new System.Drawing.Point(390, 42 + 15 * i);
-                this.clearPeakButtons[i].Size = new System.Drawing.Size(13, 13);
-                this.clearPeakButtons[i].TabIndex = 146 + i;
-                this.clearPeakButtons[i].Margin = new Padding(0);
-                this.clearPeakButtons[i].MouseHover += new EventHandler(clearPeakButtons_MouseHover);
-                this.clearPeakButtons[i].Click += new EventHandler(clearPeakButtons_Click);
-
-                this.groupBox1.Controls.Add(peakNumberLabels[i]);
-                this.groupBox1.Controls.Add(usePeakCheckBoxes[i]);
-                this.groupBox1.Controls.Add(stepTextBoxes[i]);
-                this.groupBox1.Controls.Add(colTextBoxes[i]);
-                this.groupBox1.Controls.Add(lapsTextBoxes[i]);
-                this.groupBox1.Controls.Add(widthTextBoxes[i]);
-                this.groupBox1.Controls.Add(precTextBoxes[i]);
-                this.groupBox1.Controls.Add(commentTextBoxes[i]);
-                this.groupBox1.Controls.Add(clearPeakButtons[i]);
-                */
             }
             
             this.groupBox1.ResumeLayout(false);
@@ -309,21 +209,7 @@ namespace Flavor
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-        /*
-        private void clearPeakButtons_MouseHover(object sender, EventArgs e)
-        {
-            this.clearRowToolTip.Show("Очистить строку", (IWin32Window)sender);
-        }
-
-        private void clearPeakButtons_Click(object sender, EventArgs e)
-        {
-            int i;
-            for (i = 0; this.clearPeakButtons[i] != (Button)sender; ++i);//not safe!!!
-            clearRowData(i);
-        }
-        */
-        private PreciseOptionsForm()
-            : base()
+        private PreciseOptionsForm(): base()
         {
             InitializeComponent();
             this.SuspendLayout();
@@ -459,15 +345,6 @@ namespace Flavor
                     PErows[p.pNumber].WidthText = p.Width.ToString();
                     PErows[p.pNumber].PrecText = p.Precision.ToString();
                     PErows[p.pNumber].CommentText = p.Comment;
-                    /*
-                    usePeakCheckBoxes[p.pNumber].Checked = p.Use;
-                    stepTextBoxes[p.pNumber].Text = p.Step.ToString();
-                    colTextBoxes[p.pNumber].Text = p.Collector.ToString();
-                    lapsTextBoxes[p.pNumber].Text = p.Iterations.ToString();
-                    widthTextBoxes[p.pNumber].Text = p.Width.ToString();
-                    precTextBoxes[p.pNumber].Text = p.Precision.ToString();
-                    commentTextBoxes[p.pNumber].Text = p.Comment;
-                    */
                 }
             }
         }
@@ -495,49 +372,6 @@ namespace Flavor
                                                            Convert.ToUInt16(PErows[i].WidthText),
                                                            (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/,
                                                            PErows[i].CommentText));
-                /*
-                bool somethingFilled = ((lapsTextBoxes[i].Text != "") || (stepTextBoxes[i].Text != "") || (colTextBoxes[i].Text != "") || (widthTextBoxes[i].Text != "") );
-                bool allFilled = ((lapsTextBoxes[i].Text != "") && (stepTextBoxes[i].Text != "") && (colTextBoxes[i].Text != "") && (widthTextBoxes[i].Text != ""));
-                stepTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                colTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                lapsTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                widthTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                precTextBoxes[i].BackColor = System.Drawing.SystemColors.ControlDark;
-                if (somethingFilled & !allFilled)
-                {
-                    stepTextBoxes[i].BackColor = Color.Gold;
-                    colTextBoxes[i].BackColor = Color.Gold;
-                    lapsTextBoxes[i].BackColor = Color.Gold;
-                    widthTextBoxes[i].BackColor = Color.Gold;
-                    precTextBoxes[i].BackColor = Color.Gold;
-                    exitFlag = false;
-                }
-                if ((widthTextBoxes[i].Text != "") && (stepTextBoxes[i].Text != "") && ((Convert.ToUInt16(stepTextBoxes[i].Text) - Convert.ToUInt16(widthTextBoxes[i].Text) < 0) || (Convert.ToUInt16(stepTextBoxes[i].Text) + Convert.ToUInt16(widthTextBoxes[i].Text) > 1056)))
-                {
-                    stepTextBoxes[i].BackColor = Color.Green;
-                    widthTextBoxes[i].BackColor = Color.Green;
-                    exitFlag = false;
-                }
-                if ((stepTextBoxes[i].Text != "") && (Convert.ToInt16(stepTextBoxes[i].Text) > 1056))
-                {
-                    stepTextBoxes[i].BackColor = Color.Red;
-                    exitFlag = false;
-                }
-                if ((lapsTextBoxes[i].Text != "") && (Convert.ToInt16(lapsTextBoxes[i].Text) <= 0))
-                {
-                    lapsTextBoxes[i].BackColor = Color.Red;
-                    exitFlag = false;
-                }
-                if ((widthTextBoxes[i].Text != "") && (Convert.ToInt16(widthTextBoxes[i].Text) <= 0))
-                {
-                    widthTextBoxes[i].BackColor = Color.Red;
-                    exitFlag = false;
-                }
-                if (allFilled & exitFlag)
-                {
-                    data.Add(new Utility.PreciseEditorData(usePeakCheckBoxes[i].Checked, (byte)i, Convert.ToUInt16(stepTextBoxes[i].Text), Convert.ToByte(colTextBoxes[i].Text), Convert.ToUInt16(lapsTextBoxes[i].Text), Convert.ToUInt16(widthTextBoxes[i].Text), (float)0, commentTextBoxes[i].Text));
-                }
-                */
             }
             return exitFlag;
         }
@@ -579,18 +413,7 @@ namespace Flavor
         {
             for (int i = 0; i < 20; ++i)
                 PErows[i].Clear();
-                //clearRowData(i);
         }
-        /*
-        private void clearRowData(int i)
-        {
-            stepTextBoxes[i].Text = "";
-            colTextBoxes[i].Text = "";
-            lapsTextBoxes[i].Text = "";
-            widthTextBoxes[i].Text = "";
-            precTextBoxes[i].Text = "";
-        }
-        */
         private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             instance = null;

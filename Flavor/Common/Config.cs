@@ -30,20 +30,12 @@ namespace Flavor
         private static ushort focusVoltage2;
         
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
-        //private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
 
         public static List<Utility.PreciseEditorData> PreciseData
         {
             get { return preciseData; }
             //set { preciseData = value; }
         }
-        /*
-        public static List<Utility.PreciseEditorData> PreciseDataLoaded
-        {
-            get { return preciseDataLoaded; }
-            //set { preciseData = value; }
-        }
-        */
         public static string Port
         {
             get { return SerialPort; }
@@ -682,12 +674,6 @@ namespace Flavor
                 catch (NullReferenceException)
                 {
                     structureErrorOnLoadPrecise(pedConfName);
-                    /*
-                    if (!pedConfName.Equals(confName))
-                        System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионных точек");
-                    else
-                        System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения конфигурационного файла");
-                    */
                     return null;
                 }
                 if ((peak != "") && (iter != "") && (width != "") && (col != ""))
@@ -714,12 +700,6 @@ namespace Flavor
                     catch (FormatException)
                     {
                         wrongFormatOnLoadPrecise(confName);
-                        /*
-                        if (!pedConfName.Equals(confName))
-                            System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионных точек");
-                        else
-                            System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения конфигурационного файла");
-                        */
                         return null;
                     }
                 }
@@ -838,12 +818,6 @@ namespace Flavor
             catch (NullReferenceException)
             {
                 structureErrorOnLoadCommonData(cdConfName);
-                /*
-                if (!cdConfName.Equals(confName))
-                    System.Windows.Forms.MessageBox.Show("Ошибка чтения файла общих настроек", "Ошибка структуры файла");
-                else
-                    System.Windows.Forms.MessageBox.Show("Ошибка чтения конфигурационного файла", "Ошибка структуры файла");
-                */
                 return;
             }
             eTime = eT;
