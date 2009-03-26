@@ -32,13 +32,11 @@ namespace Flavor
 
         private void cancel_butt_Click(object sender, EventArgs e)
         {
-            //DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
         private void ok_butt_Click(object sender, EventArgs e)
         {
-            //DialogResult = DialogResult.OK;
             ModBus.Close();
             Config.SaveConnectOptions(Port, BaudRate);
             ModBus.Open();

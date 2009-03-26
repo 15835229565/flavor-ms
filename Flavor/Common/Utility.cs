@@ -19,16 +19,15 @@ namespace Flavor
                 width = wi;
                 precision = pr;
             }
+            public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+                : this(pn, st, co, it, wi, pr)
+            {
+                comment = comm;
+            }
             public PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+                :this(pn, st, co, it, wi, pr, comm)
             {
                 usethis = useit;
-                pointNumber = pn;
-                step = st;
-                collector = co;
-                iterations = it;
-                width = wi;
-                precision = pr;
-                comment = comm;
             }
             private bool usethis = true;
             private byte pointNumber;
@@ -86,6 +85,118 @@ namespace Flavor
             }
         }
 
+        public class PreciseEditorLabelRow
+        {
+            protected System.Windows.Forms.Label label8;
+            protected System.Windows.Forms.Label colNumLabel;
+            protected System.Windows.Forms.Label label9;
+            protected System.Windows.Forms.Label label10;
+            protected System.Windows.Forms.Label label11;
+            protected System.Windows.Forms.Label commentLabel;
+            public PreciseEditorLabelRow()
+            {
+                this.label8 = new System.Windows.Forms.Label();
+                this.colNumLabel = new System.Windows.Forms.Label();
+                this.label9 = new System.Windows.Forms.Label();
+                this.label10 = new System.Windows.Forms.Label();
+                this.label11 = new System.Windows.Forms.Label();
+                this.commentLabel = new System.Windows.Forms.Label();
+                // label8
+                this.label8.AutoSize = true;
+                this.label8.BackColor = System.Drawing.SystemColors.Control;
+                this.label8.Location = new System.Drawing.Point(0, 0);
+                this.label8.Name = "label8";
+                this.label8.Size = new System.Drawing.Size(60, 26);
+                this.label8.Text = "Ступенька\r\n(<=1056)";
+                this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                // colNumLabel
+                this.colNumLabel.AutoSize = true;
+                this.colNumLabel.Location = new System.Drawing.Point(50, 13);
+                this.colNumLabel.Name = "colNumLabel";
+                this.colNumLabel.Size = new System.Drawing.Size(29, 13);
+                this.colNumLabel.Text = "Кол.";
+                // label9
+                this.label9.AutoSize = true;
+                this.label9.BackColor = System.Drawing.SystemColors.Control;
+                this.label9.Location = new System.Drawing.Point(75, 13);
+                this.label9.Name = "label9";
+                this.label9.Size = new System.Drawing.Size(52, 13);
+                this.label9.Text = "Проходы";
+                // label10
+                this.label10.AutoSize = true;
+                this.label10.BackColor = System.Drawing.SystemColors.Control;
+                this.label10.Location = new System.Drawing.Point(127, 13);
+                this.label10.Name = "label10";
+                this.label10.Size = new System.Drawing.Size(46, 13);
+                this.label10.Text = "Ширина";
+                // label11
+                this.label11.AutoSize = true;
+                this.label11.BackColor = System.Drawing.SystemColors.Control;
+                this.label11.Location = new System.Drawing.Point(177, 13);
+                this.label11.Name = "label11";
+                this.label11.Size = new System.Drawing.Size(54, 13);
+                this.label11.Text = "Точность";
+                // commentLabel
+                this.commentLabel.AutoSize = true;
+                this.commentLabel.BackColor = System.Drawing.SystemColors.Control;
+                this.commentLabel.Location = new System.Drawing.Point(233, 13);
+                this.commentLabel.Name = "commentLabel";
+                this.commentLabel.Size = new System.Drawing.Size(54, 13);
+                this.commentLabel.Text = "Комментарий";
+            }
+            public PreciseEditorLabelRow(int x, int y): this()
+            {
+                moveTo(x, y);
+            }
+            public virtual Control[] getControls()
+            {
+                return new Control[] { colNumLabel, label11, label10, label9, label8, commentLabel };
+            }
+            protected virtual void moveTo(int x, int y)
+            {
+                this.label8.Location = new System.Drawing.Point(this.label8.Location.X + x, this.label8.Location.Y + y);
+                this.colNumLabel.Location = new System.Drawing.Point(this.colNumLabel.Location.X + x, this.colNumLabel.Location.Y + y);
+                this.label9.Location = new System.Drawing.Point(this.label9.Location.X + x, this.label9.Location.Y + y);
+                this.label10.Location = new System.Drawing.Point(this.label10.Location.X + x, this.label10.Location.Y + y);
+                this.label11.Location = new System.Drawing.Point(this.label11.Location.X + x, this.label11.Location.Y + y);
+                this.commentLabel.Location = new System.Drawing.Point(this.commentLabel.Location.X + x, this.commentLabel.Location.Y + y);
+            }
+        }
+        public class PreciseEditorLabelRowPlus: PreciseEditorLabelRow
+        {
+            private System.Windows.Forms.Label label1;
+            public PreciseEditorLabelRowPlus(): base()
+            {
+                base.moveTo(49, 0);
+                this.label1 = new System.Windows.Forms.Label();
+                // label1
+                this.label1.AutoSize = true;
+                this.label1.BackColor = System.Drawing.SystemColors.Control;
+                this.label1.Location = new System.Drawing.Point(0, 0);
+                this.label1.Name = "label1";
+                this.label1.Size = new System.Drawing.Size(41, 26);
+                this.label1.Text = "Номер\r\nпика";
+                this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            }
+            public PreciseEditorLabelRowPlus(int x, int y): this()
+            {
+                moveTo(x, y);
+            }
+            public override Control[] getControls()
+            {
+                return new Control[] { colNumLabel, label11, label10, label9, label8, commentLabel, label1 };
+            }
+            protected override void moveTo(int x, int y)
+            {
+                this.label1.Location = new System.Drawing.Point(this.label1.Location.X + x, this.label1.Location.Y + y);
+                this.label8.Location = new System.Drawing.Point(this.label8.Location.X + x, this.label8.Location.Y + y);
+                this.colNumLabel.Location = new System.Drawing.Point(this.colNumLabel.Location.X + x, this.colNumLabel.Location.Y + y);
+                this.label9.Location = new System.Drawing.Point(this.label9.Location.X + x, this.label9.Location.Y + y);
+                this.label10.Location = new System.Drawing.Point(this.label10.Location.X + x, this.label10.Location.Y + y);
+                this.label11.Location = new System.Drawing.Point(this.label11.Location.X + x, this.label11.Location.Y + y);
+                this.commentLabel.Location = new System.Drawing.Point(this.commentLabel.Location.X + x, this.commentLabel.Location.Y + y);
+            }
+        }
         public class PreciseEditorRow
         {
             protected TextBox stepTextBox;
@@ -104,25 +215,25 @@ namespace Flavor
             public string LapsText
             {
                 get { return lapsTextBox.Text; }
-                set { lapsTextBox.Text = value; }
+                //set { lapsTextBox.Text = value; }
             }
             protected TextBox widthTextBox;
             public string WidthText
             {
                 get { return widthTextBox.Text; }
-                set { widthTextBox.Text = value; }
+                //set { widthTextBox.Text = value; }
             }
             protected TextBox precTextBox;
             public string PrecText
             {
                 get { return precTextBox.Text; }
-                set { precTextBox.Text = value; }
+                //set { precTextBox.Text = value; }
             }
             protected TextBox commentTextBox;
             public string CommentText
             {
                 get { return commentTextBox.Text; }
-                set { commentTextBox.Text = value; }
+                //set { commentTextBox.Text = value; }
             }
             protected bool stepAndColEnabled = false;
             //The other result of checkTextBoxes()
@@ -266,6 +377,15 @@ namespace Flavor
                 */
                 return exitFlag;
             }
+            public virtual void setValues(PreciseEditorData p)
+            {
+                stepTextBox.Text = p.Step.ToString();
+                colTextBox.Text = p.Collector.ToString();
+                lapsTextBox.Text = p.Iterations.ToString();
+                widthTextBox.Text = p.Width.ToString();
+                precTextBox.Text = p.Precision.ToString();
+                commentTextBox.Text = p.Comment;
+            }
         }
         public class PreciseEditorRowPlus: PreciseEditorRow
         {
@@ -278,7 +398,7 @@ namespace Flavor
             public bool UseChecked
             {
                 get { return usePeakCheckBox.Checked; }
-                set { usePeakCheckBox.Checked = value; }
+                //set { usePeakCheckBox.Checked = value; }
             }
             private Button clearPeakButton;
             private static ToolTip clearRowToolTip = new ToolTip();
@@ -342,6 +462,11 @@ namespace Flavor
             public override bool checkTextBoxes() 
             {
                 return base.checkTextBoxes();
+            }
+            public override void setValues(PreciseEditorData ped)
+            {
+                base.setValues(ped);
+                usePeakCheckBox.Checked = ped.Use;
             }
         }
         //Comparers and predicate for sorting and finding Utility.PreciseEditorData objects in List

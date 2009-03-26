@@ -235,21 +235,21 @@ namespace Flavor
                 {
                     gForm.RefreshGraph();
                     scanProgressBar.PerformStep();
-                    stepNumberLabel.Text = Graph.lastPoint.ToString();
-                    scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.lastPoint));
+                    stepNumberLabel.Text = Graph.LastPoint.ToString();
+                    scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.LastPoint));
                     detector1CountsLabel.Text = Device.Detector1.ToString();
                     detector2CountsLabel.Text = Device.Detector2.ToString();
                     if (Commander.isSenseMeasure)
                     {
-                        peakNumberLabel.Text = (Graph.curPeak.pNumber + 1).ToString();
+                        peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
                         peakNumberLabel.Visible = true;
                         label39.Visible = true;
-                        peakCenterLabel.Text = Graph.curPeak.Step.ToString();
+                        peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
                         peakCenterLabel.Visible = true;
                         label41.Visible = true;
-                        peakWidthLabel.Text = Graph.curPeak.Width.ToString();
+                        peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
                         peakWidthLabel.Visible = true;
-                        if (Graph.curPeak.Collector == 1)
+                        if (Graph.CurrentPeak.Collector == 1)
                         {
                             detector1CountsLabel.Visible = true;
                             label15.Visible = true;

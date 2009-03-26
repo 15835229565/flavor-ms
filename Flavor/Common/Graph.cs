@@ -16,28 +16,29 @@ namespace Flavor
                 Mass = 2
             }
 
+            private PointPairList[] points = new PointPairList[3];
             public PointPairList Step
             {
                 get { return points[(int)DisplayValue.Step]; }
             }
-
             public PointPairList Voltage
             {
                 get { return points[(int)DisplayValue.Voltage]; }
             }
-
             public PointPairList Mass
             {
                 get { return points[(int)DisplayValue.Mass]; }
+            }
+            public PointPairList Points(DisplayValue which)
+            {
+                return points[(int)which];
             }
 
             public bool isEmpty
             {
                 get { return (points[(int)DisplayValue.Step].Count == 0); }
             }
-
             private bool collector;
-            private PointPairList[] points = new PointPairList[3];
 
             public void Add(ushort pnt, int count)
             {
@@ -45,17 +46,11 @@ namespace Flavor
                 points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
                 points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
             }
-
             public void Clear()
             {
                 points[(int)DisplayValue.Step].Clear();
                 points[(int)DisplayValue.Voltage].Clear();
                 points[(int)DisplayValue.Mass].Clear();
-            }
-
-            public PointPairList Points(DisplayValue which)
-            {
-                return points[(int)which];
             }
 
             public pListScaled(bool isFirstCollector)
@@ -65,7 +60,6 @@ namespace Flavor
                 points[(int)DisplayValue.Voltage] = new PointPairList();
                 points[(int)DisplayValue.Mass] = new PointPairList();
             }
-
             public pListScaled(bool isFirstCollector, PointPairList dataPoints)
             {
                 collector = isFirstCollector;
@@ -78,7 +72,6 @@ namespace Flavor
             {
                 pp.X = Config.scanVoltageReal((ushort)pp.X);
             }
-
             private void xToMass(PointPair pp)
             {
                 pp.X = Config.pointToMass((ushort)pp.X, collector);
@@ -192,8 +185,24 @@ namespace Flavor
             return temp;
         }
         
-        public static ushort lastPoint;
-        public static Utility.PreciseEditorData curPeak;
+        private static ushort lastPoint;
+        public static ushort LastPoint
+        {
+            get { return lastPoint; }
+            //set { lastPoint = value; }
+        }
+        private static Utility.PreciseEditorData curPeak;
+        public static Utility.PreciseEditorData CurrentPeak
+        {
+            get { return curPeak; }
+            //set { curPeak = value; }
+        }
+        private static Utility.PreciseEditorData peakToAdd = null;
+        public static Utility.PreciseEditorData PointToAdd
+        {
+            get { return peakToAdd;}
+            set { peakToAdd = value;}
+        }
 
         static Graph()
         {

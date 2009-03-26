@@ -10,13 +10,6 @@ namespace Flavor
 {
     public class PreciseOptionsForm : OptionsForm
     {
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label colNumLabel;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label commentLabel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.SaveFileDialog savePreciseEditorToFileDialog;
@@ -32,6 +25,7 @@ namespace Flavor
             set { upLevel = value; }
         }
 
+        private Utility.PreciseEditorLabelRowPlus PElabelRow;
         private Utility.PreciseEditorRowPlus[] PErows = new Utility.PreciseEditorRowPlus[20];
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
@@ -61,13 +55,6 @@ namespace Flavor
 
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.colNumLabel = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.commentLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.insertPointButton = new System.Windows.Forms.Button();
@@ -79,69 +66,12 @@ namespace Flavor
             this.groupBox1.SuspendLayout();
             this.params_groupBox.SuspendLayout();
             this.SuspendLayout();
-            // label1
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(6, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 26);
-            this.label1.Text = "Номер\r\nпика";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // label8
-            this.label8.AutoSize = true;
-            this.label8.BackColor = System.Drawing.SystemColors.Control;
-            this.label8.Location = new System.Drawing.Point(55, 16);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(60, 26);
-            this.label8.Text = "Ступенька\r\n(<=1056)";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // colNumLabel
-            this.colNumLabel.AutoSize = true;
-            this.colNumLabel.Location = new System.Drawing.Point(105, 29);
-            this.colNumLabel.Name = "colNumLabel";
-            this.colNumLabel.Size = new System.Drawing.Size(29, 13);
-            this.colNumLabel.Text = "Кол.";
-            // label9
-            this.label9.AutoSize = true;
-            this.label9.BackColor = System.Drawing.SystemColors.Control;
-            this.label9.Location = new System.Drawing.Point(130, 29);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(52, 13);
-            this.label9.Text = "Проходы";
-            // label10
-            this.label10.AutoSize = true;
-            this.label10.BackColor = System.Drawing.SystemColors.Control;
-            this.label10.Location = new System.Drawing.Point(182, 29);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(46, 13);
-            this.label10.Text = "Ширина";
-            // label11
-            this.label11.AutoSize = true;
-            this.label11.BackColor = System.Drawing.SystemColors.Control;
-            this.label11.Location = new System.Drawing.Point(232, 29);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(54, 13);
-            this.label11.Text = "Точность";
-            // commentLabel
-            this.commentLabel.AutoSize = true;
-            this.commentLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.commentLabel.Location = new System.Drawing.Point(288, 29);
-            this.commentLabel.Name = "commentLabel";
-            this.commentLabel.Size = new System.Drawing.Size(54, 13);
-            this.commentLabel.Text = "Комментарий";
             // groupBox1
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.colNumLabel);
             this.groupBox1.Controls.Add(this.insertPointButton);
             this.groupBox1.Controls.Add(this.clearButton);
             this.groupBox1.Controls.Add(this.loadPreciseEditorFromFileButton);
             this.groupBox1.Controls.Add(this.savePreciseEditorToFileButton);
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.commentLabel);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(312 + 2 + 100, 385);
@@ -151,7 +81,7 @@ namespace Flavor
             // insertPointButton
             this.insertPointButton.Location = new System.Drawing.Point(312, 356);
             this.insertPointButton.Name = "insertPointButton";
-            this.insertPointButton.Size = new System.Drawing.Size(62, 23);
+            this.insertPointButton.Size = new System.Drawing.Size(90, 23);
             this.insertPointButton.Text = "Вставка точки";
             this.insertPointButton.UseVisualStyleBackColor = true;
             this.insertPointButton.Click += new System.EventHandler(this.insertPointButton_Click);
@@ -213,7 +143,9 @@ namespace Flavor
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
                 this.groupBox1.Controls.AddRange(PErows[i].getControls());
             }
-            
+            this.PElabelRow = new Utility.PreciseEditorLabelRowPlus(6, 16);
+            this.groupBox1.Controls.AddRange(this.PElabelRow.getControls());
+
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -348,13 +280,7 @@ namespace Flavor
                 clearPreciseEditorData();
                 foreach (Utility.PreciseEditorData p in ped)
                 {
-                    PErows[p.pNumber].UseChecked = p.Use;
-                    PErows[p.pNumber].StepText = p.Step.ToString();
-                    PErows[p.pNumber].ColText = p.Collector.ToString();
-                    PErows[p.pNumber].LapsText = p.Iterations.ToString();
-                    PErows[p.pNumber].WidthText = p.Width.ToString();
-                    PErows[p.pNumber].PrecText = p.Precision.ToString();
-                    PErows[p.pNumber].CommentText = p.Comment;
+                    PErows[p.pNumber].setValues(p);
                 }
             }
         }
@@ -421,7 +347,19 @@ namespace Flavor
 
         private void insertPointButton_Click(object sender, EventArgs e)
         {
-            //Add code here!
+            if (Graph.PointToAdd != null)
+            {
+                PlacePointForm ppForm = new PlacePointForm(Graph.PointToAdd);
+                if (ppForm.ShowDialog() == DialogResult.OK)
+                {
+                    if (ppForm.PointNumber != -1)
+                        PErows[ppForm.PointNumber].setValues(Graph.PointToAdd);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
+            }
         }
 
         private void clearPreciseEditorData()

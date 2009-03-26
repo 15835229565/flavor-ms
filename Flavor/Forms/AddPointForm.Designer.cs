@@ -68,14 +68,14 @@ namespace Flavor
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "AddPointForm";
+            this.Text = "Добавление точки";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
+        protected System.Windows.Forms.Button okButton;
+        protected System.Windows.Forms.Button cancelButton;
     }
 }

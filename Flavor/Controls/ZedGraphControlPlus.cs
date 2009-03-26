@@ -160,14 +160,16 @@ namespace Flavor
                 }
             }
             if ((pp != null) && (collector != 0))
+            {
                 if (new AddPointForm((ushort)(pp.X), collector).ShowDialog() == DialogResult.OK)
                 {
                     PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
                     pForm.UpLevel = (mainForm)((GraphForm)(this.ParentForm)).MdiParent;
                     pForm.Show();
                 }
-                else
-                    MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+            }
+            else
+                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
         }
     }
 }
