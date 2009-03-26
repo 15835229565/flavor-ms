@@ -9,7 +9,7 @@ using System.Resources;
 [assembly: AssemblyTitle("Flavor")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MSLab")]
+[assembly: AssemblyCompany("Mass-Spec Lab")]
 [assembly: AssemblyProduct("Flavor")]
 [assembly: AssemblyCopyright("Copyright © Dmitrii Lebedev 2009")]
 [assembly: AssemblyTrademark("")]
