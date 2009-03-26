@@ -29,7 +29,7 @@ namespace Flavor
             GraphPane pane = this.MasterPane.FindChartRect(mousePt);
             CurveItem nearestCurve;
             int iNearest;
-            if (pane.FindNearestPoint(mousePt, out nearestCurve, out iNearest))
+            if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out iNearest))
             {
                 /*foreach (ToolStripMenuItem it in menuStrip.Items)
                 {

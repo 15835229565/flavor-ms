@@ -125,6 +125,12 @@ namespace Flavor
                 set { commentTextBox.Text = value; }
             }
             protected bool stepAndColEnabled = false;
+            //The other result of checkTextBoxes()
+            protected bool allFilled = false;
+            public bool AllFilled
+            {
+                get { return allFilled; }
+            }
             public PreciseEditorRow()
             {
                 this.stepTextBox = new TextBox();
@@ -214,7 +220,7 @@ namespace Flavor
                 bool exitFlag = true;
                 bool somethingFilled = ((lapsTextBox.Text != "") || (stepTextBox.Text != "") ||
                                         (colTextBox.Text != "") || (widthTextBox.Text != "") /*|| (precTextBox].Text != "")*/);
-                bool allFilled = ((lapsTextBox.Text != "") && (stepTextBox.Text != "") && (colTextBox.Text != "") &&
+                this.allFilled = ((lapsTextBox.Text != "") && (stepTextBox.Text != "") && (colTextBox.Text != "") &&
                                   (widthTextBox.Text != "")/* && (precTextBox.Text != "")*/);
                 stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -222,7 +228,7 @@ namespace Flavor
                 widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-                if (somethingFilled & !allFilled)
+                if (somethingFilled && !this.allFilled)
                 {
                     stepTextBox.BackColor = Color.Gold;
                     colTextBox.BackColor = Color.Gold;
@@ -258,7 +264,7 @@ namespace Flavor
                     exitFlag = false;
                 }
                 */
-                return (exitFlag && allFilled);
+                return exitFlag;
             }
         }
         public class PreciseEditorRowPlus: PreciseEditorRow
@@ -299,6 +305,9 @@ namespace Flavor
                 this.clearPeakButton.Click += new EventHandler(clearPeakButton_Click);
 
                 this.stepAndColEnabled = true;
+                this.stepTextBox.Enabled = stepAndColEnabled;
+                this.colTextBox.Enabled = stepAndColEnabled;
+                
                 this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
                 this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
             }

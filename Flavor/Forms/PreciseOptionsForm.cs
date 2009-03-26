@@ -365,13 +365,13 @@ namespace Flavor
             for (int i = 0; i < 20; ++i)
             {
                 if (exitFlag &= PErows[i].checkTextBoxes())
-                    data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
-                                                           Convert.ToUInt16(PErows[i].StepText),
-                                                           Convert.ToByte(PErows[i].ColText),
-                                                           Convert.ToUInt16(PErows[i].LapsText),
-                                                           Convert.ToUInt16(PErows[i].WidthText),
-                                                           (float)0/*Convert.ToSingle(precTextBoxes[i].Text)*/,
-                                                           PErows[i].CommentText));
+                    if (PErows[i].AllFilled == true)
+                        data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
+                                                               Convert.ToUInt16(PErows[i].StepText),
+                                                               Convert.ToByte(PErows[i].ColText),
+                                                               Convert.ToUInt16(PErows[i].LapsText),
+                                                               Convert.ToUInt16(PErows[i].WidthText),
+                                                               (float)0, PErows[i].CommentText));
             }
             return exitFlag;
         }
