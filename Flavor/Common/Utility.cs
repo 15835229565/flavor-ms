@@ -215,7 +215,7 @@ namespace Flavor
                 precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             }
-            protected virtual bool checkTextBoxes()
+            public virtual bool checkTextBoxes()
             {
                 bool exitFlag = true;
                 bool somethingFilled = ((lapsTextBox.Text != "") || (stepTextBox.Text != "") ||
@@ -339,7 +339,7 @@ namespace Flavor
             {
                 this.Clear();
             }
-            public new bool checkTextBoxes() 
+            public override bool checkTextBoxes() 
             {
                 return base.checkTextBoxes();
             }

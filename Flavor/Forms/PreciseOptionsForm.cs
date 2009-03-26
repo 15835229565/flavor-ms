@@ -23,6 +23,7 @@ namespace Flavor
         private System.Windows.Forms.Button loadPreciseEditorFromFileButton;
         private System.Windows.Forms.OpenFileDialog loadPreciseEditorFromFileDialog;
         private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.Button insertPointButton;
         
         private mainForm upLevel;
         public mainForm UpLevel
@@ -69,6 +70,7 @@ namespace Flavor
             this.commentLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clearButton = new System.Windows.Forms.Button();
+            this.insertPointButton = new System.Windows.Forms.Button();
             this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -130,6 +132,7 @@ namespace Flavor
             // groupBox1
             this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox1.Controls.Add(this.colNumLabel);
+            this.groupBox1.Controls.Add(this.insertPointButton);
             this.groupBox1.Controls.Add(this.clearButton);
             this.groupBox1.Controls.Add(this.loadPreciseEditorFromFileButton);
             this.groupBox1.Controls.Add(this.savePreciseEditorToFileButton);
@@ -145,6 +148,13 @@ namespace Flavor
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Редактор областей сканирования";
+            // insertPointButton
+            this.insertPointButton.Location = new System.Drawing.Point(312, 356);
+            this.insertPointButton.Name = "insertPointButton";
+            this.insertPointButton.Size = new System.Drawing.Size(62, 23);
+            this.insertPointButton.Text = "Вставка точки";
+            this.insertPointButton.UseVisualStyleBackColor = true;
+            this.insertPointButton.Click += new System.EventHandler(this.insertPointButton_Click);
             // clearButton
             this.clearButton.Location = new System.Drawing.Point(244, 356);
             this.clearButton.Name = "clearButton";
@@ -365,7 +375,7 @@ namespace Flavor
             for (int i = 0; i < 20; ++i)
             {
                 if (exitFlag &= PErows[i].checkTextBoxes())
-                    if (PErows[i].AllFilled == true)
+                    if (PErows[i].AllFilled)
                         data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
                                                                Convert.ToUInt16(PErows[i].StepText),
                                                                Convert.ToByte(PErows[i].ColText),
@@ -407,6 +417,11 @@ namespace Flavor
         private void clearButton_Click(object sender, EventArgs e)
         {
             clearPreciseEditorData();
+        }
+
+        private void insertPointButton_Click(object sender, EventArgs e)
+        {
+            //Add code here!
         }
 
         private void clearPreciseEditorData()
