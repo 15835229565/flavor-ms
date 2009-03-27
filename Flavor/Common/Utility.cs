@@ -245,6 +245,12 @@ namespace Flavor
             public PreciseEditorRow()
             {
                 this.stepTextBox = new TextBox();
+                this.colTextBox = new TextBox();
+                this.lapsTextBox = new TextBox();
+                this.widthTextBox = new TextBox();
+                this.precTextBox = new TextBox();
+                this.commentTextBox = new TextBox();
+                
                 this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.stepTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.stepTextBox.Location = new System.Drawing.Point(0, 0);
@@ -253,7 +259,6 @@ namespace Flavor
                 this.stepTextBox.Size = new System.Drawing.Size(50, 13);
                 this.stepTextBox.Enabled = stepAndColEnabled;
 
-                this.colTextBox = new TextBox();
                 this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.colTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.colTextBox.Location = new System.Drawing.Point(52, 0);
@@ -262,7 +267,6 @@ namespace Flavor
                 this.colTextBox.Size = new System.Drawing.Size(20, 13);
                 this.colTextBox.Enabled = stepAndColEnabled;
 
-                this.lapsTextBox = new TextBox();
                 this.lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.lapsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.lapsTextBox.Location = new System.Drawing.Point(74, 0);
@@ -270,7 +274,6 @@ namespace Flavor
                 this.lapsTextBox.Size = new System.Drawing.Size(50, 13);
                 this.lapsTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
 
-                this.widthTextBox = new TextBox();
                 this.widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.widthTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.widthTextBox.Location = new System.Drawing.Point(126, 0);
@@ -279,7 +282,6 @@ namespace Flavor
                 this.widthTextBox.Size = new System.Drawing.Size(50, 13);
                 this.widthTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
 
-                this.precTextBox = new TextBox();
                 this.precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.precTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.precTextBox.Location = new System.Drawing.Point(178, 0);
@@ -287,7 +289,6 @@ namespace Flavor
                 this.precTextBox.Size = new System.Drawing.Size(50, 13);
                 this.precTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
 
-                this.commentTextBox = new TextBox();
                 this.commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.commentTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.commentTextBox.Location = new System.Drawing.Point(230, 0);
@@ -405,19 +406,21 @@ namespace Flavor
             public PreciseEditorRowPlus(): base()
             {
                 base.moveTo(37, 0);
+                
                 this.peakNumberLabel = new Label();
+                this.usePeakCheckBox = new CheckBox();
+                this.clearPeakButton = new Button();
+
                 this.peakNumberLabel.AutoSize = true;
                 this.peakNumberLabel.BackColor = System.Drawing.SystemColors.Control;
                 this.peakNumberLabel.Location = new System.Drawing.Point(0, 0);
                 this.peakNumberLabel.Size = new System.Drawing.Size(16, 13);
                 this.peakNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-                this.usePeakCheckBox = new CheckBox();
                 this.usePeakCheckBox.Location = new System.Drawing.Point(22, 0);
                 this.usePeakCheckBox.Size = new System.Drawing.Size(13, 13);
                 this.usePeakCheckBox.Text = "";
 
-                this.clearPeakButton = new Button();
                 this.clearPeakButton.Location = new System.Drawing.Point(369, 0);
                 this.clearPeakButton.Size = new System.Drawing.Size(13, 13);
                 this.clearPeakButton.Margin = new Padding(1);
@@ -438,6 +441,7 @@ namespace Flavor
             protected override void moveTo(int x, int y)
             {
                 base.moveTo(x, y);
+                
                 this.peakNumberLabel.Location = new System.Drawing.Point(this.peakNumberLabel.Location.X + x, this.peakNumberLabel.Location.Y + y);
                 this.usePeakCheckBox.Location = new System.Drawing.Point(this.usePeakCheckBox.Location.X + x, this.usePeakCheckBox.Location.Y + y);
                 this.clearPeakButton.Location = new System.Drawing.Point(this.clearPeakButton.Location.X + x, this.clearPeakButton.Location.Y + y);

@@ -166,6 +166,7 @@ namespace Flavor
                     PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
                     pForm.UpLevel = (mainForm)((GraphForm)(this.ParentForm)).MdiParent;
                     pForm.Show();
+                    pForm.BringToFront();
                 }
             }
             else
