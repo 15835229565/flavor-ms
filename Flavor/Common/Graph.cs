@@ -46,6 +46,16 @@ namespace Flavor
                 points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
                 points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
             }
+            public void AddRange(pListScaled pl)
+            {
+                AddRange(pl.Step);
+            }
+            public void AddRange(PointPairList dataPoints)
+            {
+                points[(int)DisplayValue.Step] = new PointPairList(dataPoints);
+                (points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints)).ForEach(xToVoltage);
+                (points[(int)DisplayValue.Mass] = new PointPairList(dataPoints)).ForEach(xToMass);
+            }
             public void Clear()
             {
                 points[(int)DisplayValue.Step].Clear();
@@ -63,9 +73,7 @@ namespace Flavor
             public pListScaled(bool isFirstCollector, PointPairList dataPoints)
             {
                 collector = isFirstCollector;
-                points[(int)DisplayValue.Step] = new PointPairList(dataPoints);
-                (points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints)).ForEach(xToVoltage);
-                (points[(int)DisplayValue.Mass] = new PointPairList(dataPoints)).ForEach(xToMass);
+                AddRange(dataPoints);
             }
 
             private void xToVoltage(PointPair pp)
@@ -248,7 +256,14 @@ namespace Flavor
         {
             OnNewGraphData(true, false);
         }
-        
+
+        internal static void updateLoaded(PointPairList pl1, PointPairList pl2)
+        {
+            (loadedSpectra[0])[0].AddRange(pl1);
+            (loadedSpectra[1])[0].AddRange(pl2);
+            OnNewGraphData(true, false);
+        }
+
         internal static void ResetLoadedPointLists()
         {
             loadedSpectra[0].Clear();

@@ -356,7 +356,7 @@ namespace Flavor
         
         internal static void OpenSpecterFile(string p)
         {
-            XmlDocument sf = new XmlDocument();
+            /*XmlDocument sf = new XmlDocument();
             ushort X = 0;
             int Y = 0;
             try
@@ -383,13 +383,54 @@ namespace Flavor
                     Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
                     Graph.updateLoaded2Graph(X, Y);
                 }
-                Graph.updateLoaded();
             }
             catch (NullReferenceException)
             {
                 System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
                 return;
+            }*/
+            ZedGraph.PointPairList pl1 = new ZedGraph.PointPairList(), pl2 = new ZedGraph.PointPairList();
+            if (OpenSpecterFile(p, pl1, pl2))
+            {
+                Graph.ResetLoadedPointLists();
+                Graph.updateLoaded(pl1, pl2);
             }
+        }
+        internal static bool OpenSpecterFile(string p, ZedGraph.PointPairList pl1, ZedGraph.PointPairList pl2)
+        {
+            XmlDocument sf = new XmlDocument();
+            ushort X = 0;
+            int Y = 0;
+            try
+            {
+                sf.Load(p);
+            }
+            catch (Exception Error)
+            {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла спектра");
+                return false;
+            }
+            try
+            {
+                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
+                {
+                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                    pl1.Add(X, Y);
+                }
+                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/p"))
+                {
+                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                    pl2.Add(X, Y);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
+                return false;
+            }
+            return true;
         }
         internal static void SaveSpecterFile(string p, bool isFromFile)
         {
@@ -443,6 +484,62 @@ namespace Flavor
         internal static void AutoSaveSpecterFile()
         {
             SaveSpecterFile(genAutoSaveFilename("sdf"), false);
+        }
+
+        internal static void DistractSpectra(string from, string what)
+        {
+            ZedGraph.PointPairList pl11 = new ZedGraph.PointPairList();
+            ZedGraph.PointPairList pl21 = new ZedGraph.PointPairList();
+            ZedGraph.PointPairList pl12 = new ZedGraph.PointPairList();
+            ZedGraph.PointPairList pl22 = new ZedGraph.PointPairList();
+            if (OpenSpecterFile(from, pl11, pl21) && OpenSpecterFile(what, pl12, pl22))
+            {
+                try
+                {
+                    ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12);
+                    ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22);
+                    Graph.ResetLoadedPointLists();
+                    Graph.updateLoaded(diff1, diff2);
+                }
+                catch (System.ArgumentException)
+                {
+                    System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
+                    return;
+                }
+            }
+        }
+        internal static void DistractSpectra(string what)
+        {
+            ZedGraph.PointPairList pl12 = new ZedGraph.PointPairList();
+            ZedGraph.PointPairList pl22 = new ZedGraph.PointPairList();
+            if (OpenSpecterFile(what, pl12, pl22))
+            {
+                try
+                {
+                    ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.LoadedSpectra1Steps[0], pl12);
+                    ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.LoadedSpectra2Steps[0], pl22);
+                    Graph.ResetLoadedPointLists();
+                    Graph.updateLoaded(diff1, diff2);
+                }
+                catch (System.ArgumentException)
+                {
+                    System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
+                    return;
+                }
+            }
+        }
+        private static ZedGraph.PointPairList PointPairListDiff(ZedGraph.PointPairList from, ZedGraph.PointPairList what)
+        {
+            if (from.Count != what.Count)
+                throw new System.ArgumentOutOfRangeException();
+            ZedGraph.PointPairList res = new ZedGraph.PointPairList(from);
+            for (int i = 0; i < res.Count; ++i)
+            {
+                if (res[i].X != what[i].X)
+                    throw new System.ArgumentException();
+                res[i].Y -= what[i].Y;
+            }
+            return res;
         }
 
         internal static void OpenPreciseSpecterFile(string p)
