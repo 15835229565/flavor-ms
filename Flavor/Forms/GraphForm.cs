@@ -9,7 +9,7 @@ using ZedGraph;
 
 namespace Flavor
 {
-    delegate void CustomZoomEventHandler(ZedGraphControl zgc);
+    //delegate void CustomZoomEventHandler(ZedGraphControl zgc);
     
     public partial class GraphForm : Form
     {
