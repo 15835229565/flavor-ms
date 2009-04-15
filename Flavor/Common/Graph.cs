@@ -192,7 +192,47 @@ namespace Flavor
             }
             return temp;
         }
-        
+        public static List<PointPairList> Displayed1Steps
+        {
+            get
+            {
+                if (isFromFile)
+                    return getPointPairs(loadedSpectra, 1, false);
+                else
+                    return getPointPairs(collectors, 1, false);
+            }
+        }
+        public static List<PointPairList> Displayed2Steps
+        {
+            get
+            {
+                if (isFromFile)
+                    return getPointPairs(loadedSpectra, 2, false);
+                else
+                    return getPointPairs(collectors, 2, false);
+            }
+        }
+        public static List<pListScaled> DisplayedRows1
+        {
+            get
+            {
+                if (isFromFile)
+                    return loadedSpectra[0];
+                else
+                    return collectors[0];
+            }
+        }
+        public static List<pListScaled> DisplayedRows2
+        {
+            get
+            {
+                if (isFromFile)
+                    return loadedSpectra[1];
+                else
+                    return collectors[1];
+            }
+        }
+
         private static ushort lastPoint;
         public static ushort LastPoint
         {
@@ -264,13 +304,20 @@ namespace Flavor
             OnNewGraphData(true, false);
         }
 
+        internal static void updateNotPrecise(PointPairList pl1, PointPairList pl2)
+        {
+            DisplayedRows1[0].AddRange(pl1);
+            DisplayedRows2[0].AddRange(pl2);
+            OnNewGraphData(isFromFile, true);
+        }
+
         internal static void ResetLoadedPointLists()
         {
             loadedSpectra[0].Clear();
             loadedSpectra[0].Add(new pListScaled(true));
             loadedSpectra[1].Clear();
             loadedSpectra[1].Add(new pListScaled(false));
-            OnNewGraphData(true, true);
+            OnNewGraphData(true, false/*true*/);
         }
 
         internal static void updateGraph(int[][] senseModeCounts, Utility.PreciseEditorData[] peds)

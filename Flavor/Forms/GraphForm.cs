@@ -14,9 +14,7 @@ namespace Flavor
     public partial class GraphForm : Form
     {
         private string displayedFileName = "";
-
         private bool preciseSpecterDisplayed = false;
-
         private bool prevPreciseSpecterDisplayed = false;
 
         public bool specterOpeningEnabled
@@ -24,9 +22,19 @@ namespace Flavor
             set 
             {
                 openSpecterFileToolStripMenuItem.Enabled = value;
+                //!!!
+                distractFromCurrentToolStripMenuItem.Enabled = closeSpecterFileToolStripMenuItem.Enabled && value;
             }
         }
-
+        public bool specterClosingEnabled
+        {
+            set
+            {
+                closeSpecterFileToolStripMenuItem.Enabled = value;
+                //!!!
+                distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && value;
+            }
+        }
         public bool specterSavingEnabled
         {
             set
@@ -81,7 +89,7 @@ namespace Flavor
         {
             displayedFileName = "";
             Graph.IsFromFile = false;
-            closeSpecterFileToolStripMenuItem.Enabled = false;
+            specterClosingEnabled = false;
             ZedGraphRebirth(zgc1, Graph.Collector1, "Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.Collector2, "Второй коллектор");
         }
@@ -92,13 +100,17 @@ namespace Flavor
             collect2_graph.Refresh();
         }
 
+        public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
+        {
+            DisplayLoadedSpectrum(zgc1, zgc2, displayedFileName);
+        }
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2, string fileName) 
         {
             displayedFileName = fileName;
             Graph.IsFromFile = true;
             ZedGraphRebirth(zgc1, Graph.LoadedSpectra1, "Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.LoadedSpectra2, "Второй коллектор");
-            closeSpecterFileToolStripMenuItem.Enabled = true;
+            specterClosingEnabled = true;
         }
         
         private void GraphForm_Validating(object sender, CancelEventArgs e)
@@ -188,13 +200,15 @@ namespace Flavor
 
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            closeSpecterFileToolStripMenuItem.Enabled = false;
+            specterClosingEnabled = false;
             CreateGraph(this.collect1_graph, this.collect2_graph);
             preciseSpecterDisplayed = prevPreciseSpecterDisplayed;
         }
 
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
+            //openSpecterFileDialog.DefaultExt = "";
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
             {
                 Graph.ResetLoadedPointLists();
@@ -211,7 +225,30 @@ namespace Flavor
                     Config.OpenPreciseSpecterFile(openSpecterFileDialog.FileName);
                 }
                 DisplayLoadedSpectrum(collect1_graph, collect2_graph, openSpecterFileDialog.FileName);
-                closeSpecterFileToolStripMenuItem.Enabled = true;
+                specterClosingEnabled = true;
+            }
+        }
+
+        private void distractFromCurrentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (preciseSpecterDisplayed)
+            {
+                System.Windows.Forms.MessageBox.Show("Вычитание прецизионных спектров еще не реализовано", "Внутренняя ошибка программы");
+                return;
+                openSpecterFileDialog.Filter = "Precise specter files (*.psf)|*.psf";
+                //openSpecterFileDialog.DefaultExt = "psf";
+                if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                }
+            }
+            else
+            {
+                openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf";
+                //openSpecterFileDialog.DefaultExt = "sdf";
+                if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Config.DistractSpectra(openSpecterFileDialog.FileName);
+                }
             }
         }
     }

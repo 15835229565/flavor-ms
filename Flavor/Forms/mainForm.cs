@@ -223,8 +223,9 @@ namespace Flavor
         {
             if (fromFile)
             {
-                //if (recreate) gForm.DisplayLoadedSpectrum(gForm.collect1_graph, gForm.collect2_graph);
-                //else
+                if (recreate)
+                    gForm.DisplayLoadedSpectrum(gForm.collect1_graph, gForm.collect2_graph);
+                else
                     gForm.RefreshGraph();
             }
             else

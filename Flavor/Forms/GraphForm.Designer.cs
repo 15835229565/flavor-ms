@@ -61,6 +61,7 @@ namespace Flavor
             this.defaultScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSpecterFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collect2_graph = new Flavor.ZedGraphControlPlus();
             this.collect1_graph = new Flavor.ZedGraphControlPlus();
             this.graphFormMenuStrip.SuspendLayout();
@@ -83,6 +84,7 @@ namespace Flavor
             // 
             this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openSpecterFileToolStripMenuItem,
+            this.distractFromCurrentToolStripMenuItem,
             this.closeSpecterFileToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.toolStripSeparator4,
@@ -113,7 +115,7 @@ namespace Flavor
             // 
             this.closeSpecterFileToolStripMenuItem.Enabled = false;
             this.closeSpecterFileToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.closeSpecterFileToolStripMenuItem.MergeIndex = 1;
+            this.closeSpecterFileToolStripMenuItem.MergeIndex = 2;
             this.closeSpecterFileToolStripMenuItem.Name = "closeSpecterFileToolStripMenuItem";
             this.closeSpecterFileToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.closeSpecterFileToolStripMenuItem.Text = "Закрыть файл спектра";
@@ -125,7 +127,7 @@ namespace Flavor
             this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.saveToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.saveToolStripMenuItem.MergeIndex = 2;
+            this.saveToolStripMenuItem.MergeIndex = 3;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
@@ -135,7 +137,7 @@ namespace Flavor
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.toolStripSeparator4.MergeIndex = 3;
+            this.toolStripSeparator4.MergeIndex = 4;
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(241, 6);
             // 
@@ -144,7 +146,7 @@ namespace Flavor
             this.printToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printToolStripMenuItem.Image")));
             this.printToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.printToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.printToolStripMenuItem.MergeIndex = 4;
+            this.printToolStripMenuItem.MergeIndex = 5;
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
             this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.printToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
@@ -156,7 +158,7 @@ namespace Flavor
             this.printPreviewToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printPreviewToolStripMenuItem.Image")));
             this.printPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
             this.printPreviewToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.printPreviewToolStripMenuItem.MergeIndex = 5;
+            this.printPreviewToolStripMenuItem.MergeIndex = 6;
             this.printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
             this.printPreviewToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.printPreviewToolStripMenuItem.Text = "Print Pre&view";
@@ -165,7 +167,7 @@ namespace Flavor
             // printSetupToolStripMenuItem
             // 
             this.printSetupToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.printSetupToolStripMenuItem.MergeIndex = 6;
+            this.printSetupToolStripMenuItem.MergeIndex = 7;
             this.printSetupToolStripMenuItem.Name = "printSetupToolStripMenuItem";
             this.printSetupToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.printSetupToolStripMenuItem.Text = "Print Setup";
@@ -174,7 +176,7 @@ namespace Flavor
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.toolStripSeparator5.MergeIndex = 7;
+            this.toolStripSeparator5.MergeIndex = 8;
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(241, 6);
             this.toolStripSeparator5.Visible = false;
@@ -346,6 +348,16 @@ namespace Flavor
             this.openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
             this.openSpecterFileDialog.InitialDirectory = ".";
             // 
+            // distractFromCurrentToolStripMenuItem
+            // 
+            this.distractFromCurrentToolStripMenuItem.Enabled = false;
+            this.distractFromCurrentToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
+            this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
+            this.distractFromCurrentToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.distractFromCurrentToolStripMenuItem.Text = "Вычесть из текущего";
+            this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
+            // 
             // collect2_graph
             // 
             this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
@@ -442,5 +454,6 @@ namespace Flavor
         private System.Windows.Forms.SaveFileDialog saveSpecterFileDialog;
         private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
         private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
+        private System.Windows.Forms.ToolStripMenuItem distractFromCurrentToolStripMenuItem;
     }
 }

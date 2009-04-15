@@ -499,7 +499,7 @@ namespace Flavor
                     ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12);
                     ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22);
                     Graph.ResetLoadedPointLists();
-                    Graph.updateLoaded(diff1, diff2);
+                    Graph.updateNotPrecise(diff1, diff2);
                 }
                 catch (System.ArgumentException)
                 {
@@ -516,10 +516,10 @@ namespace Flavor
             {
                 try
                 {
-                    ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.LoadedSpectra1Steps[0], pl12);
-                    ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.LoadedSpectra2Steps[0], pl22);
-                    Graph.ResetLoadedPointLists();
-                    Graph.updateLoaded(diff1, diff2);
+                    ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12);
+                    ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22);
+                    //Graph.ResetLoadedPointLists();
+                    Graph.updateNotPrecise(diff1, diff2);
                 }
                 catch (System.ArgumentException)
                 {
