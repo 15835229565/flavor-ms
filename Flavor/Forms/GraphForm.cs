@@ -23,7 +23,7 @@ namespace Flavor
             {
                 openSpecterFileToolStripMenuItem.Enabled = value;
                 //!!!
-                distractFromCurrentToolStripMenuItem.Enabled = closeSpecterFileToolStripMenuItem.Enabled && value;
+                distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value;
             }
         }
         public bool specterClosingEnabled
@@ -31,8 +31,6 @@ namespace Flavor
             set
             {
                 closeSpecterFileToolStripMenuItem.Enabled = value;
-                //!!!
-                distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && value;
             }
         }
         public bool specterSavingEnabled
@@ -40,6 +38,8 @@ namespace Flavor
             set
             {
                 saveToolStripMenuItem.Enabled = value;
+                //!!!
+                distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && value;
             }
         }
         
