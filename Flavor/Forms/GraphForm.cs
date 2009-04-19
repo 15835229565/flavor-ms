@@ -55,13 +55,19 @@ namespace Flavor
 
         private void Graph_OnAxisModeChanged()
         {
-            if (Graph.IsFromFile)
+            switch (Graph.DisplayingMode)
             {
-                DisplayLoadedSpectrum(this.collect1_graph, this.collect2_graph, displayedFileName);
-            }
-            else
-            {
-                CreateGraph(this.collect1_graph, this.collect2_graph);
+                case Graph.Displaying.Loaded:
+                    DisplayLoadedSpectrum(this.collect1_graph, this.collect2_graph, displayedFileName);
+                    break;
+                case Graph.Displaying.Measured:
+                    CreateGraph(this.collect1_graph, this.collect2_graph);
+                    break;
+                case Graph.Displaying.Diff:
+                    DisplayDiff(this.collect1_graph, this.collect2_graph);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -85,19 +91,21 @@ namespace Flavor
             collect2_graph.Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
         }
 
-        public void CreateGraph(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
-        {
-            displayedFileName = "";
-            Graph.IsFromFile = false;
-            specterClosingEnabled = false;
-            ZedGraphRebirth(zgc1, Graph.Collector1, "Первый коллектор");
-            ZedGraphRebirth(zgc2, Graph.Collector2, "Второй коллектор");
-        }
-
         public void RefreshGraph()
         {
             collect1_graph.Refresh();
             collect2_graph.Refresh();
+        }
+
+        public void CreateGraph(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
+        {
+            displayedFileName = "";
+            Graph.DisplayingMode = Graph.Displaying.Measured;
+            specterClosingEnabled = false;
+            ZedGraphRebirth(zgc1, Graph.Displayed1, "Первый коллектор");
+            ZedGraphRebirth(zgc2, Graph.Displayed2, "Второй коллектор");
+            //ZedGraphRebirth(zgc1, Graph.Collector1, "Первый коллектор");
+            //ZedGraphRebirth(zgc2, Graph.Collector2, "Второй коллектор");
         }
 
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
@@ -107,11 +115,22 @@ namespace Flavor
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2, string fileName) 
         {
             displayedFileName = fileName;
-            Graph.IsFromFile = true;
-            ZedGraphRebirth(zgc1, Graph.LoadedSpectra1, "Первый коллектор");
-            ZedGraphRebirth(zgc2, Graph.LoadedSpectra2, "Второй коллектор");
+            Graph.DisplayingMode = Graph.Displaying.Loaded;
+            ZedGraphRebirth(zgc1, Graph.Displayed1, "Первый коллектор");
+            ZedGraphRebirth(zgc2, Graph.Displayed2, "Второй коллектор");
+            //ZedGraphRebirth(zgc1, Graph.LoadedSpectra1, "Первый коллектор");
+            //ZedGraphRebirth(zgc2, Graph.LoadedSpectra2, "Второй коллектор");
             specterClosingEnabled = true;
         }
+        public void DisplayDiff(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
+        {
+            //displayedFileName = fileName;
+            Graph.DisplayingMode = Graph.Displaying.Diff;
+            ZedGraphRebirth(zgc1, Graph.Displayed1, "Diff - Первый коллектор");
+            ZedGraphRebirth(zgc2, Graph.Displayed2, "Diff - Второй коллектор");
+            specterClosingEnabled = true;
+        }
+        
         
         private void GraphForm_Validating(object sender, CancelEventArgs e)
         {
@@ -126,7 +145,7 @@ namespace Flavor
                 saveSpecterFileDialog.DefaultExt = "psf";
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, Graph.IsFromFile);
+                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, Graph.DisplayingMode);
                 }
             }
             else
@@ -135,7 +154,7 @@ namespace Flavor
                 saveSpecterFileDialog.DefaultExt = "sdf";
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Config.SaveSpecterFile(saveSpecterFileDialog.FileName, Graph.IsFromFile);
+                    Config.SaveSpecterFile(saveSpecterFileDialog.FileName, Graph.DisplayingMode);
                 }
             }
         }
@@ -200,7 +219,7 @@ namespace Flavor
 
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            specterClosingEnabled = false;
+            //specterClosingEnabled = false;
             CreateGraph(this.collect1_graph, this.collect2_graph);
             preciseSpecterDisplayed = prevPreciseSpecterDisplayed;
         }
@@ -208,10 +227,9 @@ namespace Flavor
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
-            //openSpecterFileDialog.DefaultExt = "";
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Graph.ResetLoadedPointLists();
+                //Graph.ResetLoadedPointLists();
                 if (openSpecterFileDialog.FilterIndex == 1)
                 {
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
@@ -233,22 +251,15 @@ namespace Flavor
         {
             if (preciseSpecterDisplayed)
             {
-                System.Windows.Forms.MessageBox.Show("Вычитание прецизионных спектров еще не реализовано", "Внутренняя ошибка программы");
-                return;
                 openSpecterFileDialog.Filter = "Precise specter files (*.psf)|*.psf";
-                //openSpecterFileDialog.DefaultExt = "psf";
-                if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                }
             }
             else
             {
                 openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf";
-                //openSpecterFileDialog.DefaultExt = "sdf";
-                if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    Config.DistractSpectra(openSpecterFileDialog.FileName);
-                }
+            }
+            if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Config.DistractSpectra(openSpecterFileDialog.FileName);
             }
         }
     }

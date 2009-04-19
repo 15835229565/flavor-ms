@@ -206,84 +206,93 @@ namespace Flavor
             this.measure_StatusLabel.Text = msg;
         }
 
-        public void InvokeRefreshGraph(bool fromFile, bool recreate)
+        private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate)
         {
             if (this.InvokeRequired)
             {
                 Graph.GraphEventHandler InvokeDelegate = new Graph.GraphEventHandler(RefreshGraph);
-                this.Invoke(InvokeDelegate, fromFile, recreate);
+                this.Invoke(InvokeDelegate, displayMode, recreate);
             }
             else
             {
-                RefreshGraph(fromFile, recreate);
+                RefreshGraph(displayMode, recreate);
             }
         }
 
-        private void RefreshGraph(bool fromFile, bool recreate)
+        private void RefreshGraph(Graph.Displaying displayMode, bool recreate)
         {
-            if (fromFile)
+            switch (displayMode)
             {
-                if (recreate)
-                    gForm.DisplayLoadedSpectrum(gForm.collect1_graph, gForm.collect2_graph);
-                else
-                    gForm.RefreshGraph();
-            }
-            else
-            {
-                if (recreate)
-                    gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph);
-                else
-                {
-                    gForm.RefreshGraph();
-                    scanProgressBar.PerformStep();
-                    stepNumberLabel.Text = Graph.LastPoint.ToString();
-                    scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.LastPoint));
-                    detector1CountsLabel.Text = Device.Detector1.ToString();
-                    detector2CountsLabel.Text = Device.Detector2.ToString();
-                    if (Commander.isSenseMeasure)
+                case Graph.Displaying.Loaded:
+                    if (recreate)
+                        gForm.DisplayLoadedSpectrum(gForm.collect1_graph, gForm.collect2_graph);
+                    else
+                        gForm.RefreshGraph();
+                    break;
+                case Graph.Displaying.Measured:
+                    if (recreate)
+                        gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph);
+                    else
                     {
-                        peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
-                        peakNumberLabel.Visible = true;
-                        label39.Visible = true;
-                        peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
-                        peakCenterLabel.Visible = true;
-                        label41.Visible = true;
-                        peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
-                        peakWidthLabel.Visible = true;
-                        if (Graph.CurrentPeak.Collector == 1)
+                        gForm.RefreshGraph();
+                        scanProgressBar.PerformStep();
+                        stepNumberLabel.Text = Graph.LastPoint.ToString();
+                        scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.LastPoint));
+                        detector1CountsLabel.Text = Device.Detector1.ToString();
+                        detector2CountsLabel.Text = Device.Detector2.ToString();
+                        if (Commander.isSenseMeasure)
                         {
-                            detector1CountsLabel.Visible = true;
-                            label15.Visible = true;
-                            detector2CountsLabel.Visible = false;
-                            label16.Visible = false;
+                            peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
+                            peakNumberLabel.Visible = true;
+                            label39.Visible = true;
+                            peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
+                            peakCenterLabel.Visible = true;
+                            label41.Visible = true;
+                            peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
+                            peakWidthLabel.Visible = true;
+                            if (Graph.CurrentPeak.Collector == 1)
+                            {
+                                detector1CountsLabel.Visible = true;
+                                label15.Visible = true;
+                                detector2CountsLabel.Visible = false;
+                                label16.Visible = false;
+                            }
+                            else
+                            {
+                                detector1CountsLabel.Visible = false;
+                                label15.Visible = false;
+                                detector2CountsLabel.Visible = true;
+                                label16.Visible = true;
+                            }
                         }
                         else
                         {
-                            detector1CountsLabel.Visible = false;
-                            label15.Visible = false;
+                            gForm.specterSavingEnabled = true;
+                            
+                            detector1CountsLabel.Visible = true;
+                            label15.Visible = true;
                             detector2CountsLabel.Visible = true;
                             label16.Visible = true;
+                            peakNumberLabel.Visible = false;
+                            label39.Visible = false;
+                            peakCenterLabel.Visible = false;
+                            label41.Visible = false;
+                            peakWidthLabel.Visible = false;
                         }
                     }
+                    break;
+                case Graph.Displaying.Diff:
+                    if (recreate)
+                        gForm.DisplayDiff(gForm.collect1_graph, gForm.collect2_graph);
                     else
-                    {
-                        gForm.specterSavingEnabled = true;
-                        
-                        detector1CountsLabel.Visible = true;
-                        label15.Visible = true;
-                        detector2CountsLabel.Visible = true;
-                        label16.Visible = true;
-                        peakNumberLabel.Visible = false;
-                        label39.Visible = false;
-                        peakCenterLabel.Visible = false;
-                        label41.Visible = false;
-                        peakWidthLabel.Visible = false;
-                    }
-                }
+                        gForm.RefreshGraph();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        public void InvokeRefreshDeviceState()
+        private void InvokeRefreshDeviceState()
         {
             if (this.InvokeRequired)
             {
@@ -351,7 +360,7 @@ namespace Flavor
             }
         }
 
-        public void InvokeRefreshTurboPumpStatus() 
+        private void InvokeRefreshTurboPumpStatus() 
         {
             if (this.InvokeRequired)
             {
@@ -374,7 +383,7 @@ namespace Flavor
             this.operationTimeLabel.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
         }
 
-        public void InvokeRefreshDeviceStatus()
+        private void InvokeRefreshDeviceStatus()
         {
             if (this.InvokeRequired)
             {
@@ -453,7 +462,7 @@ namespace Flavor
             this.turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
         }
 
-        public void InvokeRefreshVacuumState()
+        private void InvokeRefreshVacuumState()
         {
             if (this.InvokeRequired)
             {
@@ -557,7 +566,7 @@ namespace Flavor
             }
         }
 
-        public void InvokeRefreshButtons() 
+        internal void InvokeRefreshButtons() 
         {
             if (this.InvokeRequired)
             {
@@ -570,7 +579,7 @@ namespace Flavor
             }
         }
 
-        public void RefreshButtons()
+        private void RefreshButtons()
         {
             //bool precPointsExist = (Config.PreciseData.Count != 0);
             bool precPointsExist = Commander.somePointsUsed();
@@ -736,7 +745,7 @@ namespace Flavor
             }
         }
 
-        public void InvokeCancelScan()
+        private void InvokeCancelScan()
         {
             if (this.InvokeRequired)
             {

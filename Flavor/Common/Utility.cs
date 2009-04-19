@@ -29,6 +29,11 @@ namespace Flavor
             {
                 usethis = useit;
             }
+            public PreciseEditorData(PreciseEditorData other)
+                : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment)
+            {
+                associatedPoints = other.associatedPoints.Clone();
+            }
             private bool usethis = true;
             private byte pointNumber;
             private ushort step;
@@ -82,6 +87,12 @@ namespace Flavor
             {
                 get { return comment; }
                 //set { comment = value; }
+            }
+            public bool Equals(PreciseEditorData other)
+            {
+                bool result = (this.collector == other.collector) && (this.step == other.step) && 
+                              (this.iterations == other.iterations) && (this.width == other.width);
+                return result;
             }
         }
 
@@ -474,6 +485,33 @@ namespace Flavor
             }
         }
         //Comparers and predicate for sorting and finding Utility.PreciseEditorData objects in List
+        internal static int ComparePreciseEditorData(PreciseEditorData ped1, PreciseEditorData ped2)
+        {
+            if (ped1 == null)
+            {
+                if (ped2 == null)
+                    return 0;
+                else
+                    return -1;
+            }
+            else
+            {
+                if (ped2 == null)
+                    return 1;
+                else
+                {
+                    if (ped1.Collector != ped2.Collector)
+                        return (int)(ped1.Collector - ped2.Collector);
+                    if (ped1.Step != ped2.Step)
+                        return (int)(ped1.Step - ped2.Step);
+                    if (ped1.Width != ped2.Width)
+                        return (int)(ped2.Width - ped1.Width);
+                    if (ped1.Iterations != ped2.Iterations)
+                        return (int)(ped2.Iterations - ped1.Iterations);
+                    return 0;
+                }
+            }
+        }
         internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
         {
             //Forward sort

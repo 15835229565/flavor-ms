@@ -30,10 +30,22 @@ namespace Flavor
         private static ushort focusVoltage2;
         
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
+        private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
+        private static List<Utility.PreciseEditorData> preciseDataDiff = new List<Utility.PreciseEditorData>();
 
         public static List<Utility.PreciseEditorData> PreciseData
         {
             get { return preciseData; }
+            //set { preciseData = value; }
+        }
+        public static List<Utility.PreciseEditorData> PreciseDataLoaded
+        {
+            get { return preciseDataLoaded; }
+            //set { preciseData = value; }
+        }
+        public static List<Utility.PreciseEditorData> PreciseDataDiff
+        {
+            get { return preciseDataDiff; }
             //set { preciseData = value; }
         }
         public static string Port
@@ -354,47 +366,16 @@ namespace Flavor
             return dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension;
         }
         
-        internal static void OpenSpecterFile(string p)
+        internal static bool OpenSpecterFile(string p)
         {
-            /*XmlDocument sf = new XmlDocument();
-            ushort X = 0;
-            int Y = 0;
-            try
-            {
-                sf.Load(p);
-            }
-            catch (Exception Error)
-            {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла спектра");
-                return;
-            }
-            try
-            {
-                Graph.ResetLoadedPointLists();
-                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
-                {
-                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
-                    Graph.updateLoaded1Graph(X, Y);
-                }
-                foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/p"))
-                {
-                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
-                    Graph.updateLoaded2Graph(X, Y);
-                }
-            }
-            catch (NullReferenceException)
-            {
-                System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
-                return;
-            }*/
             ZedGraph.PointPairList pl1 = new ZedGraph.PointPairList(), pl2 = new ZedGraph.PointPairList();
-            if (OpenSpecterFile(p, pl1, pl2))
+            bool result = OpenSpecterFile(p, pl1, pl2);
+            if (result)
             {
                 Graph.ResetLoadedPointLists();
                 Graph.updateLoaded(pl1, pl2);
             }
+            return result;
         }
         internal static bool OpenSpecterFile(string p, ZedGraph.PointPairList pl1, ZedGraph.PointPairList pl2)
         {
@@ -430,60 +411,57 @@ namespace Flavor
                 System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
                 return false;
             }
+            pl1.Sort(ZedGraph.SortType.XValues);
+            pl2.Sort(ZedGraph.SortType.XValues);
             return true;
         }
-        internal static void SaveSpecterFile(string p, bool isFromFile)
+        internal static void SaveSpecterFile(string p, Graph.Displaying displayMode)
         {
             XmlDocument sf = new XmlDocument();
             XmlNode temp;
             sf.AppendChild(sf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
             sf.AppendChild(sf.CreateNode(XmlNodeType.Element, "overview", ""));
             sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "header", ""));
-            sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "start", ""));
-            sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "end", ""));
+            switch (displayMode)
+            {
+                case Graph.Displaying.Loaded:
+                    sf.SelectSingleNode("/overview/header").InnerText = "Custom save";
+                    break;
+                case Graph.Displaying.Measured:
+                    sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "start", ""));
+                    sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "end", ""));
+                    sf.SelectSingleNode("/overview/header").InnerText = "Measure save";
+                    sf.SelectSingleNode("/overview/start").InnerText = sPoint.ToString();
+                    sf.SelectSingleNode("/overview/end").InnerText = ePoint.ToString();
+                    // In case of loaded (not auto) start/end points and measure parameters are not connected to spectrum data..
+                    break;
+                case Graph.Displaying.Diff:
+                    sf.SelectSingleNode("/overview/header").InnerText = "Diff save";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "collector1", ""));
             sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "collector2", ""));
-            sf.SelectSingleNode("/overview/start").InnerText = sPoint.ToString();
-            sf.SelectSingleNode("/overview/end").InnerText = ePoint.ToString();
-            if (isFromFile)
+            foreach (ZedGraph.PointPair pp in Graph.Displayed1Steps[0])
             {
-                foreach (ZedGraph.PointPair pp in Graph.LoadedSpectra1Steps[0])
-                {
-                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                    sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
-                }
-                foreach (ZedGraph.PointPair pp in Graph.LoadedSpectra2Steps[0])
-                {
-                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                    sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
-                }
+                temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
             }
-            else
+            foreach (ZedGraph.PointPair pp in Graph.Displayed2Steps[0])
             {
-                foreach (ZedGraph.PointPair pp in Graph.Collector1Steps[0])
-                {
-                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                    sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
-                }
-                foreach (ZedGraph.PointPair pp in Graph.Collector2Steps[0])
-                {
-                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                    sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
-                }
+                temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
             }
             sf.Save(@p);
         }
         internal static void AutoSaveSpecterFile()
         {
-            SaveSpecterFile(genAutoSaveFilename("sdf"), false);
+            SaveSpecterFile(genAutoSaveFilename("sdf"), Graph.Displaying.Measured);
         }
 
         internal static void DistractSpectra(string from, string what)
@@ -498,7 +476,7 @@ namespace Flavor
                 {
                     ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12);
                     ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22);
-                    Graph.ResetLoadedPointLists();
+                    //Graph.ResetLoadedPointLists();
                     Graph.updateNotPrecise(diff1, diff2);
                 }
                 catch (System.ArgumentException)
@@ -510,21 +488,63 @@ namespace Flavor
         }
         internal static void DistractSpectra(string what)
         {
-            ZedGraph.PointPairList pl12 = new ZedGraph.PointPairList();
-            ZedGraph.PointPairList pl22 = new ZedGraph.PointPairList();
-            if (OpenSpecterFile(what, pl12, pl22))
+            if (Graph.isPreciseSpectrum)
             {
-                try
+                List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+                if (OpenPreciseSpecterFile(what, peds))
                 {
-                    ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12);
-                    ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22);
-                    //Graph.ResetLoadedPointLists();
-                    Graph.updateNotPrecise(diff1, diff2);
+                    peds.Sort(Utility.ComparePreciseEditorData);
+                    List<Utility.PreciseEditorData> temp;
+                    switch (Graph.DisplayingMode)
+                    {
+                        case Graph.Displaying.Loaded:
+                            temp = new List<Utility.PreciseEditorData>(preciseDataLoaded);
+                            break;
+                        case Graph.Displaying.Measured:
+                            temp = new List<Utility.PreciseEditorData>(preciseData);
+                            break;
+                        case Graph.Displaying.Diff:
+                            temp = new List<Utility.PreciseEditorData>(preciseDataDiff);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    temp.Sort(Utility.ComparePreciseEditorData);
+                    try
+                    {
+                        temp = PreciseEditorDataListDiff(temp, peds);
+                        //ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12);
+                        //ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22);
+                        //Graph.ResetLoadedPointLists();
+                        //Graph.updateNotPrecise(diff1, diff2);
+                        preciseDataDiff = temp;
+                        Graph.updatePrecise(temp);
+                    }
+                    catch (System.ArgumentException)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
+                        return;
+                    }
                 }
-                catch (System.ArgumentException)
+            }
+            else
+            {
+                ZedGraph.PointPairList pl12 = new ZedGraph.PointPairList();
+                ZedGraph.PointPairList pl22 = new ZedGraph.PointPairList();
+                if (OpenSpecterFile(what, pl12, pl22))
                 {
-                    System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
-                    return;
+                    try
+                    {
+                        ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12);
+                        ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22);
+                        Graph.ResetDiffPointLists();
+                        Graph.updateNotPrecise(diff1, diff2);
+                    }
+                    catch (System.ArgumentException)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
+                        return;
+                    }
                 }
             }
         }
@@ -541,13 +561,47 @@ namespace Flavor
             }
             return res;
         }
+        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData from, Utility.PreciseEditorData what)
+        {
+            if (!from.Equals(what))
+                throw new System.ArgumentException();
+            if (from.AssociatedPoints.Count != what.AssociatedPoints.Count)
+                throw new System.ArgumentOutOfRangeException();
+            Utility.PreciseEditorData res = new Utility.PreciseEditorData(from);
+            for (int i = 0; i < res.AssociatedPoints.Count; ++i)
+            {
+                if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
+                    throw new System.ArgumentException();
+                res.AssociatedPoints[i].Y -= what.AssociatedPoints[i].Y;
+            }
+            return res;
+        }
+        private static List<Utility.PreciseEditorData> PreciseEditorDataListDiff(List<Utility.PreciseEditorData> from, List<Utility.PreciseEditorData> what)
+        {
+            if (from.Count != what.Count)
+                throw new System.ArgumentOutOfRangeException();
+            List<Utility.PreciseEditorData> res = new List<Utility.PreciseEditorData>(from);
+            for (int i = 0; i < res.Count; ++i)
+            {
+                res[i] = PreciseEditorDataDiff(res[i], what[i]);
+            }
+            return res;
+        }
 
-        internal static void OpenPreciseSpecterFile(string p)
+        internal static bool OpenPreciseSpecterFile(string p)
+        {
+            List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+            bool result = OpenPreciseSpecterFile(p, peds);
+            if (result)
+            {
+                preciseDataLoaded = peds;
+                Graph.updatePrecise();
+            }
+            return result;
+        }
+        internal static bool OpenPreciseSpecterFile(string p, List<Utility.PreciseEditorData> peds)
         {
             XmlDocument sf = new XmlDocument();
-            List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
-            ushort X = 0;
-            int Y = 0;
             try
             {
                 sf.Load(p);
@@ -555,8 +609,12 @@ namespace Flavor
             catch (Exception Error)
             {
                 System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионного спектра");
-                return;
+                return false;
             }
+            return LoadPED(sf, p, peds, true, "");
+            
+            ushort X = 0;
+            int Y = 0;
             for (int i = 1; i <= 20; ++i)
             {
                 Utility.PreciseEditorData temp = null;
@@ -588,13 +646,13 @@ namespace Flavor
                 catch (NullReferenceException)
                 {
                     System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра");
-                    return;
+                    return false;
                 }
                 if (temp != null) peds.Add(temp);
             }
-            Graph.updateGraph(peds);
+            return true;
         }
-        internal static void SavePreciseSpecterFile(string p, bool isFromFile)
+        internal static void SavePreciseSpecterFile(string p, Graph.Displaying displayMode)
         {
             XmlDocument sf = new XmlDocument();
             XmlNode temp;
@@ -611,42 +669,41 @@ namespace Flavor
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "error", ""));
                 sf.SelectSingleNode(string.Format("sense")).AppendChild(temp);
             }
-            if (isFromFile)
+            List<Utility.PreciseEditorData> processed;
+            switch (displayMode)
             {
-                foreach (Utility.PreciseEditorData ped in Config.PreciseData/*Loaded*/)
-                {
-                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
-                    {
-                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                        sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
-                    }
-                }
+                case Graph.Displaying.Loaded:
+                    processed = Config.PreciseDataLoaded;
+                    break;
+                case Graph.Displaying.Measured:
+                    processed = Config.PreciseData;
+                    break;
+                case Graph.Displaying.Diff:
+                    processed = Config.PreciseDataDiff;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else
+            foreach (Utility.PreciseEditorData ped in processed)
             {
-                foreach (Utility.PreciseEditorData ped in Config.PreciseData)
+                sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
+                sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
+                sf.SelectSingleNode(string.Format("/sense/region{0}/width", ped.pNumber + 1)).InnerText = ped.Width.ToString();
+                sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
+                sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();
+                foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
                 {
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/width", ped.pNumber + 1)).InnerText = ped.Width.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();
-                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
-                    {
-                        temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
-                        sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
-                    }
+                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                    sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
                 }
             }
             sf.Save(@p);
         }
         internal static void AutoSavePreciseSpecterFile()
         {
-            SavePreciseSpecterFile(genAutoSaveFilename("psf"), false);
+            SavePreciseSpecterFile(genAutoSaveFilename("psf"), Graph.Displaying.Measured);
         }
 
         internal static void SavePreciseOptions() 
@@ -757,6 +814,11 @@ namespace Flavor
                 pedConf = _conf;
                 mainConfPrefix = mainConfigPrefix;
             }
+
+            if (LoadPED(pedConf, pedConfName, ped, false, mainConfPrefix))
+                return ped;
+            return null;
+
             for (int i = 1; i <= 20; ++i)
             {
                 Utility.PreciseEditorData temp = null;
@@ -809,9 +871,87 @@ namespace Flavor
             List<Utility.PreciseEditorData> pedl = LoadPreciseEditorData(confName);
             if ((pedl != null) && (pedl.Count > 0)) 
             { 
-                PreciseData.Clear();
-                PreciseData.AddRange(pedl); 
+                //BAD!!! cleaning previous points!!!
+                preciseData.Clear();
+                preciseData.AddRange(pedl); 
             }
+        }
+
+        private static bool LoadPED(XmlDocument pedConf, string pedConfName, List<Utility.PreciseEditorData> ped, bool readSpectrum, string mainConfPrefix)
+        {
+            for (int i = 1; i <= 20; ++i)
+            {
+                Utility.PreciseEditorData temp = null;
+                string peak, iter, width, col;
+                try
+                {
+                    peak = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText;
+                    col = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText;
+                    iter = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText;
+                    width = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText;
+                    bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
+                    if (allFilled)
+                    {
+                        string comment = "";
+                        try
+                        {
+                            comment = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/comment", i)).InnerText;
+                        }
+                        catch (NullReferenceException) { }
+                        bool use = true;
+                        try
+                        {
+                            use = bool.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/use", i)).InnerText);
+                        }
+                        catch (NullReferenceException) { }
+                        catch (FormatException) { }
+                        try
+                        {
+                            temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
+                                                         byte.Parse(col), ushort.Parse(iter),
+                                                         ushort.Parse(width), (float)0, comment);
+                        }
+                        catch (FormatException)
+                        {
+                            if (readSpectrum)
+                                System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионного спектра");
+                            else
+                                wrongFormatOnLoadPrecise(confName);
+                            return false;
+                        }
+                        if (readSpectrum)
+                        {
+                            int X, Y;
+                            ZedGraph.PointPairList tempPntLst = new ZedGraph.PointPairList();
+                            try
+                            {
+                                foreach (XmlNode pntNode in pedConf.SelectNodes(string.Format(mainConfPrefix + "sense/region{0}/p", i)))
+                                {
+                                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
+                                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                                    tempPntLst.Add(X, Y);
+                                }
+                            }
+                            catch (FormatException)
+                            {
+                                System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионного спектра");
+                                return false;
+                            }
+                            temp.AssociatedPoints = tempPntLst;
+                        }
+                    }
+                }
+                catch (NullReferenceException)
+                {
+                    if (readSpectrum)
+                        System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра");
+                    else
+                        structureErrorOnLoadPrecise(pedConfName);
+                    return false;
+                }
+                if (temp != null) ped.Add(temp);
+            }
+            return true;
         }
 
         internal static void saveCommonOptions()
