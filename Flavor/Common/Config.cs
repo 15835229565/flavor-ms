@@ -476,7 +476,6 @@ namespace Flavor
                 {
                     ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12);
                     ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22);
-                    //Graph.ResetLoadedPointLists();
                     Graph.updateNotPrecise(diff1, diff2);
                 }
                 catch (System.ArgumentException)
@@ -513,10 +512,6 @@ namespace Flavor
                     try
                     {
                         temp = PreciseEditorDataListDiff(temp, peds);
-                        //ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12);
-                        //ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22);
-                        //Graph.ResetLoadedPointLists();
-                        //Graph.updateNotPrecise(diff1, diff2);
                         preciseDataDiff = temp;
                         Graph.updatePrecise(temp);
                     }
@@ -612,45 +607,6 @@ namespace Flavor
                 return false;
             }
             return LoadPED(sf, p, peds, true, "");
-            
-            ushort X = 0;
-            int Y = 0;
-            for (int i = 1; i <= 20; ++i)
-            {
-                Utility.PreciseEditorData temp = null;
-                try
-                {
-                    bool allFilled = ((sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText != "") &&
-                                      (sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText != "") &&
-                                      (sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText != "") &&
-                                      (sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText != ""));
-                    if (allFilled)
-                    {
-                        temp = new Utility.PreciseEditorData((byte)(i - 1),
-                                                     ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/peak", i)).InnerText),
-                                                     byte.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/col", i)).InnerText),
-                                                     ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", i)).InnerText),
-                                                     ushort.Parse(sf.SelectSingleNode(string.Format("/sense/region{0}/width", i)).InnerText),
-                                                     (float)0);
-
-                        ZedGraph.PointPairList tempPntLst = new ZedGraph.PointPairList();
-                        foreach (XmlNode pntNode in sf.SelectNodes(string.Format("/sense/region{0}/p", i)))
-                        {
-                            X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                            Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
-                            tempPntLst.Add(X, Y);
-                        }
-                        temp.AssociatedPoints = tempPntLst;
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра");
-                    return false;
-                }
-                if (temp != null) peds.Add(temp);
-            }
-            return true;
         }
         internal static void SavePreciseSpecterFile(string p, Graph.Displaying displayMode)
         {
@@ -818,53 +774,6 @@ namespace Flavor
             if (LoadPED(pedConf, pedConfName, ped, false, mainConfPrefix))
                 return ped;
             return null;
-
-            for (int i = 1; i <= 20; ++i)
-            {
-                Utility.PreciseEditorData temp = null;
-                string peak, iter, width, col;
-                try
-                {
-                    peak = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/peak", i)).InnerText;
-                    col = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/col", i)).InnerText;
-                    iter = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/iteration", i)).InnerText;
-                    width = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/width", i)).InnerText;
-                }
-                catch (NullReferenceException)
-                {
-                    structureErrorOnLoadPrecise(pedConfName);
-                    return null;
-                }
-                if ((peak != "") && (iter != "") && (width != "") && (col != ""))
-                {
-                    string comment = "";
-                    try
-                    {
-                        comment = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/comment", i)).InnerText;
-                    }
-                    catch (NullReferenceException) { }
-                    bool use = true;
-                    try
-                    {
-                        use = bool.Parse(pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}/use", i)).InnerText);
-                    }
-                    catch (NullReferenceException) { }
-                    catch (FormatException) { }
-                    try
-                    {
-                        temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
-                                                     byte.Parse(col), ushort.Parse(iter),
-                                                     ushort.Parse(width), (float)0, comment);
-                    }
-                    catch (FormatException)
-                    {
-                        wrongFormatOnLoadPrecise(confName);
-                        return null;
-                    }
-                }
-                if (temp != null) ped.Add(temp);
-            }
-            return ped;
         }
         internal static void LoadPreciseEditorData()
         {

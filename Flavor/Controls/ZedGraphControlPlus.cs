@@ -132,33 +132,11 @@ namespace Flavor
         private void AddPointToPreciseEditor(object sender, EventArgs e) 
         {
             byte collector = 0;
-            //List<PointPairList> l1 = null, l2 = null;
-            //int curveIndex1 = -1, curveIndex2 = -1;
             PointPair pp = null;
             int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curveReference.Points));
             List<PointPairList> l1 = Graph.Displayed1Steps;
             int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curveReference.Points));
             List<PointPairList> l2 = Graph.Displayed2Steps;
-            /*switch (Graph.DisplayingMode)
-            {
-                case Graph.Displaying.Loaded:
-                    curveIndex1 = Graph.LoadedSpectra1.IndexOf((PointPairList)(curveReference.Points));
-                    l1 = Graph.LoadedSpectra1Steps;
-                    curveIndex2 = Graph.LoadedSpectra2.IndexOf((PointPairList)(curveReference.Points));
-                    l2 = Graph.LoadedSpectra2Steps;
-                    break;
-                case Graph.Displaying.Measured:
-                    curveIndex1 = Graph.Collector1.IndexOf((PointPairList)(curveReference.Points));
-                    l1 = Graph.Collector1Steps;
-                    curveIndex2 = Graph.Collector2.IndexOf((PointPairList)(curveReference.Points));
-                    l2 = Graph.Collector2Steps;
-                    break;
-                case Graph.Displaying.Diff:
-                    //!!!
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }*/
             if (-1 != curveIndex1)
             {
                 collector = 1;

@@ -9,8 +9,6 @@ using ZedGraph;
 
 namespace Flavor
 {
-    //delegate void CustomZoomEventHandler(ZedGraphControl zgc);
-    
     public partial class GraphForm : Form
     {
         private string displayedFileName = "";
@@ -104,8 +102,6 @@ namespace Flavor
             specterClosingEnabled = false;
             ZedGraphRebirth(zgc1, Graph.Displayed1, "Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.Displayed2, "Второй коллектор");
-            //ZedGraphRebirth(zgc1, Graph.Collector1, "Первый коллектор");
-            //ZedGraphRebirth(zgc2, Graph.Collector2, "Второй коллектор");
         }
 
         public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
@@ -118,13 +114,10 @@ namespace Flavor
             Graph.DisplayingMode = Graph.Displaying.Loaded;
             ZedGraphRebirth(zgc1, Graph.Displayed1, "Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.Displayed2, "Второй коллектор");
-            //ZedGraphRebirth(zgc1, Graph.LoadedSpectra1, "Первый коллектор");
-            //ZedGraphRebirth(zgc2, Graph.LoadedSpectra2, "Второй коллектор");
             specterClosingEnabled = true;
         }
         public void DisplayDiff(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
         {
-            //displayedFileName = fileName;
             Graph.DisplayingMode = Graph.Displaying.Diff;
             ZedGraphRebirth(zgc1, Graph.Displayed1, "Diff - Первый коллектор");
             ZedGraphRebirth(zgc2, Graph.Displayed2, "Diff - Второй коллектор");
@@ -219,7 +212,6 @@ namespace Flavor
 
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //specterClosingEnabled = false;
             CreateGraph(this.collect1_graph, this.collect2_graph);
             preciseSpecterDisplayed = prevPreciseSpecterDisplayed;
         }
@@ -229,7 +221,6 @@ namespace Flavor
             openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
             {
-                //Graph.ResetLoadedPointLists();
                 if (openSpecterFileDialog.FilterIndex == 1)
                 {
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;

@@ -128,81 +128,10 @@ namespace Flavor
                 }
             }
         }
-        //private static bool isFromFile = false;
-        /*public static bool IsFromFile
-        {
-            get
-            {
-                return isFromFile;
-            }
-            set
-            {
-                if (isFromFile != value)
-                {
-                    isFromFile = value;
-                }
-            }
-        }*/
 
         private static List<pListScaled>[] collectors = new List<pListScaled>[2];
         private static List<pListScaled>[] loadedSpectra = new List<pListScaled>[2];
         private static List<pListScaled>[] diffSpectra = new List<pListScaled>[2];
-        /*public static List<PointPairList> Collector1Steps
-        {
-            get 
-            {
-                return getPointPairs(collectors, 1, false);
-            }
-        }
-        public static List<PointPairList> Collector2Steps
-        {
-            get
-            {
-                return getPointPairs(collectors, 2, false);
-            }
-        }
-        public static List<PointPairList> LoadedSpectra1Steps
-        {
-            get
-            {
-                return getPointPairs(loadedSpectra, 1, false);
-            }
-        }
-        public static List<PointPairList> LoadedSpectra2Steps
-        {
-            get
-            {
-                return getPointPairs(loadedSpectra, 2, false);
-            }
-        }
-        public static List<PointPairList> Collector1
-        {
-            get
-            {
-                return getPointPairs(collectors, 1, true);
-            }
-        }
-        public static List<PointPairList> Collector2
-        {
-            get
-            {
-                return getPointPairs(collectors, 2, true);
-            }
-        }
-        public static List<PointPairList> LoadedSpectra1
-        {
-            get
-            {
-                return getPointPairs(loadedSpectra, 1, true);
-            }
-        }
-        public static List<PointPairList> LoadedSpectra2
-        {
-            get
-            {
-                return getPointPairs(loadedSpectra, 2, true);
-            }
-        }*/
         private static List<PointPairList> getPointPairs(List<pListScaled>[] which, int col, bool useAxisMode)
         {
             List<PointPairList> temp = new List<PointPairList>();
@@ -467,15 +396,6 @@ namespace Flavor
             }
             OnNewGraphData(displayMode, true);
         }
-
-        /*internal static void updateGraph(List <Utility.PreciseEditorData> peds)
-        {
-            ResetLoadedPointLists();
-            foreach (Utility.PreciseEditorData ped in peds)
-                loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-            displayMode = Displaying.Loaded;
-            OnNewGraphData(Displaying.Loaded, false);
-        }*/
         internal static void updatePrecise(List<Utility.PreciseEditorData> peds)
         {
             ResetDiffPointLists();
