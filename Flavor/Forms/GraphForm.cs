@@ -132,6 +132,32 @@ namespace Flavor
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            switch (Graph.DisplayingMode)
+            {
+                case Graph.Displaying.Loaded:
+                    if (displayedFileName == "")
+                    {
+                        saveSpecterFileDialog.FileName = "";
+                        break;
+                    }
+                    saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(displayedFileName);
+                    saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(displayedFileName);
+                    break;
+                case Graph.Displaying.Measured:
+                    saveSpecterFileDialog.FileName = "";
+                    break;
+                case Graph.Displaying.Diff:
+                    if (displayedFileName == "")
+                    {
+                        saveSpecterFileDialog.FileName = "";
+                        break;
+                    }
+                    saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(displayedFileName);
+                    saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(displayedFileName) + "~diff";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             if (preciseSpecterDisplayed)
             {
                 saveSpecterFileDialog.Filter = "Precise specter files (*.psf)|*.psf";
