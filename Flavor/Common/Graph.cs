@@ -271,11 +271,12 @@ namespace Flavor
                 {
                     return false;
                 }
-                if ((count1 > 1) && (count2 > 1))
-                {
-                    return true;
-                }
-                throw new Exception("Graph 1-2 mismatch or is empty");
+                return true;
+                //if ((count1 > 1) || (count2 > 1))
+                //{
+                //    return true;
+                //}
+                //throw new Exception("Graph 1-2 mismatch or is empty");
             }
         }
 
