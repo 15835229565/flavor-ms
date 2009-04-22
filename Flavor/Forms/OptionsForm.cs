@@ -131,10 +131,10 @@ namespace Flavor
 
         private void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            CPNumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
-            fV1NumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
-            fV2NumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
-            hCurrentNumericUpDown.Enabled = adjustSettingsCheckBox.Checked;
+            CPNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            hCurrentNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
         }
     }
 }

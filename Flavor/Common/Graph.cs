@@ -68,7 +68,12 @@ namespace Flavor
                 points[(int)DisplayValue.Voltage].Clear();
                 points[(int)DisplayValue.Mass].Clear();
             }
-
+            public void RecomputeMassRow()
+            {
+                //points[(int)DisplayValue.Mass].Clear();
+                (points[(int)DisplayValue.Mass] = new PointPairList(points[(int)DisplayValue.Step])).ForEach(xToMass);
+            }
+            
             public pListScaled(bool isFirstCollector)
             {
                 collector = isFirstCollector;
@@ -94,6 +99,13 @@ namespace Flavor
         public delegate void GraphEventHandler(Displaying mode, bool recreate);
         public delegate void AxisModeEventHandler();
 
+        public enum Recreate
+        {
+            None,
+            Col1,
+            Col2,
+            Both
+        }
         public static event GraphEventHandler OnNewGraphData;
         public static event AxisModeEventHandler OnAxisModeChanged;
 
@@ -272,11 +284,6 @@ namespace Flavor
                     return false;
                 }
                 return true;
-                //if ((count1 > 1) || (count2 > 1))
-                //{
-                //    return true;
-                //}
-                //throw new Exception("Graph 1-2 mismatch or is empty");
             }
         }
 
@@ -417,6 +424,26 @@ namespace Flavor
             lastPoint = pnt;
             curPeak = curped;
             OnNewGraphData(Displaying.Measured, false);
+        }
+
+        internal static void RecomputeMassRows(byte col)
+        {
+            foreach (pListScaled pl in collectors[col - 1]){
+                pl.RecomputeMassRow();
+            }
+            foreach (pListScaled pl in loadedSpectra[col - 1])
+            {
+                pl.RecomputeMassRow();
+            }
+            foreach (pListScaled pl in diffSpectra[col - 1])
+            {
+                pl.RecomputeMassRow();
+            }
+            if (axisMode == pListScaled.DisplayValue.Mass)
+            {
+                //Нужно заменить recreate bool -> enum, чтобы перерисовывать только нужный коллектор
+                OnNewGraphData(displayMode, true);
+            }
         }
     }
 }

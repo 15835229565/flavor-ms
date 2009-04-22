@@ -1004,11 +1004,35 @@ namespace Flavor
                 System.Windows.Forms.MessageBox.Show(errorMessage, "Ошибка чтения конфигурационного файла");
         }
 
+        private static double col1Coeff = 2770 * 28;
+        private static double col2Coeff = 896.5 * 18;
+        internal static void setScalingCoeff(byte col, ushort pnt, double mass)
+        {
+            double value = mass * Config.scanVoltageReal(pnt);
+            if (col == 1)
+            {
+                if (value != col1Coeff)
+                {
+                    col1Coeff = value;
+                    Graph.RecomputeMassRows(col);
+                }
+            }
+            else
+            {
+                if (value != col2Coeff)
+                {
+                    col2Coeff = value;
+                    Graph.RecomputeMassRows(col);
+                }
+            }
+        }
         internal static double pointToMass(ushort pnt, bool isFirstCollector)
         {
-            //!!! Requires real law !!!
-            double coeff = 896.5 * 18;
-            if (isFirstCollector) coeff = 2770 * 28;
+            double coeff;
+            if (isFirstCollector) 
+                coeff = col1Coeff;
+            else 
+                coeff = col2Coeff;
             return coeff / Config.scanVoltageReal(pnt);
         }
     }

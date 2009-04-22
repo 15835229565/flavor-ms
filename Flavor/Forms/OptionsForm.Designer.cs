@@ -29,6 +29,7 @@ namespace Flavor
         private void InitializeComponent()
         {
             this.params_groupBox = new System.Windows.Forms.GroupBox();
+            this.adjustSettingsCheckBox = new System.Windows.Forms.CheckBox();
             this.loadFileButton = new System.Windows.Forms.Button();
             this.saveFileButton = new System.Windows.Forms.Button();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -53,7 +54,6 @@ namespace Flavor
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.adjustSettingsCheckBox = new System.Windows.Forms.CheckBox();
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
@@ -93,6 +93,17 @@ namespace Flavor
             this.params_groupBox.TabStop = false;
             this.params_groupBox.Text = "Общие параметры";
             // 
+            // adjustSettingsCheckBox
+            // 
+            this.adjustSettingsCheckBox.AutoSize = true;
+            this.adjustSettingsCheckBox.Location = new System.Drawing.Point(9, 227);
+            this.adjustSettingsCheckBox.Name = "adjustSettingsCheckBox";
+            this.adjustSettingsCheckBox.Size = new System.Drawing.Size(211, 17);
+            this.adjustSettingsCheckBox.TabIndex = 35;
+            this.adjustSettingsCheckBox.Text = "Активировать настройки юстировки";
+            this.adjustSettingsCheckBox.UseVisualStyleBackColor = true;
+            this.adjustSettingsCheckBox.CheckedChanged += new System.EventHandler(this.adjustSettingsCheckBox_CheckedChanged);
+            // 
             // loadFileButton
             // 
             this.loadFileButton.Location = new System.Drawing.Point(135, 250);
@@ -116,7 +127,6 @@ namespace Flavor
             // fV2NumericUpDown
             // 
             this.fV2NumericUpDown.DecimalPlaces = 1;
-            this.fV2NumericUpDown.Enabled = false;
             this.fV2NumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -134,6 +144,7 @@ namespace Flavor
             0,
             0});
             this.fV2NumericUpDown.Name = "fV2NumericUpDown";
+            this.fV2NumericUpDown.ReadOnly = true;
             this.fV2NumericUpDown.Size = new System.Drawing.Size(60, 20);
             this.fV2NumericUpDown.TabIndex = 33;
             this.fV2NumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -146,7 +157,6 @@ namespace Flavor
             // fV1NumericUpDown
             // 
             this.fV1NumericUpDown.DecimalPlaces = 1;
-            this.fV1NumericUpDown.Enabled = false;
             this.fV1NumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -164,6 +174,7 @@ namespace Flavor
             0,
             0});
             this.fV1NumericUpDown.Name = "fV1NumericUpDown";
+            this.fV1NumericUpDown.ReadOnly = true;
             this.fV1NumericUpDown.Size = new System.Drawing.Size(60, 20);
             this.fV1NumericUpDown.TabIndex = 32;
             this.fV1NumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -176,7 +187,6 @@ namespace Flavor
             // hCurrentNumericUpDown
             // 
             this.hCurrentNumericUpDown.DecimalPlaces = 2;
-            this.hCurrentNumericUpDown.Enabled = false;
             this.hCurrentNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -189,6 +199,7 @@ namespace Flavor
             0,
             0});
             this.hCurrentNumericUpDown.Name = "hCurrentNumericUpDown";
+            this.hCurrentNumericUpDown.ReadOnly = true;
             this.hCurrentNumericUpDown.Size = new System.Drawing.Size(60, 20);
             this.hCurrentNumericUpDown.TabIndex = 31;
             this.hCurrentNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -225,7 +236,6 @@ namespace Flavor
             // CPNumericUpDown
             // 
             this.CPNumericUpDown.DecimalPlaces = 3;
-            this.CPNumericUpDown.Enabled = false;
             this.CPNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
@@ -243,6 +253,7 @@ namespace Flavor
             0,
             0});
             this.CPNumericUpDown.Name = "CPNumericUpDown";
+            this.CPNumericUpDown.ReadOnly = true;
             this.CPNumericUpDown.Size = new System.Drawing.Size(60, 20);
             this.CPNumericUpDown.TabIndex = 29;
             this.CPNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -459,17 +470,6 @@ namespace Flavor
             // 
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
             this.saveCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
-            // 
-            // adjustSettingsCheckBox
-            // 
-            this.adjustSettingsCheckBox.AutoSize = true;
-            this.adjustSettingsCheckBox.Location = new System.Drawing.Point(9, 227);
-            this.adjustSettingsCheckBox.Name = "adjustSettingsCheckBox";
-            this.adjustSettingsCheckBox.Size = new System.Drawing.Size(211, 17);
-            this.adjustSettingsCheckBox.TabIndex = 35;
-            this.adjustSettingsCheckBox.Text = "Активировать настройки юстировки";
-            this.adjustSettingsCheckBox.UseVisualStyleBackColor = true;
-            this.adjustSettingsCheckBox.CheckedChanged += new System.EventHandler(this.adjustSettingsCheckBox_CheckedChanged);
             // 
             // OptionsForm
             // 

@@ -246,7 +246,7 @@ namespace Flavor
                 get { return commentTextBox.Text; }
                 //set { commentTextBox.Text = value; }
             }
-            protected bool stepAndColEnabled = false;
+            protected bool stepAndColModifiable = false;
             //The other result of checkTextBoxes()
             protected bool allFilled = false;
             public bool AllFilled
@@ -261,22 +261,28 @@ namespace Flavor
                 this.widthTextBox = new TextBox();
                 this.precTextBox = new TextBox();
                 this.commentTextBox = new TextBox();
-                
-                this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+
+                if (stepAndColModifiable)
+                    this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                else
+                    this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
                 this.stepTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.stepTextBox.Location = new System.Drawing.Point(0, 0);
                 this.stepTextBox.Margin = new System.Windows.Forms.Padding(1);
                 this.stepTextBox.MaxLength = 4;
                 this.stepTextBox.Size = new System.Drawing.Size(50, 13);
-                this.stepTextBox.Enabled = stepAndColEnabled;
+                this.stepTextBox.ReadOnly = !stepAndColModifiable;
 
-                this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                if (stepAndColModifiable)
+                    this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                else
+                    this.colTextBox.BackColor = System.Drawing.SystemColors.Control;
                 this.colTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
                 this.colTextBox.Location = new System.Drawing.Point(52, 0);
                 this.colTextBox.Margin = new System.Windows.Forms.Padding(1);
                 this.colTextBox.MaxLength = 1;
                 this.colTextBox.Size = new System.Drawing.Size(20, 13);
-                this.colTextBox.Enabled = stepAndColEnabled;
+                this.colTextBox.ReadOnly = !stepAndColModifiable;
 
                 this.lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.lapsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -438,9 +444,17 @@ namespace Flavor
                 this.clearPeakButton.MouseHover += new EventHandler(clearPeakButton_MouseHover);
                 this.clearPeakButton.Click += new EventHandler(clearPeakButton_Click);
 
-                this.stepAndColEnabled = true;
-                this.stepTextBox.Enabled = stepAndColEnabled;
-                this.colTextBox.Enabled = stepAndColEnabled;
+                this.stepAndColModifiable = true;
+                this.stepTextBox.ReadOnly = !stepAndColModifiable;
+                this.colTextBox.ReadOnly = !stepAndColModifiable;
+                if (stepAndColModifiable)
+                    this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                else
+                    this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
+                if (stepAndColModifiable)
+                    this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                else
+                    this.colTextBox.BackColor = System.Drawing.SystemColors.Control;
                 
                 this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
                 this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);

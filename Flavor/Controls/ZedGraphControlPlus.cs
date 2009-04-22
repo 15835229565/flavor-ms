@@ -18,6 +18,7 @@ namespace Flavor
     public partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
         private CurveItem curveReference;
+        private int curveIndex = -1;
         private int pointIndex;
         
         public ZedGraphControlPlus(): base()
@@ -44,6 +45,9 @@ namespace Flavor
                         break;
                     }
                 }*/
+                curveReference = nearestCurve;
+                pointIndex = iNearest;
+
                 // create a new menu item for point
                 ToolStripMenuItem item = new ToolStripMenuItem();
                 // This is the user-defined Tag so you can find this menu item later if necessary
@@ -52,12 +56,37 @@ namespace Flavor
                 // This is the text that will show up in the menu
                 item.Text = "Добавить точку в редактор";
                 
-                curveReference = nearestCurve;
-                pointIndex = iNearest;
                 // Add a handler that will respond when that menu item is selected
                 item.Click += new System.EventHandler(AddPointToPreciseEditor);
                 // Add the menu item to the menu
                 menuStrip.Items.Add(item);
+
+                ToolStripMenuItem item1 = new ToolStripMenuItem();
+
+                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(nearestCurve.Points));
+                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(nearestCurve.Points));
+                if (-1 != curveIndex1)
+                {
+                    curveIndex = curveIndex1;
+                    item1.Name = "axis_rescale_coeff1";
+                    item1.Tag = "axis_rescale_coeff1";
+                    item1.Text = "Коэффициент коллектора 1";
+                }
+                else if (-1 != curveIndex2)
+                {
+                    curveIndex = curveIndex2;
+                    item1.Name = "axis_rescale_coeff2";
+                    item1.Tag = "axis_rescale_coeff2";
+                    item1.Text = "Коэффициент коллектора 2";
+                }
+                else
+                {
+                    curveIndex = -1;
+                    throw new Exception("Point not in any collector. Strange.");
+                }
+
+                item1.Click += new System.EventHandler(SetScalingCoeff);
+                menuStrip.Items.Add(item1);
             }
             else
             {
@@ -134,18 +163,18 @@ namespace Flavor
             byte collector = 0;
             PointPair pp = null;
             int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curveReference.Points));
-            List<PointPairList> l1 = Graph.Displayed1Steps;
+            //List<PointPairList> l1 = Graph.Displayed1Steps;
             int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curveReference.Points));
-            List<PointPairList> l2 = Graph.Displayed2Steps;
+            //List<PointPairList> l2 = Graph.Displayed2Steps;
             if (-1 != curveIndex1)
             {
                 collector = 1;
-                pp = (l1[curveIndex1])[pointIndex];
+                pp = (Graph.Displayed1Steps[curveIndex1])[pointIndex];
             }
             else if (-1 != curveIndex2)
             {
                 collector = 2;
-                pp = (l2[curveIndex2])[pointIndex];
+                pp = (Graph.Displayed2Steps[curveIndex2])[pointIndex];
             }
             if ((pp != null) && (collector != 0))
             {
@@ -155,6 +184,32 @@ namespace Flavor
                     pForm.UpLevel = (mainForm)((GraphForm)(this.ParentForm)).MdiParent;
                     pForm.Show();
                     pForm.BringToFront();
+                }
+            }
+            else
+                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+        }
+        private void SetScalingCoeff(object sender, EventArgs e)
+        {
+            byte collector = 0;
+            PointPair pp = null;
+            if (((ToolStripMenuItem)sender).Name == "axis_rescale_coeff1")
+            {
+                collector = 1;
+                pp = (Graph.Displayed1Steps[curveIndex])[pointIndex];
+            }
+            else if (((ToolStripMenuItem)sender).Name == "axis_rescale_coeff2")
+            {
+                collector = 2;
+                pp = (Graph.Displayed2Steps[curveIndex])[pointIndex];
+            }
+            if ((pp != null) && (collector != 0))
+            {
+                if (new SetScalingCoeffForm((ushort)(pp.X), collector).ShowDialog() == DialogResult.OK)
+                {
+                    //Recompute of mass rows
+                    //Repaint with new coeffs if needed (mass displaying mode)
+                    //Implemented in Config & Graph respectively
                 }
             }
             else
