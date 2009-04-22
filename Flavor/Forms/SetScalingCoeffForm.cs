@@ -25,7 +25,7 @@ namespace Flavor
             myCol = col;
             myStep = step;
             this.stepTextBox.Text = step.ToString();
-            this.Name += " " + col;
+            this.Text += " " + col.ToString();
         }
 
         protected void okButton_Click(object sender, EventArgs e)
@@ -35,7 +35,18 @@ namespace Flavor
             {
                 mass = Convert.ToDouble(massTextBox.Text);
             }
-            catch(System.InvalidCastException) 
+            catch(System.FormatException)
+            {
+                massTextBox.BackColor = Color.Red;
+                return;
+            }
+            catch (System.OverflowException)
+            {
+                massTextBox.BackColor = Color.Red;
+                return;
+            }
+            //Проверка, что масса не вблизи нуля
+            if (mass < 1)
             {
                 massTextBox.BackColor = Color.Red;
                 return;
