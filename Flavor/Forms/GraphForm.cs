@@ -17,7 +17,8 @@ namespace Flavor
         private bool prevPreciseSpecterDisplayed = false;
 
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
-        
+        private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
+        Color.Black,};
         internal bool specterOpeningEnabled
         {
             set 
@@ -134,8 +135,8 @@ namespace Flavor
             displayedFileName = "";
             Graph.DisplayingMode = Graph.Displaying.Measured;
             specterClosingEnabled = false;
-            ZedGraphRebirth(0, Graph.Displayed1, "Первый коллектор");
-            ZedGraphRebirth(1, Graph.Displayed2, "Второй коллектор");
+            ZedGraphRebirth(0, Graph.DisplayedRows1, "Первый коллектор");
+            ZedGraphRebirth(1, Graph.DisplayedRows2, "Второй коллектор");
             setLegendAndScales();
         }
 
@@ -147,16 +148,16 @@ namespace Flavor
         {
             displayedFileName = fileName;
             Graph.DisplayingMode = Graph.Displaying.Loaded;
-            ZedGraphRebirth(0, Graph.Displayed1, "Первый коллектор");
-            ZedGraphRebirth(1, Graph.Displayed2, "Второй коллектор");
+            ZedGraphRebirth(0, Graph.DisplayedRows1, "Первый коллектор");
+            ZedGraphRebirth(1, Graph.DisplayedRows2, "Второй коллектор");
             setLegendAndScales();
             specterClosingEnabled = true;
         }
         internal void DisplayDiff()
         {
             Graph.DisplayingMode = Graph.Displaying.Diff;
-            ZedGraphRebirth(0, Graph.Displayed1, "Diff - Первый коллектор");
-            ZedGraphRebirth(1, Graph.Displayed2, "Diff - Второй коллектор");
+            ZedGraphRebirth(0, Graph.DisplayedRows1, "Diff - Первый коллектор");
+            ZedGraphRebirth(1, Graph.DisplayedRows2, "Diff - Второй коллектор");
             // ?
             setLegendAndScales();
             specterClosingEnabled = true;
@@ -213,7 +214,7 @@ namespace Flavor
             }
         }
 
-        private void ZedGraphRebirth(int zgcIndex, List<PointPairList> dataPoints, string title)
+        private void ZedGraphRebirth(int zgcIndex, List<Graph.pListScaled> dataPoints, string title)
         {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
             
@@ -255,15 +256,25 @@ namespace Flavor
             myPane.CurveList.Clear();
             
             specterSavingEnabled = false;
-            foreach (PointPairList ppl in dataPoints)
+
+            if (preciseSpecterDisplayed)
             {
-                if (ppl.Count > 0)
+                for (int i = 1; i < dataPoints.Count; ++i)
+                {
+                    if (dataPoints[i].Step.Count > 0)
+                        specterSavingEnabled = true;
+                    LineItem temp = myPane.AddCurve(dataPoints[i].PeakSum.ToString(), dataPoints[i].Points(Graph.AxisDisplayMode), rowsColors[i % rowsColors.Length], SymbolType.None);
+                    temp.Symbol.Fill = new Fill(Color.White);
+                }
+            }
+            else
+            {
+                if (dataPoints[0].Step.Count > 0)
                     specterSavingEnabled = true;
-                LineItem temp = myPane.AddCurve("My Curve", ppl, Color.Blue, SymbolType.None);
+                LineItem temp = myPane.AddCurve("My Curve", dataPoints[0].Points(Graph.AxisDisplayMode), Color.Blue, SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
-
-            //myPane.Legend.IsVisible = false;
+            myPane.Legend.IsShowLegendSymbols = false;
 
             // Fill the axis background with a color gradient
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);

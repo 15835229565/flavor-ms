@@ -39,7 +39,11 @@ namespace Flavor
             {
                 return points[(int)which];
             }
-
+            private long peakSum = 0;
+            public long PeakSum
+            {
+                get { return peakSum; }
+            }
             public bool isEmpty
             {
                 get { return (points[(int)DisplayValue.Step].Count == 0); }
@@ -48,25 +52,39 @@ namespace Flavor
 
             public void Add(ushort pnt, int count)
             {
+                peakSum += count;
                 points[(int)DisplayValue.Step].Add(pnt, count);
                 points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
                 points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
             }
-            public void AddRange(pListScaled pl)
+            private void SetRows(pListScaled pl)
             {
-                AddRange(pl.Step);
+                points[(int)DisplayValue.Step] = new PointPairList(pl.Step);
+                points[(int)DisplayValue.Voltage] = new PointPairList(pl.Voltage);
+                points[(int)DisplayValue.Mass] = new PointPairList(pl.Mass);
+                peakSum = pl.peakSum;
             }
-            public void AddRange(PointPairList dataPoints)
+            public void SetRows(PointPairList dataPoints)
+            {
+                long sum = 0;
+                foreach (PointPair pp in dataPoints)
+                    sum += (long)(pp.Y);
+                SetRows(dataPoints, sum);
+            }
+            // Be careful with sumCounts!
+            internal void SetRows(PointPairList dataPoints, long sumCounts)
             {
                 points[(int)DisplayValue.Step] = new PointPairList(dataPoints);
                 (points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints)).ForEach(xToVoltage);
                 (points[(int)DisplayValue.Mass] = new PointPairList(dataPoints)).ForEach(xToMass);
+                peakSum = sumCounts;
             }
             public void Clear()
             {
                 points[(int)DisplayValue.Step].Clear();
                 points[(int)DisplayValue.Voltage].Clear();
                 points[(int)DisplayValue.Mass].Clear();
+                peakSum = 0;
             }
             public void RecomputeMassRow()
             {
@@ -81,10 +99,15 @@ namespace Flavor
                 points[(int)DisplayValue.Voltage] = new PointPairList();
                 points[(int)DisplayValue.Mass] = new PointPairList();
             }
+            public pListScaled(pListScaled other)
+            {
+                collector = other.collector;
+                SetRows(other);
+            }
             public pListScaled(bool isFirstCollector, PointPairList dataPoints)
             {
                 collector = isFirstCollector;
-                AddRange(dataPoints);
+                SetRows(dataPoints);
             }
 
             private void xToVoltage(PointPair pp)
@@ -358,15 +381,15 @@ namespace Flavor
 
         internal static void updateLoaded(PointPairList pl1, PointPairList pl2)
         {
-            (loadedSpectra[0])[0].AddRange(pl1);
-            (loadedSpectra[1])[0].AddRange(pl2);
+            (loadedSpectra[0])[0].SetRows(pl1);
+            (loadedSpectra[1])[0].SetRows(pl2);
             OnNewGraphData(Displaying.Loaded, false);
         }
 
         internal static void updateNotPrecise(PointPairList pl1, PointPairList pl2)
         {
-            DisplayedRows1[0].AddRange(pl1);
-            DisplayedRows2[0].AddRange(pl2);
+            DisplayedRows1[0].SetRows(pl1);
+            DisplayedRows2[0].SetRows(pl2);
             OnNewGraphData(displayMode, true);
         }
 

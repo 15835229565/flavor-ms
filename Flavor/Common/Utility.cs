@@ -42,7 +42,7 @@ namespace Flavor
             private ushort width;
             private float precision;
             private string comment = "";
-            ZedGraph.PointPairList associatedPoints;
+            private ZedGraph.PointPairList associatedPoints;
             public ZedGraph.PointPairList AssociatedPoints
             {
                 get { return associatedPoints; }
