@@ -125,11 +125,8 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            this.gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph); 
-            this.gForm.collect1_graph.GraphPane.XAxis.Scale.Min = Config.sPoint;
-            this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = Config.ePoint;
-            this.gForm.collect2_graph.GraphPane.XAxis.Scale.Min = Config.sPoint;
-            this.gForm.collect2_graph.GraphPane.XAxis.Scale.Max = Config.ePoint;
+            this.gForm.setXScaleLimits();
+            this.gForm.CreateGraph();
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Scan();
         }
@@ -180,10 +177,7 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            this.gForm.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
-            this.gForm.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
-            this.gForm.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
-            this.gForm.collect2_graph.GraphPane.XAxis.Scale.Max = 1056;
+            this.gForm.setXScaleLimits(0, 1056, 0, 1056);
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Sense();
         }
@@ -225,13 +219,13 @@ namespace Flavor
             {
                 case Graph.Displaying.Loaded:
                     if (recreate)
-                        gForm.DisplayLoadedSpectrum(gForm.collect1_graph, gForm.collect2_graph);
+                        gForm.DisplayLoadedSpectrum();
                     else
                         gForm.RefreshGraph();
                     break;
                 case Graph.Displaying.Measured:
                     if (recreate)
-                        gForm.CreateGraph(gForm.collect1_graph, gForm.collect2_graph);
+                        gForm.CreateGraph();
                     else
                     {
                         gForm.RefreshGraph();
@@ -283,12 +277,10 @@ namespace Flavor
                     break;
                 case Graph.Displaying.Diff:
                     if (recreate)
-                        gForm.DisplayDiff(gForm.collect1_graph, gForm.collect2_graph);
+                        gForm.DisplayDiff();
                     else
                         gForm.RefreshGraph();
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 

@@ -9,13 +9,16 @@ using ZedGraph;
 
 namespace Flavor
 {
-    public partial class GraphForm : Form
+    internal partial class GraphForm : Form
     {
+        private ZedGraphControlPlus[] graphs;
         private string displayedFileName = "";
         private bool preciseSpecterDisplayed = false;
         private bool prevPreciseSpecterDisplayed = false;
 
-        public bool specterOpeningEnabled
+        private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
+        
+        internal bool specterOpeningEnabled
         {
             set 
             {
@@ -24,14 +27,14 @@ namespace Flavor
                 distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value;
             }
         }
-        public bool specterClosingEnabled
+        internal bool specterClosingEnabled
         {
             set
             {
                 closeSpecterFileToolStripMenuItem.Enabled = value;
             }
         }
-        public bool specterSavingEnabled
+        internal bool specterSavingEnabled
         {
             set
             {
@@ -40,15 +43,12 @@ namespace Flavor
                 distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && value;
             }
         }
-        
-        public GraphForm()
+
+        internal GraphForm()
         {
             InitializeComponent();
+            graphs = new ZedGraphControlPlus[] {collect1_graph, collect2_graph};
             Graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
-            this.collect1_graph.GraphPane.XAxis.Scale.Min = 0;
-            this.collect1_graph.GraphPane.XAxis.Scale.Max = 1056;
-            this.collect2_graph.GraphPane.XAxis.Scale.Min = 0;
-            this.collect2_graph.GraphPane.XAxis.Scale.Max = 1056;
         }
 
         private void Graph_OnAxisModeChanged()
@@ -56,22 +56,20 @@ namespace Flavor
             switch (Graph.DisplayingMode)
             {
                 case Graph.Displaying.Loaded:
-                    DisplayLoadedSpectrum(this.collect1_graph, this.collect2_graph, displayedFileName);
+                    DisplayLoadedSpectrum(displayedFileName);
                     break;
                 case Graph.Displaying.Measured:
-                    CreateGraph(this.collect1_graph, this.collect2_graph);
+                    CreateGraph();
                     break;
                 case Graph.Displaying.Diff:
-                    DisplayDiff(this.collect1_graph, this.collect2_graph);
+                    DisplayDiff();
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
         private void GraphForm_Load(object sender, EventArgs e)
         {
-            CreateGraph(collect1_graph, collect2_graph);
+            CreateGraph();
             SetSize();
         }
 
@@ -80,50 +78,89 @@ namespace Flavor
             SetSize();
         }
         
-        public void SetSize()
+        private void SetSize()
         {
-            collect1_graph.Location = new Point(12, 12);
-            collect1_graph.Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
+            graphs[0].Location = new Point(12, 12);
+            graphs[0].Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
 
-            collect2_graph.Location = new Point(12, 12 + (this.ClientSize.Height - (12)) / 2);
-            collect2_graph.Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
+            graphs[1].Location = new Point(12, 12 + (this.ClientSize.Height - (12)) / 2);
+            graphs[1].Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
         }
 
-        public void RefreshGraph()
+        internal void setXScaleLimits()
         {
-            collect1_graph.Refresh();
-            collect2_graph.Refresh();
+            minX[0] = minX[1] = Config.sPoint;
+            maxX[0] = maxX[1] = Config.ePoint;
+        }
+        internal void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2)
+        {
+            minX[0] = minX1;
+            minX[1] = minX2;
+            maxX[0] = maxX1;
+            maxX[1] = maxX2;
         }
 
-        public void CreateGraph(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
+        internal void RefreshGraph()
+        {
+            graphs[0].Refresh();
+            graphs[1].Refresh();
+        }
+
+        private void setAutoScales()
+        {
+            graphs[0].RestoreScale(graphs[0].GraphPane);
+            graphs[1].RestoreScale(graphs[1].GraphPane);
+            graphs[0].GraphPane.ZoomStack.Clear();
+            graphs[1].GraphPane.ZoomStack.Clear();
+        }
+        private void setLegendAndScales()
+        {
+            if (preciseSpecterDisplayed)
+            {
+                graphs[0].GraphPane.Legend.IsVisible = true;
+                graphs[1].GraphPane.Legend.IsVisible = true;
+                setAutoScales();
+            }
+            else
+            {
+                graphs[0].GraphPane.Legend.IsVisible = false;
+                graphs[1].GraphPane.Legend.IsVisible = false;
+            }
+            RefreshGraph();
+        }
+        
+        internal void CreateGraph()
         {
             displayedFileName = "";
             Graph.DisplayingMode = Graph.Displaying.Measured;
             specterClosingEnabled = false;
-            ZedGraphRebirth(zgc1, Graph.Displayed1, "Первый коллектор");
-            ZedGraphRebirth(zgc2, Graph.Displayed2, "Второй коллектор");
+            ZedGraphRebirth(0, Graph.Displayed1, "Первый коллектор");
+            ZedGraphRebirth(1, Graph.Displayed2, "Второй коллектор");
+            setLegendAndScales();
         }
 
-        public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
+        internal void DisplayLoadedSpectrum()
         {
-            DisplayLoadedSpectrum(zgc1, zgc2, displayedFileName);
+            DisplayLoadedSpectrum(displayedFileName);
         }
-        public void DisplayLoadedSpectrum(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2, string fileName) 
+        internal void DisplayLoadedSpectrum(string fileName) 
         {
             displayedFileName = fileName;
             Graph.DisplayingMode = Graph.Displaying.Loaded;
-            ZedGraphRebirth(zgc1, Graph.Displayed1, "Первый коллектор");
-            ZedGraphRebirth(zgc2, Graph.Displayed2, "Второй коллектор");
+            ZedGraphRebirth(0, Graph.Displayed1, "Первый коллектор");
+            ZedGraphRebirth(1, Graph.Displayed2, "Второй коллектор");
+            setLegendAndScales();
             specterClosingEnabled = true;
         }
-        public void DisplayDiff(ZedGraphControlPlus zgc1, ZedGraphControlPlus zgc2)
+        internal void DisplayDiff()
         {
             Graph.DisplayingMode = Graph.Displaying.Diff;
-            ZedGraphRebirth(zgc1, Graph.Displayed1, "Diff - Первый коллектор");
-            ZedGraphRebirth(zgc2, Graph.Displayed2, "Diff - Второй коллектор");
+            ZedGraphRebirth(0, Graph.Displayed1, "Diff - Первый коллектор");
+            ZedGraphRebirth(1, Graph.Displayed2, "Diff - Второй коллектор");
+            // ?
+            setLegendAndScales();
             specterClosingEnabled = true;
         }
-        
         
         private void GraphForm_Validating(object sender, CancelEventArgs e)
         {
@@ -155,8 +192,6 @@ namespace Flavor
                     saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(displayedFileName);
                     saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(displayedFileName) + "~diff";
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
             if (preciseSpecterDisplayed)
             {
@@ -178,9 +213,9 @@ namespace Flavor
             }
         }
 
-        private void ZedGraphRebirth(ZedGraphControlPlus zgc, List<PointPairList> dataPoints, string title)
+        private void ZedGraphRebirth(int zgcIndex, List<PointPairList> dataPoints, string title)
         {
-            GraphPane myPane = zgc.GraphPane;
+            GraphPane myPane = graphs[zgcIndex].GraphPane;
             
             string modeText = " (прециз.)";
             preciseSpecterDisplayed = true;
@@ -201,12 +236,19 @@ namespace Flavor
             {
                 case Graph.pListScaled.DisplayValue.Step:
                     myPane.XAxis.Title.Text = "Ступени";
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = minX[zgcIndex];
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    myPane.XAxis.Title.Text = "Напряжение";
+                    myPane.XAxis.Title.Text = "Напряжение (В)";
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.scanVoltageReal(minX[zgcIndex]);
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    myPane.XAxis.Title.Text = "Масса";
+                    myPane.XAxis.Title.Text = "Масса (а.е.м.)";
+                    //limits inverted due to point-to-mass law
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
                     break;
             }
 
@@ -221,24 +263,28 @@ namespace Flavor
                 temp.Symbol.Fill = new Fill(Color.White);
             }
 
-            myPane.Legend.IsVisible = false;
+            //myPane.Legend.IsVisible = false;
 
             // Fill the axis background with a color gradient
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
             // Fill the pane background with a color gradient
             myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
+            // Y-scale needs to be computed more properly!
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 10000;
 
+            myPane.YAxis.Scale.MaxAuto = true;
             // Calculate the Axis Scale Ranges
-            zgc.AxisChange();
+            graphs[zgcIndex].AxisChange();
 
-            RefreshGraph();
+            //RefreshGraph();
         }
 
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CreateGraph(this.collect1_graph, this.collect2_graph);
+            setXScaleLimits();
+            //!!!
+            CreateGraph();
             preciseSpecterDisplayed = prevPreciseSpecterDisplayed;
         }
 
@@ -249,17 +295,26 @@ namespace Flavor
             {
                 if (openSpecterFileDialog.FilterIndex == 1)
                 {
+                    Config.OpenSpecterFile(openSpecterFileDialog.FileName);
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
                     preciseSpecterDisplayed = false;
-                    Config.OpenSpecterFile(openSpecterFileDialog.FileName);
+                    // setXScaleLimits
+                    ushort minX = (ushort)(Graph.Displayed1Steps[0][0].X);
+                    ushort maxX = (ushort)(minX - 1 + Graph.Displayed1Steps[0].Count);
+                    setXScaleLimits(minX, maxX, minX, maxX);
+                    // YScaleMax - auto!
+                    DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
                 }
                 else 
                 {
+                    Config.OpenPreciseSpecterFile(openSpecterFileDialog.FileName);
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
                     preciseSpecterDisplayed = true;
-                    Config.OpenPreciseSpecterFile(openSpecterFileDialog.FileName);
+                    DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
+                    // Default scale
+                    setAutoScales();
                 }
-                DisplayLoadedSpectrum(collect1_graph, collect2_graph, openSpecterFileDialog.FileName);
+
                 specterClosingEnabled = true;
             }
         }

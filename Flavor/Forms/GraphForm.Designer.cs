@@ -33,6 +33,7 @@ namespace Flavor
             this.graphFormMenuStrip = new System.Windows.Forms.MenuStrip();
             this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.openSpecterFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeSpecterFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -61,7 +62,6 @@ namespace Flavor
             this.defaultScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSpecterFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collect2_graph = new Flavor.ZedGraphControlPlus();
             this.collect1_graph = new Flavor.ZedGraphControlPlus();
             this.graphFormMenuStrip.SuspendLayout();
@@ -110,6 +110,16 @@ namespace Flavor
             this.openSpecterFileToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.openSpecterFileToolStripMenuItem.Text = "&Открыть файл спектра";
             this.openSpecterFileToolStripMenuItem.Click += new System.EventHandler(this.openSpecterFileToolStripMenuItem_Click);
+            // 
+            // distractFromCurrentToolStripMenuItem
+            // 
+            this.distractFromCurrentToolStripMenuItem.Enabled = false;
+            this.distractFromCurrentToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
+            this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
+            this.distractFromCurrentToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.distractFromCurrentToolStripMenuItem.Text = "Вычесть из текущего";
+            this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
             // 
             // closeSpecterFileToolStripMenuItem
             // 
@@ -348,24 +358,15 @@ namespace Flavor
             this.openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
             this.openSpecterFileDialog.InitialDirectory = ".";
             // 
-            // distractFromCurrentToolStripMenuItem
-            // 
-            this.distractFromCurrentToolStripMenuItem.Enabled = false;
-            this.distractFromCurrentToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
-            this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
-            this.distractFromCurrentToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.distractFromCurrentToolStripMenuItem.Text = "Вычесть из текущего";
-            this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
-            // 
             // collect2_graph
             // 
             this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect2_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
+            this.collect2_graph.IsEnableSelection = true;
             this.collect2_graph.IsShowPointValues = true;
             this.collect2_graph.Location = new System.Drawing.Point(12, 210);
             this.collect2_graph.Name = "collect2_graph";
-            this.collect2_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
+            this.collect2_graph.PanModifierKeys = System.Windows.Forms.Keys.None;
             this.collect2_graph.ScrollGrace = 0;
             this.collect2_graph.ScrollMaxX = 1056;
             this.collect2_graph.ScrollMaxY = 2000000;
@@ -373,6 +374,7 @@ namespace Flavor
             this.collect2_graph.ScrollMinX = 0;
             this.collect2_graph.ScrollMinY = 0;
             this.collect2_graph.ScrollMinY2 = 0;
+            this.collect2_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.collect2_graph.Size = new System.Drawing.Size(281, 192);
             this.collect2_graph.TabIndex = 10;
             // 
@@ -380,6 +382,7 @@ namespace Flavor
             // 
             this.collect1_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect1_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
+            this.collect1_graph.IsEnableSelection = true;
             this.collect1_graph.IsShowPointValues = true;
             this.collect1_graph.Location = new System.Drawing.Point(12, 12);
             this.collect1_graph.Name = "collect1_graph";
@@ -391,6 +394,7 @@ namespace Flavor
             this.collect1_graph.ScrollMinX = 0;
             this.collect1_graph.ScrollMinY = 0;
             this.collect1_graph.ScrollMinY2 = 0;
+            this.collect1_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.collect1_graph.Size = new System.Drawing.Size(281, 192);
             this.collect1_graph.TabIndex = 9;
             // 
@@ -421,8 +425,8 @@ namespace Flavor
 
         #endregion
 
-        public ZedGraphControlPlus collect2_graph;
-        public ZedGraphControlPlus collect1_graph;
+        private ZedGraphControlPlus collect2_graph;
+        private ZedGraphControlPlus collect1_graph;
         private System.Windows.Forms.MenuStrip graphFormMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem editMenu;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
