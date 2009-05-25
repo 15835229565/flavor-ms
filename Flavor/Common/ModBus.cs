@@ -146,6 +146,7 @@ namespace Flavor
             }
             catch
             {
+                // BAD! consider revising
             }
         }
 
@@ -410,55 +411,55 @@ namespace Flavor
                         case CommandCode.InternalError:
                             if (raw_command.Length == 3)
                             {
-                                return new logInternalError(raw_command[1]);
+                                return new logInternalError(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.InvalidSystemState:
                             if (raw_command.Length == 2)
                             {
-                                return new logInvalidSystemState();
+                                return new logInvalidSystemState(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.VacuumCrash:
                             if (raw_command.Length == 3)
                             {
-                                return new logVacuumCrash(raw_command[1]);
+                                return new logVacuumCrash(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.TurboPumpFailure:
-                            if (raw_command.Length == 2)
+                            if (raw_command.Length == 17)
                             {
-                                return new logTurboPumpFailure();
+                                return new logTurboPumpFailure(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.PowerFail:
                             if (raw_command.Length == 2)
                             {
-                                return new logPowerFail();
+                                return new logPowerFail(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.InvalidVacuumState:
                             if (raw_command.Length == 2)
                             {
-                                return new logInvalidVacuumState();
+                                return new logInvalidVacuumState(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.AdcPlaceIonSrc:
                             if (raw_command.Length == 2)
                             {
-                                return new logAdcPlaceIonSrc();
+                                return new logAdcPlaceIonSrc(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.AdcPlaceScanv:
                             if (raw_command.Length == 2)
                             {
-                                return new logAdcPlaceScanv();
+                                return new logAdcPlaceScanv(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.AdcPlaceControlm:
                             if (raw_command.Length == 2)
                             {
-                                return new logAdcPlaceControlm();
+                                return new logAdcPlaceControlm(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.Measured:

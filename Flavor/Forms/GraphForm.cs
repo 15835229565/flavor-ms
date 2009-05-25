@@ -283,8 +283,8 @@ namespace Flavor
             // Y-scale needs to be computed more properly!
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 10000;
-
-            myPane.YAxis.Scale.MaxAuto = true;
+            //autoscaling needs review. not working now. RefreshGraph or AxisChange anywhere?
+            //myPane.YAxis.Scale.MaxAuto = true;
             // Calculate the Axis Scale Ranges
             graphs[zgcIndex].AxisChange();
 

@@ -12,6 +12,7 @@ namespace Flavor
 
         private static string initialDir;
         private static string confName;
+        private static string logName;
 
         private static string SerialPort;
         private static ushort SerialBaudRate;
@@ -265,6 +266,7 @@ namespace Flavor
         {
             initialDir = System.IO.Directory.GetCurrentDirectory();
             confName = initialDir + "\\config.xml";
+            logName = initialDir + "\\MScrash.log";
         }
 
         internal static void LoadConfig()
@@ -1034,6 +1036,28 @@ namespace Flavor
             else 
                 coeff = col2Coeff;
             return coeff / Config.scanVoltageReal(pnt);
+        }
+
+        internal static void logCrash(byte[] commandline)
+        {
+            System.IO.StreamWriter errorLog;
+            try
+            {
+                errorLog = new System.IO.StreamWriter(@logName, true);
+                errorLog.AutoFlush = true;
+                DateTime now = System.DateTime.Now;
+                errorLog.WriteLine(string.Format("{0}-{1}-{2}|", now.Year, now.Month, now.Day) + 
+                    string.Format("{0}.{1}.{2}.{3}: ", now.Hour, now.Minute, now.Second, now.Millisecond) +
+                    commandline.ToString());
+                errorLog.Close();
+            }
+            catch (Exception Error)
+            {
+                string message = "Ошибка записи файла отказов";
+                string cause = "(" + commandline.ToString() + ") -- " + Error.Message;
+                Console.WriteLine(message + cause);
+                System.Windows.Forms.MessageBox.Show(cause, message);
+            }
         }
     }
 }

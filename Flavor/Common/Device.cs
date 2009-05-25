@@ -56,6 +56,7 @@ namespace Flavor
 	        LargeLeak = 0x23,
 	        SmallLeak = 0x24,
             ThermoCoupleFailure = 0x25,
+            TurboPumpFailure = 0x26,
 
 	        VacuumShutdownProbeLeak = 0x28
         }
@@ -342,8 +343,21 @@ namespace Flavor
                 get { return opTime; }
                 set { opTime = value; }
             }
+
+            private static byte statusBits, alertBits, faultBits;
             public static void relaysState(byte value, byte value2, byte value3)
             {
+                statusBits = value;
+                alertBits = value2;
+                faultBits = value3;
+                if (alertBits == 0)
+                {
+                    //Alert here!
+                }
+                if (faultBits == 0)
+                {
+                    //Fault here!
+                }
                 OnTurboPumpStatusChanged();
             }
 

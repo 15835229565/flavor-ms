@@ -547,6 +547,10 @@ namespace Flavor
                     this.VacuumState_label.Text = "Отказ термопары";
                     this.VacuumState_label.ForeColor = Color.Red;
                     break;
+                case (byte)Device.VacuumStates.TurboPumpFailure:
+                    this.VacuumState_label.Text = "Отказ турбонасоса";
+                    this.VacuumState_label.ForeColor = Color.Red;
+                    break;
                 case (byte)Device.VacuumStates.VacuumShutdownProbeLeak:
                     this.VacuumState_label.Text = "Отключение датчика вакуума";
                     this.VacuumState_label.ForeColor = Color.Red;
