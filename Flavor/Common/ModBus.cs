@@ -445,19 +445,22 @@ namespace Flavor
                             }
                             return new ServicePacket();
                         case CommandCode.AdcPlaceIonSrc:
-                            if (raw_command.Length == 2)
+                            //!!!
+                            if (raw_command.Length >= 2)
                             {
                                 return new logAdcPlaceIonSrc(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.AdcPlaceScanv:
-                            if (raw_command.Length == 2)
+                            //!!!
+                            if (raw_command.Length >= 2)
                             {
                                 return new logAdcPlaceScanv(raw_command);
                             }
                             return new ServicePacket();
                         case CommandCode.AdcPlaceControlm:
-                            if (raw_command.Length == 2)
+                            //!!!
+                            if (raw_command.Length >= 2)
                             {
                                 return new logAdcPlaceControlm(raw_command);
                             }

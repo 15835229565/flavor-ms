@@ -1046,9 +1046,16 @@ namespace Flavor
                 errorLog = new System.IO.StreamWriter(@logName, true);
                 errorLog.AutoFlush = true;
                 DateTime now = System.DateTime.Now;
-                errorLog.WriteLine(string.Format("{0}-{1}-{2}|", now.Year, now.Month, now.Day) + 
+                string cmd = "";
+                commandline = ModBus.buildPack(commandline);
+                for (int i = 0; i < commandline.Length; ++i){
+                    cmd += (char)commandline[i];
+                }
+                string message = string.Format("{0}-{1}-{2}|", now.Year, now.Month, now.Day) +
                     string.Format("{0}.{1}.{2}.{3}: ", now.Hour, now.Minute, now.Second, now.Millisecond) +
-                    commandline.ToString());
+                    cmd;
+                errorLog.WriteLine(message);
+                //Console.WriteLine(logName + message);
                 errorLog.Close();
             }
             catch (Exception Error)
