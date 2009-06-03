@@ -465,8 +465,8 @@ namespace Flavor
         {
             SaveSpecterFile(genAutoSaveFilename("sdf"), Graph.Displaying.Measured);
         }
-
-        internal static void DistractSpectra(string from, string what)
+        /*
+        internal static void DistractSpectra(string from, ref string what)
         {
             ZedGraph.PointPairList pl11 = new ZedGraph.PointPairList();
             ZedGraph.PointPairList pl21 = new ZedGraph.PointPairList();
@@ -476,8 +476,8 @@ namespace Flavor
             {
                 try
                 {
-                    ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12);
-                    ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22);
+                    ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12, 0);
+                    ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22, 0);
                     Graph.updateNotPrecise(diff1, diff2);
                 }
                 catch (System.ArgumentException)
@@ -486,15 +486,19 @@ namespace Flavor
                     return;
                 }
             }
-        }
+        }*/
         internal static void DistractSpectra(string what)
+        {
+            DistractSpectra(what, 0, null);
+        }
+        internal static void DistractSpectra(string what, ushort step, Utility.PreciseEditorData pedReference)
         {
             if (Graph.isPreciseSpectrum)
             {
                 List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
                 if (OpenPreciseSpecterFile(what, peds))
                 {
-                    peds.Sort(Utility.ComparePreciseEditorData);
+                    //peds.Sort(Utility.ComparePreciseEditorData);
                     List<Utility.PreciseEditorData> temp;
                     switch (Graph.DisplayingMode)
                     {
@@ -513,9 +517,9 @@ namespace Flavor
                     temp.Sort(Utility.ComparePreciseEditorData);
                     try
                     {
-                        temp = PreciseEditorDataListDiff(temp, peds);
+                        temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
                         preciseDataDiff = temp;
-                        Graph.updatePrecise(temp);
+                        Graph.updateGraphAfterPreciseDiff(temp);
                     }
                     catch (System.ArgumentException)
                     {
@@ -532,8 +536,8 @@ namespace Flavor
                 {
                     try
                     {
-                        ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12);
-                        ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22);
+                        ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12, step);
+                        ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22, step);
                         Graph.ResetDiffPointLists();
                         Graph.updateNotPrecise(diff1, diff2);
                     }
@@ -545,42 +549,82 @@ namespace Flavor
                 }
             }
         }
-        private static ZedGraph.PointPairList PointPairListDiff(ZedGraph.PointPairList from, ZedGraph.PointPairList what)
+        private static ZedGraph.PointPairList PointPairListDiff(ZedGraph.PointPairList from, ZedGraph.PointPairList what, ushort step)
         {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
+            
+            // coeff counting
+            double coeff = 1.0;
+            if (step != 0)
+            {
+                for (int i = 0; i < from.Count; ++i)
+                {
+                    if (step == from[i].X)
+                    {
+                        if (step != what[i].X)
+                            throw new System.ArgumentException();
+                        if (what[i].Y != 0)
+                            coeff = from[i].Y / what[i].Y;
+                        break;
+                    }
+                }
+            }
+            
             ZedGraph.PointPairList res = new ZedGraph.PointPairList(from);
             for (int i = 0; i < res.Count; ++i)
             {
                 if (res[i].X != what[i].X)
                     throw new System.ArgumentException();
-                res[i].Y -= what[i].Y;
+                res[i].Y -= what[i].Y * coeff;
             }
             return res;
         }
-        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData from, Utility.PreciseEditorData what)
+        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData from, Utility.PreciseEditorData what, double coeff)
         {
             if (!from.Equals(what))
                 throw new System.ArgumentException();
             if (from.AssociatedPoints.Count != what.AssociatedPoints.Count)
-                throw new System.ArgumentOutOfRangeException();
+                throw new System.ArgumentException();
+            if (from.AssociatedPoints.Count != 2 * from.Width + 1)
+                throw new System.ArgumentException();
             Utility.PreciseEditorData res = new Utility.PreciseEditorData(from);
             for (int i = 0; i < res.AssociatedPoints.Count; ++i)
             {
                 if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
                     throw new System.ArgumentException();
-                res.AssociatedPoints[i].Y -= what.AssociatedPoints[i].Y;
+                res.AssociatedPoints[i].Y -= what.AssociatedPoints[i].Y * coeff;
             }
             return res;
         }
-        private static List<Utility.PreciseEditorData> PreciseEditorDataListDiff(List<Utility.PreciseEditorData> from, List<Utility.PreciseEditorData> what)
+        private static List<Utility.PreciseEditorData> PreciseEditorDataListDiff(List<Utility.PreciseEditorData> from, List<Utility.PreciseEditorData> what, ushort step, Utility.PreciseEditorData pedReference)
         {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
+            
+            // coeff counting
+            double coeff = 1.0;
+            if ((step != 0) && (pedReference != null))
+            {
+                int fromIndex = from.IndexOf(pedReference);
+                int whatIndex = what.IndexOf(pedReference);
+                if ((fromIndex == -1) || (whatIndex == -1))
+                    throw new System.ArgumentException();
+                if (System.Math.Abs(from[fromIndex].Step - step) < from[fromIndex].Width)
+                    throw new System.ArgumentOutOfRangeException();
+                if (from[fromIndex].AssociatedPoints.Count != what[whatIndex].AssociatedPoints.Count)
+                    throw new System.ArgumentException();
+                if (from[fromIndex].AssociatedPoints.Count != 2 * from[fromIndex].Width + 1)
+                    throw new System.ArgumentException();
+                if (what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y != 0)
+                    coeff = from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y /
+                            what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y;
+            }
+            
             List<Utility.PreciseEditorData> res = new List<Utility.PreciseEditorData>(from);
             for (int i = 0; i < res.Count; ++i)
             {
-                res[i] = PreciseEditorDataDiff(res[i], what[i]);
+                res[i] = PreciseEditorDataDiff(res[i], what[i], coeff);
             }
             return res;
         }
@@ -592,7 +636,7 @@ namespace Flavor
             if (result)
             {
                 preciseDataLoaded = peds;
-                Graph.updatePrecise();
+                Graph.updateGraphAfterPreciseLoad();
             }
             return result;
         }
@@ -750,7 +794,7 @@ namespace Flavor
 
         internal static List<Utility.PreciseEditorData> LoadPreciseEditorData(string pedConfName)
         {
-            List<Utility.PreciseEditorData> ped = new List<Utility.PreciseEditorData>();
+            List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
             XmlDocument pedConf;
             string mainConfPrefix = "";
 
@@ -773,8 +817,8 @@ namespace Flavor
                 mainConfPrefix = mainConfigPrefix;
             }
 
-            if (LoadPED(pedConf, pedConfName, ped, false, mainConfPrefix))
-                return ped;
+            if (LoadPED(pedConf, pedConfName, peds, false, mainConfPrefix))
+                return peds;
             return null;
         }
         internal static void LoadPreciseEditorData()
@@ -788,7 +832,7 @@ namespace Flavor
             }
         }
 
-        private static bool LoadPED(XmlDocument pedConf, string pedConfName, List<Utility.PreciseEditorData> ped, bool readSpectrum, string mainConfPrefix)
+        private static bool LoadPED(XmlDocument pedConf, string pedConfName, List<Utility.PreciseEditorData> peds, bool readSpectrum, string mainConfPrefix)
         {
             for (int i = 1; i <= 20; ++i)
             {
@@ -860,8 +904,9 @@ namespace Flavor
                         structureErrorOnLoadPrecise(pedConfName);
                     return false;
                 }
-                if (temp != null) ped.Add(temp);
+                if (temp != null) peds.Add(temp);
             }
+            peds.Sort(Utility.ComparePreciseEditorData);
             return true;
         }
 

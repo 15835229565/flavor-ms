@@ -15,6 +15,28 @@ using ZedGraph;
 
 namespace Flavor
 {
+    internal class PointPairListPlus : PointPairList
+    {
+        private readonly Utility.PreciseEditorData myPED;
+        private readonly Graph.pListScaled myPLS;
+
+        public Utility.PreciseEditorData PEDreference
+        {
+            get { return myPED; }
+        }
+        public Graph.pListScaled PLSreference
+        {
+            get { return myPLS; }
+        }
+
+        public PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
+            : base()
+        {
+            myPED = ped;
+            myPLS = pls;
+        }
+    }
+    
     public partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
         private CurveItem curveReference;
@@ -87,6 +109,13 @@ namespace Flavor
 
                 item1.Click += new System.EventHandler(SetScalingCoeff);
                 menuStrip.Items.Add(item1);
+            
+                ToolStripMenuItem item2 = new ToolStripMenuItem();
+                item2.Name = "custom_diff";
+                item2.Tag = "custom_diff";
+                item2.Text = "Вычесть из текущего с перенормировкой на точку";
+                item2.Click += new System.EventHandler(DiffWithCoeff);
+                menuStrip.Items.Add(item2);
             }
             else
             {
@@ -157,15 +186,13 @@ namespace Flavor
                     break;
             }
         }
-        
+
         private void AddPointToPreciseEditor(object sender, EventArgs e) 
         {
             byte collector = 0;
             PointPair pp = null;
             int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curveReference.Points));
-            //List<PointPairList> l1 = Graph.Displayed1Steps;
             int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curveReference.Points));
-            //List<PointPairList> l2 = Graph.Displayed2Steps;
             if (-1 != curveIndex1)
             {
                 collector = 1;
@@ -185,6 +212,51 @@ namespace Flavor
                     pForm.Show();
                     pForm.BringToFront();
                 }
+            }
+            else
+                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+        }
+        private void DiffWithCoeff(object sender, EventArgs e)
+        {
+            if (Graph.isPreciseSpectrum)
+            {
+                List<Utility.PreciseEditorData> peds = null;
+                switch (Graph.DisplayingMode){
+                    case Graph.Displaying.Measured:
+                        peds = Config.PreciseData;
+                        break;
+                    case Graph.Displaying.Loaded:
+                        peds = Config.PreciseDataLoaded;
+                        break;
+                    case Graph.Displaying.Diff:
+                        peds = Config.PreciseDataDiff;
+                        break;
+                }
+                foreach (Utility.PreciseEditorData ped in peds)
+                {
+                    if (ped.AssociatedPoints == curveReference.Points)
+                    {
+                        //consider revising
+                        return;
+                    }
+                }
+            }
+            byte collector = 0;
+            PointPair pp = null;
+            int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curveReference.Points));
+            int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curveReference.Points));
+            if (-1 != curveIndex1)
+            {
+                collector = 1;
+                pp = (Graph.Displayed1Steps[curveIndex1])[pointIndex];
+            }
+            else if (-1 != curveIndex2)
+            {
+                collector = 2;
+                pp = (Graph.Displayed2Steps[curveIndex2])[pointIndex];
+            }
+            if ((pp != null) && (collector != 0))
+            {
             }
             else
                 MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
@@ -214,6 +286,43 @@ namespace Flavor
             }
             else
                 MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+        }
+
+        private string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt)
+        {
+            string tooltipData = "";
+            PointPair pp = curve[iPt];
+            switch (Graph.AxisDisplayMode)
+            {
+                case Graph.pListScaled.DisplayValue.Step:
+                    tooltipData = string.Format("ступень={0:G},счеты={1:G}", pp.X, pp.Y);
+                    break;
+                case Graph.pListScaled.DisplayValue.Voltage:
+                    tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:G}", pp.X, pp.Z, pp.Y);
+                    break;
+                case Graph.pListScaled.DisplayValue.Mass:
+                    tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:G}", pp.X, pp.Z, pp.Y);
+                    break;
+            }
+            if (Graph.isPreciseSpectrum)
+            {
+                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curve.Points));
+                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curve.Points));
+                long peakSum = -1;
+                if (-1 != curveIndex1)
+                {
+                    peakSum = Graph.DisplayedRows1[curveIndex1].PeakSum;
+                }
+                else if (-1 != curveIndex2)
+                {
+                    peakSum = Graph.DisplayedRows2[curveIndex2].PeakSum;
+                }
+                if (peakSum != -1)
+                    tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);
+                else
+                    tooltipData += "\nНе удалось идентифицировать пик";
+            }
+            return tooltipData;
         }
     }
 }

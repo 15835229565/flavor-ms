@@ -54,12 +54,12 @@ namespace Flavor
             {
                 peakSum += count;
                 points[(int)DisplayValue.Step].Add(pnt, count);
-                points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count);
-                points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count);
+                points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count, pnt);
+                points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count, pnt);
             }
             private void SetRows(pListScaled pl)
             {
-                points[(int)DisplayValue.Step] = new PointPairList(pl.Step);
+                points[(int)DisplayValue.Step] = pl.Step;
                 points[(int)DisplayValue.Voltage] = new PointPairList(pl.Voltage);
                 points[(int)DisplayValue.Mass] = new PointPairList(pl.Mass);
                 peakSum = pl.peakSum;
@@ -74,22 +74,30 @@ namespace Flavor
             // Be careful with sumCounts!
             internal void SetRows(PointPairList dataPoints, long sumCounts)
             {
-                points[(int)DisplayValue.Step] = new PointPairList(dataPoints);
-                (points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints)).ForEach(xToVoltage);
-                (points[(int)DisplayValue.Mass] = new PointPairList(dataPoints)).ForEach(xToMass);
+                points[(int)DisplayValue.Step] = dataPoints;
+                
+                points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints);
+                //in this order!
+                points[(int)DisplayValue.Voltage].ForEach(setZ);
+                points[(int)DisplayValue.Voltage].ForEach(zToVoltage);
+                
+                points[(int)DisplayValue.Mass] = new PointPairList(dataPoints);
+                //in this order!
+                points[(int)DisplayValue.Mass].ForEach(setZ);
+                points[(int)DisplayValue.Mass].ForEach(zToMass);
+
                 peakSum = sumCounts;
             }
             public void Clear()
             {
-                points[(int)DisplayValue.Step].Clear();
+                points[(int)DisplayValue.Step]= new PointPairList();
                 points[(int)DisplayValue.Voltage].Clear();
                 points[(int)DisplayValue.Mass].Clear();
                 peakSum = 0;
             }
             public void RecomputeMassRow()
             {
-                //points[(int)DisplayValue.Mass].Clear();
-                (points[(int)DisplayValue.Mass] = new PointPairList(points[(int)DisplayValue.Step])).ForEach(xToMass);
+                points[(int)DisplayValue.Mass].ForEach(zToMass);
             }
             
             public pListScaled(bool isFirstCollector)
@@ -110,13 +118,17 @@ namespace Flavor
                 SetRows(dataPoints);
             }
 
-            private void xToVoltage(PointPair pp)
+            private void setZ(PointPair pp)
             {
-                pp.X = Config.scanVoltageReal((ushort)pp.X);
+                pp.Z = pp.X;
             }
-            private void xToMass(PointPair pp)
+            private void zToVoltage(PointPair pp)
             {
-                pp.X = Config.pointToMass((ushort)pp.X, collector);
+                pp.X = Config.scanVoltageReal((ushort)pp.Z);
+            }
+            private void zToMass(PointPair pp)
+            {
+                pp.X = Config.pointToMass((ushort)pp.Z, collector);
             }
         }
         public delegate void GraphEventHandler(Displaying mode, bool recreate);
@@ -127,7 +139,7 @@ namespace Flavor
             None,
             Col1,
             Col2,
-            Both
+            Both,
         }
         public static event GraphEventHandler OnNewGraphData;
         public static event AxisModeEventHandler OnAxisModeChanged;
@@ -412,7 +424,7 @@ namespace Flavor
             OnNewGraphData(displayMode, false/*true*/);
         }
 
-        internal static void updateGraph(int[][] senseModeCounts, Utility.PreciseEditorData[] peds)
+        internal static void updateGraphAfterPreciseMeasure(int[][] senseModeCounts, Utility.PreciseEditorData[] peds)
         {
             ResetPointLists();
             for (int i = 0; i < peds.Length; ++i)
@@ -425,24 +437,24 @@ namespace Flavor
                 collectors[peds[i].Collector - 1].Add(temp);
                 peds[i].AssociatedPoints = temp.Step;
             }
-            OnNewGraphData(displayMode, true);
+            OnNewGraphData(displayMode/*Graph.Displaying.Measured*/, true);
         }
-        internal static void updatePrecise(List<Utility.PreciseEditorData> peds)
+        internal static void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds)
         {
             ResetDiffPointLists();
             foreach (Utility.PreciseEditorData ped in peds)
                 diffSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-            OnNewGraphData(displayMode, true);
+            OnNewGraphData(displayMode/*Graph.Displaying.Diff*/, true);
         }
-        internal static void updatePrecise()
+        internal static void updateGraphAfterPreciseLoad()
         {
             ResetLoadedPointLists();
             foreach (Utility.PreciseEditorData ped in Config.PreciseDataLoaded)
                 loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-            OnNewGraphData(displayMode, false);
+            OnNewGraphData(displayMode/*Graph.Displaying.Loaded*/, false);
         }
 
-        internal static void updateGraph(ushort pnt, Utility.PreciseEditorData curped)
+        internal static void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped)
         {
             lastPoint = pnt;
             curPeak = curped;

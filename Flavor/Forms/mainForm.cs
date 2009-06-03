@@ -177,7 +177,7 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            this.gForm.setXScaleLimits(0, 1056, 0, 1056);
+            this.gForm.setXScaleLimits(Config.PreciseData);
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Sense();
         }
@@ -261,6 +261,7 @@ namespace Flavor
                         }
                         else
                         {
+                            gForm.yAxisChange();
                             gForm.specterSavingEnabled = true;
                             
                             detector1CountsLabel.Visible = true;

@@ -17,8 +17,9 @@ namespace Flavor
         private bool prevPreciseSpecterDisplayed = false;
 
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
+        private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };
         private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
-        Color.Black,};
+        Color.Black, Color.Magenta,};
         internal bool specterOpeningEnabled
         {
             set 
@@ -49,6 +50,8 @@ namespace Flavor
         {
             InitializeComponent();
             graphs = new ZedGraphControlPlus[] {collect1_graph, collect2_graph};
+            graphs[0].GraphPane.Legend.IsVisible = false;
+            graphs[1].GraphPane.Legend.IsVisible = false;
             Graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
         }
 
@@ -90,21 +93,50 @@ namespace Flavor
 
         internal void setXScaleLimits()
         {
-            minX[0] = minX[1] = Config.sPoint;
-            maxX[0] = maxX[1] = Config.ePoint;
+            setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
         }
         internal void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2)
         {
+            storeXScaleLimits();
             minX[0] = minX1;
             minX[1] = minX2;
             maxX[0] = maxX1;
             maxX[1] = maxX2;
+        }
+        internal void setXScaleLimits(List<Utility.PreciseEditorData> peds)
+        {
+            storeXScaleLimits();
+            ushort[] minX = { 1056, 1056 }, maxX = { 0, 0 };
+            foreach (Utility.PreciseEditorData ped in peds)
+            {
+                if (minX[ped.Collector - 1] > ped.Step - ped.Width) 
+                    minX[ped.Collector - 1] = (ushort)(ped.Step - ped.Width);
+                if (maxX[ped.Collector - 1] < ped.Step + ped.Width)
+                    maxX[ped.Collector - 1] = (ushort)(ped.Step + ped.Width);
+            }
+            this.minX = minX;
+            this.maxX = maxX;
+        }
+        internal void storeXScaleLimits()
+        {
+            minXprev = minX;
+            maxXprev = maxX;
+        }
+        internal void restoreXScaleLimits()
+        {
+            minX = minXprev;
+            maxX = maxXprev;
         }
 
         internal void RefreshGraph()
         {
             graphs[0].Refresh();
             graphs[1].Refresh();
+        }
+        internal void yAxisChange()
+        {
+            graphs[0].AxisChange();
+            graphs[1].AxisChange();
         }
 
         private void setAutoScales()
@@ -114,21 +146,6 @@ namespace Flavor
             graphs[0].GraphPane.ZoomStack.Clear();
             graphs[1].GraphPane.ZoomStack.Clear();
         }
-        private void setLegendAndScales()
-        {
-            if (preciseSpecterDisplayed)
-            {
-                graphs[0].GraphPane.Legend.IsVisible = true;
-                graphs[1].GraphPane.Legend.IsVisible = true;
-                setAutoScales();
-            }
-            else
-            {
-                graphs[0].GraphPane.Legend.IsVisible = false;
-                graphs[1].GraphPane.Legend.IsVisible = false;
-            }
-            RefreshGraph();
-        }
         
         internal void CreateGraph()
         {
@@ -137,7 +154,7 @@ namespace Flavor
             specterClosingEnabled = false;
             ZedGraphRebirth(0, Graph.DisplayedRows1, "Первый коллектор");
             ZedGraphRebirth(1, Graph.DisplayedRows2, "Второй коллектор");
-            setLegendAndScales();
+            RefreshGraph();
         }
 
         internal void DisplayLoadedSpectrum()
@@ -150,7 +167,7 @@ namespace Flavor
             Graph.DisplayingMode = Graph.Displaying.Loaded;
             ZedGraphRebirth(0, Graph.DisplayedRows1, "Первый коллектор");
             ZedGraphRebirth(1, Graph.DisplayedRows2, "Второй коллектор");
-            setLegendAndScales();
+            RefreshGraph();
             specterClosingEnabled = true;
         }
         internal void DisplayDiff()
@@ -159,7 +176,7 @@ namespace Flavor
             ZedGraphRebirth(0, Graph.DisplayedRows1, "Diff - Первый коллектор");
             ZedGraphRebirth(1, Graph.DisplayedRows2, "Diff - Второй коллектор");
             // ?
-            setLegendAndScales();
+            RefreshGraph();
             specterClosingEnabled = true;
         }
         
@@ -284,7 +301,7 @@ namespace Flavor
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 10000;
             //autoscaling needs review. not working now. RefreshGraph or AxisChange anywhere?
-            //myPane.YAxis.Scale.MaxAuto = true;
+            myPane.YAxis.Scale.MaxAuto = true;
             // Calculate the Axis Scale Ranges
             graphs[zgcIndex].AxisChange();
 
@@ -293,7 +310,7 @@ namespace Flavor
 
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            setXScaleLimits();
+            restoreXScaleLimits();
             //!!!
             CreateGraph();
             preciseSpecterDisplayed = prevPreciseSpecterDisplayed;
@@ -309,11 +326,11 @@ namespace Flavor
                     Config.OpenSpecterFile(openSpecterFileDialog.FileName);
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
                     preciseSpecterDisplayed = false;
-                    // setXScaleLimits
+
                     ushort minX = (ushort)(Graph.Displayed1Steps[0][0].X);
                     ushort maxX = (ushort)(minX - 1 + Graph.Displayed1Steps[0].Count);
                     setXScaleLimits(minX, maxX, minX, maxX);
-                    // YScaleMax - auto!
+                    // YScaleLimits - auto!
                     DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
                 }
                 else 
@@ -321,11 +338,10 @@ namespace Flavor
                     Config.OpenPreciseSpecterFile(openSpecterFileDialog.FileName);
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
                     preciseSpecterDisplayed = true;
+                    setXScaleLimits(Config.PreciseDataLoaded);
+                    // YScaleLimits - auto!
                     DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
-                    // Default scale
-                    setAutoScales();
                 }
-
                 specterClosingEnabled = true;
             }
         }

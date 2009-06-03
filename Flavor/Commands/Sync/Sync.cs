@@ -281,7 +281,7 @@ namespace Flavor
             {
                 Graph.updateGraph(Detector1, Detector2, CurPoint);
             }
-            else Graph.updateGraph(CurPoint, Commander.SenseModePeak);
+            else Graph.updateGraphDuringPreciseMeasure(CurPoint, Commander.SenseModePeak);
         }
 
         #endregion
