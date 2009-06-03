@@ -32,7 +32,7 @@ namespace Flavor
             public PreciseEditorData(PreciseEditorData other)
                 : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment)
             {
-                associatedPoints = other.associatedPoints.Clone();
+                associatedPoints = new PointPairListPlus(other.associatedPoints, this, null);
             }
             private bool usethis = true;
             private byte pointNumber;
@@ -42,11 +42,20 @@ namespace Flavor
             private ushort width;
             private float precision;
             private string comment = "";
-            private ZedGraph.PointPairList associatedPoints;
-            public ZedGraph.PointPairList AssociatedPoints
+            private PointPairListPlus associatedPoints = null;
+            public PointPairListPlus AssociatedPoints
             {
                 get { return associatedPoints; }
-                set { associatedPoints = value; }
+                set
+                {
+                    if (value.PEDreference == null)
+                    {
+                        associatedPoints = value;
+                        associatedPoints.PEDreference = this;
+                    }
+                    else
+                        associatedPoints = new PointPairListPlus(value, this, null); 
+                }
             }
             public bool Use
             {
@@ -88,11 +97,21 @@ namespace Flavor
                 get { return comment; }
                 //set { comment = value; }
             }
-            public bool Equals(PreciseEditorData other)
+            public override bool Equals(object other)
             {
-                bool result = (this.collector == other.collector) && (this.step == other.step) && 
-                              (this.iterations == other.iterations) && (this.width == other.width);
-                return result;
+                if (other is PreciseEditorData)
+                {
+                    PreciseEditorData o = other as PreciseEditorData;
+                    bool result = (this.collector == o.collector) && (this.step == o.step) &&
+                                  (this.iterations == o.iterations) && (this.width == o.width);
+                    return result;
+                }
+                return false;
+            }
+            public override int GetHashCode()
+            {
+                //later it will be better!
+                return 0;
             }
         }
 

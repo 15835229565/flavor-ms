@@ -53,6 +53,8 @@ namespace Flavor
             graphs[0].GraphPane.Legend.IsVisible = false;
             graphs[1].GraphPane.Legend.IsVisible = false;
             Graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
+            graphs[0].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
+            graphs[1].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
         }
 
         private void Graph_OnAxisModeChanged()
@@ -348,6 +350,11 @@ namespace Flavor
 
         private void distractFromCurrentToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            GraphForm_OnDiffOnPoint(0, null, null);
+        }
+
+        private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference)
+        {
             if (preciseSpecterDisplayed)
             {
                 openSpecterFileDialog.Filter = "Precise specter files (*.psf)|*.psf";
@@ -358,7 +365,7 @@ namespace Flavor
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Config.DistractSpectra(openSpecterFileDialog.FileName);
+                Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference);
             }
         }
     }

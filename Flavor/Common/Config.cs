@@ -370,7 +370,7 @@ namespace Flavor
         
         internal static bool OpenSpecterFile(string p)
         {
-            ZedGraph.PointPairList pl1 = new ZedGraph.PointPairList(), pl2 = new ZedGraph.PointPairList();
+            PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
             bool result = OpenSpecterFile(p, pl1, pl2);
             if (result)
             {
@@ -379,11 +379,11 @@ namespace Flavor
             }
             return result;
         }
-        internal static bool OpenSpecterFile(string p, ZedGraph.PointPairList pl1, ZedGraph.PointPairList pl2)
+        internal static bool OpenSpecterFile(string p, PointPairListPlus pl1, PointPairListPlus pl2)
         {
             XmlDocument sf = new XmlDocument();
             ushort X = 0;
-            int Y = 0;
+            long Y = 0;
             try
             {
                 sf.Load(p);
@@ -398,13 +398,13 @@ namespace Flavor
                 foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector1/p"))
                 {
                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                    Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                     pl1.Add(X, Y);
                 }
                 foreach (XmlNode pntNode in sf.SelectNodes("/overview/collector2/p"))
                 {
                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                    Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                     pl2.Add(X, Y);
                 }
             }
@@ -449,14 +449,14 @@ namespace Flavor
             {
                 temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
                 sf.SelectSingleNode(string.Format("overview/collector1")).AppendChild(temp);
             }
             foreach (ZedGraph.PointPair pp in Graph.Displayed2Steps[0])
             {
                 temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
                 sf.SelectSingleNode(string.Format("overview/collector2")).AppendChild(temp);
             }
             sf.Save(@p);
@@ -468,16 +468,16 @@ namespace Flavor
         /*
         internal static void DistractSpectra(string from, ref string what)
         {
-            ZedGraph.PointPairList pl11 = new ZedGraph.PointPairList();
-            ZedGraph.PointPairList pl21 = new ZedGraph.PointPairList();
-            ZedGraph.PointPairList pl12 = new ZedGraph.PointPairList();
-            ZedGraph.PointPairList pl22 = new ZedGraph.PointPairList();
+            PointPairListPlus pl11 = new PointPairListPlus();
+            PointPairListPlus pl21 = new PointPairListPlus();
+            PointPairListPlus pl12 = new PointPairListPlus();
+            PointPairListPlus pl22 = new PointPairListPlus();
             if (OpenSpecterFile(from, pl11, pl21) && OpenSpecterFile(what, pl12, pl22))
             {
                 try
                 {
-                    ZedGraph.PointPairList diff1 = PointPairListDiff(pl11, pl12, 0);
-                    ZedGraph.PointPairList diff2 = PointPairListDiff(pl21, pl22, 0);
+                    PointPairListPlus diff1 = PointPairListDiff(pl11, pl12, 0);
+                    PointPairListPlus diff2 = PointPairListDiff(pl21, pl22, 0);
                     Graph.updateNotPrecise(diff1, diff2);
                 }
                 catch (System.ArgumentException)
@@ -489,9 +489,9 @@ namespace Flavor
         }*/
         internal static void DistractSpectra(string what)
         {
-            DistractSpectra(what, 0, null);
+            DistractSpectra(what, 0, null, null);
         }
-        internal static void DistractSpectra(string what, ushort step, Utility.PreciseEditorData pedReference)
+        internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference)
         {
             if (Graph.isPreciseSpectrum)
             {
@@ -530,14 +530,32 @@ namespace Flavor
             }
             else
             {
-                ZedGraph.PointPairList pl12 = new ZedGraph.PointPairList();
-                ZedGraph.PointPairList pl22 = new ZedGraph.PointPairList();
+                PointPairListPlus pl12 = new PointPairListPlus();
+                PointPairListPlus pl22 = new PointPairListPlus();
                 if (OpenSpecterFile(what, pl12, pl22))
                 {
+                    // coeff counting
+                    double coeff = 1.0;
+                    PointPairListPlus PL = plsReference.IsFirstCollector ? Graph.Displayed1Steps[0] : Graph.Displayed2Steps[0];
+                    PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
+                    if (step != 0)
+                    {
+                        for (int i = 0; i < PL.Count; ++i)
+                        {
+                            if (step == PL[i].X)
+                            {
+                                if (step != pl[i].X)
+                                    throw new System.ArgumentException();
+                                if ((pl[i].Y != 0) && (PL[i].Y != 0))
+                                    coeff = PL[i].Y / pl[i].Y;
+                                break;
+                            }
+                        }
+                    }
                     try
                     {
-                        ZedGraph.PointPairList diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12, step);
-                        ZedGraph.PointPairList diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22, step);
+                        PointPairListPlus diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12, coeff);
+                        PointPairListPlus diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22, coeff);
                         Graph.ResetDiffPointLists();
                         Graph.updateNotPrecise(diff1, diff2);
                     }
@@ -549,29 +567,12 @@ namespace Flavor
                 }
             }
         }
-        private static ZedGraph.PointPairList PointPairListDiff(ZedGraph.PointPairList from, ZedGraph.PointPairList what, ushort step)
+        private static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff)
         {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
             
-            // coeff counting
-            double coeff = 1.0;
-            if (step != 0)
-            {
-                for (int i = 0; i < from.Count; ++i)
-                {
-                    if (step == from[i].X)
-                    {
-                        if (step != what[i].X)
-                            throw new System.ArgumentException();
-                        if (what[i].Y != 0)
-                            coeff = from[i].Y / what[i].Y;
-                        break;
-                    }
-                }
-            }
-            
-            ZedGraph.PointPairList res = new ZedGraph.PointPairList(from);
+            PointPairListPlus res = new PointPairListPlus(from, null, null);
             for (int i = 0; i < res.Count; ++i)
             {
                 if (res[i].X != what[i].X)
@@ -610,13 +611,14 @@ namespace Flavor
                 int whatIndex = what.IndexOf(pedReference);
                 if ((fromIndex == -1) || (whatIndex == -1))
                     throw new System.ArgumentException();
-                if (System.Math.Abs(from[fromIndex].Step - step) < from[fromIndex].Width)
+                if (System.Math.Abs(from[fromIndex].Step - step) > from[fromIndex].Width)
                     throw new System.ArgumentOutOfRangeException();
                 if (from[fromIndex].AssociatedPoints.Count != what[whatIndex].AssociatedPoints.Count)
                     throw new System.ArgumentException();
                 if (from[fromIndex].AssociatedPoints.Count != 2 * from[fromIndex].Width + 1)
                     throw new System.ArgumentException();
-                if (what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y != 0)
+                if ((what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y != 0) &&
+                    (from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y != 0))
                     coeff = from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y /
                             what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y;
             }
@@ -697,7 +699,7 @@ namespace Flavor
                 {
                     temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                     temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = pp.Y.ToString();
+                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
                     sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
                 }
             }
@@ -876,14 +878,15 @@ namespace Flavor
                         }
                         if (readSpectrum)
                         {
-                            int X, Y;
-                            ZedGraph.PointPairList tempPntLst = new ZedGraph.PointPairList();
+                            ushort X;
+                            long Y;
+                            PointPairListPlus tempPntLst = new PointPairListPlus();
                             try
                             {
                                 foreach (XmlNode pntNode in pedConf.SelectNodes(string.Format(mainConfPrefix + "sense/region{0}/p", i)))
                                 {
                                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                                    Y = int.Parse(pntNode.SelectSingleNode("c").InnerText);
+                                    Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                                     tempPntLst.Add(X, Y);
                                 }
                             }

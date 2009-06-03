@@ -21,21 +21,27 @@ namespace Flavor
                 Voltage = 1,
                 Mass = 2
             }
+            private readonly Utility.PreciseEditorData myPED;
+            public Utility.PreciseEditorData PEDreference
+            {
+                get { return myPED; }
+                //set { myPED = value; }
+            }
 
-            private PointPairList[] points = new PointPairList[3];
-            public PointPairList Step
+            private PointPairListPlus[] points = new PointPairListPlus[3];
+            public PointPairListPlus Step
             {
                 get { return points[(int)DisplayValue.Step]; }
             }
-            public PointPairList Voltage
+            public PointPairListPlus Voltage
             {
                 get { return points[(int)DisplayValue.Voltage]; }
             }
-            public PointPairList Mass
+            public PointPairListPlus Mass
             {
                 get { return points[(int)DisplayValue.Mass]; }
             }
-            public PointPairList Points(DisplayValue which)
+            public PointPairListPlus Points(DisplayValue which)
             {
                 return points[(int)which];
             }
@@ -49,6 +55,10 @@ namespace Flavor
                 get { return (points[(int)DisplayValue.Step].Count == 0); }
             }
             private bool collector;
+            public bool IsFirstCollector
+            {
+                get { return collector; }
+            }
 
             public void Add(ushort pnt, int count)
             {
@@ -59,12 +69,12 @@ namespace Flavor
             }
             private void SetRows(pListScaled pl)
             {
-                points[(int)DisplayValue.Step] = pl.Step;
-                points[(int)DisplayValue.Voltage] = new PointPairList(pl.Voltage);
-                points[(int)DisplayValue.Mass] = new PointPairList(pl.Mass);
+                points[(int)DisplayValue.Step] = new PointPairListPlus(pl.Step, null, this);
+                points[(int)DisplayValue.Voltage] = new PointPairListPlus(pl.Voltage, null, this);
+                points[(int)DisplayValue.Mass] = new PointPairListPlus(pl.Mass, null, this);
                 peakSum = pl.peakSum;
             }
-            public void SetRows(PointPairList dataPoints)
+            public void SetRows(PointPairListPlus dataPoints)
             {
                 long sum = 0;
                 foreach (PointPair pp in dataPoints)
@@ -72,16 +82,24 @@ namespace Flavor
                 SetRows(dataPoints, sum);
             }
             // Be careful with sumCounts!
-            internal void SetRows(PointPairList dataPoints, long sumCounts)
+            internal void SetRows(PointPairListPlus dataPoints, long sumCounts)
             {
-                points[(int)DisplayValue.Step] = dataPoints;
-                
-                points[(int)DisplayValue.Voltage] = new PointPairList(dataPoints);
+                if (dataPoints.PLSreference == null)
+                {
+                    points[(int)DisplayValue.Step] = dataPoints;
+                    dataPoints.PLSreference = this;
+                }
+                else
+                {
+                    points[(int)DisplayValue.Step] = new PointPairListPlus(dataPoints, null, this);
+                }
+
+                points[(int)DisplayValue.Voltage] = new PointPairListPlus(dataPoints, null, this);
                 //in this order!
                 points[(int)DisplayValue.Voltage].ForEach(setZ);
                 points[(int)DisplayValue.Voltage].ForEach(zToVoltage);
-                
-                points[(int)DisplayValue.Mass] = new PointPairList(dataPoints);
+
+                points[(int)DisplayValue.Mass] = new PointPairListPlus(dataPoints, null, this);
                 //in this order!
                 points[(int)DisplayValue.Mass].ForEach(setZ);
                 points[(int)DisplayValue.Mass].ForEach(zToMass);
@@ -90,7 +108,7 @@ namespace Flavor
             }
             public void Clear()
             {
-                points[(int)DisplayValue.Step]= new PointPairList();
+                points[(int)DisplayValue.Step]= new PointPairListPlus(this.Step.PEDreference, this);
                 points[(int)DisplayValue.Voltage].Clear();
                 points[(int)DisplayValue.Mass].Clear();
                 peakSum = 0;
@@ -99,22 +117,32 @@ namespace Flavor
             {
                 points[(int)DisplayValue.Mass].ForEach(zToMass);
             }
-            
+
+            public pListScaled(Utility.PreciseEditorData ped)
+            {
+                collector = (ped.Collector == 1);
+                myPED = ped;
+                if (ped.AssociatedPoints != null)
+                    SetRows(ped.AssociatedPoints);
+            }
             public pListScaled(bool isFirstCollector)
             {
                 collector = isFirstCollector;
-                points[(int)DisplayValue.Step] = new PointPairList();
-                points[(int)DisplayValue.Voltage] = new PointPairList();
-                points[(int)DisplayValue.Mass] = new PointPairList();
+                myPED = null;
+                points[(int)DisplayValue.Step] = new PointPairListPlus(null, this);
+                points[(int)DisplayValue.Voltage] = new PointPairListPlus(null, this);
+                points[(int)DisplayValue.Mass] = new PointPairListPlus(null, this);
             }
             public pListScaled(pListScaled other)
             {
                 collector = other.collector;
+                myPED = null;
                 SetRows(other);
             }
-            public pListScaled(bool isFirstCollector, PointPairList dataPoints)
+            public pListScaled(bool isFirstCollector, PointPairListPlus dataPoints)
             {
                 collector = isFirstCollector;
+                myPED = dataPoints.PEDreference;
                 SetRows(dataPoints);
             }
 
@@ -179,9 +207,9 @@ namespace Flavor
         private static List<pListScaled>[] collectors = new List<pListScaled>[2];
         private static List<pListScaled>[] loadedSpectra = new List<pListScaled>[2];
         private static List<pListScaled>[] diffSpectra = new List<pListScaled>[2];
-        private static List<PointPairList> getPointPairs(List<pListScaled>[] which, int col, bool useAxisMode)
+        private static List<PointPairListPlus> getPointPairs(List<pListScaled>[] which, int col, bool useAxisMode)
         {
-            List<PointPairList> temp = new List<PointPairList>();
+            List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
             if (useAxisMode) am = axisMode;
             foreach (pListScaled pLS in which[col - 1])
@@ -190,7 +218,7 @@ namespace Flavor
             }
             return temp;
         }
-        public static List<PointPairList> Displayed1
+        public static List<PointPairListPlus> Displayed1
         {
             get
             {
@@ -207,7 +235,7 @@ namespace Flavor
                 }
             }
         }
-        public static List<PointPairList> Displayed2
+        public static List<PointPairListPlus> Displayed2
         {
             get
             {
@@ -224,7 +252,7 @@ namespace Flavor
                 }
             }
         }
-        public static List<PointPairList> Displayed1Steps
+        public static List<PointPairListPlus> Displayed1Steps
         {
             get
             {
@@ -241,7 +269,7 @@ namespace Flavor
                 }
             }
         }
-        public static List<PointPairList> Displayed2Steps
+        public static List<PointPairListPlus> Displayed2Steps
         {
             get
             {
@@ -391,14 +419,14 @@ namespace Flavor
             OnNewGraphData(Displaying.Loaded, false);
         }
 
-        internal static void updateLoaded(PointPairList pl1, PointPairList pl2)
+        internal static void updateLoaded(PointPairListPlus pl1, PointPairListPlus pl2)
         {
             (loadedSpectra[0])[0].SetRows(pl1);
             (loadedSpectra[1])[0].SetRows(pl2);
             OnNewGraphData(Displaying.Loaded, false);
         }
 
-        internal static void updateNotPrecise(PointPairList pl1, PointPairList pl2)
+        internal static void updateNotPrecise(PointPairListPlus pl1, PointPairListPlus pl2)
         {
             DisplayedRows1[0].SetRows(pl1);
             DisplayedRows2[0].SetRows(pl2);

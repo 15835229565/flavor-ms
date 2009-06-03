@@ -17,20 +17,40 @@ namespace Flavor
 {
     internal class PointPairListPlus : PointPairList
     {
-        private readonly Utility.PreciseEditorData myPED;
-        private readonly Graph.pListScaled myPLS;
+        private Utility.PreciseEditorData myPED;
+        private Graph.pListScaled myPLS;
 
         public Utility.PreciseEditorData PEDreference
         {
             get { return myPED; }
+            set { myPED = value; }
         }
         public Graph.pListScaled PLSreference
         {
             get { return myPLS; }
+            set { myPLS = value; }
         }
 
+        public PointPairListPlus()
+            : base()
+        {
+            myPED = null;
+            myPLS = null;
+        }
         public PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
             : base()
+        {
+            myPED = ped;
+            myPLS = pls;
+        }
+        /*public PointPairListPlus(PointPairListPlus other)
+            : base(other)
+        {
+            myPED = null;
+            myPLS = null;
+        }*/
+        public PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
+            : base(other)
         {
             myPED = ped;
             myPLS = pls;
@@ -39,6 +59,8 @@ namespace Flavor
     
     public partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
+        public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
+        public event DiffOnPointEventHandler OnDiffOnPoint;
         private CurveItem curveReference;
         private int curveIndex = -1;
         private int pointIndex;
@@ -85,8 +107,8 @@ namespace Flavor
 
                 ToolStripMenuItem item1 = new ToolStripMenuItem();
 
-                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(nearestCurve.Points));
-                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(nearestCurve.Points));
+                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairListPlus)(nearestCurve.Points));
+                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairListPlus)(nearestCurve.Points));
                 if (-1 != curveIndex1)
                 {
                     curveIndex = curveIndex1;
@@ -191,8 +213,8 @@ namespace Flavor
         {
             byte collector = 0;
             PointPair pp = null;
-            int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curveReference.Points));
-            int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curveReference.Points));
+            int curveIndex1 = Graph.Displayed1.IndexOf((PointPairListPlus)(curveReference.Points));
+            int curveIndex2 = Graph.Displayed2.IndexOf((PointPairListPlus)(curveReference.Points));
             if (-1 != curveIndex1)
             {
                 collector = 1;
@@ -218,10 +240,17 @@ namespace Flavor
         }
         private void DiffWithCoeff(object sender, EventArgs e)
         {
+            Graph.pListScaled pls = ((PointPairListPlus)(curveReference.Points)).PLSreference;
+            if (pls == null)
+            {
+                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                return;
+            }
             if (Graph.isPreciseSpectrum)
             {
                 List<Utility.PreciseEditorData> peds = null;
-                switch (Graph.DisplayingMode){
+                switch (Graph.DisplayingMode)
+                {
                     case Graph.Displaying.Measured:
                         peds = Config.PreciseData;
                         break;
@@ -232,34 +261,18 @@ namespace Flavor
                         peds = Config.PreciseDataDiff;
                         break;
                 }
-                foreach (Utility.PreciseEditorData ped in peds)
+                Utility.PreciseEditorData ped = ((PointPairListPlus)(curveReference.Points)).PEDreference;
+                if (ped == null)
                 {
-                    if (ped.AssociatedPoints == curveReference.Points)
-                    {
-                        //consider revising
-                        return;
-                    }
+                    MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                    return;
                 }
-            }
-            byte collector = 0;
-            PointPair pp = null;
-            int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curveReference.Points));
-            int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curveReference.Points));
-            if (-1 != curveIndex1)
-            {
-                collector = 1;
-                pp = (Graph.Displayed1Steps[curveIndex1])[pointIndex];
-            }
-            else if (-1 != curveIndex2)
-            {
-                collector = 2;
-                pp = (Graph.Displayed2Steps[curveIndex2])[pointIndex];
-            }
-            if ((pp != null) && (collector != 0))
-            {
+                OnDiffOnPoint((ushort)pls.Step[pointIndex].X, pls, ped);
             }
             else
-                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+            {
+                OnDiffOnPoint((ushort)pls.Step[pointIndex].X, pls, null);
+            }
         }
         private void SetScalingCoeff(object sender, EventArgs e)
         {
@@ -295,19 +308,19 @@ namespace Flavor
             switch (Graph.AxisDisplayMode)
             {
                 case Graph.pListScaled.DisplayValue.Step:
-                    tooltipData = string.Format("ступень={0:G},счеты={1:G}", pp.X, pp.Y);
+                    tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:G}", pp.X, pp.Z, pp.Y);
+                    tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:G}", pp.X, pp.Z, pp.Y);
+                    tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
             }
             if (Graph.isPreciseSpectrum)
             {
-                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairList)(curve.Points));
-                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairList)(curve.Points));
+                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
+                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
                 long peakSum = -1;
                 if (-1 != curveIndex1)
                 {
