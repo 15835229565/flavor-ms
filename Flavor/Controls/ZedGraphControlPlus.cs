@@ -15,48 +15,6 @@ using ZedGraph;
 
 namespace Flavor
 {
-    internal class PointPairListPlus : PointPairList
-    {
-        private Utility.PreciseEditorData myPED;
-        private Graph.pListScaled myPLS;
-
-        public Utility.PreciseEditorData PEDreference
-        {
-            get { return myPED; }
-            set { myPED = value; }
-        }
-        public Graph.pListScaled PLSreference
-        {
-            get { return myPLS; }
-            set { myPLS = value; }
-        }
-
-        public PointPairListPlus()
-            : base()
-        {
-            myPED = null;
-            myPLS = null;
-        }
-        public PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
-            : base()
-        {
-            myPED = ped;
-            myPLS = pls;
-        }
-        /*public PointPairListPlus(PointPairListPlus other)
-            : base(other)
-        {
-            myPED = null;
-            myPLS = null;
-        }*/
-        public PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
-            : base(other)
-        {
-            myPED = ped;
-            myPLS = pls;
-        }
-    }
-    
     public partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
         public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
@@ -261,7 +219,7 @@ namespace Flavor
                         peds = Config.PreciseDataDiff;
                         break;
                 }
-                Utility.PreciseEditorData ped = ((PointPairListPlus)(curveReference.Points)).PEDreference;
+                Utility.PreciseEditorData ped = pls.PEDreference;
                 if (ped == null)
                 {
                     MessageBox.Show("Не удалось корректно найти точку", "Ошибка");

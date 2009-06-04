@@ -6,6 +6,48 @@ using System.Drawing;
 
 namespace Flavor
 {
+    internal class PointPairListPlus : ZedGraph.PointPairList
+    {
+        private Utility.PreciseEditorData myPED;
+        private Graph.pListScaled myPLS;
+
+        public Utility.PreciseEditorData PEDreference
+        {
+            get { return myPED; }
+            set { myPED = value; }
+        }
+        public Graph.pListScaled PLSreference
+        {
+            get { return myPLS; }
+            set { myPLS = value; }
+        }
+
+        public PointPairListPlus()
+            : base()
+        {
+            myPED = null;
+            myPLS = null;
+        }
+        public PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
+            : base()
+        {
+            myPED = ped;
+            myPLS = pls;
+        }
+        /*public PointPairListPlus(PointPairListPlus other)
+            : base(other)
+        {
+            myPED = null;
+            myPLS = null;
+        }*/
+        public PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
+            : base(other)
+        {
+            myPED = ped;
+            myPLS = pls;
+        }
+    }
+
     static class Utility
     {
         public class PreciseEditorData
