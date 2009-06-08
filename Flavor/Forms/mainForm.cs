@@ -831,5 +831,11 @@ namespace Flavor
                 Commander.Connect();
             }
         }
+
+        private void delaysToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DelaysOptionsForm dForm = new DelaysOptionsForm();
+            dForm.ShowDialog();
+        }
     }
 }

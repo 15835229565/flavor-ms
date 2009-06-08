@@ -21,6 +21,11 @@ namespace Flavor
         private static ushort startPoint;
         private static ushort endPoint;
 
+        private static ushort beforeTime = (ushort)100;
+        private static ushort forwardTime = (ushort)100;
+        private static ushort backwardTime = (ushort)400;
+        private static bool forwardAsBefore = false;
+
         private static ushort expTime;
         private static ushort idleTime;
         private static ushort ionizationVoltage;
@@ -49,12 +54,12 @@ namespace Flavor
             get { return preciseDataDiff; }
             //set { preciseData = value; }
         }
+        
         public static string Port
         {
             get { return SerialPort; }
             set { SerialPort = value; }
         }
-
         public static ushort BaudRate
         {
             get { return SerialBaudRate; }
@@ -78,31 +83,73 @@ namespace Flavor
             set { endPoint = value; }
         }
 
+        public static ushort befTime
+        {
+            get { return beforeTime; }
+        }
+        public static ushort befTimeReal
+        {
+            get { return (ushort)(beforeTime * 5); }
+            set
+            {
+                beforeTime = (ushort)(value / 5);
+            }
+        }
+        public static ushort fTime
+        {
+            get { return forwardTime; }
+        }
+        public static ushort fTimeReal
+        {
+            get { return (ushort)(forwardTime * 5); }
+            set
+            {
+                forwardTime = (ushort)(value / 5);
+            }
+        }
+        public static ushort bTime
+        {
+            get { return backwardTime; }
+        }
+        public static ushort bTimeReal
+        {
+            get { return (ushort)(backwardTime * 5); }
+            set
+            {
+                backwardTime = (ushort)(value / 5);
+            }
+        }
+        public static bool ForwardTimeEqualsBeforeTime
+        {
+            get { return forwardAsBefore; }
+            set { forwardAsBefore = value; }
+        }
+
         public static ushort eTime
         {
             get { return expTime; }
-            set { expTime = value; }
+            //set { expTime = value; }
         }
         public static ushort eTimeReal
         {
-            get { return (ushort)(eTime * 5); }
+            get { return (ushort)(expTime * 5); }
             set
             {
-                eTime = (ushort)(value / 5);
+                expTime = (ushort)(value / 5);
             }
         }
 
         public static ushort iTime
         {
             get { return idleTime; }
-            set { idleTime = value; }
+            //set { idleTime = value; }
         }
         public static ushort iTimeReal
         {
-            get { return (ushort)(5 * iTime); }
+            get { return (ushort)(5 * idleTime); }
             set
             {
-                iTime = (ushort)(value / 5);
+                idleTime = (ushort)(value / 5);
             }
         }
 
@@ -269,6 +316,19 @@ namespace Flavor
             logName = initialDir + "\\MScrash.log";
         }
 
+        private static void fillInnerText(string prefix, string nodeName, object value)
+        {
+            try
+            {
+                _conf.SelectSingleNode(prefix + "/" + nodeName).InnerText = value.ToString();
+            }
+            catch (NullReferenceException)
+            {
+                _conf.SelectSingleNode(prefix).AppendChild(_conf.CreateNode(XmlNodeType.Element, nodeName, ""));
+                _conf.SelectSingleNode(prefix + "/" + nodeName).InnerText = value.ToString();
+            }
+        }
+
         internal static void LoadConfig()
         {
             try
@@ -293,6 +353,7 @@ namespace Flavor
                 System.Windows.Forms.MessageBox.Show("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла");
             }
             loadCommonOptions();
+            loadDelaysOptions();
             LoadPreciseEditorData();
         }
 
@@ -321,6 +382,23 @@ namespace Flavor
             Config.sPoint = sPointReal;//!!!
             Config.ePoint = ePointReal;//!!!
             Config.saveScanOptions();
+        }
+
+        private static void saveDelaysOptions()
+        {
+            fillInnerText("/control/common", "before", beforeTime);
+            fillInnerText("/control/common", "equal", forwardAsBefore);
+            fillInnerText("/control/common", "forward", forwardTime);
+            fillInnerText("/control/common", "back", backwardTime);
+            _conf.Save(@confName);
+        }
+        internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal)
+        {
+            Config.befTimeReal = befTimeReal;
+            Config.fTimeReal = fTimeReal;
+            Config.bTimeReal = bTimeReal;
+            Config.forwardAsBefore = forwardAsBefore;
+            Config.saveDelaysOptions();
         }
         
         private static void SaveConnectOptions()
@@ -352,10 +430,11 @@ namespace Flavor
 
         internal static void SaveAll()
         {
-            Config.SaveConnectOptions();
-            Config.saveScanOptions();
-            Config.saveCommonOptions();
-            Config.SavePreciseOptions();
+            SaveConnectOptions();
+            saveScanOptions();
+            saveCommonOptions();
+            saveDelaysOptions();
+            SavePreciseOptions();
         }
 
         private static string genAutoSaveFilename(string extension)
@@ -747,34 +826,14 @@ namespace Flavor
             {
                 for (int i = 1; i <= 20; ++i)
                 {
-                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/peak", i)).InnerText = "";
-                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/iteration", i)).InnerText = "";
-                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/width", i)).InnerText = "";
-                    _conf.SelectSingleNode(string.Format("/control/sense/region{0}/error", i)).InnerText = "";
-                    try
-                    {
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}/col", i)).InnerText = "";
-                    }
-                    catch (NullReferenceException)
-                    {
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(_conf.CreateNode(XmlNodeType.Element, "col", ""));
-                    }
-                    try 
-                    {
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}/comment", i)).InnerText = "";
-                    }
-                    catch (NullReferenceException)
-                    {
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(_conf.CreateNode(XmlNodeType.Element, "comment", ""));
-                    }
-                    try
-                    {
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}/use", i)).InnerText = "";
-                    }
-                    catch (NullReferenceException)
-                    {
-                        _conf.SelectSingleNode(string.Format("/control/sense/region{0}", i)).AppendChild(_conf.CreateNode(XmlNodeType.Element, "use", ""));
-                    }
+                    string prefix = string.Format("/control/sense/region{0}", i);
+                    fillInnerText(prefix, "peak", "");
+                    fillInnerText(prefix, "iteration", "");
+                    fillInnerText(prefix, "width", "");
+                    fillInnerText(prefix, "error", "");
+                    fillInnerText(prefix, "col", "");
+                    fillInnerText(prefix, "comment", "");
+                    fillInnerText(prefix, "use", "");
                 }
 
                 pedConf = _conf;
@@ -1016,14 +1075,61 @@ namespace Flavor
                 structureErrorOnLoadCommonData(cdConfName);
                 return;
             }
-            eTime = eT;
-            iTime = iT;
+            expTime = eT;
+            idleTime = iT;
             iVoltage = iV;
             CP = cp;
             eCurrent = eC;
             hCurrent = hC;
             fV1 = fv1;
             fV2 = fv2;
+        }
+
+        internal static void loadDelaysOptions()
+        {
+            loadDelaysOptions(confName);
+        }
+        internal static void loadDelaysOptions(string cdConfName)
+        {
+            XmlDocument cdConf;
+            string mainConfPrefix = "";
+
+            if (!cdConfName.Equals(confName))
+            {
+                cdConf = new XmlDocument();
+                try
+                {
+                    cdConf.Load(cdConfName);
+                }
+                catch (Exception Error)
+                {
+                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла общих настроек");
+                    return;
+                }
+            }
+            else
+            {
+                cdConf = _conf;
+                mainConfPrefix = mainConfigPrefix;
+            }
+            ushort befT, fT, bT;
+            bool fAsbef;
+            try
+            {
+                befT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/before").InnerText);
+                fT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/forward").InnerText);
+                bT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/back").InnerText);
+                fAsbef = bool.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/cp").InnerText);
+            }
+            catch (NullReferenceException)
+            {
+                //Use hard-coded defaults
+                return;
+            }
+            beforeTime = befT;
+            forwardAsBefore = fAsbef;
+            forwardTime = fT;
+            backwardTime = bT;
         }
         //Error messages on loading different configs
         private static void wrongFormatOnLoadPrecise(string configName)

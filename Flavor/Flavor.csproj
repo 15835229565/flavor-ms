@@ -93,11 +93,11 @@
     <Compile Include="Forms\OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CustomZoomOptions.cs">
+    <Compile Include="Forms\DelaysOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CustomZoomOptions.Designer.cs">
-      <DependentUpon>CustomZoomOptions.cs</DependentUpon>
+    <Compile Include="Forms\DelaysOptionsForm.Designer.cs">
+      <DependentUpon>DelaysOptionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\GraphForm.cs">
       <SubType>Form</SubType>
@@ -143,9 +143,9 @@
       <DependentUpon>OptionsForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CustomZoomOptions.resx">
+    <EmbeddedResource Include="Forms\DelaysOptionsForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>CustomZoomOptions.cs</DependentUpon>
+      <DependentUpon>DelaysOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\GraphForm.resx">
       <SubType>Designer</SubType>

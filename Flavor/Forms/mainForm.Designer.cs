@@ -152,6 +152,8 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
+            this.delaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -307,6 +309,8 @@ namespace Flavor
             // measureToolStripMenuItem
             // 
             this.measureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.delaysToolStripMenuItem,
+            this.toolStripSeparator2,
             this.overviewToolStripMenuItem,
             this.senseToolStripMenuItem});
             this.measureToolStripMenuItem.Name = "measureToolStripMenuItem";
@@ -316,14 +320,14 @@ namespace Flavor
             // overviewToolStripMenuItem
             // 
             this.overviewToolStripMenuItem.Name = "overviewToolStripMenuItem";
-            this.overviewToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.overviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.overviewToolStripMenuItem.Text = "Обзорный режим";
             this.overviewToolStripMenuItem.Click += new System.EventHandler(this.overviewToolStripMenuItem_Click);
             // 
             // senseToolStripMenuItem
             // 
             this.senseToolStripMenuItem.Name = "senseToolStripMenuItem";
-            this.senseToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.senseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.senseToolStripMenuItem.Text = "Точный режим";
             this.senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
             // 
@@ -1459,6 +1463,18 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
+            // delaysToolStripMenuItem
+            // 
+            this.delaysToolStripMenuItem.Name = "delaysToolStripMenuItem";
+            this.delaysToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.delaysToolStripMenuItem.Text = "Установка задержек";
+            this.delaysToolStripMenuItem.Click += new System.EventHandler(this.delaysToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(189, 6);
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1622,6 +1638,8 @@ namespace Flavor
         private System.Windows.Forms.Label pwmLabel;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label operationTimeLabel;
+        private System.Windows.Forms.ToolStripMenuItem delaysToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
 

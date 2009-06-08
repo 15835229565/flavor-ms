@@ -40,8 +40,6 @@ namespace Flavor
             DelayPumpingHighVacuumByForvac = 0x04,
             PumpingHighVacuumByForvac = 0x05,
             PumpingHighVacuumByTurbo = 0x06,
-            //CheckHighVacuum = 0x03,
-	        //DelayPumpHighVacuumByTurbo = 0x06,
 	        Ready = 0x07,
 
 	        ShutdownInit = 0x10,
