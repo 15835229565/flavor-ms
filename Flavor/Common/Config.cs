@@ -1119,7 +1119,7 @@ namespace Flavor
                 befT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/before").InnerText);
                 fT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/forward").InnerText);
                 bT = ushort.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/back").InnerText);
-                fAsbef = bool.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/cp").InnerText);
+                fAsbef = bool.Parse(cdConf.SelectSingleNode(mainConfPrefix + "common/equal").InnerText);
             }
             catch (NullReferenceException)
             {
