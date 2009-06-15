@@ -29,7 +29,7 @@ namespace Flavor
             get { return ModBus.CommandCode.GetState; }
         }
 
-        #region IReply Members
+        #region IAutomatedReply Members
         public void AutomatedReply()
         {
             Commander.AddToSend(new requestStatus());

@@ -148,7 +148,7 @@ namespace Flavor
         
         private static byte Try = 0;
 
-        private static Queue<ISend> ToSend = new Queue<ISend>();
+        private static Queue<UserRequest> ToSend = new Queue<UserRequest>();
 
         private static System.Timers.Timer SendTimer;
 
@@ -192,39 +192,85 @@ namespace Flavor
 
         private static void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if ((ToSend.Count == 0) || !scanning) Commander.AddToSend(new requestStatus());
+            //workaround needing
+            if ((ToSend.Count == 0) || !scanning)
+                Commander.AddToSend(new requestStatus());
         }
 
         private static void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if ((ToSend.Count == 0) || !scanning) Commander.AddToSend(new getTurboPumpStatus());
+            //workaround needing
+            if ((ToSend.Count == 0) || !scanning)
+                Commander.AddToSend(new getTurboPumpStatus());
         }
 
         private static void StartSending()
         {
-            Try = 1;
-            SendTimer.Elapsed += new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
-            SendTimer.Enabled = true;
+            lock (SendTimer)
+            {
+                if (Try != 0)
+                {
+                    Console.WriteLine("Опа. Таймер отправки сообщений уже был запущен.");
+                    return;
+                }
+                Try = 1;
+                SendTimer.Elapsed += new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
+                SendTimer.Enabled = true;
+            }
         }
 
         private static void StopSending()
         {
-            SendTimer.Elapsed -= new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
-            SendTimer.Enabled = false;
-            Try = 0;
+            lock (SendTimer)
+            {
+                if (Try == 0)
+                {
+                    Console.WriteLine("Опа. Таймер отправки сообщений уже был остановлен.");
+                    return;
+                }
+                SendTimer.Elapsed -= new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
+                SendTimer.Enabled = false;
+                Try = 0;
+            }
         }
 
         private static void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            Try++;
+            lock (SendTimer)
+            {
+                ++Try;
+            }
+            if (Try > Config.Try)
+            {
+                lock (ToSend)
+                {
+                    UserRequest packet = null;
+                    if (ToSend.Count == 0)
+                        Console.WriteLine("Опа. Очередь пакетов пуста, а счетчик отправки не обнулен.");
+                    else
+                    {
+                        if (dequeueToSendInsideLock(ref packet))
+                        {
+                            if (packet == null)
+                                Console.WriteLine("Кирдык. В очереди пакетов лежал null.");
+                        }
+                    }
+                    StopSending();
+                    if (packet != null)
+                        Console.WriteLine("Прибор не отвечает на {0}", packet.Id);
+                    if (Commander.pState != Commander.pStatePrev)
+                        Commander.pState = Commander.pStatePrev;
+                }
+                return;
+            }
             Send();
         }
 
-        public static void AddToSend(SyncServicePacket Command)
+        public static void AddToSend(UserRequest Command)
         {
-            if (Command is ISend)
+            lock(ToSend)
             {
-                ToSend.Enqueue((ISend)Command);
+                ToSend.Enqueue(Command);
                 if (SendTimer.Enabled == false)
                 {
                     Send();
@@ -232,36 +278,65 @@ namespace Flavor
             }
         }
 
+        private static bool dequeueToSendInsideLock(ref UserRequest packet)
+        {
+            try
+            {
+                packet = ToSend.Dequeue();
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("Кирдык. Не удалось удалить из очереди пакетов, хотя там должно что-то быть.");
+            }
+            try
+            {
+                ToSend.Clear();
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("Кирдык. Не удалось очистить очередь пакетов.");
+            }
+            Console.WriteLine("Пересоздаем очередь пакетов.");
+            ToSend = new Queue<UserRequest>();
+            return false;
+        }
+
+        private static void peekToSendInsideLock(ref UserRequest packet)
+        {
+            try
+            {
+                packet = ToSend.Peek();
+                if (packet == null)
+                    Console.WriteLine("Кирдык. Из очереди пакетов достался null.");
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("Кирдык. Не удалось достать из очереди пакетов, хотя там должно что-то быть.");
+            }
+        }
+        
         public static void Send()
         {
-            while (ToSend.Count > 0)
+            lock (ToSend)
             {
-                if (Try <= Config.Try)
+                while (ToSend.Count > 0)
                 {
-                    try
+                    UserRequest packet = null;
+                    peekToSendInsideLock(ref packet);
+                    if (packet != null)
                     {
                         if (0 == Try)
                         {
                             StartSending();
                         }
-                        ToSend.Peek().Send();
+                        packet.Send();
+                        break;
                     }
-                    catch (NullReferenceException)
-                    {
-                        StopSending();
-                        Console.WriteLine("Кирдык");
-                    }
+                    if (dequeueToSendInsideLock(ref packet)) 
+                        continue;
                     break;
-                }
-                else
-                {
-                    Console.WriteLine("Прибор не отвечает на {0}", ((SyncServicePacket)(ToSend.Peek())).Id);
-                    ToSend.Dequeue();
-                    StopSending();
-                    if (Commander.pState != Commander.pStatePrev)
-                    {
-                        Commander.pState = Commander.pStatePrev;
-                    }
                 }
             }
         }
@@ -343,232 +418,234 @@ namespace Flavor
             }
             if (Command is SyncErrorReply)
             {
-                StopSending();
-                ToSend.Dequeue();
-                if (Commander.pState != Commander.pStatePrev)
+                lock (ToSend)
                 {
-                    Commander.pState = Commander.pStatePrev;
+                    UserRequest packet = null;
+                    dequeueToSendInsideLock(ref packet);
+                    //ToSend.Dequeue();
+                    StopSending();
+                    if (Commander.pState != Commander.pStatePrev)
+                        Commander.pState = Commander.pStatePrev;
                 }
                 CheckInterfaces(Command);
                 if (SendTimer.Enabled == false)
-                {
                     Send();
-                }
             }
             if (Command is SyncReply)
             {
-                if (ToSend.Count > 0)
+                UserRequest packet = null;
+                lock (ToSend)
                 {
-                    try
+                    if (ToSend.Count == 0)
                     {
-                        if (((SyncServicePacket)(ToSend.Peek())).Id == ((SyncReply)Command).Id)
+                        Console.WriteLine("Пришло {0}. Не ждали ничего.", Command);
+                        return;
+                    }
+                    peekToSendInsideLock(ref packet);
+                    if (packet == null)
+                    {
+                        dequeueToSendInsideLock(ref packet);
+                        return;
+                    }
+                    if (packet.Id != ((SyncReply)Command).Id)
+                    {
+                        Console.WriteLine("Пришло {0}. Ждали {1}.", Command, packet);
+                        return;
+                    }
+                    StopSending();
+                    if (!dequeueToSendInsideLock(ref packet))
+                        return;
+                    //ToSend.Dequeue();
+                }
+                CheckInterfaces(Command);
+                if (Command is confirmInit)
+                {
+                    Console.WriteLine("Запрос на инициализацию подтвержден");
+                    Commander.pState = Commander.programStates.Init;
+                    Commander.pStatePrev = Commander.pState;
+                    Console.WriteLine(Commander.pState);
+                }
+                if (Command is confirmShutdown)
+                {
+                    Console.WriteLine("Запрос на отключение подтвержден");
+                    Commander.pState = Commander.programStates.Shutdown;
+                    Commander.pStatePrev = Commander.pState;
+                    Console.WriteLine(Commander.pState);
+                }
+                if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is updateStatus))
+                {
+                    switch (Device.sysState)
+                    {
+                        case (byte)Device.DeviceStates.Ready:
+                            Commander.hBlock = false;
+                            Commander.pState = Commander.programStates.Ready;
+                            Commander.pStatePrev = Commander.pState;
+                            break;
+                        case (byte)Device.DeviceStates.WaitHighVoltage:
+                            Commander.hBlock = true;
+                            Commander.pState = Commander.programStates.WaitHighVoltage;
+                            Commander.pStatePrev = Commander.pState;
+                            break;
+                        //!!!!
+                        case (byte)Device.DeviceStates.Measured:
+                            Commander.hBlock = false;
+                            Commander.pState = Commander.programStates.Ready;
+                            Commander.pStatePrev = Commander.pState;
+                            break;
+                        case (byte)Device.DeviceStates.Measuring:
+                            Commander.hBlock = false;
+                            Commander.pState = Commander.programStates.Ready;
+                            Commander.pStatePrev = Commander.pState;
+                            break;
+                    }
+                    Console.WriteLine(Commander.pState);
+                    onTheFly = false;
+                }
+                if (Command is updateCounts)
+                {
+                    customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
+                    if (!Commander.isSenseMeasure)
+                    {
+                        if (!Commander.measureCancelRequested && (Commander.Point <= Config.ePoint))
                         {
-                            StopSending();
-                            ToSend.Dequeue();
-                            CheckInterfaces(Command);
-                            if (Command is confirmInit)
+                            Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                        }
+                        else
+                        {
+                            if (scanning)
                             {
-                                Console.WriteLine("Запрос на инициализацию подтвержден");
-                                Commander.pState = Commander.programStates.Init;
+                                if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                                scanning = false;
+                                Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
+                                OnScanCancelled();
                                 Commander.pStatePrev = Commander.pState;
-                                Console.WriteLine(Commander.pState);
-                            }
-                            if (Command is confirmShutdown)
-                            {
-                                Console.WriteLine("Запрос на отключение подтвержден");
-                                Commander.pState = Commander.programStates.Shutdown;
+                                Commander.pState = Commander.programStates.Ready;
                                 Commander.pStatePrev = Commander.pState;
-                                Console.WriteLine(Commander.pState);
+                                Commander.measureCancelRequested = false;
+                                Config.AutoSaveSpecterFile();
                             }
-                            if (onTheFly && (Commander.pState == Commander.programStates.Start)&&(Command is updateStatus))
+                        }
+                    }
+                    else
+                    {
+                        if (!Commander.measureCancelRequested)
+                        {
+                            if (senseModePoints[senseModePeak].Collector == 1)
+                                senseModeCounts[senseModePeak][(Commander.Point - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
+                            else
+                                senseModeCounts[senseModePeak][(Commander.Point - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
+                            if ((Commander.Point <= (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width)))
                             {
-                                switch (Device.sysState)
-                                {
-                                    case (byte)Device.DeviceStates.Ready:
-                                        Commander.hBlock = false;
-                                        Commander.pState = Commander.programStates.Ready;
-                                        Commander.pStatePrev = Commander.pState;
-                                        break;
-                                    case (byte)Device.DeviceStates.WaitHighVoltage:
-                                        Commander.hBlock = true;
-                                        Commander.pState = Commander.programStates.WaitHighVoltage;
-                                        Commander.pStatePrev = Commander.pState;
-                                        break;
-                                    //!!!!
-                                    case (byte)Device.DeviceStates.Measured:
-                                        Commander.hBlock = false;
-                                        Commander.pState = Commander.programStates.Ready;
-                                        Commander.pStatePrev = Commander.pState;
-                                        break;
-                                    case (byte)Device.DeviceStates.Measuring:
-                                        Commander.hBlock = false;
-                                        Commander.pState = Commander.programStates.Ready;
-                                        Commander.pStatePrev = Commander.pState;
-                                        break;
-                                }
-                                Console.WriteLine(Commander.pState);
-                                onTheFly = false;
+                                Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
                             }
-                            if (Command is updateCounts)
+                            else
                             {
-                                customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
-                                if (!Commander.isSenseMeasure)
+                                --(senseModePeakIteration[senseModePeak]);
+                                --smpiSum;
+                                if (smpiSum > 0)
                                 {
-                                    if (!Commander.measureCancelRequested && (Commander.Point <= Config.ePoint))
+                                    for (int i = 0; i < senseModePoints.Length; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
                                     {
-                                        Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                                        ++senseModePeak;
+                                        if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
+                                        if (senseModePeakIteration[senseModePeak] > 0) break;
+                                    }
+                                    ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                                    if (Commander.Point > nextPoint)
+                                    {
+                                        //!!!case of backward voltage change
+                                        customMeasure = new sendMeasure(Config.bTime, Config.eTime);
                                     }
                                     else
                                     {
-                                        if (scanning)
+                                        //!!!case of forward voltage change
+                                        if (Config.ForwardTimeEqualsBeforeTime)
                                         {
-                                            if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
-                                            scanning = false;
-                                            Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                                            OnScanCancelled();
-                                            Commander.pStatePrev = Commander.pState;
-                                            Commander.pState = Commander.programStates.Ready;
-                                            Commander.pStatePrev = Commander.pState;
-                                            Commander.measureCancelRequested = false;
-                                            Config.AutoSaveSpecterFile();
+                                            customMeasure = new sendMeasure(Config.befTime, Config.eTime);
+                                        }
+                                        else
+                                        {
+                                            customMeasure = new sendMeasure(Config.fTime, Config.eTime);
                                         }
                                     }
+                                    Commander.Point = nextPoint;
+                                    Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                                    //old code:
+                                    //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                                    //Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
                                 }
                                 else
                                 {
-                                    if (!Commander.measureCancelRequested)
-                                    {
-                                        if (senseModePoints[senseModePeak].Collector == 1)
-                                            senseModeCounts[senseModePeak][(Commander.Point - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
-                                        else
-                                            senseModeCounts[senseModePeak][(Commander.Point - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
-                                        if ((Commander.Point <= (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width)))
-                                        {
-                                            Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
-                                        }
-                                        else
-                                        {
-                                            --(senseModePeakIteration[senseModePeak]);
-                                            --smpiSum;
-                                            if (smpiSum > 0)
-                                            {
-                                                for (int i = 0; i < senseModePoints.Length; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
-                                                {
-                                                    ++senseModePeak;
-                                                    if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
-                                                    if (senseModePeakIteration[senseModePeak] > 0) break;
-                                                }
-                                                ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                                if (Commander.Point > nextPoint) 
-                                                {
-                                                    //!!!case of backward voltage change
-                                                    customMeasure = new sendMeasure(Config.bTime, Config.eTime);
-                                                }
-                                                else 
-                                                {
-                                                    //!!!case of forward voltage change
-                                                    if (Config.ForwardTimeEqualsBeforeTime)
-                                                    {
-                                                        customMeasure = new sendMeasure(Config.befTime, Config.eTime);
-                                                    }
-                                                    else
-                                                    {
-                                                        customMeasure = new sendMeasure(Config.fTime, Config.eTime);
-                                                    }
-                                                }
-                                                Commander.Point = nextPoint;
-                                                Commander.AddToSend(new sendSVoltage(Commander.Point++));
-                                                //old code:
-                                                //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                                //Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
-                                            }
-                                            else
-                                            {
-                                                if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
-                                                Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                                                Commander.pStatePrev = Commander.pState;
-                                                Commander.pState = Commander.programStates.Ready;
-                                                Commander.pStatePrev = Commander.pState;
-                                                Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
-                                                Config.AutoSavePreciseSpecterFile();
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
-                                        if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
-                                        Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                                        Commander.pStatePrev = Commander.pState;
-                                        Commander.pState = Commander.programStates.Ready;
-                                        Commander.pStatePrev = Commander.pState;
-                                        Commander.measureCancelRequested = false;
-                                    }
-                                }
-                            }
-                            if (Command is confirmF2Voltage)
-                            {
-                                if (Commander.pState == programStates.Measure)
-                                {
-                                    //first measure point with increased idle time
-                                    customMeasure = new sendMeasure(Config.befTime, Config.eTime);
-                                    if (!Commander.isSenseMeasure)
-                                    {
-                                        Commander.Point = Config.sPoint;
-                                        Commander.AddToSend(new sendSVoltage(Commander.Point++));
-                                    }
-                                    else
-                                    {
-                                        if (Config.PreciseData.Count > 0)
-                                        {
-                                            //Sort in increased order
-                                            //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
-                                            //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
-                                            //senseModePoints = Config.PreciseData.ToArray();
-                                            List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
-                                            temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
-                                            senseModePoints = temp.ToArray();
-                                            senseModePeakIteration = new ushort[senseModePoints.Length];
-                                            smpiSum = 0;
-                                            senseModeCounts = new int[senseModePoints.Length][];
-                                            for (int i = 0; i < senseModePeakIteration.Length; ++i)
-                                            {
-                                                senseModeCounts[i] = new int[2 * senseModePoints[i].Width + 1];
-                                                senseModePeakIteration[i] = senseModePoints[i].Iterations;
-                                                smpiSum += senseModePoints[i].Iterations; ;
-                                            }
-                                            senseModePeak = 0;
-                                            Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                            Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
-                                        }
-                                        else
-                                        {
-                                            if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
-                                            Commander.pStatePrev = Commander.pState;
-                                            Commander.pState = Commander.programStates.Ready;// ATTENTION!
-                                            Commander.pStatePrev = Commander.pState;
-                                        }
-                                    }
+                                    if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                                    Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
+                                    Commander.pStatePrev = Commander.pState;
+                                    Commander.pState = Commander.programStates.Ready;
+                                    Commander.pStatePrev = Commander.pState;
+                                    Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
+                                    Config.AutoSavePreciseSpecterFile();
                                 }
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Пришло {0}. Ждали {1}.", Command, ToSend.Peek());
+                            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
+                            if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                            Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
+                            Commander.pStatePrev = Commander.pState;
+                            Commander.pState = Commander.programStates.Ready;
+                            Commander.pStatePrev = Commander.pState;
+                            Commander.measureCancelRequested = false;
                         }
                     }
-                    catch (NullReferenceException) 
+                }
+                if (Command is confirmF2Voltage)
+                {
+                    if (Commander.pState == programStates.Measure)
                     {
-                        Console.WriteLine("Опа-па!");
-                    }
-                    if (SendTimer.Enabled == false)
-                    {
-                        Send();
+                        //first measure point with increased idle time
+                        customMeasure = new sendMeasure(Config.befTime, Config.eTime);
+                        if (!Commander.isSenseMeasure)
+                        {
+                            Commander.Point = Config.sPoint;
+                            Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                        }
+                        else
+                        {
+                            if (Config.PreciseData.Count > 0)
+                            {
+                                //Sort in increased order
+                                //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
+                                //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
+                                //senseModePoints = Config.PreciseData.ToArray();
+                                List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
+                                temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
+                                senseModePoints = temp.ToArray();
+                                senseModePeakIteration = new ushort[senseModePoints.Length];
+                                smpiSum = 0;
+                                senseModeCounts = new int[senseModePoints.Length][];
+                                for (int i = 0; i < senseModePeakIteration.Length; ++i)
+                                {
+                                    senseModeCounts[i] = new int[2 * senseModePoints[i].Width + 1];
+                                    senseModePeakIteration[i] = senseModePoints[i].Iterations;
+                                    smpiSum += senseModePoints[i].Iterations; ;
+                                }
+                                senseModePeak = 0;
+                                Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                                Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
+                            }
+                            else
+                            {
+                                if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
+                                Commander.pStatePrev = Commander.pState;
+                                Commander.pState = Commander.programStates.Ready;// ATTENTION!
+                                Commander.pStatePrev = Commander.pState;
+                            }
+                        }
                     }
                 }
-                else
+                if (SendTimer.Enabled == false)
                 {
-                    Console.WriteLine("Пришло {0}. Не ждали ничего.", Command);
+                    Send();
                 }
             }
         }
@@ -682,7 +759,7 @@ namespace Flavor
             {
                 case ModBus.PortStates.Opening:
                     Commander.deviceIsConnected = true;
-                    SendTimer = new System.Timers.Timer(2000);
+                    SendTimer = new System.Timers.Timer(1000);
                     SendTimer.Enabled = false;
                     StartDeviceStatusCheck();
                     break;
@@ -699,24 +776,21 @@ namespace Flavor
 
         internal static void Disconnect()
         {
-            //SendTimer.Enabled = true;
             switch (ModBus.Close())
             {
                 case ModBus.PortStates.Closing:
                     StopDeviceStatusCheck();
-                    if (ToSend.Count > 0)
+                    lock (ToSend)
                     {
-                        Commander.ToSend.Clear();
+                        if (ToSend.Count > 0)
+                        {
+                            Commander.ToSend.Clear();
+                        }
+                        if (SendTimer.Enabled == true)
+                        {
+                            StopSending();
+                        }
                     }
-                    if (SendTimer.Enabled == true)
-                    {
-                        StopSending();
-                    }
-                    /*SendTimer.Enabled = false;
-                    if (ToSend.Count > 0)
-                    {
-                        Commander.ToSend.Clear();
-                    }*/
                     Commander.deviceIsConnected = false;
                     onTheFly = true;// надо ли здесь???
                     break;
