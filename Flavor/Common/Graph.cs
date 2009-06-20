@@ -426,10 +426,11 @@ namespace Flavor
             OnNewGraphData(Displaying.Loaded, false);
         }
 
-        internal static void updateNotPrecise(PointPairListPlus pl1, PointPairListPlus pl2)
+        internal static void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2)
         {
             DisplayedRows1[0].SetRows(pl1);
             DisplayedRows2[0].SetRows(pl2);
+            //displayMode = Displaying.Diff;
             OnNewGraphData(displayMode, true);
         }
 
@@ -472,6 +473,7 @@ namespace Flavor
             ResetDiffPointLists();
             foreach (Utility.PreciseEditorData ped in peds)
                 diffSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+            displayMode = Displaying.Diff;
             OnNewGraphData(displayMode/*Graph.Displaying.Diff*/, true);
         }
         internal static void updateGraphAfterPreciseLoad()

@@ -89,13 +89,25 @@ namespace Flavor
 
                 item1.Click += new System.EventHandler(SetScalingCoeff);
                 menuStrip.Items.Add(item1);
-            
-                ToolStripMenuItem item2 = new ToolStripMenuItem();
-                item2.Name = "custom_diff";
-                item2.Tag = "custom_diff";
-                item2.Text = "Вычесть из текущего с перенормировкой на точку";
-                item2.Click += new System.EventHandler(DiffWithCoeff);
-                menuStrip.Items.Add(item2);
+
+                if ((this.ParentForm as GraphForm).specterDiffEnabled)
+                {
+                    ToolStripMenuItem item2 = new ToolStripMenuItem();
+                    item2.Name = "custom_diff";
+                    item2.Tag = "custom_diff";
+                    item2.Text = "Вычесть из текущего с перенормировкой на точку";
+                    item2.Click += new System.EventHandler(DiffWithCoeff);
+                    menuStrip.Items.Add(item2);
+                    if (Graph.isPreciseSpectrum)
+                    {
+                        ToolStripMenuItem item3 = new ToolStripMenuItem();
+                        item3.Name = "custom_diff_peak";
+                        item3.Tag = "custom_diff_peak";
+                        item3.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                        item3.Click += new System.EventHandler(DiffWithCoeff);
+                        menuStrip.Items.Add(item3);
+                    }
+                }
             }
             else
             {
@@ -216,8 +228,9 @@ namespace Flavor
                         peds = Config.PreciseDataLoaded;
                         break;
                     case Graph.Displaying.Diff:
-                        peds = Config.PreciseDataDiff;
-                        break;
+                        //peds = Config.PreciseDataDiff;
+                        //break;
+                        throw new ArgumentOutOfRangeException();
                 }
                 Utility.PreciseEditorData ped = pls.PEDreference;
                 if (ped == null)
@@ -225,7 +238,15 @@ namespace Flavor
                     MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
                     return;
                 }
-                OnDiffOnPoint((ushort)pls.Step[pointIndex].X, pls, ped);
+                if (((ToolStripMenuItem)sender).Name == "custom_diff_peak")
+                {
+                    //!!!! modify!
+                    OnDiffOnPoint(ushort.MaxValue, null, ped);
+                }
+                else
+                {
+                    OnDiffOnPoint((ushort)pls.Step[pointIndex].X, pls, ped);
+                }
             }
             else
             {

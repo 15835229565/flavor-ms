@@ -26,7 +26,8 @@ namespace Flavor
             {
                 openSpecterFileToolStripMenuItem.Enabled = value;
                 //!!!
-                distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value;
+                distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value &&
+                    (Graph.DisplayingMode != Graph.Displaying.Diff);
             }
         }
         internal bool specterClosingEnabled
@@ -42,8 +43,18 @@ namespace Flavor
             {
                 saveToolStripMenuItem.Enabled = value;
                 //!!!
-                distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && value;
+                distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && value &&
+                    (Graph.DisplayingMode != Graph.Displaying.Diff);
             }
+        }
+        internal bool specterDiffEnabled
+        {
+            set
+            {
+                distractFromCurrentToolStripMenuItem.Enabled = openSpecterFileToolStripMenuItem.Enabled && saveToolStripMenuItem.Enabled &&
+                    value && (Graph.DisplayingMode != Graph.Displaying.Diff);
+            }
+            get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
 
         internal GraphForm()

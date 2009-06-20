@@ -182,7 +182,7 @@ namespace Flavor
             Commander.Sense();
         }
 
-        void InvokeRefreshUserMessage(string msg)
+        private void InvokeRefreshUserMessage(string msg)
         {
             if (this.InvokeRequired)
             {

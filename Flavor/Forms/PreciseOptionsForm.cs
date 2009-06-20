@@ -327,7 +327,7 @@ namespace Flavor
             {
                 if (savePreciseEditorToFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Config.SavePreciseOptions(data, savePreciseEditorToFileDialog.FileName);
+                    Config.SavePreciseOptions(data, savePreciseEditorToFileDialog.FileName, false, "Precise options");
                 }
             }
         }
