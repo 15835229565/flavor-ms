@@ -353,7 +353,6 @@ namespace Flavor
                 System.Windows.Forms.MessageBox.Show("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла");
             }
             loadCommonOptions();
-            //loadDelaysOptions();
             LoadPreciseEditorData();
         }
 
@@ -528,9 +527,7 @@ namespace Flavor
         {
             XmlDocument sf = new XmlDocument();
             XmlNode temp;
-            //sf.AppendChild(sf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
             XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, "overview", ""));
-            //sf.SelectSingleNode("overview").AppendChild(sf.CreateNode(XmlNodeType.Element, "header", ""));
             switch (displayMode)
             {
                 case Graph.Displaying.Loaded:
@@ -577,28 +574,7 @@ namespace Flavor
             saveCommonOptions(commonNode);
             file.Save(filename);
         }
-        /*
-        internal static void DistractSpectra(string from, ref string what)
-        {
-            PointPairListPlus pl11 = new PointPairListPlus();
-            PointPairListPlus pl21 = new PointPairListPlus();
-            PointPairListPlus pl12 = new PointPairListPlus();
-            PointPairListPlus pl22 = new PointPairListPlus();
-            if (OpenSpecterFile(from, pl11, pl21) && OpenSpecterFile(what, pl12, pl22))
-            {
-                try
-                {
-                    PointPairListPlus diff1 = PointPairListDiff(pl11, pl12, 0);
-                    PointPairListPlus diff2 = PointPairListDiff(pl21, pl22, 0);
-                    Graph.updateNotPrecise(diff1, diff2);
-                }
-                catch (System.ArgumentException)
-                {
-                    System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
-                    return;
-                }
-            }
-        }*/
+
         internal static void DistractSpectra(string what)
         {
             DistractSpectra(what, 0, null, null);
@@ -610,7 +586,6 @@ namespace Flavor
                 List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
                 if (OpenPreciseSpecterFile(what, peds))
                 {
-                    //peds.Sort(Utility.ComparePreciseEditorData);
                     List<Utility.PreciseEditorData> temp;
                     switch (Graph.DisplayingMode)
                     {
@@ -622,8 +597,6 @@ namespace Flavor
                             break;
                         case Graph.Displaying.Diff:
                             //diffs can't be distracted!
-                            //temp = new List<Utility.PreciseEditorData>(preciseDataDiff);
-                            //break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -804,25 +777,6 @@ namespace Flavor
         }
         internal static XmlDocument SavePreciseSpecterFile(string filename, Graph.Displaying displayMode)
         {
-            #region old code
-            //XmlDocument sf = new XmlDocument();
-            //XmlNode temp;
-            /*
-            sf.AppendChild(sf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-            sf.AppendChild(sf.CreateNode(XmlNodeType.Element, "sense", ""));
-            sf.SelectSingleNode("sense").AppendChild(sf.CreateNode(XmlNodeType.Element, "header", ""));
-            for (int i = 1; i <= 20; ++i)
-            {
-                temp = sf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "peak", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "col", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "width", ""));
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "error", ""));
-                sf.SelectSingleNode(string.Format("sense")).AppendChild(temp);
-            }
-            */
-            #endregion
             List<Utility.PreciseEditorData> processed;
             string header;
             switch (displayMode)
@@ -844,25 +798,6 @@ namespace Flavor
                     throw new ArgumentOutOfRangeException();
             }
             return SavePreciseOptions(processed, filename, true, header);
-            #region old code
-            //foreach (Utility.PreciseEditorData ped in processed)
-            //{
-                /*sf.SelectSingleNode(string.Format("/sense/region{0}/peak", ped.pNumber + 1)).InnerText = ped.Step.ToString();
-                sf.SelectSingleNode(string.Format("/sense/region{0}/iteration", ped.pNumber + 1)).InnerText = ped.Iterations.ToString();
-                sf.SelectSingleNode(string.Format("/sense/region{0}/width", ped.pNumber + 1)).InnerText = ped.Width.ToString();
-                sf.SelectSingleNode(string.Format("/sense/region{0}/error", ped.pNumber + 1)).InnerText = ped.Precision.ToString();
-                sf.SelectSingleNode(string.Format("/sense/region{0}/col", ped.pNumber + 1)).InnerText = ped.Collector.ToString();*/
-                /*foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
-                {
-                    temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                    temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
-                    sf.SelectSingleNode(string.Format("/sense/region{0}", ped.pNumber + 1)).AppendChild(temp);
-                }*/
-            //}
-            //sf.Save(@filename);
-            #endregion
-
         }
         internal static void AutoSavePreciseSpecterFile()
         {
@@ -890,30 +825,11 @@ namespace Flavor
 
             if (newConfigFile(out pedConf, pedConfName))
             {
-                //pedConf = new XmlDocument();
                 XmlNode rootNode = createRootStub(pedConf, header);
                 createPEDStub(pedConf, rootNode);
-                #region old code
-                /*pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-                pedConf.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "sense", ""));
-                pedConf.SelectSingleNode("sense").AppendChild(pedConf.CreateNode(XmlNodeType.Element, "header", ""));
-                for (int i = 1; i <= 20; ++i)
-                {
-                    XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "peak", ""));
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "col", ""));
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "width", ""));
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "error", ""));
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "comment", ""));
-                    tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "use", ""));
-                    pedConf.SelectSingleNode(string.Format("sense")).AppendChild(tempRegion);
-                }*/
-                #endregion
             }
             else
             {
-                //pedConf = _conf;
                 for (int i = 1; i <= 20; ++i)
                 {
                     string prefix = string.Format("/control/sense/region{0}", i);
@@ -925,7 +841,6 @@ namespace Flavor
                     fillInnerText(prefix, "comment", "");
                     fillInnerText(prefix, "use", "");
                 }
-                //mainConfPrefix = mainConfigPrefix;
             }
 
             foreach (Utility.PreciseEditorData ped in peds)
@@ -1106,42 +1021,19 @@ namespace Flavor
         {
             XmlDocument cdConf;
             XmlNode commonNode;
-            //string mainConfPrefix = "";
-            //mainConfPrefix = mainConfigPrefix;
 
             if (newConfigFile(out cdConf, filename))
             {
-                //cdConf = new XmlDocument();
-                //cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
                 XmlNode rootNode = createRootStub(cdConf, "Common options");
                 commonNode = createCommonOptsStub(cdConf, rootNode);
-                #region old code
-                /*cdConf.AppendChild(cdConf.CreateNode(XmlNodeType.Element, "common", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "header", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "exptime", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "meastime", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ivoltage", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "cp", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "ecurrent", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "hcurrent", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus1", ""));
-                cdConf.SelectSingleNode("common").AppendChild(cdConf.CreateNode(XmlNodeType.Element, "focus2", ""));*/
-                #endregion
             }
             else 
             {
-                //cdConf = _conf;
                 commonNode = cdConf.SelectSingleNode("control/common");
-                //mainConfPrefix = mainConfigPrefix;
             }
             saveCommonOptions(commonNode);
             cdConf.Save(filename);
         }
-        /*private static void saveCommonOptions(XmlDocument conf)
-        {
-            XmlNode commonNode = conf.SelectSingleNode("control/common");
-            saveCommonOptions(commonNode);
-        }*/
         private static void saveCommonOptions(XmlNode commonNode)
         {
             commonNode.SelectSingleNode("exptime").InnerText = Config.eTime.ToString();
@@ -1236,43 +1128,6 @@ namespace Flavor
             forwardTime = fT;
             backwardTime = bT;
         }
-        #region old code
-        /*internal static void loadDelaysOptions()
-        {
-            loadDelaysOptions(confName);
-        }*/
-        /*internal static void loadDelaysOptions(string cdConfName)
-        {
-            XmlDocument cdConf;
-            string mainConfPrefix = "";
-            mainConfPrefix = mainConfigPrefix;
-
-            if (!newCommonOptionsFileOnLoad(out cdConf, cdConfName))
-            {
-                return;
-            }
-
-            ushort befT, fT, bT;
-            bool fAsbef;
-            try
-            {
-                XmlNode commonNode = cdConf.SelectSingleNode(mainConfPrefix + "common");
-                befT = ushort.Parse(commonNode.SelectSingleNode("before").InnerText);
-                fT = ushort.Parse(commonNode.SelectSingleNode("forward").InnerText);
-                bT = ushort.Parse(commonNode.SelectSingleNode("back").InnerText);
-                fAsbef = bool.Parse(commonNode.SelectSingleNode("equal").InnerText);
-            }
-            catch (NullReferenceException)
-            {
-                //Use hard-coded defaults
-                return;
-            }
-            beforeTime = befT;
-            forwardAsBefore = fAsbef;
-            forwardTime = fT;
-            backwardTime = bT;
-        }*/
-        #endregion
         #region Error messages on loading different configs
         private static void wrongFormatOnLoadPrecise(string configName)
         {
