@@ -26,6 +26,7 @@ namespace Flavor
             Device.OnDeviceStatusChanged += new DeviceEventHandler(InvokeRefreshDeviceStatus);
             Device.OnVacuumStateChanged += new DeviceEventHandler(InvokeRefreshVacuumState);
             Device.OnTurboPumpStatusChanged += new DeviceEventHandler(InvokeRefreshTurboPumpStatus);
+            Device.OnTurboPumpAlert += new TurboPumpAlertEventHandler(InvokeProcessTurboPumpAlert);
             Device.Init();
 
             Graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
@@ -69,19 +70,16 @@ namespace Flavor
             initSys_butt.Enabled = false;
             Commander.Init();
         }
-
         private void shutSys_butt_Click(object sender, EventArgs e)
         {
             shutSys_butt.Enabled = false;
             Commander.Shutdown();
         }
-
         private void unblock_butt_Click(object sender, EventArgs e)
         {
             unblock_butt.Enabled = false;
             Commander.Unblock();
         }
-
         private void overview_button_Click(object sender, EventArgs e)
         {
             overview_button.Enabled = false;
@@ -130,7 +128,6 @@ namespace Flavor
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Scan();
         }
-
         private void sensmeasure_button_Click(object sender, EventArgs e)
         {
             overview_button.Enabled = false;
@@ -182,6 +179,16 @@ namespace Flavor
             Commander.Sense();
         }
 
+        private void InvokeProcessTurboPumpAlert(bool isFault, byte bits)
+        {
+            string msg = "Турбонасос: ";
+            msg += isFault ? "отказ (" : "предупреждение (";
+            msg += bits.ToString("{N}");
+            msg += ")";
+            InvokeRefreshUserMessage(msg);
+            Config.logTurboPumpAlert(msg);
+        }
+
         private void InvokeRefreshUserMessage(string msg)
         {
             if (this.InvokeRequired)
@@ -194,7 +201,6 @@ namespace Flavor
                 RefreshUserMessage(msg);
             }
         }
-
         private void RefreshUserMessage(string msg)
         {
             this.measure_StatusLabel.Text = msg;
@@ -212,7 +218,6 @@ namespace Flavor
                 RefreshGraph(displayMode, recreate);
             }
         }
-
         private void RefreshGraph(Graph.Displaying displayMode, bool recreate)
         {
             switch (displayMode)
@@ -297,7 +302,6 @@ namespace Flavor
                 RefreshDeviceState();
             }
         }
-
         private void RefreshDeviceState()
         {
             switch (Device.sysState)
@@ -365,7 +369,6 @@ namespace Flavor
                 RefreshTurboPumpStatus();
             }
         }
-
         private void RefreshTurboPumpStatus()
         {
             this.turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
@@ -388,7 +391,6 @@ namespace Flavor
                 RefreshDeviceStatus();
             }
         }
-
         private void RefreshDeviceStatus()
         {
             if (Device.fPumpOn)
@@ -467,7 +469,6 @@ namespace Flavor
                 RefreshVacuumState();
             }
         }
-
         private void RefreshVacuumState()
         {
             switch (Device.vacState) 
@@ -575,7 +576,6 @@ namespace Flavor
                 RefreshButtons(); 
             }
         }
-
         private void RefreshButtons()
         {
             //bool precPointsExist = (Config.PreciseData.Count != 0);
@@ -754,7 +754,6 @@ namespace Flavor
                 CancelScan();
             }
         }
-
         private void CancelScan()
         {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);

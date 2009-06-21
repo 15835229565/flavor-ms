@@ -7,7 +7,7 @@ namespace Flavor
     delegate void DeviceEventHandler();
     //delegate void DeviceStatusChangedEventHandler();
     //delegate void VacuumStateChangedEventHandler();
-    //delegate void TurboPumpStatusChangedEventHandler();
+    delegate void TurboPumpAlertEventHandler(bool isFault, byte bits);
 
     static class Device
     {
@@ -15,6 +15,7 @@ namespace Flavor
         public static event DeviceEventHandler OnDeviceStatusChanged;
         public static event DeviceEventHandler OnVacuumStateChanged;
         public static event DeviceEventHandler OnTurboPumpStatusChanged;
+        public static event TurboPumpAlertEventHandler OnTurboPumpAlert;
 
         public enum DeviceStates : byte
         {
@@ -72,7 +73,7 @@ namespace Flavor
         private static bool hvOn;
 
         private static bool heatCurrentEnable;
-        private static bool emissionCurrentEnable;
+        //private static bool emissionCurrentEnable;
 
         private static ushort forVacuumValue;
         private static ushort hVacuumValue;
@@ -135,48 +136,58 @@ namespace Flavor
         public static bool fPumpOn
         {
             get { return forPumpOn; }
-            set { forPumpOn = value; }
+            private set { forPumpOn = value; }
         }
 
         public static bool probeValve
         {
             get { return pValve; }
-            set { pValve = value; }
+            private set { pValve = value; }
         }
 
         public static bool highVacuumValve
         {
             get { return hvValve; }
-            set { hvValve = value; }
+            private set { hvValve = value; }
         }
 
         public static bool tPumpOn
         {
             get { return turboPumpOn; }
-            set { turboPumpOn = value; }
+            private set { turboPumpOn = value; }
         }
 
         public static bool turboReplyFault
         {
             get { return trFault; }
-            set { trFault = value; }
+            private set
+            {
+                if (value != trFault)
+                {
+                    trFault = value;
+                    if (trFault != false)
+                    {
+                        OnTurboPumpAlert(true, 0);
+                    }
+                }
+            }
         }
 
         public static bool highVoltageOn
         {
             get { return hvOn; }
-            set { hvOn = value; }
+            private set { hvOn = value; }
         }
-        public static bool eCurrentEnable
+        /*public static bool eCurrentEnable
         {
             get { return emissionCurrentEnable; }
             set { emissionCurrentEnable = value; }
-        }
+        }*/
 
         public static bool hCurrentEnable
         {
             get { return heatCurrentEnable; }
-            set { heatCurrentEnable = value; }
+            private set { heatCurrentEnable = value; }
         }
         
         public static ushort fVacuum
@@ -343,19 +354,46 @@ namespace Flavor
             }
 
             private static byte statusBits, alertBits, faultBits;
+            public static byte StatusBits
+            {
+                get { return statusBits; }
+                private set { statusBits = value; }
+            }
+            public static byte AlertBits
+            {
+                get { return alertBits; }
+                private set 
+                {
+                    if (value != alertBits)
+                    {
+                        alertBits = value;
+                        if (alertBits != 0)
+                        {
+                            OnTurboPumpAlert(false, alertBits);
+                        }
+                    }
+                }
+            }
+            public static byte FaultBits
+            {
+                get { return faultBits; }
+                private set
+                {
+                    if (value != faultBits)
+                    {
+                        faultBits = value;
+                        if (faultBits != 0)
+                        {
+                            OnTurboPumpAlert(true, faultBits);
+                        }
+                    }
+                }
+            }
             public static void relaysState(byte value, byte value2, byte value3)
             {
-                statusBits = value;
-                alertBits = value2;
-                faultBits = value3;
-                if (alertBits == 0)
-                {
-                    //Alert here!
-                }
-                if (faultBits == 0)
-                {
-                    //Fault here!
-                }
+                StatusBits = value;
+                AlertBits = value2;
+                FaultBits = value3;
                 OnTurboPumpStatusChanged();
             }
 

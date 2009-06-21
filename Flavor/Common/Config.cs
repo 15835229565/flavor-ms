@@ -1205,36 +1205,69 @@ namespace Flavor
             return coeff / Config.scanVoltageReal(pnt);
         }
         #endregion
-        internal static void logCrash(byte[] commandline)
+        #region Logging routines
+        private static System.IO.StreamWriter openLog()
         {
-            System.IO.StreamWriter errorLog;
             try
             {
+                System.IO.StreamWriter errorLog;
                 errorLog = new System.IO.StreamWriter(@logName, true);
                 errorLog.AutoFlush = true;
-                DateTime now = System.DateTime.Now;
-                string cmd = "";
-                List<byte> pack = new List<byte>();
-                ModBus.buildPackBody(pack, commandline);
-                foreach (byte b in pack)
-                {
-                    cmd += (char)b;
-                }
-                string message = string.Format("{0}-{1}-{2}|", now.Year, now.Month, now.Day) +
-                    string.Format("{0}.{1}.{2}.{3}: ", now.Hour, now.Minute, now.Second, now.Millisecond) +
-                    cmd;
-                errorLog.WriteLine(message);
-                errorLog.Close();
+                return errorLog;
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message, "Ошибка при открытии файла отказов");
+                return null;
+            }
+        }
+        private static string genMessage(string data, DateTime moment)
+        {
+            return string.Format("{0}-{1}-{2}|", moment.Year, moment.Month, moment.Day) +
+                string.Format("{0}.{1}.{2}.{3}: ", moment.Hour, moment.Minute, moment.Second, moment.Millisecond) + data;
+        }
+        private static void log(System.IO.StreamWriter errorLog, string msg)
+        {
+            DateTime now = System.DateTime.Now;
+            try
+            {
+                errorLog.WriteLine(genMessage(msg, now));
+                //errorLog.Flush();
             }
             catch (Exception Error)
             {
                 string message = "Ошибка записи файла отказов";
-                string cause = "(" + commandline.ToString() + ") -- " + Error.Message;
+                string cause = "(" + msg + ") -- " + Error.Message;
                 Console.WriteLine(message + cause);
                 System.Windows.Forms.MessageBox.Show(cause, message);
             }
+            finally
+            {
+                errorLog.Close();
+            }
         }
-
+        internal static void logCrash(byte[] commandline)
+        {
+            string cmd = "";
+            List<byte> pack = new List<byte>();
+            ModBus.buildPackBody(pack, commandline);
+            foreach (byte b in pack)
+            {
+                cmd += (char)b;
+            }
+            System.IO.StreamWriter errorLog;
+            if ((errorLog = openLog()) == null)
+                return;
+            log(errorLog, cmd);
+        }
+        internal static void logTurboPumpAlert(string message)
+        {
+            System.IO.StreamWriter errorLog;
+            if ((errorLog = openLog()) == null)
+                return;
+            log(errorLog, message);
+        }
+        #endregion
         private static bool newConfigFile(out XmlDocument conf, string filename)
         {
             if (!filename.Equals(confName))
