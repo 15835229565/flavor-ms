@@ -1214,15 +1214,16 @@ namespace Flavor
                 errorLog.AutoFlush = true;
                 DateTime now = System.DateTime.Now;
                 string cmd = "";
-                commandline = ModBus.buildPack(commandline);
-                for (int i = 0; i < commandline.Length; ++i){
-                    cmd += (char)commandline[i];
+                List<byte> pack = new List<byte>();
+                ModBus.buildPackBody(pack, commandline);
+                foreach (byte b in pack)
+                {
+                    cmd += (char)b;
                 }
                 string message = string.Format("{0}-{1}-{2}|", now.Year, now.Month, now.Day) +
                     string.Format("{0}.{1}.{2}.{3}: ", now.Hour, now.Minute, now.Second, now.Millisecond) +
                     cmd;
                 errorLog.WriteLine(message);
-                //Console.WriteLine(logName + message);
                 errorLog.Close();
             }
             catch (Exception Error)

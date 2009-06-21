@@ -538,6 +538,12 @@ namespace Flavor
         {
             List<byte> pack = new List<byte>();
             pack.Add((byte)':');
+            buildPackBody(pack, data);
+            pack.Add((byte)'\r');
+            return pack.ToArray();
+        }
+        public static void buildPackBody(List<byte> pack, byte[] data)
+        {
             for (int i = 0; i < data.Length; i++)
             {
                 pack.Add(GetNibble(data[i] >> 4));
@@ -546,33 +552,27 @@ namespace Flavor
             byte cs = ComputeChecksum(data);
             pack.Add(GetNibble(cs >> 4));
             pack.Add(GetNibble(cs));
-            pack.Add((byte)'\r');
-            return pack.ToArray();
         }
 
         public static byte[] collectData(byte functCode)
         {
             return new byte[] { functCode };
         }
-
         public static byte[] collectData(byte functCode, byte value)
         {
             return new byte[] { functCode, value };
         }
-
         public static byte[] collectData(byte functCode, ushort value)
         {
             byte[] data = ushort2ByteArray(value);
             return new byte[] { functCode, data[0], data[1] };
         }
-
         public static byte[] collectData(byte functCode, ushort value1, ushort value2)
         {
             byte[] data1 = ushort2ByteArray(value1);
             byte[] data2 = ushort2ByteArray(value2);
             return new byte[] { functCode, data1[0], data1[1], data2[0], data2[1] };
         }
-
         public static byte[] collectData(byte functCode, int value1, int value2)
         {
             List<byte> Data = new List<byte>();
