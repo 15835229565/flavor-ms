@@ -83,6 +83,19 @@ namespace Flavor
         
         private TreeNode turboPumpNode;
 
+        private TreeNode turboSpeedTextTreeNode;
+        private TreeNode turboSpeedValueTreeNode;
+        private TreeNode turboCurrentTextTreeNode;
+        private TreeNode turboCurrentValueTreeNode;
+        private TreeNode pumpTemperatureTextTreeNode;
+        private TreeNode pumpTemperatureValueTreeNode;
+        private TreeNode driveTemperatureTextTreeNode;
+        private TreeNode driveTemperatureValueTreeNode;
+        private TreeNode pwmTextTreeNode;
+        private TreeNode pwmValueTreeNode;
+        private TreeNode operationTimeTextTreeNode;
+        private TreeNode operationTimeValueTreeNode;
+        
         private void populateStatusTreeView()
         {
             systemStateTextTreeNode = new TreeNode();
@@ -105,49 +118,16 @@ namespace Flavor
             vGate2ValueTreeNode = new TreeNode();
 
             systemStateTextTreeNode.Text = "Состояние системы";
-            // 
-            systemStateValueTreeNode.ForeColor = Color.Green;
-            systemStateValueTreeNode.Text = "*";
-            // 
             vacuumStateTextTreeNode.Text = "Состояние вакуума";
-            // 
-            vacuumStateValueTreeNode.ForeColor = Color.Green;
-            vacuumStateValueTreeNode.Text = "*";
-            // 
             forPumpOnTextTreeNode.Text = "Форвакуумный насос";
-            // 
-            forPumpOnValueTreeNode.ForeColor = Color.Green;
-            forPumpOnValueTreeNode.Text = "*";
-            // 
             turboPumpOnTextTreeNode.Text = "Турбомолекулярный насос";
-            // 
-            turboPumpOnValueTreeNode.ForeColor = Color.Green;
-            turboPumpOnValueTreeNode.Text = "*";
-            // 
             forVacuumTextTreeNode.Text = "Уровень вакуума (фор)";
-            // 
             forVacuumValueTreeNode.ForeColor = Color.Green;
-            forVacuumValueTreeNode.Text = "*";
-            // 
             highVacuumTextTreeNode.Text = "Уровень вакуума (высок)";
-            // 
             highVacuumValueTreeNode.ForeColor = Color.Green;
-            highVacuumValueTreeNode.Text = "*";
-            // 
             hardwareBlockTextTreeNode.Text = "Высокое напряжение";
-            // 
-            hardwareBlockValueTreeNode.ForeColor = Color.Green;
-            hardwareBlockValueTreeNode.Text = "*";
-            // 
             vGate1TextTreeNode.Text = "Вакуумный вентиль 1";
-            // 
-            vGate1ValueTreeNode.ForeColor = Color.Green;
-            vGate1ValueTreeNode.Text = "*";
-            // 
             vGate2TextTreeNode.Text = "Вакуумный вентиль 2";
-            // 
-            vGate2ValueTreeNode.ForeColor = Color.Green;
-            vGate2ValueTreeNode.Text = "*";
             
             infoNode = new TreeNode("Информация о системе",
                 new TreeNode[] { systemStateTextTreeNode, systemStateValueTreeNode, vacuumStateTextTreeNode, vacuumStateValueTreeNode,
@@ -176,51 +156,24 @@ namespace Flavor
             hCurrentTextTreeNode = new TreeNode();
             hCurrentValueTreeNode = new TreeNode();
 
-            // 
             f1VoltageTextTreeNode.Text = "Фокусирующее напр. (1) В";
-            // 
             f1VoltageValueTreeNode.ForeColor = Color.Green;
-            f1VoltageValueTreeNode.Text = "*";
-            // 
             f2VoltageTextTreeNode.Text = "Фокусирующее напр. (2) В";
-            // 
             f2VoltageValueTreeNode.ForeColor = Color.Green;
-            f2VoltageValueTreeNode.Text = "*";
-            // 
             scanVoltageTextTreeNode.Text = "Напряжение развертки В";
-            // 
             scanVoltageValueTreeNode.ForeColor = Color.Green;
-            scanVoltageValueTreeNode.Text = "*";
-            // 
             iVoltageTextTreeNode.Text = "Напряжение ионизации, В";
-            // 
             iVoltageValueTreeNode.ForeColor = Color.Green;
-            iVoltageValueTreeNode.Text = "*";
-            // 
             eCurrentTextTreeNode.Text = "Ток эмиссии, мкА";
-            // 
             eCurrentValueTreeNode.ForeColor = Color.Green;
-            eCurrentValueTreeNode.Text = "*";
-            // 
             condPlusTextTreeNode.Text = "Напряжение конденсатора (+) (50-150 В)";
-            // 
             condPlusValueTreeNode.ForeColor = Color.Green;
-            condPlusValueTreeNode.Text = "*";
-            // 
             condMinusTextTreeNode.Text = "Напряжение конденсатора (-) (50-150 В)";
-            // 
             condMinusValueTreeNode.ForeColor = Color.Green;
-            condMinusValueTreeNode.Text = "*";
-            // 
             detectorVoltageTextTreeNode.Text = "Напряжение на детекторе, В";
-            // 
             detectorVoltageValueTreeNode.ForeColor = Color.Green;
-            detectorVoltageValueTreeNode.Text = "*";
-            // 
             hCurrentTextTreeNode.Text = "Ток нагрева, А";
-            // 
             hCurrentValueTreeNode.ForeColor = Color.Green;
-            hCurrentValueTreeNode.Text = "*"; 
             
             extraNode = new TreeNode("Дополнительно",
                 new TreeNode[] { f1VoltageTextTreeNode, f1VoltageValueTreeNode, f2VoltageTextTreeNode, f2VoltageValueTreeNode,
@@ -230,7 +183,36 @@ namespace Flavor
             extraNode.Name = "extraNode";
             extraNode.Text = "Дополнительно";
 
-            turboPumpNode = new TreeNode("Турбонасос");
+            turboSpeedTextTreeNode = new TreeNode();
+            turboSpeedValueTreeNode = new TreeNode();
+            turboCurrentTextTreeNode = new TreeNode();
+            turboCurrentValueTreeNode = new TreeNode();
+            pumpTemperatureTextTreeNode = new TreeNode();
+            pumpTemperatureValueTreeNode = new TreeNode();
+            driveTemperatureTextTreeNode = new TreeNode();
+            driveTemperatureValueTreeNode = new TreeNode();
+            pwmTextTreeNode = new TreeNode();
+            pwmValueTreeNode = new TreeNode();
+            operationTimeTextTreeNode = new TreeNode();
+            operationTimeValueTreeNode = new TreeNode();
+
+            turboSpeedTextTreeNode.Text = "Скорость вращения, об./мин.";
+            turboSpeedValueTreeNode.ForeColor = System.Drawing.Color.Green;
+            turboCurrentTextTreeNode.Text = "Ток, мА";
+            turboCurrentValueTreeNode.ForeColor = System.Drawing.Color.Green;
+            pumpTemperatureTextTreeNode.Text = "Температура насоса";
+            pumpTemperatureValueTreeNode.ForeColor = System.Drawing.Color.Green;
+            driveTemperatureTextTreeNode.Text = "Температура привода";
+            driveTemperatureValueTreeNode.ForeColor = System.Drawing.Color.Green;
+            pwmTextTreeNode.Text = "pwm";
+            pwmValueTreeNode.ForeColor = System.Drawing.Color.Green;
+            operationTimeTextTreeNode.Text = "Время работы";
+            operationTimeValueTreeNode.ForeColor = System.Drawing.Color.Green;
+
+            turboPumpNode = new TreeNode("Турбонасос", 
+                new TreeNode[] { turboSpeedTextTreeNode, turboSpeedValueTreeNode, turboCurrentTextTreeNode, turboCurrentValueTreeNode,
+                    pumpTemperatureTextTreeNode, pumpTemperatureValueTreeNode, driveTemperatureTextTreeNode, driveTemperatureValueTreeNode,
+                    pwmTextTreeNode, pwmValueTreeNode, operationTimeTextTreeNode, operationTimeValueTreeNode});
             turboPumpNode.Name = "turboPumpNode";
             turboPumpNode.Text = "Турбонасос";
 
@@ -578,12 +560,12 @@ namespace Flavor
         }
         private void RefreshTurboPumpStatus()
         {
-            turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
-            turboCurrentLabel.Text = string.Format("{0:f0}", Device.TurboPump.Current);
-            pwmLabel.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
-            pumpTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.PumpTemperature);
-            driveTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.DriveTemperature);
-            operationTimeLabel.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
+            turboSpeedValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
+            turboCurrentValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.Current);
+            pwmValueTreeNode.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
+            pumpTemperatureValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.PumpTemperature);
+            driveTemperatureValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.DriveTemperature);
+            operationTimeValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
         }
 
         private void InvokeRefreshDeviceStatus()
@@ -661,7 +643,7 @@ namespace Flavor
             scanVoltageValueTreeNode.Text = string.Format("{0:f1}", Device.sVoltageReal);
             eCurrentValueTreeNode.Text = string.Format("{0:f3}", Device.eCurrentReal);
             hCurrentValueTreeNode.Text = string.Format("{0:f3}", Device.hCurrentReal);
-            turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
+            turboSpeedValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
         }
 
         private void InvokeRefreshVacuumState()

@@ -66,20 +66,6 @@ namespace Flavor
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ParameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
-            this.turboPumpBox = new System.Windows.Forms.GroupBox();
-            this.operationTimeLabel = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.pwmLabel = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.driveTemperatureLabel = new System.Windows.Forms.Label();
-            this.label30 = new System.Windows.Forms.Label();
-            this.pumpTemperatureLabel = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.turboCurrentLabel = new System.Windows.Forms.Label();
-            this.label27 = new System.Windows.Forms.Label();
-            this.turboSpeedLabel = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.extraInformationGroupBox = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.f2_label = new System.Windows.Forms.Label();
             this.f1_label = new System.Windows.Forms.Label();
@@ -122,8 +108,6 @@ namespace Flavor
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
             this.ParameterPanel.SuspendLayout();
-            this.turboPumpBox.SuspendLayout();
-            this.extraInformationGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.measurePanel.SuspendLayout();
             this.SuspendLayout();
@@ -474,165 +458,6 @@ namespace Flavor
             this.statusTreeView.ShowPlusMinus = false;
             this.statusTreeView.Size = new System.Drawing.Size(234, 895);
             this.statusTreeView.TabIndex = 0;
-            // 
-            // turboPumpBox
-            // 
-            this.turboPumpBox.Controls.Add(this.operationTimeLabel);
-            this.turboPumpBox.Controls.Add(this.label31);
-            this.turboPumpBox.Controls.Add(this.pwmLabel);
-            this.turboPumpBox.Controls.Add(this.label28);
-            this.turboPumpBox.Controls.Add(this.driveTemperatureLabel);
-            this.turboPumpBox.Controls.Add(this.label30);
-            this.turboPumpBox.Controls.Add(this.pumpTemperatureLabel);
-            this.turboPumpBox.Controls.Add(this.label29);
-            this.turboPumpBox.Controls.Add(this.turboCurrentLabel);
-            this.turboPumpBox.Controls.Add(this.label27);
-            this.turboPumpBox.Controls.Add(this.turboSpeedLabel);
-            this.turboPumpBox.Controls.Add(this.label26);
-            this.turboPumpBox.Location = new System.Drawing.Point(240, 352);
-            this.turboPumpBox.Name = "turboPumpBox";
-            this.turboPumpBox.Size = new System.Drawing.Size(228, 244);
-            this.turboPumpBox.TabIndex = 38;
-            this.turboPumpBox.TabStop = false;
-            this.turboPumpBox.Text = "Турбонасос";
-            this.turboPumpBox.Visible = false;
-            // 
-            // operationTimeLabel
-            // 
-            this.operationTimeLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.operationTimeLabel.ForeColor = System.Drawing.Color.Green;
-            this.operationTimeLabel.Location = new System.Drawing.Point(9, 159);
-            this.operationTimeLabel.Name = "operationTimeLabel";
-            this.operationTimeLabel.Size = new System.Drawing.Size(200, 13);
-            this.operationTimeLabel.TabIndex = 34;
-            this.operationTimeLabel.Text = "*";
-            this.operationTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label31
-            // 
-            this.label31.BackColor = System.Drawing.SystemColors.Control;
-            this.label31.Location = new System.Drawing.Point(6, 146);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(216, 13);
-            this.label31.TabIndex = 33;
-            this.label31.Text = "Время работы";
-            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // pwmLabel
-            // 
-            this.pwmLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.pwmLabel.ForeColor = System.Drawing.Color.Green;
-            this.pwmLabel.Location = new System.Drawing.Point(9, 133);
-            this.pwmLabel.Name = "pwmLabel";
-            this.pwmLabel.Size = new System.Drawing.Size(200, 13);
-            this.pwmLabel.TabIndex = 32;
-            this.pwmLabel.Text = "*";
-            this.pwmLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label28
-            // 
-            this.label28.BackColor = System.Drawing.SystemColors.Control;
-            this.label28.Location = new System.Drawing.Point(6, 120);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(216, 13);
-            this.label28.TabIndex = 31;
-            this.label28.Text = "pwm";
-            this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // driveTemperatureLabel
-            // 
-            this.driveTemperatureLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.driveTemperatureLabel.ForeColor = System.Drawing.Color.Green;
-            this.driveTemperatureLabel.Location = new System.Drawing.Point(9, 107);
-            this.driveTemperatureLabel.Name = "driveTemperatureLabel";
-            this.driveTemperatureLabel.Size = new System.Drawing.Size(200, 13);
-            this.driveTemperatureLabel.TabIndex = 30;
-            this.driveTemperatureLabel.Text = "*";
-            this.driveTemperatureLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label30
-            // 
-            this.label30.BackColor = System.Drawing.SystemColors.Control;
-            this.label30.Location = new System.Drawing.Point(6, 94);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(216, 13);
-            this.label30.TabIndex = 29;
-            this.label30.Text = "Температура привода";
-            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // pumpTemperatureLabel
-            // 
-            this.pumpTemperatureLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.pumpTemperatureLabel.ForeColor = System.Drawing.Color.Green;
-            this.pumpTemperatureLabel.Location = new System.Drawing.Point(9, 81);
-            this.pumpTemperatureLabel.Name = "pumpTemperatureLabel";
-            this.pumpTemperatureLabel.Size = new System.Drawing.Size(200, 13);
-            this.pumpTemperatureLabel.TabIndex = 28;
-            this.pumpTemperatureLabel.Text = "*";
-            this.pumpTemperatureLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label29
-            // 
-            this.label29.BackColor = System.Drawing.SystemColors.Control;
-            this.label29.Location = new System.Drawing.Point(6, 68);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(216, 13);
-            this.label29.TabIndex = 27;
-            this.label29.Text = "Температура насоса";
-            this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // turboCurrentLabel
-            // 
-            this.turboCurrentLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.turboCurrentLabel.ForeColor = System.Drawing.Color.Green;
-            this.turboCurrentLabel.Location = new System.Drawing.Point(9, 55);
-            this.turboCurrentLabel.Name = "turboCurrentLabel";
-            this.turboCurrentLabel.Size = new System.Drawing.Size(200, 13);
-            this.turboCurrentLabel.TabIndex = 24;
-            this.turboCurrentLabel.Text = "*";
-            this.turboCurrentLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label27
-            // 
-            this.label27.BackColor = System.Drawing.SystemColors.Control;
-            this.label27.Location = new System.Drawing.Point(6, 42);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(216, 13);
-            this.label27.TabIndex = 23;
-            this.label27.Text = "Ток, мА";
-            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // turboSpeedLabel
-            // 
-            this.turboSpeedLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.turboSpeedLabel.ForeColor = System.Drawing.Color.Green;
-            this.turboSpeedLabel.Location = new System.Drawing.Point(9, 29);
-            this.turboSpeedLabel.Name = "turboSpeedLabel";
-            this.turboSpeedLabel.Size = new System.Drawing.Size(200, 13);
-            this.turboSpeedLabel.TabIndex = 22;
-            this.turboSpeedLabel.Text = "*";
-            this.turboSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label26
-            // 
-            this.label26.BackColor = System.Drawing.SystemColors.Control;
-            this.label26.Location = new System.Drawing.Point(6, 16);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(216, 13);
-            this.label26.TabIndex = 16;
-            this.label26.Text = "Скорость вращения, об./мин.";
-            this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // extraInformationGroupBox
-            // 
-            this.extraInformationGroupBox.Location = new System.Drawing.Point(471, 60);
-            this.extraInformationGroupBox.Name = "extraInformationGroupBox";
-            this.extraInformationGroupBox.Size = new System.Drawing.Size(228, 274);
-            this.extraInformationGroupBox.TabIndex = 37;
-            this.extraInformationGroupBox.TabStop = false;
-            this.extraInformationGroupBox.Text = "Дополнительно";
-            this.extraInformationGroupBox.Visible = false;
-
             // 
             // groupBox1
             // 
@@ -1036,9 +861,7 @@ namespace Flavor
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(992, 966);
-            this.Controls.Add(this.turboPumpBox);
             this.Controls.Add(this.measurePanel);
-            this.Controls.Add(this.extraInformationGroupBox);
             this.Controls.Add(this.ParameterPanel);
             this.Controls.Add(this.ControlToolStrip);
             this.Controls.Add(this.menuStrip1);
@@ -1057,9 +880,6 @@ namespace Flavor
             this.ControlToolStrip.ResumeLayout(false);
             this.ControlToolStrip.PerformLayout();
             this.ParameterPanel.ResumeLayout(false);
-            this.turboPumpBox.ResumeLayout(false);
-            this.extraInformationGroupBox.ResumeLayout(false);
-            this.extraInformationGroupBox.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.measurePanel.ResumeLayout(false);
@@ -1099,17 +919,7 @@ namespace Flavor
         private System.Windows.Forms.Panel ParameterPanel;
         private System.Windows.Forms.ToolStripMenuItem ParameterToolStripMenuItem;
         private System.Windows.Forms.ToolStripProgressBar vacuumLevelBar;
-        private System.Windows.Forms.GroupBox extraInformationGroupBox;
         private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
-        private System.Windows.Forms.GroupBox turboPumpBox;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Label turboSpeedLabel;
-        private System.Windows.Forms.Label turboCurrentLabel;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Label driveTemperatureLabel;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label pumpTemperatureLabel;
-        private System.Windows.Forms.Label label29;
         private System.Windows.Forms.ToolStripMenuItem openConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -1153,10 +963,6 @@ namespace Flavor
         private System.Windows.Forms.Label peakWidthLabel;
         private System.Windows.Forms.Panel measurePanel;
         private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Label pwmLabel;
-        private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label operationTimeLabel;
         private System.Windows.Forms.ToolStripMenuItem delaysToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView statusTreeView;
