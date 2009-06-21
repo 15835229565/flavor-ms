@@ -37,7 +37,7 @@ namespace Flavor
 
         private void mainForm_Load(object sender, EventArgs e)
         {
-            Config.LoadConfig();
+            openConfigFileToolStripMenuItem_Click(sender, e);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -802,7 +802,14 @@ namespace Flavor
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Config.LoadConfig();
+            try
+            {
+                Config.LoadConfig();
+            }
+            catch (Config.ConfigLoadException cle)
+            {
+                cle.visualise();
+            }
         }
 
         private void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e)

@@ -125,7 +125,14 @@ namespace Flavor
         {
             if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK)
             {
-                loadCommonData(openCommonDataFileDialog.FileName);
+                try
+                {
+                    loadCommonData(openCommonDataFileDialog.FileName);
+                }
+                catch (Config.ConfigLoadException cle)
+                {
+                    cle.visualise();
+                }
             }
         }
 

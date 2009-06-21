@@ -334,28 +334,31 @@ namespace Flavor
             openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
             {
-                if (openSpecterFileDialog.FilterIndex == 1)
+                bool hint = (openSpecterFileDialog.FilterIndex == 1);
+                try
                 {
-                    Config.OpenSpecterFile(openSpecterFileDialog.FileName);
+                    bool result = Config.openSpectrumFile(openSpecterFileDialog.FileName, hint);
                     prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
-                    preciseSpecterDisplayed = false;
-
-                    ushort minX = (ushort)(Graph.Displayed1Steps[0][0].X);
-                    ushort maxX = (ushort)(minX - 1 + Graph.Displayed1Steps[0].Count);
-                    setXScaleLimits(minX, maxX, minX, maxX);
+                    if (result)
+                    {
+                        preciseSpecterDisplayed = false;
+                        ushort minX = (ushort)(Graph.Displayed1Steps[0][0].X);
+                        ushort maxX = (ushort)(minX - 1 + Graph.Displayed1Steps[0].Count);
+                        setXScaleLimits(minX, maxX, minX, maxX);
+                    }
+                    else
+                    {
+                        preciseSpecterDisplayed = true;
+                        setXScaleLimits(Config.PreciseDataLoaded);
+                    }
                     // YScaleLimits - auto!
                     DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
+                    specterClosingEnabled = true;
                 }
-                else 
+                catch (Config.ConfigLoadException cle)
                 {
-                    Config.OpenPreciseSpecterFile(openSpecterFileDialog.FileName);
-                    prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
-                    preciseSpecterDisplayed = true;
-                    setXScaleLimits(Config.PreciseDataLoaded);
-                    // YScaleLimits - auto!
-                    DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
+                    cle.visualise();
                 }
-                specterClosingEnabled = true;
             }
         }
 
@@ -376,7 +379,14 @@ namespace Flavor
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference);
+                try
+                {
+                    Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference);
+                }
+                catch (Config.ConfigLoadException cle)
+                {
+                    cle.visualise();
+                }
             }
         }
     }

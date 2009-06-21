@@ -14,26 +14,26 @@ namespace Flavor
         private static string confName;
         private static string logName;
 
-        private static string SerialPort;
-        private static ushort SerialBaudRate;
-        private static byte SendTry;
+        private static string SerialPort = "COM1";
+        private static ushort SerialBaudRate = 38400;
+        private static byte SendTry = 1;
 
-        private static ushort startPoint;
-        private static ushort endPoint;
+        private static ushort startPoint = 0;
+        private static ushort endPoint = 1056;
 
-        private static ushort beforeTime = (ushort)100;
-        private static ushort forwardTime = (ushort)100;
-        private static ushort backwardTime = (ushort)400;
+        private static ushort beforeTime = 100;
+        private static ushort forwardTime = 100;
+        private static ushort backwardTime = 400;
         private static bool forwardAsBefore = false;
 
-        private static ushort expTime;
-        private static ushort idleTime;
-        private static ushort ionizationVoltage;
-        private static ushort CPVoltage;
-        private static ushort heatCurrent;
-        private static ushort emissionCurrent;
-        private static ushort focusVoltage1;
-        private static ushort focusVoltage2;
+        private static ushort expTime = 200;
+        private static ushort idleTime = 10;
+        private static ushort ionizationVoltage = 1911;
+        private static ushort CPVoltage = 3780;
+        private static ushort heatCurrent = 0;
+        private static ushort emissionCurrent = 79;
+        private static ushort focusVoltage1 = 2730;
+        private static ushort focusVoltage2 = 2730;
         
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
@@ -337,43 +337,53 @@ namespace Flavor
             }
             catch (Exception Error)
             {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения конфигурационного файла");
+                throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
             }
-
             try
             {
                 SerialPort = (_conf.SelectSingleNode("/control/connect/port").InnerText);
                 SerialBaudRate = ushort.Parse(_conf.SelectSingleNode("/control/connect/baudrate").InnerText);
                 SendTry = byte.Parse(_conf.SelectSingleNode("/control/connect/try").InnerText);
+            }
+            catch (NullReferenceException)
+            {
+                (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                //use hard-coded defaults
+            }
+            try
+            {
                 sPoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/start").InnerText);
                 ePoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/end").InnerText);
             }
             catch (NullReferenceException)
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла");
+                (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                //use hard-coded defaults
             }
-            loadCommonOptions();
-            LoadPreciseEditorData();
+            try
+            {
+                loadCommonOptions();
+            }
+            catch (ConfigLoadException cle)
+            {
+                cle.visualise();
+                //use hard-coded defaults
+            }
+            try
+            {
+                LoadPreciseEditorData();
+            }
+            catch (ConfigLoadException cle)
+            {
+                cle.visualise();
+                //use empty default ped
+            }
         }
 
         private static void saveScanOptions()
         {
-            try
-            {
-                _conf.SelectSingleNode("/control/overview/start").InnerText = sPoint.ToString();
-            }
-            catch (NullReferenceException)
-            {
-                System.Windows.Forms.MessageBox.Show("Невозможно найти начальное значение напряжения развертки при сканировании", "Ошибка структуры конфигурационного файла");
-            }
-            try
-            {
-                _conf.SelectSingleNode("/control/overview/end").InnerText = ePoint.ToString();
-            }
-            catch (NullReferenceException)
-            {
-                System.Windows.Forms.MessageBox.Show("Невозможно найти конечное значение напряжения развертки при сканировании", "Ошибка структуры конфигурационного файла");
-            }
+            fillInnerText("/control/overview", "start", sPoint);
+            fillInnerText("/control/overview", "end", ePoint);
             _conf.Save(@confName);
         }
         internal static void saveScanOptions(ushort sPointReal, ushort ePointReal)
@@ -402,22 +412,8 @@ namespace Flavor
         
         private static void SaveConnectOptions()
         {
-            try
-            {
-                _conf.SelectSingleNode("/control/connect/port").InnerText = Config.Port;
-            }
-            catch (NullReferenceException)
-            {
-                System.Windows.Forms.MessageBox.Show("Невозможно найти имя последовательного порта", "Ошибка структуры конфигурационного файла");
-            }
-            try
-            {
-                _conf.SelectSingleNode("/control/connect/baudrate").InnerText = Config.BaudRate.ToString();
-            }
-            catch (NullReferenceException)
-            {
-                System.Windows.Forms.MessageBox.Show("Невозможно найти настройки скорости соединения", "Ошибка структуры конфигурационного файла");
-            }
+            fillInnerText("/control/connect", "port", Port);
+            fillInnerText("/control/connect", "baudrate", BaudRate);
             _conf.Save(@confName);
         }
         internal static void SaveConnectOptions(string port, ushort baudrate)
@@ -436,6 +432,35 @@ namespace Flavor
             SavePreciseOptions();
         }
 
+        internal static bool openSpectrumFile(string filename, bool hint)
+        {
+            bool result;
+            ConfigLoadException resultException = null;
+            try
+            {
+                result = hint ? OpenSpecterFile(filename) : OpenPreciseSpecterFile(filename);
+            }
+            catch (ConfigLoadException cle)
+            {
+                resultException = cle;
+                result = false;
+            }
+            if (result)
+                return hint;
+            try
+            {
+                result = (!hint) ? OpenSpecterFile(filename) : OpenPreciseSpecterFile(filename);
+            }
+            catch (ConfigLoadException cle)
+            {
+                resultException = (resultException == null) ? cle : resultException;
+                result = false;
+            }
+            if (result)
+                return (!hint);
+            throw resultException;
+        }
+        
         private static string genAutoSaveFilename(string extension)
         {
             string dirname;
@@ -446,7 +471,7 @@ namespace Flavor
             return dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension;
         }
         
-        internal static bool OpenSpecterFile(string p)
+        private static bool OpenSpecterFile(string p)
         {
             PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
             Graph.Displaying result = OpenSpecterFile(p, pl1, pl2);
@@ -465,22 +490,21 @@ namespace Flavor
                     return false;
             }
         }
-        internal static Graph.Displaying OpenSpecterFile(string p, PointPairListPlus pl1, PointPairListPlus pl2)
+        private static Graph.Displaying OpenSpecterFile(string filename, PointPairListPlus pl1, PointPairListPlus pl2)
         {
             XmlDocument sf = new XmlDocument();
             XmlNode headerNode = null;
             Graph.Displaying spectrumType = Graph.Displaying.Measured;
             try
             {
-                sf.Load(p);
+                sf.Load(filename);
             }
             catch (Exception Error)
             {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла спектра");
-                return Graph.Displaying.Loaded;
+                throw new ConfigLoadException(Error.Message, "Ошибка чтения файла спектра", filename);
             }
             string prefix = "";
-            if (sf.SelectSingleNode("control") != null)
+            if (sf.SelectSingleNode("control/overview") != null)
             {
                 prefix = mainConfigPrefix;
                 headerNode = sf.SelectSingleNode("control/header");
@@ -491,8 +515,7 @@ namespace Flavor
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
-                return Graph.Displaying.Loaded;
+                throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
             if (headerNode != null && headerNode.InnerText == "Diff")
                 spectrumType = Graph.Displaying.Diff;
@@ -516,8 +539,7 @@ namespace Flavor
             }
             catch (NullReferenceException)
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла спектра");
-                return Graph.Displaying.Loaded;
+                throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
             pl1.Sort(ZedGraph.SortType.XValues);
             pl2.Sort(ZedGraph.SortType.XValues);
@@ -575,10 +597,6 @@ namespace Flavor
             file.Save(filename);
         }
 
-        internal static void DistractSpectra(string what)
-        {
-            DistractSpectra(what, 0, null, null);
-        }
         internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference)
         {
             if (Graph.isPreciseSpectrum)
@@ -609,8 +627,7 @@ namespace Flavor
                     }
                     catch (System.ArgumentException)
                     {
-                        System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
-                        return;
+                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
                 }
             }
@@ -647,8 +664,7 @@ namespace Flavor
                     }
                     catch (System.ArgumentException)
                     {
-                        System.Windows.Forms.MessageBox.Show("Несовпадение рядов данных", "Ошибка при вычитании спектров");
-                        return;
+                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
                 }
                 else
@@ -742,7 +758,7 @@ namespace Flavor
             return res;
         }
 
-        internal static bool OpenPreciseSpecterFile(string filename)
+        private static bool OpenPreciseSpecterFile(string filename)
         {
             List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
             bool result = OpenPreciseSpecterFile(filename, peds);
@@ -753,7 +769,7 @@ namespace Flavor
             }
             return result;
         }
-        internal static bool OpenPreciseSpecterFile(string filename, List<Utility.PreciseEditorData> peds)
+        private static bool OpenPreciseSpecterFile(string filename, List<Utility.PreciseEditorData> peds)
         {
             XmlDocument sf = new XmlDocument();
             string prefix = "";
@@ -763,15 +779,13 @@ namespace Flavor
             }
             catch (Exception Error)
             {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионного спектра");
-                return false;
+                throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионного спектра", filename);
             }
-            if (sf.SelectSingleNode("control") != null)
+            if (sf.SelectSingleNode("control/sense") != null)
                 prefix = mainConfigPrefix;
             else if (sf.SelectSingleNode("sense") == null)
             {
-                System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра");
-                return false;
+                throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
             }
             return LoadPED(sf, filename, peds, true, prefix);
         }
@@ -808,7 +822,7 @@ namespace Flavor
             file.Save(filename);
         }
 
-        internal static void SavePreciseOptions() 
+        private static void SavePreciseOptions() 
         {
             SavePreciseOptions(Config.PreciseData, confName, false, "Precise options");
         }
@@ -884,15 +898,13 @@ namespace Flavor
                 }
                 catch (Exception Error)
                 {
-                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла прецизионных точек");
-                    return null;
+                    throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионных точек", pedConfName);
                 }
-                if (pedConf.SelectSingleNode("control") != null)
+                if (pedConf.SelectSingleNode("control/sense") != null)
                     mainConfPrefix = mainConfigPrefix;
                 else if (pedConf.SelectSingleNode("sense") == null)
                 {
-                    structureErrorOnLoadPrecise(pedConfName);
-                    return null;
+                    throw new structureErrorOnLoadPrecise(pedConfName);
                 }
             }
             else 
@@ -905,7 +917,7 @@ namespace Flavor
                 return peds;
             return null;
         }
-        internal static void LoadPreciseEditorData()
+        private static void LoadPreciseEditorData()
         {
             List<Utility.PreciseEditorData> pedl = LoadPreciseEditorData(confName);
             if ((pedl != null) && (pedl.Count > 0)) 
@@ -954,10 +966,9 @@ namespace Flavor
                         catch (FormatException)
                         {
                             if (readSpectrum)
-                                System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионного спектра");
+                                throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", pedConfName);
                             else
-                                wrongFormatOnLoadPrecise(confName);
-                            return false;
+                                throw new wrongFormatOnLoadPrecise(pedConfName);
                         }
                         if (readSpectrum)
                         {
@@ -975,8 +986,7 @@ namespace Flavor
                             }
                             catch (FormatException)
                             {
-                                System.Windows.Forms.MessageBox.Show("Неверный формат данных", "Ошибка чтения файла прецизионного спектра");
-                                return false;
+                                throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", pedConfName);
                             }
                             temp.AssociatedPoints = tempPntLst;
                         }
@@ -985,10 +995,9 @@ namespace Flavor
                 catch (NullReferenceException)
                 {
                     if (readSpectrum)
-                        System.Windows.Forms.MessageBox.Show("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра");
+                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", pedConfName);
                     else
-                        structureErrorOnLoadPrecise(pedConfName);
-                    return false;
+                        throw new structureErrorOnLoadPrecise(pedConfName);
                 }
                 if (temp != null) peds.Add(temp);
             }
@@ -996,7 +1005,7 @@ namespace Flavor
             return true;
         }
 
-        internal static void saveCommonOptions()
+        private static void saveCommonOptions()
         {
             saveCommonOptions(confName);
         }
@@ -1017,7 +1026,7 @@ namespace Flavor
 
             saveCommonOptions(filename);
         }
-        internal static void saveCommonOptions(string filename)
+        private static void saveCommonOptions(string filename)
         {
             XmlDocument cdConf;
             XmlNode commonNode;
@@ -1051,7 +1060,7 @@ namespace Flavor
             commonNode.SelectSingleNode("back").InnerText = Config.backwardTime.ToString();
         }
 
-        private static bool newCommonOptionsFileOnLoad(out XmlDocument conf, string filename)
+        private static void newCommonOptionsFileOnLoad(out XmlDocument conf, string filename)
         {
             if (newConfigFile(out conf, filename))
             {
@@ -1061,53 +1070,46 @@ namespace Flavor
                 }
                 catch (Exception Error)
                 {
-                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка чтения файла общих настроек");
-                    return false;
+                    throw new ConfigLoadException(Error.Message, "Ошибка чтения файла общих настроек", filename);
                 }
             }
-            return true;
         }
-        internal static void loadCommonOptions() 
+        private static void loadCommonOptions() 
         {
             loadCommonOptions(confName);
         }
         internal static void loadCommonOptions(string cdConfName)
         {
             XmlDocument cdConf;
-            string mainConfPrefix = "";
-            mainConfPrefix = mainConfigPrefix;
+            string mainConfPrefix = mainConfigPrefix;
 
-            if (!newCommonOptionsFileOnLoad(out cdConf, cdConfName))
-            {
-                return;
-            }
+            newCommonOptionsFileOnLoad(out cdConf, cdConfName);
             XmlNode commonNode = cdConf.SelectSingleNode(mainConfPrefix + "common");
             
-            ushort eT, iT, iV, cp, eC, hC, fv1, fv2;
             try
             {
+                ushort eT, iT, iV, cp, eC, hC, fv1, fv2;
                 eT = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
+                expTime = eT;
                 iT = ushort.Parse(commonNode.SelectSingleNode("meastime").InnerText);
+                idleTime = iT;
                 iV = ushort.Parse(commonNode.SelectSingleNode("ivoltage").InnerText);
+                iVoltage = iV;
                 cp = ushort.Parse(commonNode.SelectSingleNode("cp").InnerText);
+                CP = cp;
                 eC = ushort.Parse(commonNode.SelectSingleNode("ecurrent").InnerText);
+                eCurrent = eC;
                 hC = ushort.Parse(commonNode.SelectSingleNode("hcurrent").InnerText);
+                hCurrent = hC;
                 fv1 = ushort.Parse(commonNode.SelectSingleNode("focus1").InnerText);
+                fV1 = fv1;
                 fv2 = ushort.Parse(commonNode.SelectSingleNode("focus2").InnerText);
+                fV2 = fv2;
             }
             catch (NullReferenceException)
             {
-                structureErrorOnLoadCommonData(cdConfName);
-                return;
+                throw new structureErrorOnLoadCommonData(cdConfName);
             }
-            expTime = eT;
-            idleTime = iT;
-            iVoltage = iV;
-            CP = cp;
-            eCurrent = eC;
-            hCurrent = hC;
-            fV1 = fv1;
-            fV2 = fv2;
 
             ushort befT, fT, bT;
             bool fAsbef;
@@ -1129,32 +1131,45 @@ namespace Flavor
             backwardTime = bT;
         }
         #region Error messages on loading different configs
-        private static void wrongFormatOnLoadPrecise(string configName)
+        public class ConfigLoadException : System.Exception
         {
-            wrongFormatOnLoad(configName, "Ошибка чтения файла прецизионных точек");
+            public ConfigLoadException(string message, string filestring, string confname): base(message)
+            {
+                this.Data["FS"] = filestring;
+                this.Data["CN"] = confname;
+            }
+            public void visualise()
+            {
+                if (!(this.Data["CN"].Equals(confName)))
+                    System.Windows.Forms.MessageBox.Show(this.Message, this.Data["FS"] as string);
+                else
+                    System.Windows.Forms.MessageBox.Show(this.Message, "Ошибка чтения конфигурационного файла");
+            }
         }
-        private static void wrongFormatOnLoad(string configName, string errorFile)
+        private class wrongFormatOnLoadPrecise : wrongFormatOnLoad
         {
-            errorOnLoad(configName, errorFile, "Неверный формат данных");
+            public wrongFormatOnLoadPrecise(string configName)
+                : base (configName, "Ошибка чтения файла прецизионных точек") { }
         }
-        private static void structureErrorOnLoadCommonData(string configName)
+        private class wrongFormatOnLoad : ConfigLoadException
         {
-            structureErrorOnLoad(configName, "Ошибка чтения файла общих настроек");
+            public wrongFormatOnLoad(string configName, string errorFile)
+                : base("Неверный формат данных", errorFile, configName) { }
         }
-        private static void structureErrorOnLoadPrecise(string configName)
+        private class structureErrorOnLoad : ConfigLoadException
         {
-            structureErrorOnLoad(configName, "Ошибка чтения файла прецизионных точек");
+            public structureErrorOnLoad(string configName, string errorFile)
+                : base("Ошибка структуры файла", errorFile, configName) { }
         }
-        private static void structureErrorOnLoad(string configName, string errorFile)
+        private class structureErrorOnLoadCommonData : structureErrorOnLoad
         {
-            errorOnLoad(configName, errorFile, "Ошибка структуры файла");
+            public structureErrorOnLoadCommonData(string configName)
+                : base(configName, "Ошибка чтения файла общих настроек") { }
         }
-        private static void errorOnLoad(string configName, string errorFile, string errorMessage)
+        private class structureErrorOnLoadPrecise : structureErrorOnLoad
         {
-            if (!configName.Equals(confName))
-                System.Windows.Forms.MessageBox.Show(errorMessage, errorFile);
-            else
-                System.Windows.Forms.MessageBox.Show(errorMessage, "Ошибка чтения конфигурационного файла");
+            public structureErrorOnLoadPrecise(string configName)
+                : base(configName, "Ошибка чтения файла прецизионных точек") { }
         }
         #endregion
         #region Graph scaling to mass coeffs

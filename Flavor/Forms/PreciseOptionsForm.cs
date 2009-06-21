@@ -336,7 +336,14 @@ namespace Flavor
         {
             if (loadPreciseEditorFromFileDialog.ShowDialog() == DialogResult.OK)
             {
-                loadPreciseEditorData(Config.LoadPreciseEditorData(loadPreciseEditorFromFileDialog.FileName));
+                try
+                {
+                    loadPreciseEditorData(Config.LoadPreciseEditorData(loadPreciseEditorFromFileDialog.FileName));
+                }
+                catch (Config.ConfigLoadException cle)
+                {
+                    cle.visualise();
+                }
             }
         }
 
