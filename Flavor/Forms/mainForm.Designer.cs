@@ -65,7 +65,6 @@ namespace Flavor
             this.ControlToolStrip = new System.Windows.Forms.ToolStrip();
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.ParameterPanel = new System.Windows.Forms.Panel();
-            this.indicatorPictureBox = new System.Windows.Forms.PictureBox();
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.turboPumpBox = new System.Windows.Forms.GroupBox();
             this.operationTimeLabel = new System.Windows.Forms.Label();
@@ -81,24 +80,6 @@ namespace Flavor
             this.turboSpeedLabel = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.extraInformationGroupBox = new System.Windows.Forms.GroupBox();
-            this.scanVoltageLabel = new System.Windows.Forms.Label();
-            this.label34 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.f1Voltage_label = new System.Windows.Forms.Label();
-            this.label33 = new System.Windows.Forms.Label();
-            this.detectorVoltage_label = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.CondPlus_label = new System.Windows.Forms.Label();
-            this.CondMin_label = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.f2Voltage_label = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.iVoltage_label = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.eCurrent_label = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.hCurrent_label = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.f2_label = new System.Windows.Forms.Label();
             this.f1_label = new System.Windows.Forms.Label();
@@ -141,7 +122,6 @@ namespace Flavor
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
             this.ParameterPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.indicatorPictureBox)).BeginInit();
             this.turboPumpBox.SuspendLayout();
             this.extraInformationGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -475,7 +455,6 @@ namespace Flavor
             // 
             this.ParameterPanel.BackColor = System.Drawing.SystemColors.Control;
             this.ParameterPanel.Controls.Add(this.statusTreeView);
-            this.ParameterPanel.Controls.Add(this.indicatorPictureBox);
             this.ParameterPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.ParameterPanel.Location = new System.Drawing.Point(0, 49);
             this.ParameterPanel.Name = "ParameterPanel";
@@ -483,26 +462,17 @@ namespace Flavor
             this.ParameterPanel.TabIndex = 16;
             this.ParameterPanel.Text = "Параметры системы";
             // 
-            // indicatorPictureBox
-            // 
-            this.indicatorPictureBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.indicatorPictureBox.Location = new System.Drawing.Point(0, 0);
-            this.indicatorPictureBox.Name = "indicatorPictureBox";
-            this.indicatorPictureBox.Size = new System.Drawing.Size(234, 25);
-            this.indicatorPictureBox.TabIndex = 1;
-            this.indicatorPictureBox.TabStop = false;
-            // 
             // statusTreeView
             // 
             this.statusTreeView.BackColor = System.Drawing.SystemColors.Control;
             this.statusTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.statusTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statusTreeView.Indent = 15;
-            this.statusTreeView.Location = new System.Drawing.Point(0, 25);
+            this.statusTreeView.Location = new System.Drawing.Point(0, 0);
             this.statusTreeView.Name = "statusTreeView";
             this.statusTreeView.ShowLines = false;
             this.statusTreeView.ShowPlusMinus = false;
-            this.statusTreeView.Size = new System.Drawing.Size(234, 870);
+            this.statusTreeView.Size = new System.Drawing.Size(234, 895);
             this.statusTreeView.TabIndex = 0;
             // 
             // turboPumpBox
@@ -655,24 +625,6 @@ namespace Flavor
             // 
             // extraInformationGroupBox
             // 
-            this.extraInformationGroupBox.Controls.Add(this.scanVoltageLabel);
-            this.extraInformationGroupBox.Controls.Add(this.label34);
-            this.extraInformationGroupBox.Controls.Add(this.label32);
-            this.extraInformationGroupBox.Controls.Add(this.f1Voltage_label);
-            this.extraInformationGroupBox.Controls.Add(this.label33);
-            this.extraInformationGroupBox.Controls.Add(this.detectorVoltage_label);
-            this.extraInformationGroupBox.Controls.Add(this.label13);
-            this.extraInformationGroupBox.Controls.Add(this.label4);
-            this.extraInformationGroupBox.Controls.Add(this.CondPlus_label);
-            this.extraInformationGroupBox.Controls.Add(this.CondMin_label);
-            this.extraInformationGroupBox.Controls.Add(this.label14);
-            this.extraInformationGroupBox.Controls.Add(this.f2Voltage_label);
-            this.extraInformationGroupBox.Controls.Add(this.label3);
-            this.extraInformationGroupBox.Controls.Add(this.iVoltage_label);
-            this.extraInformationGroupBox.Controls.Add(this.label5);
-            this.extraInformationGroupBox.Controls.Add(this.eCurrent_label);
-            this.extraInformationGroupBox.Controls.Add(this.label6);
-            this.extraInformationGroupBox.Controls.Add(this.hCurrent_label);
             this.extraInformationGroupBox.Location = new System.Drawing.Point(471, 60);
             this.extraInformationGroupBox.Name = "extraInformationGroupBox";
             this.extraInformationGroupBox.Size = new System.Drawing.Size(228, 274);
@@ -680,194 +632,7 @@ namespace Flavor
             this.extraInformationGroupBox.TabStop = false;
             this.extraInformationGroupBox.Text = "Дополнительно";
             this.extraInformationGroupBox.Visible = false;
-            // 
-            // scanVoltageLabel
-            // 
-            this.scanVoltageLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.scanVoltageLabel.ForeColor = System.Drawing.Color.Green;
-            this.scanVoltageLabel.Location = new System.Drawing.Point(9, 88);
-            this.scanVoltageLabel.Name = "scanVoltageLabel";
-            this.scanVoltageLabel.Size = new System.Drawing.Size(200, 13);
-            this.scanVoltageLabel.TabIndex = 37;
-            this.scanVoltageLabel.Text = "*";
-            this.scanVoltageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(9, 75);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(137, 13);
-            this.label34.TabIndex = 36;
-            this.label34.Text = "Напряжение развертки В";
-            // 
-            // label32
-            // 
-            this.label32.BackColor = System.Drawing.SystemColors.Control;
-            this.label32.Location = new System.Drawing.Point(9, 17);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(216, 13);
-            this.label32.TabIndex = 20;
-            this.label32.Text = "Фокусирующее напр. (1) В";
-            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // f1Voltage_label
-            // 
-            this.f1Voltage_label.BackColor = System.Drawing.SystemColors.Control;
-            this.f1Voltage_label.ForeColor = System.Drawing.Color.Green;
-            this.f1Voltage_label.Location = new System.Drawing.Point(9, 32);
-            this.f1Voltage_label.Name = "f1Voltage_label";
-            this.f1Voltage_label.Size = new System.Drawing.Size(200, 13);
-            this.f1Voltage_label.TabIndex = 21;
-            this.f1Voltage_label.Text = "*";
-            this.f1Voltage_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label33
-            // 
-            this.label33.BackColor = System.Drawing.SystemColors.Control;
-            this.label33.Location = new System.Drawing.Point(9, 47);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(216, 13);
-            this.label33.TabIndex = 22;
-            this.label33.Text = "Фокусирующее напр. (2) В";
-            this.label33.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // detectorVoltage_label
-            // 
-            this.detectorVoltage_label.BackColor = System.Drawing.SystemColors.Control;
-            this.detectorVoltage_label.ForeColor = System.Drawing.Color.Green;
-            this.detectorVoltage_label.Location = new System.Drawing.Point(9, 224);
-            this.detectorVoltage_label.Name = "detectorVoltage_label";
-            this.detectorVoltage_label.Size = new System.Drawing.Size(200, 13);
-            this.detectorVoltage_label.TabIndex = 27;
-            this.detectorVoltage_label.Text = "*";
-            this.detectorVoltage_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label13
-            // 
-            this.label13.BackColor = System.Drawing.SystemColors.Control;
-            this.label13.Location = new System.Drawing.Point(9, 185);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(216, 13);
-            this.label13.TabIndex = 30;
-            this.label13.Text = "Напряжение конденсатора (-) (50-150 В)";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label4
-            // 
-            this.label4.BackColor = System.Drawing.SystemColors.Control;
-            this.label4.Location = new System.Drawing.Point(9, 211);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(216, 13);
-            this.label4.TabIndex = 26;
-            this.label4.Text = "Напряжение на детекторе, В";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // CondPlus_label
-            // 
-            this.CondPlus_label.BackColor = System.Drawing.SystemColors.Control;
-            this.CondPlus_label.ForeColor = System.Drawing.Color.Green;
-            this.CondPlus_label.Location = new System.Drawing.Point(9, 172);
-            this.CondPlus_label.Name = "CondPlus_label";
-            this.CondPlus_label.Size = new System.Drawing.Size(200, 13);
-            this.CondPlus_label.TabIndex = 29;
-            this.CondPlus_label.Text = "*";
-            this.CondPlus_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // CondMin_label
-            // 
-            this.CondMin_label.BackColor = System.Drawing.SystemColors.Control;
-            this.CondMin_label.ForeColor = System.Drawing.Color.Green;
-            this.CondMin_label.Location = new System.Drawing.Point(9, 198);
-            this.CondMin_label.Name = "CondMin_label";
-            this.CondMin_label.Size = new System.Drawing.Size(200, 13);
-            this.CondMin_label.TabIndex = 31;
-            this.CondMin_label.Text = "*";
-            this.CondMin_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label14
-            // 
-            this.label14.BackColor = System.Drawing.SystemColors.Control;
-            this.label14.Location = new System.Drawing.Point(9, 159);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(216, 13);
-            this.label14.TabIndex = 28;
-            this.label14.Text = "Напряжение конденсатора (+) (50-150 В)";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // f2Voltage_label
-            // 
-            this.f2Voltage_label.BackColor = System.Drawing.SystemColors.Control;
-            this.f2Voltage_label.ForeColor = System.Drawing.Color.Green;
-            this.f2Voltage_label.Location = new System.Drawing.Point(9, 62);
-            this.f2Voltage_label.Name = "f2Voltage_label";
-            this.f2Voltage_label.Size = new System.Drawing.Size(200, 13);
-            this.f2Voltage_label.TabIndex = 23;
-            this.f2Voltage_label.Text = "*";
-            this.f2Voltage_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.SystemColors.Control;
-            this.label3.Location = new System.Drawing.Point(9, 102);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(216, 13);
-            this.label3.TabIndex = 24;
-            this.label3.Text = "Напряжение ионизации, В";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // iVoltage_label
-            // 
-            this.iVoltage_label.BackColor = System.Drawing.SystemColors.Control;
-            this.iVoltage_label.ForeColor = System.Drawing.Color.Green;
-            this.iVoltage_label.Location = new System.Drawing.Point(9, 120);
-            this.iVoltage_label.Name = "iVoltage_label";
-            this.iVoltage_label.Size = new System.Drawing.Size(200, 13);
-            this.iVoltage_label.TabIndex = 25;
-            this.iVoltage_label.Text = "*";
-            this.iVoltage_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label5
-            // 
-            this.label5.BackColor = System.Drawing.SystemColors.Control;
-            this.label5.Location = new System.Drawing.Point(9, 133);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(216, 13);
-            this.label5.TabIndex = 32;
-            this.label5.Text = "Ток эмиссии, мкА";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // eCurrent_label
-            // 
-            this.eCurrent_label.BackColor = System.Drawing.SystemColors.Control;
-            this.eCurrent_label.ForeColor = System.Drawing.Color.Green;
-            this.eCurrent_label.Location = new System.Drawing.Point(9, 146);
-            this.eCurrent_label.Name = "eCurrent_label";
-            this.eCurrent_label.Size = new System.Drawing.Size(200, 13);
-            this.eCurrent_label.TabIndex = 33;
-            this.eCurrent_label.Text = "*";
-            this.eCurrent_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label6
-            // 
-            this.label6.BackColor = System.Drawing.SystemColors.Control;
-            this.label6.Location = new System.Drawing.Point(9, 237);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(216, 13);
-            this.label6.TabIndex = 34;
-            this.label6.Text = "Ток нагрева, А";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // hCurrent_label
-            // 
-            this.hCurrent_label.BackColor = System.Drawing.SystemColors.Control;
-            this.hCurrent_label.ForeColor = System.Drawing.Color.Green;
-            this.hCurrent_label.Location = new System.Drawing.Point(9, 250);
-            this.hCurrent_label.Name = "hCurrent_label";
-            this.hCurrent_label.Size = new System.Drawing.Size(200, 13);
-            this.hCurrent_label.TabIndex = 35;
-            this.hCurrent_label.Text = "*";
-            this.hCurrent_label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
             // 
             // groupBox1
             // 
@@ -1292,7 +1057,6 @@ namespace Flavor
             this.ControlToolStrip.ResumeLayout(false);
             this.ControlToolStrip.PerformLayout();
             this.ParameterPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.indicatorPictureBox)).EndInit();
             this.turboPumpBox.ResumeLayout(false);
             this.extraInformationGroupBox.ResumeLayout(false);
             this.extraInformationGroupBox.PerformLayout();
@@ -1334,22 +1098,6 @@ namespace Flavor
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Panel ParameterPanel;
         private System.Windows.Forms.ToolStripMenuItem ParameterToolStripMenuItem;
-        private System.Windows.Forms.Label hCurrent_label;
-        private System.Windows.Forms.Label eCurrent_label;
-        private System.Windows.Forms.Label CondMin_label;
-        private System.Windows.Forms.Label CondPlus_label;
-        private System.Windows.Forms.Label detectorVoltage_label;
-        private System.Windows.Forms.Label iVoltage_label;
-        private System.Windows.Forms.Label f2Voltage_label;
-        private System.Windows.Forms.Label f1Voltage_label;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ToolStripProgressBar vacuumLevelBar;
         private System.Windows.Forms.GroupBox extraInformationGroupBox;
         private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
@@ -1362,8 +1110,6 @@ namespace Flavor
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Label pumpTemperatureLabel;
         private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Label scanVoltageLabel;
-        private System.Windows.Forms.Label label34;
         private System.Windows.Forms.ToolStripMenuItem openConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -1414,7 +1160,6 @@ namespace Flavor
         private System.Windows.Forms.ToolStripMenuItem delaysToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView statusTreeView;
-        private System.Windows.Forms.PictureBox indicatorPictureBox;
     }
 }
 

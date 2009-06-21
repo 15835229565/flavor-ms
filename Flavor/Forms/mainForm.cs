@@ -12,7 +12,7 @@ namespace Flavor
 
         public mainForm()
         {
-            this.gForm = new GraphForm();
+            gForm = new GraphForm();
             InitializeComponent();
             populateStatusTreeView();
             gForm.MdiParent = this;
@@ -61,6 +61,26 @@ namespace Flavor
         private TreeNode vGate2ValueTreeNode;
 
         private TreeNode extraNode;
+        
+        private TreeNode f1VoltageTextTreeNode;
+        private TreeNode f1VoltageValueTreeNode;
+        private TreeNode f2VoltageTextTreeNode;
+        private TreeNode f2VoltageValueTreeNode;
+        private TreeNode scanVoltageTextTreeNode;
+        private TreeNode scanVoltageValueTreeNode;
+        private TreeNode iVoltageTextTreeNode;
+        private TreeNode iVoltageValueTreeNode;
+        private TreeNode eCurrentTextTreeNode;
+        private TreeNode eCurrentValueTreeNode;
+        private TreeNode condPlusTextTreeNode;
+        private TreeNode condPlusValueTreeNode;
+        private TreeNode condMinusTextTreeNode;
+        private TreeNode condMinusValueTreeNode;
+        private TreeNode detectorVoltageTextTreeNode;
+        private TreeNode detectorVoltageValueTreeNode;
+        private TreeNode hCurrentTextTreeNode;
+        private TreeNode hCurrentValueTreeNode;
+        
         private TreeNode turboPumpNode;
 
         private void populateStatusTreeView()
@@ -137,7 +157,76 @@ namespace Flavor
             infoNode.Name = "infoNode";
             infoNode.Text = "Информация о системе";
 
-            extraNode = new TreeNode("Дополнительно");
+            f1VoltageTextTreeNode = new TreeNode();
+            f1VoltageValueTreeNode = new TreeNode();
+            f2VoltageTextTreeNode = new TreeNode();
+            f2VoltageValueTreeNode = new TreeNode();
+            scanVoltageTextTreeNode = new TreeNode();
+            scanVoltageValueTreeNode = new TreeNode();
+            iVoltageTextTreeNode = new TreeNode();
+            iVoltageValueTreeNode = new TreeNode();
+            eCurrentTextTreeNode = new TreeNode();
+            eCurrentValueTreeNode = new TreeNode();
+            condPlusTextTreeNode = new TreeNode();
+            condPlusValueTreeNode = new TreeNode();
+            condMinusTextTreeNode = new TreeNode();
+            condMinusValueTreeNode = new TreeNode();
+            detectorVoltageTextTreeNode = new TreeNode();
+            detectorVoltageValueTreeNode = new TreeNode();
+            hCurrentTextTreeNode = new TreeNode();
+            hCurrentValueTreeNode = new TreeNode();
+
+            // 
+            f1VoltageTextTreeNode.Text = "Фокусирующее напр. (1) В";
+            // 
+            f1VoltageValueTreeNode.ForeColor = Color.Green;
+            f1VoltageValueTreeNode.Text = "*";
+            // 
+            f2VoltageTextTreeNode.Text = "Фокусирующее напр. (2) В";
+            // 
+            f2VoltageValueTreeNode.ForeColor = Color.Green;
+            f2VoltageValueTreeNode.Text = "*";
+            // 
+            scanVoltageTextTreeNode.Text = "Напряжение развертки В";
+            // 
+            scanVoltageValueTreeNode.ForeColor = Color.Green;
+            scanVoltageValueTreeNode.Text = "*";
+            // 
+            iVoltageTextTreeNode.Text = "Напряжение ионизации, В";
+            // 
+            iVoltageValueTreeNode.ForeColor = Color.Green;
+            iVoltageValueTreeNode.Text = "*";
+            // 
+            eCurrentTextTreeNode.Text = "Ток эмиссии, мкА";
+            // 
+            eCurrentValueTreeNode.ForeColor = Color.Green;
+            eCurrentValueTreeNode.Text = "*";
+            // 
+            condPlusTextTreeNode.Text = "Напряжение конденсатора (+) (50-150 В)";
+            // 
+            condPlusValueTreeNode.ForeColor = Color.Green;
+            condPlusValueTreeNode.Text = "*";
+            // 
+            condMinusTextTreeNode.Text = "Напряжение конденсатора (-) (50-150 В)";
+            // 
+            condMinusValueTreeNode.ForeColor = Color.Green;
+            condMinusValueTreeNode.Text = "*";
+            // 
+            detectorVoltageTextTreeNode.Text = "Напряжение на детекторе, В";
+            // 
+            detectorVoltageValueTreeNode.ForeColor = Color.Green;
+            detectorVoltageValueTreeNode.Text = "*";
+            // 
+            hCurrentTextTreeNode.Text = "Ток нагрева, А";
+            // 
+            hCurrentValueTreeNode.ForeColor = Color.Green;
+            hCurrentValueTreeNode.Text = "*"; 
+            
+            extraNode = new TreeNode("Дополнительно",
+                new TreeNode[] { f1VoltageTextTreeNode, f1VoltageValueTreeNode, f2VoltageTextTreeNode, f2VoltageValueTreeNode,
+                    scanVoltageTextTreeNode, scanVoltageValueTreeNode, iVoltageTextTreeNode, iVoltageValueTreeNode, eCurrentTextTreeNode,
+                    eCurrentValueTreeNode, condPlusTextTreeNode, condPlusValueTreeNode, condMinusTextTreeNode, condMinusValueTreeNode,
+                    detectorVoltageTextTreeNode, detectorVoltageValueTreeNode, hCurrentTextTreeNode, hCurrentValueTreeNode});
             extraNode.Name = "extraNode";
             extraNode.Text = "Дополнительно";
 
@@ -217,12 +306,12 @@ namespace Flavor
             measurePanelToolStripMenuItem.Enabled = true;
             measurePanelToolStripMenuItem.Checked = true;
 
-            this.startScanTextLabel.Visible = true;
-            this.label18.Visible = true;
-            this.firstStepLabel.Visible = true;
-            this.lastStepLabel.Visible = true;
-            this.label37.Visible = false;
-            this.peakNumberLabel.Visible = false;
+            startScanTextLabel.Visible = true;
+            label18.Visible = true;
+            firstStepLabel.Visible = true;
+            lastStepLabel.Visible = true;
+            label37.Visible = false;
+            peakNumberLabel.Visible = false;
 
             firstStepLabel.Text = Config.sPoint.ToString();
             lastStepLabel.Text = Config.ePoint.ToString();
@@ -241,8 +330,8 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            this.gForm.setXScaleLimits();
-            this.gForm.CreateGraph();
+            gForm.setXScaleLimits();
+            gForm.CreateGraph();
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Scan();
         }
@@ -265,12 +354,12 @@ namespace Flavor
             measurePanelToolStripMenuItem.Enabled = true;
             measurePanelToolStripMenuItem.Checked = true;
 
-            this.startScanTextLabel.Visible = false;
-            this.label18.Visible = false;
-            this.firstStepLabel.Visible = false;
-            this.lastStepLabel.Visible = false;
-            this.label37.Visible = true;
-            this.peakNumberLabel.Visible = true;
+            startScanTextLabel.Visible = false;
+            label18.Visible = false;
+            firstStepLabel.Visible = false;
+            lastStepLabel.Visible = false;
+            label37.Visible = true;
+            peakNumberLabel.Visible = true;
 
             etime_label.Text = Config.eTimeReal.ToString();
             itime_label.Text = Config.iTimeReal.ToString();
@@ -292,7 +381,7 @@ namespace Flavor
             cancelScanButton.Visible = true;
 
             Graph.ResetLoadedPointLists();
-            this.gForm.setXScaleLimits(Config.PreciseData);
+            gForm.setXScaleLimits(Config.PreciseData);
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.Sense();
         }
@@ -321,7 +410,7 @@ namespace Flavor
         }
         private void RefreshUserMessage(string msg)
         {
-            this.measure_StatusLabel.Text = msg;
+            measure_StatusLabel.Text = msg;
         }
 
         private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate)
@@ -425,52 +514,52 @@ namespace Flavor
             switch (Device.sysState)
             {
                 case (byte)Device.DeviceStates.Start:
-                    this.systemStateValueTreeNode.Text = "Запуск";
-                    this.systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.Text = "Запуск";
+                    systemStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.DeviceStates.Init:
-                    this.systemStateValueTreeNode.Text = "Инициализация";
-                    this.systemStateValueTreeNode.ForeColor = Color.Blue;
+                    systemStateValueTreeNode.Text = "Инициализация";
+                    systemStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.DeviceStates.VacuumInit:
-                    this.systemStateValueTreeNode.Text = "Инициализация вакуума";
-                    this.systemStateValueTreeNode.ForeColor = Color.Blue;
+                    systemStateValueTreeNode.Text = "Инициализация вакуума";
+                    systemStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.DeviceStates.WaitHighVoltage:
-                    this.systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
-                    this.systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
+                    systemStateValueTreeNode.ForeColor = Color.Green;
                     break;
                 case (byte)Device.DeviceStates.Ready:
-                    this.systemStateValueTreeNode.Text = "Готова к измерению";
-                    this.systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.Text = "Готова к измерению";
+                    systemStateValueTreeNode.ForeColor = Color.Green;
                     break;
                 case (byte)Device.DeviceStates.Measuring:
-                    this.systemStateValueTreeNode.Text = "Производятся измерения";
-                    this.systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.Text = "Производятся измерения";
+                    systemStateValueTreeNode.ForeColor = Color.Green;
                     break;
                 case (byte)Device.DeviceStates.Measured:
-                    this.systemStateValueTreeNode.Text = "Измерения закончены";
-                    this.systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.Text = "Измерения закончены";
+                    systemStateValueTreeNode.ForeColor = Color.Green;
                     break;
                 case (byte)Device.DeviceStates.Shutdowning:
-                    this.systemStateValueTreeNode.Text = "Идет выключение";
-                    this.systemStateValueTreeNode.ForeColor = Color.Blue;
+                    systemStateValueTreeNode.Text = "Идет выключение";
+                    systemStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.DeviceStates.Shutdown:
-                    this.systemStateValueTreeNode.Text = "Выключение";
-                    this.systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.Text = "Выключение";
+                    systemStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.DeviceStates.TurboPumpFailure:
-                    this.systemStateValueTreeNode.Text = "Отказ турбонасоса";
-                    this.systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.Text = "Отказ турбонасоса";
+                    systemStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.DeviceStates.VacuumCrash:
-                    this.systemStateValueTreeNode.Text = "Потеря вакуума";
-                    this.systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.Text = "Потеря вакуума";
+                    systemStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 default:
-                    this.systemStateValueTreeNode.Text = "Неизвестно";
-                    this.systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.Text = "Неизвестно";
+                    systemStateValueTreeNode.ForeColor = Color.Red;
                     break;
             }
         }
@@ -489,12 +578,12 @@ namespace Flavor
         }
         private void RefreshTurboPumpStatus()
         {
-            this.turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
-            this.turboCurrentLabel.Text = string.Format("{0:f0}", Device.TurboPump.Current);
-            this.pwmLabel.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
-            this.pumpTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.PumpTemperature);
-            this.driveTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.DriveTemperature);
-            this.operationTimeLabel.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
+            turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
+            turboCurrentLabel.Text = string.Format("{0:f0}", Device.TurboPump.Current);
+            pwmLabel.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
+            pumpTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.PumpTemperature);
+            driveTemperatureLabel.Text = string.Format("{0:f0}", Device.TurboPump.DriveTemperature);
+            operationTimeLabel.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
         }
 
         private void InvokeRefreshDeviceStatus()
@@ -513,66 +602,66 @@ namespace Flavor
         {
             if (Device.fPumpOn)
             {
-                this.forPumpOnValueTreeNode.ForeColor = Color.Green;
-                this.forPumpOnValueTreeNode.Text = "Включен";
+                forPumpOnValueTreeNode.ForeColor = Color.Green;
+                forPumpOnValueTreeNode.Text = "Включен";
             }
             else
             {
-                this.forPumpOnValueTreeNode.ForeColor = Color.Red;
-                this.forPumpOnValueTreeNode.Text = "Выключен";
+                forPumpOnValueTreeNode.ForeColor = Color.Red;
+                forPumpOnValueTreeNode.Text = "Выключен";
             }
             if (Device.tPumpOn)
             {
-                this.turboPumpOnValueTreeNode.ForeColor = Color.Green;
-                this.turboPumpOnValueTreeNode.Text = "Включен";
+                turboPumpOnValueTreeNode.ForeColor = Color.Green;
+                turboPumpOnValueTreeNode.Text = "Включен";
             }
             else
             {
-                this.turboPumpOnValueTreeNode.ForeColor = Color.Red;
-                this.turboPumpOnValueTreeNode.Text = "Выключен";
+                turboPumpOnValueTreeNode.ForeColor = Color.Red;
+                turboPumpOnValueTreeNode.Text = "Выключен";
             }
-            this.forVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.fVacuumReal);
-            this.highVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.hVacuumReal);
+            forVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.fVacuumReal);
+            highVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.hVacuumReal);
             if (Device.highVoltageOn)
             {
-                this.hardwareBlockValueTreeNode.ForeColor = Color.Green;
-                this.hardwareBlockValueTreeNode.Text = "Включено";
+                hardwareBlockValueTreeNode.ForeColor = Color.Green;
+                hardwareBlockValueTreeNode.Text = "Включено";
             }
             else
             {
-                this.hardwareBlockValueTreeNode.ForeColor = Color.Red;
-                this.hardwareBlockValueTreeNode.Text = "Выключено";
+                hardwareBlockValueTreeNode.ForeColor = Color.Red;
+                hardwareBlockValueTreeNode.Text = "Выключено";
             }
             if (Device.highVacuumValve)
             {
-                this.vGate1ValueTreeNode.ForeColor = Color.Green;
-                this.vGate1ValueTreeNode.Text = "Открыт";
+                vGate1ValueTreeNode.ForeColor = Color.Green;
+                vGate1ValueTreeNode.Text = "Открыт";
             }
             else
             {
-                this.vGate1ValueTreeNode.ForeColor = Color.Red;
-                this.vGate1ValueTreeNode.Text = "Закрыт";
+                vGate1ValueTreeNode.ForeColor = Color.Red;
+                vGate1ValueTreeNode.Text = "Закрыт";
             }
             if (Device.probeValve)
             {
-                this.vGate2ValueTreeNode.ForeColor = Color.Green;
-                this.vGate2ValueTreeNode.Text = "Открыт";
+                vGate2ValueTreeNode.ForeColor = Color.Green;
+                vGate2ValueTreeNode.Text = "Открыт";
             }
             else
             {
-                this.vGate2ValueTreeNode.ForeColor = Color.Red;
-                this.vGate2ValueTreeNode.Text = "Закрыт";
+                vGate2ValueTreeNode.ForeColor = Color.Red;
+                vGate2ValueTreeNode.Text = "Закрыт";
             }
-            this.f1Voltage_label.Text = string.Format("{0:f2}", Device.fV1Real);
-            this.f2Voltage_label.Text = string.Format("{0:f2}", Device.fV2Real);
-            this.iVoltage_label.Text = string.Format("{0:f2}", Device.iVoltageReal);
-            this.detectorVoltage_label.Text = string.Format("{0:f1}", Device.dVoltageReal);
-            this.CondPlus_label.Text = string.Format("{0:f2}", Device.cVPlusReal);
-            this.CondMin_label.Text = string.Format("{0:f2}", Device.cVMinReal);
-            this.scanVoltageLabel.Text = string.Format("{0:f1}", Device.sVoltageReal);
-            this.eCurrent_label.Text = string.Format("{0:f3}", Device.eCurrentReal);
-            this.hCurrent_label.Text = string.Format("{0:f3}", Device.hCurrentReal);
-            this.turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
+            f1VoltageValueTreeNode.Text = string.Format("{0:f2}", Device.fV1Real);
+            f2VoltageValueTreeNode.Text = string.Format("{0:f2}", Device.fV2Real);
+            iVoltageValueTreeNode.Text = string.Format("{0:f2}", Device.iVoltageReal);
+            detectorVoltageValueTreeNode.Text = string.Format("{0:f1}", Device.dVoltageReal);
+            condPlusValueTreeNode.Text = string.Format("{0:f2}", Device.cVPlusReal);
+            condMinusValueTreeNode.Text = string.Format("{0:f2}", Device.cVMinReal);
+            scanVoltageValueTreeNode.Text = string.Format("{0:f1}", Device.sVoltageReal);
+            eCurrentValueTreeNode.Text = string.Format("{0:f3}", Device.eCurrentReal);
+            hCurrentValueTreeNode.Text = string.Format("{0:f3}", Device.hCurrentReal);
+            turboSpeedLabel.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
         }
 
         private void InvokeRefreshVacuumState()
@@ -592,92 +681,92 @@ namespace Flavor
             switch (Device.vacState) 
             {
                 case (byte)Device.VacuumStates.Idle:
-                    this.vacuumStateValueTreeNode.Text = "Бездействие";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Бездействие";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.Init:
-                    this.vacuumStateValueTreeNode.Text = "Инициализация";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Инициализация";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.StartingForvacuumPump:
-                    this.vacuumStateValueTreeNode.Text = "Включение форнасоса";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Включение форнасоса";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.PumpingForvacuum:
-                    this.vacuumStateValueTreeNode.Text = "Откачка форвакуума";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Откачка форвакуума";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.DelayPumpingHighVacuumByForvac:
-                    this.vacuumStateValueTreeNode.Text = "Задержка высокого вакуума из-за фор";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Задержка высокого вакуума из-за фор";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.PumpingHighVacuumByForvac:
-                    this.vacuumStateValueTreeNode.Text = "Откачка высокого вакуума форнасосом";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Откачка высокого вакуума форнасосом";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.PumpingHighVacuumByTurbo:
-                    this.vacuumStateValueTreeNode.Text = "Откачка турбо";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Откачка турбо";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.Ready:
-                    this.vacuumStateValueTreeNode.Text = "Готово";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Green;
+                    vacuumStateValueTreeNode.Text = "Готово";
+                    vacuumStateValueTreeNode.ForeColor = Color.Green;
                     break;
                 case (byte)Device.VacuumStates.ShutdownInit:
-                    this.vacuumStateValueTreeNode.Text = "Инициализация отключения";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Инициализация отключения";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.ShutdownDelay:
-                    this.vacuumStateValueTreeNode.Text = "Задержка отключения";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Задержка отключения";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.ShutdownPumpProbe:
-                    this.vacuumStateValueTreeNode.Text = "Отключение датчика насоса";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Отключение датчика насоса";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.Shutdowned:
-                    this.vacuumStateValueTreeNode.Text = "Отключено";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Отключено";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.ShutdownTurboPump:
-                    this.vacuumStateValueTreeNode.Text = "Откачка при выключении";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.Text = "Откачка при выключении";
+                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
                     break;
                 case (byte)Device.VacuumStates.BadHighVacuum:
-                    this.vacuumStateValueTreeNode.Text = "Плохой высокий вакуум";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Плохой высокий вакуум";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.BadForvacuum:
-                    this.vacuumStateValueTreeNode.Text = "Плохой форвакуум";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Плохой форвакуум";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.ForvacuumFailure:
-                    this.vacuumStateValueTreeNode.Text = "Отказ форвакуума";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Отказ форвакуума";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.LargeLeak:
-                    this.vacuumStateValueTreeNode.Text = "Большая течь";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Большая течь";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.SmallLeak:
-                    this.vacuumStateValueTreeNode.Text = "Малая течь";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Малая течь";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.ThermoCoupleFailure:
-                    this.vacuumStateValueTreeNode.Text = "Отказ термопары";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Отказ термопары";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.TurboPumpFailure:
-                    this.vacuumStateValueTreeNode.Text = "Отказ турбонасоса";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Отказ турбонасоса";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 case (byte)Device.VacuumStates.VacuumShutdownProbeLeak:
-                    this.vacuumStateValueTreeNode.Text = "Отключение датчика вакуума";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Отключение датчика вакуума";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
                 default:
-                    this.vacuumStateValueTreeNode.Text = "Неизвестное состояние";
-                    this.vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.Text = "Неизвестное состояние";
+                    vacuumStateValueTreeNode.ForeColor = Color.Red;
                     break;
             }
         }
