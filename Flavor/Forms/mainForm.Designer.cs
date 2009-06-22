@@ -28,6 +28,7 @@ namespace Flavor
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             this.initSys_butt = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -104,6 +105,7 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
+            this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -428,7 +430,6 @@ namespace Flavor
             // connectToolStripButton
             // 
             this.connectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.connectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("connectToolStripButton.Image")));
             this.connectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.connectToolStripButton.Name = "connectToolStripButton";
             this.connectToolStripButton.Size = new System.Drawing.Size(67, 22);
@@ -457,6 +458,7 @@ namespace Flavor
             this.statusTreeView.ShowLines = false;
             this.statusTreeView.ShowPlusMinus = false;
             this.statusTreeView.Size = new System.Drawing.Size(234, 895);
+            this.statusTreeView.StateImageList = this.statusTreeViewStateImageList;
             this.statusTreeView.TabIndex = 0;
             // 
             // groupBox1
@@ -855,6 +857,13 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
+            // statusTreeViewStateImageList
+            // 
+            this.statusTreeViewStateImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusTreeViewStateImageList.ImageStream")));
+            this.statusTreeViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
+            this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -966,6 +975,7 @@ namespace Flavor
         private System.Windows.Forms.ToolStripMenuItem delaysToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView statusTreeView;
+        private System.Windows.Forms.ImageList statusTreeViewStateImageList;
     }
 }
 
