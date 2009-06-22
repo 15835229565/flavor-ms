@@ -581,6 +581,7 @@ namespace Flavor
                                     Commander.pStatePrev = Commander.pState;
                                     Commander.pState = Commander.programStates.Ready;
                                     Commander.pStatePrev = Commander.pState;
+                                    OnScanCancelled();//!!!
                                     Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
                                     Config.AutoSavePreciseSpecterFile();
                                 }
@@ -588,6 +589,7 @@ namespace Flavor
                         }
                         else
                         {
+                            OnScanCancelled();//!!!
                             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
                             if (!Commander.notRareModeRequested) Commander.StopScanStatusCheck();
                             Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit

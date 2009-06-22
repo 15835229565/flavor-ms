@@ -259,6 +259,7 @@ namespace Flavor
             gForm.setXScaleLimits();
             gForm.CreateGraph();
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
+            gForm.specterSavingEnabled = false;
             Commander.Scan();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e)
@@ -309,6 +310,7 @@ namespace Flavor
             Graph.ResetLoadedPointLists();
             gForm.setXScaleLimits(Config.PreciseData);
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
+            gForm.specterSavingEnabled = false;
             Commander.Sense();
         }
 
@@ -400,7 +402,7 @@ namespace Flavor
                         else
                         {
                             gForm.yAxisChange();
-                            gForm.specterSavingEnabled = true;
+                            //gForm.specterSavingEnabled = true;
                             
                             detector1CountsLabel.Visible = true;
                             label15.Visible = true;
@@ -837,6 +839,7 @@ namespace Flavor
                     measurePanelToolStripMenuItem.Enabled = true;
 
                     gForm.specterOpeningEnabled = false;
+                    //gForm.specterSavingEnabled = false; 
                     break;
                 case Commander.programStates.WaitShutdown:
                     connectToolStripButton.Enabled = false;
@@ -892,6 +895,7 @@ namespace Flavor
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             cancelScanButton.Enabled = false;
             cancelScanButton.Visible = false;
+            gForm.specterSavingEnabled = true; 
         }
         
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e)
