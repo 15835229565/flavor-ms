@@ -34,12 +34,6 @@ namespace Flavor
             myPED = ped;
             myPLS = pls;
         }
-        /*public PointPairListPlus(PointPairListPlus other)
-            : base(other)
-        {
-            myPED = null;
-            myPLS = null;
-        }*/
         public PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
             : base(other)
         {
@@ -47,9 +41,141 @@ namespace Flavor
             myPLS = pls;
         }
     }
-
+    #region TreeNodes
+    internal class TreeNodePlus : System.Windows.Forms.TreeNode
+    {
+        public enum States
+        {
+            Ok,
+            Warning,
+            Error
+        }
+        private States myState = States.Ok;
+        public States State
+        {
+            get { return myState; }
+            set 
+            {
+                if (myState != value)
+                {
+                    States previous = myState;
+                    myState = value;
+                    if (Parent is TreeNodePlus)
+                    {
+                        (Parent as TreeNodePlus).computeState(previous, myState);
+                    }
+                    setStateImageKey();
+                }
+            }
+        }
+        public TreeNodePlus(string text, TreeNode[] nodes)
+            : base(text, nodes) { }
+        protected TreeNodePlus()
+            : base() { }
+        protected void setStateImageKey()
+        {
+            switch (myState)
+            {
+                case States.Ok:
+                    StateImageKey = "";
+                    break;
+                case States.Warning:
+                    StateImageKey = "warning";
+                    break;
+                case States.Error:
+                    StateImageKey = "error";
+                    break;
+            }
+        }
+        private void computeState(States previous, States current)
+        {
+            if (myState < previous)
+            {
+                // illegal state
+                throw new InvalidOperationException();
+            }
+            if (myState < current)
+            {
+                State = current;
+                return;
+            }
+            if (myState > current)
+            {
+                if (previous < current)
+                {
+                    return;
+                }
+                State = computeState(current);
+            }
+        }
+        private States computeState(States hint)
+        {
+            States result = hint;
+            foreach (TreeNodePlus node in Nodes)
+            {
+                if (result < node.State)
+                {
+                    result = node.State;
+                    if (result == States.Error)
+                        return result;
+                }
+            }
+            return result;
+        }
+    }
+    internal class TreeNodeLeaf : TreeNodePlus
+    {
+        public new States State
+        {
+            get { return base.State; }
+            set
+            {
+                base.State = value;
+                setForeColor();
+            }
+        }
+        private new TreeNodeCollection Nodes
+        {
+            get { return base.Nodes; }
+        }
+        private void setForeColor()
+        {
+            StateImageKey = "";
+            switch (State)
+            {
+                case States.Ok:
+                    ForeColor = Color.Green;
+                    break;
+                case States.Warning:
+                    ForeColor = Color.Blue;
+                    break;
+                case States.Error:
+                    ForeColor = Color.Red;
+                    break;
+            }
+        }
+        public TreeNodeLeaf()
+            : base()
+        {
+            setForeColor();
+        }
+    }
+    internal class TreeNodePair : TreeNodePlus
+    {
+        private new TreeNodeCollection Nodes
+        {
+            get { return base.Nodes; }
+        }
+        public TreeNodePair(string text, TreeNodeLeaf valueNode): base()
+        {
+            Text = text;
+            Nodes.Add(valueNode);
+        }
+    }
+    #endregion
     static class Utility
     {
+        #region PreciseEditorData
         public class PreciseEditorData
         {
             public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr)
@@ -156,7 +282,8 @@ namespace Flavor
                 return 0;
             }
         }
-
+        #endregion
+        #region PreciseEditorRows
         public class PreciseEditorLabelRow
         {
             protected System.Windows.Forms.Label label8;
@@ -559,7 +686,8 @@ namespace Flavor
                 usePeakCheckBox.Checked = ped.Use;
             }
         }
-        //Comparers and predicate for sorting and finding Utility.PreciseEditorData objects in List
+        #endregion
+        #region Comparers and predicate for sorting and finding Utility.PreciseEditorData objects in List
         internal static int ComparePreciseEditorData(PreciseEditorData ped1, PreciseEditorData ped2)
         {
             if (ped1 == null)
@@ -627,7 +755,8 @@ namespace Flavor
         {
             return ped.Use;
         }
-        //Textbox charset limitations
+        #endregion
+        #region Textbox charset limitations
         internal static void oneDigitTextbox_TextChanged(object sender, EventArgs e)
         {
             char[] numbers = { '1', '2' };
@@ -690,5 +819,6 @@ namespace Flavor
             }
             ((TextBox)sender).Text = outputString;
         }
+        #endregion
     }
 }

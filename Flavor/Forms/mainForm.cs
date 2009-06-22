@@ -37,192 +37,146 @@ namespace Flavor
             Commander.pStatePrev = Commander.pState;
         }
         #region Status TreeView population
+        private TreeNodeLeaf systemStateValueTreeNode;
+        private TreeNodeLeaf vacuumStateValueTreeNode;
+        private TreeNodeLeaf forPumpOnValueTreeNode;
+        private TreeNodeLeaf turboPumpOnValueTreeNode;
+        private TreeNodeLeaf forVacuumValueTreeNode;
+        private TreeNodeLeaf highVacuumValueTreeNode;
+        private TreeNodeLeaf hardwareBlockValueTreeNode;
+        private TreeNodeLeaf vGate1ValueTreeNode;
+        private TreeNodeLeaf vGate2ValueTreeNode;
 
-        private TreeNode rootNode;
+        private TreeNodeLeaf f1VoltageValueTreeNode;
+        private TreeNodeLeaf f2VoltageValueTreeNode;
+        private TreeNodeLeaf scanVoltageValueTreeNode;
+        private TreeNodeLeaf iVoltageValueTreeNode;
+        private TreeNodeLeaf eCurrentValueTreeNode;
+        private TreeNodeLeaf condPlusValueTreeNode;
+        private TreeNodeLeaf condMinusValueTreeNode;
+        private TreeNodeLeaf detectorVoltageValueTreeNode;
+        private TreeNodeLeaf hCurrentValueTreeNode;
 
-        private TreeNode infoNode;
-
-        private TreeNode systemStateTextTreeNode;
-        private TreeNode systemStateValueTreeNode;
-        private TreeNode vacuumStateTextTreeNode;
-        private TreeNode vacuumStateValueTreeNode;
-        private TreeNode forPumpOnTextTreeNode;
-        private TreeNode forPumpOnValueTreeNode;
-        private TreeNode turboPumpOnTextTreeNode;
-        private TreeNode turboPumpOnValueTreeNode;
-        private TreeNode forVacuumTextTreeNode;
-        private TreeNode forVacuumValueTreeNode;
-        private TreeNode highVacuumTextTreeNode;
-        private TreeNode highVacuumValueTreeNode;
-        private TreeNode hardwareBlockTextTreeNode;
-        private TreeNode hardwareBlockValueTreeNode;
-        private TreeNode vGate1TextTreeNode;
-        private TreeNode vGate1ValueTreeNode;
-        private TreeNode vGate2TextTreeNode;
-        private TreeNode vGate2ValueTreeNode;
-
-        private TreeNode extraNode;
-        
-        private TreeNode f1VoltageTextTreeNode;
-        private TreeNode f1VoltageValueTreeNode;
-        private TreeNode f2VoltageTextTreeNode;
-        private TreeNode f2VoltageValueTreeNode;
-        private TreeNode scanVoltageTextTreeNode;
-        private TreeNode scanVoltageValueTreeNode;
-        private TreeNode iVoltageTextTreeNode;
-        private TreeNode iVoltageValueTreeNode;
-        private TreeNode eCurrentTextTreeNode;
-        private TreeNode eCurrentValueTreeNode;
-        private TreeNode condPlusTextTreeNode;
-        private TreeNode condPlusValueTreeNode;
-        private TreeNode condMinusTextTreeNode;
-        private TreeNode condMinusValueTreeNode;
-        private TreeNode detectorVoltageTextTreeNode;
-        private TreeNode detectorVoltageValueTreeNode;
-        private TreeNode hCurrentTextTreeNode;
-        private TreeNode hCurrentValueTreeNode;
-        
-        private TreeNode turboPumpNode;
-
-        private TreeNode turboSpeedTextTreeNode;
-        private TreeNode turboSpeedValueTreeNode;
-        private TreeNode turboCurrentTextTreeNode;
-        private TreeNode turboCurrentValueTreeNode;
-        private TreeNode pumpTemperatureTextTreeNode;
-        private TreeNode pumpTemperatureValueTreeNode;
-        private TreeNode driveTemperatureTextTreeNode;
-        private TreeNode driveTemperatureValueTreeNode;
-        private TreeNode pwmTextTreeNode;
-        private TreeNode pwmValueTreeNode;
-        private TreeNode operationTimeTextTreeNode;
-        private TreeNode operationTimeValueTreeNode;
+        private TreeNodeLeaf turboSpeedValueTreeNode;
+        private TreeNodeLeaf turboCurrentValueTreeNode;
+        private TreeNodeLeaf pumpTemperatureValueTreeNode;
+        private TreeNodeLeaf driveTemperatureValueTreeNode;
+        private TreeNodeLeaf pwmValueTreeNode;
+        private TreeNodeLeaf operationTimeValueTreeNode;
         
         private void populateStatusTreeView()
         {
-            systemStateTextTreeNode = new TreeNode();
-            systemStateValueTreeNode = new TreeNode();
-            vacuumStateTextTreeNode = new TreeNode();
-            vacuumStateValueTreeNode = new TreeNode();
-            forPumpOnTextTreeNode = new TreeNode();
-            forPumpOnValueTreeNode = new TreeNode();
-            turboPumpOnTextTreeNode = new TreeNode();
-            turboPumpOnValueTreeNode = new TreeNode();
-            forVacuumTextTreeNode = new TreeNode();
-            forVacuumValueTreeNode = new TreeNode();
-            highVacuumTextTreeNode = new TreeNode();
-            highVacuumValueTreeNode = new TreeNode();
-            hardwareBlockTextTreeNode = new TreeNode();
-            hardwareBlockValueTreeNode = new TreeNode();
-            vGate1TextTreeNode = new TreeNode();
-            vGate1ValueTreeNode = new TreeNode();
-            vGate2TextTreeNode = new TreeNode();
-            vGate2ValueTreeNode = new TreeNode();
+            TreeNodePlus rootNode;
+        
+            TreeNodePlus infoNode;
 
-            systemStateTextTreeNode.Text = "Состояние системы";
-            vacuumStateTextTreeNode.Text = "Состояние вакуума";
-            forPumpOnTextTreeNode.Text = "Форвакуумный насос";
-            turboPumpOnTextTreeNode.Text = "Турбомолекулярный насос";
-            forVacuumTextTreeNode.Text = "Уровень вакуума (фор)";
-            forVacuumValueTreeNode.ForeColor = Color.Green;
-            highVacuumTextTreeNode.Text = "Уровень вакуума (высок)";
-            highVacuumValueTreeNode.ForeColor = Color.Green;
-            hardwareBlockTextTreeNode.Text = "Высокое напряжение";
-            vGate1TextTreeNode.Text = "Вакуумный вентиль 1";
-            vGate2TextTreeNode.Text = "Вакуумный вентиль 2";
-            
-            infoNode = new TreeNode("Информация о системе",
-                new TreeNode[] { systemStateTextTreeNode, systemStateValueTreeNode, vacuumStateTextTreeNode, vacuumStateValueTreeNode,
-                    forPumpOnTextTreeNode, forPumpOnValueTreeNode, turboPumpOnTextTreeNode, turboPumpOnValueTreeNode, forVacuumTextTreeNode,
-                    forVacuumValueTreeNode, highVacuumTextTreeNode, highVacuumValueTreeNode, hardwareBlockTextTreeNode, hardwareBlockValueTreeNode,
-                    vGate1TextTreeNode, vGate1ValueTreeNode, vGate2TextTreeNode, vGate2ValueTreeNode });
+            TreeNodePair systemStateTextTreeNode;
+            TreeNodePair vacuumStateTextTreeNode;
+            TreeNodePair forPumpOnTextTreeNode;
+            TreeNodePair turboPumpOnTextTreeNode;
+            TreeNodePair forVacuumTextTreeNode;
+            TreeNodePair highVacuumTextTreeNode;
+            TreeNodePair hardwareBlockTextTreeNode;
+            TreeNodePair vGate1TextTreeNode;
+            TreeNodePair vGate2TextTreeNode;
+
+            TreeNodePlus extraNode;
+
+            TreeNodePair f1VoltageTextTreeNode;
+            TreeNodePair f2VoltageTextTreeNode;
+            TreeNodePair scanVoltageTextTreeNode;
+            TreeNodePair iVoltageTextTreeNode;
+            TreeNodePair eCurrentTextTreeNode;
+            TreeNodePair condPlusTextTreeNode;
+            TreeNodePair condMinusTextTreeNode;
+            TreeNodePair detectorVoltageTextTreeNode;
+            TreeNodePair hCurrentTextTreeNode;
+        
+            TreeNodePlus turboPumpNode;
+
+            TreeNodePair turboSpeedTextTreeNode;
+            TreeNodePair turboCurrentTextTreeNode;
+            TreeNodePair pumpTemperatureTextTreeNode;
+            TreeNodePair driveTemperatureTextTreeNode;
+            TreeNodePair pwmTextTreeNode;
+            TreeNodePair operationTimeTextTreeNode;
+
+            systemStateValueTreeNode = new TreeNodeLeaf();
+            systemStateTextTreeNode = new TreeNodePair("Состояние системы", systemStateValueTreeNode);
+            vacuumStateValueTreeNode = new TreeNodeLeaf();
+            vacuumStateTextTreeNode = new TreeNodePair("Состояние вакуума", vacuumStateValueTreeNode);
+            forPumpOnValueTreeNode = new TreeNodeLeaf();
+            forPumpOnTextTreeNode = new TreeNodePair("Форвакуумный насос", forPumpOnValueTreeNode);
+            turboPumpOnValueTreeNode = new TreeNodeLeaf();
+            turboPumpOnTextTreeNode = new TreeNodePair("Турбомолекулярный насос", turboPumpOnValueTreeNode);
+            forVacuumValueTreeNode = new TreeNodeLeaf();
+            //forVacuumValueTreeNode.ForeColor = Color.Green;
+            forVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (фор)", forVacuumValueTreeNode);
+            highVacuumValueTreeNode = new TreeNodeLeaf();
+            //highVacuumValueTreeNode.ForeColor = Color.Green;
+            highVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (высок)", highVacuumValueTreeNode);
+            hardwareBlockValueTreeNode = new TreeNodeLeaf();
+            hardwareBlockTextTreeNode = new TreeNodePair("Высокое напряжение", hardwareBlockValueTreeNode);
+            vGate1ValueTreeNode = new TreeNodeLeaf();
+            vGate1TextTreeNode = new TreeNodePair("Вакуумный вентиль 1", vGate1ValueTreeNode);
+            vGate2ValueTreeNode = new TreeNodeLeaf();
+            vGate2TextTreeNode = new TreeNodePair("Вакуумный вентиль 2", vGate2ValueTreeNode);
+
+            infoNode = new TreeNodePlus("Информация о системе",
+                new TreeNode[] { systemStateTextTreeNode, vacuumStateTextTreeNode, forPumpOnTextTreeNode, turboPumpOnTextTreeNode, 
+                    forVacuumTextTreeNode, highVacuumTextTreeNode, hardwareBlockTextTreeNode, vGate1TextTreeNode, vGate2TextTreeNode });
             infoNode.Name = "infoNode";
             infoNode.Text = "Информация о системе";
 
-            f1VoltageTextTreeNode = new TreeNode();
-            f1VoltageValueTreeNode = new TreeNode();
-            f2VoltageTextTreeNode = new TreeNode();
-            f2VoltageValueTreeNode = new TreeNode();
-            scanVoltageTextTreeNode = new TreeNode();
-            scanVoltageValueTreeNode = new TreeNode();
-            iVoltageTextTreeNode = new TreeNode();
-            iVoltageValueTreeNode = new TreeNode();
-            eCurrentTextTreeNode = new TreeNode();
-            eCurrentValueTreeNode = new TreeNode();
-            condPlusTextTreeNode = new TreeNode();
-            condPlusValueTreeNode = new TreeNode();
-            condMinusTextTreeNode = new TreeNode();
-            condMinusValueTreeNode = new TreeNode();
-            detectorVoltageTextTreeNode = new TreeNode();
-            detectorVoltageValueTreeNode = new TreeNode();
-            hCurrentTextTreeNode = new TreeNode();
-            hCurrentValueTreeNode = new TreeNode();
+            f1VoltageValueTreeNode = new TreeNodeLeaf();
+            f1VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (1) В", f1VoltageValueTreeNode);
+            f2VoltageValueTreeNode = new TreeNodeLeaf();
+            f2VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (2) В", f2VoltageValueTreeNode);
+            scanVoltageValueTreeNode = new TreeNodeLeaf();
+            scanVoltageTextTreeNode = new TreeNodePair("Напряжение развертки В", scanVoltageValueTreeNode);
+            iVoltageValueTreeNode = new TreeNodeLeaf();
+            iVoltageTextTreeNode = new TreeNodePair("Напряжение ионизации, В", iVoltageValueTreeNode);
+            eCurrentValueTreeNode = new TreeNodeLeaf();
+            eCurrentTextTreeNode = new TreeNodePair("Ток эмиссии, мкА", eCurrentValueTreeNode);
+            condPlusValueTreeNode = new TreeNodeLeaf();
+            condPlusTextTreeNode = new TreeNodePair("Напряжение конденсатора (+) (50-150 В)", condPlusValueTreeNode);
+            condMinusValueTreeNode = new TreeNodeLeaf();
+            condMinusTextTreeNode = new TreeNodePair("Напряжение конденсатора (-) (50-150 В)", condMinusValueTreeNode);
+            detectorVoltageValueTreeNode = new TreeNodeLeaf();
+            detectorVoltageTextTreeNode = new TreeNodePair("Напряжение на детекторе, В", detectorVoltageValueTreeNode);
+            hCurrentValueTreeNode = new TreeNodeLeaf();
+            hCurrentTextTreeNode = new TreeNodePair("Ток нагрева, А", hCurrentValueTreeNode);
 
-            f1VoltageTextTreeNode.Text = "Фокусирующее напр. (1) В";
-            f1VoltageValueTreeNode.ForeColor = Color.Green;
-            f2VoltageTextTreeNode.Text = "Фокусирующее напр. (2) В";
-            f2VoltageValueTreeNode.ForeColor = Color.Green;
-            scanVoltageTextTreeNode.Text = "Напряжение развертки В";
-            scanVoltageValueTreeNode.ForeColor = Color.Green;
-            iVoltageTextTreeNode.Text = "Напряжение ионизации, В";
-            iVoltageValueTreeNode.ForeColor = Color.Green;
-            eCurrentTextTreeNode.Text = "Ток эмиссии, мкА";
-            eCurrentValueTreeNode.ForeColor = Color.Green;
-            condPlusTextTreeNode.Text = "Напряжение конденсатора (+) (50-150 В)";
-            condPlusValueTreeNode.ForeColor = Color.Green;
-            condMinusTextTreeNode.Text = "Напряжение конденсатора (-) (50-150 В)";
-            condMinusValueTreeNode.ForeColor = Color.Green;
-            detectorVoltageTextTreeNode.Text = "Напряжение на детекторе, В";
-            detectorVoltageValueTreeNode.ForeColor = Color.Green;
-            hCurrentTextTreeNode.Text = "Ток нагрева, А";
-            hCurrentValueTreeNode.ForeColor = Color.Green;
-            
-            extraNode = new TreeNode("Дополнительно",
-                new TreeNode[] { f1VoltageTextTreeNode, f1VoltageValueTreeNode, f2VoltageTextTreeNode, f2VoltageValueTreeNode,
-                    scanVoltageTextTreeNode, scanVoltageValueTreeNode, iVoltageTextTreeNode, iVoltageValueTreeNode, eCurrentTextTreeNode,
-                    eCurrentValueTreeNode, condPlusTextTreeNode, condPlusValueTreeNode, condMinusTextTreeNode, condMinusValueTreeNode,
-                    detectorVoltageTextTreeNode, detectorVoltageValueTreeNode, hCurrentTextTreeNode, hCurrentValueTreeNode});
+            extraNode = new TreeNodePlus("Дополнительно",
+                new TreeNode[] { f1VoltageTextTreeNode, f2VoltageTextTreeNode, scanVoltageTextTreeNode, iVoltageTextTreeNode, eCurrentTextTreeNode,
+                    condPlusTextTreeNode, condMinusTextTreeNode, detectorVoltageTextTreeNode,  hCurrentTextTreeNode });
             extraNode.Name = "extraNode";
             extraNode.Text = "Дополнительно";
 
-            turboSpeedTextTreeNode = new TreeNode();
-            turboSpeedValueTreeNode = new TreeNode();
-            turboCurrentTextTreeNode = new TreeNode();
-            turboCurrentValueTreeNode = new TreeNode();
-            pumpTemperatureTextTreeNode = new TreeNode();
-            pumpTemperatureValueTreeNode = new TreeNode();
-            driveTemperatureTextTreeNode = new TreeNode();
-            driveTemperatureValueTreeNode = new TreeNode();
-            pwmTextTreeNode = new TreeNode();
-            pwmValueTreeNode = new TreeNode();
-            operationTimeTextTreeNode = new TreeNode();
-            operationTimeValueTreeNode = new TreeNode();
+            turboSpeedValueTreeNode = new TreeNodeLeaf();
+            turboSpeedTextTreeNode = new TreeNodePair("Скорость вращения, об./мин.", turboSpeedValueTreeNode);
+            turboCurrentValueTreeNode = new TreeNodeLeaf();
+            turboCurrentTextTreeNode = new TreeNodePair("Ток, мА", turboCurrentValueTreeNode);
+            pumpTemperatureValueTreeNode = new TreeNodeLeaf();
+            pumpTemperatureTextTreeNode = new TreeNodePair("Температура насоса", pumpTemperatureValueTreeNode);
+            driveTemperatureValueTreeNode = new TreeNodeLeaf();
+            driveTemperatureTextTreeNode = new TreeNodePair("Температура привода", driveTemperatureValueTreeNode);
+            pwmValueTreeNode = new TreeNodeLeaf();
+            pwmTextTreeNode = new TreeNodePair("pwm", pwmValueTreeNode);
+            operationTimeValueTreeNode = new TreeNodeLeaf();
+            operationTimeTextTreeNode = new TreeNodePair("Время работы", operationTimeValueTreeNode);
 
-            turboSpeedTextTreeNode.Text = "Скорость вращения, об./мин.";
-            turboSpeedValueTreeNode.ForeColor = System.Drawing.Color.Green;
-            turboCurrentTextTreeNode.Text = "Ток, мА";
-            turboCurrentValueTreeNode.ForeColor = System.Drawing.Color.Green;
-            pumpTemperatureTextTreeNode.Text = "Температура насоса";
-            pumpTemperatureValueTreeNode.ForeColor = System.Drawing.Color.Green;
-            driveTemperatureTextTreeNode.Text = "Температура привода";
-            driveTemperatureValueTreeNode.ForeColor = System.Drawing.Color.Green;
-            pwmTextTreeNode.Text = "pwm";
-            pwmValueTreeNode.ForeColor = System.Drawing.Color.Green;
-            operationTimeTextTreeNode.Text = "Время работы";
-            operationTimeValueTreeNode.ForeColor = System.Drawing.Color.Green;
-
-            turboPumpNode = new TreeNode("Турбонасос", 
-                new TreeNode[] { turboSpeedTextTreeNode, turboSpeedValueTreeNode, turboCurrentTextTreeNode, turboCurrentValueTreeNode,
-                    pumpTemperatureTextTreeNode, pumpTemperatureValueTreeNode, driveTemperatureTextTreeNode, driveTemperatureValueTreeNode,
-                    pwmTextTreeNode, pwmValueTreeNode, operationTimeTextTreeNode, operationTimeValueTreeNode});
+            turboPumpNode = new TreeNodePlus("Турбонасос", 
+                new TreeNode[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,
+                    pwmTextTreeNode, operationTimeTextTreeNode });
             turboPumpNode.Name = "turboPumpNode";
             turboPumpNode.Text = "Турбонасос";
 
-            rootNode = new TreeNode("Корень",
+            rootNode = new TreeNodePlus("Корень",
                 new TreeNode[] { infoNode, extraNode, turboPumpNode });
             rootNode.Name = "rootNode";
             rootNode.Text = "Состояние системы";
             rootNode.ExpandAll();
-            //rootNode.StateImageKey = "error";
 
             statusTreeView.Nodes.AddRange(new TreeNode[] {rootNode});
         }
@@ -236,7 +190,6 @@ namespace Flavor
         {
             mainForm.ActiveForm.Close();
         }
-
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConnectOptionsForm cForm = new ConnectOptionsForm();
@@ -248,7 +201,6 @@ namespace Flavor
             ScanOptionsForm sForm = new ScanOptionsForm();
             sForm.ShowDialog();
         }
-
         private void senseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
@@ -499,51 +451,51 @@ namespace Flavor
             {
                 case (byte)Device.DeviceStates.Start:
                     systemStateValueTreeNode.Text = "Запуск";
-                    systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.DeviceStates.Init:
                     systemStateValueTreeNode.Text = "Инициализация";
-                    systemStateValueTreeNode.ForeColor = Color.Blue;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.DeviceStates.VacuumInit:
                     systemStateValueTreeNode.Text = "Инициализация вакуума";
-                    systemStateValueTreeNode.ForeColor = Color.Blue;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.DeviceStates.WaitHighVoltage:
                     systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
-                    systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
                 case (byte)Device.DeviceStates.Ready:
                     systemStateValueTreeNode.Text = "Готова к измерению";
-                    systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
                 case (byte)Device.DeviceStates.Measuring:
                     systemStateValueTreeNode.Text = "Производятся измерения";
-                    systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
                 case (byte)Device.DeviceStates.Measured:
                     systemStateValueTreeNode.Text = "Измерения закончены";
-                    systemStateValueTreeNode.ForeColor = Color.Green;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
                 case (byte)Device.DeviceStates.Shutdowning:
                     systemStateValueTreeNode.Text = "Идет выключение";
-                    systemStateValueTreeNode.ForeColor = Color.Blue;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.DeviceStates.Shutdown:
                     systemStateValueTreeNode.Text = "Выключение";
-                    systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.DeviceStates.TurboPumpFailure:
                     systemStateValueTreeNode.Text = "Отказ турбонасоса";
-                    systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.DeviceStates.VacuumCrash:
                     systemStateValueTreeNode.Text = "Потеря вакуума";
-                    systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 default:
                     systemStateValueTreeNode.Text = "Неизвестно";
-                    systemStateValueTreeNode.ForeColor = Color.Red;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
             }
         }
@@ -586,54 +538,54 @@ namespace Flavor
         {
             if (Device.fPumpOn)
             {
-                forPumpOnValueTreeNode.ForeColor = Color.Green;
+                forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
                 forPumpOnValueTreeNode.Text = "Включен";
             }
             else
             {
-                forPumpOnValueTreeNode.ForeColor = Color.Red;
+                forPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
                 forPumpOnValueTreeNode.Text = "Выключен";
             }
             if (Device.tPumpOn)
             {
-                turboPumpOnValueTreeNode.ForeColor = Color.Green;
+                turboPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
                 turboPumpOnValueTreeNode.Text = "Включен";
             }
             else
             {
-                turboPumpOnValueTreeNode.ForeColor = Color.Red;
+                turboPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
                 turboPumpOnValueTreeNode.Text = "Выключен";
             }
             forVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.fVacuumReal);
             highVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.hVacuumReal);
             if (Device.highVoltageOn)
             {
-                hardwareBlockValueTreeNode.ForeColor = Color.Green;
+                hardwareBlockValueTreeNode.State = TreeNodePlus.States.Ok;
                 hardwareBlockValueTreeNode.Text = "Включено";
             }
             else
             {
-                hardwareBlockValueTreeNode.ForeColor = Color.Red;
+                hardwareBlockValueTreeNode.State = TreeNodePlus.States.Warning;
                 hardwareBlockValueTreeNode.Text = "Выключено";
             }
             if (Device.highVacuumValve)
             {
-                vGate1ValueTreeNode.ForeColor = Color.Green;
+                vGate1ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate1ValueTreeNode.Text = "Открыт";
             }
             else
             {
-                vGate1ValueTreeNode.ForeColor = Color.Red;
+                vGate1ValueTreeNode.State = TreeNodePlus.States.Warning;
                 vGate1ValueTreeNode.Text = "Закрыт";
             }
             if (Device.probeValve)
             {
-                vGate2ValueTreeNode.ForeColor = Color.Green;
+                vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate2ValueTreeNode.Text = "Открыт";
             }
             else
             {
-                vGate2ValueTreeNode.ForeColor = Color.Red;
+                vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
                 vGate2ValueTreeNode.Text = "Закрыт";
             }
             f1VoltageValueTreeNode.Text = string.Format("{0:f2}", Device.fV1Real);
@@ -666,91 +618,91 @@ namespace Flavor
             {
                 case (byte)Device.VacuumStates.Idle:
                     vacuumStateValueTreeNode.Text = "Бездействие";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.Init:
                     vacuumStateValueTreeNode.Text = "Инициализация";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.StartingForvacuumPump:
                     vacuumStateValueTreeNode.Text = "Включение форнасоса";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.PumpingForvacuum:
                     vacuumStateValueTreeNode.Text = "Откачка форвакуума";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.DelayPumpingHighVacuumByForvac:
                     vacuumStateValueTreeNode.Text = "Задержка высокого вакуума из-за фор";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.PumpingHighVacuumByForvac:
                     vacuumStateValueTreeNode.Text = "Откачка высокого вакуума форнасосом";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.PumpingHighVacuumByTurbo:
                     vacuumStateValueTreeNode.Text = "Откачка турбо";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.Ready:
                     vacuumStateValueTreeNode.Text = "Готово";
-                    vacuumStateValueTreeNode.ForeColor = Color.Green;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
                 case (byte)Device.VacuumStates.ShutdownInit:
                     vacuumStateValueTreeNode.Text = "Инициализация отключения";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.ShutdownDelay:
                     vacuumStateValueTreeNode.Text = "Задержка отключения";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.ShutdownPumpProbe:
                     vacuumStateValueTreeNode.Text = "Отключение датчика насоса";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.Shutdowned:
                     vacuumStateValueTreeNode.Text = "Отключено";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.ShutdownTurboPump:
                     vacuumStateValueTreeNode.Text = "Откачка при выключении";
-                    vacuumStateValueTreeNode.ForeColor = Color.Blue;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.VacuumStates.BadHighVacuum:
                     vacuumStateValueTreeNode.Text = "Плохой высокий вакуум";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.BadForvacuum:
                     vacuumStateValueTreeNode.Text = "Плохой форвакуум";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.ForvacuumFailure:
                     vacuumStateValueTreeNode.Text = "Отказ форвакуума";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.LargeLeak:
                     vacuumStateValueTreeNode.Text = "Большая течь";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.SmallLeak:
                     vacuumStateValueTreeNode.Text = "Малая течь";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.ThermoCoupleFailure:
                     vacuumStateValueTreeNode.Text = "Отказ термопары";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.TurboPumpFailure:
                     vacuumStateValueTreeNode.Text = "Отказ турбонасоса";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 case (byte)Device.VacuumStates.VacuumShutdownProbeLeak:
                     vacuumStateValueTreeNode.Text = "Отключение датчика вакуума";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
                 default:
                     vacuumStateValueTreeNode.Text = "Неизвестное состояние";
-                    vacuumStateValueTreeNode.ForeColor = Color.Red;
+                    vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
             }
         }
