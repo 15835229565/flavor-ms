@@ -37,6 +37,8 @@ namespace Flavor
             Commander.pStatePrev = Commander.pState;
         }
         #region Status TreeView population
+        private TreeNodePlus rootNode;
+
         private TreeNodeLeaf systemStateValueTreeNode;
         private TreeNodeLeaf vacuumStateValueTreeNode;
         private TreeNodeLeaf forPumpOnValueTreeNode;
@@ -66,8 +68,6 @@ namespace Flavor
         
         private void populateStatusTreeView()
         {
-            TreeNodePlus rootNode;
-        
             TreeNodePlus infoNode;
 
             TreeNodePair systemStateTextTreeNode;
@@ -110,10 +110,8 @@ namespace Flavor
             turboPumpOnValueTreeNode = new TreeNodeLeaf();
             turboPumpOnTextTreeNode = new TreeNodePair("Турбомолекулярный насос", turboPumpOnValueTreeNode);
             forVacuumValueTreeNode = new TreeNodeLeaf();
-            //forVacuumValueTreeNode.ForeColor = Color.Green;
             forVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (фор)", forVacuumValueTreeNode);
             highVacuumValueTreeNode = new TreeNodeLeaf();
-            //highVacuumValueTreeNode.ForeColor = Color.Green;
             highVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (высок)", highVacuumValueTreeNode);
             hardwareBlockValueTreeNode = new TreeNodeLeaf();
             hardwareBlockTextTreeNode = new TreeNodePair("Высокое напряжение", hardwareBlockValueTreeNode);
@@ -125,8 +123,6 @@ namespace Flavor
             infoNode = new TreeNodePlus("Информация о системе",
                 new TreeNode[] { systemStateTextTreeNode, vacuumStateTextTreeNode, forPumpOnTextTreeNode, turboPumpOnTextTreeNode, 
                     forVacuumTextTreeNode, highVacuumTextTreeNode, hardwareBlockTextTreeNode, vGate1TextTreeNode, vGate2TextTreeNode });
-            infoNode.Name = "infoNode";
-            infoNode.Text = "Информация о системе";
 
             f1VoltageValueTreeNode = new TreeNodeLeaf();
             f1VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (1) В", f1VoltageValueTreeNode);
@@ -150,8 +146,6 @@ namespace Flavor
             extraNode = new TreeNodePlus("Дополнительно",
                 new TreeNode[] { f1VoltageTextTreeNode, f2VoltageTextTreeNode, scanVoltageTextTreeNode, iVoltageTextTreeNode, eCurrentTextTreeNode,
                     condPlusTextTreeNode, condMinusTextTreeNode, detectorVoltageTextTreeNode,  hCurrentTextTreeNode });
-            extraNode.Name = "extraNode";
-            extraNode.Text = "Дополнительно";
 
             turboSpeedValueTreeNode = new TreeNodeLeaf();
             turboSpeedTextTreeNode = new TreeNodePair("Скорость вращения, об./мин.", turboSpeedValueTreeNode);
@@ -169,13 +163,9 @@ namespace Flavor
             turboPumpNode = new TreeNodePlus("Турбонасос", 
                 new TreeNode[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,
                     pwmTextTreeNode, operationTimeTextTreeNode });
-            turboPumpNode.Name = "turboPumpNode";
-            turboPumpNode.Text = "Турбонасос";
 
-            rootNode = new TreeNodePlus("Корень",
+            rootNode = new TreeNodePlus("Состояние системы",
                 new TreeNode[] { infoNode, extraNode, turboPumpNode });
-            rootNode.Name = "rootNode";
-            rootNode.Text = "Состояние системы";
             rootNode.ExpandAll();
 
             statusTreeView.Nodes.AddRange(new TreeNode[] {rootNode});
