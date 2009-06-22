@@ -99,17 +99,6 @@ namespace Flavor
         
         private void populateStatusTreeView()
         {
-            /*System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
-            statusTreeViewImageList = new ImageList();
-            statusTreeViewImageList.ImageSize = new Size(16, 16);
-            statusTreeViewImageList.TransparentColor = Color.Transparent;
-            statusTreeViewImageList.Images.Add((Image)(resources.GetObject("warning")));
-            statusTreeViewImageList.Images.SetKeyName(0, "warning");
-            statusTreeViewImageList.Images.Add((Image)(resources.GetObject("error")));
-            statusTreeViewImageList.Images.SetKeyName(1, "error");*/
-
-            //statusTreeView.ImageList = statusTreeViewImageList;
-
             systemStateTextTreeNode = new TreeNode();
             systemStateValueTreeNode = new TreeNode();
             vacuumStateTextTreeNode = new TreeNode();
