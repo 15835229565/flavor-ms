@@ -329,7 +329,7 @@ namespace Flavor
             }
         }
 
-        internal static void LoadConfig()
+        internal static void loadConfig()
         {
             try
             {
@@ -358,6 +358,15 @@ namespace Flavor
             catch (NullReferenceException)
             {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                //use hard-coded defaults
+            }
+            try
+            {
+                loadMassCoeffs();
+            }
+            catch (ConfigLoadException)
+            {
+                //cle.visualise();
                 //use hard-coded defaults
             }
             try
@@ -409,26 +418,35 @@ namespace Flavor
             Config.forwardAsBefore = forwardAsBefore;
             Config.saveDelaysOptions();
         }
-        
-        private static void SaveConnectOptions()
+
+        private static void saveMassCoeffs()
+        {
+            fillInnerText("/control", "interface", "");
+            fillInnerText("/control/interface", "coeff1", col1Coeff.ToString("R"));
+            fillInnerText("/control/interface", "coeff2", col2Coeff.ToString("R"));
+            _conf.Save(@confName);
+        }
+
+        private static void saveConnectOptions()
         {
             fillInnerText("/control/connect", "port", Port);
             fillInnerText("/control/connect", "baudrate", BaudRate);
             _conf.Save(@confName);
         }
-        internal static void SaveConnectOptions(string port, ushort baudrate)
+        internal static void saveConnectOptions(string port, ushort baudrate)
         {
             Config.Port = port;
             Config.BaudRate = baudrate;
-            Config.SaveConnectOptions();
+            Config.saveConnectOptions();
         }
 
-        internal static void SaveAll()
+        internal static void saveAll()
         {
-            SaveConnectOptions();
+            saveConnectOptions();
             saveScanOptions();
             saveCommonOptions();
             saveDelaysOptions();
+            saveMassCoeffs();
             SavePreciseOptions();
         }
 
@@ -1088,47 +1106,38 @@ namespace Flavor
             
             try
             {
-                ushort eT, iT, iV, cp, eC, hC, fv1, fv2;
-                eT = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
-                expTime = eT;
-                iT = ushort.Parse(commonNode.SelectSingleNode("meastime").InnerText);
-                idleTime = iT;
-                iV = ushort.Parse(commonNode.SelectSingleNode("ivoltage").InnerText);
-                iVoltage = iV;
-                cp = ushort.Parse(commonNode.SelectSingleNode("cp").InnerText);
-                CP = cp;
-                eC = ushort.Parse(commonNode.SelectSingleNode("ecurrent").InnerText);
-                eCurrent = eC;
-                hC = ushort.Parse(commonNode.SelectSingleNode("hcurrent").InnerText);
-                hCurrent = hC;
-                fv1 = ushort.Parse(commonNode.SelectSingleNode("focus1").InnerText);
-                fV1 = fv1;
-                fv2 = ushort.Parse(commonNode.SelectSingleNode("focus2").InnerText);
-                fV2 = fv2;
+                expTime = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
+                idleTime = ushort.Parse(commonNode.SelectSingleNode("meastime").InnerText);
+                iVoltage = ushort.Parse(commonNode.SelectSingleNode("ivoltage").InnerText);
+                CP = ushort.Parse(commonNode.SelectSingleNode("cp").InnerText);
+                eCurrent = ushort.Parse(commonNode.SelectSingleNode("ecurrent").InnerText);
+                hCurrent = ushort.Parse(commonNode.SelectSingleNode("hcurrent").InnerText);
+                fV1 = ushort.Parse(commonNode.SelectSingleNode("focus1").InnerText);
+                fV2 = ushort.Parse(commonNode.SelectSingleNode("focus2").InnerText);
             }
             catch (NullReferenceException)
             {
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
 
-            ushort befT, fT, bT;
-            bool fAsbef;
             try
             {
+                ushort befT, fT, bT;
+                bool fAsbef;
                 befT = ushort.Parse(commonNode.SelectSingleNode("before").InnerText);
                 fT = ushort.Parse(commonNode.SelectSingleNode("forward").InnerText);
                 bT = ushort.Parse(commonNode.SelectSingleNode("back").InnerText);
                 fAsbef = bool.Parse(commonNode.SelectSingleNode("equal").InnerText);
+                beforeTime = befT;
+                forwardAsBefore = fAsbef;
+                forwardTime = fT;
+                backwardTime = bT;
             }
             catch (NullReferenceException)
             {
                 //Use hard-coded defaults
                 return;
             }
-            beforeTime = befT;
-            forwardAsBefore = fAsbef;
-            forwardTime = fT;
-            backwardTime = bT;
         }
         #region Error messages on loading different configs
         public class ConfigLoadException : System.Exception
@@ -1175,6 +1184,28 @@ namespace Flavor
         #region Graph scaling to mass coeffs
         private static double col1Coeff = 2770 * 28;
         private static double col2Coeff = 896.5 * 18;
+        private static void loadMassCoeffs()
+        {
+            loadMassCoeffs(confName);
+        }
+        private static void loadMassCoeffs(string confName)
+        {
+            XmlDocument conf;
+
+            newCommonOptionsFileOnLoad(out conf, confName);
+            XmlNode interfaceNode = conf.SelectSingleNode(mainConfigPrefix + "interface");
+
+            try
+            {
+                col1Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff1").InnerText);
+                col2Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff2").InnerText);
+            }
+            catch (NullReferenceException)
+            {
+                //!!!
+                throw new ConfigLoadException("", "", confName);
+            }
+        }
         internal static void setScalingCoeff(byte col, ushort pnt, double mass)
         {
             double value = mass * Config.scanVoltageReal(pnt);
@@ -1194,6 +1225,7 @@ namespace Flavor
                     Graph.RecomputeMassRows(col);
                 }
             }
+            saveMassCoeffs();
         }
         internal static double pointToMass(ushort pnt, bool isFirstCollector)
         {

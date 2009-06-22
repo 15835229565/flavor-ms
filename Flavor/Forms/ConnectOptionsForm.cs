@@ -38,7 +38,7 @@ namespace Flavor
         private void ok_butt_Click(object sender, EventArgs e)
         {
             ModBus.Close();
-            Config.SaveConnectOptions(Port, BaudRate);
+            Config.saveConnectOptions(Port, BaudRate);
             ModBus.Open();
             this.Close();
         }

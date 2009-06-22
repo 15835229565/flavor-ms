@@ -936,7 +936,7 @@ namespace Flavor
         {
             try
             {
-                Config.LoadConfig();
+                Config.loadConfig();
             }
             catch (Config.ConfigLoadException cle)
             {
@@ -946,7 +946,7 @@ namespace Flavor
 
         private void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Config.SaveAll();
+            Config.saveAll();
         }
 
         private void cancelScanButton_Click(object sender, EventArgs e)
