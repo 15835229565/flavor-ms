@@ -572,12 +572,12 @@ namespace Flavor
             }
             if (Device.probeValve)
             {
-                vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
+                vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
                 vGate2ValueTreeNode.Text = "Открыт";
             }
             else
             {
-                vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
+                vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate2ValueTreeNode.Text = "Закрыт";
             }
             f1VoltageValueTreeNode.Text = string.Format("{0:f2}", Device.fV1Real);

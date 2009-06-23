@@ -885,7 +885,7 @@ namespace Flavor
                 regionNode.SelectSingleNode("col").InnerText = ped.Collector.ToString();
                 regionNode.SelectSingleNode("comment").InnerText = ped.Comment;
                 regionNode.SelectSingleNode("use").InnerText = ped.Use.ToString();
-                if (savePoints)
+                if (savePoints && (ped.AssociatedPoints != null))
                 {
                     XmlNode temp;
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
@@ -1333,6 +1333,11 @@ namespace Flavor
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "hcurrent", ""));
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "focus1", ""));
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "focus2", ""));
+
+            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "before", ""));
+            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "equal", ""));
+            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "forward", ""));
+            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "back", ""));
             mountPoint.AppendChild(commonNode);
             return commonNode;
         }
