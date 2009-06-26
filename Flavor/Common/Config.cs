@@ -1099,9 +1099,16 @@ namespace Flavor
         internal static void loadCommonOptions(string cdConfName)
         {
             XmlDocument cdConf;
-            string mainConfPrefix = mainConfigPrefix;
+            string mainConfPrefix = "";
 
             newCommonOptionsFileOnLoad(out cdConf, cdConfName);
+
+            if (cdConf.SelectSingleNode("control/common") != null)
+                mainConfPrefix = mainConfigPrefix;
+            else if (cdConf.SelectSingleNode("common") == null)
+            {
+                throw new structureErrorOnLoadCommonData(cdConfName);
+            }
             XmlNode commonNode = cdConf.SelectSingleNode(mainConfPrefix + "common");
             
             try
