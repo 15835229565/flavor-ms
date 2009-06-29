@@ -59,14 +59,14 @@ namespace Flavor
             this.overview_button = new System.Windows.Forms.ToolStripButton();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.measure_StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.vacuumLevelBar = new System.Windows.Forms.ToolStripProgressBar();
             this.sensmeasure_button = new System.Windows.Forms.ToolStripButton();
             this.shutSys_butt = new System.Windows.Forms.ToolStripButton();
             this.unblock_butt = new System.Windows.Forms.ToolStripButton();
             this.ControlToolStrip = new System.Windows.Forms.ToolStrip();
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.ParameterPanel = new System.Windows.Forms.Panel();
+            this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
+            this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.f2_label = new System.Windows.Forms.Label();
             this.f1_label = new System.Windows.Forms.Label();
@@ -105,11 +105,10 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
-            this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
-            this.ParameterPanel.SuspendLayout();
+            this.parameterPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.measurePanel.SuspendLayout();
             this.SuspendLayout();
@@ -352,8 +351,8 @@ namespace Flavor
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.measure_StatusLabel,
-            this.vacuumLevelBar});
+            this.measure_StatusLabel});
+            this.statusStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.statusStrip.Location = new System.Drawing.Point(0, 944);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(992, 22);
@@ -366,15 +365,6 @@ namespace Flavor
             this.measure_StatusLabel.Name = "measure_StatusLabel";
             this.measure_StatusLabel.Size = new System.Drawing.Size(96, 17);
             this.measure_StatusLabel.Text = "Info about System";
-            // 
-            // vacuumLevelBar
-            // 
-            this.vacuumLevelBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.vacuumLevelBar.Name = "vacuumLevelBar";
-            this.vacuumLevelBar.Size = new System.Drawing.Size(300, 16);
-            this.vacuumLevelBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.vacuumLevelBar.Value = 30;
-            this.vacuumLevelBar.Visible = false;
             // 
             // sensmeasure_button
             // 
@@ -436,16 +426,16 @@ namespace Flavor
             this.connectToolStripButton.Text = "Соединить";
             this.connectToolStripButton.Click += new System.EventHandler(this.connectToolStripButton_Click);
             // 
-            // ParameterPanel
+            // parameterPanel
             // 
-            this.ParameterPanel.BackColor = System.Drawing.SystemColors.Control;
-            this.ParameterPanel.Controls.Add(this.statusTreeView);
-            this.ParameterPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ParameterPanel.Location = new System.Drawing.Point(0, 49);
-            this.ParameterPanel.Name = "ParameterPanel";
-            this.ParameterPanel.Size = new System.Drawing.Size(234, 895);
-            this.ParameterPanel.TabIndex = 16;
-            this.ParameterPanel.Text = "Параметры системы";
+            this.parameterPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.parameterPanel.Controls.Add(this.statusTreeView);
+            this.parameterPanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.parameterPanel.Location = new System.Drawing.Point(0, 49);
+            this.parameterPanel.Name = "parameterPanel";
+            this.parameterPanel.Size = new System.Drawing.Size(234, 895);
+            this.parameterPanel.TabIndex = 16;
+            this.parameterPanel.Text = "Параметры системы";
             // 
             // statusTreeView
             // 
@@ -460,6 +450,13 @@ namespace Flavor
             this.statusTreeView.Size = new System.Drawing.Size(234, 895);
             this.statusTreeView.StateImageList = this.statusTreeViewStateImageList;
             this.statusTreeView.TabIndex = 0;
+            // 
+            // statusTreeViewStateImageList
+            // 
+            this.statusTreeViewStateImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusTreeViewStateImageList.ImageStream")));
+            this.statusTreeViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
+            this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
             // 
             // groupBox1
             // 
@@ -857,13 +854,6 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
-            // statusTreeViewStateImageList
-            // 
-            this.statusTreeViewStateImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusTreeViewStateImageList.ImageStream")));
-            this.statusTreeViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
-            this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
-            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -871,7 +861,7 @@ namespace Flavor
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(992, 966);
             this.Controls.Add(this.measurePanel);
-            this.Controls.Add(this.ParameterPanel);
+            this.Controls.Add(this.parameterPanel);
             this.Controls.Add(this.ControlToolStrip);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.statusStrip);
@@ -888,7 +878,7 @@ namespace Flavor
             this.statusStrip.PerformLayout();
             this.ControlToolStrip.ResumeLayout(false);
             this.ControlToolStrip.PerformLayout();
-            this.ParameterPanel.ResumeLayout(false);
+            this.parameterPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.measurePanel.ResumeLayout(false);
@@ -925,9 +915,8 @@ namespace Flavor
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.Panel ParameterPanel;
+        private System.Windows.Forms.Panel parameterPanel;
         private System.Windows.Forms.ToolStripMenuItem ParameterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripProgressBar vacuumLevelBar;
         private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openConfigFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveConfigFileToolStripMenuItem;

@@ -204,10 +204,10 @@ namespace Flavor
             }
         }
 
-        private static List<pListScaled>[] collectors = new List<pListScaled>[2];
-        private static List<pListScaled>[] loadedSpectra = new List<pListScaled>[2];
-        private static List<pListScaled>[] diffSpectra = new List<pListScaled>[2];
-        private static List<PointPairListPlus> getPointPairs(List<pListScaled>[] which, int col, bool useAxisMode)
+        private static Spectrum collectors = new Spectrum();
+        private static Spectrum loadedSpectra = new Spectrum();
+        private static Spectrum diffSpectra = new Spectrum();
+        private static List<PointPairListPlus> getPointPairs(Spectrum which, int col, bool useAxisMode)
         {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;

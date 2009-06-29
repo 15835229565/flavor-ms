@@ -6,6 +6,27 @@ using System.Drawing;
 
 namespace Flavor
 {
+    internal class CommonOptions
+    {
+    }
+
+    internal class Spectrum: List<List<Graph.pListScaled>>
+    {
+        private CommonOptions myCommonOptions = null;
+        public Spectrum(CommonOptions cd)
+            : this()
+        {
+            myCommonOptions = cd;
+        }
+        public Spectrum()
+            : base()
+        {
+            List<Graph.pListScaled> temp1 = new List<Graph.pListScaled>();
+            List<Graph.pListScaled> temp2 = new List<Graph.pListScaled>();
+            this.Add(temp1);
+            this.Add(temp2);
+        }
+    }
     internal class PointPairListPlus : ZedGraph.PointPairList
     {
         private Utility.PreciseEditorData myPED;
@@ -50,8 +71,8 @@ namespace Flavor
             Warning,
             Error
         }
-        private States myState = States.Ok;
-        public States State
+        protected States myState = States.Ok;
+        public virtual States State
         {
             get { return myState; }
             set 
@@ -72,7 +93,7 @@ namespace Flavor
             : base(text, nodes) { }
         protected TreeNodePlus()
             : base() { }
-        protected void setStateImageKey()
+        private void setStateImageKey()
         {
             switch (myState)
             {
@@ -125,22 +146,38 @@ namespace Flavor
     }
     internal class TreeNodeLeaf : TreeNodePlus
     {
-        public new States State
+        public override States State
         {
-            get { return base.State; }
+            get { return myState; }
             set
             {
-                base.State = value;
-                setForeColor();
+                if (myState != value)
+                {
+                    myState = value;
+                    if (Parent is TreeNodePair)
+                    {
+                        (Parent as TreeNodePair).State = value;
+                    }
+                    setForeColor();
+                }
             }
         }
         private new TreeNodeCollection Nodes
         {
             get { return base.Nodes; }
         }
+        /*public new string Text
+        {
+            get { return base.Text; }
+            set 
+            {
+                if (base.Text != value)
+                    base.Text = value;
+            }
+        }*/
+
         private void setForeColor()
         {
-            StateImageKey = "";
             switch (State)
             {
                 case States.Ok:

@@ -8,6 +8,8 @@ namespace Flavor
 {
     static class ModBus
     {
+        public class ModBusException : Exception { }
+
         public enum CommandCode : byte
         {
             None = 0x00,
@@ -147,6 +149,17 @@ namespace Flavor
             catch
             {
                 // BAD! consider revising
+                Console.WriteLine("Ошибка записи в порт следующей команды:");
+                //throw new ModBusException();
+            }
+            finally
+            {
+                Console.Write("[out]");
+                foreach (byte b in message)
+                {
+                    Console.Write((char)b);
+                }
+                Console.WriteLine();
             }
         }
 
@@ -162,9 +175,19 @@ namespace Flavor
         
         private static void _serialPort_DataReceived(object sender, EventArgs e)
         {
-            while (_serialPort.BytesToRead > 0)
+            while (_serialPort.IsOpen && _serialPort.BytesToRead > 0)
             {
-                byte ch = ReadByte();
+                byte ch;
+                try
+                {
+                    ch = (byte)_serialPort.ReadByte();
+                }
+                catch
+                {
+                    Console.WriteLine("Error(reading byte)");
+                    continue;
+                    // не получилось;
+                }
                 Console.Write((char)ch);
                 DispatchByte(ch);
             }
@@ -174,20 +197,6 @@ namespace Flavor
                 Commander.Realize(ModBus.Parse(raw_command));
             }
             PacketReceived.Clear();
-        }
-
-        private static byte ReadByte()
-        {
-            try
-            {
-                return (byte)_serialPort.ReadByte();
-            }
-            catch
-            {
-                Console.WriteLine("Error(reading byte)");
-                return 0;
-                // не получилось;
-            }
         }
 
         private static void DispatchByte(byte data)

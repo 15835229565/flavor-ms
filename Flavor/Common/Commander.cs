@@ -149,6 +149,8 @@ namespace Flavor
         private static byte Try = 0;
 
         private static Queue<UserRequest> ToSend = new Queue<UserRequest>();
+        private static bool statusToSend = false;
+        private static bool turboToSend = false;
 
         private static System.Timers.Timer SendTimer;
 
@@ -193,15 +195,23 @@ namespace Flavor
         private static void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             //workaround needing
-            if ((ToSend.Count == 0) || !scanning)
+            if (!statusToSend)
+            {
                 Commander.AddToSend(new requestStatus());
+            }
+            //if ((ToSend.Count == 0) || !scanning)
+            //    Commander.AddToSend(new requestStatus());
         }
 
         private static void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             //workaround needing
-            if ((ToSend.Count == 0) || !scanning)
+            if (!turboToSend)
+            {
                 Commander.AddToSend(new getTurboPumpStatus());
+            }
+            //if ((ToSend.Count == 0) || !scanning)
+            //    Commander.AddToSend(new getTurboPumpStatus());
         }
 
         private static void StartSending()
@@ -271,6 +281,14 @@ namespace Flavor
             lock(ToSend)
             {
                 ToSend.Enqueue(Command);
+                if (Command is requestStatus)
+                {
+                    statusToSend = true;
+                }
+                if (Command is getTurboPumpStatus)
+                {
+                    turboToSend = true;
+                }
                 if (SendTimer.Enabled == false)
                 {
                     Send();
@@ -283,6 +301,14 @@ namespace Flavor
             try
             {
                 packet = ToSend.Dequeue();
+                if (packet is requestStatus)
+                {
+                    statusToSend = false;
+                }
+                if (packet is getTurboPumpStatus)
+                {
+                    turboToSend = false;
+                }
                 return true;
             }
             catch (InvalidOperationException)
@@ -422,7 +448,6 @@ namespace Flavor
                 {
                     UserRequest packet = null;
                     dequeueToSendInsideLock(ref packet);
-                    //ToSend.Dequeue();
                     StopSending();
                     if (Commander.pState != Commander.pStatePrev)
                         Commander.pState = Commander.pStatePrev;
@@ -455,7 +480,6 @@ namespace Flavor
                     StopSending();
                     if (!dequeueToSendInsideLock(ref packet))
                         return;
-                    //ToSend.Dequeue();
                 }
                 CheckInterfaces(Command);
                 if (Command is confirmInit)

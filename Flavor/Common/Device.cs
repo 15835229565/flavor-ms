@@ -26,10 +26,12 @@ namespace Flavor
             Ready,
             Measuring,
             Measured,
+            ShutdownInit,
             Shutdowning,
-            Shutdown,
+            Shutdowned,
             TurboPumpFailure = 16,
-            VacuumCrash = 17
+            VacuumCrash = 17,
+            ConstantsWrite = 32
         }
 
         public enum VacuumStates : byte
@@ -47,7 +49,7 @@ namespace Flavor
 	        ShutdownDelay = 0x11,
 	        ShutdownPumpProbe = 0x12,
 	        Shutdowned = 0x13,
-            ShutdownTurboPump = 0x14,
+            ShutdownStartingTurboPump = 0x14,
 
 	        BadHighVacuum = 0x20,
 	        BadForvacuum = 0x21,
@@ -78,23 +80,6 @@ namespace Flavor
         private static ushort forVacuumValue;
         private static ushort hVacuumValue;
 
-        private static ushort heatCurrent;
-        private static ushort emissionCurrent;
-
-        private static ushort ionizatinVoltage;
-
-        private static ushort focusVoltage1;
-        private static ushort focusVoltage2;
-
-        private static ushort scanVoltage;
-
-        private static ushort condVoltagePlus;
-        private static ushort condVoltageMin;
-
-        private static ushort CPValue;
-
-        private static ushort detectorVoltage;
-
         private static int Detector1Value;
         private static int Detector2Value;
 
@@ -116,6 +101,14 @@ namespace Flavor
                 {
                     systemState = value;
                     OnDeviceStateChanged();
+                    if (systemState == (byte)DeviceStates.TurboPumpFailure)
+                    {
+                        // log!
+                    }
+                    if (systemState == (byte)DeviceStates.VacuumCrash)
+                    {
+                        // log!
+                    }
                 };
             }
         }
@@ -210,99 +203,6 @@ namespace Flavor
             get { return 2 * 5 * (double)hVacuum / 4096; }
         }
 
-        public static ushort hCurrent 
-        {
-            get { return heatCurrent; }
-            set { heatCurrent = value; }
-        }
-        public static double hCurrentReal
-        {
-            get { return (double)hCurrent / 4096; }
-        }
-        
-        public static ushort eCurrent
-        {
-            get { return emissionCurrent; }
-            set { emissionCurrent = value; }
-        }
-        public static double eCurrentReal
-        {
-            get { return 50 * (double)eCurrent / 4096; }
-        }
-
-        public static ushort iVoltage
-        {
-            get { return ionizatinVoltage; }
-            set { ionizatinVoltage = value; }
-        }
-        public static double iVoltageReal
-        {
-            get { return 150 * (double)iVoltage / 4096; }
-        }
-
-        public static ushort fV1
-        {
-            get { return focusVoltage1; }
-            set { focusVoltage1 = value; }
-        }
-        public static double fV1Real
-        {
-            get { return 150 * (double)fV1 / 4096; }
-        }
-        public static ushort fV2
-        {
-            get { return focusVoltage2; }
-            set { focusVoltage2 = value; }
-        }
-        public static double fV2Real
-        {
-            get { return 150 * (double)fV2 / 4096; }
-        }
-
-        public static ushort sVoltage
-        {
-            get { return scanVoltage; }
-            set { scanVoltage = value; }
-        }
-        public static double sVoltageReal
-        {
-            get { return 5 * (double)sVoltage / (4096 * 0.0008); }
-        }
-        public static ushort cVPlus
-        {
-            get { return condVoltagePlus; }
-            set { condVoltagePlus = value; }
-        }
-        public static double cVPlusReal
-        {
-            get { return 120 * 5 * (double)cVPlus / 4096; }
-        }
-        public static ushort cVMin
-        {
-            get { return condVoltageMin; }
-            set { condVoltageMin = value; }
-        }
-        public static double cVMinReal
-        {
-            get { return 100 * 5 * (double)cVMin / 4096; }
-        }
-
-        public static ushort CP
-        {
-            get { return CPValue; }
-            set { CPValue = value; }
-        }
-
-        public static ushort dVoltage
-        {
-            get { return detectorVoltage; }
-            set { detectorVoltage = value; }
-        }
-        public static double dVoltageReal 
-        {
-            get { return 5 * (double)dVoltage / (4096 * 0.001); }
-        }
-        
         public static int Detector1
         {
             get { return Detector1Value; }
@@ -312,6 +212,119 @@ namespace Flavor
         {
             get { return Detector2Value; }
             set { Detector2Value = value; }
+        }
+
+        public struct DeviceCommonData
+        {
+            private static ushort heatCurrent;
+            private static ushort emissionCurrent;
+
+            private static ushort ionizatinVoltage;
+
+            private static ushort focusVoltage1;
+            private static ushort focusVoltage2;
+
+            private static ushort scanVoltage;
+
+            private static ushort condVoltagePlus;
+            private static ushort condVoltageMin;
+
+            private static ushort CPValue;
+
+            private static ushort detectorVoltage;
+
+            public static ushort hCurrent
+            {
+                get { return heatCurrent; }
+                set { heatCurrent = value; }
+            }
+            public static double hCurrentReal
+            {
+                get { return (double)hCurrent / 4096; }
+            }
+
+            public static ushort eCurrent
+            {
+                get { return emissionCurrent; }
+                set { emissionCurrent = value; }
+            }
+            public static double eCurrentReal
+            {
+                get { return 50 * (double)eCurrent / 4096; }
+            }
+
+            public static ushort iVoltage
+            {
+                get { return ionizatinVoltage; }
+                set { ionizatinVoltage = value; }
+            }
+            public static double iVoltageReal
+            {
+                get { return 150 * (double)iVoltage / 4096; }
+            }
+
+            public static ushort fV1
+            {
+                get { return focusVoltage1; }
+                set { focusVoltage1 = value; }
+            }
+            public static double fV1Real
+            {
+                get { return 150 * (double)fV1 / 4096; }
+            }
+            public static ushort fV2
+            {
+                get { return focusVoltage2; }
+                set { focusVoltage2 = value; }
+            }
+            public static double fV2Real
+            {
+                get { return 150 * (double)fV2 / 4096; }
+            }
+
+            public static ushort sVoltage
+            {
+                get { return scanVoltage; }
+                set { scanVoltage = value; }
+            }
+            public static double sVoltageReal
+            {
+                get { return 5 * (double)sVoltage / (4096 * 0.0008); }
+            }
+            public static ushort cVPlus
+            {
+                get { return condVoltagePlus; }
+                set { condVoltagePlus = value; }
+            }
+            public static double cVPlusReal
+            {
+                get { return 120 * 5 * (double)cVPlus / 4096; }
+            }
+            public static ushort cVMin
+            {
+                get { return condVoltageMin; }
+                set { condVoltageMin = value; }
+            }
+            public static double cVMinReal
+            {
+                get { return 100 * 5 * (double)cVMin / 4096; }
+            }
+
+            public static ushort CP
+            {
+                get { return CPValue; }
+                set { CPValue = value; }
+            }
+
+            public static ushort dVoltage
+            {
+                get { return detectorVoltage; }
+                set { detectorVoltage = value; }
+            }
+            public static double dVoltageReal
+            {
+                get { return 5 * (double)dVoltage / (4096 * 0.001); }
+            }
         }
 
         public struct TurboPump 
@@ -430,15 +443,15 @@ namespace Flavor
             Device.vacState = 255;
             Device.fVacuum = 0;
             Device.hVacuum = 0;
-            Device.hCurrent = 0;
-            Device.eCurrent = 0;
-            Device.iVoltage = 0;
-            Device.fV1 = 0;
-            Device.fV2 = 0;
-            Device.sVoltage = 0;
-            Device.cVPlus = 0;
-            Device.cVMin = 0;
-            Device.dVoltage = 0;
+            Device.DeviceCommonData.hCurrent = 0;
+            Device.DeviceCommonData.eCurrent = 0;
+            Device.DeviceCommonData.iVoltage = 0;
+            Device.DeviceCommonData.fV1 = 0;
+            Device.DeviceCommonData.fV2 = 0;
+            Device.DeviceCommonData.sVoltage = 0;
+            Device.DeviceCommonData.cVPlus = 0;
+            Device.DeviceCommonData.cVMin = 0;
+            Device.DeviceCommonData.dVoltage = 0;
             Device.relaysState(0/*, 0*/);
             Device.TurboPump.Init();
         }

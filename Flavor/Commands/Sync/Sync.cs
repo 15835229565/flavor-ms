@@ -85,15 +85,15 @@ namespace Flavor
             Device.vacState = vacState;
             Device.fVacuum = fVacuum;
             Device.hVacuum = hVacuum;
-            Device.hCurrent = hCurrent;
-            Device.eCurrent = eCurrent;
-            Device.iVoltage = iVoltage;
-            Device.fV1 = fV1;
-            Device.fV2 = fV2;
-            Device.sVoltage = sVoltage;
-            Device.cVPlus = cVPlus;
-            Device.cVMin = cVMin;
-            Device.dVoltage = dVoltage;
+            Device.DeviceCommonData.hCurrent = hCurrent;
+            Device.DeviceCommonData.eCurrent = eCurrent;
+            Device.DeviceCommonData.iVoltage = iVoltage;
+            Device.DeviceCommonData.fV1 = fV1;
+            Device.DeviceCommonData.fV2 = fV2;
+            Device.DeviceCommonData.sVoltage = sVoltage;
+            Device.DeviceCommonData.cVPlus = cVPlus;
+            Device.DeviceCommonData.cVMin = cVMin;
+            Device.DeviceCommonData.dVoltage = dVoltage;
             Device.TurboPump.Speed = turboSpeed;
             Device.relaysState(relaysStates/*, relaysStates2*/);
         }

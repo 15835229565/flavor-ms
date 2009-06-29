@@ -243,12 +243,12 @@ namespace Flavor
             lastStepLabel.Text = Config.ePoint.ToString();
             etime_label.Text = Config.eTimeReal.ToString();
             itime_label.Text = Config.iTimeReal.ToString();
-            iVolt_label.Text = string.Format("{0:f3}", Config.iVoltageReal);
-            cp_label.Text = string.Format("{0:f3}", Config.CPReal);
-            emCurLabel.Text = string.Format("{0:f3}", Config.eCurrentReal);
-            heatCurLabel.Text = string.Format("{0:f3}", Config.hCurrentReal);
-            f1_label.Text = string.Format("{0:f3}", Config.fV1Real);
-            f2_label.Text = string.Format("{0:f3}", Config.fV2Real);
+            iVolt_label.Text = Config.iVoltageReal.ToString("f3");
+            cp_label.Text = Config.CPReal.ToString("f3");
+            emCurLabel.Text = Config.eCurrentReal.ToString("f3");
+            heatCurLabel.Text = Config.hCurrentReal.ToString("f3");
+            f1_label.Text = Config.fV1Real.ToString("f3");
+            f2_label.Text = Config.fV2Real.ToString("f3");
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = Config.ePoint - Config.sPoint;
             scanProgressBar.Step = 1;
@@ -290,12 +290,12 @@ namespace Flavor
 
             etime_label.Text = Config.eTimeReal.ToString();
             itime_label.Text = Config.iTimeReal.ToString();
-            iVolt_label.Text = string.Format("{0:f3}", Config.iVoltageReal);
-            cp_label.Text = string.Format("{0:f3}", Config.CPReal);
-            emCurLabel.Text = string.Format("{0:f3}", Config.eCurrentReal);
-            heatCurLabel.Text = string.Format("{0:f3}", Config.hCurrentReal);
-            f1_label.Text = string.Format("{0:f3}", Config.fV1Real);
-            f2_label.Text = string.Format("{0:f3}", Config.fV2Real);
+            iVolt_label.Text = Config.iVoltageReal.ToString("f3");
+            cp_label.Text = Config.CPReal.ToString("f3");
+            emCurLabel.Text = Config.eCurrentReal.ToString("f3");
+            heatCurLabel.Text = Config.hCurrentReal.ToString("f3");
+            f1_label.Text = Config.fV1Real.ToString("f3");
+            f2_label.Text = Config.fV2Real.ToString("f3");
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = 0;
             foreach (Utility.PreciseEditorData ped in Config.PreciseData)
@@ -371,7 +371,7 @@ namespace Flavor
                         gForm.RefreshGraph();
                         scanProgressBar.PerformStep();
                         stepNumberLabel.Text = Graph.LastPoint.ToString();
-                        scanRealTimeLabel.Text = string.Format("{0:f1}", Config.scanVoltageReal(Graph.LastPoint));
+                        scanRealTimeLabel.Text = Config.scanVoltageReal(Graph.LastPoint).ToString("f1");
                         detector1CountsLabel.Text = Device.Detector1.ToString();
                         detector2CountsLabel.Text = Device.Detector2.ToString();
                         if (Commander.isSenseMeasure)
@@ -439,6 +439,8 @@ namespace Flavor
         }
         private void RefreshDeviceState()
         {
+            parameterPanel.SuspendLayout();
+            statusTreeView.BeginUpdate();
             switch (Device.sysState)
             {
                 case (byte)Device.DeviceStates.Start:
@@ -469,13 +471,17 @@ namespace Flavor
                     systemStateValueTreeNode.Text = "Измерения закончены";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
+                case (byte)Device.DeviceStates.ShutdownInit:
+                    systemStateValueTreeNode.Text = "Идициализация выключения";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                    break;
                 case (byte)Device.DeviceStates.Shutdowning:
                     systemStateValueTreeNode.Text = "Идет выключение";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.Shutdown:
-                    systemStateValueTreeNode.Text = "Выключение";
-                    systemStateValueTreeNode.State = TreeNodePlus.States.Error;
+                case (byte)Device.DeviceStates.Shutdowned:
+                    systemStateValueTreeNode.Text = "Выключено";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.DeviceStates.TurboPumpFailure:
                     systemStateValueTreeNode.Text = "Отказ турбонасоса";
@@ -485,11 +491,17 @@ namespace Flavor
                     systemStateValueTreeNode.Text = "Потеря вакуума";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
+                case (byte)Device.DeviceStates.ConstantsWrite:
+                    systemStateValueTreeNode.Text = "Запись констант";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                    break;
                 default:
                     systemStateValueTreeNode.Text = "Неизвестно";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
             }
+            statusTreeView.EndUpdate();
+            parameterPanel.ResumeLayout();
         }
 
         private void InvokeRefreshTurboPumpStatus() 
@@ -506,12 +518,18 @@ namespace Flavor
         }
         private void RefreshTurboPumpStatus()
         {
-            turboSpeedValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
-            turboCurrentValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.Current);
-            pwmValueTreeNode.Text = string.Format("{0:f3}", Device.TurboPump.pwm);
-            pumpTemperatureValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.PumpTemperature);
-            driveTemperatureValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.DriveTemperature);
-            operationTimeValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.OperationTime);
+            parameterPanel.SuspendLayout();
+            statusTreeView.BeginUpdate();
+
+            turboSpeedValueTreeNode.Text = Device.TurboPump.Speed.ToString("f0");
+            turboCurrentValueTreeNode.Text = Device.TurboPump.Current.ToString("f0");
+            pwmValueTreeNode.Text = Device.TurboPump.pwm.ToString("f3");
+            pumpTemperatureValueTreeNode.Text = Device.TurboPump.PumpTemperature.ToString("f0");
+            driveTemperatureValueTreeNode.Text = Device.TurboPump.DriveTemperature.ToString("f0");
+            operationTimeValueTreeNode.Text = Device.TurboPump.OperationTime.ToString("f0");
+            
+            statusTreeView.EndUpdate();
+            parameterPanel.ResumeLayout();
         }
 
         private void InvokeRefreshDeviceStatus()
@@ -528,6 +546,8 @@ namespace Flavor
         }
         private void RefreshDeviceStatus()
         {
+            parameterPanel.SuspendLayout();
+            statusTreeView.BeginUpdate();
             if (Device.fPumpOn)
             {
                 forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
@@ -580,16 +600,19 @@ namespace Flavor
                 vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate2ValueTreeNode.Text = "Закрыт";
             }
-            f1VoltageValueTreeNode.Text = string.Format("{0:f2}", Device.fV1Real);
-            f2VoltageValueTreeNode.Text = string.Format("{0:f2}", Device.fV2Real);
-            iVoltageValueTreeNode.Text = string.Format("{0:f2}", Device.iVoltageReal);
-            detectorVoltageValueTreeNode.Text = string.Format("{0:f1}", Device.dVoltageReal);
-            condPlusValueTreeNode.Text = string.Format("{0:f2}", Device.cVPlusReal);
-            condMinusValueTreeNode.Text = string.Format("{0:f2}", Device.cVMinReal);
-            scanVoltageValueTreeNode.Text = string.Format("{0:f1}", Device.sVoltageReal);
-            eCurrentValueTreeNode.Text = string.Format("{0:f3}", Device.eCurrentReal);
-            hCurrentValueTreeNode.Text = string.Format("{0:f3}", Device.hCurrentReal);
-            turboSpeedValueTreeNode.Text = string.Format("{0:f0}", Device.TurboPump.Speed);
+            f1VoltageValueTreeNode.Text = Device.DeviceCommonData.fV1Real.ToString("f2");
+            f2VoltageValueTreeNode.Text = Device.DeviceCommonData.fV2Real.ToString("f2");
+            iVoltageValueTreeNode.Text = Device.DeviceCommonData.iVoltageReal.ToString("f2");
+            detectorVoltageValueTreeNode.Text = Device.DeviceCommonData.dVoltageReal.ToString("f1");
+            condPlusValueTreeNode.Text = Device.DeviceCommonData.cVPlusReal.ToString("f2");
+            condMinusValueTreeNode.Text = Device.DeviceCommonData.cVMinReal.ToString("f2");
+            scanVoltageValueTreeNode.Text = Device.DeviceCommonData.sVoltageReal.ToString("f1");
+            eCurrentValueTreeNode.Text = Device.DeviceCommonData.eCurrentReal.ToString("f3");
+            hCurrentValueTreeNode.Text = Device.DeviceCommonData.hCurrentReal.ToString("f3");
+            turboSpeedValueTreeNode.Text = Device.TurboPump.Speed.ToString("f0");
+
+            statusTreeView.EndUpdate();
+            parameterPanel.ResumeLayout();
         }
 
         private void InvokeRefreshVacuumState()
@@ -606,6 +629,8 @@ namespace Flavor
         }
         private void RefreshVacuumState()
         {
+            parameterPanel.SuspendLayout();
+            statusTreeView.BeginUpdate();
             switch (Device.vacState) 
             {
                 case (byte)Device.VacuumStates.Idle:
@@ -656,7 +681,7 @@ namespace Flavor
                     vacuumStateValueTreeNode.Text = "Отключено";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.ShutdownTurboPump:
+                case (byte)Device.VacuumStates.ShutdownStartingTurboPump:
                     vacuumStateValueTreeNode.Text = "Откачка при выключении";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
@@ -697,6 +722,8 @@ namespace Flavor
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
             }
+            statusTreeView.EndUpdate();
+            parameterPanel.ResumeLayout();
         }
 
         internal void InvokeRefreshButtons() 
@@ -915,7 +942,7 @@ namespace Flavor
 
         private void ParameterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ParameterPanel.Visible = ParameterToolStripMenuItem.Checked;
+            parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
         }
 
         private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
