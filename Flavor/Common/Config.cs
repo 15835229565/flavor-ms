@@ -657,19 +657,22 @@ namespace Flavor
                 {
                     // coeff counting
                     double coeff = 1.0;
-                    PointPairListPlus PL = plsReference.IsFirstCollector ? Graph.Displayed1Steps[0] : Graph.Displayed2Steps[0];
-                    PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
-                    if (step != 0)
+                    if (plsReference != null)
                     {
-                        for (int i = 0; i < PL.Count; ++i)
+                        PointPairListPlus PL = plsReference.IsFirstCollector ? Graph.Displayed1Steps[0] : Graph.Displayed2Steps[0];
+                        PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
+                        if (step != 0)
                         {
-                            if (step == PL[i].X)
+                            for (int i = 0; i < PL.Count; ++i)
                             {
-                                if (step != pl[i].X)
-                                    throw new System.ArgumentException();
-                                if ((pl[i].Y != 0) && (PL[i].Y != 0))
-                                    coeff = PL[i].Y / pl[i].Y;
-                                break;
+                                if (step == PL[i].X)
+                                {
+                                    if (step != pl[i].X)
+                                        throw new System.ArgumentException();
+                                    if ((pl[i].Y != 0) && (PL[i].Y != 0))
+                                        coeff = PL[i].Y / pl[i].Y;
+                                    break;
+                                }
                             }
                         }
                     }
