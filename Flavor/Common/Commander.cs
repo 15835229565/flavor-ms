@@ -802,21 +802,23 @@ namespace Flavor
 
         internal static void Disconnect()
         {
+            StopDeviceStatusCheck();
+            lock (ToSend)
+            {
+                if (ToSend.Count > 0)
+                {
+                    Commander.ToSend.Clear();
+                }
+                if (SendTimer.Enabled == true)
+                {
+                    StopSending();
+                }
+                statusToSend = false;
+                turboToSend = false;
+            }
             switch (ModBus.Close())
             {
                 case ModBus.PortStates.Closing:
-                    StopDeviceStatusCheck();
-                    lock (ToSend)
-                    {
-                        if (ToSend.Count > 0)
-                        {
-                            Commander.ToSend.Clear();
-                        }
-                        if (SendTimer.Enabled == true)
-                        {
-                            StopSending();
-                        }
-                    }
                     Commander.deviceIsConnected = false;
                     onTheFly = true;// надо ли здесь???
                     break;
