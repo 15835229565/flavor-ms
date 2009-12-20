@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Globalization;
 
 namespace Flavor
 {
@@ -485,10 +486,10 @@ namespace Flavor
             throw resultException;
         }
         
-        private static string genAutoSaveFilename(string extension)
+        private static string genAutoSaveFilename(string extension, out DateTime now)
         {
             string dirname;
-            DateTime now = System.DateTime.Now;
+            now = System.DateTime.Now;
             dirname = initialDir + string.Format("\\{0}-{1}-{2}", now.Year, now.Month, now.Day);
             if (!System.IO.Directory.Exists(@dirname))
                 System.IO.Directory.CreateDirectory(@dirname);
@@ -627,8 +628,14 @@ namespace Flavor
         }
         internal static void AutoSaveSpecterFile()
         {
-            string filename = genAutoSaveFilename("sdf");
+            DateTime dt;
+            string filename = genAutoSaveFilename("sdf", out dt);
             XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured);
+
+            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, "time", "");
+            attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
+            file.SelectSingleNode("/control/header").Attributes.Append(attr as XmlAttribute);
+
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode("control"));
             saveCommonOptions(commonNode);
             file.Save(filename);
@@ -868,8 +875,14 @@ namespace Flavor
         }
         internal static void AutoSavePreciseSpecterFile()
         {
-            string filename = genAutoSaveFilename("psf");
+            DateTime dt;
+            string filename = genAutoSaveFilename("psf", out dt);
             XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
+
+            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, "time", "");
+            attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
+            file.SelectSingleNode("/control/header").Attributes.Append(attr as XmlAttribute);
+
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode("control"));
             saveCommonOptions(commonNode);
             file.Save(filename);
@@ -1386,6 +1399,8 @@ namespace Flavor
             conf.AppendChild(rootNode);
             XmlNode headerNode = conf.CreateNode(XmlNodeType.Element, "header", "");
             headerNode.InnerText = header;
+
+            
             rootNode.AppendChild(headerNode);
 
             return rootNode;
