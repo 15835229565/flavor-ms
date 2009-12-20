@@ -218,6 +218,7 @@ namespace Flavor
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
 
+            // put here code that only changes data source and refreshes
             //Elements are not visible until first real information is ready
             peakNumberLabel.Visible = false;
             label39.Visible = false;
@@ -241,14 +242,14 @@ namespace Flavor
 
             firstStepLabel.Text = Config.sPoint.ToString();
             lastStepLabel.Text = Config.ePoint.ToString();
-            etime_label.Text = Config.eTimeReal.ToString();
-            itime_label.Text = Config.iTimeReal.ToString();
-            iVolt_label.Text = Config.iVoltageReal.ToString("f3");
-            cp_label.Text = Config.CPReal.ToString("f3");
-            emCurLabel.Text = Config.eCurrentReal.ToString("f3");
-            heatCurLabel.Text = Config.hCurrentReal.ToString("f3");
-            f1_label.Text = Config.fV1Real.ToString("f3");
-            f2_label.Text = Config.fV2Real.ToString("f3");
+            etime_label.Text = Config.CommonOptions.eTimeReal.ToString();
+            itime_label.Text = Config.CommonOptions.iTimeReal.ToString();
+            iVolt_label.Text = Config.CommonOptions.iVoltageReal.ToString("f3");
+            cp_label.Text = Config.CommonOptions.CPReal.ToString("f3");
+            emCurLabel.Text = Config.CommonOptions.eCurrentReal.ToString("f3");
+            heatCurLabel.Text = Config.CommonOptions.hCurrentReal.ToString("f3");
+            f1_label.Text = Config.CommonOptions.fV1Real.ToString("f3");
+            f2_label.Text = Config.CommonOptions.fV2Real.ToString("f3");
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = Config.ePoint - Config.sPoint;
             scanProgressBar.Step = 1;
@@ -288,14 +289,14 @@ namespace Flavor
             label37.Visible = true;
             peakNumberLabel.Visible = true;
 
-            etime_label.Text = Config.eTimeReal.ToString();
-            itime_label.Text = Config.iTimeReal.ToString();
-            iVolt_label.Text = Config.iVoltageReal.ToString("f3");
-            cp_label.Text = Config.CPReal.ToString("f3");
-            emCurLabel.Text = Config.eCurrentReal.ToString("f3");
-            heatCurLabel.Text = Config.hCurrentReal.ToString("f3");
-            f1_label.Text = Config.fV1Real.ToString("f3");
-            f2_label.Text = Config.fV2Real.ToString("f3");
+            etime_label.Text = Config.CommonOptions.eTimeReal.ToString();
+            itime_label.Text = Config.CommonOptions.iTimeReal.ToString();
+            iVolt_label.Text = Config.CommonOptions.iVoltageReal.ToString("f3");
+            cp_label.Text = Config.CommonOptions.CPReal.ToString("f3");
+            emCurLabel.Text = Config.CommonOptions.eCurrentReal.ToString("f3");
+            heatCurLabel.Text = Config.CommonOptions.hCurrentReal.ToString("f3");
+            f1_label.Text = Config.CommonOptions.fV1Real.ToString("f3");
+            f2_label.Text = Config.CommonOptions.fV2Real.ToString("f3");
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = 0;
             foreach (Utility.PreciseEditorData ped in Config.PreciseData)
@@ -371,7 +372,7 @@ namespace Flavor
                         gForm.RefreshGraph();
                         scanProgressBar.PerformStep();
                         stepNumberLabel.Text = Graph.LastPoint.ToString();
-                        scanRealTimeLabel.Text = Config.scanVoltageReal(Graph.LastPoint).ToString("f1");
+                        scanRealTimeLabel.Text = Config.CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
                         detector1CountsLabel.Text = Device.Detector1.ToString();
                         detector2CountsLabel.Text = Device.Detector2.ToString();
                         if (Commander.isSenseMeasure)
@@ -938,6 +939,7 @@ namespace Flavor
         private void GraphWindowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             gForm.Visible = GraphWindowToolStripMenuItem.Checked;
+            // and some action with measurePanel
         }
 
         private void ParameterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1006,6 +1008,13 @@ namespace Flavor
         {
             DelaysOptionsForm dForm = new DelaysOptionsForm();
             dForm.ShowDialog();
+        }
+
+        private void mainForm_MdiChildActivate(object sender, EventArgs e)
+        {
+            // stub
+            // set data source of measurePanel according to spectrum displayed
+            // and refresh it
         }
     }
 }

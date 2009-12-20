@@ -38,54 +38,54 @@ namespace Flavor
         {
             decimal temp;
 
-            temp = (decimal)(Config.eTimeReal);
+            temp = (decimal)(Config.CommonOptions.eTimeReal);
             if (temp < expTimeNumericUpDown.Minimum) temp = expTimeNumericUpDown.Minimum;
             if (temp > expTimeNumericUpDown.Maximum) temp = expTimeNumericUpDown.Maximum;
             expTimeNumericUpDown.Value = temp;
 
-            temp = (decimal)(Config.iTimeReal);
+            temp = (decimal)(Config.CommonOptions.iTimeReal);
             if (temp < idleTimeNumericUpDown.Minimum) temp = idleTimeNumericUpDown.Minimum;
             if (temp > idleTimeNumericUpDown.Maximum) temp = idleTimeNumericUpDown.Maximum;
             idleTimeNumericUpDown.Value = temp;
 
-            iVoltageNumericUpDown.Minimum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)20)));
-            iVoltageNumericUpDown.Maximum = (decimal)(Config.iVoltageConvert(Config.iVoltageConvert((double)150)));
-            temp = (decimal)(Config.iVoltageReal);
+            iVoltageNumericUpDown.Minimum = (decimal)(Config.CommonOptions.iVoltageConvert(Config.CommonOptions.iVoltageConvert((double)20)));
+            iVoltageNumericUpDown.Maximum = (decimal)(Config.CommonOptions.iVoltageConvert(Config.CommonOptions.iVoltageConvert((double)150)));
+            temp = (decimal)(Config.CommonOptions.iVoltageReal);
             if (temp < iVoltageNumericUpDown.Minimum) temp = iVoltageNumericUpDown.Minimum;
             if (temp > iVoltageNumericUpDown.Maximum) temp = iVoltageNumericUpDown.Maximum;
             iVoltageNumericUpDown.Value = temp;
 
-            CPNumericUpDown.Minimum = (decimal)(Config.CPConvert(Config.CPConvert((double)10)));
-            CPNumericUpDown.Maximum = (decimal)(Config.CPConvert(Config.CPConvert((double)12)));
-            temp = (decimal)(Config.CPReal);
+            CPNumericUpDown.Minimum = (decimal)(Config.CommonOptions.CPConvert(Config.CommonOptions.CPConvert((double)10)));
+            CPNumericUpDown.Maximum = (decimal)(Config.CommonOptions.CPConvert(Config.CommonOptions.CPConvert((double)12)));
+            temp = (decimal)(Config.CommonOptions.CPReal);
             if (temp < CPNumericUpDown.Minimum) temp = CPNumericUpDown.Minimum;
             if (temp > CPNumericUpDown.Maximum) temp = CPNumericUpDown.Maximum;
             CPNumericUpDown.Value = temp;
 
-            eCurrentNumericUpDown.Minimum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)0)));
-            eCurrentNumericUpDown.Maximum = (decimal)(Config.eCurrentConvert(Config.eCurrentConvert((double)10)));
-            temp = (decimal)(Config.eCurrentReal);
+            eCurrentNumericUpDown.Minimum = (decimal)(Config.CommonOptions.eCurrentConvert(Config.CommonOptions.eCurrentConvert((double)0)));
+            eCurrentNumericUpDown.Maximum = (decimal)(Config.CommonOptions.eCurrentConvert(Config.CommonOptions.eCurrentConvert((double)10)));
+            temp = (decimal)(Config.CommonOptions.eCurrentReal);
             if (temp < eCurrentNumericUpDown.Minimum) temp = eCurrentNumericUpDown.Minimum;
             if (temp > eCurrentNumericUpDown.Maximum) temp = eCurrentNumericUpDown.Maximum;
             eCurrentNumericUpDown.Value = temp;
 
-            hCurrentNumericUpDown.Minimum = (decimal)(Config.hCurrentConvert(Config.hCurrentConvert((double)0)));
-            hCurrentNumericUpDown.Maximum = (decimal)(Config.hCurrentConvert(Config.hCurrentConvert((double)1)));
-            temp = (decimal)(Config.hCurrentReal);
+            hCurrentNumericUpDown.Minimum = (decimal)(Config.CommonOptions.hCurrentConvert(Config.CommonOptions.hCurrentConvert((double)0)));
+            hCurrentNumericUpDown.Maximum = (decimal)(Config.CommonOptions.hCurrentConvert(Config.CommonOptions.hCurrentConvert((double)1)));
+            temp = (decimal)(Config.CommonOptions.hCurrentReal);
             if (temp < hCurrentNumericUpDown.Minimum) temp = hCurrentNumericUpDown.Minimum;
             if (temp > hCurrentNumericUpDown.Maximum) temp = hCurrentNumericUpDown.Maximum;
             hCurrentNumericUpDown.Value = temp;
 
-            fV1NumericUpDown.Minimum = (decimal)(Config.fV1Convert(Config.fV1Convert((double)20)));
-            fV1NumericUpDown.Maximum = (decimal)(Config.fV1Convert(Config.fV1Convert((double)150)));
-            temp = (decimal)(Config.fV1Real);
+            fV1NumericUpDown.Minimum = (decimal)(Config.CommonOptions.fV1Convert(Config.CommonOptions.fV1Convert((double)20)));
+            fV1NumericUpDown.Maximum = (decimal)(Config.CommonOptions.fV1Convert(Config.CommonOptions.fV1Convert((double)150)));
+            temp = (decimal)(Config.CommonOptions.fV1Real);
             if (temp < fV1NumericUpDown.Minimum) temp = fV1NumericUpDown.Minimum;
             if (temp > fV1NumericUpDown.Maximum) temp = fV1NumericUpDown.Maximum;
             fV1NumericUpDown.Value = temp;
 
-            fV2NumericUpDown.Minimum = (decimal)(Config.fV2Convert(Config.fV2Convert((double)20)));
-            fV2NumericUpDown.Maximum = (decimal)(Config.fV2Convert(Config.fV2Convert((double)150)));
-            temp = (decimal)(Config.fV2Real);
+            fV2NumericUpDown.Minimum = (decimal)(Config.CommonOptions.fV2Convert(Config.CommonOptions.fV2Convert((double)20)));
+            fV2NumericUpDown.Maximum = (decimal)(Config.CommonOptions.fV2Convert(Config.CommonOptions.fV2Convert((double)150)));
+            temp = (decimal)(Config.CommonOptions.fV2Real);
             if (temp < fV2NumericUpDown.Minimum) temp = fV2NumericUpDown.Minimum;
             if (temp > fV2NumericUpDown.Maximum) temp = fV2NumericUpDown.Maximum;
             fV2NumericUpDown.Value = temp;

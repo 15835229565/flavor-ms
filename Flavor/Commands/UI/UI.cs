@@ -56,7 +56,7 @@ namespace Flavor
 
         public override void Send()
         {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetHeatCurrent, Config.hCurrent)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetHeatCurrent, Config.CommonOptions.hCurrent)));
         }
 
         #endregion
@@ -71,7 +71,7 @@ namespace Flavor
         #region ISend Members
         public override void Send()
         {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetEmissionCurrent, Config.eCurrent)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetEmissionCurrent, Config.CommonOptions.eCurrent)));
         }
         #endregion
     }
@@ -85,7 +85,7 @@ namespace Flavor
         #region ISend Members
         public override void Send()
         {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetIonizationVoltage, Config.iVoltage)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetIonizationVoltage, Config.CommonOptions.iVoltage)));
         }
         #endregion
     }
@@ -99,7 +99,7 @@ namespace Flavor
         #region ISend Members
         public override void Send()
         {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage1, Config.fV1)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage1, Config.CommonOptions.fV1)));
         }
         #endregion
     }
@@ -114,7 +114,7 @@ namespace Flavor
         #region ISend Members
         public override void Send()
         {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage2, Config.fV2)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage2, Config.CommonOptions.fV2)));
         }
         #endregion
     }
@@ -125,13 +125,13 @@ namespace Flavor
 
         public sendSVoltage(ushort step)
         {
-            SVoltage = Config.scanVoltage(step);
+            SVoltage = Config.CommonOptions.scanVoltage(step);
             Commander.DoMeasure = true;
         }
 
         public sendSVoltage(ushort step, bool doMeasure)
         {
-            SVoltage = Config.scanVoltage(step);
+            SVoltage = Config.CommonOptions.scanVoltage(step);
             Commander.DoMeasure = doMeasure;
         }
         
@@ -166,7 +166,7 @@ namespace Flavor
         #region ISend Members
         public override void Send()
         {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetCapacitorVoltage, Config.CP)));
+            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetCapacitorVoltage, Config.CommonOptions.CP)));
         }
         #endregion
     }
@@ -178,8 +178,8 @@ namespace Flavor
 
         public sendMeasure()
         {
-            itime = Config.iTime;
-            etime = Config.eTime;
+            itime = Config.CommonOptions.iTime;
+            etime = Config.CommonOptions.eTime;
         }
 
         public sendMeasure(ushort iT, ushort eT)

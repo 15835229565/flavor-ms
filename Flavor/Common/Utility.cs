@@ -8,6 +8,250 @@ namespace Flavor
 {
     internal class CommonOptions
     {
+        // defaults
+        private ushort beforeTime = 100;
+        private ushort forwardTime = 100;
+        private ushort backwardTime = 400;
+        private bool forwardAsBefore = false;
+
+        public ushort befTime
+        {
+            get { return beforeTime; }
+            set { beforeTime = value; }
+        }
+        public ushort befTimeReal
+        {
+            get { return (ushort)(beforeTime * 5); }
+            set
+            {
+                beforeTime = (ushort)(value / 5);
+            }
+        }
+        public ushort fTime
+        {
+            get { return forwardTime; }
+            set { forwardTime = value; }
+        }
+        public ushort fTimeReal
+        {
+            get { return (ushort)(forwardTime * 5); }
+            set
+            {
+                forwardTime = (ushort)(value / 5);
+            }
+        }
+        public ushort bTime
+        {
+            get { return backwardTime; }
+            set { backwardTime = value; }
+        }
+        public ushort bTimeReal
+        {
+            get { return (ushort)(backwardTime * 5); }
+            set
+            {
+                backwardTime = (ushort)(value / 5);
+            }
+        }
+        public bool ForwardTimeEqualsBeforeTime
+        {
+            get { return forwardAsBefore; }
+            set { forwardAsBefore = value; }
+        }
+
+        // defaults
+        private ushort expTime = 200;
+        private ushort idleTime = 10;
+        private ushort ionizationVoltage = 1911;
+        private ushort CPVoltage = 3780;
+        private ushort heatCurrent = 0;
+        private ushort emissionCurrent = 79;
+        private ushort focusVoltage1 = 2730;
+        private ushort focusVoltage2 = 2730;
+
+        public ushort eTime
+        {
+            get { return expTime; }
+            set { expTime = value; }
+        }
+        public ushort eTimeReal
+        {
+            get { return (ushort)(expTime * 5); }
+            set
+            {
+                expTime = (ushort)(value / 5);
+            }
+        }
+
+        public ushort iTime
+        {
+            get { return idleTime; }
+            set { idleTime = value; }
+        }
+        public ushort iTimeReal
+        {
+            get { return (ushort)(5 * idleTime); }
+            set
+            {
+                idleTime = (ushort)(value / 5);
+            }
+        }
+
+        public ushort iVoltage
+        {
+            get { return ionizationVoltage; }
+            set { ionizationVoltage = value; }
+        }
+        public double iVoltageReal
+        {
+            get { return iVoltageConvert(ionizationVoltage); }
+            set
+            {
+                ionizationVoltage = iVoltageConvert(value);
+            }
+        }
+        public double iVoltageConvert(ushort voltage)
+        {
+            return (double)(150 * (double)voltage / 4096);
+        }
+        public ushort iVoltageConvert(double voltage)
+        {
+            ushort x = (ushort)((voltage / 150) * 4096);
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+        
+        public ushort CP
+        {
+            get { return CPVoltage; }
+            set { CPVoltage = value; }
+        }
+        public double CPReal
+        {
+            get { return CPConvert(CPVoltage); }
+            set
+            {
+                CPVoltage = CPConvert(value);
+            }
+        }
+        public double CPConvert(ushort coeff)
+        {
+            return (double)((10 / (double)coeff) * 4096);
+        }
+        public ushort CPConvert(double coeff)
+        {
+            ushort x = (ushort)((10 / coeff) * 4096);
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+
+        public ushort eCurrent
+        {
+            get { return emissionCurrent; }
+            set { emissionCurrent = value; }
+        }
+        public double eCurrentReal
+        {
+            get { return eCurrentConvert(emissionCurrent); }
+            set
+            {
+                emissionCurrent = eCurrentConvert(value);
+            }
+        }
+        public double eCurrentConvert(ushort current)
+        {
+            return (double)((50 * (double)current) / 4096);
+        }
+        public ushort eCurrentConvert(double current)
+        {
+            ushort x = (ushort)((current / 50) * 4096);
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+
+        public ushort hCurrent
+        {
+            get { return heatCurrent; }
+            set { heatCurrent = value; }
+        }
+        public double hCurrentReal
+        {
+            get { return hCurrentConvert(heatCurrent); }
+            set
+            {
+                heatCurrent = hCurrentConvert(value);
+            }
+        }
+        public double hCurrentConvert(ushort current)
+        {
+            return (double)((double)current / 4096);
+        }
+        public ushort hCurrentConvert(double current)
+        {
+            ushort x = (ushort)(current * 4096);
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+
+        public ushort fV1
+        {
+            get { return focusVoltage1; }
+            set { focusVoltage1 = value; }
+        }
+        public double fV1Real
+        {
+            get { return fV1Convert(focusVoltage1); }
+            set
+            {
+                focusVoltage1 = fV1Convert(value);
+            }
+        }
+        public double fV1Convert(ushort voltage)
+        {
+            return (double)(150 * (double)voltage / 4096);
+        }
+        public ushort fV1Convert(double voltage)
+        {
+            ushort x = (ushort)((voltage / 150) * 4096);
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+
+        public ushort fV2
+        {
+            get { return focusVoltage2; }
+            set { focusVoltage2 = value; }
+        }
+        public double fV2Real
+        {
+            get { return fV2Convert(focusVoltage2); }
+            set
+            {
+                focusVoltage2 = fV2Convert(value);
+            }
+        }
+        public double fV2Convert(ushort voltage)
+        {
+            return (double)(150 * (double)voltage / 4096);
+        }
+        public ushort fV2Convert(double voltage)
+        {
+            ushort x = (ushort)((voltage / 150) * 4096);
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+
+        public ushort scanVoltage(ushort step)
+        {
+            if (step > 1056) step = 1056;
+            return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
+            //if (step <= 456) return (ushort)(4095 - 5 * step);
+            //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
+        }
+        public double scanVoltageReal(ushort step)
+        {
+            return (double)(scanVoltage(step) * 5 * 600) / 4096;
+        }
     }
 
     internal class Spectrum: List<List<Graph.pListScaled>>
@@ -16,6 +260,7 @@ namespace Flavor
         public Spectrum(CommonOptions cd)
             : this()
         {
+            // better to clone here..
             myCommonOptions = cd;
         }
         public Spectrum()
@@ -26,7 +271,33 @@ namespace Flavor
             this.Add(temp1);
             this.Add(temp2);
         }
+        public CommonOptions CommonOptions
+        {
+            get { return myCommonOptions; }
+            set { myCommonOptions = value; }
+        }
     }
+    
+    internal class PreciseSpectrum : List<Utility.PreciseEditorData>
+    {
+        private CommonOptions myCommonOptions = null;
+        public PreciseSpectrum(CommonOptions cd)
+            : this()
+        {
+            // better to clone here..
+            myCommonOptions = cd;
+        }
+        public PreciseSpectrum()
+            : base()
+        {
+        }
+        public CommonOptions CommonOptions
+        {
+            get { return myCommonOptions; }
+            set { myCommonOptions = value; }
+        }
+    }
+
     internal class PointPairListPlus : ZedGraph.PointPairList
     {
         private Utility.PreciseEditorData myPED;

@@ -13,10 +13,10 @@ namespace Flavor
         public DelaysOptionsForm()
         {
             InitializeComponent();
-            beforeTimeNumericUpDown.Value = Config.befTimeReal;
-            forwardTimeNumericUpDown.Value = Config.fTimeReal;
-            backwardTimeNumericUpDown.Value = Config.bTimeReal;
-            forwardAsBeforeCheckBox.Checked = Config.ForwardTimeEqualsBeforeTime;
+            beforeTimeNumericUpDown.Value = Config.CommonOptions.befTimeReal;
+            forwardTimeNumericUpDown.Value = Config.CommonOptions.fTimeReal;
+            backwardTimeNumericUpDown.Value = Config.CommonOptions.bTimeReal;
+            forwardAsBeforeCheckBox.Checked = Config.CommonOptions.ForwardTimeEqualsBeforeTime;
         }
 
         private void forwardAsBeforeCheckBox_CheckedChanged(object sender, EventArgs e)

@@ -578,18 +578,18 @@ namespace Flavor
                                     if (Commander.Point > nextPoint)
                                     {
                                         //!!!case of backward voltage change
-                                        customMeasure = new sendMeasure(Config.bTime, Config.eTime);
+                                        customMeasure = new sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
                                     }
                                     else
                                     {
                                         //!!!case of forward voltage change
-                                        if (Config.ForwardTimeEqualsBeforeTime)
+                                        if (Config.CommonOptions.ForwardTimeEqualsBeforeTime)
                                         {
-                                            customMeasure = new sendMeasure(Config.befTime, Config.eTime);
+                                            customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
                                         }
                                         else
                                         {
-                                            customMeasure = new sendMeasure(Config.fTime, Config.eTime);
+                                            customMeasure = new sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
                                         }
                                     }
                                     Commander.Point = nextPoint;
@@ -629,7 +629,7 @@ namespace Flavor
                     if (Commander.pState == programStates.Measure)
                     {
                         //first measure point with increased idle time
-                        customMeasure = new sendMeasure(Config.befTime, Config.eTime);
+                        customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
                         if (!Commander.isSenseMeasure)
                         {
                             Commander.Point = Config.sPoint;

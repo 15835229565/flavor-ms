@@ -272,8 +272,8 @@ namespace Flavor
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
                     myPane.XAxis.Title.Text = "Напряжение (В)";
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.scanVoltageReal(minX[zgcIndex]);
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.scanVoltageReal(maxX[zgcIndex]);
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
+                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = "Масса (а.е.м.)";
@@ -320,7 +320,7 @@ namespace Flavor
 
             //RefreshGraph();
         }
-
+        // move to mainForm
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             restoreXScaleLimits();
@@ -328,7 +328,7 @@ namespace Flavor
             CreateGraph();
             preciseSpecterDisplayed = prevPreciseSpecterDisplayed;
         }
-
+        // move to mainForm
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";

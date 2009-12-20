@@ -21,19 +21,25 @@ namespace Flavor
         private static ushort startPoint = 0;
         private static ushort endPoint = 1056;
 
-        private static ushort beforeTime = 100;
-        private static ushort forwardTime = 100;
-        private static ushort backwardTime = 400;
-        private static bool forwardAsBefore = false;
+        private static CommonOptions commonOpts = new CommonOptions();
+        public static CommonOptions CommonOptions
+        {
+            get { return commonOpts; }
+        }
 
-        private static ushort expTime = 200;
-        private static ushort idleTime = 10;
-        private static ushort ionizationVoltage = 1911;
-        private static ushort CPVoltage = 3780;
-        private static ushort heatCurrent = 0;
-        private static ushort emissionCurrent = 79;
-        private static ushort focusVoltage1 = 2730;
-        private static ushort focusVoltage2 = 2730;
+        //private static ushort beforeTime = 100;
+        //private static ushort forwardTime = 100;
+        //private static ushort backwardTime = 400;
+        //private static bool forwardAsBefore = false;
+
+        //private static ushort expTime = 200;
+        //private static ushort idleTime = 10;
+        //private static ushort ionizationVoltage = 1911;
+        //private static ushort CPVoltage = 3780;
+        //private static ushort heatCurrent = 0;
+        //private static ushort emissionCurrent = 79;
+        //private static ushort focusVoltage1 = 2730;
+        //private static ushort focusVoltage2 = 2730;
         
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
@@ -83,231 +89,231 @@ namespace Flavor
             set { endPoint = value; }
         }
 
-        public static ushort befTime
-        {
-            get { return beforeTime; }
-        }
-        public static ushort befTimeReal
-        {
-            get { return (ushort)(beforeTime * 5); }
-            set
-            {
-                beforeTime = (ushort)(value / 5);
-            }
-        }
-        public static ushort fTime
-        {
-            get { return forwardTime; }
-        }
-        public static ushort fTimeReal
-        {
-            get { return (ushort)(forwardTime * 5); }
-            set
-            {
-                forwardTime = (ushort)(value / 5);
-            }
-        }
-        public static ushort bTime
-        {
-            get { return backwardTime; }
-        }
-        public static ushort bTimeReal
-        {
-            get { return (ushort)(backwardTime * 5); }
-            set
-            {
-                backwardTime = (ushort)(value / 5);
-            }
-        }
-        public static bool ForwardTimeEqualsBeforeTime
-        {
-            get { return forwardAsBefore; }
-            set { forwardAsBefore = value; }
-        }
+        //public static ushort befTime
+        //{
+        //    get { return beforeTime; }
+        //}
+        //public static ushort befTimeReal
+        //{
+        //    get { return (ushort)(beforeTime * 5); }
+        //    set
+        //    {
+        //        beforeTime = (ushort)(value / 5);
+        //    }
+        //}
+        //public static ushort fTime
+        //{
+        //    get { return forwardTime; }
+        //}
+        //public static ushort fTimeReal
+        //{
+        //    get { return (ushort)(forwardTime * 5); }
+        //    set
+        //    {
+        //        forwardTime = (ushort)(value / 5);
+        //    }
+        //}
+        //public static ushort bTime
+        //{
+        //    get { return backwardTime; }
+        //}
+        //public static ushort bTimeReal
+        //{
+        //    get { return (ushort)(backwardTime * 5); }
+        //    set
+        //    {
+        //        backwardTime = (ushort)(value / 5);
+        //    }
+        //}
+        //public static bool ForwardTimeEqualsBeforeTime
+        //{
+        //    get { return forwardAsBefore; }
+        //    set { forwardAsBefore = value; }
+        //}
 
-        public static ushort eTime
-        {
-            get { return expTime; }
-            //set { expTime = value; }
-        }
-        public static ushort eTimeReal
-        {
-            get { return (ushort)(expTime * 5); }
-            set
-            {
-                expTime = (ushort)(value / 5);
-            }
-        }
+        //public static ushort eTime
+        //{
+        //    get { return expTime; }
+        //    //set { expTime = value; }
+        //}
+        //public static ushort eTimeReal
+        //{
+        //    get { return (ushort)(expTime * 5); }
+        //    set
+        //    {
+        //        expTime = (ushort)(value / 5);
+        //    }
+        //}
 
-        public static ushort iTime
-        {
-            get { return idleTime; }
-            //set { idleTime = value; }
-        }
-        public static ushort iTimeReal
-        {
-            get { return (ushort)(5 * idleTime); }
-            set
-            {
-                idleTime = (ushort)(value / 5);
-            }
-        }
+        //public static ushort iTime
+        //{
+        //    get { return idleTime; }
+        //    //set { idleTime = value; }
+        //}
+        //public static ushort iTimeReal
+        //{
+        //    get { return (ushort)(5 * idleTime); }
+        //    set
+        //    {
+        //        idleTime = (ushort)(value / 5);
+        //    }
+        //}
 
-        public static ushort iVoltage
-        {
-            get { return ionizationVoltage; }
-            set { ionizationVoltage = value; }
-        }
-        public static double iVoltageReal
-        {
-            get { return iVoltageConvert(ionizationVoltage); }
-            set
-            {
-                ionizationVoltage = iVoltageConvert(value);
-            }
-        }
-        public static double iVoltageConvert(ushort voltage)
-        {
-            return (double)(150 * (double)voltage / 4096);
-        }
-        public static ushort iVoltageConvert(double voltage)
-        {
-            ushort x = (ushort)((voltage / 150) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
+        //public static ushort iVoltage
+        //{
+        //    get { return ionizationVoltage; }
+        //    set { ionizationVoltage = value; }
+        //}
+        //public static double iVoltageReal
+        //{
+        //    get { return iVoltageConvert(ionizationVoltage); }
+        //    set
+        //    {
+        //        ionizationVoltage = iVoltageConvert(value);
+        //    }
+        //}
+        //public static double iVoltageConvert(ushort voltage)
+        //{
+        //    return (double)(150 * (double)voltage / 4096);
+        //}
+        //public static ushort iVoltageConvert(double voltage)
+        //{
+        //    ushort x = (ushort)((voltage / 150) * 4096);
+        //    if (x >= 4096) x = 4095;
+        //    return x;
+        //}
 
-        public static ushort CP
-        {
-            get { return CPVoltage; }
-            set { CPVoltage = value; }
-        }
-        public static double CPReal
-        {
-            get { return CPConvert(CPVoltage); }
-            set
-            {
-                CPVoltage = CPConvert(value);
-            }
-        }
-        public static double CPConvert(ushort coeff)
-        {
-            return (double)((10 / (double)coeff) * 4096);
-        }
-        public static ushort CPConvert(double coeff)
-        {
-            ushort x = (ushort)((10 / coeff) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
+        //public static ushort CP
+        //{
+        //    get { return CPVoltage; }
+        //    set { CPVoltage = value; }
+        //}
+        //public static double CPReal
+        //{
+        //    get { return CPConvert(CPVoltage); }
+        //    set
+        //    {
+        //        CPVoltage = CPConvert(value);
+        //    }
+        //}
+        //public static double CPConvert(ushort coeff)
+        //{
+        //    return (double)((10 / (double)coeff) * 4096);
+        //}
+        //public static ushort CPConvert(double coeff)
+        //{
+        //    ushort x = (ushort)((10 / coeff) * 4096);
+        //    if (x >= 4096) x = 4095;
+        //    return x;
+        //}
 
-        public static ushort eCurrent
-        {
-            get { return emissionCurrent; }
-            set { emissionCurrent = value; }
-        }
-        public static double eCurrentReal
-        {
-            get { return eCurrentConvert(emissionCurrent); }
-            set
-            {
-                emissionCurrent = eCurrentConvert(value);
-            }
-        }
-        public static double eCurrentConvert(ushort current)
-        {
-            return (double)((50 * (double)current) / 4096);
-        }
-        public static ushort eCurrentConvert(double current)
-        {
-            ushort x = (ushort)((current / 50) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
+        //public static ushort eCurrent
+        //{
+        //    get { return emissionCurrent; }
+        //    set { emissionCurrent = value; }
+        //}
+        //public static double eCurrentReal
+        //{
+        //    get { return eCurrentConvert(emissionCurrent); }
+        //    set
+        //    {
+        //        emissionCurrent = eCurrentConvert(value);
+        //    }
+        //}
+        //public static double eCurrentConvert(ushort current)
+        //{
+        //    return (double)((50 * (double)current) / 4096);
+        //}
+        //public static ushort eCurrentConvert(double current)
+        //{
+        //    ushort x = (ushort)((current / 50) * 4096);
+        //    if (x >= 4096) x = 4095;
+        //    return x;
+        //}
 
-        public static ushort hCurrent
-        {
-            get { return heatCurrent; }
-            set { heatCurrent = value; }
-        }
-        public static double hCurrentReal
-        {
-            get { return hCurrentConvert(heatCurrent); }
-            set
-            {
-                heatCurrent = hCurrentConvert(value);
-            }
-        }
-        public static double hCurrentConvert(ushort current)
-        {
-            return (double)((double)current / 4096);
-        }
-        public static ushort hCurrentConvert(double current)
-        {
-            ushort x = (ushort)(current * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
+        //public static ushort hCurrent
+        //{
+        //    get { return heatCurrent; }
+        //    set { heatCurrent = value; }
+        //}
+        //public static double hCurrentReal
+        //{
+        //    get { return hCurrentConvert(heatCurrent); }
+        //    set
+        //    {
+        //        heatCurrent = hCurrentConvert(value);
+        //    }
+        //}
+        //public static double hCurrentConvert(ushort current)
+        //{
+        //    return (double)((double)current / 4096);
+        //}
+        //public static ushort hCurrentConvert(double current)
+        //{
+        //    ushort x = (ushort)(current * 4096);
+        //    if (x >= 4096) x = 4095;
+        //    return x;
+        //}
 
-        public static ushort fV1
-        {
-            get { return focusVoltage1; }
-            set { focusVoltage1 = value; }
-        }
-        public static double fV1Real
-        {
-            get { return fV1Convert(focusVoltage1); }
-            set
-            {
-                focusVoltage1 = fV1Convert(value);
-            }
-        }
-        public static double fV1Convert(ushort voltage)
-        {
-            return (double)(150 * (double)voltage / 4096);
-        }
-        public static ushort fV1Convert(double voltage)
-        {
-            ushort x = (ushort)((voltage / 150) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
+        //public static ushort fV1
+        //{
+        //    get { return focusVoltage1; }
+        //    set { focusVoltage1 = value; }
+        //}
+        //public static double fV1Real
+        //{
+        //    get { return fV1Convert(focusVoltage1); }
+        //    set
+        //    {
+        //        focusVoltage1 = fV1Convert(value);
+        //    }
+        //}
+        //public static double fV1Convert(ushort voltage)
+        //{
+        //    return (double)(150 * (double)voltage / 4096);
+        //}
+        //public static ushort fV1Convert(double voltage)
+        //{
+        //    ushort x = (ushort)((voltage / 150) * 4096);
+        //    if (x >= 4096) x = 4095;
+        //    return x;
+        //}
 
-        public static ushort fV2
-        {
-            get { return focusVoltage2; }
-            set { focusVoltage2 = value; }
-        }
-        public static double fV2Real
-        {
-            get { return fV2Convert(focusVoltage2); }
-            set
-            {
-                focusVoltage2 = fV2Convert(value);
-            }
-        }
-        public static double fV2Convert(ushort voltage)
-        {
-            return (double)(150 * (double)voltage / 4096);
-        }
-        public static ushort fV2Convert(double voltage)
-        {
-            ushort x = (ushort)((voltage / 150) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
+        //public static ushort fV2
+        //{
+        //    get { return focusVoltage2; }
+        //    set { focusVoltage2 = value; }
+        //}
+        //public static double fV2Real
+        //{
+        //    get { return fV2Convert(focusVoltage2); }
+        //    set
+        //    {
+        //        focusVoltage2 = fV2Convert(value);
+        //    }
+        //}
+        //public static double fV2Convert(ushort voltage)
+        //{
+        //    return (double)(150 * (double)voltage / 4096);
+        //}
+        //public static ushort fV2Convert(double voltage)
+        //{
+        //    ushort x = (ushort)((voltage / 150) * 4096);
+        //    if (x >= 4096) x = 4095;
+        //    return x;
+        //}
 
-        public static ushort scanVoltage(ushort step)
-        {
-            if (step > 1056) step = 1056;
-            return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
-            //if (step <= 456) return (ushort)(4095 - 5 * step);
-            //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
-        }
-        public static double scanVoltageReal(ushort step)
-        {
-            return (double)(scanVoltage(step) * 5 * 600) / 4096;
-        }
+        //public static ushort scanVoltage(ushort step)
+        //{
+        //    if (step > 1056) step = 1056;
+        //    return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
+        //    //if (step <= 456) return (ushort)(4095 - 5 * step);
+        //    //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
+        //}
+        //public static double scanVoltageReal(ushort step)
+        //{
+        //    return (double)(scanVoltage(step) * 5 * 600) / 4096;
+        //}
 
         internal static void getInitialDirectory()
         {
@@ -404,18 +410,18 @@ namespace Flavor
 
         private static void saveDelaysOptions()
         {
-            fillInnerText("/control/common", "before", beforeTime);
-            fillInnerText("/control/common", "equal", forwardAsBefore);
-            fillInnerText("/control/common", "forward", forwardTime);
-            fillInnerText("/control/common", "back", backwardTime);
+            fillInnerText("/control/common", "before", commonOpts.befTime);
+            fillInnerText("/control/common", "equal", commonOpts.ForwardTimeEqualsBeforeTime);
+            fillInnerText("/control/common", "forward", commonOpts.fTime);
+            fillInnerText("/control/common", "back", commonOpts.bTime);
             _conf.Save(@confName);
         }
         internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal)
         {
-            Config.befTimeReal = befTimeReal;
-            Config.fTimeReal = fTimeReal;
-            Config.bTimeReal = bTimeReal;
-            Config.forwardAsBefore = forwardAsBefore;
+            Config.commonOpts.befTimeReal = befTimeReal;
+            Config.commonOpts.fTimeReal = fTimeReal;
+            Config.commonOpts.bTimeReal = bTimeReal;
+            Config.commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
             Config.saveDelaysOptions();
         }
 
@@ -559,6 +565,19 @@ namespace Flavor
             {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
+            //the whole logic of displaying spertra must be modified
+            //!!!!!!!!!!!!!!!!!!!!!!!!
+            CommonOptions co = null;
+            try
+            {
+                // what version of function will be called here?
+                loadCommonOptions(filename, sf, out co);
+            }
+            catch (structureErrorOnLoadCommonData)
+            {
+                co = null;
+            }
+            //!!!!!!!!!!!!!!!!!!!!!!!!
             pl1.Sort(ZedGraph.SortType.XValues);
             pl2.Sort(ZedGraph.SortType.XValues);
             return spectrumType;
@@ -619,7 +638,7 @@ namespace Flavor
         {
             if (Graph.isPreciseSpectrum)
             {
-                List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+                PreciseSpectrum peds = new PreciseSpectrum();
                 if (OpenPreciseSpecterFile(what, peds))
                 {
                     List<Utility.PreciseEditorData> temp;
@@ -781,7 +800,7 @@ namespace Flavor
 
         private static bool OpenPreciseSpecterFile(string filename)
         {
-            List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+            PreciseSpectrum peds = new PreciseSpectrum();
             bool result = OpenPreciseSpecterFile(filename, peds);
             if (result)
             {
@@ -790,7 +809,7 @@ namespace Flavor
             }
             return result;
         }
-        private static bool OpenPreciseSpecterFile(string filename, List<Utility.PreciseEditorData> peds)
+        private static bool OpenPreciseSpecterFile(string filename, PreciseSpectrum peds)
         {
             XmlDocument sf = new XmlDocument();
             string prefix = "";
@@ -808,6 +827,19 @@ namespace Flavor
             {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
             }
+
+            CommonOptions co = null;
+            try
+            {
+                // what version of function will be called here?
+                loadCommonOptions(filename, sf, out co);
+            }
+            catch (structureErrorOnLoadCommonData)
+            {
+                co = null;
+            }
+            peds.CommonOptions = co;
+
             return LoadPED(sf, filename, peds, true, prefix);
         }
         internal static XmlDocument SavePreciseSpecterFile(string filename, Graph.Displaying displayMode)
@@ -1036,14 +1068,14 @@ namespace Flavor
         }
         internal static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
         {
-            Config.eTimeReal = eT;
-            Config.iTimeReal = iT;
-            Config.iVoltageReal = iV;
-            Config.CPReal = cp;
-            Config.eCurrentReal = eC;
-            Config.hCurrentReal = hC;
-            Config.fV1Real = fv1;
-            Config.fV2Real = fv2;
+            Config.commonOpts.eTimeReal = eT;
+            Config.commonOpts.iTimeReal = iT;
+            Config.commonOpts.iVoltageReal = iV;
+            Config.commonOpts.CPReal = cp;
+            Config.commonOpts.eCurrentReal = eC;
+            Config.commonOpts.hCurrentReal = hC;
+            Config.commonOpts.fV1Real = fv1;
+            Config.commonOpts.fV2Real = fv2;
 
             saveCommonOptions(filename);
         }
@@ -1066,19 +1098,19 @@ namespace Flavor
         }
         private static void saveCommonOptions(XmlNode commonNode)
         {
-            commonNode.SelectSingleNode("exptime").InnerText = Config.eTime.ToString();
-            commonNode.SelectSingleNode("meastime").InnerText = Config.iTime.ToString();
-            commonNode.SelectSingleNode("ivoltage").InnerText = Config.iVoltage.ToString();
-            commonNode.SelectSingleNode("cp").InnerText = Config.CP.ToString();
-            commonNode.SelectSingleNode("ecurrent").InnerText = Config.eCurrent.ToString();
-            commonNode.SelectSingleNode("hcurrent").InnerText = Config.hCurrent.ToString();
-            commonNode.SelectSingleNode("focus1").InnerText = Config.fV1.ToString();
-            commonNode.SelectSingleNode("focus2").InnerText = Config.fV2.ToString();
+            commonNode.SelectSingleNode("exptime").InnerText = Config.commonOpts.eTime.ToString();
+            commonNode.SelectSingleNode("meastime").InnerText = Config.commonOpts.iTime.ToString();
+            commonNode.SelectSingleNode("ivoltage").InnerText = Config.commonOpts.iVoltage.ToString();
+            commonNode.SelectSingleNode("cp").InnerText = Config.commonOpts.CP.ToString();
+            commonNode.SelectSingleNode("ecurrent").InnerText = Config.commonOpts.eCurrent.ToString();
+            commonNode.SelectSingleNode("hcurrent").InnerText = Config.commonOpts.hCurrent.ToString();
+            commonNode.SelectSingleNode("focus1").InnerText = Config.commonOpts.fV1.ToString();
+            commonNode.SelectSingleNode("focus2").InnerText = Config.commonOpts.fV2.ToString();
 
-            commonNode.SelectSingleNode("before").InnerText = Config.beforeTime.ToString();
-            commonNode.SelectSingleNode("equal").InnerText = Config.forwardAsBefore.ToString();
-            commonNode.SelectSingleNode("forward").InnerText = Config.forwardTime.ToString();
-            commonNode.SelectSingleNode("back").InnerText = Config.backwardTime.ToString();
+            commonNode.SelectSingleNode("before").InnerText = Config.commonOpts.befTime.ToString();
+            commonNode.SelectSingleNode("equal").InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
+            commonNode.SelectSingleNode("forward").InnerText = Config.commonOpts.fTime.ToString();
+            commonNode.SelectSingleNode("back").InnerText = Config.commonOpts.bTime.ToString();
         }
 
         private static void newCommonOptionsFileOnLoad(out XmlDocument conf, string filename)
@@ -1101,10 +1133,18 @@ namespace Flavor
         }
         internal static void loadCommonOptions(string cdConfName)
         {
+            loadCommonOptions(cdConfName, null);
+        }
+        private static void loadCommonOptions(string cdConfName, CommonOptions commonOpts)
+        {
             XmlDocument cdConf;
-            string mainConfPrefix = "";
-
             newCommonOptionsFileOnLoad(out cdConf, cdConfName);
+
+            loadCommonOptions(cdConfName, cdConf, out commonOpts);
+        }
+        private static void loadCommonOptions(string cdConfName, XmlDocument cdConf, out CommonOptions commonOpts)
+        {
+            string mainConfPrefix = "";
 
             if (cdConf.SelectSingleNode("control/common") != null)
                 mainConfPrefix = mainConfigPrefix;
@@ -1113,20 +1153,37 @@ namespace Flavor
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
             XmlNode commonNode = cdConf.SelectSingleNode(mainConfPrefix + "common");
-            
+
+            loadCommonOptions(cdConfName, commonNode, out commonOpts);
+        }        
+        private static void loadCommonOptions(string cdConfName, XmlNode commonNode, out CommonOptions commonOpts)
+        {
             try
             {
-                expTime = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
-                idleTime = ushort.Parse(commonNode.SelectSingleNode("meastime").InnerText);
-                iVoltage = ushort.Parse(commonNode.SelectSingleNode("ivoltage").InnerText);
+                ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
+
+                eT = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
+                iT = ushort.Parse(commonNode.SelectSingleNode("meastime").InnerText);
+                iV = ushort.Parse(commonNode.SelectSingleNode("ivoltage").InnerText);
                 CP = ushort.Parse(commonNode.SelectSingleNode("cp").InnerText);
-                eCurrent = ushort.Parse(commonNode.SelectSingleNode("ecurrent").InnerText);
-                hCurrent = ushort.Parse(commonNode.SelectSingleNode("hcurrent").InnerText);
+                eC = ushort.Parse(commonNode.SelectSingleNode("ecurrent").InnerText);
+                hC = ushort.Parse(commonNode.SelectSingleNode("hcurrent").InnerText);
                 fV1 = ushort.Parse(commonNode.SelectSingleNode("focus1").InnerText);
                 fV2 = ushort.Parse(commonNode.SelectSingleNode("focus2").InnerText);
+
+                commonOpts = new CommonOptions();
+                commonOpts.eTime = eT;
+                commonOpts.iTime = iT;
+                commonOpts.iVoltage = iV;
+                commonOpts.CP = CP;
+                commonOpts.eCurrent = eC;
+                commonOpts.hCurrent = hC;
+                commonOpts.fV1 = fV1;
+                commonOpts.fV2 = fV2;
             }
             catch (NullReferenceException)
             {
+                commonOpts = null;
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
 
@@ -1134,14 +1191,16 @@ namespace Flavor
             {
                 ushort befT, fT, bT;
                 bool fAsbef;
+
                 befT = ushort.Parse(commonNode.SelectSingleNode("before").InnerText);
                 fT = ushort.Parse(commonNode.SelectSingleNode("forward").InnerText);
                 bT = ushort.Parse(commonNode.SelectSingleNode("back").InnerText);
                 fAsbef = bool.Parse(commonNode.SelectSingleNode("equal").InnerText);
-                beforeTime = befT;
-                forwardAsBefore = fAsbef;
-                forwardTime = fT;
-                backwardTime = bT;
+
+                commonOpts.befTime = befT;
+                commonOpts.ForwardTimeEqualsBeforeTime = fAsbef;
+                commonOpts.fTime = fT;
+                commonOpts.bTime = bT;
             }
             catch (NullReferenceException)
             {
@@ -1218,7 +1277,7 @@ namespace Flavor
         }
         internal static void setScalingCoeff(byte col, ushort pnt, double mass)
         {
-            double value = mass * Config.scanVoltageReal(pnt);
+            double value = mass * Config.commonOpts.scanVoltageReal(pnt);
             if (col == 1)
             {
                 if (value != col1Coeff)
@@ -1244,7 +1303,7 @@ namespace Flavor
                 coeff = col1Coeff;
             else 
                 coeff = col2Coeff;
-            return coeff / Config.scanVoltageReal(pnt);
+            return coeff / Config.commonOpts.scanVoltageReal(pnt);
         }
         #endregion
         #region Logging routines

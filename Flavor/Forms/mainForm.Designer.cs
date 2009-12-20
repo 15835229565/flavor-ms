@@ -105,6 +105,7 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
+            this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -407,6 +408,7 @@ namespace Flavor
             this.initSys_butt,
             this.shutSys_butt,
             this.unblock_butt,
+            this.monitorToolStripButton,
             this.sensmeasure_button,
             this.overview_button});
             this.ControlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
@@ -854,6 +856,17 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
+            // monitorToolStripButton
+            // 
+            this.monitorToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.monitorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.monitorToolStripButton.Enabled = false;
+            this.monitorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("monitorToolStripButton.Image")));
+            this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.monitorToolStripButton.Name = "monitorToolStripButton";
+            this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
+            this.monitorToolStripButton.Text = "Режим мониторинга";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -871,6 +884,7 @@ namespace Flavor
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Управление масс-спектрометром";
             this.Load += new System.EventHandler(this.mainForm_Load);
+            this.MdiChildActivate += new System.EventHandler(this.mainForm_MdiChildActivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -965,6 +979,7 @@ namespace Flavor
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView statusTreeView;
         private System.Windows.Forms.ImageList statusTreeViewStateImageList;
+        private System.Windows.Forms.ToolStripButton monitorToolStripButton;
     }
 }
 

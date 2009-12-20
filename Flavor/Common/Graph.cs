@@ -64,7 +64,7 @@ namespace Flavor
             {
                 peakSum += count;
                 points[(int)DisplayValue.Step].Add(pnt, count);
-                points[(int)DisplayValue.Voltage].Add(Config.scanVoltageReal(pnt), count, pnt);
+                points[(int)DisplayValue.Voltage].Add(Config.CommonOptions.scanVoltageReal(pnt), count, pnt);
                 points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count, pnt);
             }
             private void SetRows(pListScaled pl)
@@ -152,7 +152,7 @@ namespace Flavor
             }
             private void zToVoltage(PointPair pp)
             {
-                pp.X = Config.scanVoltageReal((ushort)pp.Z);
+                pp.X = Config.CommonOptions.scanVoltageReal((ushort)pp.Z);
             }
             private void zToMass(PointPair pp)
             {
@@ -204,7 +204,7 @@ namespace Flavor
             }
         }
 
-        private static Spectrum collectors = new Spectrum();
+        private static Spectrum collectors = new Spectrum(Config.CommonOptions);
         private static Spectrum loadedSpectra = new Spectrum();
         private static Spectrum diffSpectra = new Spectrum();
         private static List<PointPairListPlus> getPointPairs(Spectrum which, int col, bool useAxisMode)
