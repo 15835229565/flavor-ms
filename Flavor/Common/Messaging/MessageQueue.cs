@@ -170,10 +170,7 @@ namespace Flavor
                 }
                 
                 ToSend.Enqueue(Command);
-                if (SendTimer.Enabled == false)
-                {
-                    Send();
-                }
+                trySend();
             }
         }
 
@@ -199,6 +196,8 @@ namespace Flavor
             try
             {
                 ToSend.Clear();
+                statusToSend = false;
+                turboToSend = false;
                 return false;
             }
             catch (InvalidOperationException)
@@ -207,6 +206,8 @@ namespace Flavor
             }
             Console.WriteLine("Message queue recreation.");
             ToSend = new Queue<UserRequest>();
+            statusToSend = false;
+            turboToSend = false;
             return false;
         }
 
@@ -256,6 +257,7 @@ namespace Flavor
                 {
                     ToSend.Enqueue(new requestStatus());
                     statusToSend = true;
+                    trySend();
                 }
             }
         }
@@ -268,6 +270,7 @@ namespace Flavor
                     ToSend.Enqueue(new getTurboPumpStatus());
                     turboToSend = true;
                 }
+                trySend();
             }
         }
     }
