@@ -7,12 +7,10 @@ namespace Flavor
     class MessageQueue
     {
         private byte Try = 0;
-
-        private Object queueLock = new Object();
-        private Queue<UserRequest> ToSend = new Queue<UserRequest>();
         private bool statusToSend = false;
         private bool turboToSend = false;
 
+        private Queue<UserRequest> ToSend = new Queue<UserRequest>();
         private System.Timers.Timer SendTimer;
         private System.Timers.ElapsedEventHandler elapsed;
 
@@ -38,14 +36,29 @@ namespace Flavor
                 }
             }
         }
-        private void trySend()
+        public void AddToSend(UserRequest Command)//Enqueue
         {
-            lock (SendTimer)
+            lock (ToSend)
             {
-                if (!SendTimer.Enabled)
+                if (Command is requestStatus)
                 {
-                    Send();
+                    if (statusToSend)
+                    {
+                        return;
+                    }
+                    statusToSend = true;
                 }
+                else if (Command is getTurboPumpStatus)
+                {
+                    if (turboToSend)
+                    {
+                        return;
+                    }
+                    turboToSend = true;
+                }
+
+                ToSend.Enqueue(Command);
+                trySend();
             }
         }
         public UserRequest Dequeue()
@@ -87,6 +100,32 @@ namespace Flavor
             trySend();
             return packet;
         }
+
+        protected void addStatusRequest()
+        {
+            lock (ToSend)
+            {
+                if (!statusToSend)
+                {
+                    ToSend.Enqueue(new requestStatus());
+                    statusToSend = true;
+                    trySend();
+                }
+            }
+        }
+        protected void addTurboPumpStatusRequest()
+        {
+            lock (ToSend)
+            {
+                if (!turboToSend)
+                {
+                    ToSend.Enqueue(new getTurboPumpStatus());
+                    turboToSend = true;
+                }
+                trySend();
+            }
+        }
+
         private void StartSending()
         {
             lock (SendTimer)
@@ -101,7 +140,6 @@ namespace Flavor
                 SendTimer.Enabled = true;
             }
         }
-
         private void StopSending()
         {
             lock (SendTimer)
@@ -149,28 +187,37 @@ namespace Flavor
             }
         }
 
-        internal void AddToSend(UserRequest Command)
+        private void trySend()
+        {
+            lock (SendTimer)
+            {
+                if (!SendTimer.Enabled)
+                {
+                    Send();
+                }
+            }
+        }
+        private void Send()
         {
             lock (ToSend)
             {
-                if (Command is requestStatus)
+                while (ToSend.Count > 0)
                 {
-                    if (statusToSend) {
-                        return;
-                    }
-                    statusToSend = true;
-                }
-                else if (Command is getTurboPumpStatus)
-                {
-                    if (turboToSend)
+                    UserRequest packet = null;
+                    peekToSendInsideLock(ref packet);
+                    if (packet != null)
                     {
-                        return;
+                        if (0 == Try)
+                        {
+                            StartSending();
+                        }
+                        packet.Send();
+                        break;
                     }
-                    turboToSend = true;
+                    if (dequeueToSendInsideLock(ref packet))
+                        continue;
+                    break;
                 }
-                
-                ToSend.Enqueue(Command);
-                trySend();
             }
         }
 
@@ -210,7 +257,6 @@ namespace Flavor
             turboToSend = false;
             return false;
         }
-
         private void peekToSendInsideLock(ref UserRequest packet)
         {
             try
@@ -222,55 +268,6 @@ namespace Flavor
             catch (InvalidOperationException)
             {
                 Console.WriteLine("Error. Peek failed though someting must be in queue.");
-            }
-        }
-
-        private void Send()
-        {
-            lock (ToSend)
-            {
-                while (ToSend.Count > 0)
-                {
-                    UserRequest packet = null;
-                    peekToSendInsideLock(ref packet);
-                    if (packet != null)
-                    {
-                        if (0 == Try)
-                        {
-                            StartSending();
-                        }
-                        packet.Send();
-                        break;
-                    }
-                    if (dequeueToSendInsideLock(ref packet))
-                        continue;
-                    break;
-                }
-            }
-        }
-
-        internal void addStatusRequest()
-        {
-            lock (ToSend)
-            {
-                if (!statusToSend)
-                {
-                    ToSend.Enqueue(new requestStatus());
-                    statusToSend = true;
-                    trySend();
-                }
-            }
-        }
-        internal void addTurboPumpStatusRequest()
-        {
-            lock (ToSend)
-            {
-                if (!turboToSend)
-                {
-                    ToSend.Enqueue(new getTurboPumpStatus());
-                    turboToSend = true;
-                }
-                trySend();
             }
         }
     }

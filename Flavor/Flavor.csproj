@@ -58,6 +58,7 @@
     <Compile Include="Common\Measuring\PreciseMeasureMode.cs" />
     <Compile Include="Common\Measuring\ScanMeasureMode.cs" />
     <Compile Include="Common\Measuring\MeasureMode.cs" />
+    <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Utility.cs" />

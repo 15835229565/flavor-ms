@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flavor.Common.Measuring
+namespace Flavor
 {
     abstract public class MeasureMode
     {

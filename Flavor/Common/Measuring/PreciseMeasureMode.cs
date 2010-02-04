@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flavor.Common.Measuring
+namespace Flavor
 {
-    public class PreciseMeasureMode: MeasureMode
+    class PreciseMeasureMode: MeasureMode
     {
         public override void onUpdateCounts()
         {
