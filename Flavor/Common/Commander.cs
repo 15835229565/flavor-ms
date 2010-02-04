@@ -27,14 +27,16 @@ namespace Flavor
         private static Commander.programStates programState;
         private static Commander.programStates programStatePrev;
         private static bool handleBlock = true;
-        private static bool isSenseMeasureMode;
         private static bool cancelMeasure = false;
-        private static bool scanning = false;
         private static bool notRareMode = false;
         private static bool isConnected = false;
         private static bool onTheFly = true;
         private static sendMeasure customMeasure = null;
         private static bool doMeasure = true;
+
+        private static bool isSenseMeasureMode;
+        //private static bool scanning = false;
+        private static MeasureMode measureMode = null;
 
         public static event AsyncReplyHandler OnAsyncReply;
         
@@ -160,11 +162,10 @@ namespace Flavor
                 Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 if (Commander.pState != Commander.programStates.Start)
                 {
-                    if (scanning & !Commander.notRareModeRequested) toSend.IsRareMode = false;
+                    if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
                     Commander.hBlock = true;//!!!
-                    scanning = false;
                     Commander.measureCancelRequested = false;
                 }
             }
@@ -178,7 +179,6 @@ namespace Flavor
                     Commander.pStatePrev = Commander.pState;
                     Commander.hBlock = true;
                     Console.WriteLine(Commander.pState);
-                    scanning = false;
                     Device.Init();
                 }
                 if (Command is SystemReseted)
@@ -187,11 +187,10 @@ namespace Flavor
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start)
                     {
-                        if (scanning & !Commander.notRareModeRequested) toSend.IsRareMode = false;
+                        if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
                         Commander.hBlock = true;//!!!
-                        scanning = false;
                         Commander.measureCancelRequested = false;
                     }
                 }
@@ -284,6 +283,7 @@ namespace Flavor
                 if (Command is updateCounts)
                 {
                     customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
+                    //measureMode.onUpdateCounts();
                     if (!Commander.isSenseMeasure)
                     {
                         if (!Commander.measureCancelRequested && (Commander.Point <= Config.ePoint))
@@ -292,18 +292,14 @@ namespace Flavor
                         }
                         else
                         {
-                            if (scanning)
-                            {
-                                if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
-                                scanning = false;
-                                toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                                OnScanCancelled();
-                                Commander.pStatePrev = Commander.pState;
-                                Commander.pState = Commander.programStates.Ready;
-                                Commander.pStatePrev = Commander.pState;
-                                Commander.measureCancelRequested = false;
-                                Config.AutoSaveSpecterFile();
-                            }
+                            if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
+                            toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
+                            OnScanCancelled();
+                            Commander.pStatePrev = Commander.pState;
+                            Commander.pState = Commander.programStates.Ready;
+                            Commander.pStatePrev = Commander.pState;
+                            Commander.measureCancelRequested = false;
+                            Config.AutoSaveSpecterFile();
                         }
                     }
                     else
@@ -386,6 +382,7 @@ namespace Flavor
                     {
                         //first measure point with increased idle time
                         customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
+                        //measureMode.start();
                         if (!Commander.isSenseMeasure)
                         {
                             Commander.Point = Config.sPoint;
@@ -471,14 +468,21 @@ namespace Flavor
         {
 
             Console.WriteLine(pState);
+            if (measureMode != null && measureMode.isOperating)
+            {
+                //something in operation
+                return;
+            }
             if (pState == Commander.programStates.Ready)
             {
                 pStatePrev = pState;
                 pState = Commander.programStates.Measure;
                 Commander.isSenseMeasure = false;
+
+                measureMode = new ScanMeasureMode();
+                
                 Graph.ResetPointLists();
                 if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
-                scanning = true;
                 Commander.measureCancelRequested = false;
                 toSend.AddToSend(new sendIVoltage());
             }
