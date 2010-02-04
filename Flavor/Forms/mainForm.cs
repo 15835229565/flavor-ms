@@ -199,6 +199,7 @@ namespace Flavor
         }
         private void monitorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Prec/Mon forms simultaneously howto?
             MonitorOptionsForm mForm = MonitorOptionsForm.getInstance();
             mForm.UpLevel = this;
             mForm.Show();
@@ -788,6 +789,7 @@ namespace Flavor
                     unblock_butt.Enabled = Commander.deviceIsConnected && !Commander.hBlock;//разрешено для включения блокировки
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = true;
                     
                     connectToolStripMenuItem.Enabled = true;
                     measureToolStripMenuItem.Enabled = true;
@@ -806,6 +808,7 @@ namespace Flavor
                     unblock_butt.Enabled = false;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = false;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -823,6 +826,7 @@ namespace Flavor
                     unblock_butt.Enabled = false;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = false;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -840,6 +844,7 @@ namespace Flavor
                     unblock_butt.Enabled = true;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = false;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -857,6 +862,7 @@ namespace Flavor
                     unblock_butt.Enabled = true;
                     overview_button.Enabled = true & !Commander.hBlock;
                     sensmeasure_button.Enabled = true & !Commander.hBlock & precPointsExist;
+                    monitorToolStripButton.Enabled = true & !Commander.hBlock & precPointsExist;//&& smth else?;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -874,6 +880,7 @@ namespace Flavor
                     unblock_butt.Enabled = true;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = false;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = false;
@@ -891,6 +898,7 @@ namespace Flavor
                     unblock_butt.Enabled = false;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = false;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
@@ -908,6 +916,7 @@ namespace Flavor
                     unblock_butt.Enabled = false;
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
+                    monitorToolStripButton.Enabled = false;
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
