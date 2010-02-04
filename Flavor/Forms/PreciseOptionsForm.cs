@@ -151,7 +151,7 @@ namespace Flavor
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-        private PreciseOptionsForm(): base()
+        internal PreciseOptionsForm(): base()
         {
             InitializeComponent();
             this.SuspendLayout();

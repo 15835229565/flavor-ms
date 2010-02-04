@@ -64,6 +64,7 @@ namespace Flavor
             this.unblock_butt = new System.Windows.Forms.ToolStripButton();
             this.ControlToolStrip = new System.Windows.Forms.ToolStrip();
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
@@ -105,7 +106,7 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
-            this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -261,7 +262,8 @@ namespace Flavor
             this.delaysToolStripMenuItem,
             this.toolStripSeparator2,
             this.overviewToolStripMenuItem,
-            this.senseToolStripMenuItem});
+            this.senseToolStripMenuItem,
+            this.monitorToolStripMenuItem});
             this.measureToolStripMenuItem.Name = "measureToolStripMenuItem";
             this.measureToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
             this.measureToolStripMenuItem.Text = "Измерение";
@@ -427,6 +429,18 @@ namespace Flavor
             this.connectToolStripButton.Size = new System.Drawing.Size(67, 22);
             this.connectToolStripButton.Text = "Соединить";
             this.connectToolStripButton.Click += new System.EventHandler(this.connectToolStripButton_Click);
+            // 
+            // monitorToolStripButton
+            // 
+            this.monitorToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.monitorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.monitorToolStripButton.Enabled = false;
+            this.monitorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("monitorToolStripButton.Image")));
+            this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.monitorToolStripButton.Name = "monitorToolStripButton";
+            this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
+            this.monitorToolStripButton.Text = "Режим мониторинга";
+            this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
             // 
             // parameterPanel
             // 
@@ -856,16 +870,12 @@ namespace Flavor
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
             // 
-            // monitorToolStripButton
+            // monitorToolStripMenuItem
             // 
-            this.monitorToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.monitorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.monitorToolStripButton.Enabled = false;
-            this.monitorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("monitorToolStripButton.Image")));
-            this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.monitorToolStripButton.Name = "monitorToolStripButton";
-            this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
-            this.monitorToolStripButton.Text = "Режим мониторинга";
+            this.monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
+            this.monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.monitorToolStripMenuItem.Text = "Режим мониторинга";
+            this.monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
             // 
             // mainForm
             // 
@@ -980,6 +990,7 @@ namespace Flavor
         private System.Windows.Forms.TreeView statusTreeView;
         private System.Windows.Forms.ImageList statusTreeViewStateImageList;
         private System.Windows.Forms.ToolStripButton monitorToolStripButton;
+        private System.Windows.Forms.ToolStripMenuItem monitorToolStripMenuItem;
     }
 }
 

@@ -35,8 +35,8 @@ namespace Flavor
         private static bool onTheFly = true;
         private static sendMeasure customMeasure = null;
         private static bool doMeasure = true;
-        public static System.Timers.Timer DeviceStatusCheckTimer;
-        public static System.Timers.Timer TurboPumpCheckTimer;
+        private static System.Timers.Timer DeviceStatusCheckTimer;
+        private static System.Timers.Timer TurboPumpCheckTimer;
 
         public static event AsyncReplyHandler OnAsyncReply;
         
@@ -146,13 +146,14 @@ namespace Flavor
             set { PointValue = value; }
         }
         
-        private static byte Try = 0;
+        //private static byte Try = 0;
 
-        private static Queue<UserRequest> ToSend = new Queue<UserRequest>();
-        private static bool statusToSend = false;
-        private static bool turboToSend = false;
+        private static MessageQueue toSend;// = new MessageQueue();
+        //private static Queue<UserRequest> ToSend = new Queue<UserRequest>();
+        //private static bool statusToSend = false;
+        //private static bool turboToSend = false;
 
-        private static System.Timers.Timer SendTimer;
+        //private static System.Timers.Timer SendTimer;
 
         private static void StartDeviceStatusCheck()
         {
@@ -194,27 +195,29 @@ namespace Flavor
 
         private static void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            toSend.addStatusRequest();
             //workaround needing
-            if (!statusToSend)
+            /*if (!statusToSend)
             {
                 Commander.AddToSend(new requestStatus());
-            }
+            }*/
             //if ((ToSend.Count == 0) || !scanning)
             //    Commander.AddToSend(new requestStatus());
         }
 
         private static void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            toSend.addTurboPumpStatusRequest();
             //workaround needing
-            if (!turboToSend)
+            /*if (!turboToSend)
             {
                 Commander.AddToSend(new getTurboPumpStatus());
-            }
+            }*/
             //if ((ToSend.Count == 0) || !scanning)
             //    Commander.AddToSend(new getTurboPumpStatus());
         }
 
-        private static void StartSending()
+        /*private static void StartSending()
         {
             lock (SendTimer)
             {
@@ -256,18 +259,18 @@ namespace Flavor
                 {
                     UserRequest packet = null;
                     if (ToSend.Count == 0)
-                        Console.WriteLine("Опа. Очередь пакетов пуста, а счетчик отправки не обнулен.");
+                        Console.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
                     else
                     {
                         if (dequeueToSendInsideLock(ref packet))
                         {
                             if (packet == null)
-                                Console.WriteLine("Кирдык. В очереди пакетов лежал null.");
+                                Console.WriteLine("Error. In message queue null found.");
                         }
                     }
                     StopSending();
                     if (packet != null)
-                        Console.WriteLine("Прибор не отвечает на {0}", packet.Id);
+                        Console.WriteLine("Device not answering to {0}", packet.Id);
                     if (Commander.pState != Commander.pStatePrev)
                         Commander.pState = Commander.pStatePrev;
                 }
@@ -313,7 +316,7 @@ namespace Flavor
             }
             catch (InvalidOperationException)
             {
-                Console.WriteLine("Кирдык. Не удалось удалить из очереди пакетов, хотя там должно что-то быть.");
+                Console.WriteLine("Error. Dequeue failed though someting must be in queue.");
             }
             try
             {
@@ -322,9 +325,9 @@ namespace Flavor
             }
             catch (InvalidOperationException)
             {
-                Console.WriteLine("Кирдык. Не удалось очистить очередь пакетов.");
+                Console.WriteLine("Error. Cannot clear message queue.");
             }
-            Console.WriteLine("Пересоздаем очередь пакетов.");
+            Console.WriteLine("Message queue recreation.");
             ToSend = new Queue<UserRequest>();
             return false;
         }
@@ -335,15 +338,15 @@ namespace Flavor
             {
                 packet = ToSend.Peek();
                 if (packet == null)
-                    Console.WriteLine("Кирдык. Из очереди пакетов достался null.");
+                    Console.WriteLine("Error. In message queue null found.");
             }
             catch (InvalidOperationException)
             {
-                Console.WriteLine("Кирдык. Не удалось достать из очереди пакетов, хотя там должно что-то быть.");
+                Console.WriteLine("Error. Peek failed though someting must be in queue.");
             }
         }
         
-        public static void Send()
+        private static void Send()
         {
             lock (ToSend)
             {
@@ -365,6 +368,11 @@ namespace Flavor
                     break;
                 }
             }
+        }*/
+
+        public static void AddToSend(UserRequest Command)
+        {
+            toSend.AddToSend(Command);
         }
 
         public static void Realize(ServicePacket Command)
@@ -372,7 +380,7 @@ namespace Flavor
             if (Command is AsyncErrorReply)
             {
                 CheckInterfaces(Command);
-                Console.WriteLine("Бяда: {0}", ((AsyncErrorReply)Command).errorMessage);
+                Console.WriteLine("Device says: {0}", ((AsyncErrorReply)Command).errorMessage);
                 Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 if (Commander.pState != Commander.programStates.Start)
                 {
@@ -389,7 +397,7 @@ namespace Flavor
                 CheckInterfaces(Command);
                 if (Command is confirmShutdowned)
                 {
-                    Console.WriteLine("Система отключена");
+                    Console.WriteLine("System is shutdowned");
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
                     Commander.hBlock = true;
@@ -399,7 +407,7 @@ namespace Flavor
                 }
                 if (Command is SystemReseted)
                 {
-                    Console.WriteLine("Система переинициализировалась");
+                    Console.WriteLine("System reseted");
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start)
                     {
@@ -444,26 +452,28 @@ namespace Flavor
             }
             if (Command is SyncErrorReply)
             {
+                /*UserRequest packet = null;
+
                 lock (ToSend)
                 {
-                    UserRequest packet = null;
                     dequeueToSendInsideLock(ref packet);
                     StopSending();
                     if (Commander.pState != Commander.pStatePrev)
                         Commander.pState = Commander.pStatePrev;
-                }
+                }*/
+                toSend.Dequeue();
                 CheckInterfaces(Command);
-                if (SendTimer.Enabled == false)
-                    Send();
+                /*if (SendTimer.Enabled == false)
+                    Send();*/
             }
             if (Command is SyncReply)
             {
-                UserRequest packet = null;
+                /*UserRequest packet = null;
                 lock (ToSend)
                 {
                     if (ToSend.Count == 0)
                     {
-                        Console.WriteLine("Пришло {0}. Не ждали ничего.", Command);
+                        Console.WriteLine("Received {0}. While waiting for nothing.", Command);
                         return;
                     }
                     peekToSendInsideLock(ref packet);
@@ -474,24 +484,25 @@ namespace Flavor
                     }
                     if (packet.Id != ((SyncReply)Command).Id)
                     {
-                        Console.WriteLine("Пришло {0}. Ждали {1}.", Command, packet);
+                        Console.WriteLine("Received {0}. While waiting for {1}.", Command, packet);
                         return;
                     }
                     StopSending();
                     if (!dequeueToSendInsideLock(ref packet))
                         return;
-                }
+                }*/
+                toSend.Peek((SyncReply)Command);
                 CheckInterfaces(Command);
                 if (Command is confirmInit)
                 {
-                    Console.WriteLine("Запрос на инициализацию подтвержден");
+                    Console.WriteLine("Init request confirmed");
                     Commander.pState = Commander.programStates.Init;
                     Commander.pStatePrev = Commander.pState;
                     Console.WriteLine(Commander.pState);
                 }
                 if (Command is confirmShutdown)
                 {
-                    Console.WriteLine("Запрос на отключение подтвержден");
+                    Console.WriteLine("Shutdown request confirmed");
                     Commander.pState = Commander.programStates.Shutdown;
                     Commander.pStatePrev = Commander.pState;
                     Console.WriteLine(Commander.pState);
@@ -669,10 +680,10 @@ namespace Flavor
                         }
                     }
                 }
-                if (SendTimer.Enabled == false)
+                /*if (SendTimer.Enabled == false)
                 {
                     Send();
-                }
+                }*/
             }
         }
 
@@ -706,7 +717,6 @@ namespace Flavor
 
             Console.WriteLine(pState);
         }
-
         internal static void Shutdown()
         {
 
@@ -732,7 +742,6 @@ namespace Flavor
                 Commander.AddToSend(new sendIVoltage());
             }
         }
-
         internal static void Sense()
         {
             if (pState == Commander.programStates.Ready)
@@ -761,6 +770,10 @@ namespace Flavor
                 */
             }
         }
+        internal static void Monitor()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
         internal static bool somePointsUsed()
         {
@@ -785,8 +798,9 @@ namespace Flavor
             {
                 case ModBus.PortStates.Opening:
                     Commander.deviceIsConnected = true;
-                    SendTimer = new System.Timers.Timer(1000);
-                    SendTimer.Enabled = false;
+                    toSend = new MessageQueue();
+                    /*SendTimer = new System.Timers.Timer(1000);
+                    SendTimer.Enabled = false;*/
                     StartDeviceStatusCheck();
                     break;
                 case ModBus.PortStates.Opened:
@@ -799,11 +813,11 @@ namespace Flavor
                     break;
             }
         }
-
         internal static void Disconnect()
         {
             StopDeviceStatusCheck();
-            lock (ToSend)
+            toSend.Clear();
+            /*lock (ToSend)
             {
                 if (ToSend.Count > 0)
                 {
@@ -815,7 +829,7 @@ namespace Flavor
                 }
                 statusToSend = false;
                 turboToSend = false;
-            }
+            }*/
             switch (ModBus.Close())
             {
                 case ModBus.PortStates.Closing:

@@ -55,6 +55,10 @@
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
+    <Compile Include="Common\Measuring\PreciseMeasureMode.cs" />
+    <Compile Include="Common\Measuring\ScanMeasureMode.cs" />
+    <Compile Include="Common\Measuring\MeasureMode.cs" />
+    <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Controls\ZedGraphControlPlus.cs">
@@ -80,6 +84,12 @@
     </Compile>
     <Compile Include="Forms\ConnectOptionsForm.Designer.cs">
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MonitorOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MonitorOptionsForm.Designer.cs">
+      <DependentUpon>MonitorOptionsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\SetScalingCoeffForm.cs">
       <SubType>Form</SubType>
@@ -134,6 +144,10 @@
     <EmbeddedResource Include="Forms\ConnectOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MonitorOptionsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MonitorOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SetScalingCoeffForm.resx">
       <DependentUpon>SetScalingCoeffForm.cs</DependentUpon>
