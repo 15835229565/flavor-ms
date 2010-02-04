@@ -146,14 +146,7 @@ namespace Flavor
             set { PointValue = value; }
         }
         
-        //private static byte Try = 0;
-
-        private static MessageQueue toSend;// = new MessageQueue();
-        //private static Queue<UserRequest> ToSend = new Queue<UserRequest>();
-        //private static bool statusToSend = false;
-        //private static bool turboToSend = false;
-
-        //private static System.Timers.Timer SendTimer;
+        private static MessageQueue toSend;
 
         private static void StartDeviceStatusCheck()
         {
@@ -196,179 +189,13 @@ namespace Flavor
         private static void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             toSend.addStatusRequest();
-            //workaround needing
-            /*if (!statusToSend)
-            {
-                Commander.AddToSend(new requestStatus());
-            }*/
-            //if ((ToSend.Count == 0) || !scanning)
-            //    Commander.AddToSend(new requestStatus());
         }
 
         private static void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             toSend.addTurboPumpStatusRequest();
-            //workaround needing
-            /*if (!turboToSend)
-            {
-                Commander.AddToSend(new getTurboPumpStatus());
-            }*/
-            //if ((ToSend.Count == 0) || !scanning)
-            //    Commander.AddToSend(new getTurboPumpStatus());
         }
 
-        /*private static void StartSending()
-        {
-            lock (SendTimer)
-            {
-                if (Try != 0)
-                {
-                    Console.WriteLine("Опа. Таймер отправки сообщений уже был запущен.");
-                    return;
-                }
-                Try = 1;
-                SendTimer.Elapsed += new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
-                SendTimer.Enabled = true;
-            }
-        }
-
-        private static void StopSending()
-        {
-            lock (SendTimer)
-            {
-                if (Try == 0)
-                {
-                    Console.WriteLine("Опа. Таймер отправки сообщений уже был остановлен.");
-                    return;
-                }
-                SendTimer.Elapsed -= new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
-                SendTimer.Enabled = false;
-                Try = 0;
-            }
-        }
-
-        private static void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            lock (SendTimer)
-            {
-                ++Try;
-            }
-            if (Try > Config.Try)
-            {
-                lock (ToSend)
-                {
-                    UserRequest packet = null;
-                    if (ToSend.Count == 0)
-                        Console.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
-                    else
-                    {
-                        if (dequeueToSendInsideLock(ref packet))
-                        {
-                            if (packet == null)
-                                Console.WriteLine("Error. In message queue null found.");
-                        }
-                    }
-                    StopSending();
-                    if (packet != null)
-                        Console.WriteLine("Device not answering to {0}", packet.Id);
-                    if (Commander.pState != Commander.pStatePrev)
-                        Commander.pState = Commander.pStatePrev;
-                }
-                return;
-            }
-            Send();
-        }
-
-        public static void AddToSend(UserRequest Command)
-        {
-            lock(ToSend)
-            {
-                ToSend.Enqueue(Command);
-                if (Command is requestStatus)
-                {
-                    statusToSend = true;
-                }
-                if (Command is getTurboPumpStatus)
-                {
-                    turboToSend = true;
-                }
-                if (SendTimer.Enabled == false)
-                {
-                    Send();
-                }
-            }
-        }
-
-        private static bool dequeueToSendInsideLock(ref UserRequest packet)
-        {
-            try
-            {
-                packet = ToSend.Dequeue();
-                if (packet is requestStatus)
-                {
-                    statusToSend = false;
-                }
-                if (packet is getTurboPumpStatus)
-                {
-                    turboToSend = false;
-                }
-                return true;
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Error. Dequeue failed though someting must be in queue.");
-            }
-            try
-            {
-                ToSend.Clear();
-                return false;
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Error. Cannot clear message queue.");
-            }
-            Console.WriteLine("Message queue recreation.");
-            ToSend = new Queue<UserRequest>();
-            return false;
-        }
-
-        private static void peekToSendInsideLock(ref UserRequest packet)
-        {
-            try
-            {
-                packet = ToSend.Peek();
-                if (packet == null)
-                    Console.WriteLine("Error. In message queue null found.");
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Error. Peek failed though someting must be in queue.");
-            }
-        }
-        
-        private static void Send()
-        {
-            lock (ToSend)
-            {
-                while (ToSend.Count > 0)
-                {
-                    UserRequest packet = null;
-                    peekToSendInsideLock(ref packet);
-                    if (packet != null)
-                    {
-                        if (0 == Try)
-                        {
-                            StartSending();
-                        }
-                        packet.Send();
-                        break;
-                    }
-                    if (dequeueToSendInsideLock(ref packet)) 
-                        continue;
-                    break;
-                }
-            }
-        }*/
 
         public static void AddToSend(UserRequest Command)
         {
@@ -452,46 +279,15 @@ namespace Flavor
             }
             if (Command is SyncErrorReply)
             {
-                /*UserRequest packet = null;
-
-                lock (ToSend)
-                {
-                    dequeueToSendInsideLock(ref packet);
-                    StopSending();
-                    if (Commander.pState != Commander.pStatePrev)
-                        Commander.pState = Commander.pStatePrev;
-                }*/
                 toSend.Dequeue();
                 CheckInterfaces(Command);
-                /*if (SendTimer.Enabled == false)
-                    Send();*/
             }
             if (Command is SyncReply)
             {
-                /*UserRequest packet = null;
-                lock (ToSend)
+                if (null == toSend.Peek((SyncReply)Command))
                 {
-                    if (ToSend.Count == 0)
-                    {
-                        Console.WriteLine("Received {0}. While waiting for nothing.", Command);
-                        return;
-                    }
-                    peekToSendInsideLock(ref packet);
-                    if (packet == null)
-                    {
-                        dequeueToSendInsideLock(ref packet);
-                        return;
-                    }
-                    if (packet.Id != ((SyncReply)Command).Id)
-                    {
-                        Console.WriteLine("Received {0}. While waiting for {1}.", Command, packet);
-                        return;
-                    }
-                    StopSending();
-                    if (!dequeueToSendInsideLock(ref packet))
-                        return;
-                }*/
-                toSend.Peek((SyncReply)Command);
+                    return;
+                }
                 CheckInterfaces(Command);
                 if (Command is confirmInit)
                 {
@@ -680,10 +476,6 @@ namespace Flavor
                         }
                     }
                 }
-                /*if (SendTimer.Enabled == false)
-                {
-                    Send();
-                }*/
             }
         }
 
@@ -799,8 +591,6 @@ namespace Flavor
                 case ModBus.PortStates.Opening:
                     Commander.deviceIsConnected = true;
                     toSend = new MessageQueue();
-                    /*SendTimer = new System.Timers.Timer(1000);
-                    SendTimer.Enabled = false;*/
                     StartDeviceStatusCheck();
                     break;
                 case ModBus.PortStates.Opened:
@@ -817,19 +607,6 @@ namespace Flavor
         {
             StopDeviceStatusCheck();
             toSend.Clear();
-            /*lock (ToSend)
-            {
-                if (ToSend.Count > 0)
-                {
-                    Commander.ToSend.Clear();
-                }
-                if (SendTimer.Enabled == true)
-                {
-                    StopSending();
-                }
-                statusToSend = false;
-                turboToSend = false;
-            }*/
             switch (ModBus.Close())
             {
                 case ModBus.PortStates.Closing:
