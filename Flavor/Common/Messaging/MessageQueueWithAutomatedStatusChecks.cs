@@ -87,49 +87,11 @@ namespace Flavor
                 toggleRareMode();
             }
         }
-        /*private void StartDeviceStatusCheck()
-        {
-            DeviceStatusCheckTimer = new System.Timers.Timer(500);
-            DeviceStatusCheckTimer.Elapsed += statusElapsed;
-            DeviceStatusCheckTimer.Enabled = true;
-            TurboPumpCheckTimer = new System.Timers.Timer(2000);
-            TurboPumpCheckTimer.Elapsed += turboElapsed;
-            TurboPumpCheckTimer.Enabled = true;
-        }
 
-        private void StopDeviceStatusCheck()
-        {
-            DeviceStatusCheckTimer.Enabled = false;
-            DeviceStatusCheckTimer.Elapsed -= statusElapsed;
-            TurboPumpCheckTimer.Enabled = false;
-            TurboPumpCheckTimer.Elapsed -= turboElapsed;
-        }
-
-        private void StartScanStatusCheck()
-        {
-            StopDeviceStatusCheck();
-            DeviceStatusCheckTimer = new System.Timers.Timer(10000);
-            DeviceStatusCheckTimer.Elapsed += statusElapsed;
-            DeviceStatusCheckTimer.Enabled = true;
-            TurboPumpCheckTimer = new System.Timers.Timer(20000);
-            TurboPumpCheckTimer.Elapsed += turboElapsed;
-            TurboPumpCheckTimer.Enabled = true;
-        }
-
-        private void StopScanStatusCheck()
-        {
-            DeviceStatusCheckTimer.Enabled = false;
-            DeviceStatusCheckTimer.Elapsed -= statusElapsed;
-            TurboPumpCheckTimer.Enabled = false;
-            TurboPumpCheckTimer.Elapsed -= turboElapsed;
-            StartDeviceStatusCheck();
-        }
-        */
         private void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             addStatusRequest();
         }
-
         private void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             addTurboPumpStatusRequest();

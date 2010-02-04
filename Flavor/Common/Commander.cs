@@ -35,8 +35,6 @@ namespace Flavor
         private static bool onTheFly = true;
         private static sendMeasure customMeasure = null;
         private static bool doMeasure = true;
-        /*private static System.Timers.Timer DeviceStatusCheckTimer;
-        private static System.Timers.Timer TurboPumpCheckTimer;*/
 
         public static event AsyncReplyHandler OnAsyncReply;
         
@@ -147,56 +145,7 @@ namespace Flavor
         }
         
         private static MessageQueueWithAutomatedStatusChecks toSend;
-/*
-        private static void StartDeviceStatusCheck()
-        {
-            DeviceStatusCheckTimer = new System.Timers.Timer(500);
-            DeviceStatusCheckTimer.Elapsed += new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
-            DeviceStatusCheckTimer.Enabled = true;
-            TurboPumpCheckTimer = new System.Timers.Timer(2000);
-            TurboPumpCheckTimer.Elapsed += new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
-            TurboPumpCheckTimer.Enabled = true;
-        }
 
-        private static void StopDeviceStatusCheck()
-        {
-            DeviceStatusCheckTimer.Enabled = false;
-            DeviceStatusCheckTimer.Elapsed -= new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
-            TurboPumpCheckTimer.Enabled = false;
-            TurboPumpCheckTimer.Elapsed -= new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
-        }
-
-        private static void StartScanStatusCheck()
-        {
-            StopDeviceStatusCheck();
-            DeviceStatusCheckTimer = new System.Timers.Timer(10000);
-            DeviceStatusCheckTimer.Elapsed += new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
-            DeviceStatusCheckTimer.Enabled = true;
-            TurboPumpCheckTimer = new System.Timers.Timer(20000);
-            TurboPumpCheckTimer.Elapsed += new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
-            TurboPumpCheckTimer.Enabled = true;
-        }
-
-        private static void StopScanStatusCheck()
-        {
-            DeviceStatusCheckTimer.Enabled = false;
-            DeviceStatusCheckTimer.Elapsed -= new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
-            TurboPumpCheckTimer.Enabled = false;
-            TurboPumpCheckTimer.Elapsed -= new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
-            StartDeviceStatusCheck();
-        }
-
-        private static void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            toSend.addStatusRequest();
-        }
-
-        private static void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            toSend.addTurboPumpStatusRequest();
-        }
-
-        */
         public static void AddToSend(UserRequest Command)
         {
             toSend.AddToSend(Command);
@@ -211,7 +160,7 @@ namespace Flavor
                 Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 if (Commander.pState != Commander.programStates.Start)
                 {
-                    if (scanning & !Commander.notRareModeRequested) toSend.IsRareMode = false;//Commander.StopScanStatusCheck();
+                    if (scanning & !Commander.notRareModeRequested) toSend.IsRareMode = false;
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
                     Commander.hBlock = true;//!!!
@@ -238,7 +187,7 @@ namespace Flavor
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start)
                     {
-                        if (scanning & !Commander.notRareModeRequested) toSend.IsRareMode = false;//Commander.StopScanStatusCheck();
+                        if (scanning & !Commander.notRareModeRequested) toSend.IsRareMode = false;
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
                         Commander.hBlock = true;//!!!
@@ -345,7 +294,7 @@ namespace Flavor
                         {
                             if (scanning)
                             {
-                                if (!Commander.notRareModeRequested) toSend.IsRareMode = false;//Commander.StopScanStatusCheck();
+                                if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
                                 scanning = false;
                                 toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                                 OnScanCancelled();
@@ -407,7 +356,7 @@ namespace Flavor
                                 }
                                 else
                                 {
-                                    if (!Commander.notRareModeRequested) toSend.IsRareMode = false;//Commander.StopScanStatusCheck();
+                                    if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
                                     toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                                     Commander.pStatePrev = Commander.pState;
                                     Commander.pState = Commander.programStates.Ready;
@@ -422,7 +371,7 @@ namespace Flavor
                         {
                             OnScanCancelled();//!!!
                             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
-                            if (!Commander.notRareModeRequested) toSend.IsRareMode = false;//Commander.StopScanStatusCheck();
+                            if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
                             toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
                             Commander.pStatePrev = Commander.pState;
                             Commander.pState = Commander.programStates.Ready;
@@ -468,7 +417,7 @@ namespace Flavor
                             }
                             else
                             {
-                                if (!Commander.notRareModeRequested) toSend.IsRareMode = false;//Commander.StopScanStatusCheck();
+                                if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
                                 Commander.pStatePrev = Commander.pState;
                                 Commander.pState = Commander.programStates.Ready;// ATTENTION!
                                 Commander.pStatePrev = Commander.pState;
@@ -528,7 +477,7 @@ namespace Flavor
                 pState = Commander.programStates.Measure;
                 Commander.isSenseMeasure = false;
                 Graph.ResetPointLists();
-                if (!Commander.notRareModeRequested) toSend.IsRareMode = true;//Commander.StartScanStatusCheck();
+                if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
                 scanning = true;
                 Commander.measureCancelRequested = false;
                 toSend.AddToSend(new sendIVoltage());
@@ -544,7 +493,7 @@ namespace Flavor
                     pState = Commander.programStates.Measure;
                     Commander.isSenseMeasure = true;
                     Graph.ResetPointLists();
-                    if (!Commander.notRareModeRequested) toSend.IsRareMode = true;//Commander.StartScanStatusCheck();
+                    if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
                     Commander.measureCancelRequested = false;
                     toSend.AddToSend(new sendIVoltage());
                 }
@@ -591,7 +540,7 @@ namespace Flavor
                 case ModBus.PortStates.Opening:
                     Commander.deviceIsConnected = true;
                     toSend = new MessageQueueWithAutomatedStatusChecks();
-                    toSend.IsOperating = true;//StartDeviceStatusCheck();
+                    toSend.IsOperating = true;
                     break;
                 case ModBus.PortStates.Opened:
                     Commander.deviceIsConnected = true;
@@ -605,7 +554,7 @@ namespace Flavor
         }
         internal static void Disconnect()
         {
-            toSend.IsOperating = false;//StopDeviceStatusCheck();
+            toSend.IsOperating = false;
             toSend.Clear();
             switch (ModBus.Close())
             {
