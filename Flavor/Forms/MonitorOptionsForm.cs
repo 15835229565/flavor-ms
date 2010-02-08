@@ -21,6 +21,11 @@ namespace Flavor
             if (instance == null) instance = new MonitorOptionsForm();
             return instance;
         }
+
+        private void MonitorOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            instance = null;
+        }
     }
 }
 

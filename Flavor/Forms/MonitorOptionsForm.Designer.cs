@@ -45,6 +45,7 @@ namespace Flavor
             this.ClientSize = new System.Drawing.Size(711, 409);
             this.Name = "MonitorOptionsForm";
             this.Text = "Настройки  режима мониторинга";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MonitorOptionsForm_FormClosed);
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();

@@ -789,7 +789,7 @@ namespace Flavor
                     unblock_butt.Enabled = Commander.deviceIsConnected && !Commander.hBlock;//разрешено для включения блокировки
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = true;
+                    monitorToolStripButton.Enabled = false;
                     
                     connectToolStripMenuItem.Enabled = true;
                     measureToolStripMenuItem.Enabled = true;
