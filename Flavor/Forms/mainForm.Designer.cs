@@ -50,6 +50,7 @@ namespace Flavor
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.senseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,7 +107,6 @@ namespace Flavor
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
-            this.monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.ControlToolStrip.SuspendLayout();
@@ -293,6 +293,13 @@ namespace Flavor
             this.senseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.senseToolStripMenuItem.Text = "Точный режим";
             this.senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
+            // 
+            // monitorToolStripMenuItem
+            // 
+            this.monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
+            this.monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.monitorToolStripMenuItem.Text = "Режим мониторинга";
+            this.monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
             // 
             // helpMenu
             // 
@@ -869,13 +876,6 @@ namespace Flavor
             this.measurePanel.Size = new System.Drawing.Size(280, 895);
             this.measurePanel.TabIndex = 18;
             this.measurePanel.Visible = false;
-            // 
-            // monitorToolStripMenuItem
-            // 
-            this.monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
-            this.monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.monitorToolStripMenuItem.Text = "Режим мониторинга";
-            this.monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
             // 
             // mainForm
             // 

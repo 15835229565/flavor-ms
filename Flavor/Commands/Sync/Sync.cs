@@ -99,7 +99,6 @@ namespace Flavor
         }
 
         #endregion
-
         
         public override ModBus.CommandCode Id
         {
@@ -260,7 +259,7 @@ namespace Flavor
             Detector1 = value1;
             Detector2 = value2;
             CurPoint = Commander.Point;
-            --CurPoint;//!!!
+            --CurPoint;//!!!wtf?
         }
 
         #region IUpdateDevice Members

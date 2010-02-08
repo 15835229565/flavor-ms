@@ -135,9 +135,9 @@ namespace Flavor
             eCurrentValueTreeNode = new TreeNodeLeaf();
             eCurrentTextTreeNode = new TreeNodePair("Ток эмиссии, мкА", eCurrentValueTreeNode);
             condPlusValueTreeNode = new TreeNodeLeaf();
-            condPlusTextTreeNode = new TreeNodePair("Напряжение конденсатора (+) (50-150 В)", condPlusValueTreeNode);
+            condPlusTextTreeNode = new TreeNodePair("Напряжение конденсатора (+), В", condPlusValueTreeNode);
             condMinusValueTreeNode = new TreeNodeLeaf();
-            condMinusTextTreeNode = new TreeNodePair("Напряжение конденсатора (-) (50-150 В)", condMinusValueTreeNode);
+            condMinusTextTreeNode = new TreeNodePair("Напряжение конденсатора (-), В", condMinusValueTreeNode);
             detectorVoltageValueTreeNode = new TreeNodeLeaf();
             detectorVoltageTextTreeNode = new TreeNodePair("Напряжение на детекторе, В", detectorVoltageValueTreeNode);
             hCurrentValueTreeNode = new TreeNodeLeaf();
@@ -332,9 +332,9 @@ namespace Flavor
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits)
         {
-            string msg = "Турбонасос: ";
-            msg += isFault ? "отказ (" : "предупреждение (";
-            msg += bits.ToString("{N}");
+            string msg = "Turbopump: ";
+            msg += isFault ? "failure (" : "warning (";
+            msg += bits.ToString("X2");
             msg += ")";
             InvokeRefreshUserMessage(msg);
             Config.logTurboPumpAlert(msg);
@@ -539,7 +539,7 @@ namespace Flavor
 
             turboSpeedValueTreeNode.Text = Device.TurboPump.Speed.ToString("f0");
             turboCurrentValueTreeNode.Text = Device.TurboPump.Current.ToString("f0");
-            pwmValueTreeNode.Text = Device.TurboPump.pwm.ToString("f3");
+            pwmValueTreeNode.Text = Device.TurboPump.pwm.ToString("f0");
             pumpTemperatureValueTreeNode.Text = Device.TurboPump.PumpTemperature.ToString("f0");
             driveTemperatureValueTreeNode.Text = Device.TurboPump.DriveTemperature.ToString("f0");
             operationTimeValueTreeNode.Text = Device.TurboPump.OperationTime.ToString("f0");

@@ -14,7 +14,7 @@ namespace Flavor
         }
         public virtual string errorMessage
         {
-            get{return "Асинхронный ответ об ошибке";}
+            get{return "Async error reply";}
         }
     }
     
@@ -22,7 +22,7 @@ namespace Flavor
     {
         public override string errorMessage
         {
-            get { return "Внутренняя ошибка " + internalError.ToString(); }
+            get { return "Internal error " + internalError.ToString(); }
         }
         
         private byte internalError;
@@ -37,7 +37,7 @@ namespace Flavor
     {
         public override string errorMessage
         {
-            get { return "Неверное состояние системы"; }
+            get { return "Wrong system state"; }
         }
         public logInvalidSystemState(byte[] commandline)
             : base(commandline)
@@ -49,7 +49,7 @@ namespace Flavor
     {
         public override string errorMessage
         {
-            get { return "Вакуум сдох " + vacState.ToString(); }
+            get { return "Vacuum crash state " + vacState.ToString(); }
         }
         
         byte vacState;
@@ -74,7 +74,7 @@ namespace Flavor
         
         public override string errorMessage
         {
-            get { return "Отказ турбонасоса"; }
+            get { return "Turbopump failure"; }
         }
         public logTurboPumpFailure(byte[] commandline)
             : base(commandline)
@@ -110,7 +110,7 @@ namespace Flavor
     {
         public override string errorMessage
         {
-            get { return "Сбой питания прибора"; }
+            get { return "Device power fail"; }
         }
         public logPowerFail(byte[] commandline)
             : base(commandline)
@@ -122,7 +122,7 @@ namespace Flavor
     {
         public override string errorMessage
         {
-            get { return "Неверное состояние вакуума"; }
+            get { return "Wrong vacuum state"; }
         }
         public logInvalidVacuumState(byte[] commandline)
             : base(commandline)

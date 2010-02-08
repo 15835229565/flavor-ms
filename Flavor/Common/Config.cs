@@ -1350,7 +1350,7 @@ namespace Flavor
             }
             catch (Exception Error)
             {
-                string message = "Ошибка записи файла отказов";
+                string message = "Error log write failure ";
                 string cause = "(" + msg + ") -- " + Error.Message;
                 Console.WriteLine(message + cause);
                 System.Windows.Forms.MessageBox.Show(cause, message);
