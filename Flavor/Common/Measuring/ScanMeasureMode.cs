@@ -19,13 +19,6 @@ namespace Flavor.Common.Measuring
             else
             {
                 stop();
-                if (!Commander.notRareModeRequested) toggleStatusCheck(!Commander.notRareModeRequested);//?
-                
-                cancelScan();
-                Commander.pStatePrev = Commander.pState;
-                Commander.pState = Commander.programStates.Ready;
-                Commander.pStatePrev = Commander.pState;
-                Commander.measureCancelRequested = false;
                 Config.AutoSaveSpecterFile();
             }
         }
@@ -33,7 +26,6 @@ namespace Flavor.Common.Measuring
         {
             base.start();
             //lock here
-            toggleStatusCheck(Commander.notRareModeRequested);//?
             pointValue = Config.sPoint;
             Commander.AddToSend(new sendSVoltage(pointValue++));
         }

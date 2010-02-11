@@ -9,18 +9,13 @@ namespace Flavor.Common.Measuring
     internal class PreciseMeasureMode: MeasureMode
     {
         private static Utility.PreciseEditorData[] senseModePoints;
-
         private static int[][] senseModeCounts;
-
         private static byte senseModePeak = 0;
-
-        internal static Utility.PreciseEditorData SenseModePeak
+        private static Utility.PreciseEditorData SenseModePeak
         {
             get { return senseModePoints[senseModePeak]; }
         }
-
         private static ushort[] senseModePeakIteration;
-
         private static ushort smpiSum;
 
         internal override void onUpdateCounts()
@@ -74,65 +69,49 @@ namespace Flavor.Common.Measuring
                     }
                     else
                     {
-                        //TODO extract method
-                        stop();
-                        toggleStatusCheck(Commander.notRareModeRequested);//?
-
-                        Commander.pStatePrev = Commander.pState;
-                        Commander.pState = Commander.programStates.Ready;
-                        Commander.pStatePrev = Commander.pState;
-                        cancelScan();//!!!
-                        Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
+                        finishMeasure();
                         Config.AutoSavePreciseSpecterFile();
                     }
                 }
             }
             else
             {
-                //TODO extract method
-                stop();
-                cancelScan();//!!!
-                Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
-                toggleStatusCheck(Commander.notRareModeRequested);//?
-                Commander.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
-                Commander.pStatePrev = Commander.pState;
-                Commander.pState = Commander.programStates.Ready;
-                Commander.pStatePrev = Commander.pState;
-                Commander.measureCancelRequested = false;
+                finishMeasure();
             }
         }
+        private void finishMeasure()
+        {
+            stop();
+            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
+        }
+
         internal override void start()
         {
+            if (!Commander.somePointsUsed())
+            {
+                cancelScan();
+                return;
+            }
             base.start();
-            if (Config.PreciseData.Count > 0)
+            //Sort in increased order
+            //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
+            //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
+            //senseModePoints = Config.PreciseData.ToArray();
+            List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
+            temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
+            senseModePoints = temp.ToArray();
+            senseModePeakIteration = new ushort[senseModePoints.Length];
+            smpiSum = 0;
+            senseModeCounts = new int[senseModePoints.Length][];
+            for (int i = 0; i < senseModePeakIteration.Length; ++i)
             {
-                //Sort in increased order
-                //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
-                //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
-                //senseModePoints = Config.PreciseData.ToArray();
-                List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
-                temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
-                senseModePoints = temp.ToArray();
-                senseModePeakIteration = new ushort[senseModePoints.Length];
-                smpiSum = 0;
-                senseModeCounts = new int[senseModePoints.Length][];
-                for (int i = 0; i < senseModePeakIteration.Length; ++i)
-                {
-                    senseModeCounts[i] = new int[2 * senseModePoints[i].Width + 1];
-                    senseModePeakIteration[i] = senseModePoints[i].Iterations;
-                    smpiSum += senseModePoints[i].Iterations; ;
-                }
-                senseModePeak = 0;
-                pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                Commander.AddToSend(new sendSVoltage(pointValue++));
+                senseModeCounts[i] = new int[2 * senseModePoints[i].Width + 1];
+                senseModePeakIteration[i] = senseModePoints[i].Iterations;
+                smpiSum += senseModePoints[i].Iterations; ;
             }
-            else
-            {
-                toggleStatusCheck(Commander.notRareModeRequested);//?
-                Commander.pStatePrev = Commander.pState;
-                Commander.pState = Commander.programStates.Ready;// ATTENTION!
-                Commander.pStatePrev = Commander.pState;
-            }
+            senseModePeak = 0;
+            pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+            Commander.AddToSend(new sendSVoltage(pointValue++));
         }
         internal override void updateGraph()
         {

@@ -128,7 +128,7 @@ namespace Flavor.Common
                 Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 if (Commander.pState != Commander.programStates.Start)
                 {
-                    if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
+                    toSend.IsRareMode = false;
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
                     Commander.hBlock = true;//!!!
@@ -153,7 +153,7 @@ namespace Flavor.Common
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start)
                     {
-                        if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
+                        toSend.IsRareMode = false;
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
                         Commander.hBlock = true;//!!!
@@ -258,6 +258,7 @@ namespace Flavor.Common
                 {
                     if (Commander.pState == programStates.Measure)
                     {
+                        toSend.IsRareMode = !notRareMode;
                         measureMode.start();
                     }
                 }
@@ -305,23 +306,10 @@ namespace Flavor.Common
         
         internal static void Scan()
         {
-            Console.WriteLine(pState);
-            if (measureMode != null && measureMode.isOperating)
-            {
-                //something in operation
-                return;
-            }
             if (pState == Commander.programStates.Ready)
             {
-                pStatePrev = pState;
-                pState = Commander.programStates.Measure;
-
-                measureMode = new ScanMeasureMode();
-                
-                Graph.ResetPointLists();
-                if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
-                Commander.measureCancelRequested = false;
-                toSend.AddToSend(new sendIVoltage());
+                initMeasure();                          //?
+                measureMode = new ScanMeasureMode();    //order
             }
         }
         internal static void Sense()
@@ -330,35 +318,67 @@ namespace Flavor.Common
             {
                 if (somePointsUsed())
                 {
-                    pStatePrev = pState;
-                    pState = Commander.programStates.Measure;
-                    
-                    measureMode = new PreciseMeasureMode();
-                    
-                    Graph.ResetPointLists();
-                    if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
-                    Commander.measureCancelRequested = false;
-                    toSend.AddToSend(new sendIVoltage());
+                    initMeasure();                          //?
+                    measureMode = new PreciseMeasureMode(); //order
                 }
-                else {
-                    Console.WriteLine("Нет точек для прецизионного режима");
+                else
+                {
+                    Console.WriteLine("No points for precise mode measure.");
                 }
-                /*
-                Commander.AddToSend(new sendCP());
-                Commander.AddToSend(new enableECurrent());
-                Commander.AddToSend(new enableHCurrent());
-                Commander.AddToSend(new sendECurrent());
-                Commander.AddToSend(new sendHCurrent());
-                Commander.AddToSend(new sendF1Voltage());
-                Commander.AddToSend(new sendF2Voltage());
-                */
             }
         }
         internal static void Monitor()
         {
-            throw new Exception("The method or operation is not implemented.");
+            //TODO: now uses precise mode
+            if (pState == Commander.programStates.Ready)
+            {
+                if (somePointsUsed())
+                {
+                    initMeasure();                          //?
+                    measureMode = new PreciseMeasureMode(); //order
+                }
+                else
+                {
+                    Console.WriteLine("No points for precise mode measure.");
+                }
+            }
         }
+        internal static void cancelScan()
+        {
+            Commander.measureCancelRequested = false;
+            toSend.IsRareMode = false;
+            Commander.pStatePrev = Commander.pState;
+            Commander.pState = Commander.programStates.Ready;
+            Commander.pStatePrev = Commander.pState;
+            OnScanCancelled();
+            measureMode = null;//?
+        }
+        private static void initMeasure()
+        {
+            Console.WriteLine(pState);
+            if (measureMode != null && measureMode.isOperating)
+            {
+                //error. something in operation
+                throw new Exception("Measure mode already in operation.");
+            }
+            pStatePrev = pState;
+            pState = Commander.programStates.Measure;
 
+            Graph.ResetPointLists();
+            toSend.IsRareMode = !Commander.notRareModeRequested;
+            //if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
+            Commander.measureCancelRequested = false;
+            toSend.AddToSend(new sendIVoltage());
+            /*
+            Commander.AddToSend(new sendCP());
+            Commander.AddToSend(new enableECurrent());
+            Commander.AddToSend(new enableHCurrent());
+            Commander.AddToSend(new sendECurrent());
+            Commander.AddToSend(new sendHCurrent());
+            Commander.AddToSend(new sendF1Voltage());
+            Commander.AddToSend(new sendF2Voltage());
+            */
+        }
         internal static bool somePointsUsed()
         {
             if (Config.PreciseData.Count > 0)
@@ -369,7 +389,7 @@ namespace Flavor.Common
 
         internal static void Unblock()
         {
-            if (Commander.pState == programStates.Measure)
+            if (Commander.pState == programStates.Measure)//strange..
             {
                 Commander.measureCancelRequested = true;
             }

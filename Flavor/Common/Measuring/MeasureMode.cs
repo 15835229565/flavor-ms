@@ -8,35 +8,22 @@ namespace Flavor.Common.Measuring
 {
     abstract internal class MeasureMode
     {
-        internal delegate void StatusCheckToggleEventHandler(bool isRareMode);
         internal event Commander.ProgramEventHandler OnScanCancelled;
-        internal event StatusCheckToggleEventHandler OnStatusCheckToggled;
         
         protected object locker = new object();
         private bool operating = false;
+
+        internal bool isOperating
+        {
+            get { return operating; }
+        }
 
         protected ushort pointValue = 0;
         internal ushort Point
         {
             get { return pointValue; }
-            //set { pointValue = value; }
         }
-        
-        internal bool isOperating
-        {
-            get { return operating; }
-            /*protected set
-            {
-                lock (locker)
-                {
-                    if (value != operating)
-                    {
-                        operating = value;
-                        //toggleOperation();
-                    }
-                }
-            }*/
-        }
+
         protected sendMeasure customMeasure = null;
         private ushort befTime;
         private ushort eTime;
@@ -51,6 +38,8 @@ namespace Flavor.Common.Measuring
             eTime = Config.CommonOptions.eTime;
             //first measure point with increased idle time
             customMeasure = new sendMeasure(befTime, eTime);
+            OnScanCancelled += new Commander.ProgramEventHandler(Commander.cancelScan);
+
             operating = true;
         }
         abstract internal void updateGraph();
@@ -72,15 +61,13 @@ namespace Flavor.Common.Measuring
         protected void cancelScan()
         {
             OnScanCancelled();
-        }
-        protected void toggleStatusCheck(bool isRareMode)
-        {
-            OnStatusCheckToggled(isRareMode);
+            OnScanCancelled -= new Commander.ProgramEventHandler(Commander.cancelScan);
         }
         protected void stop()
         {
             operating = false;
             Commander.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
+            cancelScan();
         }
     }
 }

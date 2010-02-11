@@ -209,16 +209,13 @@ namespace Flavor.Common.Commands.Sync
         }
 
         #region IAutomatedReply Members
-
         public void AutomatedReply()
         {
-            if (Commander.CurrentMeasureMode == null)
+            if (Commander.CurrentMeasureMode != null && Commander.CurrentMeasureMode.isOperating)
             {
-                return;
+                Commander.CurrentMeasureMode.autoNextMeasure();
             }
-            Commander.CurrentMeasureMode.autoNextMeasure();
         }
-
         #endregion
     }
     
