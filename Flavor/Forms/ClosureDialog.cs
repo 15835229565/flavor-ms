@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace Flavor.Forms
 {
-    public partial class ClosureDialog : Form
+    internal partial class ClosureDialog : Form
     {
-        public ClosureDialog()
+        internal ClosureDialog()
         {
             InitializeComponent();
         }

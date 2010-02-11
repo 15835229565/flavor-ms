@@ -13,11 +13,11 @@ namespace Flavor.Forms
     {
         private ComboBox pNumComboBox;
         private int pNum = -1;
-        public int PointNumber
+        internal int PointNumber
         {
             get { return pNum; }
         }
-        public PlacePointForm(): base()
+        internal PlacePointForm(): base()
         {
             this.Text = "Вставка точки";
             this.pNumComboBox = new ComboBox();
@@ -29,7 +29,7 @@ namespace Flavor.Forms
             this.Controls.Add(this.pNumComboBox);
             this.okButton.Enabled = false;
         }
-        public PlacePointForm(Utility.PreciseEditorData ped)
+        internal PlacePointForm(Utility.PreciseEditorData ped)
             : this()
         {
             oneRow.setValues(ped);

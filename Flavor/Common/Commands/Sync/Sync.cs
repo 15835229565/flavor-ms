@@ -26,7 +26,7 @@ namespace Flavor.Common.Commands.Sync
         }
         #endregion
 
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetState; }
         }
@@ -59,7 +59,7 @@ namespace Flavor.Common.Commands.Sync
         //private byte relaysStates2;
         private ushort turboSpeed;
 
-        public updateStatus(byte value1, byte value2, ushort value3, ushort value4, ushort value5, ushort value6, ushort value7, ushort value8, ushort value9, ushort value10, ushort value11, ushort value12, ushort value13, byte value14, /*byte value15,*/ ushort value16)
+        internal updateStatus(byte value1, byte value2, ushort value3, ushort value4, ushort value5, ushort value6, ushort value7, ushort value8, ushort value9, ushort value10, ushort value11, ushort value12, ushort value13, byte value14, /*byte value15,*/ ushort value16)
         {
             sysState = value1;
             vacState = value2;
@@ -102,7 +102,7 @@ namespace Flavor.Common.Commands.Sync
 
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetStatus; }
         }
@@ -110,7 +110,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmShutdown : SyncReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Shutdown; }
         }
@@ -118,7 +118,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmInit : SyncReply, IAutomatedReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Init; }
         }
@@ -142,7 +142,7 @@ namespace Flavor.Common.Commands.Sync
         }
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetHeatCurrent; }
         }
@@ -157,7 +157,7 @@ namespace Flavor.Common.Commands.Sync
         }
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetEmissionCurrent; }
         }
@@ -165,7 +165,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmIVoltage : SyncReply, IAutomatedReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetIonizationVoltage; }
         }
@@ -187,7 +187,7 @@ namespace Flavor.Common.Commands.Sync
         }
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetFocusVoltage1; }
         }
@@ -195,7 +195,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmF2Voltage : SyncReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetFocusVoltage2; }
         }
@@ -203,7 +203,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmSVoltage : SyncReply, IAutomatedReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetScanVoltage; }
         }
@@ -224,7 +224,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmCP : SyncReply, IAutomatedReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetCapacitorVoltage; }
         }
@@ -239,7 +239,7 @@ namespace Flavor.Common.Commands.Sync
     
     class confirmMeasure : SyncReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Measure; }
         }
@@ -250,7 +250,7 @@ namespace Flavor.Common.Commands.Sync
         private int Detector1;
         private int Detector2;
 
-        public updateCounts(int value1, int value2)
+        internal updateCounts(int value1, int value2)
         {
             Detector1 = value1;
             Detector2 = value2;
@@ -275,7 +275,7 @@ namespace Flavor.Common.Commands.Sync
 
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetCounts; }
         }
@@ -290,7 +290,7 @@ namespace Flavor.Common.Commands.Sync
         }
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.heatCurrentEnable; }
         }
@@ -305,7 +305,7 @@ namespace Flavor.Common.Commands.Sync
         }
         #endregion
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.emissionCurrentEnable; }
         }
@@ -313,7 +313,7 @@ namespace Flavor.Common.Commands.Sync
 */    
     class confirmHighVoltage : SyncReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.EnableHighVoltage; }
         }
@@ -331,7 +331,7 @@ namespace Flavor.Common.Commands.Sync
         private byte v2;
         private byte v3;
 
-        public updateTurboPumpStatus(ushort value1, ushort value2, ushort value3, ushort value4, ushort value5, ushort value6, byte value7, byte value8, byte value9)
+        internal updateTurboPumpStatus(ushort value1, ushort value2, ushort value3, ushort value4, ushort value5, ushort value6, byte value7, byte value8, byte value9)
         {
             turboSpeed = value1;
             turboCurrent = value2;
@@ -359,7 +359,7 @@ namespace Flavor.Common.Commands.Sync
 
         #endregion
 
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetTurboPumpStatus; }
         }
@@ -367,7 +367,7 @@ namespace Flavor.Common.Commands.Sync
 
     class confirmForvacuumLevel : SyncReply
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetForvacuumLevel; }
         }

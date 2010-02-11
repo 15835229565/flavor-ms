@@ -5,63 +5,63 @@ using Flavor.Common.Commands.Interfaces;
 
 namespace Flavor.Common.Commands.Async
 {
-    public abstract class AsyncErrorReply : ServicePacket
+    internal abstract class AsyncErrorReply : ServicePacket
     {
         private byte[] cmdln;
-        public AsyncErrorReply(byte[] commandline)
+        internal AsyncErrorReply(byte[] commandline)
         {
             cmdln = commandline;
             Config.logCrash(cmdln);
         }
-        public virtual string errorMessage
+        internal virtual string errorMessage
         {
             get{return "Async error reply";}
         }
     }
 
-    public class logInternalError : AsyncErrorReply
+    internal class logInternalError : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "Internal error " + internalError.ToString(); }
         }
         
         private byte internalError;
 
-        public logInternalError(byte[] commandline): base(commandline)
+        internal logInternalError(byte[] commandline): base(commandline)
         {
             internalError = commandline[1];
         }
     }
 
-    public class logInvalidSystemState : AsyncErrorReply
+    internal class logInvalidSystemState : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "Wrong system state"; }
         }
-        public logInvalidSystemState(byte[] commandline)
+        internal logInvalidSystemState(byte[] commandline)
             : base(commandline)
         {
         }
     }
 
-    public class logVacuumCrash : AsyncErrorReply
+    internal class logVacuumCrash : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "Vacuum crash state " + vacState.ToString(); }
         }
         
         byte vacState;
-        public logVacuumCrash(byte[] commandline)
+        internal logVacuumCrash(byte[] commandline)
             : base(commandline)
         {
             vacState = commandline[1];
         }
     }
 
-    public class logTurboPumpFailure : AsyncErrorReply, IUpdateDevice
+    internal class logTurboPumpFailure : AsyncErrorReply, IUpdateDevice
     {
         private ushort turboSpeed;
         private ushort turboCurrent;
@@ -73,11 +73,11 @@ namespace Flavor.Common.Commands.Async
         private byte v2;
         private byte v3;
         
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "Turbopump failure"; }
         }
-        public logTurboPumpFailure(byte[] commandline)
+        internal logTurboPumpFailure(byte[] commandline)
             : base(commandline)
         {
             turboSpeed = (ushort)((ushort)commandline[1] + ((ushort)commandline[2] << 8));
@@ -107,61 +107,61 @@ namespace Flavor.Common.Commands.Async
         #endregion
     }
 
-    public class logPowerFail : AsyncErrorReply
+    internal class logPowerFail : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "Device power fail"; }
         }
-        public logPowerFail(byte[] commandline)
+        internal logPowerFail(byte[] commandline)
             : base(commandline)
         {
         }
     }
 
-    public class logInvalidVacuumState : AsyncErrorReply
+    internal class logInvalidVacuumState : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "Wrong vacuum state"; }
         }
-        public logInvalidVacuumState(byte[] commandline)
+        internal logInvalidVacuumState(byte[] commandline)
             : base(commandline)
         {
         }
     }
 
-    public class logAdcPlaceIonSrc : AsyncErrorReply
+    internal class logAdcPlaceIonSrc : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "AdcPlaceIonSrc"; }
         }
-        public logAdcPlaceIonSrc(byte[] commandline)
+        internal logAdcPlaceIonSrc(byte[] commandline)
             : base(commandline)
         {
         }
     }
 
-    public class logAdcPlaceScanv : AsyncErrorReply
+    internal class logAdcPlaceScanv : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "AdcPlaceScanv"; }
         }
-        public logAdcPlaceScanv(byte[] commandline)
+        internal logAdcPlaceScanv(byte[] commandline)
             : base(commandline)
         {
         }
     }
 
-    public class logAdcPlaceControlm : AsyncErrorReply
+    internal class logAdcPlaceControlm : AsyncErrorReply
     {
-        public override string errorMessage
+        internal override string errorMessage
         {
             get { return "AdcPlaceControlm"; }
         }
-        public logAdcPlaceControlm(byte[] commandline)
+        internal logAdcPlaceControlm(byte[] commandline)
             : base(commandline)
         {
         }

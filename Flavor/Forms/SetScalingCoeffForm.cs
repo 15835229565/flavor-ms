@@ -13,14 +13,14 @@ namespace Flavor.Forms
     {
         private byte myCol = 0;
         private ushort myStep = 0;
-        public SetScalingCoeffForm()
+        internal SetScalingCoeffForm()
             : base()
         {
             InitializeComponent();
 
             this.massTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
         }
-        public SetScalingCoeffForm(ushort step, byte col)
+        internal SetScalingCoeffForm(ushort step, byte col)
             : this()
         {
             myCol = col;

@@ -16,13 +16,13 @@ namespace Flavor.Common.Messaging
         private System.Timers.Timer SendTimer;
         private System.Timers.ElapsedEventHandler elapsed;
 
-        public MessageQueue(): base()
+        internal MessageQueue(): base()
         {
             elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
             SendTimer = new System.Timers.Timer(1000);
             SendTimer.Enabled = false;
         }
-        public void Clear()
+        internal void Clear()
         {
             lock (ToSend)
             {
@@ -38,7 +38,7 @@ namespace Flavor.Common.Messaging
                 }
             }
         }
-        public void AddToSend(UserRequest Command)//Enqueue
+        internal void AddToSend(UserRequest Command)//Enqueue
         {
             lock (ToSend)
             {
@@ -63,7 +63,7 @@ namespace Flavor.Common.Messaging
                 trySend();
             }
         }
-        public UserRequest Dequeue()
+        internal UserRequest Dequeue()
         {
             UserRequest packet = null;
             lock (ToSend)
@@ -74,7 +74,7 @@ namespace Flavor.Common.Messaging
             trySend();
             return packet;
         }
-        public UserRequest Peek(SyncReply command)
+        internal UserRequest Peek(SyncReply command)
         {
             UserRequest packet = null;
             lock (ToSend)

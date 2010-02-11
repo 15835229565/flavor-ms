@@ -23,7 +23,7 @@ namespace Flavor.Common
         private static ushort endPoint = 1056;
 
         private static CommonOptions commonOpts = new CommonOptions();
-        public static CommonOptions CommonOptions
+        internal static CommonOptions CommonOptions
         {
             get { return commonOpts; }
         }
@@ -46,55 +46,55 @@ namespace Flavor.Common
         private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataDiff = new List<Utility.PreciseEditorData>();
 
-        public static List<Utility.PreciseEditorData> PreciseData
+        internal static List<Utility.PreciseEditorData> PreciseData
         {
             get { return preciseData; }
             //set { preciseData = value; }
         }
-        public static List<Utility.PreciseEditorData> PreciseDataLoaded
+        internal static List<Utility.PreciseEditorData> PreciseDataLoaded
         {
             get { return preciseDataLoaded; }
             //set { preciseData = value; }
         }
-        public static List<Utility.PreciseEditorData> PreciseDataDiff
+        internal static List<Utility.PreciseEditorData> PreciseDataDiff
         {
             get { return preciseDataDiff; }
             //set { preciseData = value; }
         }
         
-        public static string Port
+        internal static string Port
         {
             get { return SerialPort; }
             set { SerialPort = value; }
         }
-        public static ushort BaudRate
+        internal static ushort BaudRate
         {
             get { return SerialBaudRate; }
             set { SerialBaudRate = value; }
         }
 
-        public static byte Try
+        internal static byte Try
         {
             get { return SendTry; }
             set { SendTry = value; }
         }
 
-        public static ushort sPoint
+        internal static ushort sPoint
         {
             get { return startPoint; }
             set { startPoint = value; }
         }
-        public static ushort ePoint
+        internal static ushort ePoint
         {
             get { return endPoint; }
             set { endPoint = value; }
         }
 
-        //public static ushort befTime
+        //internal static ushort befTime
         //{
         //    get { return beforeTime; }
         //}
-        //public static ushort befTimeReal
+        //internal static ushort befTimeReal
         //{
         //    get { return (ushort)(beforeTime * 5); }
         //    set
@@ -102,11 +102,11 @@ namespace Flavor.Common
         //        beforeTime = (ushort)(value / 5);
         //    }
         //}
-        //public static ushort fTime
+        //internal static ushort fTime
         //{
         //    get { return forwardTime; }
         //}
-        //public static ushort fTimeReal
+        //internal static ushort fTimeReal
         //{
         //    get { return (ushort)(forwardTime * 5); }
         //    set
@@ -114,11 +114,11 @@ namespace Flavor.Common
         //        forwardTime = (ushort)(value / 5);
         //    }
         //}
-        //public static ushort bTime
+        //internal static ushort bTime
         //{
         //    get { return backwardTime; }
         //}
-        //public static ushort bTimeReal
+        //internal static ushort bTimeReal
         //{
         //    get { return (ushort)(backwardTime * 5); }
         //    set
@@ -126,18 +126,18 @@ namespace Flavor.Common
         //        backwardTime = (ushort)(value / 5);
         //    }
         //}
-        //public static bool ForwardTimeEqualsBeforeTime
+        //internal static bool ForwardTimeEqualsBeforeTime
         //{
         //    get { return forwardAsBefore; }
         //    set { forwardAsBefore = value; }
         //}
 
-        //public static ushort eTime
+        //internal static ushort eTime
         //{
         //    get { return expTime; }
         //    //set { expTime = value; }
         //}
-        //public static ushort eTimeReal
+        //internal static ushort eTimeReal
         //{
         //    get { return (ushort)(expTime * 5); }
         //    set
@@ -146,12 +146,12 @@ namespace Flavor.Common
         //    }
         //}
 
-        //public static ushort iTime
+        //internal static ushort iTime
         //{
         //    get { return idleTime; }
         //    //set { idleTime = value; }
         //}
-        //public static ushort iTimeReal
+        //internal static ushort iTimeReal
         //{
         //    get { return (ushort)(5 * idleTime); }
         //    set
@@ -160,12 +160,12 @@ namespace Flavor.Common
         //    }
         //}
 
-        //public static ushort iVoltage
+        //internal static ushort iVoltage
         //{
         //    get { return ionizationVoltage; }
         //    set { ionizationVoltage = value; }
         //}
-        //public static double iVoltageReal
+        //internal static double iVoltageReal
         //{
         //    get { return iVoltageConvert(ionizationVoltage); }
         //    set
@@ -173,23 +173,23 @@ namespace Flavor.Common
         //        ionizationVoltage = iVoltageConvert(value);
         //    }
         //}
-        //public static double iVoltageConvert(ushort voltage)
+        //internal static double iVoltageConvert(ushort voltage)
         //{
         //    return (double)(150 * (double)voltage / 4096);
         //}
-        //public static ushort iVoltageConvert(double voltage)
+        //internal static ushort iVoltageConvert(double voltage)
         //{
         //    ushort x = (ushort)((voltage / 150) * 4096);
         //    if (x >= 4096) x = 4095;
         //    return x;
         //}
 
-        //public static ushort CP
+        //internal static ushort CP
         //{
         //    get { return CPVoltage; }
         //    set { CPVoltage = value; }
         //}
-        //public static double CPReal
+        //internal static double CPReal
         //{
         //    get { return CPConvert(CPVoltage); }
         //    set
@@ -197,23 +197,23 @@ namespace Flavor.Common
         //        CPVoltage = CPConvert(value);
         //    }
         //}
-        //public static double CPConvert(ushort coeff)
+        //internal static double CPConvert(ushort coeff)
         //{
         //    return (double)((10 / (double)coeff) * 4096);
         //}
-        //public static ushort CPConvert(double coeff)
+        //internal static ushort CPConvert(double coeff)
         //{
         //    ushort x = (ushort)((10 / coeff) * 4096);
         //    if (x >= 4096) x = 4095;
         //    return x;
         //}
 
-        //public static ushort eCurrent
+        //internal static ushort eCurrent
         //{
         //    get { return emissionCurrent; }
         //    set { emissionCurrent = value; }
         //}
-        //public static double eCurrentReal
+        //internal static double eCurrentReal
         //{
         //    get { return eCurrentConvert(emissionCurrent); }
         //    set
@@ -221,23 +221,23 @@ namespace Flavor.Common
         //        emissionCurrent = eCurrentConvert(value);
         //    }
         //}
-        //public static double eCurrentConvert(ushort current)
+        //internal static double eCurrentConvert(ushort current)
         //{
         //    return (double)((50 * (double)current) / 4096);
         //}
-        //public static ushort eCurrentConvert(double current)
+        //internal static ushort eCurrentConvert(double current)
         //{
         //    ushort x = (ushort)((current / 50) * 4096);
         //    if (x >= 4096) x = 4095;
         //    return x;
         //}
 
-        //public static ushort hCurrent
+        //internal static ushort hCurrent
         //{
         //    get { return heatCurrent; }
         //    set { heatCurrent = value; }
         //}
-        //public static double hCurrentReal
+        //internal static double hCurrentReal
         //{
         //    get { return hCurrentConvert(heatCurrent); }
         //    set
@@ -245,23 +245,23 @@ namespace Flavor.Common
         //        heatCurrent = hCurrentConvert(value);
         //    }
         //}
-        //public static double hCurrentConvert(ushort current)
+        //internal static double hCurrentConvert(ushort current)
         //{
         //    return (double)((double)current / 4096);
         //}
-        //public static ushort hCurrentConvert(double current)
+        //internal static ushort hCurrentConvert(double current)
         //{
         //    ushort x = (ushort)(current * 4096);
         //    if (x >= 4096) x = 4095;
         //    return x;
         //}
 
-        //public static ushort fV1
+        //internal static ushort fV1
         //{
         //    get { return focusVoltage1; }
         //    set { focusVoltage1 = value; }
         //}
-        //public static double fV1Real
+        //internal static double fV1Real
         //{
         //    get { return fV1Convert(focusVoltage1); }
         //    set
@@ -269,23 +269,23 @@ namespace Flavor.Common
         //        focusVoltage1 = fV1Convert(value);
         //    }
         //}
-        //public static double fV1Convert(ushort voltage)
+        //internal static double fV1Convert(ushort voltage)
         //{
         //    return (double)(150 * (double)voltage / 4096);
         //}
-        //public static ushort fV1Convert(double voltage)
+        //internal static ushort fV1Convert(double voltage)
         //{
         //    ushort x = (ushort)((voltage / 150) * 4096);
         //    if (x >= 4096) x = 4095;
         //    return x;
         //}
 
-        //public static ushort fV2
+        //internal static ushort fV2
         //{
         //    get { return focusVoltage2; }
         //    set { focusVoltage2 = value; }
         //}
-        //public static double fV2Real
+        //internal static double fV2Real
         //{
         //    get { return fV2Convert(focusVoltage2); }
         //    set
@@ -293,25 +293,25 @@ namespace Flavor.Common
         //        focusVoltage2 = fV2Convert(value);
         //    }
         //}
-        //public static double fV2Convert(ushort voltage)
+        //internal static double fV2Convert(ushort voltage)
         //{
         //    return (double)(150 * (double)voltage / 4096);
         //}
-        //public static ushort fV2Convert(double voltage)
+        //internal static ushort fV2Convert(double voltage)
         //{
         //    ushort x = (ushort)((voltage / 150) * 4096);
         //    if (x >= 4096) x = 4095;
         //    return x;
         //}
 
-        //public static ushort scanVoltage(ushort step)
+        //internal static ushort scanVoltage(ushort step)
         //{
         //    if (step > 1056) step = 1056;
         //    return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
         //    //if (step <= 456) return (ushort)(4095 - 5 * step);
         //    //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         //}
-        //public static double scanVoltageReal(ushort step)
+        //internal static double scanVoltageReal(ushort step)
         //{
         //    return (double)(scanVoltage(step) * 5 * 600) / 4096;
         //}
@@ -1222,14 +1222,14 @@ namespace Flavor.Common
             }
         }
         #region Error messages on loading different configs
-        public class ConfigLoadException : System.Exception
+        internal class ConfigLoadException : System.Exception
         {
-            public ConfigLoadException(string message, string filestring, string confname): base(message)
+            internal ConfigLoadException(string message, string filestring, string confname): base(message)
             {
                 this.Data["FS"] = filestring;
                 this.Data["CN"] = confname;
             }
-            public void visualise()
+            internal void visualise()
             {
                 if (!(this.Data["CN"].Equals(confName)))
                     System.Windows.Forms.MessageBox.Show(this.Message, this.Data["FS"] as string);
@@ -1239,27 +1239,27 @@ namespace Flavor.Common
         }
         private class wrongFormatOnLoadPrecise : wrongFormatOnLoad
         {
-            public wrongFormatOnLoadPrecise(string configName)
+            internal wrongFormatOnLoadPrecise(string configName)
                 : base (configName, "Ошибка чтения файла прецизионных точек") { }
         }
         private class wrongFormatOnLoad : ConfigLoadException
         {
-            public wrongFormatOnLoad(string configName, string errorFile)
+            internal wrongFormatOnLoad(string configName, string errorFile)
                 : base("Неверный формат данных", errorFile, configName) { }
         }
         private class structureErrorOnLoad : ConfigLoadException
         {
-            public structureErrorOnLoad(string configName, string errorFile)
+            internal structureErrorOnLoad(string configName, string errorFile)
                 : base("Ошибка структуры файла", errorFile, configName) { }
         }
         private class structureErrorOnLoadCommonData : structureErrorOnLoad
         {
-            public structureErrorOnLoadCommonData(string configName)
+            internal structureErrorOnLoadCommonData(string configName)
                 : base(configName, "Ошибка чтения файла общих настроек") { }
         }
         private class structureErrorOnLoadPrecise : structureErrorOnLoad
         {
-            public structureErrorOnLoadPrecise(string configName)
+            internal structureErrorOnLoadPrecise(string configName)
                 : base(configName, "Ошибка чтения файла прецизионных точек") { }
         }
         #endregion

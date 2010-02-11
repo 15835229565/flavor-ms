@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Flavor.Forms
 {
-    public partial class MonitorOptionsForm : PreciseOptionsForm
+    internal partial class MonitorOptionsForm : PreciseOptionsForm
     {
         private MonitorOptionsForm()
         {
@@ -16,7 +16,7 @@ namespace Flavor.Forms
         }
 
         private static MonitorOptionsForm instance = null;
-        public new static MonitorOptionsForm getInstance()
+        internal new static MonitorOptionsForm getInstance()
         {
             if (instance == null) instance = new MonitorOptionsForm();
             return instance;

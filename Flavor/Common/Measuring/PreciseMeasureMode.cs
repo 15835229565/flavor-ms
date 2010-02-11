@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
+using Flavor.Forms;
 
 namespace Flavor.Common.Measuring
 {
-    class PreciseMeasureMode: MeasureMode
+    internal class PreciseMeasureMode: MeasureMode
     {
         private static Utility.PreciseEditorData[] senseModePoints;
 
@@ -13,7 +14,7 @@ namespace Flavor.Common.Measuring
 
         private static byte senseModePeak = 0;
 
-        public static Utility.PreciseEditorData SenseModePeak
+        internal static Utility.PreciseEditorData SenseModePeak
         {
             get { return senseModePoints[senseModePeak]; }
         }
@@ -22,7 +23,7 @@ namespace Flavor.Common.Measuring
 
         private static ushort smpiSum;
 
-        public override void onUpdateCounts()
+        internal override void onUpdateCounts()
         {
             base.onUpdateCounts();
             if (!Commander.measureCancelRequested)
@@ -100,7 +101,7 @@ namespace Flavor.Common.Measuring
                 Commander.measureCancelRequested = false;
             }
         }
-        public override void start()
+        internal override void start()
         {
             base.start();
             if (Config.PreciseData.Count > 0)
@@ -133,10 +134,14 @@ namespace Flavor.Common.Measuring
                 Commander.pStatePrev = Commander.pState;
             }
         }
-        public override void updateGraph()
+        internal override void updateGraph()
         {
             ushort pnt = pointValue;
             Graph.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
+        }
+        internal override void refreshGraphics(mainForm form)
+        {
+            form.refreshGraphicsOnPreciseStep();
         }
     }
 }

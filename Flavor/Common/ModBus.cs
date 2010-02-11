@@ -9,11 +9,11 @@ using Flavor.Common.Commands.Async;
 
 namespace Flavor.Common
 {
-    public static class ModBus
+    internal static class ModBus
     {
-        public class ModBusException : Exception { }
+        internal class ModBusException : Exception { }
 
-        public enum CommandCode : byte
+        internal enum CommandCode : byte
         {
             None = 0x00,
             //sync
@@ -69,7 +69,7 @@ namespace Flavor.Common
             WaitLower
         }
 
-        public enum PortStates
+        internal enum PortStates
         { 
             Closed,
             Opened,
@@ -89,7 +89,7 @@ namespace Flavor.Common
 
         private static List<byte[]> PacketReceived = new List<byte[]>();
 
-        public static PortStates Open()
+        internal static PortStates Open()
         {
             if (!_serialPort.IsOpen)
             {
@@ -120,7 +120,7 @@ namespace Flavor.Common
             }
         }
 
-        public static PortStates Close()
+        internal static PortStates Close()
         {
             if (_serialPort.IsOpen)
             {
@@ -143,7 +143,7 @@ namespace Flavor.Common
             }
         }
 
-        public static void Send(byte[] message)
+        internal static void Send(byte[] message)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace Flavor.Common
             }
         }
 
-        public static ServicePacket Parse(byte[] raw_command)
+        internal static ServicePacket Parse(byte[] raw_command)
         {
             ///<summary> CS проверка <summary>
             if (raw_command.Length >= 2)
@@ -546,7 +546,7 @@ namespace Flavor.Common
             return true ^ Convert.ToBoolean(ComputeChecksum(data));
         }
 
-        public static byte[] buildPack(byte[] data)
+        internal static byte[] buildPack(byte[] data)
         {
             List<byte> pack = new List<byte>();
             pack.Add((byte)':');
@@ -554,7 +554,7 @@ namespace Flavor.Common
             pack.Add((byte)'\r');
             return pack.ToArray();
         }
-        public static void buildPackBody(List<byte> pack, byte[] data)
+        internal static void buildPackBody(List<byte> pack, byte[] data)
         {
             for (int i = 0; i < data.Length; i++)
             {
@@ -566,26 +566,26 @@ namespace Flavor.Common
             pack.Add(GetNibble(cs));
         }
 
-        public static byte[] collectData(byte functCode)
+        internal static byte[] collectData(byte functCode)
         {
             return new byte[] { functCode };
         }
-        public static byte[] collectData(byte functCode, byte value)
+        internal static byte[] collectData(byte functCode, byte value)
         {
             return new byte[] { functCode, value };
         }
-        public static byte[] collectData(byte functCode, ushort value)
+        internal static byte[] collectData(byte functCode, ushort value)
         {
             byte[] data = ushort2ByteArray(value);
             return new byte[] { functCode, data[0], data[1] };
         }
-        public static byte[] collectData(byte functCode, ushort value1, ushort value2)
+        internal static byte[] collectData(byte functCode, ushort value1, ushort value2)
         {
             byte[] data1 = ushort2ByteArray(value1);
             byte[] data2 = ushort2ByteArray(value2);
             return new byte[] { functCode, data1[0], data1[1], data2[0], data2[1] };
         }
-        public static byte[] collectData(byte functCode, int value1, int value2)
+        internal static byte[] collectData(byte functCode, int value1, int value2)
         {
             List<byte> Data = new List<byte>();
             Data.Add(functCode);
@@ -594,14 +594,14 @@ namespace Flavor.Common
             return Data.ToArray();
         }
 
-        public static byte[] ushort2ByteArray(ushort value)
+        internal static byte[] ushort2ByteArray(ushort value)
         {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;
             return new byte[] { (byte)(value), (byte)(value >> 8) };
         }
 
-        public static byte[] int2ByteArray(int value)
+        internal static byte[] int2ByteArray(int value)
         {
             if (value < 0) value = 0;
             if (value > 16777215) value = 16777215;

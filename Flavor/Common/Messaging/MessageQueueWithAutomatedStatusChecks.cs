@@ -15,7 +15,7 @@ namespace Flavor.Common.Messaging
         private object locker = new object();
 
         private bool isRareMode = false;
-        public bool IsRareMode
+        internal bool IsRareMode
         {
             get { return isRareMode; }
             set
@@ -55,7 +55,7 @@ namespace Flavor.Common.Messaging
         }
 
         private bool operating = false;
-        public bool IsOperating
+        internal bool IsOperating
         {
             get { return operating; }
             set
@@ -76,7 +76,7 @@ namespace Flavor.Common.Messaging
             TurboPumpCheckTimer.Enabled = operating;
         }
 
-        public MessageQueueWithAutomatedStatusChecks()
+        internal MessageQueueWithAutomatedStatusChecks()
             : base()
         {
             statusElapsed = new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);

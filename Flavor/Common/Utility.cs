@@ -14,12 +14,12 @@ namespace Flavor.Common
         private ushort backwardTime = 400;
         private bool forwardAsBefore = false;
 
-        public ushort befTime
+        internal ushort befTime
         {
             get { return beforeTime; }
             set { beforeTime = value; }
         }
-        public ushort befTimeReal
+        internal ushort befTimeReal
         {
             get { return (ushort)(beforeTime * 5); }
             set
@@ -27,12 +27,12 @@ namespace Flavor.Common
                 beforeTime = (ushort)(value / 5);
             }
         }
-        public ushort fTime
+        internal ushort fTime
         {
             get { return forwardTime; }
             set { forwardTime = value; }
         }
-        public ushort fTimeReal
+        internal ushort fTimeReal
         {
             get { return (ushort)(forwardTime * 5); }
             set
@@ -40,12 +40,12 @@ namespace Flavor.Common
                 forwardTime = (ushort)(value / 5);
             }
         }
-        public ushort bTime
+        internal ushort bTime
         {
             get { return backwardTime; }
             set { backwardTime = value; }
         }
-        public ushort bTimeReal
+        internal ushort bTimeReal
         {
             get { return (ushort)(backwardTime * 5); }
             set
@@ -53,7 +53,7 @@ namespace Flavor.Common
                 backwardTime = (ushort)(value / 5);
             }
         }
-        public bool ForwardTimeEqualsBeforeTime
+        internal bool ForwardTimeEqualsBeforeTime
         {
             get { return forwardAsBefore; }
             set { forwardAsBefore = value; }
@@ -69,12 +69,12 @@ namespace Flavor.Common
         private ushort focusVoltage1 = 2730;
         private ushort focusVoltage2 = 2730;
 
-        public ushort eTime
+        internal ushort eTime
         {
             get { return expTime; }
             set { expTime = value; }
         }
-        public ushort eTimeReal
+        internal ushort eTimeReal
         {
             get { return (ushort)(expTime * 5); }
             set
@@ -83,12 +83,12 @@ namespace Flavor.Common
             }
         }
 
-        public ushort iTime
+        internal ushort iTime
         {
             get { return idleTime; }
             set { idleTime = value; }
         }
-        public ushort iTimeReal
+        internal ushort iTimeReal
         {
             get { return (ushort)(5 * idleTime); }
             set
@@ -97,12 +97,12 @@ namespace Flavor.Common
             }
         }
 
-        public ushort iVoltage
+        internal ushort iVoltage
         {
             get { return ionizationVoltage; }
             set { ionizationVoltage = value; }
         }
-        public double iVoltageReal
+        internal double iVoltageReal
         {
             get { return iVoltageConvert(ionizationVoltage); }
             set
@@ -110,23 +110,23 @@ namespace Flavor.Common
                 ionizationVoltage = iVoltageConvert(value);
             }
         }
-        public double iVoltageConvert(ushort voltage)
+        internal double iVoltageConvert(ushort voltage)
         {
             return (double)(150 * (double)voltage / 4096);
         }
-        public ushort iVoltageConvert(double voltage)
+        internal ushort iVoltageConvert(double voltage)
         {
             ushort x = (ushort)((voltage / 150) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
         
-        public ushort CP
+        internal ushort CP
         {
             get { return CPVoltage; }
             set { CPVoltage = value; }
         }
-        public double CPReal
+        internal double CPReal
         {
             get { return CPConvert(CPVoltage); }
             set
@@ -134,23 +134,23 @@ namespace Flavor.Common
                 CPVoltage = CPConvert(value);
             }
         }
-        public double CPConvert(ushort coeff)
+        internal double CPConvert(ushort coeff)
         {
             return (double)((10 / (double)coeff) * 4096);
         }
-        public ushort CPConvert(double coeff)
+        internal ushort CPConvert(double coeff)
         {
             ushort x = (ushort)((10 / coeff) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        public ushort eCurrent
+        internal ushort eCurrent
         {
             get { return emissionCurrent; }
             set { emissionCurrent = value; }
         }
-        public double eCurrentReal
+        internal double eCurrentReal
         {
             get { return eCurrentConvert(emissionCurrent); }
             set
@@ -158,23 +158,23 @@ namespace Flavor.Common
                 emissionCurrent = eCurrentConvert(value);
             }
         }
-        public double eCurrentConvert(ushort current)
+        internal double eCurrentConvert(ushort current)
         {
             return (double)((50 * (double)current) / 4096);
         }
-        public ushort eCurrentConvert(double current)
+        internal ushort eCurrentConvert(double current)
         {
             ushort x = (ushort)((current / 50) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        public ushort hCurrent
+        internal ushort hCurrent
         {
             get { return heatCurrent; }
             set { heatCurrent = value; }
         }
-        public double hCurrentReal
+        internal double hCurrentReal
         {
             get { return hCurrentConvert(heatCurrent); }
             set
@@ -182,23 +182,23 @@ namespace Flavor.Common
                 heatCurrent = hCurrentConvert(value);
             }
         }
-        public double hCurrentConvert(ushort current)
+        internal double hCurrentConvert(ushort current)
         {
             return (double)((double)current / 4096);
         }
-        public ushort hCurrentConvert(double current)
+        internal ushort hCurrentConvert(double current)
         {
             ushort x = (ushort)(current * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        public ushort fV1
+        internal ushort fV1
         {
             get { return focusVoltage1; }
             set { focusVoltage1 = value; }
         }
-        public double fV1Real
+        internal double fV1Real
         {
             get { return fV1Convert(focusVoltage1); }
             set
@@ -206,23 +206,23 @@ namespace Flavor.Common
                 focusVoltage1 = fV1Convert(value);
             }
         }
-        public double fV1Convert(ushort voltage)
+        internal double fV1Convert(ushort voltage)
         {
             return (double)(150 * (double)voltage / 4096);
         }
-        public ushort fV1Convert(double voltage)
+        internal ushort fV1Convert(double voltage)
         {
             ushort x = (ushort)((voltage / 150) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        public ushort fV2
+        internal ushort fV2
         {
             get { return focusVoltage2; }
             set { focusVoltage2 = value; }
         }
-        public double fV2Real
+        internal double fV2Real
         {
             get { return fV2Convert(focusVoltage2); }
             set
@@ -230,25 +230,25 @@ namespace Flavor.Common
                 focusVoltage2 = fV2Convert(value);
             }
         }
-        public double fV2Convert(ushort voltage)
+        internal double fV2Convert(ushort voltage)
         {
             return (double)(150 * (double)voltage / 4096);
         }
-        public ushort fV2Convert(double voltage)
+        internal ushort fV2Convert(double voltage)
         {
             ushort x = (ushort)((voltage / 150) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        public ushort scanVoltage(ushort step)
+        internal ushort scanVoltage(ushort step)
         {
             if (step > 1056) step = 1056;
             return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
-        public double scanVoltageReal(ushort step)
+        internal double scanVoltageReal(ushort step)
         {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
@@ -257,13 +257,13 @@ namespace Flavor.Common
     internal class Spectrum: List<List<Graph.pListScaled>>
     {
         private CommonOptions myCommonOptions = null;
-        public Spectrum(CommonOptions cd)
+        internal Spectrum(CommonOptions cd)
             : this()
         {
             // better to clone here..
             myCommonOptions = cd;
         }
-        public Spectrum()
+        internal Spectrum()
             : base()
         {
             List<Graph.pListScaled> temp1 = new List<Graph.pListScaled>();
@@ -271,7 +271,7 @@ namespace Flavor.Common
             this.Add(temp1);
             this.Add(temp2);
         }
-        public CommonOptions CommonOptions
+        internal CommonOptions CommonOptions
         {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
@@ -281,17 +281,17 @@ namespace Flavor.Common
     internal class PreciseSpectrum : List<Utility.PreciseEditorData>
     {
         private CommonOptions myCommonOptions = null;
-        public PreciseSpectrum(CommonOptions cd)
+        internal PreciseSpectrum(CommonOptions cd)
             : this()
         {
             // better to clone here..
             myCommonOptions = cd;
         }
-        public PreciseSpectrum()
+        internal PreciseSpectrum()
             : base()
         {
         }
-        public CommonOptions CommonOptions
+        internal CommonOptions CommonOptions
         {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
@@ -303,30 +303,30 @@ namespace Flavor.Common
         private Utility.PreciseEditorData myPED;
         private Graph.pListScaled myPLS;
 
-        public Utility.PreciseEditorData PEDreference
+        internal Utility.PreciseEditorData PEDreference
         {
             get { return myPED; }
             set { myPED = value; }
         }
-        public Graph.pListScaled PLSreference
+        internal Graph.pListScaled PLSreference
         {
             get { return myPLS; }
             set { myPLS = value; }
         }
 
-        public PointPairListPlus()
+        internal PointPairListPlus()
             : base()
         {
             myPED = null;
             myPLS = null;
         }
-        public PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
+        internal PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
             : base()
         {
             myPED = ped;
             myPLS = pls;
         }
-        public PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
+        internal PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
             : base(other)
         {
             myPED = ped;
@@ -336,14 +336,14 @@ namespace Flavor.Common
     #region TreeNodes
     internal class TreeNodePlus : System.Windows.Forms.TreeNode
     {
-        public enum States
+        internal enum States
         {
             Ok,
             Warning,
             Error
         }
         protected States myState = States.Ok;
-        public virtual States State
+        internal virtual States State
         {
             get { return myState; }
             set 
@@ -360,7 +360,7 @@ namespace Flavor.Common
                 }
             }
         }
-        public TreeNodePlus(string text, TreeNode[] nodes)
+        internal TreeNodePlus(string text, TreeNode[] nodes)
             : base(text, nodes) { }
         protected TreeNodePlus()
             : base() { }
@@ -417,7 +417,7 @@ namespace Flavor.Common
     }
     internal class TreeNodeLeaf : TreeNodePlus
     {
-        public override States State
+        internal override States State
         {
             get { return myState; }
             set
@@ -437,7 +437,7 @@ namespace Flavor.Common
         {
             get { return base.Nodes; }
         }
-        /*public new string Text
+        /*internal new string Text
         {
             get { return base.Text; }
             set 
@@ -462,7 +462,7 @@ namespace Flavor.Common
                     break;
             }
         }
-        public TreeNodeLeaf()
+        internal TreeNodeLeaf()
             : base()
         {
             setForeColor();
@@ -474,19 +474,19 @@ namespace Flavor.Common
         {
             get { return base.Nodes; }
         }
-        public TreeNodePair(string text, TreeNodeLeaf valueNode): base()
+        internal TreeNodePair(string text, TreeNodeLeaf valueNode): base()
         {
             Text = text;
             Nodes.Add(valueNode);
         }
     }
     #endregion
-    static class Utility
+    internal static class Utility
     {
         #region PreciseEditorData
-        public class PreciseEditorData
+        internal class PreciseEditorData
         {
-            public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr)
+            internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr)
             {
                 pointNumber = pn;
                 step = st;
@@ -495,17 +495,17 @@ namespace Flavor.Common
                 width = wi;
                 precision = pr;
             }
-            public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+            internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
                 : this(pn, st, co, it, wi, pr)
             {
                 comment = comm;
             }
-            public PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+            internal PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
                 :this(pn, st, co, it, wi, pr, comm)
             {
                 usethis = useit;
             }
-            public PreciseEditorData(PreciseEditorData other)
+            internal PreciseEditorData(PreciseEditorData other)
                 : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment)
             {
                 associatedPoints = new PointPairListPlus(other.associatedPoints, this, null);
@@ -519,7 +519,7 @@ namespace Flavor.Common
             private float precision;
             private string comment = "";
             private PointPairListPlus associatedPoints = null;
-            public PointPairListPlus AssociatedPoints
+            internal PointPairListPlus AssociatedPoints
             {
                 get { return associatedPoints; }
                 set
@@ -533,42 +533,42 @@ namespace Flavor.Common
                         associatedPoints = new PointPairListPlus(value, this, null); 
                 }
             }
-            public bool Use
+            internal bool Use
             {
                 get { return usethis; }
                 //set { usethis = value; }
             }
-            public byte pNumber
+            internal byte pNumber
             {
                 get { return pointNumber; }
                 //set { pointNumber = value; }
             }
-            public ushort Step
+            internal ushort Step
             {
                 get { return step; }
                 //set { step = value; }
             }
-            public byte Collector
+            internal byte Collector
             {
                 get { return collector; }
                 //set { collector = value; }
             }
-            public ushort Iterations
+            internal ushort Iterations
             {
                 get { return iterations; }
                 //set { iterations = value; }
             }
-            public ushort Width
+            internal ushort Width
             {
                 get { return width; }
                 //set { width = value; }
             }
-            public float Precision
+            internal float Precision
             {
                 get { return precision; }
                 //set { precision = value; }
             }
-            public string Comment
+            internal string Comment
             {
                 get { return comment; }
                 //set { comment = value; }
@@ -592,7 +592,7 @@ namespace Flavor.Common
         }
         #endregion
         #region PreciseEditorRows
-        public class PreciseEditorLabelRow
+        internal class PreciseEditorLabelRow
         {
             protected System.Windows.Forms.Label label8;
             protected System.Windows.Forms.Label colNumLabel;
@@ -600,7 +600,7 @@ namespace Flavor.Common
             protected System.Windows.Forms.Label label10;
             protected System.Windows.Forms.Label label11;
             protected System.Windows.Forms.Label commentLabel;
-            public PreciseEditorLabelRow()
+            internal PreciseEditorLabelRow()
             {
                 this.label8 = new System.Windows.Forms.Label();
                 this.colNumLabel = new System.Windows.Forms.Label();
@@ -651,11 +651,11 @@ namespace Flavor.Common
                 this.commentLabel.Size = new System.Drawing.Size(54, 13);
                 this.commentLabel.Text = "Комментарий";
             }
-            public PreciseEditorLabelRow(int x, int y): this()
+            internal PreciseEditorLabelRow(int x, int y): this()
             {
                 moveTo(x, y);
             }
-            public virtual Control[] getControls()
+            internal virtual Control[] getControls()
             {
                 return new Control[] { colNumLabel, label11, label10, label9, label8, commentLabel };
             }
@@ -669,10 +669,10 @@ namespace Flavor.Common
                 this.commentLabel.Location = new System.Drawing.Point(this.commentLabel.Location.X + x, this.commentLabel.Location.Y + y);
             }
         }
-        public class PreciseEditorLabelRowPlus: PreciseEditorLabelRow
+        internal class PreciseEditorLabelRowPlus: PreciseEditorLabelRow
         {
             private System.Windows.Forms.Label label1;
-            public PreciseEditorLabelRowPlus(): base()
+            internal PreciseEditorLabelRowPlus(): base()
             {
                 base.moveTo(49, 0);
                 this.label1 = new System.Windows.Forms.Label();
@@ -685,11 +685,11 @@ namespace Flavor.Common
                 this.label1.Text = "Номер\r\nпика";
                 this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             }
-            public PreciseEditorLabelRowPlus(int x, int y): this()
+            internal PreciseEditorLabelRowPlus(int x, int y): this()
             {
                 moveTo(x, y);
             }
-            public override Control[] getControls()
+            internal override Control[] getControls()
             {
                 return new Control[] { colNumLabel, label11, label10, label9, label8, commentLabel, label1 };
             }
@@ -704,40 +704,40 @@ namespace Flavor.Common
                 this.commentLabel.Location = new System.Drawing.Point(this.commentLabel.Location.X + x, this.commentLabel.Location.Y + y);
             }
         }
-        public class PreciseEditorRow
+        internal class PreciseEditorRow
         {
             protected TextBox stepTextBox;
-            public string StepText
+            internal string StepText
             {
                 get { return stepTextBox.Text; }
                 set { stepTextBox.Text = value; }
             }
             protected TextBox colTextBox;
-            public string ColText
+            internal string ColText
             {
                 get { return colTextBox.Text; }
                 set { colTextBox.Text = value; }
             }
             protected TextBox lapsTextBox;
-            public string LapsText
+            internal string LapsText
             {
                 get { return lapsTextBox.Text; }
                 //set { lapsTextBox.Text = value; }
             }
             protected TextBox widthTextBox;
-            public string WidthText
+            internal string WidthText
             {
                 get { return widthTextBox.Text; }
                 //set { widthTextBox.Text = value; }
             }
             protected TextBox precTextBox;
-            public string PrecText
+            internal string PrecText
             {
                 get { return precTextBox.Text; }
                 //set { precTextBox.Text = value; }
             }
             protected TextBox commentTextBox;
-            public string CommentText
+            internal string CommentText
             {
                 get { return commentTextBox.Text; }
                 //set { commentTextBox.Text = value; }
@@ -745,11 +745,11 @@ namespace Flavor.Common
             protected bool stepAndColModifiable = false;
             //The other result of checkTextBoxes()
             protected bool allFilled = false;
-            public bool AllFilled
+            internal bool AllFilled
             {
                 get { return allFilled; }
             }
-            public PreciseEditorRow()
+            internal PreciseEditorRow()
             {
                 this.stepTextBox = new TextBox();
                 this.colTextBox = new TextBox();
@@ -808,7 +808,7 @@ namespace Flavor.Common
                 this.commentTextBox.Margin = new System.Windows.Forms.Padding(1);
                 this.commentTextBox.Size = new System.Drawing.Size(100, 13);
             }
-            public PreciseEditorRow(int x, int y): this()
+            internal PreciseEditorRow(int x, int y): this()
             {
                 moveTo(x, y);
             }
@@ -821,7 +821,7 @@ namespace Flavor.Common
                 this.precTextBox.Location = new System.Drawing.Point(this.precTextBox.Location.X + x, this.precTextBox.Location.Y + y);
                 this.commentTextBox.Location = new System.Drawing.Point(this.commentTextBox.Location.X + x, this.commentTextBox.Location.Y + y);
             }
-            public virtual Control[] getControls()
+            internal virtual Control[] getControls()
             {
                 return new Control[] { stepTextBox, colTextBox, lapsTextBox, widthTextBox, precTextBox, commentTextBox };
             }
@@ -840,7 +840,7 @@ namespace Flavor.Common
                 precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             }
-            public virtual bool checkTextBoxes()
+            internal virtual bool checkTextBoxes()
             {
                 bool exitFlag = true;
                 bool somethingFilled = ((lapsTextBox.Text != "") || (stepTextBox.Text != "") ||
@@ -891,7 +891,7 @@ namespace Flavor.Common
                 */
                 return exitFlag;
             }
-            public virtual void setValues(PreciseEditorData p)
+            internal virtual void setValues(PreciseEditorData p)
             {
                 stepTextBox.Text = p.Step.ToString();
                 colTextBox.Text = p.Collector.ToString();
@@ -901,22 +901,22 @@ namespace Flavor.Common
                 commentTextBox.Text = p.Comment;
             }
         }
-        public class PreciseEditorRowPlus: PreciseEditorRow
+        internal class PreciseEditorRowPlus: PreciseEditorRow
         {
             private Label peakNumberLabel;
-            public string PeakNumber
+            internal string PeakNumber
             {
                 set { peakNumberLabel.Text = value; }
             }
             private CheckBox usePeakCheckBox;
-            public bool UseChecked
+            internal bool UseChecked
             {
                 get { return usePeakCheckBox.Checked; }
                 //set { usePeakCheckBox.Checked = value; }
             }
             private Button clearPeakButton;
             private static ToolTip clearRowToolTip = new ToolTip();
-            public PreciseEditorRowPlus(): base()
+            internal PreciseEditorRowPlus(): base()
             {
                 base.moveTo(37, 0);
                 
@@ -955,7 +955,7 @@ namespace Flavor.Common
                 this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
                 this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
             }
-            public PreciseEditorRowPlus(int x, int y): this()
+            internal PreciseEditorRowPlus(int x, int y): this()
             {
                 moveTo(x, y);
             }
@@ -967,11 +967,11 @@ namespace Flavor.Common
                 this.usePeakCheckBox.Location = new System.Drawing.Point(this.usePeakCheckBox.Location.X + x, this.usePeakCheckBox.Location.Y + y);
                 this.clearPeakButton.Location = new System.Drawing.Point(this.clearPeakButton.Location.X + x, this.clearPeakButton.Location.Y + y);
             }
-            public override Control[] getControls()
+            internal override Control[] getControls()
             {
                 return new Control[] { peakNumberLabel, usePeakCheckBox, stepTextBox, colTextBox, lapsTextBox, widthTextBox, precTextBox, commentTextBox, clearPeakButton };
             }
-            public new void Clear()
+            internal new void Clear()
             {
                 base.Clear();
                 usePeakCheckBox.Checked = false;
@@ -984,11 +984,11 @@ namespace Flavor.Common
             {
                 this.Clear();
             }
-            public override bool checkTextBoxes() 
+            internal override bool checkTextBoxes() 
             {
                 return base.checkTextBoxes();
             }
-            public override void setValues(PreciseEditorData ped)
+            internal override void setValues(PreciseEditorData ped)
             {
                 base.setValues(ped);
                 usePeakCheckBox.Checked = ped.Use;

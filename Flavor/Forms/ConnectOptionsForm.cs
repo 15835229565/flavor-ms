@@ -11,7 +11,7 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    public partial class ConnectOptionsForm : Form
+    internal partial class ConnectOptionsForm : Form
     {
         private string Port
         {
@@ -23,7 +23,7 @@ namespace Flavor.Forms
             get { return ushort.Parse(baudrate_comboBox.Text); }
         }
         
-        public ConnectOptionsForm()
+        internal ConnectOptionsForm()
         {
             InitializeComponent();
             serialPort_comboBox.Text = Config.Port;

@@ -6,11 +6,11 @@ using Flavor.Common.Commands.UI;
 
 namespace Flavor.Common.Commands.Async
 {
-    public abstract class AsyncReply: ServicePacket
+    internal abstract class AsyncReply: ServicePacket
     {
     }
 
-    public class requestCounts : AsyncReply, IAutomatedReply
+    internal class requestCounts : AsyncReply, IAutomatedReply
     {
         #region IReply Members
         public void AutomatedReply()
@@ -21,7 +21,7 @@ namespace Flavor.Common.Commands.Async
         #endregion
     }
 
-    public class confirmVacuumReady : AsyncReply, IUpdateDevice
+    internal class confirmVacuumReady : AsyncReply, IUpdateDevice
     {
         #region IUpdateDevice Members
         public void UpdateDevice()
@@ -30,19 +30,19 @@ namespace Flavor.Common.Commands.Async
         #endregion
     }
 
-    public class confirmShutdowned : AsyncReply
+    internal class confirmShutdowned : AsyncReply
     {
     }
 
-    public class SystemReseted : AsyncReply
+    internal class SystemReseted : AsyncReply
     {
     }
 
-    public class confirmHighVoltageOff : AsyncReply
+    internal class confirmHighVoltageOff : AsyncReply
     {
     }
 
-    public class confirmHighVoltageOn : AsyncReply
+    internal class confirmHighVoltageOn : AsyncReply
     {
     }
 }

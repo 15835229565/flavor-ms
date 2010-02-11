@@ -14,7 +14,7 @@ namespace Flavor.Forms
         protected Utility.PreciseEditorRow oneRow;
         protected Utility.PreciseEditorLabelRow oneLabelRow;
 
-        public AddPointForm()
+        internal AddPointForm()
             : base()
         {
             InitializeComponent();
@@ -25,7 +25,7 @@ namespace Flavor.Forms
             this.oneRow = new Utility.PreciseEditorRow(13, 42);
             this.Controls.AddRange(oneRow.getControls());
         }
-        public AddPointForm(ushort step, byte col)
+        internal AddPointForm(ushort step, byte col)
             : this()
         {
             this.oneRow.StepText = step.ToString();

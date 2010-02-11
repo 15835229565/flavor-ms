@@ -9,7 +9,7 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    public class PreciseOptionsForm : OptionsForm
+    internal class PreciseOptionsForm : OptionsForm
     {
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
@@ -20,7 +20,7 @@ namespace Flavor.Forms
         private System.Windows.Forms.Button insertPointButton;
         
         private mainForm upLevel;
-        public mainForm UpLevel
+        internal mainForm UpLevel
         {
             //get { return upLevel; }
             set { upLevel = value; }
@@ -31,7 +31,7 @@ namespace Flavor.Forms
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
-        public static PreciseOptionsForm getInstance(){
+        internal static PreciseOptionsForm getInstance(){
             if (instance == null) instance = new PreciseOptionsForm();
             return instance;
         }

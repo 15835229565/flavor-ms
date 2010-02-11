@@ -9,9 +9,9 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    public partial class DelaysOptionsForm : Form
+    internal partial class DelaysOptionsForm : Form
     {
-        public DelaysOptionsForm()
+        internal DelaysOptionsForm()
         {
             InitializeComponent();
             beforeTimeNumericUpDown.Value = Config.CommonOptions.befTimeReal;

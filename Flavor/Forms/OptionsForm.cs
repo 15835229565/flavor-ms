@@ -11,7 +11,7 @@ using Flavor.Common.Commands.UI;
 
 namespace Flavor.Forms
 {
-    public partial class OptionsForm : Form
+    internal partial class OptionsForm : Form
     {
         protected OptionsForm()
         {

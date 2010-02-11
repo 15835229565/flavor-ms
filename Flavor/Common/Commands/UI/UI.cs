@@ -5,7 +5,7 @@ using Flavor.Common.Commands.Interfaces;
 
 namespace Flavor.Common.Commands.UI
 {
-    public class UserRequest: SyncServicePacket, ISend
+    internal class UserRequest: SyncServicePacket, ISend
     {
         #region ISend Members
         public virtual void Send()
@@ -15,41 +15,41 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class requestState : UserRequest
+    internal class requestState : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetState; }
         }
     }
 
-    public class requestStatus : UserRequest
+    internal class requestStatus : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetStatus; }
         }
     }
 
-    public class sendShutdown : UserRequest
+    internal class sendShutdown : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Shutdown; }
         }
     }
 
-    public class sendInit : UserRequest
+    internal class sendInit : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Init; }
         }
     }
 
-    public class sendHCurrent : UserRequest
+    internal class sendHCurrent : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetHeatCurrent; }
         }
@@ -63,9 +63,9 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class sendECurrent : UserRequest
+    internal class sendECurrent : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetEmissionCurrent; }
         }
@@ -77,9 +77,9 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class sendIVoltage : UserRequest
+    internal class sendIVoltage : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetIonizationVoltage; }
         }
@@ -91,9 +91,9 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class sendF1Voltage : UserRequest
+    internal class sendF1Voltage : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetFocusVoltage1; }
         }
@@ -105,9 +105,9 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class sendF2Voltage : UserRequest
+    internal class sendF2Voltage : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetFocusVoltage2; }
         }
@@ -120,17 +120,17 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class sendSVoltage : UserRequest
+    internal class sendSVoltage : UserRequest
     {
         private ushort SVoltage;
 
-        public sendSVoltage(ushort step)
+        internal sendSVoltage(ushort step)
         {
             SVoltage = Config.CommonOptions.scanVoltage(step);
         }
         
         /*
-        public sendSVoltage(ushort step, bool isSenseMeasure)
+        internal sendSVoltage(ushort step, bool isSenseMeasure)
         {
             if (isSenseMeasure)
                 if (step > 4095) SVoltage = 4095;
@@ -138,7 +138,7 @@ namespace Flavor.Common.Commands.UI
             else SVoltage = Config.scanVoltage(step);
         }
         */
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetScanVoltage; }
         }
@@ -150,9 +150,9 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class sendCapacitorVoltage : UserRequest
+    internal class sendCapacitorVoltage : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetCapacitorVoltage; }
         }
@@ -165,23 +165,23 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
     
-    public class sendMeasure : UserRequest
+    internal class sendMeasure : UserRequest
     {
         private ushort itime;
         private ushort etime;
 
-        public sendMeasure()
+        internal sendMeasure()
         {
             itime = Config.CommonOptions.iTime;
             etime = Config.CommonOptions.eTime;
         }
-        public sendMeasure(ushort iT, ushort eT)
+        internal sendMeasure(ushort iT, ushort eT)
         {
             itime = iT;
             etime = eT;
         }
 
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Measure; }
         }
@@ -196,17 +196,17 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 
-    public class getCounts : UserRequest
+    internal class getCounts : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetCounts; }
         }
     }
 
-    public class enableHCurrent : UserRequest
+    internal class enableHCurrent : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.heatCurrentEnable; }
         }
@@ -219,9 +219,9 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
     
-    public class disableHCurrent : UserRequest
+    internal class disableHCurrent : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.heatCurrentEnable; }
         }
@@ -236,7 +236,7 @@ namespace Flavor.Common.Commands.UI
 /*    
     class enableECurrent : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.emissionCurrentEnable; }
         }
@@ -251,7 +251,7 @@ namespace Flavor.Common.Commands.UI
     
     class disableECurrent : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.emissionCurrentEnable; }
         }
@@ -264,17 +264,17 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
 */    
-    public class enableHighVoltage : UserRequest
+    internal class enableHighVoltage : UserRequest
     {
         private byte HVenable;
         
-        public enableHighVoltage(bool enable)
+        internal enableHighVoltage(bool enable)
         {
             HVenable = 0;
             if (enable) HVenable = 1;
         }
         
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.EnableHighVoltage; }
         }
@@ -287,17 +287,17 @@ namespace Flavor.Common.Commands.UI
         #endregion
     }
     
-    public class getTurboPumpStatus : UserRequest
+    internal class getTurboPumpStatus : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetTurboPumpStatus; }
         }
     }
     
-    public class setForvacuumLevel : UserRequest
+    internal class setForvacuumLevel : UserRequest
     {
-        public override ModBus.CommandCode Id
+        internal override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.SetForvacuumLevel; }
         }

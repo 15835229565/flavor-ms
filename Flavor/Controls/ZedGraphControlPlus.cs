@@ -19,13 +19,13 @@ namespace Flavor.Controls
 {
     partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
-        public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
-        public event DiffOnPointEventHandler OnDiffOnPoint;
+        internal delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
+        internal event DiffOnPointEventHandler OnDiffOnPoint;
         private CurveItem curveReference;
         private int curveIndex = -1;
         private int pointIndex;
         
-        public ZedGraphControlPlus(): base()
+        internal ZedGraphControlPlus(): base()
         {
             InitializeComponent();
         }

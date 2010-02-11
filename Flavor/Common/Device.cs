@@ -11,13 +11,13 @@ namespace Flavor.Common
 
     static class Device
     {
-        public static event DeviceEventHandler OnDeviceStateChanged;
-        public static event DeviceEventHandler OnDeviceStatusChanged;
-        public static event DeviceEventHandler OnVacuumStateChanged;
-        public static event DeviceEventHandler OnTurboPumpStatusChanged;
-        public static event TurboPumpAlertEventHandler OnTurboPumpAlert;
+        internal static event DeviceEventHandler OnDeviceStateChanged;
+        internal static event DeviceEventHandler OnDeviceStatusChanged;
+        internal static event DeviceEventHandler OnVacuumStateChanged;
+        internal static event DeviceEventHandler OnTurboPumpStatusChanged;
+        internal static event TurboPumpAlertEventHandler OnTurboPumpAlert;
 
-        public enum DeviceStates : byte
+        internal enum DeviceStates : byte
         {
             Start = 0,
             Init,
@@ -34,7 +34,7 @@ namespace Flavor.Common
             ConstantsWrite = 32
         }
 
-        public enum VacuumStates : byte
+        internal enum VacuumStates : byte
         {
             Idle = 0x00,
             Init = 0x01,
@@ -83,16 +83,16 @@ namespace Flavor.Common
         private static int Detector1Value;
         private static int Detector2Value;
 
-        public const float fVoltageC = 0.048828f;
-        public const float iVoltageC = 0.024414f;
-        public const float eCurrentC = 0.012207f;
-        public const float hCurrentC = 0.000488f;
-        public const float VacuumC = 0.009869f;
-        public const float CCPNC = 0.047778f;
-        public const float sVoltageC = 0.894043f; // онтроль сканирующего, на запись другой
-        public const float dVoltageC = 1.220703f;
+        internal const float fVoltageC = 0.048828f;
+        internal const float iVoltageC = 0.024414f;
+        internal const float eCurrentC = 0.012207f;
+        internal const float hCurrentC = 0.000488f;
+        internal const float VacuumC = 0.009869f;
+        internal const float CCPNC = 0.047778f;
+        internal const float sVoltageC = 0.894043f; // онтроль сканирующего, на запись другой
+        internal const float dVoltageC = 1.220703f;
 
-        public static byte sysState
+        internal static byte sysState
         {
             get { return systemState; }
             set 
@@ -113,7 +113,7 @@ namespace Flavor.Common
             }
         }
 
-        public static byte vacState
+        internal static byte vacState
         {
             get { return vacuumState; }
             set 
@@ -126,31 +126,31 @@ namespace Flavor.Common
             }
         }
 
-        public static bool fPumpOn
+        internal static bool fPumpOn
         {
             get { return forPumpOn; }
             private set { forPumpOn = value; }
         }
 
-        public static bool probeValve
+        internal static bool probeValve
         {
             get { return pValve; }
             private set { pValve = value; }
         }
 
-        public static bool highVacuumValve
+        internal static bool highVacuumValve
         {
             get { return hvValve; }
             private set { hvValve = value; }
         }
 
-        public static bool tPumpOn
+        internal static bool tPumpOn
         {
             get { return turboPumpOn; }
             private set { turboPumpOn = value; }
         }
 
-        public static bool turboReplyFault
+        internal static bool turboReplyFault
         {
             get { return trFault; }
             private set
@@ -166,55 +166,55 @@ namespace Flavor.Common
             }
         }
 
-        public static bool highVoltageOn
+        internal static bool highVoltageOn
         {
             get { return hvOn; }
             private set { hvOn = value; }
         }
-        /*public static bool eCurrentEnable
+        /*internal static bool eCurrentEnable
         {
             get { return emissionCurrentEnable; }
             set { emissionCurrentEnable = value; }
         }*/
 
-        public static bool hCurrentEnable
+        internal static bool hCurrentEnable
         {
             get { return heatCurrentEnable; }
             private set { heatCurrentEnable = value; }
         }
         
-        public static ushort fVacuum
+        internal static ushort fVacuum
         {
             get { return forVacuumValue; }
             set { forVacuumValue = value; }
         }
-        public static double fVacuumReal
+        internal static double fVacuumReal
         {
             get { return 2 * 5 * (double)fVacuum / 4096; }
         }
         
-        public static ushort hVacuum
+        internal static ushort hVacuum
         {
             get { return hVacuumValue; }
             set { hVacuumValue = value; }
         }
-        public static double hVacuumReal
+        internal static double hVacuumReal
         {
             get { return 2 * 5 * (double)hVacuum / 4096; }
         }
 
-        public static int Detector1
+        internal static int Detector1
         {
             get { return Detector1Value; }
             set { Detector1Value = value; }
         }
-        public static int Detector2
+        internal static int Detector2
         {
             get { return Detector2Value; }
             set { Detector2Value = value; }
         }
 
-        public struct DeviceCommonData
+        internal struct DeviceCommonData
         {
             private static ushort heatCurrent;
             private static ushort emissionCurrent;
@@ -233,146 +233,146 @@ namespace Flavor.Common
 
             private static ushort detectorVoltage;
 
-            public static ushort hCurrent
+            internal static ushort hCurrent
             {
                 get { return heatCurrent; }
                 set { heatCurrent = value; }
             }
-            public static double hCurrentReal
+            internal static double hCurrentReal
             {
                 get { return (double)hCurrent / 4096; }
             }
 
-            public static ushort eCurrent
+            internal static ushort eCurrent
             {
                 get { return emissionCurrent; }
                 set { emissionCurrent = value; }
             }
-            public static double eCurrentReal
+            internal static double eCurrentReal
             {
                 get { return 50 * (double)eCurrent / 4096; }
             }
 
-            public static ushort iVoltage
+            internal static ushort iVoltage
             {
                 get { return ionizatinVoltage; }
                 set { ionizatinVoltage = value; }
             }
-            public static double iVoltageReal
+            internal static double iVoltageReal
             {
                 get { return 150 * (double)iVoltage / 4096; }
             }
 
-            public static ushort fV1
+            internal static ushort fV1
             {
                 get { return focusVoltage1; }
                 set { focusVoltage1 = value; }
             }
-            public static double fV1Real
+            internal static double fV1Real
             {
                 get { return 150 * (double)fV1 / 4096; }
             }
-            public static ushort fV2
+            internal static ushort fV2
             {
                 get { return focusVoltage2; }
                 set { focusVoltage2 = value; }
             }
-            public static double fV2Real
+            internal static double fV2Real
             {
                 get { return 150 * (double)fV2 / 4096; }
             }
 
-            public static ushort sVoltage
+            internal static ushort sVoltage
             {
                 get { return scanVoltage; }
                 set { scanVoltage = value; }
             }
-            public static double sVoltageReal
+            internal static double sVoltageReal
             {
                 get { return 5 * (double)sVoltage / (4096 * 0.0008); }
             }
-            public static ushort cVPlus
+            internal static ushort cVPlus
             {
                 get { return condVoltagePlus; }
                 set { condVoltagePlus = value; }
             }
-            public static double cVPlusReal
+            internal static double cVPlusReal
             {
                 get { return 120 * 5 * (double)cVPlus / 4096; }
             }
-            public static ushort cVMin
+            internal static ushort cVMin
             {
                 get { return condVoltageMin; }
                 set { condVoltageMin = value; }
             }
-            public static double cVMinReal
+            internal static double cVMinReal
             {
                 get { return 100 * 5 * (double)cVMin / 4096; }
             }
 
-            public static ushort CP
+            internal static ushort CP
             {
                 get { return CPValue; }
                 set { CPValue = value; }
             }
 
-            public static ushort dVoltage
+            internal static ushort dVoltage
             {
                 get { return detectorVoltage; }
                 set { detectorVoltage = value; }
             }
-            public static double dVoltageReal
+            internal static double dVoltageReal
             {
                 get { return 5 * (double)dVoltage / (4096 * 0.001); }
             }
         }
 
-        public struct TurboPump 
+        internal struct TurboPump 
         {
             private static ushort tpSpeed;
-            public static ushort Speed
+            internal static ushort Speed
             {
                 get { return tpSpeed; }
                 set { tpSpeed = value; }
             }
             private static ushort tpCurrent;
-            public static ushort Current
+            internal static ushort Current
             {
                 get { return tpCurrent; }
                 set { tpCurrent = value; }
             }
             private static ushort pwm_;
-            public static ushort pwm
+            internal static ushort pwm
             {
                 get { return pwm_; }
                 set { pwm_ = value; }
             }
             private static ushort tpTemp;
-            public static ushort PumpTemperature
+            internal static ushort PumpTemperature
             {
                 get { return tpTemp; }
                 set { tpTemp = value; }
             }
             private static ushort drTemp;
-            public static ushort DriveTemperature
+            internal static ushort DriveTemperature
             {
                 get { return drTemp; }
                 set { drTemp = value; }
             }
             private static ushort opTime;
-            public static ushort OperationTime
+            internal static ushort OperationTime
             {
                 get { return opTime; }
                 set { opTime = value; }
             }
 
             private static byte statusBits, alertBits, faultBits;
-            public static byte StatusBits
+            internal static byte StatusBits
             {
                 get { return statusBits; }
                 private set { statusBits = value; }
             }
-            public static byte AlertBits
+            internal static byte AlertBits
             {
                 get { return alertBits; }
                 private set 
@@ -387,7 +387,7 @@ namespace Flavor.Common
                     }
                 }
             }
-            public static byte FaultBits
+            internal static byte FaultBits
             {
                 get { return faultBits; }
                 private set
@@ -402,7 +402,7 @@ namespace Flavor.Common
                     }
                 }
             }
-            public static void relaysState(byte value, byte value2, byte value3)
+            internal static void relaysState(byte value, byte value2, byte value3)
             {
                 StatusBits = value;
                 AlertBits = value2;
@@ -410,7 +410,7 @@ namespace Flavor.Common
                 OnTurboPumpStatusChanged();
             }
 
-            public static void Init()
+            internal static void Init()
             {
                 tpSpeed = 0;
                 tpCurrent = 0;
@@ -422,7 +422,7 @@ namespace Flavor.Common
             }
         }
  
-        public static void relaysState(byte value/*, byte value2*/)
+        internal static void relaysState(byte value/*, byte value2*/)
         {
             fPumpOn = Convert.ToBoolean(value & 1);
             tPumpOn = Convert.ToBoolean(value & 1 << 1);

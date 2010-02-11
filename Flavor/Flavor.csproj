@@ -45,12 +45,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Async\Async.cs" />
-    <Compile Include="Commands\Async\Async.Error.cs" />
-    <Compile Include="Commands\Interfaces\Interfaces.cs" />
-    <Compile Include="Commands\Sync\Sync.Error.cs" />
-    <Compile Include="Commands\Sync\Sync.cs" />
-    <Compile Include="Commands\UI\UI.cs" />
+    <Compile Include="Common\Commands\Async\Async.cs" />
+    <Compile Include="Common\Commands\Async\Async.Error.cs" />
+    <Compile Include="Common\Commands\Interfaces\Interfaces.cs" />
+    <Compile Include="Common\Commands\Sync\Sync.Error.cs" />
+    <Compile Include="Common\Commands\Sync\Sync.cs" />
+    <Compile Include="Common\Commands\UI\UI.cs" />
     <Compile Include="Common\Commander.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Device.cs" />

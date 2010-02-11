@@ -8,11 +8,11 @@ using Flavor.Common.Measuring;
 
 namespace Flavor.Forms
 {
-    public partial class mainForm : Form
+    internal partial class mainForm : Form
     {
         private GraphForm gForm;
 
-        public mainForm()
+        internal mainForm()
         {
             gForm = new GraphForm();
             InitializeComponent();
@@ -392,46 +392,7 @@ namespace Flavor.Forms
                         scanRealTimeLabel.Text = Config.CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
                         detector1CountsLabel.Text = Device.Detector1.ToString();
                         detector2CountsLabel.Text = Device.Detector2.ToString();
-                        if (!(Commander.CurrentMeasureMode is ScanMeasureMode))
-                        {
-                            peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
-                            peakNumberLabel.Visible = true;
-                            label39.Visible = true;
-                            peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
-                            peakCenterLabel.Visible = true;
-                            label41.Visible = true;
-                            peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
-                            peakWidthLabel.Visible = true;
-                            if (Graph.CurrentPeak.Collector == 1)
-                            {
-                                detector1CountsLabel.Visible = true;
-                                label15.Visible = true;
-                                detector2CountsLabel.Visible = false;
-                                label16.Visible = false;
-                            }
-                            else
-                            {
-                                detector1CountsLabel.Visible = false;
-                                label15.Visible = false;
-                                detector2CountsLabel.Visible = true;
-                                label16.Visible = true;
-                            }
-                        }
-                        else
-                        {
-                            gForm.yAxisChange();
-                            //gForm.specterSavingEnabled = true;
-                            
-                            detector1CountsLabel.Visible = true;
-                            label15.Visible = true;
-                            detector2CountsLabel.Visible = true;
-                            label16.Visible = true;
-                            peakNumberLabel.Visible = false;
-                            label39.Visible = false;
-                            peakCenterLabel.Visible = false;
-                            label41.Visible = false;
-                            peakWidthLabel.Visible = false;
-                        }
+                        Commander.CurrentMeasureMode.refreshGraphics(this);
                     }
                     break;
                 case Graph.Displaying.Diff:
@@ -440,6 +401,46 @@ namespace Flavor.Forms
                     else
                         gForm.RefreshGraph();
                     break;
+            }
+        }
+        internal void refreshGraphicsOnScanStep()
+        {
+            gForm.yAxisChange();
+            //gForm.specterSavingEnabled = true;
+
+            detector1CountsLabel.Visible = true;
+            label15.Visible = true;
+            detector2CountsLabel.Visible = true;
+            label16.Visible = true;
+            peakNumberLabel.Visible = false;
+            label39.Visible = false;
+            peakCenterLabel.Visible = false;
+            label41.Visible = false;
+            peakWidthLabel.Visible = false;
+        }
+        internal void refreshGraphicsOnPreciseStep()
+        {
+            peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
+            peakNumberLabel.Visible = true;
+            label39.Visible = true;
+            peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
+            peakCenterLabel.Visible = true;
+            label41.Visible = true;
+            peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
+            peakWidthLabel.Visible = true;
+            if (Graph.CurrentPeak.Collector == 1)
+            {
+                detector1CountsLabel.Visible = true;
+                label15.Visible = true;
+                detector2CountsLabel.Visible = false;
+                label16.Visible = false;
+            }
+            else
+            {
+                detector1CountsLabel.Visible = false;
+                label15.Visible = false;
+                detector2CountsLabel.Visible = true;
+                label16.Visible = true;
             }
         }
 

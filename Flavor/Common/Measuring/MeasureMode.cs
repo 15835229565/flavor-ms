@@ -2,26 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
+using Flavor.Forms;
 
 namespace Flavor.Common.Measuring
 {
-    abstract public class MeasureMode
+    abstract internal class MeasureMode
     {
-        public delegate void StatusCheckToggleEventHandler(bool isRareMode);
-        event Commander.ProgramEventHandler OnScanCancelled;
-        public event StatusCheckToggleEventHandler OnStatusCheckToggled;
+        internal delegate void StatusCheckToggleEventHandler(bool isRareMode);
+        internal event Commander.ProgramEventHandler OnScanCancelled;
+        internal event StatusCheckToggleEventHandler OnStatusCheckToggled;
         
         protected object locker = new object();
         private bool operating = false;
 
         protected ushort pointValue = 0;
-        public ushort Point
+        internal ushort Point
         {
             get { return pointValue; }
             //set { pointValue = value; }
         }
         
-        public bool isOperating
+        internal bool isOperating
         {
             get { return operating; }
             /*protected set
@@ -40,11 +41,11 @@ namespace Flavor.Common.Measuring
         private ushort befTime;
         private ushort eTime;
 
-        public virtual void onUpdateCounts() 
+        internal virtual void onUpdateCounts() 
         {
             customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
         }
-        public virtual void start()
+        internal virtual void start()
         {
             befTime = Config.CommonOptions.befTime;
             eTime = Config.CommonOptions.eTime;
@@ -52,8 +53,9 @@ namespace Flavor.Common.Measuring
             customMeasure = new sendMeasure(befTime, eTime);
             operating = true;
         }
-        abstract public void updateGraph();
-        public void autoNextMeasure()
+        abstract internal void updateGraph();
+        abstract internal void refreshGraphics(mainForm form);
+        internal void autoNextMeasure()
         {
             if (operating)
             {

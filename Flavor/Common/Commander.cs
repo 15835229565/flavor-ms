@@ -11,9 +11,9 @@ using Flavor.Common.Commands.Interfaces;
 
 namespace Flavor.Common
 {
-    static class Commander
+    internal static class Commander
     {
-        public enum programStates : byte
+        internal enum programStates : byte
         {
             Start,
             Shutdown,
@@ -25,11 +25,11 @@ namespace Flavor.Common
             WaitShutdown
         }
 
-        public delegate void ProgramEventHandler();
-        public delegate void AsyncReplyHandler(string msg);
+        internal delegate void ProgramEventHandler();
+        internal delegate void AsyncReplyHandler(string msg);
 
-        public static event ProgramEventHandler OnProgramStateChanged;
-        public static event ProgramEventHandler OnScanCancelled;
+        internal static event ProgramEventHandler OnProgramStateChanged;
+        internal static event ProgramEventHandler OnScanCancelled;
         private static Commander.programStates programState;
         private static Commander.programStates programStatePrev;
         private static bool handleBlock = true;
@@ -39,14 +39,14 @@ namespace Flavor.Common
         private static bool onTheFly = true;
 
         private static MeasureMode measureMode = null;
-        public static MeasureMode CurrentMeasureMode
+        internal static MeasureMode CurrentMeasureMode
         {
             get { return measureMode; }
         }
 
-        public static event AsyncReplyHandler OnAsyncReply;
+        internal static event AsyncReplyHandler OnAsyncReply;
         
-        public static Commander.programStates pState
+        internal static Commander.programStates pState
         {
             get 
             { 
@@ -62,13 +62,13 @@ namespace Flavor.Common
             }
         }
         
-        public static Commander.programStates pStatePrev
+        internal static Commander.programStates pStatePrev
         {
             get { return programStatePrev; }
             set { programStatePrev = value; }
         }
         
-        public static bool hBlock
+        internal static bool hBlock
         {
             get 
             {
@@ -84,19 +84,19 @@ namespace Flavor.Common
             }
         }
 
-        public static bool measureCancelRequested
+        internal static bool measureCancelRequested
         {
             get { return cancelMeasure; }
             set { cancelMeasure = value; }
         }
 
-        public static bool notRareModeRequested
+        internal static bool notRareModeRequested
         {
             get { return notRareMode; }
             set { notRareMode = value; }
         }
 
-        public static bool deviceIsConnected
+        internal static bool deviceIsConnected
         {
             get 
             {
@@ -114,12 +114,12 @@ namespace Flavor.Common
 
         private static MessageQueueWithAutomatedStatusChecks toSend;
 
-        public static void AddToSend(UserRequest command)
+        internal static void AddToSend(UserRequest command)
         {
             toSend.AddToSend(command);
         }
 
-        public static void Realize(ServicePacket Command)
+        internal static void Realize(ServicePacket Command)
         {
             if (Command is AsyncErrorReply)
             {

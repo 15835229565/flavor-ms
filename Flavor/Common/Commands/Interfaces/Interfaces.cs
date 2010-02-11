@@ -4,19 +4,19 @@ using System.Text;
 
 namespace Flavor.Common.Commands.Interfaces
 {
-    public class ServicePacket
+    internal class ServicePacket
     {
     }
 
-    public class SyncServicePacket: ServicePacket
+    internal class SyncServicePacket: ServicePacket
     {
-        public virtual ModBus.CommandCode Id
+        internal virtual ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.None; }
         }
     }
 
-    interface ISend
+    internal interface ISend
     {
         void Send();
     }

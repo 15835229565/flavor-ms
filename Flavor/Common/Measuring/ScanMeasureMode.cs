@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
+using Flavor.Forms;
 
 namespace Flavor.Common.Measuring
 {
-    class ScanMeasureMode: MeasureMode
+    internal class ScanMeasureMode: MeasureMode
     {
-        public override void onUpdateCounts()
+        internal override void onUpdateCounts()
         {
             base.onUpdateCounts();
             //lock here?
@@ -28,7 +29,7 @@ namespace Flavor.Common.Measuring
                 Config.AutoSaveSpecterFile();
             }
         }
-        public override void start()
+        internal override void start()
         {
             base.start();
             //lock here
@@ -36,10 +37,14 @@ namespace Flavor.Common.Measuring
             pointValue = Config.sPoint;
             Commander.AddToSend(new sendSVoltage(pointValue++));
         }
-        public override void updateGraph() 
+        internal override void updateGraph() 
         {
             ushort pnt = pointValue;
             Graph.updateGraph(Device.Detector1, Device.Detector2, --pnt);
+        }
+        internal override void refreshGraphics(mainForm form)
+        {
+            form.refreshGraphicsOnScanStep();
         }
     }
 }
