@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flavor
+namespace Flavor.Common
 {
     delegate void DeviceEventHandler();
     //delegate void DeviceStatusChangedEventHandler();

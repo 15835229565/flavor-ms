@@ -5,8 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Flavor.Common;
 
-namespace Flavor
+namespace Flavor.Forms
 {
     public partial class DelaysOptionsForm : Form
     {

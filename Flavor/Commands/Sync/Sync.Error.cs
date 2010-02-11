@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.Interfaces;
 
-namespace Flavor
+namespace Flavor.Common.Commands.Sync
 {
-    abstract class SyncErrorReply: SyncServicePacket
+    public abstract class SyncErrorReply : SyncServicePacket
     {
     }
-    
-    class logInvalidCommand : SyncErrorReply
+
+    public class logInvalidCommand : SyncErrorReply
     {
         private byte[] command;
         
@@ -23,49 +24,43 @@ namespace Flavor
         }
     }
 
-    class logInvalidChecksum : SyncErrorReply
+    public class logInvalidChecksum : SyncErrorReply
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.InvalidChecksum; }
         }
-        
     }
-    
-    class logInvalidPacket : SyncErrorReply
+
+    public class logInvalidPacket : SyncErrorReply
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.InvalidPacket; }
         }
-        
     }
-    
-    class logInvalidLength : SyncErrorReply
 
+    public class logInvalidLength : SyncErrorReply
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.InvalidLength; }
         }
-        
     }
-    
-    class logInvalidData : SyncErrorReply
+
+    public class logInvalidData : SyncErrorReply
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.InvalidData; }
         }
-        
     }
-    
-    class logInvalidState : SyncErrorReply
+
+    public class logInvalidState : SyncErrorReply
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.InvalidState; }
         }
-        
     }
 }

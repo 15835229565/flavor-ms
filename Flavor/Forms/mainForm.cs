@@ -3,8 +3,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Timers;
+using Flavor.Common;
+using Flavor.Common.Measuring;
 
-namespace Flavor
+namespace Flavor.Forms
 {
     public partial class mainForm : Form
     {
@@ -390,7 +392,7 @@ namespace Flavor
                         scanRealTimeLabel.Text = Config.CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
                         detector1CountsLabel.Text = Device.Detector1.ToString();
                         detector2CountsLabel.Text = Device.Detector2.ToString();
-                        if (Commander.isSenseMeasure)
+                        if (!(Commander.CurrentMeasureMode is ScanMeasureMode))
                         {
                             peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
                             peakNumberLabel.Visible = true;

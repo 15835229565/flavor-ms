@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ZedGraph;
 
-namespace Flavor
+namespace Flavor.Common
 {
     static class Graph
     {

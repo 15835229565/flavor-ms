@@ -6,9 +6,9 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Flavor
+namespace Flavor.Forms
 {
-    public partial class MonitorOptionsForm : Flavor.PreciseOptionsForm
+    public partial class MonitorOptionsForm : PreciseOptionsForm
     {
         private MonitorOptionsForm()
         {

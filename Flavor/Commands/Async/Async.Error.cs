@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.Interfaces;
 
-namespace Flavor
+namespace Flavor.Common.Commands.Async
 {
-    abstract class AsyncErrorReply : ServicePacket
+    public abstract class AsyncErrorReply : ServicePacket
     {
         private byte[] cmdln;
         public AsyncErrorReply(byte[] commandline)
@@ -17,8 +18,8 @@ namespace Flavor
             get{return "Async error reply";}
         }
     }
-    
-    class logInternalError : AsyncErrorReply
+
+    public class logInternalError : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -32,8 +33,8 @@ namespace Flavor
             internalError = commandline[1];
         }
     }
-    
-    class logInvalidSystemState : AsyncErrorReply
+
+    public class logInvalidSystemState : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -45,7 +46,7 @@ namespace Flavor
         }
     }
 
-    class logVacuumCrash : AsyncErrorReply
+    public class logVacuumCrash : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -60,7 +61,7 @@ namespace Flavor
         }
     }
 
-    class logTurboPumpFailure : AsyncErrorReply, IUpdateDevice
+    public class logTurboPumpFailure : AsyncErrorReply, IUpdateDevice
     {
         private ushort turboSpeed;
         private ushort turboCurrent;
@@ -105,8 +106,8 @@ namespace Flavor
 
         #endregion
     }
-    
-    class logPowerFail : AsyncErrorReply
+
+    public class logPowerFail : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -117,8 +118,8 @@ namespace Flavor
         {
         }
     }
-    
-    class logInvalidVacuumState : AsyncErrorReply
+
+    public class logInvalidVacuumState : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -130,7 +131,7 @@ namespace Flavor
         }
     }
 
-    class logAdcPlaceIonSrc : AsyncErrorReply
+    public class logAdcPlaceIonSrc : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -141,8 +142,8 @@ namespace Flavor
         {
         }
     }
-    
-    class logAdcPlaceScanv : AsyncErrorReply
+
+    public class logAdcPlaceScanv : AsyncErrorReply
     {
         public override string errorMessage
         {
@@ -153,8 +154,8 @@ namespace Flavor
         {
         }
     }
-    
-    class logAdcPlaceControlm : AsyncErrorReply
+
+    public class logAdcPlaceControlm : AsyncErrorReply
     {
         public override string errorMessage
         {

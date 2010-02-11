@@ -1,4 +1,4 @@
-namespace Flavor
+namespace Flavor.Controls
 {
     partial class ZedGraphControlPlus
     {

@@ -2,8 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Timers;
+using Flavor.Common.Commands.UI;
+using Flavor.Common.Commands.Async;
+using Flavor.Common.Commands.Sync;
+using Flavor.Common.Measuring;
+using Flavor.Common.Messaging;
+using Flavor.Common.Commands.Interfaces;
 
-namespace Flavor
+namespace Flavor.Common
 {
     static class Commander
     {
@@ -31,12 +37,12 @@ namespace Flavor
         private static bool notRareMode = false;
         private static bool isConnected = false;
         private static bool onTheFly = true;
-        private static sendMeasure customMeasure = null;
-        private static bool doMeasure = true;
 
-        private static bool isSenseMeasureMode;
-        //private static bool scanning = false;
         private static MeasureMode measureMode = null;
+        public static MeasureMode CurrentMeasureMode
+        {
+            get { return measureMode; }
+        }
 
         public static event AsyncReplyHandler OnAsyncReply;
         
@@ -62,23 +68,6 @@ namespace Flavor
             set { programStatePrev = value; }
         }
         
-        private static ushort PointValue = 0;
-
-        private static Utility.PreciseEditorData[] senseModePoints;
-
-        private static int[][] senseModeCounts;
-        
-        private static byte senseModePeak = 0;
-
-        public static Utility.PreciseEditorData SenseModePeak 
-        {
-            get { return senseModePoints[senseModePeak]; }
-        }
-
-        private static ushort[] senseModePeakIteration;
-
-        private static ushort smpiSum;
-
         public static bool hBlock
         {
             get 
@@ -93,12 +82,6 @@ namespace Flavor
                     OnProgramStateChanged();
                 };
             }
-        }
-        
-        public static bool isSenseMeasure
-        {
-            get { return isSenseMeasureMode; }
-            set { isSenseMeasureMode = value; }
         }
 
         public static bool measureCancelRequested
@@ -129,28 +112,11 @@ namespace Flavor
             }
         }
 
-        public static sendMeasure CustomMeasure
-        {
-            get { return customMeasure; }
-        }
-
-        public static bool DoMeasure
-        {
-            get { return doMeasure; }
-            set { doMeasure = value; }
-        }
-
-        public static ushort Point
-        {
-            get { return PointValue; }
-            set { PointValue = value; }
-        }
-        
         private static MessageQueueWithAutomatedStatusChecks toSend;
 
-        public static void AddToSend(UserRequest Command)
+        public static void AddToSend(UserRequest command)
         {
-            toSend.AddToSend(Command);
+            toSend.AddToSend(command);
         }
 
         public static void Realize(ServicePacket Command)
@@ -221,7 +187,7 @@ namespace Flavor
                         Commander.pState = Commander.programStates.Ready;
                         Commander.pStatePrev = Commander.pState;
                     }
-                    toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
+                    toSend.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
                     toSend.AddToSend(new sendIVoltage());// и остальные напр€жени€ затем
                 }
             }
@@ -282,144 +248,17 @@ namespace Flavor
                 }
                 if (Command is updateCounts)
                 {
-                    customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
-                    //measureMode.onUpdateCounts();
-                    if (!Commander.isSenseMeasure)
+                    if (measureMode == null)
                     {
-                        if (!Commander.measureCancelRequested && (Commander.Point <= Config.ePoint))
-                        {
-                            toSend.AddToSend(new sendSVoltage(Commander.Point++));
-                        }
-                        else
-                        {
-                            if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
-                            toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                            OnScanCancelled();
-                            Commander.pStatePrev = Commander.pState;
-                            Commander.pState = Commander.programStates.Ready;
-                            Commander.pStatePrev = Commander.pState;
-                            Commander.measureCancelRequested = false;
-                            Config.AutoSaveSpecterFile();
-                        }
+                        // error here
                     }
-                    else
-                    {
-                        if (!Commander.measureCancelRequested)
-                        {
-                            if (senseModePoints[senseModePeak].Collector == 1)
-                                senseModeCounts[senseModePeak][(Commander.Point - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
-                            else
-                                senseModeCounts[senseModePeak][(Commander.Point - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
-                            if ((Commander.Point <= (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width)))
-                            {
-                                toSend.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
-                            }
-                            else
-                            {
-                                --(senseModePeakIteration[senseModePeak]);
-                                --smpiSum;
-                                if (smpiSum > 0)
-                                {
-                                    for (int i = 0; i < senseModePoints.Length; ++i)//ѕоиск пика с оставшейс€ ненулевой итерацией. Ќо не более 1 цикла.
-                                    {
-                                        ++senseModePeak;
-                                        if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
-                                        if (senseModePeakIteration[senseModePeak] > 0) break;
-                                    }
-                                    ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                    if (Commander.Point > nextPoint)
-                                    {
-                                        //!!!case of backward voltage change
-                                        customMeasure = new sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
-                                    }
-                                    else
-                                    {
-                                        //!!!case of forward voltage change
-                                        if (Config.CommonOptions.ForwardTimeEqualsBeforeTime)
-                                        {
-                                            customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
-                                        }
-                                        else
-                                        {
-                                            customMeasure = new sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
-                                        }
-                                    }
-                                    Commander.Point = nextPoint;
-                                    toSend.AddToSend(new sendSVoltage(Commander.Point++));
-                                    //old code:
-                                    //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                    //Commander.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
-                                }
-                                else
-                                {
-                                    if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
-                                    toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                                    Commander.pStatePrev = Commander.pState;
-                                    Commander.pState = Commander.programStates.Ready;
-                                    Commander.pStatePrev = Commander.pState;
-                                    OnScanCancelled();//!!!
-                                    Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
-                                    Config.AutoSavePreciseSpecterFile();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            OnScanCancelled();//!!!
-                            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
-                            if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
-                            toSend.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-                            Commander.pStatePrev = Commander.pState;
-                            Commander.pState = Commander.programStates.Ready;
-                            Commander.pStatePrev = Commander.pState;
-                            Commander.measureCancelRequested = false;
-                        }
-                    }
+                    measureMode.onUpdateCounts();
                 }
                 if (Command is confirmF2Voltage)
                 {
                     if (Commander.pState == programStates.Measure)
                     {
-                        //first measure point with increased idle time
-                        customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
-                        //measureMode.start();
-                        if (!Commander.isSenseMeasure)
-                        {
-                            Commander.Point = Config.sPoint;
-                            toSend.AddToSend(new sendSVoltage(Commander.Point++));
-                        }
-                        else
-                        {
-                            if (Config.PreciseData.Count > 0)
-                            {
-                                //Sort in increased order
-                                //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
-                                //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
-                                //senseModePoints = Config.PreciseData.ToArray();
-                                List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
-                                temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
-                                senseModePoints = temp.ToArray();
-                                senseModePeakIteration = new ushort[senseModePoints.Length];
-                                smpiSum = 0;
-                                senseModeCounts = new int[senseModePoints.Length][];
-                                for (int i = 0; i < senseModePeakIteration.Length; ++i)
-                                {
-                                    senseModeCounts[i] = new int[2 * senseModePoints[i].Width + 1];
-                                    senseModePeakIteration[i] = senseModePoints[i].Iterations;
-                                    smpiSum += senseModePoints[i].Iterations; ;
-                                }
-                                senseModePeak = 0;
-                                Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                                toSend.AddToSend(new sendSVoltage(Commander.Point++/*, isSenseMeasure*/));
-                            }
-                            else
-                            {
-                                if (!Commander.notRareModeRequested) toSend.IsRareMode = false;
-                                Commander.pStatePrev = Commander.pState;
-                                Commander.pState = Commander.programStates.Ready;// ATTENTION!
-                                Commander.pStatePrev = Commander.pState;
-                            }
-                        }
+                        measureMode.start();
                     }
                 }
             }
@@ -466,7 +305,6 @@ namespace Flavor
         
         internal static void Scan()
         {
-
             Console.WriteLine(pState);
             if (measureMode != null && measureMode.isOperating)
             {
@@ -477,7 +315,6 @@ namespace Flavor
             {
                 pStatePrev = pState;
                 pState = Commander.programStates.Measure;
-                Commander.isSenseMeasure = false;
 
                 measureMode = new ScanMeasureMode();
                 
@@ -495,7 +332,9 @@ namespace Flavor
                 {
                     pStatePrev = pState;
                     pState = Commander.programStates.Measure;
-                    Commander.isSenseMeasure = true;
+                    
+                    measureMode = new PreciseMeasureMode();
+                    
                     Graph.ResetPointLists();
                     if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
                     Commander.measureCancelRequested = false;

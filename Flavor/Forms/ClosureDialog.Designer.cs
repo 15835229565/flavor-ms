@@ -1,4 +1,4 @@
-namespace Flavor
+namespace Flavor.Forms
 {
     partial class ClosureDialog
     {

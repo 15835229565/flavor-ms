@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 using System.Timers;
+using Flavor.Common.Commands.Interfaces;
+using Flavor.Common.Commands.Sync;
+using Flavor.Common.Commands.Async;
 
-namespace Flavor
+namespace Flavor.Common
 {
-    static class ModBus
+    public static class ModBus
     {
         public class ModBusException : Exception { }
 

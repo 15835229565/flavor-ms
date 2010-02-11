@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.Interfaces;
+using Flavor.Common.Commands.UI;
 
-namespace Flavor
+namespace Flavor.Common.Commands.Sync
 {
     abstract class SyncReply: SyncServicePacket
     {
@@ -206,19 +208,15 @@ namespace Flavor
             get { return ModBus.CommandCode.SetScanVoltage; }
         }
 
-        #region IReply Members
+        #region IAutomatedReply Members
 
         public void AutomatedReply()
         {
-            if (Commander.DoMeasure)
+            if (Commander.CurrentMeasureMode == null)
             {
-                if (Commander.CustomMeasure == null)
-                    Commander.AddToSend(new sendMeasure());
-                else
-                    Commander.AddToSend(Commander.CustomMeasure);
+                return;
             }
-            else
-                Commander.DoMeasure = true;
+            Commander.CurrentMeasureMode.autoNextMeasure();
         }
 
         #endregion
@@ -249,17 +247,13 @@ namespace Flavor
     
     class updateCounts : SyncReply, IUpdateDevice, IUpdateGraph
     {
-        
         private int Detector1;
         private int Detector2;
-        private ushort CurPoint;
 
         public updateCounts(int value1, int value2)
         {
             Detector1 = value1;
             Detector2 = value2;
-            CurPoint = Commander.Point;
-            --CurPoint;//!!!wtf?
         }
 
         #region IUpdateDevice Members
@@ -276,11 +270,7 @@ namespace Flavor
 
         public void UpdateGraph()
         {
-            if (!Commander.isSenseMeasure)
-            {
-                Graph.updateGraph(Detector1, Detector2, CurPoint);
-            }
-            else Graph.updateGraphDuringPreciseMeasure(CurPoint, Commander.SenseModePeak);
+            Commander.CurrentMeasureMode.updateGraph();
         }
 
         #endregion

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.Interfaces;
 
-namespace Flavor
+namespace Flavor.Common.Commands.UI
 {
-    class UserRequest: SyncServicePacket, ISend
+    public class UserRequest: SyncServicePacket, ISend
     {
         #region ISend Members
         public virtual void Send()
@@ -14,39 +15,39 @@ namespace Flavor
         #endregion
     }
 
-    class requestState : UserRequest
+    public class requestState : UserRequest
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetState; }
         }
     }
-    
-    class requestStatus : UserRequest
+
+    public class requestStatus : UserRequest
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.GetStatus; }
         }
     }
-    
-    class sendShutdown : UserRequest
+
+    public class sendShutdown : UserRequest
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Shutdown; }
         }
     }
-    
-    class sendInit : UserRequest
+
+    public class sendInit : UserRequest
     {
         public override ModBus.CommandCode Id
         {
             get { return ModBus.CommandCode.Init; }
         }
     }
-    
-    class sendHCurrent : UserRequest
+
+    public class sendHCurrent : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -61,8 +62,8 @@ namespace Flavor
 
         #endregion
     }
-    
-    class sendECurrent : UserRequest
+
+    public class sendECurrent : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -75,8 +76,8 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class sendIVoltage : UserRequest
+
+    public class sendIVoltage : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -89,8 +90,8 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class sendF1Voltage : UserRequest
+
+    public class sendF1Voltage : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -103,8 +104,8 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class sendF2Voltage : UserRequest
+
+    public class sendF2Voltage : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -118,21 +119,14 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class sendSVoltage : UserRequest
+
+    public class sendSVoltage : UserRequest
     {
         private ushort SVoltage;
 
         public sendSVoltage(ushort step)
         {
             SVoltage = Config.CommonOptions.scanVoltage(step);
-            Commander.DoMeasure = true;
-        }
-
-        public sendSVoltage(ushort step, bool doMeasure)
-        {
-            SVoltage = Config.CommonOptions.scanVoltage(step);
-            Commander.DoMeasure = doMeasure;
         }
         
         /*
@@ -155,8 +149,8 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class sendCapacitorVoltage : UserRequest
+
+    public class sendCapacitorVoltage : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -171,7 +165,7 @@ namespace Flavor
         #endregion
     }
     
-    class sendMeasure : UserRequest
+    public class sendMeasure : UserRequest
     {
         private ushort itime;
         private ushort etime;
@@ -202,7 +196,7 @@ namespace Flavor
         #endregion
     }
 
-    class getCounts : UserRequest
+    public class getCounts : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -210,7 +204,7 @@ namespace Flavor
         }
     }
 
-    class enableHCurrent : UserRequest
+    public class enableHCurrent : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -225,7 +219,7 @@ namespace Flavor
         #endregion
     }
     
-    class disableHCurrent : UserRequest
+    public class disableHCurrent : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -270,7 +264,7 @@ namespace Flavor
         #endregion
     }
 */    
-    class enableHighVoltage : UserRequest
+    public class enableHighVoltage : UserRequest
     {
         private byte HVenable;
         
@@ -293,7 +287,7 @@ namespace Flavor
         #endregion
     }
     
-    class getTurboPumpStatus : UserRequest
+    public class getTurboPumpStatus : UserRequest
     {
         public override ModBus.CommandCode Id
         {
@@ -301,7 +295,7 @@ namespace Flavor
         }
     }
     
-    class setForvacuumLevel : UserRequest
+    public class setForvacuumLevel : UserRequest
     {
         public override ModBus.CommandCode Id
         {

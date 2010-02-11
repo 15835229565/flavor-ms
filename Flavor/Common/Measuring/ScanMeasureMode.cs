@@ -1,32 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.UI;
 
-namespace Flavor
+namespace Flavor.Common.Measuring
 {
     class ScanMeasureMode: MeasureMode
     {
-        public delegate void StatusCheckToggleEventHandler(bool isRareMode);
-
-        //private bool scanning = false;
-        public event Commander.ProgramEventHandler OnScanCancelled;
-        public event StatusCheckToggleEventHandler OnStatusCheckToggled;
-
         public override void onUpdateCounts()
         {
+            base.onUpdateCounts();
             //lock here?
-            if (!Commander.measureCancelRequested && (Commander.Point <= Config.ePoint))
+            if (!Commander.measureCancelRequested && (pointValue <= Config.ePoint))
             {
-                Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                Commander.AddToSend(new sendSVoltage(pointValue++));
             }
             else
             {
-                if (!Commander.notRareModeRequested) OnStatusCheckToggled(!Commander.notRareModeRequested);//?
-                Commander.AddToSend(new sendSVoltage(0, false));//Set ScanVoltage to low limit
-
-                base.onUpdateCounts();
+                stop();
+                if (!Commander.notRareModeRequested) toggleStatusCheck(!Commander.notRareModeRequested);//?
                 
-                OnScanCancelled();
+                cancelScan();
                 Commander.pStatePrev = Commander.pState;
                 Commander.pState = Commander.programStates.Ready;
                 Commander.pStatePrev = Commander.pState;
@@ -38,9 +32,14 @@ namespace Flavor
         {
             base.start();
             //lock here
-            OnStatusCheckToggled(Commander.notRareModeRequested);//?
-            Commander.Point = Config.sPoint;
-            Commander.AddToSend(new sendSVoltage(Commander.Point++));
+            toggleStatusCheck(Commander.notRareModeRequested);//?
+            pointValue = Config.sPoint;
+            Commander.AddToSend(new sendSVoltage(pointValue++));
+        }
+        public override void updateGraph() 
+        {
+            ushort pnt = pointValue;
+            Graph.updateGraph(Device.Detector1, Device.Detector2, --pnt);
         }
     }
 }

@@ -6,8 +6,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using Flavor.Common;
+using Flavor.Common.Commands.UI;
 
-namespace Flavor
+namespace Flavor.Forms
 {
     public partial class OptionsForm : Form
     {

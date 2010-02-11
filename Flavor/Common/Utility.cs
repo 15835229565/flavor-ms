@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Flavor
+namespace Flavor.Common
 {
     internal class CommonOptions
     {

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flavor
+namespace Flavor.Common.Commands.Interfaces
 {
-    class ServicePacket
+    public class ServicePacket
     {
     }
 
-    class SyncServicePacket: ServicePacket
+    public class SyncServicePacket: ServicePacket
     {
         public virtual ModBus.CommandCode Id
         {

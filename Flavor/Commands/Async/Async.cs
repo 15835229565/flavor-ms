@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.Interfaces;
+using Flavor.Common.Commands.UI;
 
-namespace Flavor
+namespace Flavor.Common.Commands.Async
 {
-    abstract class AsyncReply: ServicePacket
+    public abstract class AsyncReply: ServicePacket
     {
     }
-    
-    class requestCounts : AsyncReply, IAutomatedReply
+
+    public class requestCounts : AsyncReply, IAutomatedReply
     {
         #region IReply Members
         public void AutomatedReply()
@@ -18,8 +20,8 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class confirmVacuumReady : AsyncReply, IUpdateDevice
+
+    public class confirmVacuumReady : AsyncReply, IUpdateDevice
     {
         #region IUpdateDevice Members
         public void UpdateDevice()
@@ -27,20 +29,20 @@ namespace Flavor
         }
         #endregion
     }
-    
-    class confirmShutdowned : AsyncReply
-    {
-    }
-    
-    class SystemReseted : AsyncReply
+
+    public class confirmShutdowned : AsyncReply
     {
     }
 
-    class confirmHighVoltageOff : AsyncReply
+    public class SystemReseted : AsyncReply
     {
     }
 
-    class confirmHighVoltageOn : AsyncReply
+    public class confirmHighVoltageOff : AsyncReply
+    {
+    }
+
+    public class confirmHighVoltageOn : AsyncReply
     {
     }
 }

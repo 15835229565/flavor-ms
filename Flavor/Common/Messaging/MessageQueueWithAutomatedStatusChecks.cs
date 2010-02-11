@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flavor
+namespace Flavor.Common.Messaging
 {
     class MessageQueueWithAutomatedStatusChecks: MessageQueue
     {

@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Globalization;
 
-namespace Flavor
+namespace Flavor.Common
 {
     static class Config
     {

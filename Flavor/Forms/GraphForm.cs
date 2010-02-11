@@ -6,8 +6,10 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using ZedGraph;
+using Flavor.Common;
+using Flavor.Controls;
 
-namespace Flavor
+namespace Flavor.Forms
 {
     internal partial class GraphForm : Form
     {

@@ -12,8 +12,10 @@ using System.Collections.Generic;
 
 using System.Runtime.InteropServices;
 using ZedGraph;
+using Flavor.Common;
+using Flavor.Forms;
 
-namespace Flavor
+namespace Flavor.Controls
 {
     partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {

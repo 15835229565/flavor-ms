@@ -1,4 +1,5 @@
-namespace Flavor
+using Flavor.Controls;
+namespace Flavor.Forms
 {
     partial class GraphForm
     {
@@ -62,8 +63,8 @@ namespace Flavor
             this.defaultScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveSpecterFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.collect2_graph = new Flavor.ZedGraphControlPlus();
-            this.collect1_graph = new Flavor.ZedGraphControlPlus();
+            this.collect2_graph = new Flavor.Controls.ZedGraphControlPlus();
+            this.collect1_graph = new Flavor.Controls.ZedGraphControlPlus();
             this.graphFormMenuStrip.SuspendLayout();
             this.graphContextMenuStrip.SuspendLayout();
             this.SuspendLayout();

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Flavor.Common.Commands.UI;
+using Flavor.Common.Commands.Sync;
 
-namespace Flavor
+namespace Flavor.Common.Messaging
 {
     class MessageQueue
     {

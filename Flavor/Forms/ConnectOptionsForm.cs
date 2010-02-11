@@ -7,8 +7,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Xml;
+using Flavor.Common;
 
-namespace Flavor
+namespace Flavor.Forms
 {
     public partial class ConnectOptionsForm : Form
     {
