@@ -251,16 +251,21 @@ namespace Flavor.Forms
             heatCurLabel.Text = Config.CommonOptions.hCurrentReal.ToString("f3");
             f1_label.Text = Config.CommonOptions.fV1Real.ToString("f3");
             f2_label.Text = Config.CommonOptions.fV2Real.ToString("f3");
-            scanProgressBar.Value = 0;
-            scanProgressBar.Maximum = Config.ePoint - Config.sPoint;
-            scanProgressBar.Step = 1;
+            
             cancelScanButton.Enabled = true;
             cancelScanButton.Visible = true;
+
+            scanProgressBar.Value = 0;
+            scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
+            scanProgressBar.Step = 1;
+
+            Graph.ResetLoadedPointLists();
+            gForm.setXScaleLimits();
+            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
+            gForm.specterSavingEnabled = false;
         }
         private void overview_button_Click(object sender, EventArgs e)
         {
-            prepareControlsOnMeasureStart();
-
             startScanTextLabel.Visible = true;
             label18.Visible = true;
             firstStepLabel.Visible = true;
@@ -271,17 +276,12 @@ namespace Flavor.Forms
             firstStepLabel.Text = Config.sPoint.ToString();
             lastStepLabel.Text = Config.ePoint.ToString();
 
-            Graph.ResetLoadedPointLists();
-            gForm.setXScaleLimits();
-            gForm.CreateGraph();
-            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
-            gForm.specterSavingEnabled = false;
             Commander.Scan();
+            prepareControlsOnMeasureStart();
+            gForm.CreateGraph();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e)
         {
-            prepareControlsOnMeasureStart();
-
             startScanTextLabel.Visible = false;
             label18.Visible = false;
             firstStepLabel.Visible = false;
@@ -289,25 +289,11 @@ namespace Flavor.Forms
             label37.Visible = true;
             peakNumberLabel.Visible = true;
 
-            scanProgressBar.Value = 0;
-            scanProgressBar.Maximum = 0;
-            foreach (Utility.PreciseEditorData ped in Config.PreciseData)
-            {
-                if (ped.Use)
-                    scanProgressBar.Maximum += (2 * ped.Width + 1) * ped.Iterations;
-            }
-            scanProgressBar.Step = 1;
-
-            Graph.ResetLoadedPointLists();
-            gForm.setXScaleLimits(Config.PreciseData);
-            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
-            gForm.specterSavingEnabled = false;
             Commander.Sense();
+            prepareControlsOnMeasureStart();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e)
         {
-            prepareControlsOnMeasureStart();
-
             startScanTextLabel.Visible = false;
             label18.Visible = false;
             firstStepLabel.Visible = false;
@@ -315,21 +301,8 @@ namespace Flavor.Forms
             label37.Visible = true;
             peakNumberLabel.Visible = true;
 
-            //!!! other values here
-            scanProgressBar.Value = 0;
-            scanProgressBar.Maximum = 0;
-            foreach (Utility.PreciseEditorData ped in Config.PreciseData)
-            {
-                if (ped.Use)
-                    scanProgressBar.Maximum += (2 * ped.Width + 1) * ped.Iterations;
-            }
-            scanProgressBar.Step = 1;
-
-            Graph.ResetLoadedPointLists();
-            gForm.setXScaleLimits(Config.PreciseData);
-            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
-            gForm.specterSavingEnabled = false;
             Commander.Monitor();
+            prepareControlsOnMeasureStart();
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits)
@@ -442,6 +415,11 @@ namespace Flavor.Forms
                 detector2CountsLabel.Visible = true;
                 label16.Visible = true;
             }
+        }
+        internal void refreshGraphicsOnMonitorStep()
+        {
+            //TODO: this is temporary
+            refreshGraphicsOnPreciseStep();
         }
 
         private void InvokeRefreshDeviceState()

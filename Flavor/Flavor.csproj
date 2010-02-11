@@ -55,6 +55,7 @@
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
+    <Compile Include="Common\Measuring\MonitorMeasureMode.cs" />
     <Compile Include="Common\Measuring\PreciseMeasureMode.cs" />
     <Compile Include="Common\Measuring\ScanMeasureMode.cs" />
     <Compile Include="Common\Measuring\MeasureMode.cs" />

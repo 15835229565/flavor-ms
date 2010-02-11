@@ -251,6 +251,7 @@ namespace Flavor.Common
                     if (measureMode == null)
                     {
                         // error here
+                        throw new Exception("No measure mode in operation.");
                     }
                     measureMode.onUpdateCounts();
                 }
@@ -329,17 +330,16 @@ namespace Flavor.Common
         }
         internal static void Monitor()
         {
-            //TODO: now uses precise mode
             if (pState == Commander.programStates.Ready)
             {
                 if (somePointsUsed())
                 {
                     initMeasure();                          //?
-                    measureMode = new PreciseMeasureMode(); //order
+                    measureMode = new MonitorMeasureMode(); //order
                 }
                 else
                 {
-                    Console.WriteLine("No points for precise mode measure.");
+                    Console.WriteLine("No points for monitor(precise) mode measure.");
                 }
             }
         }
@@ -366,7 +366,6 @@ namespace Flavor.Common
 
             Graph.ResetPointLists();
             toSend.IsRareMode = !Commander.notRareModeRequested;
-            //if (!Commander.notRareModeRequested) toSend.IsRareMode = true;
             Commander.measureCancelRequested = false;
             toSend.AddToSend(new sendIVoltage());
             /*

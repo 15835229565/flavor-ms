@@ -8,11 +8,19 @@ namespace Flavor.Common.Measuring
 {
     internal class ScanMeasureMode: MeasureMode
     {
+        private ushort sPoint;
+        private ushort ePoint;
+        internal ScanMeasureMode()
+            : base()
+        {
+            sPoint = Config.sPoint;
+            ePoint = Config.ePoint;
+        }
         internal override void onUpdateCounts()
         {
             base.onUpdateCounts();
             //lock here?
-            if (!Commander.measureCancelRequested && (pointValue <= Config.ePoint))
+            if (!Commander.measureCancelRequested && (pointValue <= ePoint))
             {
                 Commander.AddToSend(new sendSVoltage(pointValue++));
             }
@@ -26,7 +34,7 @@ namespace Flavor.Common.Measuring
         {
             base.start();
             //lock here
-            pointValue = Config.sPoint;
+            pointValue = sPoint;
             Commander.AddToSend(new sendSVoltage(pointValue++));
         }
         internal override void updateGraph() 
@@ -37,6 +45,10 @@ namespace Flavor.Common.Measuring
         internal override void refreshGraphics(mainForm form)
         {
             form.refreshGraphicsOnScanStep();
+        }
+        internal override int stepsCount()
+        {
+            return ePoint - sPoint;
         }
     }
 }

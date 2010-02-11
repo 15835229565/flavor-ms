@@ -28,14 +28,17 @@ namespace Flavor.Common.Measuring
         private ushort befTime;
         private ushort eTime;
 
+        internal MeasureMode()
+        {
+            befTime = Config.CommonOptions.befTime;
+            eTime = Config.CommonOptions.eTime;
+        }
         internal virtual void onUpdateCounts() 
         {
             customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
         }
         internal virtual void start()
         {
-            befTime = Config.CommonOptions.befTime;
-            eTime = Config.CommonOptions.eTime;
             //first measure point with increased idle time
             customMeasure = new sendMeasure(befTime, eTime);
             OnScanCancelled += new Commander.ProgramEventHandler(Commander.cancelScan);
@@ -44,6 +47,7 @@ namespace Flavor.Common.Measuring
         }
         abstract internal void updateGraph();
         abstract internal void refreshGraphics(mainForm form);
+        abstract internal int stepsCount();
         internal void autoNextMeasure()
         {
             if (operating)

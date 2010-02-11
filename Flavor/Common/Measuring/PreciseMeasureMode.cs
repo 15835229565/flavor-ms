@@ -8,16 +8,48 @@ namespace Flavor.Common.Measuring
 {
     internal class PreciseMeasureMode: MeasureMode
     {
-        private static Utility.PreciseEditorData[] senseModePoints;
-        private static int[][] senseModeCounts;
-        private static byte senseModePeak = 0;
-        private static Utility.PreciseEditorData SenseModePeak
+        private Utility.PreciseEditorData[] senseModePoints;
+        private int[][] senseModeCounts;
+        private byte senseModePeak = 0;
+        private Utility.PreciseEditorData SenseModePeak
         {
             get { return senseModePoints[senseModePeak]; }
         }
-        private static ushort[] senseModePeakIteration;
-        private static ushort smpiSum;
+        private ushort[] senseModePeakIteration;
+        private ushort smpiSum;
 
+        private bool noPoints = true;
+        private int stepPoints = 0;
+
+        internal PreciseMeasureMode(): base()
+        {
+            //Sort in increased order
+            //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
+            //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
+            //senseModePoints = Config.PreciseData.ToArray();
+            List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
+            
+            if (temp.Count == 0)
+            {
+                return;
+            }
+
+            noPoints = false;
+            temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
+            senseModePoints = temp.ToArray();
+            senseModePeakIteration = new ushort[senseModePoints.Length];
+            smpiSum = 0;
+            senseModeCounts = new int[senseModePoints.Length][];
+            for (int i = 0; i < senseModePeakIteration.Length; ++i)
+            {
+                int dimension = 2 * senseModePoints[i].Width + 1;
+                stepPoints += dimension;
+                senseModeCounts[i] = new int[dimension];
+                senseModePeakIteration[i] = senseModePoints[i].Iterations;
+                smpiSum += senseModePoints[i].Iterations; ;
+            }
+            senseModePeak = 0;
+        }
         internal override void onUpdateCounts()
         {
             base.onUpdateCounts();
@@ -79,7 +111,7 @@ namespace Flavor.Common.Measuring
                 finishMeasure();
             }
         }
-        private void finishMeasure()
+        protected virtual void finishMeasure()
         {
             stop();
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
@@ -87,29 +119,12 @@ namespace Flavor.Common.Measuring
 
         internal override void start()
         {
-            if (!Commander.somePointsUsed())
+            if (noPoints)
             {
                 cancelScan();
                 return;
             }
             base.start();
-            //Sort in increased order
-            //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
-            //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
-            //senseModePoints = Config.PreciseData.ToArray();
-            List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
-            temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
-            senseModePoints = temp.ToArray();
-            senseModePeakIteration = new ushort[senseModePoints.Length];
-            smpiSum = 0;
-            senseModeCounts = new int[senseModePoints.Length][];
-            for (int i = 0; i < senseModePeakIteration.Length; ++i)
-            {
-                senseModeCounts[i] = new int[2 * senseModePoints[i].Width + 1];
-                senseModePeakIteration[i] = senseModePoints[i].Iterations;
-                smpiSum += senseModePoints[i].Iterations; ;
-            }
-            senseModePeak = 0;
             pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
             Commander.AddToSend(new sendSVoltage(pointValue++));
         }
@@ -121,6 +136,10 @@ namespace Flavor.Common.Measuring
         internal override void refreshGraphics(mainForm form)
         {
             form.refreshGraphicsOnPreciseStep();
+        }
+        internal override int stepsCount()
+        {
+            return stepPoints;
         }
     }
 }
