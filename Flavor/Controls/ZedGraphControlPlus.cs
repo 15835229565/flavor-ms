@@ -15,7 +15,7 @@ using ZedGraph;
 
 namespace Flavor
 {
-    public partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
+    partial class ZedGraphControlPlus : ZedGraph.ZedGraphControl
     {
         public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
         public event DiffOnPointEventHandler OnDiffOnPoint;
