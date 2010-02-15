@@ -1,133 +1,133 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <control>
   <connect>
-    <port>COM5</port>
+    <port>COM1</port>
     <baudrate>38400</baudrate>
     <try>4</try>
   </connect>
   <overview>
     <start>400</start>
-    <end>1055</end>
+    <end>1056</end>
   </overview>
   <sense>
     <region1>
-      <peak>513</peak>
+      <peak>522</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>2</col>
-      <comment>15</comment>
+      <comment>15 (Метан)</comment>
       <use>True</use>
     </region1>
     <region2>
-      <peak>629</peak>
+      <peak>639</peak>
       <iteration>1</iteration>
-      <width>4</width>
+      <width>3</width>
       <error>0</error>
       <col>1</col>
-      <comment>58</comment>
+      <comment>58 (Бутан)</comment>
       <use>True</use>
     </region2>
     <region3>
-      <peak>841</peak>
+      <peak>851</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>39</comment>
-      <use>True</use>
+      <comment>39 (Пропан)</comment>
+      <use>False</use>
     </region3>
     <region4>
-      <peak>978</peak>
+      <peak>989</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>30</comment>
-      <use>True</use>
+      <comment>30 (Этан)</comment>
+      <use>False</use>
     </region4>
     <region5>
-      <peak>996</peak>
+      <peak>1007</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>29</comment>
-      <use>True</use>
+      <comment>29 (Пропан)</comment>
+      <use>False</use>
     </region5>
     <region6>
-      <peak>945</peak>
+      <peak>956</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>32</comment>
-      <use>True</use>
+      <comment>32 (Кислород(</comment>
+      <use>False</use>
     </region6>
     <region7>
-      <peak>801</peak>
+      <peak>812</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>42</comment>
-      <use>True</use>
+      <comment>42 (Изобутан)</comment>
+      <use>False</use>
     </region7>
     <region8>
-      <peak>638</peak>
+      <peak>649</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>57</comment>
-      <use>True</use>
+      <comment>57 (Гексан)</comment>
+      <use>False</use>
     </region8>
     <region9>
-      <peak>515</peak>
+      <peak>526</peak>
       <iteration>1</iteration>
       <width>3</width>
       <error>0</error>
       <col>1</col>
-      <comment>72</comment>
-      <use>True</use>
+      <comment>72 (Пентан)</comment>
+      <use>False</use>
     </region9>
     <region10>
-      <peak>523</peak>
+      <peak>533</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>71</comment>
-      <use>True</use>
+      <comment>71 (Контроль Пентана)</comment>
+      <use>False</use>
     </region10>
     <region11>
-      <peak>799</peak>
+      <peak>809</peak>
       <iteration>1</iteration>
       <width>0</width>
       <error>0</error>
       <col>1</col>
       <comment>
       </comment>
-      <use>True</use>
+      <use>False</use>
     </region11>
     <region12>
-      <peak>628</peak>
+      <peak>637</peak>
       <iteration>1</iteration>
       <width>0</width>
       <error>0</error>
       <col>1</col>
       <comment>
       </comment>
-      <use>True</use>
+      <use>False</use>
     </region12>
     <region13>
-      <peak>422</peak>
+      <peak>435</peak>
       <iteration>1</iteration>
-      <width>3</width>
+      <width>4</width>
       <error>0</error>
       <col>1</col>
-      <comment>86</comment>
-      <use>True</use>
+      <comment>86 (Гексан)</comment>
+      <use>False</use>
     </region13>
     <region14>
       <peak>
@@ -245,15 +245,19 @@
   <common>
     <focus1>2730</focus1>
     <focus2>2730</focus2>
-    <exptime>200</exptime>
+    <exptime>40</exptime>
     <meastime>10</meastime>
     <ivoltage>1911</ivoltage>
     <cp>3780</cp>
     <ecurrent>79</ecurrent>
     <hcurrent>0</hcurrent>
     <before>100</before>
-    <equal>True</equal>
+    <equal>False</equal>
     <forward>100</forward>
     <back>400</back>
   </common>
+  <interface>
+    <coeff1>79081.787109375</coeff1>
+    <coeff2>16545.41015625</coeff2>
+  </interface>
 </control>

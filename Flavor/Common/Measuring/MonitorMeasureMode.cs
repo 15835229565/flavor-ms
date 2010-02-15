@@ -22,6 +22,7 @@ namespace Flavor.Common.Measuring
                 stop();
                 return;
             }
+            start();
         }
         internal override void updateGraph()
         {

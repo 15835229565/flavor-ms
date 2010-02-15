@@ -16,7 +16,8 @@ namespace Flavor.Common.Measuring
             get { return senseModePoints[senseModePeak]; }
         }
         private ushort[] senseModePeakIteration;
-        private ushort smpiSum;
+        private ushort smpiSumMax;//ushort?
+        private ushort smpiSum;//ushort?
 
         private bool noPoints = true;
         private int stepPoints = 0;
@@ -38,7 +39,7 @@ namespace Flavor.Common.Measuring
             temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
             senseModePoints = temp.ToArray();
             senseModePeakIteration = new ushort[senseModePoints.Length];
-            smpiSum = 0;
+            smpiSumMax = 0;
             senseModeCounts = new int[senseModePoints.Length][];
             for (int i = 0; i < senseModePeakIteration.Length; ++i)
             {
@@ -46,69 +47,67 @@ namespace Flavor.Common.Measuring
                 stepPoints += dimension;
                 senseModeCounts[i] = new int[dimension];
                 senseModePeakIteration[i] = senseModePoints[i].Iterations;
-                smpiSum += senseModePoints[i].Iterations; ;
+                smpiSumMax += senseModePoints[i].Iterations; ;
             }
-            senseModePeak = 0;
+            //senseModePeak = 0;
         }
         internal override void onUpdateCounts()
         {
             base.onUpdateCounts();
-            if (!Commander.measureCancelRequested)
+            if (Commander.measureCancelRequested) 
             {
-                if (senseModePoints[senseModePeak].Collector == 1)
-                    senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
-                else
-                    senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
-                if ((pointValue <= (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width)))
-                {
-                    Commander.AddToSend(new sendSVoltage(pointValue++));
-                }
-                else
-                {
-                    --(senseModePeakIteration[senseModePeak]);
-                    --smpiSum;
-                    if (smpiSum > 0)
-                    {
-                        for (int i = 0; i < senseModePoints.Length; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
-                        {
-                            ++senseModePeak;
-                            if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
-                            if (senseModePeakIteration[senseModePeak] > 0) break;
-                        }
-                        ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                        if (pointValue > nextPoint)
-                        {
-                            //!!!case of backward voltage change
-                            customMeasure = new sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
-                        }
-                        else
-                        {
-                            //!!!case of forward voltage change
-                            if (Config.CommonOptions.ForwardTimeEqualsBeforeTime)
-                            {
-                                customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
-                            }
-                            else
-                            {
-                                customMeasure = new sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
-                            }
-                        }
-                        pointValue = nextPoint;
-                        Commander.AddToSend(new sendSVoltage(pointValue++));
-                        //old code:
-                        //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                        //Commander.AddToSend(new sendSVoltage(Commander.Point++));
-                    }
-                    else
-                    {
-                        finishMeasure();
-                        Config.AutoSavePreciseSpecterFile();
-                    }
-                }
+                finishMeasure();
+                return;
+            }
+            if (senseModePoints[senseModePeak].Collector == 1)
+                senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
+            else
+                senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
+            if ((pointValue <= (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width)))
+            {
+                Commander.AddToSend(new sendSVoltage(pointValue++));
             }
             else
             {
-                finishMeasure();
+                --(senseModePeakIteration[senseModePeak]);
+                --smpiSum;
+                if (smpiSum > 0)
+                {
+                    for (int i = 0; i < senseModePoints.Length; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
+                    {
+                        ++senseModePeak;
+                        if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
+                        if (senseModePeakIteration[senseModePeak] > 0) break;
+                    }
+                    ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                    if (pointValue > nextPoint)
+                    {
+                        //!!!case of backward voltage change
+                        customMeasure = new sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
+                    }
+                    else
+                    {
+                        //!!!case of forward voltage change
+                        if (Config.CommonOptions.ForwardTimeEqualsBeforeTime)
+                        {
+                            customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
+                        }
+                        else
+                        {
+                            customMeasure = new sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
+                        }
+                    }
+                    pointValue = nextPoint;
+                    Commander.AddToSend(new sendSVoltage(pointValue++));
+                    //old code:
+                    //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                    //Commander.AddToSend(new sendSVoltage(Commander.Point++));
+                }
+                else
+                {
+                    Config.AutoSavePreciseSpecterFile();
+                    finishMeasure();
+                }
             }
         }
         protected virtual void finishMeasure()
@@ -125,8 +124,14 @@ namespace Flavor.Common.Measuring
                 return;
             }
             base.start();
+            init();
             pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
             Commander.AddToSend(new sendSVoltage(pointValue++));
+        }
+        private void init()
+        {
+            smpiSum = smpiSumMax;
+            senseModePeak = 0;
         }
         internal override void updateGraph()
         {
