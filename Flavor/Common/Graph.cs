@@ -490,6 +490,11 @@ namespace Flavor.Common
             curPeak = curped;
             OnNewGraphData(Displaying.Measured, false);
         }
+        /*internal static void updateGraphDuringMonitorMeasure(ushort pnt, Utility.PreciseEditorData curped)
+        {
+            //temporary
+            updateGraphDuringPreciseMeasure(pnt, curped);
+        }*/
 
         internal static void RecomputeMassRows(byte col)
         {

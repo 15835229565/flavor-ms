@@ -24,13 +24,11 @@ namespace Flavor.Common.Measuring
             }
             start();
         }
-        internal override void updateGraph()
+        /*internal override void updateGraph()
         {
-            //no updates
             
-            //ushort pnt = pointValue;
-            //Graph.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
-        }
+            //Graph.updateGraphDuringMonitorMeasure();
+        }*/
         internal override void refreshGraphics(mainForm form)
         {
             form.refreshGraphicsOnMonitorStep();

@@ -20,7 +20,12 @@ namespace Flavor.Common.Measuring
         {
             base.onUpdateCounts();
             //lock here?
-            if (!Commander.measureCancelRequested && (pointValue <= ePoint))
+            if (Commander.measureCancelRequested)
+            {
+                stop();
+                return;
+            }
+            if (pointValue <= ePoint)
             {
                 Commander.AddToSend(new sendSVoltage(pointValue++));
             }

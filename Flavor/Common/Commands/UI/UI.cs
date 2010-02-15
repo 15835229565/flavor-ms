@@ -270,8 +270,7 @@ namespace Flavor.Common.Commands.UI
         
         internal enableHighVoltage(bool enable)
         {
-            HVenable = 0;
-            if (enable) HVenable = 1;
+            HVenable = enable? (byte)1: (byte)0;
         }
         
         internal override ModBus.CommandCode Id

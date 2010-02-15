@@ -131,7 +131,7 @@ namespace Flavor.Common
                     toSend.IsRareMode = false;
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
-                    Commander.hBlock = true;//!!!
+                    //Commander.hBlock = true;//!!!
                     Commander.measureCancelRequested = false;
                 }
             }
@@ -156,7 +156,7 @@ namespace Flavor.Common
                         toSend.IsRareMode = false;
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
-                        Commander.hBlock = true;//!!!
+                        //Commander.hBlock = true;//!!!
                         Commander.measureCancelRequested = false;
                     }
                 }
