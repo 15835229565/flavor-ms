@@ -9,7 +9,7 @@ namespace Flavor.Common.Measuring
     internal class PreciseMeasureMode: MeasureMode
     {
         private Utility.PreciseEditorData[] senseModePoints;
-        private int[][] senseModeCounts;
+        private long[][] senseModeCounts;
         private byte senseModePeak = 0;
         private Utility.PreciseEditorData SenseModePeak
         {
@@ -40,12 +40,12 @@ namespace Flavor.Common.Measuring
             senseModePoints = temp.ToArray();
             senseModePeakIteration = new ushort[senseModePoints.Length];
             smpiSumMax = 0;
-            senseModeCounts = new int[senseModePoints.Length][];
+            senseModeCounts = new long[senseModePoints.Length][];
             for (int i = 0; i < senseModePeakIteration.Length; ++i)
             {
                 int dimension = 2 * senseModePoints[i].Width + 1;
                 stepPoints += dimension;
-                senseModeCounts[i] = new int[dimension];
+                senseModeCounts[i] = new long[dimension];
                 senseModePeakIteration[i] = senseModePoints[i].Iterations;
                 smpiSumMax += senseModePoints[i].Iterations; ;
             }
@@ -105,8 +105,9 @@ namespace Flavor.Common.Measuring
                 }
                 else
                 {
-                    Config.AutoSavePreciseSpecterFile();
+                    // order is important here: points are saved from graph..
                     finishMeasure();
+                    Config.AutoSavePreciseSpecterFile();
                 }
             }
         }

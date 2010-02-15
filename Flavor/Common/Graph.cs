@@ -60,7 +60,7 @@ namespace Flavor.Common
                 get { return collector; }
             }
 
-            internal void Add(ushort pnt, int count)
+            internal void Add(ushort pnt, long count)
             {
                 peakSum += count;
                 points[(int)DisplayValue.Step].Add(pnt, count);
@@ -453,7 +453,7 @@ namespace Flavor.Common
             OnNewGraphData(displayMode, false/*true*/);
         }
 
-        internal static void updateGraphAfterPreciseMeasure(int[][] senseModeCounts, Utility.PreciseEditorData[] peds)
+        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, Utility.PreciseEditorData[] peds)
         {
             ResetPointLists();
             for (int i = 0; i < peds.Length; ++i)
