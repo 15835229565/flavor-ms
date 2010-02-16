@@ -1142,13 +1142,13 @@ namespace Flavor.Common
         }
         private static void loadCommonOptions() 
         {
-            loadCommonOptions(confName);
+            loadCommonOptions(confName, out Config.commonOpts);// not good fix
         }
         internal static void loadCommonOptions(string cdConfName)
         {
-            loadCommonOptions(cdConfName, null);
+            loadCommonOptions(cdConfName, out Config.commonOpts);// not good fix
         }
-        private static void loadCommonOptions(string cdConfName, CommonOptions commonOpts)
+        private static void loadCommonOptions(string cdConfName, out CommonOptions commonOpts)
         {
             XmlDocument cdConf;
             newCommonOptionsFileOnLoad(out cdConf, cdConfName);
