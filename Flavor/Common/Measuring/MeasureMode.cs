@@ -33,10 +33,35 @@ namespace Flavor.Common.Measuring
             befTime = Config.CommonOptions.befTime;
             eTime = Config.CommonOptions.eTime;
         }
-        internal virtual void onUpdateCounts() 
+        internal void onUpdateCounts() 
         {
             customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
+            //lock here?
+            saveData();
+            if (Commander.measureCancelRequested)
+            {
+                stop();
+                onCancel();
+                return;
+            }
+            if (toContinue())
+            {
+                onNextStep();
+            }
+            else
+            {
+                stop();
+                onExit();
+            }
         }
+        protected virtual void saveData() { }
+        abstract protected void onCancel();
+        abstract protected void onExit();
+        protected void onNextStep()
+        {
+            Commander.AddToSend(new sendSVoltage(pointValue++));
+        }
+        abstract protected bool toContinue();
         internal virtual void start()
         {
             //first measure point with increased idle time

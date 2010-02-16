@@ -7,28 +7,28 @@ namespace Flavor.Common.Measuring
 {
     class MonitorMeasureMode : PreciseMeasureMode
     {
-        private int counter = 10;//test
+        private int counter = 4;//test
 
         internal MonitorMeasureMode()
             : base()
         {
             //TODO: initialization logic
         }
-        protected override void finishMeasure()
+        protected override bool toContinue()
         {
+            if (base.toContinue())
+            {
+                return true;
+            }
             --counter;
             if (counter == 0)
             {
-                stop();
-                return;
+                return false;
             }
-            start();
+            base.onExit();
+            base.init();
+            return true;
         }
-        /*internal override void updateGraph()
-        {
-            
-            //Graph.updateGraphDuringMonitorMeasure();
-        }*/
         internal override void refreshGraphics(mainForm form)
         {
             form.refreshGraphicsOnMonitorStep();

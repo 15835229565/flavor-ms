@@ -16,31 +16,22 @@ namespace Flavor.Common.Measuring
             sPoint = Config.sPoint;
             ePoint = Config.ePoint;
         }
-        internal override void onUpdateCounts()
+        protected override void onCancel() {}
+        protected override void onExit()
         {
-            base.onUpdateCounts();
-            //lock here?
-            if (Commander.measureCancelRequested)
-            {
-                stop();
-                return;
-            }
-            if (pointValue <= ePoint)
-            {
-                Commander.AddToSend(new sendSVoltage(pointValue++));
-            }
-            else
-            {
-                stop();
-                Config.AutoSaveSpecterFile();
-            }
+            Config.AutoSaveSpecterFile();
         }
+        protected override bool toContinue()
+        {
+            return pointValue <= ePoint;
+        }
+        
         internal override void start()
         {
             base.start();
             //lock here
             pointValue = sPoint;
-            Commander.AddToSend(new sendSVoltage(pointValue++));
+            onNextStep();
         }
         internal override void updateGraph() 
         {
