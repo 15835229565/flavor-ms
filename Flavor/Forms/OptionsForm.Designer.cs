@@ -464,7 +464,7 @@ namespace Flavor.Forms
             // openCommonDataFileDialog
             // 
             this.openCommonDataFileDialog.DefaultExt = "cdf";
-            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf";
+            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf|Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
             // 
             // saveCommonDataFileDialog
             // 
