@@ -5,8 +5,6 @@ using System.Text;
 namespace Flavor.Common
 {
     delegate void DeviceEventHandler();
-    //delegate void DeviceStatusChangedEventHandler();
-    //delegate void VacuumStateChangedEventHandler();
     delegate void TurboPumpAlertEventHandler(bool isFault, byte bits);
 
     static class Device
@@ -171,11 +169,6 @@ namespace Flavor.Common
             get { return hvOn; }
             private set { hvOn = value; }
         }
-        /*internal static bool eCurrentEnable
-        {
-            get { return emissionCurrentEnable; }
-            set { emissionCurrentEnable = value; }
-        }*/
 
         internal static bool hCurrentEnable
         {
@@ -422,7 +415,7 @@ namespace Flavor.Common
             }
         }
  
-        internal static void relaysState(byte value/*, byte value2*/)
+        internal static void relaysState(byte value)
         {
             fPumpOn = Convert.ToBoolean(value & 1);
             tPumpOn = Convert.ToBoolean(value & 1 << 1);
@@ -433,7 +426,6 @@ namespace Flavor.Common
             turboReplyFault = Convert.ToBoolean(value & 1 << 6);
 
             Commander.hBlock = !highVoltageOn;//!!!
-            //eCurrentEnable = Convert.ToBoolean(value2 & 1 << 4);
             OnDeviceStatusChanged();
         }
 
@@ -452,7 +444,7 @@ namespace Flavor.Common
             Device.DeviceCommonData.cVPlus = 0;
             Device.DeviceCommonData.cVMin = 0;
             Device.DeviceCommonData.dVoltage = 0;
-            Device.relaysState(0/*, 0*/);
+            Device.relaysState(0);
             Device.TurboPump.Init();
         }
     }
