@@ -8,7 +8,7 @@ namespace Flavor.Common.Measuring
 {
     internal class PreciseMeasureMode: MeasureMode
     {
-        private Utility.PreciseEditorData[] senseModePoints;
+        private List<Utility.PreciseEditorData> senseModePoints;
         private long[][] senseModeCounts;
         private byte senseModePeak = 0;
         private Utility.PreciseEditorData SenseModePeak
@@ -23,25 +23,22 @@ namespace Flavor.Common.Measuring
         private bool noPoints = true;
         private int stepPoints = 0;
 
-        internal PreciseMeasureMode(): base()
+        internal PreciseMeasureMode(): this(Config.PreciseData.FindAll(Utility.PeakIsUsed)) {}
+        internal PreciseMeasureMode(List<Utility.PreciseEditorData> peaks): base()
         {
+            senseModePoints = peaks;
             //Sort in increased order
-            //Config.PreciseData.Sort(ComparePreciseEditorDataByPeakValue);
-            //Config.PreciseData.Sort(ComparePreciseEditorDataByUseFlagAndPeakValue);
-            //senseModePoints = Config.PreciseData.ToArray();
-            List<Utility.PreciseEditorData> temp = Config.PreciseData.FindAll(Utility.PeakIsUsed);
-            
-            if (temp.Count == 0)
+            if (senseModePoints.Count == 0)
             {
+                // nothing to do... strange. throw smth?
                 return;
             }
 
             noPoints = false;
-            temp.Sort(Utility.ComparePreciseEditorDataByPeakValue);
-            senseModePoints = temp.ToArray();
-            senseModePeakIterationMax = new ushort[senseModePoints.Length];
+            senseModePoints.Sort(Utility.ComparePreciseEditorDataByPeakValue);
+            senseModePeakIterationMax = new ushort[senseModePoints.Count];
             smpiSumMax = 0;
-            senseModeCounts = new long[senseModePoints.Length][];
+            senseModeCounts = new long[senseModePoints.Count][];
             for (int i = 0; i < senseModePeakIterationMax.Length; ++i)
             {
                 int dimension = 2 * senseModePoints[i].Width + 1;
@@ -50,14 +47,17 @@ namespace Flavor.Common.Measuring
                 senseModePeakIterationMax[i] = senseModePoints[i].Iterations;
                 smpiSumMax += senseModePoints[i].Iterations; ;
             }
-            //senseModePeak = 0;
         }
         protected override void saveData()
         {
             if (senseModePoints[senseModePeak].Collector == 1)
+            {
                 senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
+            }
             else
+            {
                 senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
+            }
         }
         protected override void onCancel()
         {
@@ -81,10 +81,10 @@ namespace Flavor.Common.Measuring
                     // all data acquired
                     return false;
                 }
-                for (int i = 0; i < senseModePoints.Length; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
+                for (int i = 0; i < senseModePoints.Count; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
                 {
                     ++senseModePeak;
-                    if (senseModePeak >= senseModePoints.Length) senseModePeak = 0;
+                    if (senseModePeak >= senseModePoints.Count) senseModePeak = 0;
                     if (senseModePeakIteration[senseModePeak] > 0) break;
                 }
                 ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
@@ -106,9 +106,6 @@ namespace Flavor.Common.Measuring
                     }
                 }
                 pointValue = nextPoint;
-                //old code:
-                //Commander.Point = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                //Commander.AddToSend(new sendSVoltage(Commander.Point++));
             }
             return true;
         }

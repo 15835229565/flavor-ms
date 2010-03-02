@@ -8,8 +8,6 @@ namespace Flavor.Common.Measuring
 {
     abstract internal class MeasureMode
     {
-        //internal event Commander.ProgramEventHandler OnScanCancelled;
-        
         protected object locker = new object();
         private bool operating = false;
 
@@ -66,8 +64,6 @@ namespace Flavor.Common.Measuring
         {
             //first measure point with increased idle time
             customMeasure = new sendMeasure(befTime, eTime);
-            //OnScanCancelled += new Commander.ProgramEventHandler(Commander.cancelScan);
-
             operating = true;
         }
         abstract internal void updateGraph();
@@ -90,8 +86,6 @@ namespace Flavor.Common.Measuring
         protected void cancelScan()
         {
             Commander.cancelScan();
-            //OnScanCancelled();
-            //OnScanCancelled -= new Commander.ProgramEventHandler(Commander.cancelScan);
         }
         protected void stop()
         {

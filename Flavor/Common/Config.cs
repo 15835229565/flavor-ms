@@ -47,7 +47,40 @@ namespace Flavor.Common
             get { return preciseDataDiff; }
             //set { preciseData = value; }
         }
-        
+
+        private static Utility.PreciseEditorData reperPeak;
+        internal static Utility.PreciseEditorData CheckerPeak
+        {
+            get 
+            {
+                ushort maxIteration = 0;
+                foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PeakIsUsed))
+                {
+                    maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
+                }
+                return new Utility.PreciseEditorData(true, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak");
+            }
+        }
+        internal static List<Utility.PreciseEditorData> PreciseDataWithChecker
+        {
+            get
+            {
+                ushort maxIteration = 0;
+                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PeakIsUsed);
+                if (res.Count == 0)
+                {
+                    return null;
+                }
+                foreach (Utility.PreciseEditorData ped in res)
+                {
+                    maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
+                }
+                // mark checker peak with false flag
+                res.Add(new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak"));
+                return res;
+            }
+        }
+
         internal static string Port
         {
             get { return SerialPort; }

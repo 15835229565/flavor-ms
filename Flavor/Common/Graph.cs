@@ -453,11 +453,16 @@ namespace Flavor.Common
             OnNewGraphData(displayMode, false/*true*/);
         }
 
-        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, Utility.PreciseEditorData[] peds)
+        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds)
         {
             ResetPointLists();
-            for (int i = 0; i < peds.Length; ++i)
+            for (int i = 0; i < peds.Count; ++i)
             {
+                if (!peds[i].Use)
+                {
+                    // checker peak
+                    continue;
+                }
                 pListScaled temp = new pListScaled(peds[i].Collector == 1);
                 for (int j = 0; j < senseModeCounts[i].Length; ++j)
                 {
