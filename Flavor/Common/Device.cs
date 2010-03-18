@@ -81,15 +81,6 @@ namespace Flavor.Common
         private static int Detector1Value;
         private static int Detector2Value;
 
-        internal const float fVoltageC = 0.048828f;
-        internal const float iVoltageC = 0.024414f;
-        internal const float eCurrentC = 0.012207f;
-        internal const float hCurrentC = 0.000488f;
-        internal const float VacuumC = 0.009869f;
-        internal const float CCPNC = 0.047778f;
-        internal const float sVoltageC = 0.894043f; // онтроль сканирующего, на запись другой
-        internal const float dVoltageC = 1.220703f;
-
         internal static byte sysState
         {
             get { return systemState; }

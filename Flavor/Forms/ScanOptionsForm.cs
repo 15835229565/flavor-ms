@@ -61,34 +61,23 @@ namespace Flavor.Forms
             this.scan_groupBox.Size = new System.Drawing.Size(270, 72);
             this.scan_groupBox.TabIndex = 0;
             this.scan_groupBox.TabStop = false;
-            this.scan_groupBox.Text = "Интервал сканирования (0...1056)";
+            this.scan_groupBox.Text = string.Format("Интервал сканирования ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
             // 
             // endScanNumericUpDown
             // 
             this.endScanNumericUpDown.Location = new System.Drawing.Point(195, 42);
-            this.endScanNumericUpDown.Maximum = new decimal(new int[] {
-            1056,
-            0,
-            0,
-            0});
+            this.endScanNumericUpDown.Minimum = new decimal(new int[] {Config.MIN_STEP, 0, 0, 0});
+            this.endScanNumericUpDown.Maximum = new decimal(new int[] {Config.MAX_STEP, 0, 0, 0});
             this.endScanNumericUpDown.Name = "endScanNumericUpDown";
             this.endScanNumericUpDown.Size = new System.Drawing.Size(60, 20);
             this.endScanNumericUpDown.TabIndex = 4;
             this.endScanNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.endScanNumericUpDown.Value = new decimal(new int[] {
-            1056,
-            0,
-            0,
-            0});
             // 
             // startScanNumericUpDown
             // 
             this.startScanNumericUpDown.Location = new System.Drawing.Point(195, 16);
-            this.startScanNumericUpDown.Maximum = new decimal(new int[] {
-            1056,
-            0,
-            0,
-            0});
+            this.startScanNumericUpDown.Minimum = new decimal(new int[] { Config.MIN_STEP, 0, 0, 0 });
+            this.startScanNumericUpDown.Maximum = new decimal(new int[] { Config.MAX_STEP, 0, 0, 0 });
             this.startScanNumericUpDown.Name = "startScanNumericUpDown";
             this.startScanNumericUpDown.Size = new System.Drawing.Size(60, 20);
             this.startScanNumericUpDown.TabIndex = 3;

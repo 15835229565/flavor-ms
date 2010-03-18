@@ -366,8 +366,17 @@ namespace Flavor.Common
         internal static Utility.PreciseEditorData PointToAdd
         {
             get { return peakToAdd;}
-            set { peakToAdd = value;}
+            set
+            {
+                if (peakToAdd != value)
+                {
+                    peakToAdd = value;
+                    OnPointAdded(value != null);
+                }
+            }
         }
+        internal delegate void PointAddedDelegate(bool notNull);
+        internal static event PointAddedDelegate OnPointAdded;
 
         static Graph()
         {
@@ -453,7 +462,7 @@ namespace Flavor.Common
             OnNewGraphData(displayMode, false/*true*/);
         }
 
-        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds)
+        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift)
         {
             ResetPointLists();
             for (int i = 0; i < peds.Count; ++i)
@@ -464,6 +473,7 @@ namespace Flavor.Common
                     continue;
                 }
                 pListScaled temp = new pListScaled(peds[i].Collector == 1);
+                // really need? peds[i].Step += shift;
                 for (int j = 0; j < senseModeCounts[i].Length; ++j)
                 {
                     temp.Add((ushort)(peds[i].Step - peds[i].Width + j), senseModeCounts[i][j]);

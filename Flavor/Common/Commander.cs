@@ -334,8 +334,9 @@ namespace Flavor.Common
             {
                 if (somePointsUsed())
                 {
-                    initMeasure();                          //?
-                    measureMode = new MonitorMeasureMode(); //order
+                    initMeasure();                           //?
+                    measureMode = new MonitorMeasureMode(0); //order
+                    // TODO: feed measure mode with start shift value
                 }
                 else
                 {

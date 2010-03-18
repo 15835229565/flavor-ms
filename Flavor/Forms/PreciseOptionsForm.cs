@@ -86,6 +86,12 @@ namespace Flavor.Forms
             this.insertPointButton.Text = "Вставка точки";
             this.insertPointButton.UseVisualStyleBackColor = true;
             this.insertPointButton.Click += new System.EventHandler(this.insertPointButton_Click);
+            bool enable = Graph.PointToAdd != null;
+            this.insertPointButton.Enabled = enable;
+            if (!enable)
+            {
+                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            }
             // clearButton
             this.clearButton.Location = new System.Drawing.Point(244, 356);
             this.clearButton.Name = "clearButton";
@@ -152,6 +158,7 @@ namespace Flavor.Forms
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
         internal PreciseOptionsForm(): base()
         {
             InitializeComponent();
@@ -353,6 +360,11 @@ namespace Flavor.Forms
             clearPreciseEditorData();
         }
 
+        void Graph_OnPointAdded(bool notNull)
+        {
+            insertPointButton.Enabled = notNull;
+        }
+
         private void insertPointButton_Click(object sender, EventArgs e)
         {
             if (Graph.PointToAdd != null)
@@ -377,6 +389,7 @@ namespace Flavor.Forms
         }
         private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
             instance = null;
             upLevel.InvokeRefreshButtons();
         }

@@ -19,8 +19,10 @@ namespace Flavor.Common
         private static ushort SerialBaudRate = 38400;
         private static byte SendTry = 1;
 
-        private static ushort startPoint = 0;
-        private static ushort endPoint = 1056;
+        internal const ushort MIN_STEP = 0;
+        internal const ushort MAX_STEP = 1056;
+        private static ushort startPoint = MIN_STEP;
+        private static ushort endPoint = MAX_STEP;
 
         private static CommonOptions commonOpts = new CommonOptions();
         internal static CommonOptions CommonOptions
@@ -48,17 +50,21 @@ namespace Flavor.Common
             //set { preciseData = value; }
         }
 
-        private static Utility.PreciseEditorData reperPeak;
+        private static Utility.PreciseEditorData reperPeak = null;
         internal static Utility.PreciseEditorData CheckerPeak
         {
             get 
             {
+                if (reperPeak == null)
+                {
+                    return null;
+                }
                 ushort maxIteration = 0;
                 foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PeakIsUsed))
                 {
-                    maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
+                    maxIteration = maxIteration < ped.Iterations? ped.Iterations: maxIteration;
                 }
-                return new Utility.PreciseEditorData(true, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak");
+                return new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak");
             }
         }
         internal static List<Utility.PreciseEditorData> PreciseDataWithChecker
@@ -76,7 +82,10 @@ namespace Flavor.Common
                     maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
                 }
                 // mark checker peak with false flag
-                res.Add(new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak"));
+                if (reperPeak != null)
+                {
+                    res.Add(new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak"));
+                }
                 return res;
             }
         }
@@ -186,6 +195,17 @@ namespace Flavor.Common
             {
                 cle.visualise();
                 //use empty default ped
+            }
+            try
+            {
+                ushort step = ushort.Parse(_conf.SelectSingleNode("/control/sense/check/peak").InnerText);
+                byte collector = byte.Parse(_conf.SelectSingleNode("/control/sense/check/col").InnerText);
+                ushort width = ushort.Parse(_conf.SelectSingleNode("/control/sense/check/width").InnerText);
+                reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
+            }
+            catch (NullReferenceException)
+            {
+                //use hard-coded defaults (null checker peak)
             }
         }
 
@@ -681,9 +701,22 @@ namespace Flavor.Common
             file.Save(filename);
         }
 
-        private static void SavePreciseOptions() 
+        private static void SavePreciseOptions()
         {
-            SavePreciseOptions(Config.PreciseData, confName, false, "Precise options");
+            XmlDocument pedConf = SavePreciseOptions(Config.PreciseData, confName, false, "Precise options");
+            //checkpeak
+            if (reperPeak != null)
+            {
+                if (_conf.SelectSingleNode("/control/sense/check") == null)
+                {
+                    XmlNode checkRegion = pedConf.CreateNode(XmlNodeType.Element, "check", "");
+                    _conf.SelectSingleNode("/control/sense").AppendChild(checkRegion);
+                }
+                fillInnerText("/control/sense/check", "peak", reperPeak.Step);
+                fillInnerText("/control/sense/check", "col", reperPeak.Collector);
+                fillInnerText("/control/sense/check", "width", reperPeak.Width);
+                _conf.Save(@confName);
+            }
         }
         internal static void SavePreciseOptions(List<Utility.PreciseEditorData> peds)
         {
@@ -1221,6 +1254,7 @@ namespace Flavor.Common
         private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint)
         {
             XmlNode senseNode = pedConf.CreateNode(XmlNodeType.Element, "sense", "");
+
             for (int i = 1; i <= 20; ++i)
             {
                 XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");

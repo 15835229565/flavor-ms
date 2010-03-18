@@ -10,16 +10,21 @@ namespace Flavor.Common.Measuring
     {
         private ushort sPoint;
         private ushort ePoint;
-        internal ScanMeasureMode()
-            : base()
+        internal ScanMeasureMode(): base()
         {
             sPoint = Config.sPoint;
             ePoint = Config.ePoint;
         }
-        protected override void onCancel() {}
+        protected override void saveData() { }
+        protected override void onCancel() { }
         protected override void onExit()
         {
             Config.AutoSaveSpecterFile();
+        }
+        protected override bool onNextStep()
+        {
+            Commander.AddToSend(new sendSVoltage(pointValue++));
+            return true;
         }
         protected override bool toContinue()
         {

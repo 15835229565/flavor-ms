@@ -243,7 +243,7 @@ namespace Flavor.Common
 
         internal ushort scanVoltage(ushort step)
         {
-            if (step > 1056) step = 1056;
+            if (step > Config.MAX_STEP) step = Config.MAX_STEP;
             return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
@@ -587,7 +587,7 @@ namespace Flavor.Common
             public override int GetHashCode()
             {
                 //later it will be better!
-                return 0;
+                return base.GetHashCode();
             }
         }
         #endregion
@@ -622,20 +622,20 @@ namespace Flavor.Common
                 this.colNumLabel.Name = "colNumLabel";
                 this.colNumLabel.Size = new System.Drawing.Size(29, 13);
                 this.colNumLabel.Text = "Кол.";
-                // label9
-                this.label9.AutoSize = true;
-                this.label9.BackColor = System.Drawing.SystemColors.Control;
-                this.label9.Location = new System.Drawing.Point(75, 13);
-                this.label9.Name = "label9";
-                this.label9.Size = new System.Drawing.Size(52, 13);
-                this.label9.Text = "Проходы";
                 // label10
                 this.label10.AutoSize = true;
                 this.label10.BackColor = System.Drawing.SystemColors.Control;
-                this.label10.Location = new System.Drawing.Point(127, 13);
+                this.label10.Location = new System.Drawing.Point(75, 13);
                 this.label10.Name = "label10";
                 this.label10.Size = new System.Drawing.Size(46, 13);
                 this.label10.Text = "Ширина";
+                // label9
+                this.label9.AutoSize = true;
+                this.label9.BackColor = System.Drawing.SystemColors.Control;
+                this.label9.Location = new System.Drawing.Point(126, 13);
+                this.label9.Name = "label9";
+                this.label9.Size = new System.Drawing.Size(52, 13);
+                this.label9.Text = "Проходы";
                 // label11
                 this.label11.AutoSize = true;
                 this.label11.BackColor = System.Drawing.SystemColors.Control;
@@ -704,7 +704,7 @@ namespace Flavor.Common
                 this.commentLabel.Location = new System.Drawing.Point(this.commentLabel.Location.X + x, this.commentLabel.Location.Y + y);
             }
         }
-        internal class PreciseEditorRow
+        internal class PreciseEditorRowMinus
         {
             protected TextBox stepTextBox;
             internal string StepText
@@ -718,45 +718,23 @@ namespace Flavor.Common
                 get { return colTextBox.Text; }
                 set { colTextBox.Text = value; }
             }
-            protected TextBox lapsTextBox;
-            internal string LapsText
-            {
-                get { return lapsTextBox.Text; }
-                //set { lapsTextBox.Text = value; }
-            }
             protected TextBox widthTextBox;
             internal string WidthText
             {
                 get { return widthTextBox.Text; }
                 //set { widthTextBox.Text = value; }
             }
-            protected TextBox precTextBox;
-            internal string PrecText
-            {
-                get { return precTextBox.Text; }
-                //set { precTextBox.Text = value; }
-            }
-            protected TextBox commentTextBox;
-            internal string CommentText
-            {
-                get { return commentTextBox.Text; }
-                //set { commentTextBox.Text = value; }
-            }
             protected bool stepAndColModifiable = false;
-            //The other result of checkTextBoxes()
             protected bool allFilled = false;
             internal bool AllFilled
             {
                 get { return allFilled; }
             }
-            internal PreciseEditorRow()
+            internal PreciseEditorRowMinus()
             {
                 this.stepTextBox = new TextBox();
                 this.colTextBox = new TextBox();
-                this.lapsTextBox = new TextBox();
                 this.widthTextBox = new TextBox();
-                this.precTextBox = new TextBox();
-                this.commentTextBox = new TextBox();
 
                 if (stepAndColModifiable)
                     this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
@@ -780,20 +758,107 @@ namespace Flavor.Common
                 this.colTextBox.Size = new System.Drawing.Size(20, 13);
                 this.colTextBox.ReadOnly = !stepAndColModifiable;
 
-                this.lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-                this.lapsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.lapsTextBox.Location = new System.Drawing.Point(74, 0);
-                this.lapsTextBox.Margin = new System.Windows.Forms.Padding(1);
-                this.lapsTextBox.Size = new System.Drawing.Size(50, 13);
-                this.lapsTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-
                 this.widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.widthTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-                this.widthTextBox.Location = new System.Drawing.Point(126, 0);
+                this.widthTextBox.Location = new System.Drawing.Point(74, 0);
                 this.widthTextBox.Margin = new System.Windows.Forms.Padding(1);
                 this.widthTextBox.MaxLength = 4;
                 this.widthTextBox.Size = new System.Drawing.Size(50, 13);
                 this.widthTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
+            }
+            internal PreciseEditorRowMinus(int x, int y): this()
+            {
+                moveTo(x, y);
+            }
+            protected virtual void moveTo(int x, int y)
+            {
+                this.stepTextBox.Location = new System.Drawing.Point(this.stepTextBox.Location.X + x, this.stepTextBox.Location.Y + y);
+                this.colTextBox.Location = new System.Drawing.Point(this.colTextBox.Location.X + x, this.colTextBox.Location.Y + y);
+                this.widthTextBox.Location = new System.Drawing.Point(this.widthTextBox.Location.X + x, this.widthTextBox.Location.Y + y);
+            }
+            internal virtual Control[] getControls()
+            {
+                return new Control[] { stepTextBox, colTextBox, widthTextBox };
+            }
+            protected virtual void Clear()
+            {
+                stepTextBox.Text = "";
+                colTextBox.Text = "";
+                widthTextBox.Text = "";
+                stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            }
+            internal virtual bool checkTextBoxes()
+            {
+                bool exitFlag = true;
+                bool somethingFilled = (stepTextBox.Text != "") || (colTextBox.Text != "") || (widthTextBox.Text != "");
+                this.allFilled = (stepTextBox.Text != "") && (colTextBox.Text != "") && (widthTextBox.Text != "");
+                stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                if (somethingFilled && !this.allFilled)
+                {
+                    stepTextBox.BackColor = Color.Gold;
+                    colTextBox.BackColor = Color.Gold;
+                    widthTextBox.BackColor = Color.Gold;
+                    exitFlag = false;
+                }
+                if ((widthTextBox.Text != "") && (stepTextBox.Text != "") &&
+                    ((Convert.ToUInt16(stepTextBox.Text) - Convert.ToUInt16(widthTextBox.Text) < Config.MIN_STEP) ||
+                    (Convert.ToUInt16(stepTextBox.Text) + Convert.ToUInt16(widthTextBox.Text) > Config.MAX_STEP)))
+                {
+                    stepTextBox.BackColor = Color.Green;
+                    widthTextBox.BackColor = Color.Green;
+                    exitFlag = false;
+                }
+                if ((stepTextBox.Text != "") && (Convert.ToInt16(stepTextBox.Text) > Config.MAX_STEP))
+                {
+                    stepTextBox.BackColor = Color.Red;
+                    exitFlag = false;
+                }
+                return exitFlag;
+            }
+            internal virtual void setValues(PreciseEditorData p)
+            {
+                stepTextBox.Text = p.Step.ToString();
+                colTextBox.Text = p.Collector.ToString();
+                widthTextBox.Text = p.Width.ToString();
+            }
+        }
+        internal class PreciseEditorRow: PreciseEditorRowMinus
+        {
+            protected TextBox lapsTextBox;
+            internal string LapsText
+            {
+                get { return lapsTextBox.Text; }
+                //set { lapsTextBox.Text = value; }
+            }
+            protected TextBox precTextBox;
+            internal string PrecText
+            {
+                get { return precTextBox.Text; }
+                //set { precTextBox.Text = value; }
+            }
+            protected TextBox commentTextBox;
+            internal string CommentText
+            {
+                get { return commentTextBox.Text; }
+                //set { commentTextBox.Text = value; }
+            }
+            //The other result of checkTextBoxes()
+            internal PreciseEditorRow(): base()
+            {
+                this.lapsTextBox = new TextBox();
+                this.precTextBox = new TextBox();
+                this.commentTextBox = new TextBox();
+
+                this.lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+                this.lapsTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+                this.lapsTextBox.Location = new System.Drawing.Point(126, 0);
+                this.lapsTextBox.Margin = new System.Windows.Forms.Padding(1);
+                this.lapsTextBox.Size = new System.Drawing.Size(50, 13);
+                this.lapsTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
 
                 this.precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 this.precTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -812,35 +877,28 @@ namespace Flavor.Common
             {
                 moveTo(x, y);
             }
-            protected virtual void moveTo(int x, int y)
+            protected override void moveTo(int x, int y)
             {
-                this.stepTextBox.Location = new System.Drawing.Point(this.stepTextBox.Location.X + x, this.stepTextBox.Location.Y + y);
-                this.colTextBox.Location = new System.Drawing.Point(this.colTextBox.Location.X + x, this.colTextBox.Location.Y + y);
+                base.moveTo(x, y);
                 this.lapsTextBox.Location = new System.Drawing.Point(this.lapsTextBox.Location.X + x, this.lapsTextBox.Location.Y + y);
-                this.widthTextBox.Location = new System.Drawing.Point(this.widthTextBox.Location.X + x, this.widthTextBox.Location.Y + y);
                 this.precTextBox.Location = new System.Drawing.Point(this.precTextBox.Location.X + x, this.precTextBox.Location.Y + y);
                 this.commentTextBox.Location = new System.Drawing.Point(this.commentTextBox.Location.X + x, this.commentTextBox.Location.Y + y);
             }
-            internal virtual Control[] getControls()
+            internal override Control[] getControls()
             {
                 return new Control[] { stepTextBox, colTextBox, lapsTextBox, widthTextBox, precTextBox, commentTextBox };
             }
-            protected virtual void Clear()
+            protected override void Clear()
             {
-                stepTextBox.Text = "";
-                colTextBox.Text = "";
+                base.Clear();
                 lapsTextBox.Text = "";
-                widthTextBox.Text = "";
                 precTextBox.Text = "";
                 commentTextBox.Text = "";
-                stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-                colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-                widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
                 commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             }
-            internal virtual bool checkTextBoxes()
+            internal override bool checkTextBoxes()
             {
                 bool exitFlag = true;
                 bool somethingFilled = ((lapsTextBox.Text != "") || (stepTextBox.Text != "") ||
@@ -864,39 +922,24 @@ namespace Flavor.Common
                     exitFlag = false;
                 }
                 if ((widthTextBox.Text != "") && (stepTextBox.Text != "") &&
-                    ((Convert.ToUInt16(stepTextBox.Text) - Convert.ToUInt16(widthTextBox.Text) < 0) ||
-                    (Convert.ToUInt16(stepTextBox.Text) + Convert.ToUInt16(widthTextBox.Text) > 1056)))
+                    ((Convert.ToUInt16(stepTextBox.Text) - Convert.ToUInt16(widthTextBox.Text) < Config.MIN_STEP) ||
+                    (Convert.ToUInt16(stepTextBox.Text) + Convert.ToUInt16(widthTextBox.Text) > Config.MAX_STEP)))
                 {
                     stepTextBox.BackColor = Color.Green;
                     widthTextBox.BackColor = Color.Green;
                     exitFlag = false;
                 }
-                if ((stepTextBox.Text != "") && (Convert.ToInt16(stepTextBox.Text) > 1056))
+                if ((stepTextBox.Text != "") && (Convert.ToInt16(stepTextBox.Text) > Config.MAX_STEP))
                 {
                     stepTextBox.BackColor = Color.Red;
                     exitFlag = false;
                 }
-                //Integral checkbox => (>0)
-                /*
-                if ((lapsTextBox.Text != "") && (Convert.ToInt16(lapsTextBox.Text) <= 0))
-                {
-                    lapsTextBox.BackColor = Color.Red;
-                    exitFlag = false;
-                }
-                if ((widthTextBox.Text != "") && (Convert.ToInt16(widthTextBox.Text) <= 0))
-                {
-                    widthTextBox.BackColor = Color.Red;
-                    exitFlag = false;
-                }
-                */
                 return exitFlag;
             }
-            internal virtual void setValues(PreciseEditorData p)
+            internal override void setValues(PreciseEditorData p)
             {
-                stepTextBox.Text = p.Step.ToString();
-                colTextBox.Text = p.Collector.ToString();
+                base.setValues(p);
                 lapsTextBox.Text = p.Iterations.ToString();
-                widthTextBox.Text = p.Width.ToString();
                 precTextBox.Text = p.Precision.ToString();
                 commentTextBox.Text = p.Comment;
             }

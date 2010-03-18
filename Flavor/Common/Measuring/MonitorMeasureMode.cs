@@ -5,7 +5,7 @@ using Flavor.Forms;
 
 namespace Flavor.Common.Measuring
 {
-    internal class MonitorMeasureMode : PreciseMeasureMode
+    internal class MonitorMeasureMode: PreciseMeasureMode
     {
         internal class MeasureStopper
         {
@@ -28,29 +28,15 @@ namespace Flavor.Common.Measuring
                 return counter;
             }
         }
-        internal class MeasureChecker
-        {
-            private ushort shift;
-            private Utility.PreciseEditorData peak;
-            internal MeasureChecker()
-            {
-                peak = Config.CheckerPeak;
-                shift = 0;
-            }
-            internal bool isSpectrumValid()
-            {
-                //TODO: check here for spectrum errors
-                return true;
-            }
-        }
-        private MeasureStopper stopper;
-        private MeasureChecker checker;
 
-        internal MonitorMeasureMode()
-            : base(Config.PreciseDataWithChecker)
+        private MeasureStopper stopper;
+        private Utility.PreciseEditorData peak;
+
+        internal MonitorMeasureMode(short initialShift): base(Config.PreciseDataWithChecker)
         {
+            shift = initialShift;
             stopper = new MeasureStopper();
-            checker = new MeasureChecker();
+            peak = Config.CheckerPeak;
         }
         protected override bool toContinue()
         {
@@ -58,15 +44,55 @@ namespace Flavor.Common.Measuring
             {
                 return true;
             }
-            if (checker.isSpectrumValid()) {
+            if (isSpectrumValid()) {
                 stopper.next();
             }
             if (stopper.ready())
             {
                 return false;
             }
-            base.onExit();
-            base.init();
+            onExit();
+            init();
+            return true;
+        }
+        private bool isSpectrumValid()
+        {
+            if (peak == null)
+            {
+                return true;
+            }
+            long[] counts = peakCounts(isCheckPeak);
+            ushort width = peak.Width;
+            if (counts.Length != 2 * width + 1)
+            {
+                // data mismatch
+                return false;
+            }
+            long max = -1;
+            int index = -1;
+            for (int i = 0; i < counts.Length; ++i)
+            {
+                long temp = counts[i];
+                if (temp > max)
+                {
+                    max = temp;
+                    index = i;
+                }
+            }
+            if (index != width)
+            {
+                shift += (short)(index - width);
+                return false;
+            }
+            return true;
+        }
+        private bool isCheckPeak(Utility.PreciseEditorData ped)
+        {
+            // only in this situation (checkpeak marked with false use)
+            if (ped.Use)
+            {
+                return false;
+            }
             return true;
         }
         internal override void refreshGraphics(mainForm form)

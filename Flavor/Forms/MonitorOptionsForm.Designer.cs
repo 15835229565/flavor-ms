@@ -28,6 +28,7 @@ namespace Flavor.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
@@ -39,13 +40,29 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Location = new System.Drawing.Point(432, 324);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(270, 44);
+            this.groupBox2.TabIndex = 6;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Контрольный пик";
+            // 
             // MonitorOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.ClientSize = new System.Drawing.Size(711, 409);
+            this.Controls.Add(this.groupBox2);
             this.Name = "MonitorOptionsForm";
             this.Text = "Настройки  режима мониторинга";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MonitorOptionsForm_FormClosed);
+            this.Controls.SetChildIndex(this.groupBox2, 0);
+            this.Controls.SetChildIndex(this.params_groupBox, 0);
+            this.Controls.SetChildIndex(this.ok_butt, 0);
+            this.Controls.SetChildIndex(this.cancel_butt, 0);
+            this.Controls.SetChildIndex(this.applyButton, 0);
+            this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();
@@ -62,5 +79,7 @@ namespace Flavor.Forms
         }
 
         #endregion
+
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }

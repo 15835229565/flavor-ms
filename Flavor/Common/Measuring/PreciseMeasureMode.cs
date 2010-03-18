@@ -23,7 +23,9 @@ namespace Flavor.Common.Measuring
         private bool noPoints = true;
         private int stepPoints = 0;
 
-        internal PreciseMeasureMode(): this(Config.PreciseData.FindAll(Utility.PeakIsUsed)) {}
+        protected short shift = 0;
+
+        internal PreciseMeasureMode() : this(Config.PreciseData.FindAll(Utility.PeakIsUsed)) { }
         internal PreciseMeasureMode(List<Utility.PreciseEditorData> peaks): base()
         {
             senseModePoints = peaks;
@@ -69,6 +71,35 @@ namespace Flavor.Common.Measuring
             finishMeasure();
             Config.AutoSavePreciseSpecterFile();
         }
+        protected long[] peakCounts(Utility.PreciseEditorData peak)
+        {
+            int index = senseModePoints.IndexOf(peak);
+            if (index == -1)
+            {
+                return null;
+            }
+            return senseModeCounts[index];
+        }
+        protected long[] peakCounts(Predicate<Utility.PreciseEditorData> isCheckPeak)
+        {
+            int index = senseModePoints.FindIndex(isCheckPeak);
+            if (index == -1)
+            {
+                return null;
+            }
+            return senseModeCounts[index];
+        }
+        protected override bool onNextStep()
+        {
+            int realValue = pointValue + shift;
+            if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP)
+            {
+                return false;
+            }
+            Commander.AddToSend(new sendSVoltage((ushort)realValue));
+            ++pointValue;
+            return true;
+        }
         protected override bool toContinue()
         {
             if ((pointValue > (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width)))
@@ -111,7 +142,7 @@ namespace Flavor.Common.Measuring
         }
         private void finishMeasure()
         {
-            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints);
+            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
         }
 
         internal override void start()
@@ -126,11 +157,11 @@ namespace Flavor.Common.Measuring
         }
         protected void init()
         {
-            base.start();
             smpiSum = smpiSumMax;
             senseModePeak = 0;
             senseModePeakIteration = senseModePeakIterationMax.Clone() as ushort[];
             pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+            base.start();
         }
         internal override void updateGraph()
         {

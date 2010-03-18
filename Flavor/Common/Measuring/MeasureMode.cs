@@ -44,21 +44,21 @@ namespace Flavor.Common.Measuring
             }
             if (toContinue())
             {
-                onNextStep();
+                if (!onNextStep())
+                {
+                    // TODO: cannot perform step!
+                }
             }
             else
             {
-                stop();
                 onExit();
+                stop();
             }
         }
-        protected virtual void saveData() { }
+        abstract protected void saveData();
         abstract protected void onCancel();
         abstract protected void onExit();
-        protected void onNextStep()
-        {
-            Commander.AddToSend(new sendSVoltage(pointValue++));
-        }
+        abstract protected bool onNextStep();
         abstract protected bool toContinue();
         internal virtual void start()
         {
