@@ -10,7 +10,7 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    internal class ScanOptionsForm : OptionsForm
+    internal class ScanOptionsForm: OptionsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -111,8 +111,7 @@ namespace Flavor.Forms
             this.PerformLayout();
         }
 
-        internal ScanOptionsForm()
-            : base()
+        internal ScanOptionsForm(): base()
         {
             InitializeComponent();
             loadStartEndData();

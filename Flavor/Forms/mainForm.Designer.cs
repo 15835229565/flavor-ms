@@ -51,6 +51,7 @@ namespace Flavor.Forms
             this.overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.senseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkPeakToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -263,7 +264,8 @@ namespace Flavor.Forms
             this.toolStripSeparator2,
             this.overviewToolStripMenuItem,
             this.senseToolStripMenuItem,
-            this.monitorToolStripMenuItem});
+            this.monitorToolStripMenuItem,
+            this.checkPeakToolStripMenuItem});
             this.measureToolStripMenuItem.Name = "measureToolStripMenuItem";
             this.measureToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
             this.measureToolStripMenuItem.Text = "Измерение";
@@ -300,6 +302,12 @@ namespace Flavor.Forms
             this.monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.monitorToolStripMenuItem.Text = "Режим мониторинга";
             this.monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
+            // 
+            // checkPeakToolStripMenuItem
+            // 
+            this.checkPeakToolStripMenuItem.Name = "checkPeakToolStripMenuItem";
+            this.checkPeakToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.checkPeakToolStripMenuItem.Text = "Контрольный пик";
             // 
             // helpMenu
             // 
@@ -991,6 +999,7 @@ namespace Flavor.Forms
         private System.Windows.Forms.ImageList statusTreeViewStateImageList;
         private System.Windows.Forms.ToolStripButton monitorToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem monitorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem checkPeakToolStripMenuItem;
     }
 }
 

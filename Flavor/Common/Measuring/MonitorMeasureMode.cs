@@ -10,12 +10,17 @@ namespace Flavor.Common.Measuring
         internal class MeasureStopper
         {
             private int counter;
-            internal MeasureStopper()
+            internal MeasureStopper(int counterLimit)
             {
-                counter = 4;//test
+                counter = counterLimit;
             }
             internal void next()
             {
+                if (counter == -1) 
+                {
+                    // produce infinite loop
+                    return; 
+                }
                 --counter;
             }
             internal bool ready()
@@ -35,7 +40,7 @@ namespace Flavor.Common.Measuring
         internal MonitorMeasureMode(short initialShift): base(Config.PreciseDataWithChecker)
         {
             shift = initialShift;
-            stopper = new MeasureStopper();
+            stopper = new MeasureStopper(Config.Iterations);
             peak = Config.CheckerPeak;
         }
         protected override bool toContinue()
@@ -101,7 +106,12 @@ namespace Flavor.Common.Measuring
         }
         internal override int stepsCount()
         {
-            return base.stepsCount() * stopper.estimatedTurns();
+            int stopperTurns = stopper.estimatedTurns();
+            if (stopperTurns <= 0)
+            {
+                return 0;
+            }
+            return base.stepsCount() * stopperTurns;
         }
     }
 }

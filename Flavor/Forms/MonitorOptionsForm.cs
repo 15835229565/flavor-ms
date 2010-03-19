@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Flavor.Common;
 
 namespace Flavor.Forms
 {
@@ -13,6 +14,8 @@ namespace Flavor.Forms
         private MonitorOptionsForm()
         {
             InitializeComponent();
+            iterationsNumericUpDown.Maximum = new decimal(new int[] {int.MaxValue, 0, 0, 0});
+            iterationsNumericUpDown.Value = (decimal)Config.Iterations;
         }
 
         private static MonitorOptionsForm instance = null;
@@ -20,6 +23,13 @@ namespace Flavor.Forms
         {
             if (instance == null) instance = new MonitorOptionsForm();
             return instance;
+        }
+
+        protected override void ok_butt_Click(object sender, EventArgs e)
+        {
+            // TODO:
+            Config.saveCheckOptions((int)iterationsNumericUpDown.Value);
+            base.ok_butt_Click(sender, e);
         }
 
         private void MonitorOptionsForm_FormClosed(object sender, FormClosedEventArgs e)

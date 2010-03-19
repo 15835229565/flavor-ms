@@ -29,6 +29,7 @@ namespace Flavor.Forms
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
@@ -38,16 +39,27 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.iterationsNumericUpDown);
             this.groupBox2.Location = new System.Drawing.Point(432, 324);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(270, 44);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Контрольный пик";
+            this.groupBox2.Text = "Количество итераций";
+            // 
+            // iterationsNumericUpDown
+            // 
+            this.iterationsNumericUpDown.Location = new System.Drawing.Point(195, 18);
+            this.iterationsNumericUpDown.Name = "iterationsNumericUpDown";
+            this.iterationsNumericUpDown.Size = new System.Drawing.Size(60, 20);
+            this.iterationsNumericUpDown.TabIndex = 0;
+            this.iterationsNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // MonitorOptionsForm
             // 
@@ -73,6 +85,8 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -81,5 +95,6 @@ namespace Flavor.Forms
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.NumericUpDown iterationsNumericUpDown;
     }
 }

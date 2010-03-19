@@ -257,6 +257,14 @@ namespace Flavor.Forms
 
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
+            if (scanProgressBar.Maximum == 0)
+            {
+                scanProgressBar.Style = ProgressBarStyle.Marquee;
+            }
+            else
+            {
+                scanProgressBar.Style = ProgressBarStyle.Blocks;
+            }
             scanProgressBar.Step = 1;
 
             Graph.ResetLoadedPointLists();
@@ -360,7 +368,10 @@ namespace Flavor.Forms
                     else
                     {
                         gForm.RefreshGraph();
-                        scanProgressBar.PerformStep();
+                        if (scanProgressBar.Style != ProgressBarStyle.Marquee)
+                        {
+                            scanProgressBar.PerformStep();
+                        }
                         stepNumberLabel.Text = Graph.LastPoint.ToString();
                         scanRealTimeLabel.Text = Config.CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
                         detector1CountsLabel.Text = Device.Detector1.ToString();
