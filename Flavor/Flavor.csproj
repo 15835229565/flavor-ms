@@ -63,6 +63,24 @@
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Utility.cs" />
+    <Compile Include="Controls\PreciseEditorRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorRow.Designer.cs">
+      <DependentUpon>PreciseEditorRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorRowMinus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorRowMinus.Designer.cs">
+      <DependentUpon>PreciseEditorRowMinus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorRowPlus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorRowPlus.Designer.cs">
+      <DependentUpon>PreciseEditorRowPlus.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ZedGraphControlPlus.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -131,6 +149,18 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\PreciseEditorRow.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PreciseEditorRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreciseEditorRowMinus.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PreciseEditorRowMinus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreciseEditorRowPlus.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PreciseEditorRowPlus.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ZedGraphControlPlus.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ZedGraphControlPlus.cs</DependentUpon>

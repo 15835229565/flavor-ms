@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Flavor.Common;
+using Flavor.Controls;
 
 namespace Flavor.Forms
 {
@@ -22,12 +23,11 @@ namespace Flavor.Forms
         private mainForm upLevel;
         internal mainForm UpLevel
         {
-            //get { return upLevel; }
             set { upLevel = value; }
         }
 
         private Utility.PreciseEditorLabelRowPlus PElabelRow;
-        private Utility.PreciseEditorRowPlus[] PErows = new Utility.PreciseEditorRowPlus[20];
+        private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[20];
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
@@ -146,9 +146,10 @@ namespace Flavor.Forms
 
             for (int i = 0; i < 20; ++i)
             {
-                this.PErows[i] = new Utility.PreciseEditorRowPlus(21, 42 + 15 * i);
+                this.PErows[i] = new PreciseEditorRowPlus();
+                this.PErows[i].Location = new Point(21, 42 + 15 * i);
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
-                this.groupBox1.Controls.AddRange(PErows[i].getControls());
+                this.groupBox1.Controls.Add(PErows[i]);
             }
             this.PElabelRow = new Utility.PreciseEditorLabelRowPlus(6, 16);
             this.groupBox1.Controls.AddRange(this.PElabelRow.getControls());

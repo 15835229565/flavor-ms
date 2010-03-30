@@ -6,27 +6,27 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Flavor.Common;
+using Flavor.Controls;
 
 namespace Flavor.Forms
 {
-    partial class AddPointForm : Form
+    partial class AddPointForm: Form
     {
-        protected Utility.PreciseEditorRow oneRow;
+        protected PreciseEditorRow oneRow;
         protected Utility.PreciseEditorLabelRow oneLabelRow;
 
-        internal AddPointForm()
-            : base()
+        internal AddPointForm(): base()
         {
             InitializeComponent();
 
             this.oneLabelRow = new Utility.PreciseEditorLabelRow(12, 8);
             this.Controls.AddRange(oneLabelRow.getControls());
 
-            this.oneRow = new Utility.PreciseEditorRow(13, 42);
-            this.Controls.AddRange(oneRow.getControls());
+            this.oneRow = new PreciseEditorRow();
+            this.oneRow.Location = new Point(13, 42);
+            this.Controls.Add(oneRow);
         }
-        internal AddPointForm(ushort step, byte col)
-            : this()
+        internal AddPointForm(ushort step, byte col): this()
         {
             this.oneRow.StepText = step.ToString();
             this.oneRow.ColText = col.ToString();
