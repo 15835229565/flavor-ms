@@ -30,28 +30,28 @@ namespace Flavor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.MenuStrip graphFormMenuStrip;
+            System.Windows.Forms.ToolStripMenuItem FileMenu;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GraphForm));
-            this.graphFormMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.FileMenu = new System.Windows.Forms.ToolStripMenuItem();
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+            System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem printPreviewToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem printSetupToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+            System.Windows.Forms.ToolStripMenuItem editMenu;
+            System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+            System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+            System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+            System.Windows.Forms.ContextMenuStrip graphContextMenuStrip;
             this.openSpecterFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeSpecterFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.printPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.printSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.editMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.graphContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyGraphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveGraphAsImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveGraphDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,40 +65,57 @@ namespace Flavor.Forms
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.collect2_graph = new Flavor.Controls.ZedGraphControlPlus();
             this.collect1_graph = new Flavor.Controls.ZedGraphControlPlus();
-            this.graphFormMenuStrip.SuspendLayout();
-            this.graphContextMenuStrip.SuspendLayout();
+            graphFormMenuStrip = new System.Windows.Forms.MenuStrip();
+            FileMenu = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            printPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            printSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            editMenu = new System.Windows.Forms.ToolStripMenuItem();
+            undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            graphContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            graphFormMenuStrip.SuspendLayout();
+            graphContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // graphFormMenuStrip
             // 
-            this.graphFormMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.FileMenu,
-            this.editMenu});
-            this.graphFormMenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.graphFormMenuStrip.Name = "graphFormMenuStrip";
-            this.graphFormMenuStrip.Size = new System.Drawing.Size(773, 24);
-            this.graphFormMenuStrip.TabIndex = 11;
-            this.graphFormMenuStrip.Text = "menuStrip1";
-            this.graphFormMenuStrip.Visible = false;
+            graphFormMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            FileMenu,
+            editMenu});
+            graphFormMenuStrip.Location = new System.Drawing.Point(0, 0);
+            graphFormMenuStrip.Name = "graphFormMenuStrip";
+            graphFormMenuStrip.Size = new System.Drawing.Size(773, 24);
+            graphFormMenuStrip.TabIndex = 11;
+            graphFormMenuStrip.Text = "menuStrip1";
+            graphFormMenuStrip.Visible = false;
             // 
             // FileMenu
             // 
-            this.FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            FileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openSpecterFileToolStripMenuItem,
             this.distractFromCurrentToolStripMenuItem,
             this.closeSpecterFileToolStripMenuItem,
             this.saveToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.printToolStripMenuItem,
-            this.printPreviewToolStripMenuItem,
-            this.printSetupToolStripMenuItem,
-            this.toolStripSeparator5});
-            this.FileMenu.MergeAction = System.Windows.Forms.MergeAction.MatchOnly;
-            this.FileMenu.MergeIndex = 0;
-            this.FileMenu.Name = "FileMenu";
-            this.FileMenu.Size = new System.Drawing.Size(61, 20);
-            this.FileMenu.Text = "&Главное";
-            this.FileMenu.Visible = false;
+            toolStripSeparator4,
+            printToolStripMenuItem,
+            printPreviewToolStripMenuItem,
+            printSetupToolStripMenuItem,
+            toolStripSeparator5});
+            FileMenu.MergeAction = System.Windows.Forms.MergeAction.MatchOnly;
+            FileMenu.MergeIndex = 0;
+            FileMenu.Name = "FileMenu";
+            FileMenu.Size = new System.Drawing.Size(61, 20);
+            FileMenu.Text = "&Главное";
+            FileMenu.Visible = false;
             // 
             // openSpecterFileToolStripMenuItem
             // 
@@ -147,142 +164,142 @@ namespace Flavor.Forms
             // 
             // toolStripSeparator4
             // 
-            this.toolStripSeparator4.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.toolStripSeparator4.MergeIndex = 4;
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(241, 6);
+            toolStripSeparator4.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            toolStripSeparator4.MergeIndex = 4;
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(241, 6);
             // 
             // printToolStripMenuItem
             // 
-            this.printToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printToolStripMenuItem.Image")));
-            this.printToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.printToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.printToolStripMenuItem.MergeIndex = 5;
-            this.printToolStripMenuItem.Name = "printToolStripMenuItem";
-            this.printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.printToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.printToolStripMenuItem.Text = "&Print";
-            this.printToolStripMenuItem.Visible = false;
+            printToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printToolStripMenuItem.Image")));
+            printToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            printToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            printToolStripMenuItem.MergeIndex = 5;
+            printToolStripMenuItem.Name = "printToolStripMenuItem";
+            printToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            printToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            printToolStripMenuItem.Text = "&Print";
+            printToolStripMenuItem.Visible = false;
             // 
             // printPreviewToolStripMenuItem
             // 
-            this.printPreviewToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printPreviewToolStripMenuItem.Image")));
-            this.printPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.printPreviewToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.printPreviewToolStripMenuItem.MergeIndex = 6;
-            this.printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
-            this.printPreviewToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.printPreviewToolStripMenuItem.Text = "Print Pre&view";
-            this.printPreviewToolStripMenuItem.Visible = false;
+            printPreviewToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("printPreviewToolStripMenuItem.Image")));
+            printPreviewToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            printPreviewToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            printPreviewToolStripMenuItem.MergeIndex = 6;
+            printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
+            printPreviewToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            printPreviewToolStripMenuItem.Text = "Print Pre&view";
+            printPreviewToolStripMenuItem.Visible = false;
             // 
             // printSetupToolStripMenuItem
             // 
-            this.printSetupToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.printSetupToolStripMenuItem.MergeIndex = 7;
-            this.printSetupToolStripMenuItem.Name = "printSetupToolStripMenuItem";
-            this.printSetupToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.printSetupToolStripMenuItem.Text = "Print Setup";
-            this.printSetupToolStripMenuItem.Visible = false;
+            printSetupToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            printSetupToolStripMenuItem.MergeIndex = 7;
+            printSetupToolStripMenuItem.Name = "printSetupToolStripMenuItem";
+            printSetupToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            printSetupToolStripMenuItem.Text = "Print Setup";
+            printSetupToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
-            this.toolStripSeparator5.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.toolStripSeparator5.MergeIndex = 8;
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(241, 6);
-            this.toolStripSeparator5.Visible = false;
+            toolStripSeparator5.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            toolStripSeparator5.MergeIndex = 8;
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(241, 6);
+            toolStripSeparator5.Visible = false;
             // 
             // editMenu
             // 
-            this.editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.undoToolStripMenuItem,
-            this.redoToolStripMenuItem,
-            this.toolStripSeparator6,
-            this.cutToolStripMenuItem,
-            this.copyToolStripMenuItem,
-            this.pasteToolStripMenuItem,
-            this.toolStripSeparator7,
-            this.selectAllToolStripMenuItem});
-            this.editMenu.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.editMenu.MergeIndex = 1;
-            this.editMenu.Name = "editMenu";
-            this.editMenu.Size = new System.Drawing.Size(37, 20);
-            this.editMenu.Text = "&Edit";
-            this.editMenu.Visible = false;
+            editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            undoToolStripMenuItem,
+            redoToolStripMenuItem,
+            toolStripSeparator6,
+            cutToolStripMenuItem,
+            copyToolStripMenuItem,
+            pasteToolStripMenuItem,
+            toolStripSeparator7,
+            selectAllToolStripMenuItem});
+            editMenu.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            editMenu.MergeIndex = 1;
+            editMenu.Name = "editMenu";
+            editMenu.Size = new System.Drawing.Size(37, 20);
+            editMenu.Text = "&Edit";
+            editMenu.Visible = false;
             // 
             // undoToolStripMenuItem
             // 
-            this.undoToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("undoToolStripMenuItem.Image")));
-            this.undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.undoToolStripMenuItem.Text = "&Undo";
-            this.undoToolStripMenuItem.Visible = false;
+            undoToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("undoToolStripMenuItem.Image")));
+            undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            undoToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            undoToolStripMenuItem.Text = "&Undo";
+            undoToolStripMenuItem.Visible = false;
             // 
             // redoToolStripMenuItem
             // 
-            this.redoToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("redoToolStripMenuItem.Image")));
-            this.redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.redoToolStripMenuItem.Text = "&Redo";
-            this.redoToolStripMenuItem.Visible = false;
+            redoToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("redoToolStripMenuItem.Image")));
+            redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
+            redoToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            redoToolStripMenuItem.Text = "&Redo";
+            redoToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator6
             // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(164, 6);
-            this.toolStripSeparator6.Visible = false;
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new System.Drawing.Size(164, 6);
+            toolStripSeparator6.Visible = false;
             // 
             // cutToolStripMenuItem
             // 
-            this.cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripMenuItem.Image")));
-            this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.cutToolStripMenuItem.Text = "Cu&t";
-            this.cutToolStripMenuItem.Visible = false;
+            cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripMenuItem.Image")));
+            cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+            cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+            cutToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            cutToolStripMenuItem.Text = "Cu&t";
+            cutToolStripMenuItem.Visible = false;
             // 
             // copyToolStripMenuItem
             // 
-            this.copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripMenuItem.Image")));
-            this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.copyToolStripMenuItem.Text = "&Copy";
-            this.copyToolStripMenuItem.Visible = false;
+            copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripMenuItem.Image")));
+            copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            copyToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            copyToolStripMenuItem.Text = "&Copy";
+            copyToolStripMenuItem.Visible = false;
             // 
             // pasteToolStripMenuItem
             // 
-            this.pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripMenuItem.Image")));
-            this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.pasteToolStripMenuItem.Text = "&Paste";
-            this.pasteToolStripMenuItem.Visible = false;
+            pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripMenuItem.Image")));
+            pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            pasteToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            pasteToolStripMenuItem.Text = "&Paste";
+            pasteToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator7
             // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(164, 6);
-            this.toolStripSeparator7.Visible = false;
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            toolStripSeparator7.Size = new System.Drawing.Size(164, 6);
+            toolStripSeparator7.Visible = false;
             // 
             // selectAllToolStripMenuItem
             // 
-            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.selectAllToolStripMenuItem.Text = "Select &All";
-            this.selectAllToolStripMenuItem.Visible = false;
+            selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            selectAllToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            selectAllToolStripMenuItem.Text = "Select &All";
+            selectAllToolStripMenuItem.Visible = false;
             // 
             // graphContextMenuStrip
             // 
-            this.graphContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            graphContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyGraphToolStripMenuItem,
             this.saveGraphAsImageToolStripMenuItem,
             this.saveGraphDataToolStripMenuItem,
@@ -292,8 +309,8 @@ namespace Flavor.Forms
             this.unZoomToolStripMenuItem,
             this.unZoomAllToolStripMenuItem,
             this.defaultScaleToolStripMenuItem});
-            this.graphContextMenuStrip.Name = "graphContextMenuStrip";
-            this.graphContextMenuStrip.Size = new System.Drawing.Size(287, 202);
+            graphContextMenuStrip.Name = "graphContextMenuStrip";
+            graphContextMenuStrip.Size = new System.Drawing.Size(287, 202);
             // 
             // copyGraphToolStripMenuItem
             // 
@@ -406,9 +423,9 @@ namespace Flavor.Forms
             this.ClientSize = new System.Drawing.Size(773, 691);
             this.ControlBox = false;
             this.Controls.Add(this.collect2_graph);
-            this.Controls.Add(this.graphFormMenuStrip);
             this.Controls.Add(this.collect1_graph);
-            this.MainMenuStrip = this.graphFormMenuStrip;
+            this.Controls.Add(graphFormMenuStrip);
+            this.MainMenuStrip = graphFormMenuStrip;
             this.MinimizeBox = false;
             this.Name = "GraphForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
@@ -416,9 +433,9 @@ namespace Flavor.Forms
             this.Load += new System.EventHandler(this.GraphForm_Load);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.GraphForm_Validating);
             this.Resize += new System.EventHandler(this.GraphForm_Resize);
-            this.graphFormMenuStrip.ResumeLayout(false);
-            this.graphFormMenuStrip.PerformLayout();
-            this.graphContextMenuStrip.ResumeLayout(false);
+            graphFormMenuStrip.ResumeLayout(false);
+            graphFormMenuStrip.PerformLayout();
+            graphContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -427,26 +444,8 @@ namespace Flavor.Forms
         #endregion
 
         private ZedGraphControlPlus collect2_graph;
-        private ZedGraphControlPlus collect1_graph;
-        private System.Windows.Forms.MenuStrip graphFormMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem editMenu;
-        private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
-        private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem FileMenu;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeSpecterFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem printToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printPreviewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem printSetupToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ContextMenuStrip graphContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem copyGraphToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveGraphAsImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveGraphDataToolStripMenuItem;
@@ -456,9 +455,10 @@ namespace Flavor.Forms
         private System.Windows.Forms.ToolStripMenuItem unZoomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem unZoomAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defaultScaleToolStripMenuItem;
-        private System.Windows.Forms.SaveFileDialog saveSpecterFileDialog;
-        private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
-        private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
         private System.Windows.Forms.ToolStripMenuItem distractFromCurrentToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog saveSpecterFileDialog;
+        private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
+        private ZedGraphControlPlus collect1_graph;
+        private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
     }
 }

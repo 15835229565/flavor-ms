@@ -9,19 +9,17 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    partial class SetScalingCoeffForm : Form
+    partial class SetScalingCoeffForm: Form
     {
         private byte myCol = 0;
         private ushort myStep = 0;
-        internal SetScalingCoeffForm()
-            : base()
+        internal SetScalingCoeffForm(): base()
         {
             InitializeComponent();
 
             this.massTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
         }
-        internal SetScalingCoeffForm(ushort step, byte col)
-            : this()
+        internal SetScalingCoeffForm(ushort step, byte col): this()
         {
             myCol = col;
             myStep = step;

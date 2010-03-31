@@ -28,12 +28,16 @@ namespace Flavor.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.Label label1;
+            System.Windows.Forms.Label label2;
+            System.Windows.Forms.Button ok_butt;
+            System.Windows.Forms.Button cancel_butt;
             this.serialPort_comboBox = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.baudrate_comboBox = new System.Windows.Forms.ComboBox();
-            this.ok_butt = new System.Windows.Forms.Button();
-            this.cancel_butt = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            ok_butt = new System.Windows.Forms.Button();
+            cancel_butt = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // serialPort_comboBox
@@ -46,23 +50,23 @@ namespace Flavor.Forms
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(25, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Доступные порты";
+            label1.AutoSize = true;
+            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            label1.Location = new System.Drawing.Point(25, 20);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(111, 15);
+            label1.TabIndex = 1;
+            label1.Text = "Доступные порты";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(179, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(134, 15);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Скорость соединения";
+            label2.AutoSize = true;
+            label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            label2.Location = new System.Drawing.Point(179, 20);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(134, 15);
+            label2.TabIndex = 2;
+            label2.Text = "Скорость соединения";
             // 
             // baudrate_comboBox
             // 
@@ -80,38 +84,38 @@ namespace Flavor.Forms
             // 
             // ok_butt
             // 
-            this.ok_butt.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.ok_butt.Location = new System.Drawing.Point(157, 93);
-            this.ok_butt.Name = "ok_butt";
-            this.ok_butt.Size = new System.Drawing.Size(75, 23);
-            this.ok_butt.TabIndex = 4;
-            this.ok_butt.Text = "Сохранить";
-            this.ok_butt.UseVisualStyleBackColor = true;
-            this.ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
+            ok_butt.DialogResult = System.Windows.Forms.DialogResult.OK;
+            ok_butt.Location = new System.Drawing.Point(157, 93);
+            ok_butt.Name = "ok_butt";
+            ok_butt.Size = new System.Drawing.Size(75, 23);
+            ok_butt.TabIndex = 4;
+            ok_butt.Text = "Сохранить";
+            ok_butt.UseVisualStyleBackColor = true;
+            ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
             // 
             // cancel_butt
             // 
-            this.cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel_butt.Location = new System.Drawing.Point(238, 93);
-            this.cancel_butt.Name = "cancel_butt";
-            this.cancel_butt.Size = new System.Drawing.Size(75, 23);
-            this.cancel_butt.TabIndex = 5;
-            this.cancel_butt.Text = "Отмена";
-            this.cancel_butt.UseVisualStyleBackColor = true;
-            this.cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
+            cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancel_butt.Location = new System.Drawing.Point(238, 93);
+            cancel_butt.Name = "cancel_butt";
+            cancel_butt.Size = new System.Drawing.Size(75, 23);
+            cancel_butt.TabIndex = 5;
+            cancel_butt.Text = "Отмена";
+            cancel_butt.UseVisualStyleBackColor = true;
+            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
             // ConnectOptionsForm
             // 
-            this.AcceptButton = this.ok_butt;
+            this.AcceptButton = ok_butt;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancel_butt;
+            this.CancelButton = cancel_butt;
             this.ClientSize = new System.Drawing.Size(337, 128);
-            this.Controls.Add(this.cancel_butt);
-            this.Controls.Add(this.ok_butt);
+            this.Controls.Add(cancel_butt);
+            this.Controls.Add(ok_butt);
             this.Controls.Add(this.baudrate_comboBox);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(label2);
+            this.Controls.Add(label1);
             this.Controls.Add(this.serialPort_comboBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
@@ -128,10 +132,6 @@ namespace Flavor.Forms
         #endregion
 
         private System.Windows.Forms.ComboBox serialPort_comboBox;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox baudrate_comboBox;
-        private System.Windows.Forms.Button ok_butt;
-        private System.Windows.Forms.Button cancel_butt;
     }
 }

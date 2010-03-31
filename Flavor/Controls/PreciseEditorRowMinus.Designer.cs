@@ -38,25 +38,23 @@ namespace Flavor.Controls
             // 
             // stepTextBox
             // 
-            this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             this.stepTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.stepTextBox.Location = new System.Drawing.Point(0, 0);
             this.stepTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.stepTextBox.MaxLength = 4;
             this.stepTextBox.Name = "stepTextBox";
-            this.stepTextBox.ReadOnly = true;
             this.stepTextBox.Size = new System.Drawing.Size(50, 13);
             this.stepTextBox.TabIndex = 0;
             // 
             // colTextBox
             // 
-            this.colTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             this.colTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.colTextBox.Location = new System.Drawing.Point(52, 0);
             this.colTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.colTextBox.MaxLength = 1;
             this.colTextBox.Name = "colTextBox";
-            this.colTextBox.ReadOnly = true;
             this.colTextBox.Size = new System.Drawing.Size(20, 13);
             this.colTextBox.TabIndex = 1;
             // 

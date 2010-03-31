@@ -9,9 +9,8 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    class PlacePointForm : AddPointForm
+    internal partial class PlacePointForm: AddPointForm
     {
-        private ComboBox pNumComboBox;
         private int pNum = -1;
         internal int PointNumber
         {
@@ -19,18 +18,11 @@ namespace Flavor.Forms
         }
         internal PlacePointForm(): base()
         {
-            this.Text = "Вставка точки";
-            this.pNumComboBox = new ComboBox();
-            this.pNumComboBox.Location = new Point(174, 64);
-            this.pNumComboBox.Size = new Size(40, 23);
+            InitializeComponent();
             for (int i = 1; i <= 20; ++i )
                 this.pNumComboBox.Items.Add(i.ToString());
-            this.pNumComboBox.SelectedIndexChanged += new EventHandler(pNumComboBox_SelectedIndexChanged);
-            this.Controls.Add(this.pNumComboBox);
-            this.okButton.Enabled = false;
         }
-        internal PlacePointForm(Utility.PreciseEditorData ped)
-            : this()
+        internal PlacePointForm(Utility.PreciseEditorData ped): this()
         {
             oneRow.setValues(ped);
         }

@@ -17,6 +17,11 @@ namespace Flavor.Forms
             InitializeComponent();
             iterationsNumericUpDown.Maximum = new decimal(new int[] {int.MaxValue, 0, 0, 0});
             iterationsNumericUpDown.Value = (decimal)Config.Iterations;
+            Utility.PreciseEditorData peak = Config.CheckerPeak;
+            if (peak != null)
+            {
+                checkPeakPreciseEditorRowMinus.setValues(peak);
+            }
             bool enable = Graph.PointToAdd != null;
             this.checkPeakInsertButton.Enabled = enable;
             if (!enable)

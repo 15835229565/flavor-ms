@@ -23,21 +23,6 @@ namespace Flavor.Controls
         public PreciseEditorRowPlus(): base()
         {
             InitializeComponent();
-
-            this.stepAndColModifiable = true;
-
-            this.SuspendLayout();
-
-            this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-            this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
-
-            this.stepTextBox.ReadOnly = false;
-            this.colTextBox.ReadOnly = false;
-
-            this.ResumeLayout(false);
-            this.PerformLayout();
         }
         internal void Clear()
         {

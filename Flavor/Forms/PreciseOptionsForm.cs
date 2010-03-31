@@ -10,16 +10,8 @@ using Flavor.Controls;
 
 namespace Flavor.Forms
 {
-    internal class PreciseOptionsForm : OptionsForm
+    internal partial class PreciseOptionsForm: OptionsForm
     {
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button savePreciseEditorToFileButton;
-        private System.Windows.Forms.SaveFileDialog savePreciseEditorToFileDialog;
-        private System.Windows.Forms.Button loadPreciseEditorFromFileButton;
-        private System.Windows.Forms.OpenFileDialog loadPreciseEditorFromFileDialog;
-        private System.Windows.Forms.Button clearButton;
-        private System.Windows.Forms.Button insertPointButton;
-        
         private mainForm upLevel;
         internal mainForm UpLevel
         {
@@ -36,140 +28,35 @@ namespace Flavor.Forms
             return instance;
         }
 
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        internal PreciseOptionsForm(): base()
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private void InitializeComponent()
-        {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.clearButton = new System.Windows.Forms.Button();
-            this.insertPointButton = new System.Windows.Forms.Button();
-            this.loadPreciseEditorFromFileButton = new System.Windows.Forms.Button();
-            this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
-            this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
-
-            this.groupBox1.SuspendLayout();
-            this.params_groupBox.SuspendLayout();
-            this.SuspendLayout();
-            // groupBox1
-            this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox1.Controls.Add(this.insertPointButton);
-            this.groupBox1.Controls.Add(this.clearButton);
-            this.groupBox1.Controls.Add(this.loadPreciseEditorFromFileButton);
-            this.groupBox1.Controls.Add(this.savePreciseEditorToFileButton);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(312 + 2 + 100, 385);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Редактор областей сканирования";
-            // insertPointButton
-            this.insertPointButton.Location = new System.Drawing.Point(312, 356);
-            this.insertPointButton.Name = "insertPointButton";
-            this.insertPointButton.Size = new System.Drawing.Size(90, 23);
-            this.insertPointButton.Text = "Вставка точки";
-            this.insertPointButton.UseVisualStyleBackColor = true;
-            this.insertPointButton.Click += new System.EventHandler(this.insertPointButton_Click);
+            InitializeComponent();
             bool enable = Graph.PointToAdd != null;
+
+            this.SuspendLayout();
+            this.preciseEditorGroupBox.SuspendLayout();
             this.insertPointButton.Enabled = enable;
-            if (!enable)
-            {
-                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
-            }
-            // clearButton
-            this.clearButton.Location = new System.Drawing.Point(244, 356);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(62, 23);
-            this.clearButton.TabIndex = 12;
-            this.clearButton.Text = "Очистить";
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
-            // loadPreciseEditorFromFileButton
-            this.loadPreciseEditorFromFileButton.Location = new System.Drawing.Point(118, 356);
-            this.loadPreciseEditorFromFileButton.Name = "loadPreciseEditorFromFileButton";
-            this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(120, 23);
-            this.loadPreciseEditorFromFileButton.TabIndex = 11;
-            this.loadPreciseEditorFromFileButton.Text = "Загрузить из файла";
-            this.loadPreciseEditorFromFileButton.UseVisualStyleBackColor = true;
-            this.loadPreciseEditorFromFileButton.Click += new System.EventHandler(this.loadPreciseEditorFromFileButton_Click);
-            // savePreciseEditorToFileButton
-            this.savePreciseEditorToFileButton.Location = new System.Drawing.Point(6, 356);
-            this.savePreciseEditorToFileButton.Name = "savePreciseEditorToFileButton";
-            this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(106, 23);
-            this.savePreciseEditorToFileButton.TabIndex = 10;
-            this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
-            this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
-            this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
-            // params_groupBox
-            this.params_groupBox.Location = new System.Drawing.Point(this.params_groupBox.Location.X + 320 + 2 + 100, this.params_groupBox.Location.Y - 73);
-            // rareModeCheckBox
-            this.rareModeCheckBox.Location = new System.Drawing.Point(this.rareModeCheckBox.Location.X + 320 + 2 + 100, this.rareModeCheckBox.Location.Y - 73);
-            // applyButton
-            this.applyButton.Location = new System.Drawing.Point(330 + 2 + 100, 374);
-            // cancel_butt
-            this.cancel_butt.Location = new System.Drawing.Point(540 + 2 + 100, 374);
-            // ok_butt
-            this.ok_butt.Location = new System.Drawing.Point(408 + 2 + 100, 374);
-            // savePreciseEditorToFileDialog
-            this.savePreciseEditorToFileDialog.DefaultExt = "ped";
-            this.savePreciseEditorToFileDialog.Filter = "Precise Editor Data Files (*.ped)|*.ped";
-            // loadPreciseEditorFromFileDialog
-            this.loadPreciseEditorFromFileDialog.DefaultExt = "ped";
-            this.loadPreciseEditorFromFileDialog.Filter = "Precise editor data files (*.ped)|*.ped|Precise specter files (*.psf)|*.psf";
-            // PreciseOptionsForm
-            this.ClientSize = new System.Drawing.Size(609 + 2 + 100, 409);
-            this.Controls.Add(this.groupBox1);
-            this.MinimizeBox = true;
-            this.Name = "PreciseOptionsForm";
-            this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Настройки точного режима";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PreciseOptionsForm_FormClosed);
-            this.params_groupBox.ResumeLayout(false);
-            this.params_groupBox.PerformLayout();
 
             for (int i = 0; i < 20; ++i)
             {
                 this.PErows[i] = new PreciseEditorRowPlus();
                 this.PErows[i].Location = new Point(21, 42 + 15 * i);
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
-                this.groupBox1.Controls.Add(PErows[i]);
+                this.preciseEditorGroupBox.Controls.Add(PErows[i]);
             }
             this.PElabelRow = new Utility.PreciseEditorLabelRowPlus(6, 16);
-            this.groupBox1.Controls.AddRange(this.PElabelRow.getControls());
+            this.preciseEditorGroupBox.Controls.AddRange(this.PElabelRow.getControls());
 
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-        }
-
-        internal PreciseOptionsForm(): base()
-        {
-            InitializeComponent();
-            this.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             loadPreciseEditorData(Config.PreciseData);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.preciseEditorGroupBox.ResumeLayout(false);
+            this.preciseEditorGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            if (!enable)
+            {
+                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            }
             Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeEnableForm);
         }
 
@@ -191,7 +78,7 @@ namespace Flavor.Forms
             switch (Commander.pState)
             {
                 case Commander.programStates.Start:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
@@ -203,7 +90,7 @@ namespace Flavor.Forms
                     //this.cancel_butt.Enabled = true;
                     break;
                 case Commander.programStates.WaitInit:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
@@ -214,7 +101,7 @@ namespace Flavor.Forms
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Init:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
@@ -225,7 +112,7 @@ namespace Flavor.Forms
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.WaitHighVoltage:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
@@ -236,7 +123,7 @@ namespace Flavor.Forms
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Ready:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
@@ -247,7 +134,7 @@ namespace Flavor.Forms
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Measure:
-                    this.groupBox1.Enabled = false;
+                    this.preciseEditorGroupBox.Enabled = false;
                     this.params_groupBox.Enabled = false;
                     this.savePreciseEditorToFileButton.Enabled = false;
                     this.loadPreciseEditorFromFileButton.Enabled = false;
@@ -258,7 +145,7 @@ namespace Flavor.Forms
                     this.rareModeCheckBox.Enabled = false;
                     break;
                 case Commander.programStates.WaitShutdown:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;
@@ -269,7 +156,7 @@ namespace Flavor.Forms
                     this.rareModeCheckBox.Enabled = true;
                     break;
                 case Commander.programStates.Shutdown:
-                    this.groupBox1.Enabled = true;
+                    this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
                     this.savePreciseEditorToFileButton.Enabled = true;
                     this.loadPreciseEditorFromFileButton.Enabled = true;

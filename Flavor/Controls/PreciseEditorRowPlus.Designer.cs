@@ -49,11 +49,15 @@ namespace Flavor.Controls
             // 
             // stepTextBox
             // 
+            this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             this.stepTextBox.Location = new System.Drawing.Point(37, 0);
+            this.stepTextBox.ReadOnly = false;
             // 
             // colTextBox
             // 
+            this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             this.colTextBox.Location = new System.Drawing.Point(89, 0);
+            this.colTextBox.ReadOnly = false;
             // 
             // widthTextBox
             // 

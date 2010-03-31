@@ -943,7 +943,7 @@ namespace Flavor.Forms
         
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ControlToolStrip.Visible = toolBarToolStripMenuItem.Checked;
+            controlToolStrip.Visible = toolBarToolStripMenuItem.Checked;
         }
 
         private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e)

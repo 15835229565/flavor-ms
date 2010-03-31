@@ -28,15 +28,20 @@ namespace Flavor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.label2 = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label label2;
+            System.Windows.Forms.Label label1;
+            System.Windows.Forms.Label label3;
+            System.Windows.Forms.Button ok_butt;
+            System.Windows.Forms.Button cancel_butt;
             this.beforeTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.forwardAsBeforeCheckBox = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.forwardTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.backwardTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.ok_butt = new System.Windows.Forms.Button();
-            this.cancel_butt = new System.Windows.Forms.Button();
+            label2 = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            ok_butt = new System.Windows.Forms.Button();
+            cancel_butt = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.beforeTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.forwardTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.backwardTimeNumericUpDown)).BeginInit();
@@ -44,12 +49,12 @@ namespace Flavor.Forms
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(162, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Перед циклом измерений (мс)";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(12, 9);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(162, 13);
+            label2.TabIndex = 7;
+            label2.Text = "Перед циклом измерений (мс)";
             // 
             // beforeTimeNumericUpDown
             // 
@@ -92,21 +97,21 @@ namespace Flavor.Forms
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 35);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(192, 13);
-            this.label1.TabIndex = 29;
-            this.label1.Text = "При скачке напряжения вперед (мс)";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(12, 35);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(192, 13);
+            label1.TabIndex = 29;
+            label1.Text = "При скачке напряжения вперед (мс)";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 84);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(186, 13);
-            this.label3.TabIndex = 30;
-            this.label3.Text = "При скачке напряжения назад (мс)";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(12, 84);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(186, 13);
+            label3.TabIndex = 30;
+            label3.Text = "При скачке напряжения назад (мс)";
             // 
             // forwardTimeNumericUpDown
             // 
@@ -166,41 +171,41 @@ namespace Flavor.Forms
             // 
             // ok_butt
             // 
-            this.ok_butt.Location = new System.Drawing.Point(12, 108);
-            this.ok_butt.Name = "ok_butt";
-            this.ok_butt.Size = new System.Drawing.Size(72, 23);
-            this.ok_butt.TabIndex = 33;
-            this.ok_butt.Text = "Сохранить";
-            this.ok_butt.UseVisualStyleBackColor = true;
-            this.ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
+            ok_butt.Location = new System.Drawing.Point(12, 108);
+            ok_butt.Name = "ok_butt";
+            ok_butt.Size = new System.Drawing.Size(72, 23);
+            ok_butt.TabIndex = 33;
+            ok_butt.Text = "Сохранить";
+            ok_butt.UseVisualStyleBackColor = true;
+            ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
             // 
             // cancel_butt
             // 
-            this.cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancel_butt.Location = new System.Drawing.Point(226, 108);
-            this.cancel_butt.Name = "cancel_butt";
-            this.cancel_butt.Size = new System.Drawing.Size(54, 23);
-            this.cancel_butt.TabIndex = 34;
-            this.cancel_butt.Text = "Отмена";
-            this.cancel_butt.UseVisualStyleBackColor = true;
-            this.cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
+            cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancel_butt.Location = new System.Drawing.Point(226, 108);
+            cancel_butt.Name = "cancel_butt";
+            cancel_butt.Size = new System.Drawing.Size(54, 23);
+            cancel_butt.TabIndex = 34;
+            cancel_butt.Text = "Отмена";
+            cancel_butt.UseVisualStyleBackColor = true;
+            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
             // DelaysOptionsForm
             // 
-            this.AcceptButton = this.ok_butt;
+            this.AcceptButton = ok_butt;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancel_butt;
+            this.CancelButton = cancel_butt;
             this.ClientSize = new System.Drawing.Size(292, 143);
-            this.Controls.Add(this.cancel_butt);
-            this.Controls.Add(this.ok_butt);
+            this.Controls.Add(cancel_butt);
+            this.Controls.Add(ok_butt);
             this.Controls.Add(this.backwardTimeNumericUpDown);
             this.Controls.Add(this.forwardTimeNumericUpDown);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(label3);
+            this.Controls.Add(label1);
             this.Controls.Add(this.forwardAsBeforeCheckBox);
             this.Controls.Add(this.beforeTimeNumericUpDown);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(label2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -217,14 +222,9 @@ namespace Flavor.Forms
 
         #endregion
 
-        protected System.Windows.Forms.Label label2;
         protected System.Windows.Forms.NumericUpDown beforeTimeNumericUpDown;
-        protected System.Windows.Forms.CheckBox forwardAsBeforeCheckBox;
-        protected System.Windows.Forms.Label label1;
-        protected System.Windows.Forms.Label label3;
         protected System.Windows.Forms.NumericUpDown forwardTimeNumericUpDown;
         protected System.Windows.Forms.NumericUpDown backwardTimeNumericUpDown;
-        protected System.Windows.Forms.Button ok_butt;
-        protected System.Windows.Forms.Button cancel_butt;
+        protected System.Windows.Forms.CheckBox forwardAsBeforeCheckBox;
     }
 }

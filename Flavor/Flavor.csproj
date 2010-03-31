@@ -111,6 +111,15 @@
     <Compile Include="Forms\MonitorOptionsForm.Designer.cs">
       <DependentUpon>MonitorOptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\PlacePointForm.Designer.cs">
+      <DependentUpon>PlacePointForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PreciseOptionsForm.Designer.cs">
+      <DependentUpon>PreciseOptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ScanOptionsForm.Designer.cs">
+      <DependentUpon>ScanOptionsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SetScalingCoeffForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -180,6 +189,14 @@
     <EmbeddedResource Include="Forms\MonitorOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MonitorOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PreciseOptionsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PreciseOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ScanOptionsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ScanOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SetScalingCoeffForm.resx">
       <DependentUpon>SetScalingCoeffForm.cs</DependentUpon>

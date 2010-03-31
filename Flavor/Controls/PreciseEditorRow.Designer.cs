@@ -35,6 +35,16 @@ namespace Flavor.Controls
             this.commentTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
+            // stepTextBox
+            // 
+            this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.stepTextBox.ReadOnly = true;
+            // 
+            // colTextBox
+            // 
+            this.colTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.colTextBox.Enabled = false;
+            // 
             // lapsTextBox
             // 
             this.lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;

@@ -2,24 +2,6 @@ namespace Flavor.Forms
 {
     partial class SetScalingCoeffForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -28,34 +10,56 @@ namespace Flavor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
+            System.Windows.Forms.Label stepLabel;
+            System.Windows.Forms.Label massLabel;
+            System.Windows.Forms.Button okButton;
+            System.Windows.Forms.Button cancelButton;
             this.stepTextBox = new System.Windows.Forms.TextBox();
             this.massTextBox = new System.Windows.Forms.TextBox();
-            this.stepLabel = new System.Windows.Forms.Label();
-            this.massLabel = new System.Windows.Forms.Label();
+            stepLabel = new System.Windows.Forms.Label();
+            massLabel = new System.Windows.Forms.Label();
+            okButton = new System.Windows.Forms.Button();
+            cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // stepLabel
+            // 
+            stepLabel.AutoSize = true;
+            stepLabel.Location = new System.Drawing.Point(12, 9);
+            stepLabel.Name = "stepLabel";
+            stepLabel.Size = new System.Drawing.Size(60, 13);
+            stepLabel.TabIndex = 4;
+            stepLabel.Text = "Ступенька";
+            // 
+            // massLabel
+            // 
+            massLabel.AutoSize = true;
+            massLabel.Location = new System.Drawing.Point(115, 9);
+            massLabel.Name = "massLabel";
+            massLabel.Size = new System.Drawing.Size(40, 13);
+            massLabel.TabIndex = 5;
+            massLabel.Text = "Масса";
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(12, 64);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
-            this.okButton.TabIndex = 0;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            okButton.Location = new System.Drawing.Point(12, 64);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(75, 23);
+            okButton.TabIndex = 0;
+            okButton.Text = "OK";
+            okButton.UseVisualStyleBackColor = true;
+            okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // cancelButton
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(93, 64);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Отмена";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(93, 64);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.TabIndex = 1;
+            cancelButton.Text = "Отмена";
+            cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // stepTextBox
             // 
@@ -72,37 +76,19 @@ namespace Flavor.Forms
             this.massTextBox.Size = new System.Drawing.Size(100, 20);
             this.massTextBox.TabIndex = 3;
             // 
-            // stepLabel
-            // 
-            this.stepLabel.AutoSize = true;
-            this.stepLabel.Location = new System.Drawing.Point(12, 9);
-            this.stepLabel.Name = "stepLabel";
-            this.stepLabel.Size = new System.Drawing.Size(60, 13);
-            this.stepLabel.TabIndex = 4;
-            this.stepLabel.Text = "Ступенька";
-            // 
-            // massLabel
-            // 
-            this.massLabel.AutoSize = true;
-            this.massLabel.Location = new System.Drawing.Point(115, 9);
-            this.massLabel.Name = "massLabel";
-            this.massLabel.Size = new System.Drawing.Size(40, 13);
-            this.massLabel.TabIndex = 5;
-            this.massLabel.Text = "Масса";
-            // 
             // SetScalingCoeffForm
             // 
-            this.AcceptButton = this.okButton;
+            this.AcceptButton = okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancelButton;
+            this.CancelButton = cancelButton;
             this.ClientSize = new System.Drawing.Size(354, 99);
-            this.Controls.Add(this.massLabel);
-            this.Controls.Add(this.stepLabel);
+            this.Controls.Add(massLabel);
+            this.Controls.Add(stepLabel);
             this.Controls.Add(this.massTextBox);
             this.Controls.Add(this.stepTextBox);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.okButton);
+            this.Controls.Add(cancelButton);
+            this.Controls.Add(okButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "SetScalingCoeffForm";
@@ -117,11 +103,7 @@ namespace Flavor.Forms
 
         #endregion
 
-        protected System.Windows.Forms.Button okButton;
-        protected System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.TextBox stepTextBox;
         private System.Windows.Forms.TextBox massTextBox;
-        private System.Windows.Forms.Label stepLabel;
-        private System.Windows.Forms.Label massLabel;
     }
 }

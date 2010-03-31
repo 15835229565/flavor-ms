@@ -30,47 +30,56 @@ namespace Flavor.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
+            System.Windows.Forms.MenuStrip menuStrip;
+            System.Windows.Forms.ToolStripMenuItem fileMenu;
+            System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem viewMenu;
+            System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem openConfigFileToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem saveConfigFileToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+            System.Windows.Forms.ToolStripMenuItem delaysToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+            System.Windows.Forms.ToolStripMenuItem overviewToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem senseToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem monitorToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem helpMenu;
+            System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+            System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+            System.Windows.Forms.GroupBox groupBox1;
+            System.Windows.Forms.Label label17;
+            System.Windows.Forms.Label label19;
+            System.Windows.Forms.Label label20;
+            System.Windows.Forms.Label label21;
+            System.Windows.Forms.Label label22;
+            System.Windows.Forms.Label label23;
+            System.Windows.Forms.Label label24;
+            System.Windows.Forms.Label label25;
+            System.Windows.Forms.Label label35;
+            System.Windows.Forms.Label label36;
             this.initSys_butt = new System.Windows.Forms.ToolStripButton();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measurePanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openConfigFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveConfigFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.delaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.senseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkPeakToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.overview_button = new System.Windows.Forms.ToolStripButton();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.measure_StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.sensmeasure_button = new System.Windows.Forms.ToolStripButton();
             this.shutSys_butt = new System.Windows.Forms.ToolStripButton();
             this.unblock_butt = new System.Windows.Forms.ToolStripButton();
-            this.ControlToolStrip = new System.Windows.Forms.ToolStrip();
+            this.controlToolStrip = new System.Windows.Forms.ToolStrip();
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.f2_label = new System.Windows.Forms.Label();
             this.f1_label = new System.Windows.Forms.Label();
             this.heatCurLabel = new System.Windows.Forms.Label();
@@ -82,24 +91,14 @@ namespace Flavor.Forms
             this.lastStepLabel = new System.Windows.Forms.Label();
             this.firstStepLabel = new System.Windows.Forms.Label();
             this.startScanTextLabel = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
             this.scanProgressBar = new System.Windows.Forms.ProgressBar();
-            this.label35 = new System.Windows.Forms.Label();
             this.scanRealTimeLabel = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.detector1CountsLabel = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.detector2CountsLabel = new System.Windows.Forms.Label();
             this.cancelScanButton = new System.Windows.Forms.Button();
-            this.label36 = new System.Windows.Forms.Label();
             this.stepNumberLabel = new System.Windows.Forms.Label();
             this.label37 = new System.Windows.Forms.Label();
             this.peakNumberLabel = new System.Windows.Forms.Label();
@@ -108,11 +107,41 @@ namespace Flavor.Forms
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
             this.measurePanel = new System.Windows.Forms.Panel();
-            this.menuStrip1.SuspendLayout();
+            menuStrip = new System.Windows.Forms.MenuStrip();
+            fileMenu = new System.Windows.Forms.ToolStripMenuItem();
+            exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            viewMenu = new System.Windows.Forms.ToolStripMenuItem();
+            optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            openConfigFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveConfigFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            delaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            senseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            helpMenu = new System.Windows.Forms.ToolStripMenuItem();
+            contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            label17 = new System.Windows.Forms.Label();
+            label19 = new System.Windows.Forms.Label();
+            label20 = new System.Windows.Forms.Label();
+            label21 = new System.Windows.Forms.Label();
+            label22 = new System.Windows.Forms.Label();
+            label23 = new System.Windows.Forms.Label();
+            label24 = new System.Windows.Forms.Label();
+            label25 = new System.Windows.Forms.Label();
+            label35 = new System.Windows.Forms.Label();
+            label36 = new System.Windows.Forms.Label();
+            menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
-            this.ControlToolStrip.SuspendLayout();
+            this.controlToolStrip.SuspendLayout();
             this.parameterPanel.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            groupBox1.SuspendLayout();
             this.measurePanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -128,46 +157,46 @@ namespace Flavor.Forms
             this.initSys_butt.Text = "Запуск системы";
             this.initSys_butt.Click += new System.EventHandler(this.initSys_butt_Click);
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenu,
-            this.viewMenu,
-            this.optionsToolStripMenuItem,
-            this.helpMenu});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(992, 24);
-            this.menuStrip1.TabIndex = 1;
-            this.menuStrip1.Text = "menuStrip1";
+            menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            fileMenu,
+            viewMenu,
+            optionsToolStripMenuItem,
+            helpMenu});
+            menuStrip.Location = new System.Drawing.Point(0, 0);
+            menuStrip.Name = "menuStrip";
+            menuStrip.Size = new System.Drawing.Size(992, 24);
+            menuStrip.TabIndex = 1;
+            menuStrip.Text = "menuStrip1";
             // 
             // fileMenu
             // 
-            this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
-            this.fileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
-            this.fileMenu.Name = "fileMenu";
-            this.fileMenu.Size = new System.Drawing.Size(61, 20);
-            this.fileMenu.Text = "&Главное";
+            fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            exitToolStripMenuItem});
+            fileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
+            fileMenu.Name = "fileMenu";
+            fileMenu.Size = new System.Drawing.Size(61, 20);
+            fileMenu.Text = "&Главное";
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
-            this.exitToolStripMenuItem.Text = "В&ыход";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            exitToolStripMenuItem.Text = "В&ыход";
+            exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // viewMenu
             // 
-            this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolBarToolStripMenuItem,
             this.ParameterToolStripMenuItem,
             this.statusBarToolStripMenuItem,
             this.GraphWindowToolStripMenuItem,
             this.measurePanelToolStripMenuItem});
-            this.viewMenu.Name = "viewMenu";
-            this.viewMenu.Size = new System.Drawing.Size(38, 20);
-            this.viewMenu.Text = "&Вид";
+            viewMenu.Name = "viewMenu";
+            viewMenu.Size = new System.Drawing.Size(38, 20);
+            viewMenu.Text = "&Вид";
             // 
             // toolBarToolStripMenuItem
             // 
@@ -220,35 +249,35 @@ namespace Flavor.Forms
             // 
             // optionsToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openConfigFileToolStripMenuItem,
-            this.saveConfigFileToolStripMenuItem,
-            this.toolStripSeparator1,
+            optionsToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            openConfigFileToolStripMenuItem,
+            saveConfigFileToolStripMenuItem,
+            toolStripSeparator1,
             this.connectToolStripMenuItem,
             this.measureToolStripMenuItem});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
-            this.optionsToolStripMenuItem.Text = "&Настройки";
+            optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+            optionsToolStripMenuItem.Text = "&Настройки";
             // 
             // openConfigFileToolStripMenuItem
             // 
-            this.openConfigFileToolStripMenuItem.Name = "openConfigFileToolStripMenuItem";
-            this.openConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.openConfigFileToolStripMenuItem.Text = "Перечитать файл конфигурации";
-            this.openConfigFileToolStripMenuItem.Click += new System.EventHandler(this.openConfigFileToolStripMenuItem_Click);
+            openConfigFileToolStripMenuItem.Name = "openConfigFileToolStripMenuItem";
+            openConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
+            openConfigFileToolStripMenuItem.Text = "Перечитать файл конфигурации";
+            openConfigFileToolStripMenuItem.Click += new System.EventHandler(this.openConfigFileToolStripMenuItem_Click);
             // 
             // saveConfigFileToolStripMenuItem
             // 
-            this.saveConfigFileToolStripMenuItem.Name = "saveConfigFileToolStripMenuItem";
-            this.saveConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.saveConfigFileToolStripMenuItem.Text = "Перезаписать файл конфигурации";
-            this.saveConfigFileToolStripMenuItem.Click += new System.EventHandler(this.saveConfigFileToolStripMenuItem_Click);
+            saveConfigFileToolStripMenuItem.Name = "saveConfigFileToolStripMenuItem";
+            saveConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
+            saveConfigFileToolStripMenuItem.Text = "Перезаписать файл конфигурации";
+            saveConfigFileToolStripMenuItem.Click += new System.EventHandler(this.saveConfigFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(258, 6);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(258, 6);
             // 
             // connectToolStripMenuItem
             // 
@@ -260,101 +289,94 @@ namespace Flavor.Forms
             // measureToolStripMenuItem
             // 
             this.measureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.delaysToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.overviewToolStripMenuItem,
-            this.senseToolStripMenuItem,
-            this.monitorToolStripMenuItem,
-            this.checkPeakToolStripMenuItem});
+            delaysToolStripMenuItem,
+            toolStripSeparator2,
+            overviewToolStripMenuItem,
+            senseToolStripMenuItem,
+            monitorToolStripMenuItem});
             this.measureToolStripMenuItem.Name = "measureToolStripMenuItem";
             this.measureToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
             this.measureToolStripMenuItem.Text = "Измерение";
             // 
             // delaysToolStripMenuItem
             // 
-            this.delaysToolStripMenuItem.Name = "delaysToolStripMenuItem";
-            this.delaysToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.delaysToolStripMenuItem.Text = "Установка задержек";
-            this.delaysToolStripMenuItem.Click += new System.EventHandler(this.delaysToolStripMenuItem_Click);
+            delaysToolStripMenuItem.Name = "delaysToolStripMenuItem";
+            delaysToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            delaysToolStripMenuItem.Text = "Установка задержек";
+            delaysToolStripMenuItem.Click += new System.EventHandler(this.delaysToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(189, 6);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(189, 6);
             // 
             // overviewToolStripMenuItem
             // 
-            this.overviewToolStripMenuItem.Name = "overviewToolStripMenuItem";
-            this.overviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.overviewToolStripMenuItem.Text = "Обзорный режим";
-            this.overviewToolStripMenuItem.Click += new System.EventHandler(this.overviewToolStripMenuItem_Click);
+            overviewToolStripMenuItem.Name = "overviewToolStripMenuItem";
+            overviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            overviewToolStripMenuItem.Text = "Обзорный режим";
+            overviewToolStripMenuItem.Click += new System.EventHandler(this.overviewToolStripMenuItem_Click);
             // 
             // senseToolStripMenuItem
             // 
-            this.senseToolStripMenuItem.Name = "senseToolStripMenuItem";
-            this.senseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.senseToolStripMenuItem.Text = "Точный режим";
-            this.senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
+            senseToolStripMenuItem.Name = "senseToolStripMenuItem";
+            senseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            senseToolStripMenuItem.Text = "Точный режим";
+            senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
             // 
             // monitorToolStripMenuItem
             // 
-            this.monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
-            this.monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.monitorToolStripMenuItem.Text = "Режим мониторинга";
-            this.monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
-            // 
-            // checkPeakToolStripMenuItem
-            // 
-            this.checkPeakToolStripMenuItem.Name = "checkPeakToolStripMenuItem";
-            this.checkPeakToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.checkPeakToolStripMenuItem.Text = "Контрольный пик";
+            monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
+            monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            monitorToolStripMenuItem.Text = "Режим мониторинга";
+            monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
             // 
             // helpMenu
             // 
-            this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.contentsToolStripMenuItem,
-            this.indexToolStripMenuItem,
-            this.searchToolStripMenuItem,
-            this.toolStripSeparator8,
-            this.aboutToolStripMenuItem});
-            this.helpMenu.Name = "helpMenu";
-            this.helpMenu.Size = new System.Drawing.Size(59, 20);
-            this.helpMenu.Text = "&Помощь";
-            this.helpMenu.Visible = false;
+            helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            contentsToolStripMenuItem,
+            indexToolStripMenuItem,
+            searchToolStripMenuItem,
+            toolStripSeparator8,
+            aboutToolStripMenuItem});
+            helpMenu.Name = "helpMenu";
+            helpMenu.Size = new System.Drawing.Size(59, 20);
+            helpMenu.Text = "&Помощь";
+            helpMenu.Visible = false;
             // 
             // contentsToolStripMenuItem
             // 
-            this.contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            this.contentsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-            this.contentsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.contentsToolStripMenuItem.Text = "&Contents";
+            contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
+            contentsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
+            contentsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            contentsToolStripMenuItem.Text = "&Contents";
             // 
             // indexToolStripMenuItem
             // 
-            this.indexToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("indexToolStripMenuItem.Image")));
-            this.indexToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            this.indexToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.indexToolStripMenuItem.Text = "&Index";
+            indexToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("indexToolStripMenuItem.Image")));
+            indexToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            indexToolStripMenuItem.Name = "indexToolStripMenuItem";
+            indexToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            indexToolStripMenuItem.Text = "&Index";
             // 
             // searchToolStripMenuItem
             // 
-            this.searchToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("searchToolStripMenuItem.Image")));
-            this.searchToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-            this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            this.searchToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.searchToolStripMenuItem.Text = "&Search";
+            searchToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("searchToolStripMenuItem.Image")));
+            searchToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            searchToolStripMenuItem.Name = "searchToolStripMenuItem";
+            searchToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            searchToolStripMenuItem.Text = "&Search";
             // 
             // toolStripSeparator8
             // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(170, 6);
+            toolStripSeparator8.Name = "toolStripSeparator8";
+            toolStripSeparator8.Size = new System.Drawing.Size(170, 6);
             // 
             // aboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.aboutToolStripMenuItem.Text = "&О программе ...";
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            aboutToolStripMenuItem.Text = "&О программе ...";
             // 
             // overview_button
             // 
@@ -416,11 +438,11 @@ namespace Flavor.Forms
             this.unblock_butt.Text = "Снять блокировку";
             this.unblock_butt.Click += new System.EventHandler(this.unblock_butt_Click);
             // 
-            // ControlToolStrip
+            // controlToolStrip
             // 
-            this.ControlToolStrip.AllowMerge = false;
-            this.ControlToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.ControlToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.controlToolStrip.AllowMerge = false;
+            this.controlToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.controlToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectToolStripButton,
             this.initSys_butt,
             this.shutSys_butt,
@@ -428,13 +450,13 @@ namespace Flavor.Forms
             this.monitorToolStripButton,
             this.sensmeasure_button,
             this.overview_button});
-            this.ControlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.ControlToolStrip.Location = new System.Drawing.Point(0, 24);
-            this.ControlToolStrip.Name = "ControlToolStrip";
-            this.ControlToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ControlToolStrip.Size = new System.Drawing.Size(992, 25);
-            this.ControlToolStrip.TabIndex = 14;
-            this.ControlToolStrip.Text = "Управление масс-спектрометром";
+            this.controlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.controlToolStrip.Location = new System.Drawing.Point(0, 24);
+            this.controlToolStrip.Name = "controlToolStrip";
+            this.controlToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.controlToolStrip.Size = new System.Drawing.Size(992, 25);
+            this.controlToolStrip.TabIndex = 14;
+            this.controlToolStrip.Text = "Управление масс-спектрометром";
             // 
             // connectToolStripButton
             // 
@@ -491,32 +513,32 @@ namespace Flavor.Forms
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.f2_label);
-            this.groupBox1.Controls.Add(this.f1_label);
-            this.groupBox1.Controls.Add(this.heatCurLabel);
-            this.groupBox1.Controls.Add(this.emCurLabel);
-            this.groupBox1.Controls.Add(this.cp_label);
-            this.groupBox1.Controls.Add(this.iVolt_label);
-            this.groupBox1.Controls.Add(this.itime_label);
-            this.groupBox1.Controls.Add(this.etime_label);
-            this.groupBox1.Controls.Add(this.lastStepLabel);
-            this.groupBox1.Controls.Add(this.firstStepLabel);
-            this.groupBox1.Controls.Add(this.startScanTextLabel);
-            this.groupBox1.Controls.Add(this.label17);
-            this.groupBox1.Controls.Add(this.label18);
-            this.groupBox1.Controls.Add(this.label19);
-            this.groupBox1.Controls.Add(this.label20);
-            this.groupBox1.Controls.Add(this.label21);
-            this.groupBox1.Controls.Add(this.label22);
-            this.groupBox1.Controls.Add(this.label23);
-            this.groupBox1.Controls.Add(this.label24);
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(273, 282);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Параметры режима";
+            groupBox1.Controls.Add(this.f2_label);
+            groupBox1.Controls.Add(this.f1_label);
+            groupBox1.Controls.Add(this.heatCurLabel);
+            groupBox1.Controls.Add(this.emCurLabel);
+            groupBox1.Controls.Add(this.cp_label);
+            groupBox1.Controls.Add(this.iVolt_label);
+            groupBox1.Controls.Add(this.itime_label);
+            groupBox1.Controls.Add(this.etime_label);
+            groupBox1.Controls.Add(this.lastStepLabel);
+            groupBox1.Controls.Add(this.firstStepLabel);
+            groupBox1.Controls.Add(this.startScanTextLabel);
+            groupBox1.Controls.Add(label17);
+            groupBox1.Controls.Add(this.label18);
+            groupBox1.Controls.Add(label19);
+            groupBox1.Controls.Add(label20);
+            groupBox1.Controls.Add(label21);
+            groupBox1.Controls.Add(label22);
+            groupBox1.Controls.Add(label23);
+            groupBox1.Controls.Add(label24);
+            groupBox1.Controls.Add(label25);
+            groupBox1.Location = new System.Drawing.Point(3, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(273, 282);
+            groupBox1.TabIndex = 1;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Параметры режима";
             // 
             // f2_label
             // 
@@ -619,12 +641,12 @@ namespace Flavor.Forms
             // 
             // label17
             // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 248);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(184, 13);
-            this.label17.TabIndex = 25;
-            this.label17.Text = "Фокусирующее напр. (2) (50-150 В)";
+            label17.AutoSize = true;
+            label17.Location = new System.Drawing.Point(6, 248);
+            label17.Name = "label17";
+            label17.Size = new System.Drawing.Size(184, 13);
+            label17.TabIndex = 25;
+            label17.Text = "Фокусирующее напр. (2) (50-150 В)";
             // 
             // label18
             // 
@@ -637,66 +659,66 @@ namespace Flavor.Forms
             // 
             // label19
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(6, 80);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(174, 13);
-            this.label19.TabIndex = 6;
-            this.label19.Text = "Время экспозиции (10-10000 мс)";
+            label19.AutoSize = true;
+            label19.Location = new System.Drawing.Point(6, 80);
+            label19.Name = "label19";
+            label19.Size = new System.Drawing.Size(174, 13);
+            label19.TabIndex = 6;
+            label19.Text = "Время экспозиции (10-10000 мс)";
             // 
             // label20
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(6, 226);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(184, 13);
-            this.label20.TabIndex = 24;
-            this.label20.Text = "Фокусирующее напр. (1) (50-150 В)";
+            label20.AutoSize = true;
+            label20.Location = new System.Drawing.Point(6, 226);
+            label20.Name = "label20";
+            label20.Size = new System.Drawing.Size(184, 13);
+            label20.TabIndex = 24;
+            label20.Text = "Фокусирующее напр. (1) (50-150 В)";
             // 
             // label21
             // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 105);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(149, 13);
-            this.label21.TabIndex = 7;
-            this.label21.Text = "Время перехода (10-100 мс)";
+            label21.AutoSize = true;
+            label21.Location = new System.Drawing.Point(6, 105);
+            label21.Name = "label21";
+            label21.Size = new System.Drawing.Size(149, 13);
+            label21.TabIndex = 7;
+            label21.Text = "Время перехода (10-100 мс)";
             // 
             // label22
             // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(6, 131);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(180, 13);
-            this.label22.TabIndex = 8;
-            this.label22.Text = "Напряжение ионизации (20-120 В)";
+            label22.AutoSize = true;
+            label22.Location = new System.Drawing.Point(6, 131);
+            label22.Name = "label22";
+            label22.Size = new System.Drawing.Size(180, 13);
+            label22.TabIndex = 8;
+            label22.Text = "Напряжение ионизации (20-120 В)";
             // 
             // label23
             // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(6, 203);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(104, 13);
-            this.label23.TabIndex = 11;
-            this.label23.Text = "Ток нагрева (0-2 А)";
+            label23.AutoSize = true;
+            label23.Location = new System.Drawing.Point(6, 203);
+            label23.Name = "label23";
+            label23.Size = new System.Drawing.Size(104, 13);
+            label23.TabIndex = 11;
+            label23.Text = "Ток нагрева (0-2 А)";
             // 
             // label24
             // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(6, 180);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(127, 13);
-            this.label24.TabIndex = 10;
-            this.label24.Text = "Ток эмиссии (0-10 мкА)";
+            label24.AutoSize = true;
+            label24.Location = new System.Drawing.Point(6, 180);
+            label24.Name = "label24";
+            label24.Size = new System.Drawing.Size(127, 13);
+            label24.TabIndex = 10;
+            label24.Text = "Ток эмиссии (0-10 мкА)";
             // 
             // label25
             // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(6, 156);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(122, 13);
-            this.label25.TabIndex = 9;
-            this.label25.Text = "Коэффициент деления";
+            label25.AutoSize = true;
+            label25.Location = new System.Drawing.Point(6, 156);
+            label25.Name = "label25";
+            label25.Size = new System.Drawing.Size(122, 13);
+            label25.TabIndex = 9;
+            label25.Text = "Коэффициент деления";
             // 
             // scanProgressBar
             // 
@@ -708,12 +730,12 @@ namespace Flavor.Forms
             // 
             // label35
             // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(9, 343);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(143, 13);
-            this.label35.TabIndex = 3;
-            this.label35.Text = "Сканирующее напряжение";
+            label35.AutoSize = true;
+            label35.Location = new System.Drawing.Point(9, 343);
+            label35.Name = "label35";
+            label35.Size = new System.Drawing.Size(143, 13);
+            label35.TabIndex = 3;
+            label35.Text = "Сканирующее напряжение";
             // 
             // scanRealTimeLabel
             // 
@@ -780,12 +802,12 @@ namespace Flavor.Forms
             // 
             // label36
             // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(9, 317);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(84, 13);
-            this.label36.TabIndex = 44;
-            this.label36.Text = "Номер ступени";
+            label36.AutoSize = true;
+            label36.Location = new System.Drawing.Point(9, 317);
+            label36.Name = "label36";
+            label36.Size = new System.Drawing.Size(84, 13);
+            label36.TabIndex = 44;
+            label36.Text = "Номер ступени";
             // 
             // stepNumberLabel
             // 
@@ -868,16 +890,16 @@ namespace Flavor.Forms
             this.measurePanel.Controls.Add(this.peakNumberLabel);
             this.measurePanel.Controls.Add(this.label37);
             this.measurePanel.Controls.Add(this.stepNumberLabel);
-            this.measurePanel.Controls.Add(this.label36);
+            this.measurePanel.Controls.Add(label36);
             this.measurePanel.Controls.Add(this.cancelScanButton);
             this.measurePanel.Controls.Add(this.detector2CountsLabel);
             this.measurePanel.Controls.Add(this.label16);
             this.measurePanel.Controls.Add(this.detector1CountsLabel);
             this.measurePanel.Controls.Add(this.label15);
             this.measurePanel.Controls.Add(this.scanRealTimeLabel);
-            this.measurePanel.Controls.Add(this.label35);
+            this.measurePanel.Controls.Add(label35);
             this.measurePanel.Controls.Add(this.scanProgressBar);
-            this.measurePanel.Controls.Add(this.groupBox1);
+            this.measurePanel.Controls.Add(groupBox1);
             this.measurePanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.measurePanel.Location = new System.Drawing.Point(712, 49);
             this.measurePanel.Name = "measurePanel";
@@ -893,26 +915,26 @@ namespace Flavor.Forms
             this.ClientSize = new System.Drawing.Size(992, 966);
             this.Controls.Add(this.measurePanel);
             this.Controls.Add(this.parameterPanel);
-            this.Controls.Add(this.ControlToolStrip);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.controlToolStrip);
+            this.Controls.Add(menuStrip);
             this.Controls.Add(this.statusStrip);
             this.IsMdiContainer = true;
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = menuStrip;
             this.Name = "mainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Управление масс-спектрометром";
             this.Load += new System.EventHandler(this.mainForm_Load);
             this.MdiChildActivate += new System.EventHandler(this.mainForm_MdiChildActivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            menuStrip.ResumeLayout(false);
+            menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.ControlToolStrip.ResumeLayout(false);
-            this.ControlToolStrip.PerformLayout();
+            this.controlToolStrip.ResumeLayout(false);
+            this.controlToolStrip.PerformLayout();
             this.parameterPanel.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             this.measurePanel.ResumeLayout(false);
             this.measurePanel.PerformLayout();
             this.ResumeLayout(false);
@@ -927,34 +949,15 @@ namespace Flavor.Forms
         private System.Windows.Forms.ToolStripButton unblock_butt;
         private System.Windows.Forms.ToolStripButton overview_button;
         private System.Windows.Forms.ToolStripButton sensmeasure_button;
-        private System.Windows.Forms.ToolStrip ControlToolStrip;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem measureToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel measure_StatusLabel;
-        private System.Windows.Forms.ToolStripMenuItem overviewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem senseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fileMenu;
-        private System.Windows.Forms.ToolStripMenuItem viewMenu;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpMenu;
-        private System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Panel parameterPanel;
         private System.Windows.Forms.ToolStripMenuItem ParameterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openConfigFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveConfigFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton connectToolStripButton;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label f2_label;
         private System.Windows.Forms.Label f1_label;
         private System.Windows.Forms.Label heatCurLabel;
@@ -965,25 +968,11 @@ namespace Flavor.Forms
         private System.Windows.Forms.Label etime_label;
         private System.Windows.Forms.Label lastStepLabel;
         private System.Windows.Forms.Label firstStepLabel;
-        private System.Windows.Forms.Label startScanTextLabel;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label25;
         private System.Windows.Forms.ProgressBar scanProgressBar;
-        private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Label scanRealTimeLabel;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label detector1CountsLabel;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label detector2CountsLabel;
-        private System.Windows.Forms.Button cancelScanButton;
-        private System.Windows.Forms.Label label36;
         private System.Windows.Forms.Label stepNumberLabel;
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Label peakNumberLabel;
@@ -992,14 +981,16 @@ namespace Flavor.Forms
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label peakWidthLabel;
         private System.Windows.Forms.Panel measurePanel;
-        private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem delaysToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.TreeView statusTreeView;
         private System.Windows.Forms.ImageList statusTreeViewStateImageList;
         private System.Windows.Forms.ToolStripButton monitorToolStripButton;
-        private System.Windows.Forms.ToolStripMenuItem monitorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem checkPeakToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem measureToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
+        private System.Windows.Forms.ToolStrip controlToolStrip;
+        private System.Windows.Forms.Button cancelScanButton;
+        private System.Windows.Forms.Label startScanTextLabel;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label15;
     }
 }
 

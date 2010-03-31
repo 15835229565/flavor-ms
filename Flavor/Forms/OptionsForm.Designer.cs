@@ -2,24 +2,6 @@ namespace Flavor.Forms
 {
     partial class OptionsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -28,10 +10,18 @@ namespace Flavor.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.Button loadFileButton;
+            System.Windows.Forms.Button saveFileButton;
+            System.Windows.Forms.Label label33;
+            System.Windows.Forms.Label label32;
+            System.Windows.Forms.Label label7;
+            System.Windows.Forms.Label label6;
+            System.Windows.Forms.Label label5;
+            System.Windows.Forms.Label label4;
+            System.Windows.Forms.Label label3;
+            System.Windows.Forms.Label label2;
             this.params_groupBox = new System.Windows.Forms.GroupBox();
             this.adjustSettingsCheckBox = new System.Windows.Forms.CheckBox();
-            this.loadFileButton = new System.Windows.Forms.Button();
-            this.saveFileButton = new System.Windows.Forms.Button();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.fV1NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.hCurrentNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -40,20 +30,22 @@ namespace Flavor.Forms
             this.iVoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.idleTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.expTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.label33 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.ok_butt = new System.Windows.Forms.Button();
             this.cancel_butt = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
+            loadFileButton = new System.Windows.Forms.Button();
+            saveFileButton = new System.Windows.Forms.Button();
+            label33 = new System.Windows.Forms.Label();
+            label32 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
@@ -68,8 +60,8 @@ namespace Flavor.Forms
             // params_groupBox
             // 
             this.params_groupBox.Controls.Add(this.adjustSettingsCheckBox);
-            this.params_groupBox.Controls.Add(this.loadFileButton);
-            this.params_groupBox.Controls.Add(this.saveFileButton);
+            this.params_groupBox.Controls.Add(loadFileButton);
+            this.params_groupBox.Controls.Add(saveFileButton);
             this.params_groupBox.Controls.Add(this.fV2NumericUpDown);
             this.params_groupBox.Controls.Add(this.fV1NumericUpDown);
             this.params_groupBox.Controls.Add(this.hCurrentNumericUpDown);
@@ -78,14 +70,14 @@ namespace Flavor.Forms
             this.params_groupBox.Controls.Add(this.iVoltageNumericUpDown);
             this.params_groupBox.Controls.Add(this.idleTimeNumericUpDown);
             this.params_groupBox.Controls.Add(this.expTimeNumericUpDown);
-            this.params_groupBox.Controls.Add(this.label33);
-            this.params_groupBox.Controls.Add(this.label32);
-            this.params_groupBox.Controls.Add(this.label7);
-            this.params_groupBox.Controls.Add(this.label6);
-            this.params_groupBox.Controls.Add(this.label5);
-            this.params_groupBox.Controls.Add(this.label4);
-            this.params_groupBox.Controls.Add(this.label3);
-            this.params_groupBox.Controls.Add(this.label2);
+            this.params_groupBox.Controls.Add(label33);
+            this.params_groupBox.Controls.Add(label32);
+            this.params_groupBox.Controls.Add(label7);
+            this.params_groupBox.Controls.Add(label6);
+            this.params_groupBox.Controls.Add(label5);
+            this.params_groupBox.Controls.Add(label4);
+            this.params_groupBox.Controls.Add(label3);
+            this.params_groupBox.Controls.Add(label2);
             this.params_groupBox.Location = new System.Drawing.Point(10, 85);
             this.params_groupBox.Name = "params_groupBox";
             this.params_groupBox.Size = new System.Drawing.Size(270, 283);
@@ -106,23 +98,23 @@ namespace Flavor.Forms
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(135, 250);
-            this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(120, 23);
-            this.loadFileButton.TabIndex = 34;
-            this.loadFileButton.Text = "Загрузить из файла";
-            this.loadFileButton.UseVisualStyleBackColor = true;
-            this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
+            loadFileButton.Location = new System.Drawing.Point(135, 250);
+            loadFileButton.Name = "loadFileButton";
+            loadFileButton.Size = new System.Drawing.Size(120, 23);
+            loadFileButton.TabIndex = 34;
+            loadFileButton.Text = "Загрузить из файла";
+            loadFileButton.UseVisualStyleBackColor = true;
+            loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
             // 
             // saveFileButton
             // 
-            this.saveFileButton.Location = new System.Drawing.Point(9, 250);
-            this.saveFileButton.Name = "saveFileButton";
-            this.saveFileButton.Size = new System.Drawing.Size(112, 23);
-            this.saveFileButton.TabIndex = 6;
-            this.saveFileButton.Text = "Сохранить в файл";
-            this.saveFileButton.UseVisualStyleBackColor = true;
-            this.saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
+            saveFileButton.Location = new System.Drawing.Point(9, 250);
+            saveFileButton.Name = "saveFileButton";
+            saveFileButton.Size = new System.Drawing.Size(112, 23);
+            saveFileButton.TabIndex = 6;
+            saveFileButton.Text = "Сохранить в файл";
+            saveFileButton.UseVisualStyleBackColor = true;
+            saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
             // 
             // fV2NumericUpDown
             // 
@@ -350,75 +342,75 @@ namespace Flavor.Forms
             // 
             // label33
             // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 203);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(184, 13);
-            this.label33.TabIndex = 25;
-            this.label33.Text = "Фокусирующее напр. (2) (20-150 В)";
+            label33.AutoSize = true;
+            label33.Location = new System.Drawing.Point(6, 203);
+            label33.Name = "label33";
+            label33.Size = new System.Drawing.Size(184, 13);
+            label33.TabIndex = 25;
+            label33.Text = "Фокусирующее напр. (2) (20-150 В)";
             // 
             // label32
             // 
-            this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(6, 177);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(184, 13);
-            this.label32.TabIndex = 24;
-            this.label32.Text = "Фокусирующее напр. (1) (20-150 В)";
+            label32.AutoSize = true;
+            label32.Location = new System.Drawing.Point(6, 177);
+            label32.Name = "label32";
+            label32.Size = new System.Drawing.Size(184, 13);
+            label32.TabIndex = 24;
+            label32.Text = "Фокусирующее напр. (1) (20-150 В)";
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 151);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(104, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Ток нагрева (0-1 А)";
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(6, 151);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(104, 13);
+            label7.TabIndex = 11;
+            label7.Text = "Ток нагрева (0-1 А)";
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 125);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 13);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Ток эмиссии (0-10 мкА)";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(6, 125);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(127, 13);
+            label6.TabIndex = 10;
+            label6.Text = "Ток эмиссии (0-10 мкА)";
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 99);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(122, 13);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "Коэффициент деления";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(6, 99);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(122, 13);
+            label5.TabIndex = 9;
+            label5.Text = "Коэффициент деления";
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 73);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(180, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Напряжение ионизации (20-150 В)";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(6, 73);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(180, 13);
+            label4.TabIndex = 8;
+            label4.Text = "Напряжение ионизации (20-150 В)";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 47);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(149, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "Время перехода (10-100 мс)";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(6, 47);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(149, 13);
+            label3.TabIndex = 7;
+            label3.Text = "Время перехода (10-100 мс)";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 21);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(174, 13);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Время экспозиции (10-10000 мс)";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(6, 21);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(174, 13);
+            label2.TabIndex = 6;
+            label2.Text = "Время экспозиции (10-10000 мс)";
             // 
             // ok_butt
             // 
@@ -464,7 +456,8 @@ namespace Flavor.Forms
             // openCommonDataFileDialog
             // 
             this.openCommonDataFileDialog.DefaultExt = "cdf";
-            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf|Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
+            this.openCommonDataFileDialog.Filter = "Common data files (*.cdf)|*.cdf|Specter data files (*.sdf)|*.sdf|Precise specter " +
+                "files (*.psf)|*.psf";
             // 
             // saveCommonDataFileDialog
             // 
@@ -502,22 +495,10 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
 
-        protected System.Windows.Forms.GroupBox params_groupBox;
-        protected System.Windows.Forms.Label label2;
-        protected System.Windows.Forms.Label label3;
-        protected System.Windows.Forms.Label label4;
-        protected System.Windows.Forms.Label label5;
-        protected System.Windows.Forms.Label label6;
-        protected System.Windows.Forms.Label label7;
-        protected System.Windows.Forms.Button ok_butt;
-        protected System.Windows.Forms.Button cancel_butt;
-        protected System.Windows.Forms.Label label33;
-        protected System.Windows.Forms.Label label32;
         protected System.Windows.Forms.NumericUpDown fV1NumericUpDown;
         protected System.Windows.Forms.NumericUpDown hCurrentNumericUpDown;
         protected System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
@@ -526,12 +507,13 @@ namespace Flavor.Forms
         protected System.Windows.Forms.NumericUpDown idleTimeNumericUpDown;
         protected System.Windows.Forms.NumericUpDown expTimeNumericUpDown;
         protected System.Windows.Forms.NumericUpDown fV2NumericUpDown;
-        protected System.Windows.Forms.Button applyButton;
-        protected System.Windows.Forms.CheckBox rareModeCheckBox;
-        protected System.Windows.Forms.Button saveFileButton;
-        protected System.Windows.Forms.Button loadFileButton;
         protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
+        protected System.Windows.Forms.Button cancel_butt;
+        protected System.Windows.Forms.Button applyButton;
+        protected System.Windows.Forms.Button ok_butt;
+        protected System.Windows.Forms.GroupBox params_groupBox;
         private System.Windows.Forms.CheckBox adjustSettingsCheckBox;
+        protected System.Windows.Forms.CheckBox rareModeCheckBox;
     }
 }

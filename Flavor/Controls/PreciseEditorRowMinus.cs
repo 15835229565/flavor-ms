@@ -25,7 +25,7 @@ namespace Flavor.Controls
         {
             get { return widthTextBox.Text; }
         }
-        protected bool stepAndColModifiable = false;
+        protected bool stepAndColModifiable = true;
         protected bool allFilled = false;
         internal bool AllFilled
         {
@@ -34,6 +34,9 @@ namespace Flavor.Controls
         public PreciseEditorRowMinus(): base()
         {
             InitializeComponent();
+
+            this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
+            this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
             this.widthTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
         }
         internal virtual bool checkTextBoxes()
@@ -41,8 +44,8 @@ namespace Flavor.Controls
             bool exitFlag = true;
             bool somethingFilled = (stepTextBox.Text != "") || (colTextBox.Text != "") || (widthTextBox.Text != "");
             this.allFilled = (stepTextBox.Text != "") && (colTextBox.Text != "") && (widthTextBox.Text != "");
-            stepTextBox.BackColor = System.Drawing.SystemColors.Control;
-            colTextBox.BackColor = System.Drawing.SystemColors.Control;
+            stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             if (somethingFilled && !this.allFilled)
             {
