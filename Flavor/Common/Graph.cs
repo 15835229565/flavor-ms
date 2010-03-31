@@ -371,6 +371,10 @@ namespace Flavor.Common
                 if (peakToAdd != value)
                 {
                     peakToAdd = value;
+                    if (OnPointAdded == null)
+                    {
+                        return;
+                    }
                     OnPointAdded(value != null);
                 }
             }

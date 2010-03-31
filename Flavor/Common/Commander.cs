@@ -253,14 +253,20 @@ namespace Flavor.Common
                         // error here
                         throw new Exception("No measure mode in operation.");
                     }
-                    measureMode.onUpdateCounts();
+                    if (!measureMode.onUpdateCounts())
+                    {
+                        // error (out of limits)
+                    }
                 }
                 if (Command is confirmF2Voltage)
                 {
                     if (Commander.pState == programStates.Measure)
                     {
                         toSend.IsRareMode = !notRareMode;
-                        measureMode.start();
+                        if (!measureMode.start())
+                        {
+                            // error (no points)
+                        }
                     }
                 }
             }

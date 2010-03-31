@@ -299,9 +299,10 @@ namespace Flavor.Common
             fillInnerText("/control/check", "iterations", iterations);
             _conf.Save(@confName);
         }
-        internal static void saveCheckOptions(int iter)
+        internal static void saveCheckOptions(int iter, Utility.PreciseEditorData peak)
         {
             Config.Iterations = iter;
+            reperPeak = peak;
             Config.saveCheckOptions();
         }
 

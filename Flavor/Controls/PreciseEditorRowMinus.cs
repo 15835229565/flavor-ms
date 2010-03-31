@@ -9,7 +9,7 @@ using Flavor.Common;
 
 namespace Flavor.Controls
 {
-    internal partial class PreciseEditorRowMinus: UserControl
+    public partial class PreciseEditorRowMinus: UserControl
     {
         internal string StepText
         {
@@ -31,41 +31,18 @@ namespace Flavor.Controls
         {
             get { return allFilled; }
         }
-        internal PreciseEditorRowMinus()
+        public PreciseEditorRowMinus(): base()
         {
             InitializeComponent();
-            if (stepAndColModifiable)
-            {
-                this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-                this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-                this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-                this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
-            }
-            else
-            {
-                this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
-                this.colTextBox.BackColor = System.Drawing.SystemColors.Control;
-            }
-
-            this.stepTextBox.ReadOnly = !stepAndColModifiable;
-            this.colTextBox.ReadOnly = !stepAndColModifiable;
-        }
-        protected virtual void Clear()
-        {
-            stepTextBox.Text = "";
-            colTextBox.Text = "";
-            widthTextBox.Text = "";
-            stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.widthTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
         }
         internal virtual bool checkTextBoxes()
         {
             bool exitFlag = true;
             bool somethingFilled = (stepTextBox.Text != "") || (colTextBox.Text != "") || (widthTextBox.Text != "");
             this.allFilled = (stepTextBox.Text != "") && (colTextBox.Text != "") && (widthTextBox.Text != "");
-            stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            stepTextBox.BackColor = System.Drawing.SystemColors.Control;
+            colTextBox.BackColor = System.Drawing.SystemColors.Control;
             widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
             if (somethingFilled && !this.allFilled)
             {

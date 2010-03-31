@@ -93,7 +93,7 @@ namespace Flavor.Controls
             this.Controls.Add(this.usePeakCheckBox);
             this.Controls.Add(this.clearPeakButton);
             this.Name = "PreciseEditorRowPlus";
-            this.Size = new System.Drawing.Size(367, 13);
+            this.Size = new System.Drawing.Size(382, 13);
             this.Controls.SetChildIndex(this.widthTextBox, 0);
             this.Controls.SetChildIndex(this.colTextBox, 0);
             this.Controls.SetChildIndex(this.stepTextBox, 0);

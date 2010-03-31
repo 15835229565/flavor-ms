@@ -145,23 +145,27 @@ namespace Flavor.Common.Measuring
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
         }
 
-        internal override void start()
+        internal override bool start()
         {
             if (noPoints)
             {
                 cancelScan();
-                return;
+                return false;
             }
-            init();
+            if (!init())
+            {
+                return false;
+            }
             onNextStep();
+            return true;
         }
-        protected void init()
+        protected bool init()
         {
             smpiSum = smpiSumMax;
             senseModePeak = 0;
             senseModePeakIteration = senseModePeakIterationMax.Clone() as ushort[];
             pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-            base.start();
+            return base.start();
         }
         internal override void updateGraph()
         {

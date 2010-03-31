@@ -296,14 +296,14 @@ namespace Flavor.Forms
 
         protected override void ok_butt_Click(object sender, EventArgs e)
         {
-            if (checkTextBoxes())
+            if (!checkTextBoxes())
             {
-                Config.SavePreciseOptions(data);
-                base.ok_butt_Click(sender, e);
+                return;
             }
+            saveData();
+            base.ok_butt_Click(sender, e);
         }
-
-        private bool checkTextBoxes()
+        protected virtual bool checkTextBoxes()
         {
             bool exitFlag = true;
             data = new List<Utility.PreciseEditorData>();
@@ -319,6 +319,10 @@ namespace Flavor.Forms
                                                                (float)0, PErows[i].CommentText));
             }
             return exitFlag;
+        }
+        protected virtual void saveData()
+        {
+            Config.SavePreciseOptions(data);
         }
         
         protected override void applyButton_Click(object sender, EventArgs e)
@@ -364,6 +368,7 @@ namespace Flavor.Forms
         void Graph_OnPointAdded(bool notNull)
         {
             insertPointButton.Enabled = notNull;
+            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }
 
         private void insertPointButton_Click(object sender, EventArgs e)
@@ -390,7 +395,6 @@ namespace Flavor.Forms
         }
         private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
             instance = null;
             upLevel.InvokeRefreshButtons();
         }

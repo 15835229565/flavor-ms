@@ -31,12 +31,16 @@ namespace Flavor.Common.Measuring
             return pointValue <= ePoint;
         }
         
-        internal override void start()
+        internal override bool start()
         {
-            base.start();
+            if (!base.start()) 
+            {
+                return false;
+            }
             //lock here
             pointValue = sPoint;
             onNextStep();
+            return true;
         }
         internal override void updateGraph() 
         {

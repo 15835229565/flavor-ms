@@ -1,3 +1,4 @@
+using Flavor.Controls;
 namespace Flavor.Forms
 {
     partial class MonitorOptionsForm
@@ -29,10 +30,12 @@ namespace Flavor.Forms
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.checkPeakInsertButton = new System.Windows.Forms.Button();
+            this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.label1 = new System.Windows.Forms.Label();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.preciseEditorRowMinus1 = new Flavor.Controls.PreciseEditorRowMinus();
-
             this.params_groupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
@@ -43,20 +46,58 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.preciseEditorRowMinus1);
+            this.groupBox2.Controls.Add(this.numericUpDown1);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.checkPeakInsertButton);
+            this.groupBox2.Controls.Add(this.checkPeakPreciseEditorRowMinus);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.iterationsNumericUpDown);
             this.groupBox2.Location = new System.Drawing.Point(12, 403);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(414, 44);
+            this.groupBox2.Size = new System.Drawing.Size(414, 70);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Параметры режима мониторинга";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(128, 40);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(60, 20);
+            this.numericUpDown1.TabIndex = 5;
+            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 42);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(106, 13);
+            this.label8.TabIndex = 4;
+            this.label8.Text = "Общее время (мин)";
+            // 
+            // checkPeakInsertButton
+            // 
+            this.checkPeakInsertButton.Location = new System.Drawing.Point(324, 11);
+            this.checkPeakInsertButton.Name = "checkPeakInsertButton";
+            this.checkPeakInsertButton.Size = new System.Drawing.Size(78, 49);
+            this.checkPeakInsertButton.TabIndex = 3;
+            this.checkPeakInsertButton.Text = "Вставка контрольного пика";
+            this.checkPeakInsertButton.UseVisualStyleBackColor = true;
+            this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
+            // 
+            // checkPeakPreciseEditorRowMinus
+            // 
+            this.checkPeakPreciseEditorRowMinus.Location = new System.Drawing.Point(194, 42);
+            this.checkPeakPreciseEditorRowMinus.Name = "checkPeakPreciseEditorRowMinus";
+            this.checkPeakPreciseEditorRowMinus.Size = new System.Drawing.Size(124, 13);
+            this.checkPeakPreciseEditorRowMinus.TabIndex = 2;
             // 
             // label1
             // 
@@ -75,17 +116,10 @@ namespace Flavor.Forms
             this.iterationsNumericUpDown.TabIndex = 0;
             this.iterationsNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // preciseEditorRowMinus1
-            // 
-            this.preciseEditorRowMinus1.Location = new System.Drawing.Point(278, 16);
-            this.preciseEditorRowMinus1.Name = "preciseEditorRowMinus1";
-            this.preciseEditorRowMinus1.Size = new System.Drawing.Size(124, 13);
-            this.preciseEditorRowMinus1.TabIndex = 2;
-            // 
             // MonitorOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(711, 454);
+            this.ClientSize = new System.Drawing.Size(711, 482);
             this.Controls.Add(this.groupBox2);
             this.Name = "MonitorOptionsForm";
             this.Text = "Настройки  режима мониторинга";
@@ -108,6 +142,7 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -119,6 +154,9 @@ namespace Flavor.Forms
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.NumericUpDown iterationsNumericUpDown;
         private System.Windows.Forms.Label label1;
-        private Flavor.Controls.PreciseEditorRowMinus preciseEditorRowMinus1;
+        private Flavor.Controls.PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
+        private System.Windows.Forms.Button checkPeakInsertButton;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Label label8;
     }
 }

@@ -31,7 +31,7 @@ namespace Flavor.Common.Measuring
             befTime = Config.CommonOptions.befTime;
             eTime = Config.CommonOptions.eTime;
         }
-        internal void onUpdateCounts() 
+        internal bool onUpdateCounts() 
         {
             customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
@@ -40,13 +40,14 @@ namespace Flavor.Common.Measuring
             {
                 stop();
                 onCancel();
-                return;
+                return true;
             }
             if (toContinue())
             {
                 if (!onNextStep())
                 {
                     // TODO: cannot perform step!
+                    return false;
                 }
             }
             else
@@ -54,17 +55,19 @@ namespace Flavor.Common.Measuring
                 onExit();
                 stop();
             }
+            return true;
         }
         abstract protected void saveData();
         abstract protected void onCancel();
         abstract protected void onExit();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
-        internal virtual void start()
+        internal virtual bool start()
         {
             //first measure point with increased idle time
             customMeasure = new sendMeasure(befTime, eTime);
             operating = true;
+            return true;
         }
         abstract internal void updateGraph();
         abstract internal void refreshGraphics(mainForm form);

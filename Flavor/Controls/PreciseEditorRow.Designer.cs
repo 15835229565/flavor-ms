@@ -72,13 +72,13 @@ namespace Flavor.Controls
             this.Controls.Add(this.precTextBox);
             this.Controls.Add(this.commentTextBox);
             this.Name = "PreciseEditorRow";
+            this.Size = new System.Drawing.Size(330, 13);
             this.Controls.SetChildIndex(this.commentTextBox, 0);
             this.Controls.SetChildIndex(this.precTextBox, 0);
             this.Controls.SetChildIndex(this.lapsTextBox, 0);
             this.Controls.SetChildIndex(this.widthTextBox, 0);
             this.Controls.SetChildIndex(this.colTextBox, 0);
             this.Controls.SetChildIndex(this.stepTextBox, 0);
-            this.Size = new System.Drawing.Size(330, 13);
             this.ResumeLayout(false);
             this.PerformLayout();
 

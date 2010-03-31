@@ -125,16 +125,14 @@ namespace Flavor.Forms
 
         protected override void ok_butt_Click(object sender, EventArgs e)
         {
-            if ((ushort)(startScanNumericUpDown.Value) <= (ushort)(endScanNumericUpDown.Value))
-            {
-                Config.saveScanOptions((ushort)(startScanNumericUpDown.Value), (ushort)(endScanNumericUpDown.Value));
-                base.ok_butt_Click(sender, e);
-            }
-            else 
+            if ((ushort)(startScanNumericUpDown.Value) > (ushort)(endScanNumericUpDown.Value))
             {
                 startScanNumericUpDown.BackColor = Color.Red;
                 endScanNumericUpDown.BackColor = Color.Red;
+                return;
             }
+            Config.saveScanOptions((ushort)(startScanNumericUpDown.Value), (ushort)(endScanNumericUpDown.Value));
+            base.ok_butt_Click(sender, e);
         }
 
         protected override void applyButton_Click(object sender, EventArgs e)

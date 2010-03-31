@@ -9,7 +9,7 @@ using Flavor.Common;
 
 namespace Flavor.Controls
 {
-    internal partial class PreciseEditorRow: Flavor.Controls.PreciseEditorRowMinus
+    public partial class PreciseEditorRow: PreciseEditorRowMinus
     {
         internal string LapsText
         {
@@ -23,19 +23,11 @@ namespace Flavor.Controls
         {
             get { return commentTextBox.Text; }
         }
-        internal PreciseEditorRow()
+        public PreciseEditorRow(): base()
         {
             InitializeComponent();
-        }
-        protected override void Clear()
-        {
-            base.Clear();
-            lapsTextBox.Text = "";
-            precTextBox.Text = "";
-            commentTextBox.Text = "";
-            lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.lapsTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
+            this.precTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
         }
         internal override bool checkTextBoxes()
         {

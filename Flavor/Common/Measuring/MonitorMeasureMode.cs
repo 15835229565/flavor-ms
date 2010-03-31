@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Forms;
+using System.Timers;
 
 namespace Flavor.Common.Measuring
 {
@@ -10,9 +11,24 @@ namespace Flavor.Common.Measuring
         internal class MeasureStopper
         {
             private int counter;
-            internal MeasureStopper(int counterLimit)
+            private Timer timer;
+            private bool timerElapsed = false;
+            internal MeasureStopper(int counterLimit, int timeLimit)
             {
                 counter = counterLimit;
+                if (timeLimit > 0)
+                {
+                    timer = new Timer();
+                    // time in minutes
+                    timer.Interval = timeLimit * 60000;
+                    timer.AutoReset = false;
+                    timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+                }
+            }
+
+            void timer_Elapsed(object sender, ElapsedEventArgs e)
+            {
+                timerElapsed = true;
             }
             internal void next()
             {
@@ -25,12 +41,21 @@ namespace Flavor.Common.Measuring
             }
             internal bool ready()
             {
-                return counter == 0;
+                return timerElapsed || counter == 0;
             }
             internal int estimatedTurns()
             {
                 // estimated operation duration
                 return counter;
+            }
+
+            internal void startTimer()
+            {
+                if (timer == null)
+                {
+                    return;
+                }
+                timer.Start();
             }
         }
 
@@ -40,7 +65,7 @@ namespace Flavor.Common.Measuring
         internal MonitorMeasureMode(short initialShift): base(Config.PreciseDataWithChecker)
         {
             shift = initialShift;
-            stopper = new MeasureStopper(Config.Iterations);
+            stopper = new MeasureStopper(Config.Iterations, 0);
             peak = Config.CheckerPeak;
         }
         protected override bool toContinue()
@@ -98,6 +123,15 @@ namespace Flavor.Common.Measuring
             {
                 return false;
             }
+            return true;
+        }
+        internal override bool start()
+        {
+            if (!base.start())
+            {
+                return false;
+            }
+            stopper.startTimer();
             return true;
         }
         internal override void refreshGraphics(mainForm form)

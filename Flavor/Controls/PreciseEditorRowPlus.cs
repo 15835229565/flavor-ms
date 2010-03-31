@@ -9,7 +9,7 @@ using Flavor.Common;
 
 namespace Flavor.Controls
 {
-    internal partial class PreciseEditorRowPlus : Flavor.Controls.PreciseEditorRow
+    public partial class PreciseEditorRowPlus: PreciseEditorRow
     {
         internal string PeakNumber
         {
@@ -20,26 +20,42 @@ namespace Flavor.Controls
             get { return usePeakCheckBox.Checked; }
         }
         private static ToolTip clearRowToolTip = new ToolTip();
-        internal PreciseEditorRowPlus(): base()
+        public PreciseEditorRowPlus(): base()
         {
             InitializeComponent();
 
             this.stepAndColModifiable = true;
-            this.stepTextBox.ReadOnly = !stepAndColModifiable;
-            this.colTextBox.ReadOnly = !stepAndColModifiable;
-            if (stepAndColModifiable)
-                this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            else
-                this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
-            if (stepAndColModifiable)
-                this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            else
-                this.colTextBox.BackColor = System.Drawing.SystemColors.Control;
 
+            this.SuspendLayout();
+
+            this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
+            this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
+
+            this.stepTextBox.ReadOnly = false;
+            this.colTextBox.ReadOnly = false;
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
-        internal new void Clear()
+        internal void Clear()
         {
-            base.Clear();
+            stepTextBox.Text = "";
+            colTextBox.Text = "";
+            stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+
+            widthTextBox.Text = "";
+            widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+
+            lapsTextBox.Text = "";
+            precTextBox.Text = "";
+            commentTextBox.Text = "";
+            lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+
             usePeakCheckBox.Checked = false;
         }
         private void clearPeakButton_MouseHover(object sender, EventArgs e)
