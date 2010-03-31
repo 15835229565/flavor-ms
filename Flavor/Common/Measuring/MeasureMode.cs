@@ -47,6 +47,7 @@ namespace Flavor.Common.Measuring
                 if (!onNextStep())
                 {
                     // TODO: cannot perform step!
+                    cancelScan();
                     return false;
                 }
             }
