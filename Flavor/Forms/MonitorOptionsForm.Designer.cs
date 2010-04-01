@@ -9,14 +9,15 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.GroupBox groupBox2;
+            Flavor.Controls.PreciseEditorLabelRowMinus preciseEditorLabelRowMinus1;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.preciseEditorLabelRowMinus1 = new Flavor.Controls.PreciseEditorLabelRowMinus();
             groupBox2 = new System.Windows.Forms.GroupBox();
+            preciseEditorLabelRowMinus1 = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
@@ -43,7 +44,7 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(this.preciseEditorLabelRowMinus1);
+            groupBox2.Controls.Add(preciseEditorLabelRowMinus1);
             groupBox2.Controls.Add(this.numericUpDown1);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(this.checkPeakInsertButton);
@@ -56,6 +57,13 @@ namespace Flavor.Forms {
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Параметры режима мониторинга";
+            // 
+            // preciseEditorLabelRowMinus1
+            // 
+            preciseEditorLabelRowMinus1.Location = new System.Drawing.Point(194, 14);
+            preciseEditorLabelRowMinus1.Name = "preciseEditorLabelRowMinus1";
+            preciseEditorLabelRowMinus1.Size = new System.Drawing.Size(124, 26);
+            preciseEditorLabelRowMinus1.TabIndex = 6;
             // 
             // numericUpDown1
             // 
@@ -108,13 +116,6 @@ namespace Flavor.Forms {
             this.iterationsNumericUpDown.TabIndex = 0;
             this.iterationsNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // preciseEditorLabelRowMinus1
-            // 
-            this.preciseEditorLabelRowMinus1.Location = new System.Drawing.Point(194, 14);
-            this.preciseEditorLabelRowMinus1.Name = "preciseEditorLabelRowMinus1";
-            this.preciseEditorLabelRowMinus1.Size = new System.Drawing.Size(124, 26);
-            this.preciseEditorLabelRowMinus1.TabIndex = 6;
-            // 
             // MonitorOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -154,6 +155,5 @@ namespace Flavor.Forms {
         private Flavor.Controls.PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
         private System.Windows.Forms.Button checkPeakInsertButton;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private PreciseEditorLabelRowMinus preciseEditorLabelRowMinus1;
     }
 }
