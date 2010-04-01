@@ -17,6 +17,7 @@ namespace Flavor.Controls {
             // stepTextBox
             // 
             this.stepTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.stepTextBox.Enabled = false;
             this.stepTextBox.ReadOnly = true;
             // 
             // colTextBox

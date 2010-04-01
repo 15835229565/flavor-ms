@@ -49,6 +49,7 @@ namespace Flavor.Common.Measuring {
 
         private MeasureStopper stopper;
         private Utility.PreciseEditorData peak;
+        private bool spectrumIsValid = true;
 
         internal MonitorMeasureMode(short initialShift)
             : base(Config.PreciseDataWithChecker) {
@@ -56,11 +57,18 @@ namespace Flavor.Common.Measuring {
             stopper = new MeasureStopper(Config.Iterations, 0);
             peak = Config.CheckerPeak;
         }
+        protected override void onExit() {
+            if (spectrumIsValid) {
+                base.onExit();
+            } else {
+                base.onCancel();
+            }
+        }
         protected override bool toContinue() {
             if (base.toContinue()) {
                 return true;
             }
-            if (isSpectrumValid()) {
+            if (spectrumIsValid) {
                 stopper.next();
             }
             if (stopper.ready()) {
@@ -70,15 +78,16 @@ namespace Flavor.Common.Measuring {
             init();
             return true;
         }
-        private bool isSpectrumValid() {
-            if (peak == null) {
+        protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+            if (!curPeak.Equals(peak)) {
+                // do not store value here!
                 return true;
             }
             long[] counts = peakCounts(isCheckPeak);
             ushort width = peak.Width;
             if (counts.Length != 2 * width + 1) {
                 // data mismatch
-                return false;
+                return spectrumIsValid = false;
             }
             long max = -1;
             int index = -1;
@@ -89,11 +98,14 @@ namespace Flavor.Common.Measuring {
                     index = i;
                 }
             }
+            
+            counts.Initialize(); //!!!
+
             if (index != width) {
                 shift += (short)(index - width);
-                return false;
+                return spectrumIsValid = false;
             }
-            return true;
+            return spectrumIsValid = true;
         }
         private bool isCheckPeak(Utility.PreciseEditorData ped) {
             // only in this situation (checkpeak marked with false use)

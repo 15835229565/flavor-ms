@@ -32,9 +32,11 @@ namespace Flavor.Forms {
         protected override void saveData() {
             base.saveData();
             Config.saveCheckOptions((int)iterationsNumericUpDown.Value,
+                                    checkPeakPreciseEditorRowMinus.AllFilled?
                                     new Utility.PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
-                                                                  Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"));
+                                                                  Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
+                                    null);
         }
 
         private void MonitorOptionsForm_FormClosed(object sender, FormClosedEventArgs e) {

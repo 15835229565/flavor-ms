@@ -53,11 +53,12 @@ namespace Flavor.Common.Measuring {
             }
         }
         protected override void onCancel() {
-            finishMeasure();
+            //finishMeasure();
         }
         protected override void onExit() {
             // order is important here: points are saved from graph..
-            finishMeasure();
+            //finishMeasure();
+            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
             Config.AutoSavePreciseSpecterFile();
         }
         protected long[] peakCounts(Utility.PreciseEditorData peak) {
@@ -84,7 +85,12 @@ namespace Flavor.Common.Measuring {
             return true;
         }
         protected override bool toContinue() {
-            if ((pointValue > (senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width))) {
+            Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
+            if ((pointValue > (peak.Step + peak.Width))) {
+                if (!isSpectrumValid(peak)) {
+                    // check spectrum validity after any iteration over checker peak
+                    return false;
+                }
                 // modify pointValue in case of finished iteration
                 --(senseModePeakIteration[senseModePeak]);
                 --smpiSum;
@@ -114,8 +120,11 @@ namespace Flavor.Common.Measuring {
             }
             return true;
         }
-        private void finishMeasure() {
+        /*private void finishMeasure() {
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
+        }*/
+        protected virtual bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+            return true;
         }
 
         internal override bool start() {
