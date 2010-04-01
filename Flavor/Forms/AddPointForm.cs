@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,13 +6,11 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Flavor.Common;
-using Flavor.Controls;
 
 namespace Flavor.Forms
 {
     partial class AddPointForm: Form
     {
-        protected PreciseEditorRow oneRow;
         protected Utility.PreciseEditorLabelRow oneLabelRow;
 
         internal AddPointForm(): base()
@@ -21,10 +19,6 @@ namespace Flavor.Forms
 
             this.oneLabelRow = new Utility.PreciseEditorLabelRow(12, 8);
             this.Controls.AddRange(oneLabelRow.getControls());
-
-            this.oneRow = new PreciseEditorRow();
-            this.oneRow.Location = new Point(13, 42);
-            this.Controls.Add(oneRow);
         }
         internal AddPointForm(ushort step, byte col): this()
         {

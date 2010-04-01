@@ -1,25 +1,7 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class ClosureDialog
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -43,7 +25,7 @@ namespace Flavor.Forms
             okButton.Name = "okButton";
             okButton.Size = new System.Drawing.Size(75, 23);
             okButton.TabIndex = 0;
-            okButton.Text = "Отключить!";
+            okButton.Text = "РћС‚РєР»СЋС‡РёС‚СЊ!";
             okButton.UseVisualStyleBackColor = true;
             // 
             // cancelButton
@@ -53,7 +35,7 @@ namespace Flavor.Forms
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new System.Drawing.Size(75, 23);
             cancelButton.TabIndex = 1;
-            cancelButton.Text = "Дождаться";
+            cancelButton.Text = "Р”РѕР¶РґР°С‚СЊСЃСЏ";
             cancelButton.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -63,8 +45,8 @@ namespace Flavor.Forms
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(282, 26);
             label1.TabIndex = 2;
-            label1.Text = "Следует дождаться отключения системы.\nОтключить программу несмотря на предупрежде" +
-                "ние?";
+            label1.Text = "РЎР»РµРґСѓРµС‚ РґРѕР¶РґР°С‚СЊСЃСЏ РѕС‚РєР»СЋС‡РµРЅРёСЏ СЃРёСЃС‚РµРјС‹.\nРћС‚РєР»СЋС‡РёС‚СЊ РїСЂРѕРіСЂР°РјРјСѓ РЅРµСЃРјРѕС‚СЂСЏ РЅР° РїСЂРµРґСѓРїСЂРµР¶РґРµ" +
+                "РЅРёРµ?";
             // 
             // ClosureDialog
             // 
@@ -82,7 +64,7 @@ namespace Flavor.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Предупреждение об отключении";
+            this.Text = "РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ РѕР± РѕС‚РєР»СЋС‡РµРЅРёРё";
             this.ResumeLayout(false);
             this.PerformLayout();
 

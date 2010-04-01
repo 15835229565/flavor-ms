@@ -1,4 +1,4 @@
-using Flavor.Common;
+п»їusing Flavor.Common;
 namespace Flavor.Forms
 {
     partial class PreciseOptionsForm
@@ -70,7 +70,7 @@ namespace Flavor.Forms
             this.preciseEditorGroupBox.Size = new System.Drawing.Size(414, 385);
             this.preciseEditorGroupBox.TabIndex = 3;
             this.preciseEditorGroupBox.TabStop = false;
-            this.preciseEditorGroupBox.Text = "Редактор областей сканирования";
+            this.preciseEditorGroupBox.Text = "Р РµРґР°РєС‚РѕСЂ РѕР±Р»Р°СЃС‚РµР№ СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ";
             // 
             // insertPointButton
             // 
@@ -78,7 +78,7 @@ namespace Flavor.Forms
             this.insertPointButton.Name = "insertPointButton";
             this.insertPointButton.Size = new System.Drawing.Size(90, 23);
             this.insertPointButton.TabIndex = 0;
-            this.insertPointButton.Text = "Вставка точки";
+            this.insertPointButton.Text = "Р’СЃС‚Р°РІРєР° С‚РѕС‡РєРё";
             this.insertPointButton.UseVisualStyleBackColor = true;
             this.insertPointButton.Click += new System.EventHandler(this.insertPointButton_Click);
             // 
@@ -88,7 +88,7 @@ namespace Flavor.Forms
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(62, 23);
             this.clearButton.TabIndex = 12;
-            this.clearButton.Text = "Очистить";
+            this.clearButton.Text = "РћС‡РёСЃС‚РёС‚СЊ";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
@@ -98,7 +98,7 @@ namespace Flavor.Forms
             this.loadPreciseEditorFromFileButton.Name = "loadPreciseEditorFromFileButton";
             this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(120, 23);
             this.loadPreciseEditorFromFileButton.TabIndex = 11;
-            this.loadPreciseEditorFromFileButton.Text = "Загрузить из файла";
+            this.loadPreciseEditorFromFileButton.Text = "Р—Р°РіСЂСѓР·РёС‚СЊ РёР· С„Р°Р№Р»Р°";
             this.loadPreciseEditorFromFileButton.UseVisualStyleBackColor = true;
             this.loadPreciseEditorFromFileButton.Click += new System.EventHandler(this.loadPreciseEditorFromFileButton_Click);
             // 
@@ -108,7 +108,7 @@ namespace Flavor.Forms
             this.savePreciseEditorToFileButton.Name = "savePreciseEditorToFileButton";
             this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(106, 23);
             this.savePreciseEditorToFileButton.TabIndex = 10;
-            this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
+            this.savePreciseEditorToFileButton.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ РІ С„Р°Р№Р»";
             this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
             this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
             // 
@@ -131,7 +131,7 @@ namespace Flavor.Forms
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Настройки точного режима";
+            this.Text = "РќР°СЃС‚СЂРѕР№РєРё С‚РѕС‡РЅРѕРіРѕ СЂРµР¶РёРјР°";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PreciseOptionsForm_FormClosed);
             this.Controls.SetChildIndex(this.preciseEditorGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);

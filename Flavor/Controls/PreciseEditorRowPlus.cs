@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -45,7 +45,7 @@ namespace Flavor.Controls
         }
         private void clearPeakButton_MouseHover(object sender, EventArgs e)
         {
-            PreciseEditorRowPlus.clearRowToolTip.Show("Очистить строку", (IWin32Window)sender);
+            PreciseEditorRowPlus.clearRowToolTip.Show("РћС‡РёСЃС‚РёС‚СЊ СЃС‚СЂРѕРєСѓ", (IWin32Window)sender);
         }
         private void clearPeakButton_Click(object sender, EventArgs e)
         {

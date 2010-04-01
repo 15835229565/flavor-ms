@@ -2,24 +2,6 @@
 {
     partial class AddPointForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -30,6 +12,7 @@
         {
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.oneRow = new Flavor.Controls.PreciseEditorRow();
             this.SuspendLayout();
             // 
             // okButton
@@ -52,6 +35,8 @@
             this.cancelButton.Text = "Отмена";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+
+            this.oneRow.Location = new System.Drawing.Point(13, 42);
             // 
             // AddPointForm
             // 
@@ -62,6 +47,7 @@
             this.ClientSize = new System.Drawing.Size(354, 99);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
+            this.Controls.Add(oneRow);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "AddPointForm";
@@ -70,12 +56,12 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Добавление точки";
             this.ResumeLayout(false);
-
         }
 
         #endregion
 
         protected System.Windows.Forms.Button okButton;
         protected System.Windows.Forms.Button cancelButton;
+        protected Flavor.Controls.PreciseEditorRow oneRow;
     }
 }

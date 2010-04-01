@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -160,7 +160,7 @@ namespace Flavor.Common
             }
             catch (Exception Error)
             {
-                throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
+                throw new ConfigLoadException(Error.Message, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°", confName);
             }
             try
             {
@@ -170,7 +170,7 @@ namespace Flavor.Common
             }
             catch (NullReferenceException)
             {
-                (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                (new ConfigLoadException("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°", confName)).visualise();
                 //use hard-coded defaults
             }
             try
@@ -180,7 +180,7 @@ namespace Flavor.Common
             }
             catch (NullReferenceException)
             {
-                (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                (new ConfigLoadException("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°", confName)).visualise();
                 //use hard-coded defaults
             }
             try
@@ -386,7 +386,7 @@ namespace Flavor.Common
             }
             catch (Exception Error)
             {
-                throw new ConfigLoadException(Error.Message, "Ошибка чтения файла спектра", filename);
+                throw new ConfigLoadException(Error.Message, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° СЃРїРµРєС‚СЂР°", filename);
             }
             string prefix = "";
             if (sf.SelectSingleNode("control/overview") != null)
@@ -400,7 +400,7 @@ namespace Flavor.Common
             }
             else
             {
-                throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                throw new ConfigLoadException("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ С„Р°Р№Р»Р°", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° СЃРїРµРєС‚СЂР°", filename);
             }
             if (headerNode != null && headerNode.InnerText == "Diff")
                 spectrumType = Graph.Displaying.Diff;
@@ -424,7 +424,7 @@ namespace Flavor.Common
             }
             catch (NullReferenceException)
             {
-                throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                throw new ConfigLoadException("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ С„Р°Р№Р»Р°", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° СЃРїРµРєС‚СЂР°", filename);
             }
             //the whole logic of displaying spertra must be modified
             //!!!!!!!!!!!!!!!!!!!!!!!!
@@ -531,7 +531,7 @@ namespace Flavor.Common
                     }
                     catch (System.ArgumentException)
                     {
-                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
+                        throw new ConfigLoadException("РќРµСЃРѕРІРїР°РґРµРЅРёРµ СЂСЏРґРѕРІ РґР°РЅРЅС‹С…", "РћС€РёР±РєР° РїСЂРё РІС‹С‡РёС‚Р°РЅРёРё СЃРїРµРєС‚СЂРѕРІ", what);
                     }
                 }
             }
@@ -571,7 +571,7 @@ namespace Flavor.Common
                     }
                     catch (System.ArgumentException)
                     {
-                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
+                        throw new ConfigLoadException("РќРµСЃРѕРІРїР°РґРµРЅРёРµ СЂСЏРґРѕРІ РґР°РЅРЅС‹С…", "РћС€РёР±РєР° РїСЂРё РІС‹С‡РёС‚Р°РЅРёРё СЃРїРµРєС‚СЂРѕРІ", what);
                     }
                 }
                 else
@@ -686,13 +686,13 @@ namespace Flavor.Common
             }
             catch (Exception Error)
             {
-                throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионного спектра", filename);
+                throw new ConfigLoadException(Error.Message, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅРѕРіРѕ СЃРїРµРєС‚СЂР°", filename);
             }
             if (sf.SelectSingleNode("control/sense") != null)
                 prefix = mainConfigPrefix;
             else if (sf.SelectSingleNode("sense") == null)
             {
-                throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
+                throw new ConfigLoadException("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ С„Р°Р№Р»Р°", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅРѕРіРѕ СЃРїРµРєС‚СЂР°", filename);
             }
 
             CommonOptions co = null;
@@ -824,7 +824,7 @@ namespace Flavor.Common
                 }
                 catch (Exception Error)
                 {
-                    throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионных точек", pedConfName);
+                    throw new ConfigLoadException(Error.Message, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅС‹С… С‚РѕС‡РµРє", pedConfName);
                 }
                 if (pedConf.SelectSingleNode("control/sense") != null)
                     mainConfPrefix = mainConfigPrefix;
@@ -892,7 +892,7 @@ namespace Flavor.Common
                         catch (FormatException)
                         {
                             if (readSpectrum)
-                                throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", pedConfName);
+                                throw new ConfigLoadException("РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ РґР°РЅРЅС‹С…", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅРѕРіРѕ СЃРїРµРєС‚СЂР°", pedConfName);
                             else
                                 throw new wrongFormatOnLoadPrecise(pedConfName);
                         }
@@ -912,7 +912,7 @@ namespace Flavor.Common
                             }
                             catch (FormatException)
                             {
-                                throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", pedConfName);
+                                throw new ConfigLoadException("РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ РґР°РЅРЅС‹С…", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅРѕРіРѕ СЃРїРµРєС‚СЂР°", pedConfName);
                             }
                             temp.AssociatedPoints = tempPntLst;
                         }
@@ -921,7 +921,7 @@ namespace Flavor.Common
                 catch (NullReferenceException)
                 {
                     if (readSpectrum)
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", pedConfName);
+                        throw new ConfigLoadException("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ С„Р°Р№Р»Р°", "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅРѕРіРѕ СЃРїРµРєС‚СЂР°", pedConfName);
                     else
                         throw new structureErrorOnLoadPrecise(pedConfName);
                 }
@@ -996,7 +996,7 @@ namespace Flavor.Common
                 }
                 catch (Exception Error)
                 {
-                    throw new ConfigLoadException(Error.Message, "Ошибка чтения файла общих настроек", filename);
+                    throw new ConfigLoadException(Error.Message, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РѕР±С‰РёС… РЅР°СЃС‚СЂРѕРµРє", filename);
                 }
             }
         }
@@ -1094,33 +1094,33 @@ namespace Flavor.Common
                 if (!(this.Data["CN"].Equals(confName)))
                     System.Windows.Forms.MessageBox.Show(this.Message, this.Data["FS"] as string);
                 else
-                    System.Windows.Forms.MessageBox.Show(this.Message, "Ошибка чтения конфигурационного файла");
+                    System.Windows.Forms.MessageBox.Show(this.Message, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРЅРѕРіРѕ С„Р°Р№Р»Р°");
             }
         }
         private class wrongFormatOnLoadPrecise : wrongFormatOnLoad
         {
             internal wrongFormatOnLoadPrecise(string configName)
-                : base (configName, "Ошибка чтения файла прецизионных точек") { }
+                : base (configName, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅС‹С… С‚РѕС‡РµРє") { }
         }
         private class wrongFormatOnLoad : ConfigLoadException
         {
             internal wrongFormatOnLoad(string configName, string errorFile)
-                : base("Неверный формат данных", errorFile, configName) { }
+                : base("РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ РґР°РЅРЅС‹С…", errorFile, configName) { }
         }
         private class structureErrorOnLoad : ConfigLoadException
         {
             internal structureErrorOnLoad(string configName, string errorFile)
-                : base("Ошибка структуры файла", errorFile, configName) { }
+                : base("РћС€РёР±РєР° СЃС‚СЂСѓРєС‚СѓСЂС‹ С„Р°Р№Р»Р°", errorFile, configName) { }
         }
         private class structureErrorOnLoadCommonData : structureErrorOnLoad
         {
             internal structureErrorOnLoadCommonData(string configName)
-                : base(configName, "Ошибка чтения файла общих настроек") { }
+                : base(configName, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РѕР±С‰РёС… РЅР°СЃС‚СЂРѕРµРє") { }
         }
         private class structureErrorOnLoadPrecise : structureErrorOnLoad
         {
             internal structureErrorOnLoadPrecise(string configName)
-                : base(configName, "Ошибка чтения файла прецизионных точек") { }
+                : base(configName, "РћС€РёР±РєР° С‡С‚РµРЅРёСЏ С„Р°Р№Р»Р° РїСЂРµС†РёР·РёРѕРЅРЅС‹С… С‚РѕС‡РµРє") { }
         }
         #endregion
         #region Graph scaling to mass coeffs
@@ -1191,7 +1191,7 @@ namespace Flavor.Common
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show(e.Message, "Ошибка при открытии файла отказов");
+                System.Windows.Forms.MessageBox.Show(e.Message, "РћС€РёР±РєР° РїСЂРё РѕС‚РєСЂС‹С‚РёРё С„Р°Р№Р»Р° РѕС‚РєР°Р·РѕРІ");
                 return null;
             }
         }

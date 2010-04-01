@@ -1,25 +1,7 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class DelaysOptionsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -54,7 +36,7 @@ namespace Flavor.Forms
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(162, 13);
             label2.TabIndex = 7;
-            label2.Text = "Перед циклом измерений (мс)";
+            label2.Text = "РџРµСЂРµРґ С†РёРєР»РѕРј РёР·РјРµСЂРµРЅРёР№ (РјСЃ)";
             // 
             // beforeTimeNumericUpDown
             // 
@@ -91,7 +73,7 @@ namespace Flavor.Forms
             this.forwardAsBeforeCheckBox.Name = "forwardAsBeforeCheckBox";
             this.forwardAsBeforeCheckBox.Size = new System.Drawing.Size(224, 17);
             this.forwardAsBeforeCheckBox.TabIndex = 28;
-            this.forwardAsBeforeCheckBox.Text = "Одинаково с задержкой перед циклом";
+            this.forwardAsBeforeCheckBox.Text = "РћРґРёРЅР°РєРѕРІРѕ СЃ Р·Р°РґРµСЂР¶РєРѕР№ РїРµСЂРµРґ С†РёРєР»РѕРј";
             this.forwardAsBeforeCheckBox.UseVisualStyleBackColor = true;
             this.forwardAsBeforeCheckBox.CheckedChanged += new System.EventHandler(this.forwardAsBeforeCheckBox_CheckedChanged);
             // 
@@ -102,7 +84,7 @@ namespace Flavor.Forms
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(192, 13);
             label1.TabIndex = 29;
-            label1.Text = "При скачке напряжения вперед (мс)";
+            label1.Text = "РџСЂРё СЃРєР°С‡РєРµ РЅР°РїСЂСЏР¶РµРЅРёСЏ РІРїРµСЂРµРґ (РјСЃ)";
             // 
             // label3
             // 
@@ -111,7 +93,7 @@ namespace Flavor.Forms
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(186, 13);
             label3.TabIndex = 30;
-            label3.Text = "При скачке напряжения назад (мс)";
+            label3.Text = "РџСЂРё СЃРєР°С‡РєРµ РЅР°РїСЂСЏР¶РµРЅРёСЏ РЅР°Р·Р°Рґ (РјСЃ)";
             // 
             // forwardTimeNumericUpDown
             // 
@@ -175,7 +157,7 @@ namespace Flavor.Forms
             ok_butt.Name = "ok_butt";
             ok_butt.Size = new System.Drawing.Size(72, 23);
             ok_butt.TabIndex = 33;
-            ok_butt.Text = "Сохранить";
+            ok_butt.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ";
             ok_butt.UseVisualStyleBackColor = true;
             ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
             // 
@@ -186,7 +168,7 @@ namespace Flavor.Forms
             cancel_butt.Name = "cancel_butt";
             cancel_butt.Size = new System.Drawing.Size(54, 23);
             cancel_butt.TabIndex = 34;
-            cancel_butt.Text = "Отмена";
+            cancel_butt.Text = "РћС‚РјРµРЅР°";
             cancel_butt.UseVisualStyleBackColor = true;
             cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
@@ -211,7 +193,7 @@ namespace Flavor.Forms
             this.MinimizeBox = false;
             this.Name = "DelaysOptionsForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Установка задержек";
+            this.Text = "РЈСЃС‚Р°РЅРѕРІРєР° Р·Р°РґРµСЂР¶РµРє";
             ((System.ComponentModel.ISupportInitialize)(this.beforeTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.forwardTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.backwardTimeNumericUpDown)).EndInit();

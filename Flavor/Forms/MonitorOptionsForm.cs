@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -69,7 +69,7 @@ namespace Flavor.Forms
             }
             else
             {
-                MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
+                MessageBox.Show("Р’С‹Р±РµСЂРёС‚Рµ СЃРЅР°С‡Р°Р»Р° С‚РѕС‡РєСѓ РЅР° РіСЂР°С„РёРєРµ СЃРїРµРєС‚СЂР°", "РћС€РёР±РєР°");
             }
         }
     }

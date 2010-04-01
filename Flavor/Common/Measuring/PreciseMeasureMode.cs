@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
@@ -112,7 +112,7 @@ namespace Flavor.Common.Measuring
                     // all data acquired
                     return false;
                 }
-                for (int i = 0; i < senseModePoints.Count; ++i)//Ïîèñê ïèêà ñ îñòàâøåéñÿ íåíóëåâîé èòåðàöèåé. Íî íå áîëåå 1 öèêëà.
+                for (int i = 0; i < senseModePoints.Count; ++i)//ÐŸÐ¾Ð¸ÑÐº Ð¿Ð¸ÐºÐ° Ñ Ð¾ÑÑ‚Ð°Ð²ÑˆÐµÐ¹ÑÑ Ð½ÐµÐ½ÑƒÐ»ÐµÐ²Ð¾Ð¹ Ð¸Ñ‚ÐµÑ€Ð°Ñ†Ð¸ÐµÐ¹. ÐÐ¾ Ð½Ðµ Ð±Ð¾Ð»ÐµÐµ 1 Ñ†Ð¸ÐºÐ»Ð°.
                 {
                     ++senseModePeak;
                     if (senseModePeak >= senseModePoints.Count) senseModePeak = 0;

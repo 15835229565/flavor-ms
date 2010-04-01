@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,7 +15,7 @@ namespace Flavor.Forms
         internal ScanOptionsForm(): base()
         {
             InitializeComponent();
-            this.scan_groupBox.Text = string.Format("Интервал сканирования ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
+            this.scan_groupBox.Text = string.Format("РРЅС‚РµСЂРІР°Р» СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
             this.endScanNumericUpDown.Minimum = new decimal(new int[] { Config.MIN_STEP, 0, 0, 0 });
             this.endScanNumericUpDown.Maximum = new decimal(new int[] { Config.MAX_STEP, 0, 0, 0 });
             this.startScanNumericUpDown.Minimum = new decimal(new int[] { Config.MIN_STEP, 0, 0, 0 });

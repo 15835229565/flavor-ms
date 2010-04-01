@@ -1,4 +1,4 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class mainForm
     {
@@ -154,7 +154,7 @@ namespace Flavor.Forms
             this.initSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.initSys_butt.Name = "initSys_butt";
             this.initSys_butt.Size = new System.Drawing.Size(101, 22);
-            this.initSys_butt.Text = "Запуск системы";
+            this.initSys_butt.Text = "Р—Р°РїСѓСЃРє СЃРёСЃС‚РµРјС‹";
             this.initSys_butt.Click += new System.EventHandler(this.initSys_butt_Click);
             // 
             // menuStrip
@@ -177,13 +177,13 @@ namespace Flavor.Forms
             fileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
             fileMenu.Name = "fileMenu";
             fileMenu.Size = new System.Drawing.Size(61, 20);
-            fileMenu.Text = "&Главное";
+            fileMenu.Text = "&Р“Р»Р°РІРЅРѕРµ";
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            exitToolStripMenuItem.Text = "В&ыход";
+            exitToolStripMenuItem.Text = "Р’&С‹С…РѕРґ";
             exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // viewMenu
@@ -196,7 +196,7 @@ namespace Flavor.Forms
             this.measurePanelToolStripMenuItem});
             viewMenu.Name = "viewMenu";
             viewMenu.Size = new System.Drawing.Size(38, 20);
-            viewMenu.Text = "&Вид";
+            viewMenu.Text = "&Р’РёРґ";
             // 
             // toolBarToolStripMenuItem
             // 
@@ -205,7 +205,7 @@ namespace Flavor.Forms
             this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
             this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.toolBarToolStripMenuItem.Text = "Панель &управления прибором";
+            this.toolBarToolStripMenuItem.Text = "РџР°РЅРµР»СЊ &СѓРїСЂР°РІР»РµРЅРёСЏ РїСЂРёР±РѕСЂРѕРј";
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.ToolBarToolStripMenuItem_Click);
             // 
             // ParameterToolStripMenuItem
@@ -215,7 +215,7 @@ namespace Flavor.Forms
             this.ParameterToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ParameterToolStripMenuItem.Name = "ParameterToolStripMenuItem";
             this.ParameterToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.ParameterToolStripMenuItem.Text = "&Параметры системы";
+            this.ParameterToolStripMenuItem.Text = "&РџР°СЂР°РјРµС‚СЂС‹ СЃРёСЃС‚РµРјС‹";
             this.ParameterToolStripMenuItem.Click += new System.EventHandler(this.ParameterToolStripMenuItem_Click);
             // 
             // statusBarToolStripMenuItem
@@ -225,7 +225,7 @@ namespace Flavor.Forms
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
             this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.statusBarToolStripMenuItem.Text = "Строка &состояния";
+            this.statusBarToolStripMenuItem.Text = "РЎС‚СЂРѕРєР° &СЃРѕСЃС‚РѕСЏРЅРёСЏ";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
             // 
             // GraphWindowToolStripMenuItem
@@ -235,7 +235,7 @@ namespace Flavor.Forms
             this.GraphWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
             this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
+            this.GraphWindowToolStripMenuItem.Text = "&РљРѕР»Р»РµРєС‚РѕСЂС‹";
             this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
             // 
             // measurePanelToolStripMenuItem
@@ -244,7 +244,7 @@ namespace Flavor.Forms
             this.measurePanelToolStripMenuItem.Enabled = false;
             this.measurePanelToolStripMenuItem.Name = "measurePanelToolStripMenuItem";
             this.measurePanelToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.measurePanelToolStripMenuItem.Text = "Панель режима";
+            this.measurePanelToolStripMenuItem.Text = "РџР°РЅРµР»СЊ СЂРµР¶РёРјР°";
             this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
             // 
             // optionsToolStripMenuItem
@@ -258,20 +258,20 @@ namespace Flavor.Forms
             this.measureToolStripMenuItem});
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
-            optionsToolStripMenuItem.Text = "&Настройки";
+            optionsToolStripMenuItem.Text = "&РќР°СЃС‚СЂРѕР№РєРё";
             // 
             // openConfigFileToolStripMenuItem
             // 
             openConfigFileToolStripMenuItem.Name = "openConfigFileToolStripMenuItem";
             openConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            openConfigFileToolStripMenuItem.Text = "Перечитать файл конфигурации";
+            openConfigFileToolStripMenuItem.Text = "РџРµСЂРµС‡РёС‚Р°С‚СЊ С„Р°Р№Р» РєРѕРЅС„РёРіСѓСЂР°С†РёРё";
             openConfigFileToolStripMenuItem.Click += new System.EventHandler(this.openConfigFileToolStripMenuItem_Click);
             // 
             // saveConfigFileToolStripMenuItem
             // 
             saveConfigFileToolStripMenuItem.Name = "saveConfigFileToolStripMenuItem";
             saveConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            saveConfigFileToolStripMenuItem.Text = "Перезаписать файл конфигурации";
+            saveConfigFileToolStripMenuItem.Text = "РџРµСЂРµР·Р°РїРёСЃР°С‚СЊ С„Р°Р№Р» РєРѕРЅС„РёРіСѓСЂР°С†РёРё";
             saveConfigFileToolStripMenuItem.Click += new System.EventHandler(this.saveConfigFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
@@ -283,7 +283,7 @@ namespace Flavor.Forms
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
             this.connectToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.connectToolStripMenuItem.Text = "Соединение";
+            this.connectToolStripMenuItem.Text = "РЎРѕРµРґРёРЅРµРЅРёРµ";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // measureToolStripMenuItem
@@ -296,13 +296,13 @@ namespace Flavor.Forms
             monitorToolStripMenuItem});
             this.measureToolStripMenuItem.Name = "measureToolStripMenuItem";
             this.measureToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.measureToolStripMenuItem.Text = "Измерение";
+            this.measureToolStripMenuItem.Text = "РР·РјРµСЂРµРЅРёРµ";
             // 
             // delaysToolStripMenuItem
             // 
             delaysToolStripMenuItem.Name = "delaysToolStripMenuItem";
             delaysToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            delaysToolStripMenuItem.Text = "Установка задержек";
+            delaysToolStripMenuItem.Text = "РЈСЃС‚Р°РЅРѕРІРєР° Р·Р°РґРµСЂР¶РµРє";
             delaysToolStripMenuItem.Click += new System.EventHandler(this.delaysToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
@@ -314,21 +314,21 @@ namespace Flavor.Forms
             // 
             overviewToolStripMenuItem.Name = "overviewToolStripMenuItem";
             overviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            overviewToolStripMenuItem.Text = "Обзорный режим";
+            overviewToolStripMenuItem.Text = "РћР±Р·РѕСЂРЅС‹Р№ СЂРµР¶РёРј";
             overviewToolStripMenuItem.Click += new System.EventHandler(this.overviewToolStripMenuItem_Click);
             // 
             // senseToolStripMenuItem
             // 
             senseToolStripMenuItem.Name = "senseToolStripMenuItem";
             senseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            senseToolStripMenuItem.Text = "Точный режим";
+            senseToolStripMenuItem.Text = "РўРѕС‡РЅС‹Р№ СЂРµР¶РёРј";
             senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
             // 
             // monitorToolStripMenuItem
             // 
             monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
             monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            monitorToolStripMenuItem.Text = "Режим мониторинга";
+            monitorToolStripMenuItem.Text = "Р РµР¶РёРј РјРѕРЅРёС‚РѕСЂРёРЅРіР°";
             monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
             // 
             // helpMenu
@@ -341,7 +341,7 @@ namespace Flavor.Forms
             aboutToolStripMenuItem});
             helpMenu.Name = "helpMenu";
             helpMenu.Size = new System.Drawing.Size(59, 20);
-            helpMenu.Text = "&Помощь";
+            helpMenu.Text = "&РџРѕРјРѕС‰СЊ";
             helpMenu.Visible = false;
             // 
             // contentsToolStripMenuItem
@@ -376,7 +376,7 @@ namespace Flavor.Forms
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            aboutToolStripMenuItem.Text = "&О программе ...";
+            aboutToolStripMenuItem.Text = "&Рћ РїСЂРѕРіСЂР°РјРјРµ ...";
             // 
             // overview_button
             // 
@@ -385,7 +385,7 @@ namespace Flavor.Forms
             this.overview_button.Enabled = false;
             this.overview_button.Name = "overview_button";
             this.overview_button.Size = new System.Drawing.Size(97, 22);
-            this.overview_button.Text = "Обзорный режим";
+            this.overview_button.Text = "РћР±Р·РѕСЂРЅС‹Р№ СЂРµР¶РёРј";
             this.overview_button.Click += new System.EventHandler(this.overview_button_Click);
             // 
             // statusStrip
@@ -413,7 +413,7 @@ namespace Flavor.Forms
             this.sensmeasure_button.Enabled = false;
             this.sensmeasure_button.Name = "sensmeasure_button";
             this.sensmeasure_button.Size = new System.Drawing.Size(84, 22);
-            this.sensmeasure_button.Text = "Точный режим";
+            this.sensmeasure_button.Text = "РўРѕС‡РЅС‹Р№ СЂРµР¶РёРј";
             this.sensmeasure_button.Click += new System.EventHandler(this.sensmeasure_button_Click);
             // 
             // shutSys_butt
@@ -424,7 +424,7 @@ namespace Flavor.Forms
             this.shutSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.shutSys_butt.Name = "shutSys_butt";
             this.shutSys_butt.Size = new System.Drawing.Size(123, 22);
-            this.shutSys_butt.Text = "Отключить систему";
+            this.shutSys_butt.Text = "РћС‚РєР»СЋС‡РёС‚СЊ СЃРёСЃС‚РµРјСѓ";
             this.shutSys_butt.Click += new System.EventHandler(this.shutSys_butt_Click);
             // 
             // unblock_butt
@@ -435,7 +435,7 @@ namespace Flavor.Forms
             this.unblock_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.unblock_butt.Name = "unblock_butt";
             this.unblock_butt.Size = new System.Drawing.Size(115, 22);
-            this.unblock_butt.Text = "Снять блокировку";
+            this.unblock_butt.Text = "РЎРЅСЏС‚СЊ Р±Р»РѕРєРёСЂРѕРІРєСѓ";
             this.unblock_butt.Click += new System.EventHandler(this.unblock_butt_Click);
             // 
             // controlToolStrip
@@ -456,7 +456,7 @@ namespace Flavor.Forms
             this.controlToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.controlToolStrip.Size = new System.Drawing.Size(992, 25);
             this.controlToolStrip.TabIndex = 14;
-            this.controlToolStrip.Text = "Управление масс-спектрометром";
+            this.controlToolStrip.Text = "РЈРїСЂР°РІР»РµРЅРёРµ РјР°СЃСЃ-СЃРїРµРєС‚СЂРѕРјРµС‚СЂРѕРј";
             // 
             // connectToolStripButton
             // 
@@ -464,7 +464,7 @@ namespace Flavor.Forms
             this.connectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.connectToolStripButton.Name = "connectToolStripButton";
             this.connectToolStripButton.Size = new System.Drawing.Size(67, 22);
-            this.connectToolStripButton.Text = "Соединить";
+            this.connectToolStripButton.Text = "РЎРѕРµРґРёРЅРёС‚СЊ";
             this.connectToolStripButton.Click += new System.EventHandler(this.connectToolStripButton_Click);
             // 
             // monitorToolStripButton
@@ -476,7 +476,7 @@ namespace Flavor.Forms
             this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.monitorToolStripButton.Name = "monitorToolStripButton";
             this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
-            this.monitorToolStripButton.Text = "Режим мониторинга";
+            this.monitorToolStripButton.Text = "Р РµР¶РёРј РјРѕРЅРёС‚РѕСЂРёРЅРіР°";
             this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
             // 
             // parameterPanel
@@ -488,7 +488,7 @@ namespace Flavor.Forms
             this.parameterPanel.Name = "parameterPanel";
             this.parameterPanel.Size = new System.Drawing.Size(234, 895);
             this.parameterPanel.TabIndex = 16;
-            this.parameterPanel.Text = "Параметры системы";
+            this.parameterPanel.Text = "РџР°СЂР°РјРµС‚СЂС‹ СЃРёСЃС‚РµРјС‹";
             // 
             // statusTreeView
             // 
@@ -538,7 +538,7 @@ namespace Flavor.Forms
             groupBox1.Size = new System.Drawing.Size(273, 282);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Параметры режима";
+            groupBox1.Text = "РџР°СЂР°РјРµС‚СЂС‹ СЂРµР¶РёРјР°";
             // 
             // f2_label
             // 
@@ -637,7 +637,7 @@ namespace Flavor.Forms
             this.startScanTextLabel.Name = "startScanTextLabel";
             this.startScanTextLabel.Size = new System.Drawing.Size(100, 13);
             this.startScanTextLabel.TabIndex = 0;
-            this.startScanTextLabel.Text = "Первая ступенька";
+            this.startScanTextLabel.Text = "РџРµСЂРІР°СЏ СЃС‚СѓРїРµРЅСЊРєР°";
             // 
             // label17
             // 
@@ -646,7 +646,7 @@ namespace Flavor.Forms
             label17.Name = "label17";
             label17.Size = new System.Drawing.Size(184, 13);
             label17.TabIndex = 25;
-            label17.Text = "Фокусирующее напр. (2) (50-150 В)";
+            label17.Text = "Р¤РѕРєСѓСЃРёСЂСѓСЋС‰РµРµ РЅР°РїСЂ. (2) (50-150 Р’)";
             // 
             // label18
             // 
@@ -655,7 +655,7 @@ namespace Flavor.Forms
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(118, 13);
             this.label18.TabIndex = 2;
-            this.label18.Text = "Последняя ступенька";
+            this.label18.Text = "РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СѓРїРµРЅСЊРєР°";
             // 
             // label19
             // 
@@ -664,7 +664,7 @@ namespace Flavor.Forms
             label19.Name = "label19";
             label19.Size = new System.Drawing.Size(174, 13);
             label19.TabIndex = 6;
-            label19.Text = "Время экспозиции (10-10000 мс)";
+            label19.Text = "Р’СЂРµРјСЏ СЌРєСЃРїРѕР·РёС†РёРё (10-10000 РјСЃ)";
             // 
             // label20
             // 
@@ -673,7 +673,7 @@ namespace Flavor.Forms
             label20.Name = "label20";
             label20.Size = new System.Drawing.Size(184, 13);
             label20.TabIndex = 24;
-            label20.Text = "Фокусирующее напр. (1) (50-150 В)";
+            label20.Text = "Р¤РѕРєСѓСЃРёСЂСѓСЋС‰РµРµ РЅР°РїСЂ. (1) (50-150 Р’)";
             // 
             // label21
             // 
@@ -682,7 +682,7 @@ namespace Flavor.Forms
             label21.Name = "label21";
             label21.Size = new System.Drawing.Size(149, 13);
             label21.TabIndex = 7;
-            label21.Text = "Время перехода (10-100 мс)";
+            label21.Text = "Р’СЂРµРјСЏ РїРµСЂРµС…РѕРґР° (10-100 РјСЃ)";
             // 
             // label22
             // 
@@ -691,7 +691,7 @@ namespace Flavor.Forms
             label22.Name = "label22";
             label22.Size = new System.Drawing.Size(180, 13);
             label22.TabIndex = 8;
-            label22.Text = "Напряжение ионизации (20-120 В)";
+            label22.Text = "РќР°РїСЂСЏР¶РµРЅРёРµ РёРѕРЅРёР·Р°С†РёРё (20-120 Р’)";
             // 
             // label23
             // 
@@ -700,7 +700,7 @@ namespace Flavor.Forms
             label23.Name = "label23";
             label23.Size = new System.Drawing.Size(104, 13);
             label23.TabIndex = 11;
-            label23.Text = "Ток нагрева (0-2 А)";
+            label23.Text = "РўРѕРє РЅР°РіСЂРµРІР° (0-2 Рђ)";
             // 
             // label24
             // 
@@ -709,7 +709,7 @@ namespace Flavor.Forms
             label24.Name = "label24";
             label24.Size = new System.Drawing.Size(127, 13);
             label24.TabIndex = 10;
-            label24.Text = "Ток эмиссии (0-10 мкА)";
+            label24.Text = "РўРѕРє СЌРјРёСЃСЃРёРё (0-10 РјРєРђ)";
             // 
             // label25
             // 
@@ -718,7 +718,7 @@ namespace Flavor.Forms
             label25.Name = "label25";
             label25.Size = new System.Drawing.Size(122, 13);
             label25.TabIndex = 9;
-            label25.Text = "Коэффициент деления";
+            label25.Text = "РљРѕСЌС„С„РёС†РёРµРЅС‚ РґРµР»РµРЅРёСЏ";
             // 
             // scanProgressBar
             // 
@@ -735,7 +735,7 @@ namespace Flavor.Forms
             label35.Name = "label35";
             label35.Size = new System.Drawing.Size(143, 13);
             label35.TabIndex = 3;
-            label35.Text = "Сканирующее напряжение";
+            label35.Text = "РЎРєР°РЅРёСЂСѓСЋС‰РµРµ РЅР°РїСЂСЏР¶РµРЅРёРµ";
             // 
             // scanRealTimeLabel
             // 
@@ -755,7 +755,7 @@ namespace Flavor.Forms
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(127, 13);
             this.label15.TabIndex = 39;
-            this.label15.Text = "Показания детектора 1";
+            this.label15.Text = "РџРѕРєР°Р·Р°РЅРёСЏ РґРµС‚РµРєС‚РѕСЂР° 1";
             // 
             // detector1CountsLabel
             // 
@@ -775,7 +775,7 @@ namespace Flavor.Forms
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(127, 13);
             this.label16.TabIndex = 41;
-            this.label16.Text = "Показания детектора 2";
+            this.label16.Text = "РџРѕРєР°Р·Р°РЅРёСЏ РґРµС‚РµРєС‚РѕСЂР° 2";
             // 
             // detector2CountsLabel
             // 
@@ -795,7 +795,7 @@ namespace Flavor.Forms
             this.cancelScanButton.Name = "cancelScanButton";
             this.cancelScanButton.Size = new System.Drawing.Size(75, 23);
             this.cancelScanButton.TabIndex = 43;
-            this.cancelScanButton.Text = "Остановить";
+            this.cancelScanButton.Text = "РћСЃС‚Р°РЅРѕРІРёС‚СЊ";
             this.cancelScanButton.UseVisualStyleBackColor = true;
             this.cancelScanButton.Visible = false;
             this.cancelScanButton.Click += new System.EventHandler(this.cancelScanButton_Click);
@@ -807,7 +807,7 @@ namespace Flavor.Forms
             label36.Name = "label36";
             label36.Size = new System.Drawing.Size(84, 13);
             label36.TabIndex = 44;
-            label36.Text = "Номер ступени";
+            label36.Text = "РќРѕРјРµСЂ СЃС‚СѓРїРµРЅРё";
             // 
             // stepNumberLabel
             // 
@@ -827,7 +827,7 @@ namespace Flavor.Forms
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(119, 13);
             this.label37.TabIndex = 46;
-            this.label37.Text = "Номер текущего пика";
+            this.label37.Text = "РќРѕРјРµСЂ С‚РµРєСѓС‰РµРіРѕ РїРёРєР°";
             // 
             // peakNumberLabel
             // 
@@ -847,7 +847,7 @@ namespace Flavor.Forms
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(109, 13);
             this.label39.TabIndex = 48;
-            this.label39.Text = "Центральная масса";
+            this.label39.Text = "Р¦РµРЅС‚СЂР°Р»СЊРЅР°СЏ РјР°СЃСЃР°";
             // 
             // peakCenterLabel
             // 
@@ -867,7 +867,7 @@ namespace Flavor.Forms
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(124, 13);
             this.label41.TabIndex = 50;
-            this.label41.Text = "Ширина текущего пика";
+            this.label41.Text = "РЁРёСЂРёРЅР° С‚РµРєСѓС‰РµРіРѕ РїРёРєР°";
             // 
             // peakWidthLabel
             // 
@@ -922,7 +922,7 @@ namespace Flavor.Forms
             this.MainMenuStrip = menuStrip;
             this.Name = "mainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Управление масс-спектрометром";
+            this.Text = "РЈРїСЂР°РІР»РµРЅРёРµ РјР°СЃСЃ-СЃРїРµРєС‚СЂРѕРјРµС‚СЂРѕРј";
             this.Load += new System.EventHandler(this.mainForm_Load);
             this.MdiChildActivate += new System.EventHandler(this.mainForm_MdiChildActivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);

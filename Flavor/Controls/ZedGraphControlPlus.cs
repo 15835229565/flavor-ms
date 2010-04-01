@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -58,7 +58,7 @@ namespace Flavor.Controls
                 item.Name = "point_add";
                 item.Tag = "point_add";
                 // This is the text that will show up in the menu
-                item.Text = "Добавить точку в редактор";
+                item.Text = "Р”РѕР±Р°РІРёС‚СЊ С‚РѕС‡РєСѓ РІ СЂРµРґР°РєС‚РѕСЂ";
                 
                 // Add a handler that will respond when that menu item is selected
                 item.Click += new System.EventHandler(AddPointToPreciseEditor);
@@ -74,14 +74,14 @@ namespace Flavor.Controls
                     curveIndex = curveIndex1;
                     item1.Name = "axis_rescale_coeff1";
                     item1.Tag = "axis_rescale_coeff1";
-                    item1.Text = "Коэффициент коллектора 1";
+                    item1.Text = "РљРѕСЌС„С„РёС†РёРµРЅС‚ РєРѕР»Р»РµРєС‚РѕСЂР° 1";
                 }
                 else if (-1 != curveIndex2)
                 {
                     curveIndex = curveIndex2;
                     item1.Name = "axis_rescale_coeff2";
                     item1.Tag = "axis_rescale_coeff2";
-                    item1.Text = "Коэффициент коллектора 2";
+                    item1.Text = "РљРѕСЌС„С„РёС†РёРµРЅС‚ РєРѕР»Р»РµРєС‚РѕСЂР° 2";
                 }
                 else
                 {
@@ -97,7 +97,7 @@ namespace Flavor.Controls
                     ToolStripMenuItem item2 = new ToolStripMenuItem();
                     item2.Name = "custom_diff";
                     item2.Tag = "custom_diff";
-                    item2.Text = "Вычесть из текущего с перенормировкой на точку";
+                    item2.Text = "Р’С‹С‡РµСЃС‚СЊ РёР· С‚РµРєСѓС‰РµРіРѕ СЃ РїРµСЂРµРЅРѕСЂРјРёСЂРѕРІРєРѕР№ РЅР° С‚РѕС‡РєСѓ";
                     item2.Click += new System.EventHandler(DiffWithCoeff);
                     menuStrip.Items.Add(item2);
                     if (Graph.isPreciseSpectrum)
@@ -105,7 +105,7 @@ namespace Flavor.Controls
                         ToolStripMenuItem item3 = new ToolStripMenuItem();
                         item3.Name = "custom_diff_peak";
                         item3.Tag = "custom_diff_peak";
-                        item3.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                        item3.Text = "Р’С‹С‡РµСЃС‚СЊ РёР· С‚РµРєСѓС‰РµРіРѕ СЃ РїРµСЂРµРЅРѕСЂРјРёСЂРѕРІРєРѕР№ РЅР° РёРЅС‚РµРіСЂР°Р» РїРёРєР°";
                         item3.Click += new System.EventHandler(DiffWithCoeff);
                         menuStrip.Items.Add(item3);
                     }
@@ -132,19 +132,19 @@ namespace Flavor.Controls
                 
                 stepViewItem.Name = "axis_mode_step";
                 stepViewItem.Tag = "axis_mode_step";
-                stepViewItem.Text = "Ступени";
+                stepViewItem.Text = "РЎС‚СѓРїРµРЅРё";
                 stepViewItem.CheckOnClick = true;
                 stepViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
 
                 voltageViewItem.Name = "axis_mode_voltage";
                 voltageViewItem.Tag = "axis_mode_voltage";
-                voltageViewItem.Text = "Напряжение";
+                voltageViewItem.Text = "РќР°РїСЂСЏР¶РµРЅРёРµ";
                 voltageViewItem.CheckOnClick = true;
                 voltageViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
 
                 massViewItem.Name = "axis_mode_mass";
                 massViewItem.Tag = "axis_mode_mass";
-                massViewItem.Text = "Масса";
+                massViewItem.Text = "РњР°СЃСЃР°";
                 massViewItem.CheckOnClick = true;
                 massViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
                 
@@ -154,7 +154,7 @@ namespace Flavor.Controls
                 item.Name = "axis_mode";
                 item.Tag = "axis_mode";
                 // This is the text that will show up in the menu
-                item.Text = "Выбрать шкалу";
+                item.Text = "Р’С‹Р±СЂР°С‚СЊ С€РєР°Р»Сѓ";
                 
                 // Add a handler that will respond when that menu item is selected
                 //item.Click += new System.EventHandler(CustomZoom);
@@ -208,14 +208,14 @@ namespace Flavor.Controls
                 }
             }
             else
-                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                MessageBox.Show("РќРµ СѓРґР°Р»РѕСЃСЊ РєРѕСЂСЂРµРєС‚РЅРѕ РЅР°Р№С‚Рё С‚РѕС‡РєСѓ", "РћС€РёР±РєР°");
         }
         private void DiffWithCoeff(object sender, EventArgs e)
         {
             Graph.pListScaled pls = ((PointPairListPlus)(curveReference.Points)).PLSreference;
             if (pls == null)
             {
-                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                MessageBox.Show("РќРµ СѓРґР°Р»РѕСЃСЊ РєРѕСЂСЂРµРєС‚РЅРѕ РЅР°Р№С‚Рё С‚РѕС‡РєСѓ", "РћС€РёР±РєР°");
                 return;
             }
             if (Graph.isPreciseSpectrum)
@@ -237,7 +237,7 @@ namespace Flavor.Controls
                 Utility.PreciseEditorData ped = pls.PEDreference;
                 if (ped == null)
                 {
-                    MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                    MessageBox.Show("РќРµ СѓРґР°Р»РѕСЃСЊ РєРѕСЂСЂРµРєС‚РЅРѕ РЅР°Р№С‚Рё С‚РѕС‡РєСѓ", "РћС€РёР±РєР°");
                     return;
                 }
                 if (((ToolStripMenuItem)sender).Name == "custom_diff_peak")
@@ -279,7 +279,7 @@ namespace Flavor.Controls
                 }
             }
             else
-                MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                MessageBox.Show("РќРµ СѓРґР°Р»РѕСЃСЊ РєРѕСЂСЂРµРєС‚РЅРѕ РЅР°Р№С‚Рё С‚РѕС‡РєСѓ", "РћС€РёР±РєР°");
         }
 
         private string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt)
@@ -289,13 +289,13 @@ namespace Flavor.Controls
             switch (Graph.AxisDisplayMode)
             {
                 case Graph.pListScaled.DisplayValue.Step:
-                    tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
+                    tooltipData = string.Format("СЃС‚СѓРїРµРЅСЊ={0:G},СЃС‡РµС‚С‹={1:F0}", pp.X, pp.Y);
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
+                    tooltipData = string.Format("РЅР°РїСЂСЏР¶РµРЅРёРµ={0:####.#},СЃС‚СѓРїРµРЅСЊ={1:G},СЃС‡РµС‚С‹={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
+                    tooltipData = string.Format("РјР°СЃСЃР°={0:###.##},СЃС‚СѓРїРµРЅСЊ={1:G},СЃС‡РµС‚С‹={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
             }
             if (Graph.isPreciseSpectrum)
@@ -312,9 +312,9 @@ namespace Flavor.Controls
                     peakSum = Graph.DisplayedRows2[curveIndex2].PeakSum;
                 }
                 if (peakSum != -1)
-                    tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);
+                    tooltipData += string.Format("\nРРЅС‚РµРіСЂР°Р» РїРёРєР°: {0:G}", peakSum);
                 else
-                    tooltipData += "\nНе удалось идентифицировать пик";
+                    tooltipData += "\nРќРµ СѓРґР°Р»РѕСЃСЊ РёРґРµРЅС‚РёС„РёС†РёСЂРѕРІР°С‚СЊ РїРёРє";
             }
             return tooltipData;
         }

@@ -1,4 +1,4 @@
-using System.Windows.Forms;
+п»їusing System.Windows.Forms;
 using System.Drawing;
 using System;
 namespace Flavor.Forms
@@ -22,7 +22,7 @@ namespace Flavor.Forms
 
             this.okButton.Enabled = false;
 
-            this.Text = "Вставка точки";
+            this.Text = "Р’СЃС‚Р°РІРєР° С‚РѕС‡РєРё";
             this.Controls.Add(this.pNumComboBox);
 
             this.ResumeLayout(false);

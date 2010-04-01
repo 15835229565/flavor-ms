@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.Interfaces;
@@ -15,7 +15,7 @@ namespace Flavor.Common.Commands.Async
         #region IReply Members
         public void AutomatedReply()
         {
-            //хорошо бы сюда на автомате очистку Commander.CustomMeasure...
+            //С…РѕСЂРѕС€Рѕ Р±С‹ СЃСЋРґР° РЅР° Р°РІС‚РѕРјР°С‚Рµ РѕС‡РёСЃС‚РєСѓ Commander.CustomMeasure...
             Commander.AddToSend(new getCounts());
         }
         #endregion

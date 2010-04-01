@@ -1,4 +1,4 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class ScanOptionsForm
     {
@@ -46,7 +46,7 @@ namespace Flavor.Forms
             startScan.Name = "startScan";
             startScan.Size = new System.Drawing.Size(100, 13);
             startScan.TabIndex = 0;
-            startScan.Text = "Первая ступенька";
+            startScan.Text = "РџРµСЂРІР°СЏ СЃС‚СѓРїРµРЅСЊРєР°";
             // 
             // scan_groupBox
             // 
@@ -85,7 +85,7 @@ namespace Flavor.Forms
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(118, 13);
             label1.TabIndex = 2;
-            label1.Text = "Последняя ступенька";
+            label1.Text = "РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СѓРїРµРЅСЊРєР°";
             // 
             // ScanOptionsForm
             // 
@@ -93,7 +93,7 @@ namespace Flavor.Forms
             this.ClientSize = new System.Drawing.Size(292, 432);
             this.Controls.Add(this.scan_groupBox);
             this.Name = "ScanOptionsForm";
-            this.Text = "Настройки обзорного режима";
+            this.Text = "РќР°СЃС‚СЂРѕР№РєРё РѕР±Р·РѕСЂРЅРѕРіРѕ СЂРµР¶РёРјР°";
             this.Controls.SetChildIndex(this.scan_groupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);

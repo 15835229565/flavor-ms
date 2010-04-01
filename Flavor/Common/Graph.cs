@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Text;
 using ZedGraph;
@@ -530,7 +530,7 @@ namespace Flavor.Common
             }
             if (axisMode == pListScaled.DisplayValue.Mass)
             {
-                //Нужно заменить recreate bool -> enum, чтобы перерисовывать только нужный коллектор
+                //РќСѓР¶РЅРѕ Р·Р°РјРµРЅРёС‚СЊ recreate bool -> enum, С‡С‚РѕР±С‹ РїРµСЂРµСЂРёСЃРѕРІС‹РІР°С‚СЊ С‚РѕР»СЊРєРѕ РЅСѓР¶РЅС‹Р№ РєРѕР»Р»РµРєС‚РѕСЂ
                 OnNewGraphData(displayMode, true);
             }
         }

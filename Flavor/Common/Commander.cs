@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Text;
 using System.Timers;
@@ -150,7 +150,7 @@ namespace Flavor.Common
                 if (Command is SystemReseted)
                 {
                     Console.WriteLine("System reseted");
-                    Commander.OnAsyncReply("Система переинициализировалась");
+                    Commander.OnAsyncReply("РЎРёСЃС‚РµРјР° РїРµСЂРµРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°Р»Р°СЃСЊ");
                     if (Commander.pState != Commander.programStates.Start)
                     {
                         toSend.IsRareMode = false;
@@ -188,7 +188,7 @@ namespace Flavor.Common
                         Commander.pStatePrev = Commander.pState;
                     }
                     toSend.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
-                    toSend.AddToSend(new sendIVoltage());// и остальные напряжения затем
+                    toSend.AddToSend(new sendIVoltage());// Рё РѕСЃС‚Р°Р»СЊРЅС‹Рµ РЅР°РїСЂСЏР¶РµРЅРёСЏ Р·Р°С‚РµРј
                 }
             }
             if (Command is SyncErrorReply)
@@ -308,7 +308,7 @@ namespace Flavor.Common
             toSend.AddToSend(new sendShutdown());
             Commander.pStatePrev = Commander.pState;
             Commander.pState = Commander.programStates.WaitShutdown;
-            //добавить контрольное время ожидания выключения
+            //РґРѕР±Р°РІРёС‚СЊ РєРѕРЅС‚СЂРѕР»СЊРЅРѕРµ РІСЂРµРјСЏ РѕР¶РёРґР°РЅРёСЏ РІС‹РєР»СЋС‡РµРЅРёСЏ
         }
         
         internal static void Scan()
@@ -417,7 +417,7 @@ namespace Flavor.Common
                 case ModBus.PortStates.ErrorOpening:
                     break;
                 default:
-                    // фигня
+                    // С„РёРіРЅСЏ
                     break;
             }
         }
@@ -429,7 +429,7 @@ namespace Flavor.Common
             {
                 case ModBus.PortStates.Closing:
                     Commander.deviceIsConnected = false;
-                    onTheFly = true;// надо ли здесь???
+                    onTheFly = true;// РЅР°РґРѕ Р»Рё Р·РґРµСЃСЊ???
                     break;
                 case ModBus.PortStates.Closed:
                     Commander.deviceIsConnected = false;
@@ -437,7 +437,7 @@ namespace Flavor.Common
                 case ModBus.PortStates.ErrorClosing:
                     break;
                 default:
-                    // фигня
+                    // С„РёРіРЅСЏ
                     break;
             }
         }

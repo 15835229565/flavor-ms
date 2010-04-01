@@ -1,4 +1,4 @@
-using Flavor.Controls;
+п»їusing Flavor.Controls;
 namespace Flavor.Forms
 {
     partial class GraphForm
@@ -114,7 +114,7 @@ namespace Flavor.Forms
             FileMenu.MergeIndex = 0;
             FileMenu.Name = "FileMenu";
             FileMenu.Size = new System.Drawing.Size(61, 20);
-            FileMenu.Text = "&Главное";
+            FileMenu.Text = "&Р“Р»Р°РІРЅРѕРµ";
             FileMenu.Visible = false;
             // 
             // openSpecterFileToolStripMenuItem
@@ -126,7 +126,7 @@ namespace Flavor.Forms
             this.openSpecterFileToolStripMenuItem.Name = "openSpecterFileToolStripMenuItem";
             this.openSpecterFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openSpecterFileToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.openSpecterFileToolStripMenuItem.Text = "&Открыть файл спектра";
+            this.openSpecterFileToolStripMenuItem.Text = "&РћС‚РєСЂС‹С‚СЊ С„Р°Р№Р» СЃРїРµРєС‚СЂР°";
             this.openSpecterFileToolStripMenuItem.Click += new System.EventHandler(this.openSpecterFileToolStripMenuItem_Click);
             // 
             // distractFromCurrentToolStripMenuItem
@@ -136,7 +136,7 @@ namespace Flavor.Forms
             this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
             this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
             this.distractFromCurrentToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.distractFromCurrentToolStripMenuItem.Text = "Вычесть из текущего";
+            this.distractFromCurrentToolStripMenuItem.Text = "Р’С‹С‡РµСЃС‚СЊ РёР· С‚РµРєСѓС‰РµРіРѕ";
             this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
             // 
             // closeSpecterFileToolStripMenuItem
@@ -146,7 +146,7 @@ namespace Flavor.Forms
             this.closeSpecterFileToolStripMenuItem.MergeIndex = 2;
             this.closeSpecterFileToolStripMenuItem.Name = "closeSpecterFileToolStripMenuItem";
             this.closeSpecterFileToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.closeSpecterFileToolStripMenuItem.Text = "Закрыть файл спектра";
+            this.closeSpecterFileToolStripMenuItem.Text = "Р—Р°РєСЂС‹С‚СЊ С„Р°Р№Р» СЃРїРµРєС‚СЂР°";
             this.closeSpecterFileToolStripMenuItem.Click += new System.EventHandler(this.closeSpecterFileToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
@@ -159,7 +159,7 @@ namespace Flavor.Forms
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.saveToolStripMenuItem.Text = "&Сохранить спектр";
+            this.saveToolStripMenuItem.Text = "&РЎРѕС…СЂР°РЅРёС‚СЊ СЃРїРµРєС‚СЂ";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
@@ -316,55 +316,55 @@ namespace Flavor.Forms
             // 
             this.copyGraphToolStripMenuItem.Name = "copyGraphToolStripMenuItem";
             this.copyGraphToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.copyGraphToolStripMenuItem.Text = "Копировать";
+            this.copyGraphToolStripMenuItem.Text = "РљРѕРїРёСЂРѕРІР°С‚СЊ";
             // 
             // saveGraphAsImageToolStripMenuItem
             // 
             this.saveGraphAsImageToolStripMenuItem.Name = "saveGraphAsImageToolStripMenuItem";
             this.saveGraphAsImageToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.saveGraphAsImageToolStripMenuItem.Text = "Сохранить как изображение...";
+            this.saveGraphAsImageToolStripMenuItem.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ РєР°Рє РёР·РѕР±СЂР°Р¶РµРЅРёРµ...";
             // 
             // saveGraphDataToolStripMenuItem
             // 
             this.saveGraphDataToolStripMenuItem.Name = "saveGraphDataToolStripMenuItem";
             this.saveGraphDataToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.saveGraphDataToolStripMenuItem.Text = "Сохранить данные...";
+            this.saveGraphDataToolStripMenuItem.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ РґР°РЅРЅС‹Рµ...";
             // 
             // graphPageSetupToolStripMenuItem
             // 
             this.graphPageSetupToolStripMenuItem.Name = "graphPageSetupToolStripMenuItem";
             this.graphPageSetupToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.graphPageSetupToolStripMenuItem.Text = "Параметры страницы...";
+            this.graphPageSetupToolStripMenuItem.Text = "РџР°СЂР°РјРµС‚СЂС‹ СЃС‚СЂР°РЅРёС†С‹...";
             // 
             // printGraphToolStripMenuItem
             // 
             this.printGraphToolStripMenuItem.Name = "printGraphToolStripMenuItem";
             this.printGraphToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.printGraphToolStripMenuItem.Text = "Печать...";
+            this.printGraphToolStripMenuItem.Text = "РџРµС‡Р°С‚СЊ...";
             // 
             // showValuesToolStripMenuItem
             // 
             this.showValuesToolStripMenuItem.Name = "showValuesToolStripMenuItem";
             this.showValuesToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.showValuesToolStripMenuItem.Text = "Показать значения";
+            this.showValuesToolStripMenuItem.Text = "РџРѕРєР°Р·Р°С‚СЊ Р·РЅР°С‡РµРЅРёСЏ";
             // 
             // unZoomToolStripMenuItem
             // 
             this.unZoomToolStripMenuItem.Name = "unZoomToolStripMenuItem";
             this.unZoomToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.unZoomToolStripMenuItem.Text = "Отменить последнее масштабирование";
+            this.unZoomToolStripMenuItem.Text = "РћС‚РјРµРЅРёС‚СЊ РїРѕСЃР»РµРґРЅРµРµ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ";
             // 
             // unZoomAllToolStripMenuItem
             // 
             this.unZoomAllToolStripMenuItem.Name = "unZoomAllToolStripMenuItem";
             this.unZoomAllToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.unZoomAllToolStripMenuItem.Text = "Начальный масштаб";
+            this.unZoomAllToolStripMenuItem.Text = "РќР°С‡Р°Р»СЊРЅС‹Р№ РјР°СЃС€С‚Р°Р±";
             // 
             // defaultScaleToolStripMenuItem
             // 
             this.defaultScaleToolStripMenuItem.Name = "defaultScaleToolStripMenuItem";
             this.defaultScaleToolStripMenuItem.Size = new System.Drawing.Size(286, 22);
-            this.defaultScaleToolStripMenuItem.Text = "Установить масштаб по умолчанию";
+            this.defaultScaleToolStripMenuItem.Text = "РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РјР°СЃС€С‚Р°Р± РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ";
             // 
             // saveSpecterFileDialog
             // 
@@ -429,7 +429,7 @@ namespace Flavor.Forms
             this.MinimizeBox = false;
             this.Name = "GraphForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Коллекторы";
+            this.Text = "РљРѕР»Р»РµРєС‚РѕСЂС‹";
             this.Load += new System.EventHandler(this.GraphForm_Load);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.GraphForm_Validating);
             this.Resize += new System.EventHandler(this.GraphForm_Resize);

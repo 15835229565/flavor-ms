@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
@@ -30,7 +30,7 @@ namespace Flavor.Common
             SetCapacitorVoltage = 0x0B,
             Measure = 0x0C,
             GetCounts = 0x0D,
-            //heatCurrentEnable = 0x0E,// отсюда нужно согласовывать
+            //heatCurrentEnable = 0x0E,// РѕС‚СЃСЋРґР° РЅСѓР¶РЅРѕ СЃРѕРіР»Р°СЃРѕРІС‹РІР°С‚СЊ
             //emissionCurrentEnable = 0x0F,
             heatCurrentEnable = 0x11, 
             EnableHighVoltage = 0x14,
@@ -46,7 +46,7 @@ namespace Flavor.Common
             //asyncerr
             InternalError = 0xC0,
             InvalidSystemState = 0xC1,
-            VacuumCrash = 0xC2,//+ еще что-то..
+            VacuumCrash = 0xC2,//+ РµС‰Рµ С‡С‚Рѕ-С‚Рѕ..
             TurboPumpFailure = 0xC3,
             PowerFail = 0xC4,
             InvalidVacuumState = 0xC5,
@@ -57,7 +57,7 @@ namespace Flavor.Common
             Measured = 0xE0,
             VacuumReady = 0xE1,
             SystemShutdowned = 0xE2,
-            SystemReseted = 0xE3,//+ еще что-то..
+            SystemReseted = 0xE3,//+ РµС‰Рµ С‡С‚Рѕ-С‚Рѕ..
             HighVoltageOff = 0xE5,
             HighVoltageOn = 0xE6
         }
@@ -107,7 +107,7 @@ namespace Flavor.Common
                 }
                 catch (Exception Error)
                 {
-                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                    System.Windows.Forms.MessageBox.Show(Error.Message, "РћС€РёР±РєР° РѕР±СЂР°С‰РµРЅРёСЏ Рє РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕРјСѓ РїРѕСЂС‚Сѓ");
                     return PortStates.ErrorOpening;
                 }
                 Receiving();
@@ -116,7 +116,7 @@ namespace Flavor.Common
             else
             {
                 return PortStates.Opened;
-                //В лог: Уже открыт
+                //Р’ Р»РѕРі: РЈР¶Рµ РѕС‚РєСЂС‹С‚
             }
         }
 
@@ -131,7 +131,7 @@ namespace Flavor.Common
                 }
                 catch (Exception Error)
                 {
-                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                    System.Windows.Forms.MessageBox.Show(Error.Message, "РћС€РёР±РєР° РѕР±СЂР°С‰РµРЅРёСЏ Рє РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕРјСѓ РїРѕСЂС‚Сѓ");
                     return PortStates.ErrorClosing;
                 }
                 return PortStates.Closing;
@@ -139,7 +139,7 @@ namespace Flavor.Common
             else
             {
                 return PortStates.Closed;
-                //В лог Уже закрыт
+                //Р’ Р»РѕРі РЈР¶Рµ Р·Р°РєСЂС‹С‚
             }
         }
 
@@ -152,7 +152,7 @@ namespace Flavor.Common
             catch
             {
                 // BAD! consider revising
-                Console.WriteLine("Ошибка записи в порт следующей команды:");
+                Console.WriteLine("РћС€РёР±РєР° Р·Р°РїРёСЃРё РІ РїРѕСЂС‚ СЃР»РµРґСѓСЋС‰РµР№ РєРѕРјР°РЅРґС‹:");
                 //throw new ModBusException();
             }
             finally
@@ -189,7 +189,7 @@ namespace Flavor.Common
                 {
                     Console.WriteLine("Error(reading byte)");
                     continue;
-                    // не получилось;
+                    // РЅРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ;
                 }
                 Console.Write((char)ch);
                 DispatchByte(ch);
@@ -249,14 +249,14 @@ namespace Flavor.Common
 
         internal static ServicePacket Parse(byte[] raw_command)
         {
-            ///<summary> CS проверка <summary>
+            ///<summary> CS РїСЂРѕРІРµСЂРєР° <summary>
             if (raw_command.Length >= 2)
             {
                 if (checkCS(raw_command))
                 {
-                    //Console.WriteLine("Контрольная сумма в порядке");
-                    ///<summary> Отделяем функциональный код команды,
-                    ///отталкиваясь от него принимаем решение о создании команды
+                    //Console.WriteLine("РљРѕРЅС‚СЂРѕР»СЊРЅР°СЏ СЃСѓРјРјР° РІ РїРѕСЂСЏРґРєРµ");
+                    ///<summary> РћС‚РґРµР»СЏРµРј С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Р№ РєРѕРґ РєРѕРјР°РЅРґС‹,
+                    ///РѕС‚С‚Р°Р»РєРёРІР°СЏСЃСЊ РѕС‚ РЅРµРіРѕ РїСЂРёРЅРёРјР°РµРј СЂРµС€РµРЅРёРµ Рѕ СЃРѕР·РґР°РЅРёРё РєРѕРјР°РЅРґС‹
                     ///<summary>
                     switch ((CommandCode)raw_command[0])
                     {
@@ -514,19 +514,19 @@ namespace Flavor.Common
                             }
                             return new ServicePacket();
                         default:
-                            Console.WriteLine("Неверная команда");
+                            Console.WriteLine("РќРµРІРµСЂРЅР°СЏ РєРѕРјР°РЅРґР°");
                             return new ServicePacket();
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Неверная контрольная сумма");
+                    Console.WriteLine("РќРµРІРµСЂРЅР°СЏ РєРѕРЅС‚СЂРѕР»СЊРЅР°СЏ СЃСѓРјРјР°");
                     return new ServicePacket();
                 }
             }
             else
             {
-                Console.WriteLine("Короткий пакет");
+                Console.WriteLine("РљРѕСЂРѕС‚РєРёР№ РїР°РєРµС‚");
                 return new ServicePacket();
             }
         }

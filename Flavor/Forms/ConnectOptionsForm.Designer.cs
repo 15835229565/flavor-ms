@@ -1,25 +1,7 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class ConnectOptionsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -56,7 +38,7 @@ namespace Flavor.Forms
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(111, 15);
             label1.TabIndex = 1;
-            label1.Text = "Доступные порты";
+            label1.Text = "Р”РѕСЃС‚СѓРїРЅС‹Рµ РїРѕСЂС‚С‹";
             // 
             // label2
             // 
@@ -66,7 +48,7 @@ namespace Flavor.Forms
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(134, 15);
             label2.TabIndex = 2;
-            label2.Text = "Скорость соединения";
+            label2.Text = "РЎРєРѕСЂРѕСЃС‚СЊ СЃРѕРµРґРёРЅРµРЅРёСЏ";
             // 
             // baudrate_comboBox
             // 
@@ -89,7 +71,7 @@ namespace Flavor.Forms
             ok_butt.Name = "ok_butt";
             ok_butt.Size = new System.Drawing.Size(75, 23);
             ok_butt.TabIndex = 4;
-            ok_butt.Text = "Сохранить";
+            ok_butt.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ";
             ok_butt.UseVisualStyleBackColor = true;
             ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
             // 
@@ -100,7 +82,7 @@ namespace Flavor.Forms
             cancel_butt.Name = "cancel_butt";
             cancel_butt.Size = new System.Drawing.Size(75, 23);
             cancel_butt.TabIndex = 5;
-            cancel_butt.Text = "Отмена";
+            cancel_butt.Text = "РћС‚РјРµРЅР°";
             cancel_butt.UseVisualStyleBackColor = true;
             cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
@@ -123,7 +105,7 @@ namespace Flavor.Forms
             this.Name = "ConnectOptionsForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Настройки соединения";
+            this.Text = "РќР°СЃС‚СЂРѕР№РєРё СЃРѕРµРґРёРЅРµРЅРёСЏ";
             this.ResumeLayout(false);
             this.PerformLayout();
 

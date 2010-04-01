@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -44,7 +44,7 @@ namespace Flavor.Forms
                 massTextBox.BackColor = Color.Red;
                 return;
             }
-            //Проверка, что масса не вблизи нуля
+            //РџСЂРѕРІРµСЂРєР°, С‡С‚Рѕ РјР°СЃСЃР° РЅРµ РІР±Р»РёР·Рё РЅСѓР»СЏ
             if (mass < 1)
             {
                 massTextBox.BackColor = Color.Red;

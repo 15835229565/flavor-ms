@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -614,42 +614,42 @@ namespace Flavor.Common
                 this.label8.Location = new System.Drawing.Point(0, 0);
                 this.label8.Name = "label8";
                 this.label8.Size = new System.Drawing.Size(60, 26);
-                this.label8.Text = "Ступенька\r\n(<=1056)";
+                this.label8.Text = string.Format("РЎС‚СѓРїРµРЅСЊРєР°\r\n(<={0})", Config.MAX_STEP);
                 this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
                 // colNumLabel
                 this.colNumLabel.AutoSize = true;
                 this.colNumLabel.Location = new System.Drawing.Point(50, 13);
                 this.colNumLabel.Name = "colNumLabel";
                 this.colNumLabel.Size = new System.Drawing.Size(29, 13);
-                this.colNumLabel.Text = "Кол.";
+                this.colNumLabel.Text = "РљРѕР».";
                 // label10
                 this.label10.AutoSize = true;
                 this.label10.BackColor = System.Drawing.SystemColors.Control;
                 this.label10.Location = new System.Drawing.Point(75, 13);
                 this.label10.Name = "label10";
                 this.label10.Size = new System.Drawing.Size(46, 13);
-                this.label10.Text = "Ширина";
+                this.label10.Text = "РЁРёСЂРёРЅР°";
                 // label9
                 this.label9.AutoSize = true;
                 this.label9.BackColor = System.Drawing.SystemColors.Control;
                 this.label9.Location = new System.Drawing.Point(126, 13);
                 this.label9.Name = "label9";
                 this.label9.Size = new System.Drawing.Size(52, 13);
-                this.label9.Text = "Проходы";
+                this.label9.Text = "РџСЂРѕС…РѕРґС‹";
                 // label11
                 this.label11.AutoSize = true;
                 this.label11.BackColor = System.Drawing.SystemColors.Control;
                 this.label11.Location = new System.Drawing.Point(177, 13);
                 this.label11.Name = "label11";
                 this.label11.Size = new System.Drawing.Size(54, 13);
-                this.label11.Text = "Точность";
+                this.label11.Text = "РўРѕС‡РЅРѕСЃС‚СЊ";
                 // commentLabel
                 this.commentLabel.AutoSize = true;
                 this.commentLabel.BackColor = System.Drawing.SystemColors.Control;
                 this.commentLabel.Location = new System.Drawing.Point(233, 13);
                 this.commentLabel.Name = "commentLabel";
                 this.commentLabel.Size = new System.Drawing.Size(54, 13);
-                this.commentLabel.Text = "Комментарий";
+                this.commentLabel.Text = "РљРѕРјРјРµРЅС‚Р°СЂРёР№";
             }
             internal PreciseEditorLabelRow(int x, int y): this()
             {
@@ -682,7 +682,7 @@ namespace Flavor.Common
                 this.label1.Location = new System.Drawing.Point(0, 0);
                 this.label1.Name = "label1";
                 this.label1.Size = new System.Drawing.Size(41, 26);
-                this.label1.Text = "Номер\r\nпика";
+                this.label1.Text = "РќРѕРјРµСЂ\r\nРїРёРєР°";
                 this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             }
             internal PreciseEditorLabelRowPlus(int x, int y): this()

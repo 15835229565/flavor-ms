@@ -1,4 +1,4 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class SetScalingCoeffForm
     {
@@ -29,7 +29,7 @@ namespace Flavor.Forms
             stepLabel.Name = "stepLabel";
             stepLabel.Size = new System.Drawing.Size(60, 13);
             stepLabel.TabIndex = 4;
-            stepLabel.Text = "Ступенька";
+            stepLabel.Text = "РЎС‚СѓРїРµРЅСЊРєР°";
             // 
             // massLabel
             // 
@@ -38,7 +38,7 @@ namespace Flavor.Forms
             massLabel.Name = "massLabel";
             massLabel.Size = new System.Drawing.Size(40, 13);
             massLabel.TabIndex = 5;
-            massLabel.Text = "Масса";
+            massLabel.Text = "РњР°СЃСЃР°";
             // 
             // okButton
             // 
@@ -57,7 +57,7 @@ namespace Flavor.Forms
             cancelButton.Name = "cancelButton";
             cancelButton.Size = new System.Drawing.Size(75, 23);
             cancelButton.TabIndex = 1;
-            cancelButton.Text = "Отмена";
+            cancelButton.Text = "РћС‚РјРµРЅР°";
             cancelButton.UseVisualStyleBackColor = true;
             cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
@@ -95,7 +95,7 @@ namespace Flavor.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Установка коэффициента";
+            this.Text = "РЈСЃС‚Р°РЅРѕРІРєР° РєРѕСЌС„С„РёС†РёРµРЅС‚Р°";
             this.ResumeLayout(false);
             this.PerformLayout();
 

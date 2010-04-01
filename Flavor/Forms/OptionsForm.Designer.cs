@@ -1,4 +1,4 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class OptionsForm
     {
@@ -83,7 +83,7 @@ namespace Flavor.Forms
             this.params_groupBox.Size = new System.Drawing.Size(270, 283);
             this.params_groupBox.TabIndex = 1;
             this.params_groupBox.TabStop = false;
-            this.params_groupBox.Text = "Общие параметры";
+            this.params_groupBox.Text = "РћР±С‰РёРµ РїР°СЂР°РјРµС‚СЂС‹";
             // 
             // adjustSettingsCheckBox
             // 
@@ -92,7 +92,7 @@ namespace Flavor.Forms
             this.adjustSettingsCheckBox.Name = "adjustSettingsCheckBox";
             this.adjustSettingsCheckBox.Size = new System.Drawing.Size(211, 17);
             this.adjustSettingsCheckBox.TabIndex = 35;
-            this.adjustSettingsCheckBox.Text = "Активировать настройки юстировки";
+            this.adjustSettingsCheckBox.Text = "РђРєС‚РёРІРёСЂРѕРІР°С‚СЊ РЅР°СЃС‚СЂРѕР№РєРё СЋСЃС‚РёСЂРѕРІРєРё";
             this.adjustSettingsCheckBox.UseVisualStyleBackColor = true;
             this.adjustSettingsCheckBox.CheckedChanged += new System.EventHandler(this.adjustSettingsCheckBox_CheckedChanged);
             // 
@@ -102,7 +102,7 @@ namespace Flavor.Forms
             loadFileButton.Name = "loadFileButton";
             loadFileButton.Size = new System.Drawing.Size(120, 23);
             loadFileButton.TabIndex = 34;
-            loadFileButton.Text = "Загрузить из файла";
+            loadFileButton.Text = "Р—Р°РіСЂСѓР·РёС‚СЊ РёР· С„Р°Р№Р»Р°";
             loadFileButton.UseVisualStyleBackColor = true;
             loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
             // 
@@ -112,7 +112,7 @@ namespace Flavor.Forms
             saveFileButton.Name = "saveFileButton";
             saveFileButton.Size = new System.Drawing.Size(112, 23);
             saveFileButton.TabIndex = 6;
-            saveFileButton.Text = "Сохранить в файл";
+            saveFileButton.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ РІ С„Р°Р№Р»";
             saveFileButton.UseVisualStyleBackColor = true;
             saveFileButton.Click += new System.EventHandler(this.saveFileButton_Click);
             // 
@@ -347,7 +347,7 @@ namespace Flavor.Forms
             label33.Name = "label33";
             label33.Size = new System.Drawing.Size(184, 13);
             label33.TabIndex = 25;
-            label33.Text = "Фокусирующее напр. (2) (20-150 В)";
+            label33.Text = "Р¤РѕРєСѓСЃРёСЂСѓСЋС‰РµРµ РЅР°РїСЂ. (2) (20-150 Р’)";
             // 
             // label32
             // 
@@ -356,7 +356,7 @@ namespace Flavor.Forms
             label32.Name = "label32";
             label32.Size = new System.Drawing.Size(184, 13);
             label32.TabIndex = 24;
-            label32.Text = "Фокусирующее напр. (1) (20-150 В)";
+            label32.Text = "Р¤РѕРєСѓСЃРёСЂСѓСЋС‰РµРµ РЅР°РїСЂ. (1) (20-150 Р’)";
             // 
             // label7
             // 
@@ -365,7 +365,7 @@ namespace Flavor.Forms
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(104, 13);
             label7.TabIndex = 11;
-            label7.Text = "Ток нагрева (0-1 А)";
+            label7.Text = "РўРѕРє РЅР°РіСЂРµРІР° (0-1 Рђ)";
             // 
             // label6
             // 
@@ -374,7 +374,7 @@ namespace Flavor.Forms
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(127, 13);
             label6.TabIndex = 10;
-            label6.Text = "Ток эмиссии (0-10 мкА)";
+            label6.Text = "РўРѕРє СЌРјРёСЃСЃРёРё (0-10 РјРєРђ)";
             // 
             // label5
             // 
@@ -383,7 +383,7 @@ namespace Flavor.Forms
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(122, 13);
             label5.TabIndex = 9;
-            label5.Text = "Коэффициент деления";
+            label5.Text = "РљРѕСЌС„С„РёС†РёРµРЅС‚ РґРµР»РµРЅРёСЏ";
             // 
             // label4
             // 
@@ -392,7 +392,7 @@ namespace Flavor.Forms
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(180, 13);
             label4.TabIndex = 8;
-            label4.Text = "Напряжение ионизации (20-150 В)";
+            label4.Text = "РќР°РїСЂСЏР¶РµРЅРёРµ РёРѕРЅРёР·Р°С†РёРё (20-150 Р’)";
             // 
             // label3
             // 
@@ -401,7 +401,7 @@ namespace Flavor.Forms
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(149, 13);
             label3.TabIndex = 7;
-            label3.Text = "Время перехода (10-100 мс)";
+            label3.Text = "Р’СЂРµРјСЏ РїРµСЂРµС…РѕРґР° (10-100 РјСЃ)";
             // 
             // label2
             // 
@@ -410,7 +410,7 @@ namespace Flavor.Forms
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(174, 13);
             label2.TabIndex = 6;
-            label2.Text = "Время экспозиции (10-10000 мс)";
+            label2.Text = "Р’СЂРµРјСЏ СЌРєСЃРїРѕР·РёС†РёРё (10-10000 РјСЃ)";
             // 
             // ok_butt
             // 
@@ -418,7 +418,7 @@ namespace Flavor.Forms
             this.ok_butt.Name = "ok_butt";
             this.ok_butt.Size = new System.Drawing.Size(72, 23);
             this.ok_butt.TabIndex = 2;
-            this.ok_butt.Text = "Сохранить";
+            this.ok_butt.Text = "РЎРѕС…СЂР°РЅРёС‚СЊ";
             this.ok_butt.UseVisualStyleBackColor = true;
             this.ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
             // 
@@ -429,7 +429,7 @@ namespace Flavor.Forms
             this.cancel_butt.Name = "cancel_butt";
             this.cancel_butt.Size = new System.Drawing.Size(54, 23);
             this.cancel_butt.TabIndex = 3;
-            this.cancel_butt.Text = "Отмена";
+            this.cancel_butt.Text = "РћС‚РјРµРЅР°";
             this.cancel_butt.UseVisualStyleBackColor = true;
             this.cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
@@ -439,7 +439,7 @@ namespace Flavor.Forms
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(73, 23);
             this.applyButton.TabIndex = 4;
-            this.applyButton.Text = "Применить";
+            this.applyButton.Text = "РџСЂРёРјРµРЅРёС‚СЊ";
             this.applyButton.UseVisualStyleBackColor = true;
             this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
@@ -450,7 +450,7 @@ namespace Flavor.Forms
             this.rareModeCheckBox.Name = "rareModeCheckBox";
             this.rareModeCheckBox.Size = new System.Drawing.Size(287, 17);
             this.rareModeCheckBox.TabIndex = 5;
-            this.rareModeCheckBox.Text = "Без уменьшения частоты запроса статуса прибора";
+            this.rareModeCheckBox.Text = "Р‘РµР· СѓРјРµРЅСЊС€РµРЅРёСЏ С‡Р°СЃС‚РѕС‚С‹ Р·Р°РїСЂРѕСЃР° СЃС‚Р°С‚СѓСЃР° РїСЂРёР±РѕСЂР°";
             this.rareModeCheckBox.UseVisualStyleBackColor = true;
             // 
             // openCommonDataFileDialog
@@ -482,7 +482,7 @@ namespace Flavor.Forms
             this.Name = "OptionsForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Настройки";
+            this.Text = "РќР°СЃС‚СЂРѕР№РєРё";
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();

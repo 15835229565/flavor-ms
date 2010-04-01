@@ -1,26 +1,8 @@
-using Flavor.Controls;
+п»їusing Flavor.Controls;
 namespace Flavor.Forms
 {
     partial class MonitorOptionsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -74,7 +56,7 @@ namespace Flavor.Forms
             groupBox2.Size = new System.Drawing.Size(414, 70);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Параметры режима мониторинга";
+            groupBox2.Text = "РџР°СЂР°РјРµС‚СЂС‹ СЂРµР¶РёРјР° РјРѕРЅРёС‚РѕСЂРёРЅРіР°";
             // 
             // numericUpDown1
             // 
@@ -91,7 +73,7 @@ namespace Flavor.Forms
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(106, 13);
             label8.TabIndex = 4;
-            label8.Text = "Общее время (мин)";
+            label8.Text = "РћР±С‰РµРµ РІСЂРµРјСЏ (РјРёРЅ)";
             // 
             // checkPeakInsertButton
             // 
@@ -99,7 +81,7 @@ namespace Flavor.Forms
             this.checkPeakInsertButton.Name = "checkPeakInsertButton";
             this.checkPeakInsertButton.Size = new System.Drawing.Size(78, 49);
             this.checkPeakInsertButton.TabIndex = 3;
-            this.checkPeakInsertButton.Text = "Вставка контрольного пика";
+            this.checkPeakInsertButton.Text = "Р’СЃС‚Р°РІРєР° РєРѕРЅС‚СЂРѕР»СЊРЅРѕРіРѕ РїРёРєР°";
             this.checkPeakInsertButton.UseVisualStyleBackColor = true;
             this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
             // 
@@ -117,7 +99,7 @@ namespace Flavor.Forms
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(116, 13);
             label1.TabIndex = 1;
-            label1.Text = "Количество итераций";
+            label1.Text = "РљРѕР»РёС‡РµСЃС‚РІРѕ РёС‚РµСЂР°С†РёР№";
             // 
             // iterationsNumericUpDown
             // 
@@ -133,7 +115,7 @@ namespace Flavor.Forms
             this.ClientSize = new System.Drawing.Size(711, 482);
             this.Controls.Add(groupBox2);
             this.Name = "MonitorOptionsForm";
-            this.Text = "Настройки  режима мониторинга";
+            this.Text = "РќР°СЃС‚СЂРѕР№РєРё  СЂРµР¶РёРјР° РјРѕРЅРёС‚РѕСЂРёРЅРіР°";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MonitorOptionsForm_FormClosed);
             this.Controls.SetChildIndex(groupBox2, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
@@ -157,7 +139,6 @@ namespace Flavor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

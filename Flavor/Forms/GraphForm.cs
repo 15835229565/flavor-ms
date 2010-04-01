@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -167,8 +167,8 @@ namespace Flavor.Forms
             displayedFileName = "";
             Graph.DisplayingMode = Graph.Displaying.Measured;
             specterClosingEnabled = false;
-            ZedGraphRebirth(0, Graph.DisplayedRows1, "Первый коллектор");
-            ZedGraphRebirth(1, Graph.DisplayedRows2, "Второй коллектор");
+            ZedGraphRebirth(0, Graph.DisplayedRows1, "РџРµСЂРІС‹Р№ РєРѕР»Р»РµРєС‚РѕСЂ");
+            ZedGraphRebirth(1, Graph.DisplayedRows2, "Р’С‚РѕСЂРѕР№ РєРѕР»Р»РµРєС‚РѕСЂ");
             RefreshGraph();
         }
 
@@ -180,16 +180,16 @@ namespace Flavor.Forms
         {
             displayedFileName = fileName;
             Graph.DisplayingMode = Graph.Displaying.Loaded;
-            ZedGraphRebirth(0, Graph.DisplayedRows1, "Первый коллектор");
-            ZedGraphRebirth(1, Graph.DisplayedRows2, "Второй коллектор");
+            ZedGraphRebirth(0, Graph.DisplayedRows1, "РџРµСЂРІС‹Р№ РєРѕР»Р»РµРєС‚РѕСЂ");
+            ZedGraphRebirth(1, Graph.DisplayedRows2, "Р’С‚РѕСЂРѕР№ РєРѕР»Р»РµРєС‚РѕСЂ");
             RefreshGraph();
             specterClosingEnabled = true;
         }
         internal void DisplayDiff()
         {
             Graph.DisplayingMode = Graph.Displaying.Diff;
-            ZedGraphRebirth(0, Graph.DisplayedRows1, "Diff - Первый коллектор");
-            ZedGraphRebirth(1, Graph.DisplayedRows2, "Diff - Второй коллектор");
+            ZedGraphRebirth(0, Graph.DisplayedRows1, "Diff - РџРµСЂРІС‹Р№ РєРѕР»Р»РµРєС‚РѕСЂ");
+            ZedGraphRebirth(1, Graph.DisplayedRows2, "Diff - Р’С‚РѕСЂРѕР№ РєРѕР»Р»РµРєС‚РѕСЂ");
             // ?
             RefreshGraph();
             specterClosingEnabled = true;
@@ -250,17 +250,17 @@ namespace Flavor.Forms
         {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
             
-            string modeText = " (прециз.)";
+            string modeText = " (РїСЂРµС†РёР·.)";
             preciseSpecterDisplayed = true;
             if (dataPoints.Count == 1)
             {
-                modeText = " (скан.)";
+                modeText = " (СЃРєР°РЅ.)";
                 preciseSpecterDisplayed = false;
             }
             prevPreciseSpecterDisplayed = preciseSpecterDisplayed;
 
             myPane.Title.Text = title + modeText;
-            myPane.YAxis.Title.Text = "Интенсивность";
+            myPane.YAxis.Title.Text = "РРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ";
 
             if (!(displayedFileName == ""))
                 myPane.Title.Text += ":\n" + displayedFileName;
@@ -268,17 +268,17 @@ namespace Flavor.Forms
             switch (Graph.AxisDisplayMode)
             {
                 case Graph.pListScaled.DisplayValue.Step:
-                    myPane.XAxis.Title.Text = "Ступени";
+                    myPane.XAxis.Title.Text = "РЎС‚СѓРїРµРЅРё";
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = minX[zgcIndex];
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    myPane.XAxis.Title.Text = "Напряжение (В)";
+                    myPane.XAxis.Title.Text = "РќР°РїСЂСЏР¶РµРЅРёРµ (Р’)";
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    myPane.XAxis.Title.Text = "Масса (а.е.м.)";
+                    myPane.XAxis.Title.Text = "РњР°СЃСЃР° (Р°.Рµ.Рј.)";
                     //limits inverted due to point-to-mass law
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
