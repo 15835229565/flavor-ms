@@ -1,4 +1,4 @@
-namespace Flavor.Forms
+п»їnamespace Flavor.Forms
 {
     partial class AddPointForm
     {
@@ -49,7 +49,7 @@ namespace Flavor.Forms
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Отмена";
+            this.cancelButton.Text = "РћС‚РјРµРЅР°";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
@@ -68,7 +68,7 @@ namespace Flavor.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Добавление точки";
+            this.Text = "Р”РѕР±Р°РІР»РµРЅРёРµ С‚РѕС‡РєРё";
             this.ResumeLayout(false);
 
         }
