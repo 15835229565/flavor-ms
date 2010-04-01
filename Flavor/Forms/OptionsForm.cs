@@ -1,43 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using Flavor.Common;
 using Flavor.Common.Commands.UI;
 
-namespace Flavor.Forms
-{
-    internal partial class OptionsForm : Form
-    {
-        protected OptionsForm()
-        {
+namespace Flavor.Forms {
+    internal partial class OptionsForm: Form {
+        protected OptionsForm() {
             InitializeComponent();
             rareModeCheckBox.Checked = Commander.notRareModeRequested;
-            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure))
-            {
+            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure)) {
                 applyButton.Enabled = true;
                 applyButton.Visible = true;
-            }
-            else
-            {
+            } else {
                 applyButton.Enabled = false;
                 applyButton.Visible = false;
             }
             loadCommonData();
         }
 
-        protected void loadCommonData(string fn)
-        {
+        protected void loadCommonData(string fn) {
             Config.loadCommonOptions(fn);
             loadCommonData();
         }
 
-        protected void loadCommonData()
-        {
+        protected void loadCommonData() {
             decimal temp;
 
             temp = (decimal)(Config.CommonOptions.eTimeReal);
@@ -93,14 +79,12 @@ namespace Flavor.Forms
             fV2NumericUpDown.Value = temp;
         }
 
-        protected void cancel_butt_Click(object sender, EventArgs e)
-        {
+        protected void cancel_butt_Click(object sender, EventArgs e) {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        protected virtual void ok_butt_Click(object sender, EventArgs e)
-        {
+        protected virtual void ok_butt_Click(object sender, EventArgs e) {
             Config.saveCommonOptions((ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
                                    (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
             Commander.notRareModeRequested = rareModeCheckBox.Checked;
@@ -108,38 +92,29 @@ namespace Flavor.Forms
             this.Close();
         }
 
-        protected virtual void applyButton_Click(object sender, EventArgs e)
-        {
+        protected virtual void applyButton_Click(object sender, EventArgs e) {
             Commander.AddToSend(new sendIVoltage());
             ok_butt_Click(sender, e);
         }
 
-        protected void saveFileButton_Click(object sender, EventArgs e)
-        {
-            if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK)
-            {
+        protected void saveFileButton_Click(object sender, EventArgs e) {
+            if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
                 Config.saveCommonOptions(saveCommonDataFileDialog.FileName, (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
                                          (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
             }
         }
 
-        protected void loadFileButton_Click(object sender, EventArgs e)
-        {
-            if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
+        protected void loadFileButton_Click(object sender, EventArgs e) {
+            if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
+                try {
                     loadCommonData(openCommonDataFileDialog.FileName);
-                }
-                catch (Config.ConfigLoadException cle)
-                {
+                } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
             }
         }
 
-        private void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
+        private void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e) {
             CPNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;

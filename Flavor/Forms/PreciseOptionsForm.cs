@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Flavor.Common;
 using Flavor.Controls;
 
-namespace Flavor.Forms
-{
-    internal partial class PreciseOptionsForm: OptionsForm
-    {
+namespace Flavor.Forms {
+    internal partial class PreciseOptionsForm: OptionsForm {
         private mainForm upLevel;
-        internal mainForm UpLevel
-        {
+        internal mainForm UpLevel {
             set { upLevel = value; }
         }
 
@@ -23,13 +17,13 @@ namespace Flavor.Forms
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
         private static PreciseOptionsForm instance = null;
-        internal static PreciseOptionsForm getInstance(){
+        internal static PreciseOptionsForm getInstance() {
             if (instance == null) instance = new PreciseOptionsForm();
             return instance;
         }
 
-        internal PreciseOptionsForm(): base()
-        {
+        internal PreciseOptionsForm()
+            : base() {
             InitializeComponent();
             bool enable = Graph.PointToAdd != null;
 
@@ -37,8 +31,7 @@ namespace Flavor.Forms
             this.preciseEditorGroupBox.SuspendLayout();
             this.insertPointButton.Enabled = enable;
 
-            for (int i = 0; i < 20; ++i)
-            {
+            for (int i = 0; i < 20; ++i) {
                 this.PErows[i] = new PreciseEditorRowPlus();
                 this.PErows[i].Location = new Point(21, 42 + 15 * i);
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
@@ -53,30 +46,23 @@ namespace Flavor.Forms
             this.ResumeLayout(false);
             this.PerformLayout();
 
-            if (!enable)
-            {
+            if (!enable) {
                 Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
             }
             Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeEnableForm);
         }
 
-        private void InvokeEnableForm()
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeEnableForm() {
+            if (this.InvokeRequired) {
                 DeviceEventHandler InvokeDelegate = new DeviceEventHandler(EnableForm);
                 this.Invoke(InvokeDelegate);
-            }
-            else
-            {
+            } else {
                 EnableForm();
             }
         }
 
-        private void EnableForm()
-        {
-            switch (Commander.pState)
-            {
+        private void EnableForm() {
+            switch (Commander.pState) {
                 case Commander.programStates.Start:
                     this.preciseEditorGroupBox.Enabled = true;
                     this.params_groupBox.Enabled = true;
@@ -169,33 +155,26 @@ namespace Flavor.Forms
             }
         }
 
-        private void loadPreciseEditorData(List<Utility.PreciseEditorData> ped)
-        {
-            if (ped != null)
-            {
+        private void loadPreciseEditorData(List<Utility.PreciseEditorData> ped) {
+            if (ped != null) {
                 clearPreciseEditorData();
-                foreach (Utility.PreciseEditorData p in ped)
-                {
+                foreach (Utility.PreciseEditorData p in ped) {
                     PErows[p.pNumber].setValues(p);
                 }
             }
         }
 
-        protected override void ok_butt_Click(object sender, EventArgs e)
-        {
-            if (!checkTextBoxes())
-            {
+        protected override void ok_butt_Click(object sender, EventArgs e) {
+            if (!checkTextBoxes()) {
                 return;
             }
             saveData();
             base.ok_butt_Click(sender, e);
         }
-        protected virtual bool checkTextBoxes()
-        {
+        protected virtual bool checkTextBoxes() {
             bool exitFlag = true;
             data = new List<Utility.PreciseEditorData>();
-            for (int i = 0; i < 20; ++i)
-            {
+            for (int i = 0; i < 20; ++i) {
                 if (exitFlag &= PErows[i].checkTextBoxes())
                     if (PErows[i].AllFilled)
                         data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
@@ -207,81 +186,61 @@ namespace Flavor.Forms
             }
             return exitFlag;
         }
-        protected virtual void saveData()
-        {
+        protected virtual void saveData() {
             Config.SavePreciseOptions(data);
         }
-        
-        protected override void applyButton_Click(object sender, EventArgs e)
-        {
-            if (checkTextBoxes())
-            {
+
+        protected override void applyButton_Click(object sender, EventArgs e) {
+            if (checkTextBoxes()) {
                 Config.SavePreciseOptions(data);
                 base.applyButton_Click(sender, e);
             }
         }
 
-        private void savePreciseEditorToFileButton_Click(object sender, EventArgs e)
-        {
-            if (checkTextBoxes())
-            {
-                if (savePreciseEditorToFileDialog.ShowDialog() == DialogResult.OK)
-                {
+        private void savePreciseEditorToFileButton_Click(object sender, EventArgs e) {
+            if (checkTextBoxes()) {
+                if (savePreciseEditorToFileDialog.ShowDialog() == DialogResult.OK) {
                     Config.SavePreciseOptions(data, savePreciseEditorToFileDialog.FileName, false, "Precise options");
                 }
             }
         }
 
-        private void loadPreciseEditorFromFileButton_Click(object sender, EventArgs e)
-        {
-            if (loadPreciseEditorFromFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
+        private void loadPreciseEditorFromFileButton_Click(object sender, EventArgs e) {
+            if (loadPreciseEditorFromFileDialog.ShowDialog() == DialogResult.OK) {
+                try {
                     loadPreciseEditorData(Config.LoadPreciseEditorData(loadPreciseEditorFromFileDialog.FileName));
-                }
-                catch (Config.ConfigLoadException cle)
-                {
+                } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
             }
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
-        {
+        private void clearButton_Click(object sender, EventArgs e) {
             clearPreciseEditorData();
         }
 
-        void Graph_OnPointAdded(bool notNull)
-        {
+        void Graph_OnPointAdded(bool notNull) {
             insertPointButton.Enabled = notNull;
             //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }
 
-        private void insertPointButton_Click(object sender, EventArgs e)
-        {
-            if (Graph.PointToAdd != null)
-            {
+        private void insertPointButton_Click(object sender, EventArgs e) {
+            if (Graph.PointToAdd != null) {
                 PlacePointForm ppForm = new PlacePointForm(Graph.PointToAdd);
-                if (ppForm.ShowDialog() == DialogResult.OK)
-                {
+                if (ppForm.ShowDialog() == DialogResult.OK) {
                     if (ppForm.PointNumber != -1)
                         PErows[ppForm.PointNumber].setValues(Graph.PointToAdd);
                 }
-            }
-            else
-            {
+            } else {
                 MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
             }
         }
 
-        private void clearPreciseEditorData()
-        {
+        private void clearPreciseEditorData() {
             for (int i = 0; i < 20; ++i)
                 PErows[i].Clear();
         }
-        private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
+        private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e) {
             instance = null;
             upLevel.InvokeRefreshButtons();
         }

@@ -4,20 +4,15 @@ using System.Text;
 using Flavor.Forms;
 using System.Timers;
 
-namespace Flavor.Common.Measuring
-{
-    internal class MonitorMeasureMode: PreciseMeasureMode
-    {
-        internal class MeasureStopper
-        {
+namespace Flavor.Common.Measuring {
+    internal class MonitorMeasureMode: PreciseMeasureMode {
+        internal class MeasureStopper {
             private int counter;
             private Timer timer;
             private bool timerElapsed = false;
-            internal MeasureStopper(int counterLimit, int timeLimit)
-            {
+            internal MeasureStopper(int counterLimit, int timeLimit) {
                 counter = counterLimit;
-                if (timeLimit > 0)
-                {
+                if (timeLimit > 0) {
                     timer = new Timer();
                     // time in minutes
                     timer.Interval = timeLimit * 60000;
@@ -26,33 +21,26 @@ namespace Flavor.Common.Measuring
                 }
             }
 
-            void timer_Elapsed(object sender, ElapsedEventArgs e)
-            {
+            void timer_Elapsed(object sender, ElapsedEventArgs e) {
                 timerElapsed = true;
             }
-            internal void next()
-            {
-                if (counter == -1) 
-                {
+            internal void next() {
+                if (counter == -1) {
                     // produce infinite loop
-                    return; 
+                    return;
                 }
                 --counter;
             }
-            internal bool ready()
-            {
+            internal bool ready() {
                 return timerElapsed || counter == 0;
             }
-            internal int estimatedTurns()
-            {
+            internal int estimatedTurns() {
                 // estimated operation duration
                 return counter;
             }
 
-            internal void startTimer()
-            {
-                if (timer == null)
-                {
+            internal void startTimer() {
+                if (timer == null) {
                     return;
                 }
                 timer.Start();
@@ -62,87 +50,71 @@ namespace Flavor.Common.Measuring
         private MeasureStopper stopper;
         private Utility.PreciseEditorData peak;
 
-        internal MonitorMeasureMode(short initialShift): base(Config.PreciseDataWithChecker)
-        {
+        internal MonitorMeasureMode(short initialShift)
+            : base(Config.PreciseDataWithChecker) {
             shift = initialShift;
             stopper = new MeasureStopper(Config.Iterations, 0);
             peak = Config.CheckerPeak;
         }
-        protected override bool toContinue()
-        {
-            if (base.toContinue())
-            {
+        protected override bool toContinue() {
+            if (base.toContinue()) {
                 return true;
             }
             if (isSpectrumValid()) {
                 stopper.next();
             }
-            if (stopper.ready())
-            {
+            if (stopper.ready()) {
                 return false;
             }
             onExit();
             init();
             return true;
         }
-        private bool isSpectrumValid()
-        {
-            if (peak == null)
-            {
+        private bool isSpectrumValid() {
+            if (peak == null) {
                 return true;
             }
             long[] counts = peakCounts(isCheckPeak);
             ushort width = peak.Width;
-            if (counts.Length != 2 * width + 1)
-            {
+            if (counts.Length != 2 * width + 1) {
                 // data mismatch
                 return false;
             }
             long max = -1;
             int index = -1;
-            for (int i = 0; i < counts.Length; ++i)
-            {
+            for (int i = 0; i < counts.Length; ++i) {
                 long temp = counts[i];
-                if (temp > max)
-                {
+                if (temp > max) {
                     max = temp;
                     index = i;
                 }
             }
-            if (index != width)
-            {
+            if (index != width) {
                 shift += (short)(index - width);
                 return false;
             }
             return true;
         }
-        private bool isCheckPeak(Utility.PreciseEditorData ped)
-        {
+        private bool isCheckPeak(Utility.PreciseEditorData ped) {
             // only in this situation (checkpeak marked with false use)
-            if (ped.Use)
-            {
+            if (ped.Use) {
                 return false;
             }
             return true;
         }
-        internal override bool start()
-        {
-            if (!base.start())
-            {
+        internal override bool start() {
+            if (!base.start()) {
                 return false;
             }
             stopper.startTimer();
             return true;
         }
-        internal override void refreshGraphics(mainForm form)
-        {
+        internal override void refreshGraphics(mainForm form) {
             form.refreshGraphicsOnMonitorStep();
         }
-        internal override int stepsCount()
-        {
+        internal override int stepsCount() {
             int stopperTurns = stopper.estimatedTurns();
-            if (stopperTurns <= 0)
-            {
+            if (stopperTurns <= 0) {
                 return 0;
             }
             return base.stepsCount() * stopperTurns;

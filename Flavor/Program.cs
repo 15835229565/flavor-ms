@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Flavor.Forms;
 
-namespace Flavor
-{
-    static class Program
-    {
+namespace Flavor {
+    internal static class Program {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
-        {
+        static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             mainForm MSControl = new mainForm();

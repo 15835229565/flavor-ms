@@ -1,16 +1,13 @@
 ﻿using Flavor.Controls;
-namespace Flavor.Forms
-{
-    partial class MonitorOptionsForm
-    {
+namespace Flavor.Forms {
+    partial class MonitorOptionsForm {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.Windows.Forms.GroupBox groupBox2;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;

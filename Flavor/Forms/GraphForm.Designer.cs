@@ -1,8 +1,7 @@
 ﻿using Flavor.Controls;
-namespace Flavor.Forms
-{
-    partial class GraphForm
-    {
+
+namespace Flavor.Forms {
+    partial class GraphForm {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -12,10 +11,8 @@ namespace Flavor.Forms
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -27,8 +24,7 @@ namespace Flavor.Forms
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.MenuStrip graphFormMenuStrip;
             System.Windows.Forms.ToolStripMenuItem FileMenu;
@@ -438,11 +434,11 @@ namespace Flavor.Forms
             graphContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
 
+        private ZedGraphControlPlus collect1_graph;
         private ZedGraphControlPlus collect2_graph;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeSpecterFileToolStripMenuItem;
@@ -458,7 +454,6 @@ namespace Flavor.Forms
         private System.Windows.Forms.ToolStripMenuItem distractFromCurrentToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveSpecterFileDialog;
         private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
-        private ZedGraphControlPlus collect1_graph;
         private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
     }
 }

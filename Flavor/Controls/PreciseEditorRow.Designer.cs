@@ -1,17 +1,14 @@
 ﻿using System.Windows.Forms;
 using Flavor.Common;
-namespace Flavor.Controls
-{
-    partial class PreciseEditorRow
-    {
+namespace Flavor.Controls {
+    partial class PreciseEditorRow {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.lapsTextBox = new System.Windows.Forms.TextBox();
             this.precTextBox = new System.Windows.Forms.TextBox();
             this.commentTextBox = new System.Windows.Forms.TextBox();

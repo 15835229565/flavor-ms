@@ -1,44 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Flavor.Common.Commands.Interfaces {
+    internal class ServicePacket { }
 
-namespace Flavor.Common.Commands.Interfaces
-{
-    internal class ServicePacket
-    {
-    }
-
-    internal class SyncServicePacket: ServicePacket
-    {
-        internal virtual ModBus.CommandCode Id
-        {
+    internal class SyncServicePacket: ServicePacket {
+        internal virtual ModBus.CommandCode Id {
             get { return ModBus.CommandCode.None; }
         }
     }
 
-    internal interface ISend
-    {
+    internal interface ISend {
         void Send();
     }
 
-    interface IAutomatedReply
-    {
+    interface IAutomatedReply {
         void AutomatedReply();
     }
 
-    interface IUpdateDevice
-    {
+    interface IUpdateDevice {
         void UpdateDevice();
     }
-    
-    interface IUpdateGraph
-    {
+
+    interface IUpdateGraph {
         void UpdateGraph();
     }
-    /*
-    interface IUpdateUserMessage
-    {
-        void UpdateUserMessage();
-    }
-    */
 }

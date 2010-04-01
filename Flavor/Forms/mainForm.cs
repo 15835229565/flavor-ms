@@ -6,14 +6,11 @@ using System.Timers;
 using Flavor.Common;
 using Flavor.Common.Measuring;
 
-namespace Flavor.Forms
-{
-    internal partial class mainForm : Form
-    {
+namespace Flavor.Forms {
+    internal partial class mainForm: Form {
         private GraphForm gForm;
 
-        internal mainForm()
-        {
+        internal mainForm() {
             gForm = new GraphForm();
             InitializeComponent();
             populateStatusTreeView();
@@ -33,7 +30,7 @@ namespace Flavor.Forms
             Device.Init();
 
             Graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
-            
+
             Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeRefreshButtons);
             Commander.pState = Commander.programStates.Start;
             Commander.pStatePrev = Commander.pState;
@@ -67,9 +64,8 @@ namespace Flavor.Forms
         private TreeNodeLeaf driveTemperatureValueTreeNode;
         private TreeNodeLeaf pwmValueTreeNode;
         private TreeNodeLeaf operationTimeValueTreeNode;
-        
-        private void populateStatusTreeView()
-        {
+
+        private void populateStatusTreeView() {
             TreeNodePlus infoNode;
 
             TreeNodePair systemStateTextTreeNode;
@@ -93,7 +89,7 @@ namespace Flavor.Forms
             TreeNodePair condMinusTextTreeNode;
             TreeNodePair detectorVoltageTextTreeNode;
             TreeNodePair hCurrentTextTreeNode;
-        
+
             TreeNodePlus turboPumpNode;
 
             TreeNodePair turboSpeedTextTreeNode;
@@ -162,7 +158,7 @@ namespace Flavor.Forms
             operationTimeValueTreeNode = new TreeNodeLeaf();
             operationTimeTextTreeNode = new TreeNodePair("Время работы", operationTimeValueTreeNode);
 
-            turboPumpNode = new TreeNodePlus("Турбонасос", 
+            turboPumpNode = new TreeNodePlus("Турбонасос",
                 new TreeNode[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,
                     pwmTextTreeNode, operationTimeTextTreeNode });
 
@@ -170,60 +166,50 @@ namespace Flavor.Forms
                 new TreeNode[] { infoNode, extraNode, turboPumpNode });
             rootNode.ExpandAll();
 
-            statusTreeView.Nodes.AddRange(new TreeNode[] {rootNode});
+            statusTreeView.Nodes.AddRange(new TreeNode[] { rootNode });
         }
         #endregion
-        private void mainForm_Load(object sender, EventArgs e)
-        {
+        private void mainForm_Load(object sender, EventArgs e) {
             openConfigFileToolStripMenuItem_Click(sender, e);
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
             mainForm.ActiveForm.Close();
         }
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
             ConnectOptionsForm cForm = new ConnectOptionsForm();
             cForm.ShowDialog();
         }
 
-        private void overviewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
             ScanOptionsForm sForm = new ScanOptionsForm();
             sForm.ShowDialog();
         }
-        private void senseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void senseToolStripMenuItem_Click(object sender, EventArgs e) {
             PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
             pForm.UpLevel = this;
             pForm.Show();
         }
-        private void monitorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void monitorToolStripMenuItem_Click(object sender, EventArgs e) {
             // Prec/Mon forms simultaneously howto?
             MonitorOptionsForm mForm = MonitorOptionsForm.getInstance();
             mForm.UpLevel = this;
             mForm.Show();
         }
 
-        private void initSys_butt_Click(object sender, EventArgs e)
-        {
+        private void initSys_butt_Click(object sender, EventArgs e) {
             initSys_butt.Enabled = false;
             Commander.Init();
         }
-        private void shutSys_butt_Click(object sender, EventArgs e)
-        {
+        private void shutSys_butt_Click(object sender, EventArgs e) {
             shutSys_butt.Enabled = false;
             Commander.Shutdown();
         }
-        private void unblock_butt_Click(object sender, EventArgs e)
-        {
+        private void unblock_butt_Click(object sender, EventArgs e) {
             unblock_butt.Enabled = false;
             Commander.Unblock();
         }
-        private void prepareControlsOnMeasureStart()
-        {
+        private void prepareControlsOnMeasureStart() {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
@@ -251,18 +237,15 @@ namespace Flavor.Forms
             heatCurLabel.Text = Config.CommonOptions.hCurrentReal.ToString("f3");
             f1_label.Text = Config.CommonOptions.fV1Real.ToString("f3");
             f2_label.Text = Config.CommonOptions.fV2Real.ToString("f3");
-            
+
             cancelScanButton.Enabled = true;
             cancelScanButton.Visible = true;
 
             scanProgressBar.Value = 0;
             scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
-            if (scanProgressBar.Maximum == 0)
-            {
+            if (scanProgressBar.Maximum == 0) {
                 scanProgressBar.Style = ProgressBarStyle.Marquee;
-            }
-            else
-            {
+            } else {
                 scanProgressBar.Style = ProgressBarStyle.Blocks;
             }
             scanProgressBar.Step = 1;
@@ -272,8 +255,7 @@ namespace Flavor.Forms
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             gForm.specterSavingEnabled = false;
         }
-        private void overview_button_Click(object sender, EventArgs e)
-        {
+        private void overview_button_Click(object sender, EventArgs e) {
             startScanTextLabel.Visible = true;
             label18.Visible = true;
             firstStepLabel.Visible = true;
@@ -288,8 +270,7 @@ namespace Flavor.Forms
             prepareControlsOnMeasureStart();
             gForm.CreateGraph();
         }
-        private void sensmeasure_button_Click(object sender, EventArgs e)
-        {
+        private void sensmeasure_button_Click(object sender, EventArgs e) {
             startScanTextLabel.Visible = false;
             label18.Visible = false;
             firstStepLabel.Visible = false;
@@ -300,8 +281,7 @@ namespace Flavor.Forms
             Commander.Sense();
             prepareControlsOnMeasureStart();
         }
-        private void monitorToolStripButton_Click(object sender, EventArgs e)
-        {
+        private void monitorToolStripButton_Click(object sender, EventArgs e) {
             startScanTextLabel.Visible = false;
             label18.Visible = false;
             firstStepLabel.Visible = false;
@@ -313,8 +293,7 @@ namespace Flavor.Forms
             prepareControlsOnMeasureStart();
         }
 
-        private void InvokeProcessTurboPumpAlert(bool isFault, byte bits)
-        {
+        private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
             string msg = "Turbopump: ";
             msg += isFault ? "failure (" : "warning (";
             msg += bits.ToString("X2");
@@ -323,39 +302,28 @@ namespace Flavor.Forms
             Config.logTurboPumpAlert(msg);
         }
 
-        private void InvokeRefreshUserMessage(string msg)
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeRefreshUserMessage(string msg) {
+            if (this.InvokeRequired) {
                 Commander.AsyncReplyHandler InvokeDelegate = new Commander.AsyncReplyHandler(RefreshUserMessage);
                 this.Invoke(InvokeDelegate, msg);
-            }
-            else
-            {
+            } else {
                 RefreshUserMessage(msg);
             }
         }
-        private void RefreshUserMessage(string msg)
-        {
+        private void RefreshUserMessage(string msg) {
             measure_StatusLabel.Text = msg;
         }
 
-        private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate)
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate) {
+            if (this.InvokeRequired) {
                 Graph.GraphEventHandler InvokeDelegate = new Graph.GraphEventHandler(RefreshGraph);
                 this.Invoke(InvokeDelegate, displayMode, recreate);
-            }
-            else
-            {
+            } else {
                 RefreshGraph(displayMode, recreate);
             }
         }
-        private void RefreshGraph(Graph.Displaying displayMode, bool recreate)
-        {
-            switch (displayMode)
-            {
+        private void RefreshGraph(Graph.Displaying displayMode, bool recreate) {
+            switch (displayMode) {
                 case Graph.Displaying.Loaded:
                     if (recreate)
                         gForm.DisplayLoadedSpectrum();
@@ -365,11 +333,9 @@ namespace Flavor.Forms
                 case Graph.Displaying.Measured:
                     if (recreate)
                         gForm.CreateGraph();
-                    else
-                    {
+                    else {
                         gForm.RefreshGraph();
-                        if (scanProgressBar.Style != ProgressBarStyle.Marquee)
-                        {
+                        if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
                             scanProgressBar.PerformStep();
                         }
                         stepNumberLabel.Text = Graph.LastPoint.ToString();
@@ -387,8 +353,7 @@ namespace Flavor.Forms
                     break;
             }
         }
-        internal void refreshGraphicsOnScanStep()
-        {
+        internal void refreshGraphicsOnScanStep() {
             gForm.yAxisChange();
             //gForm.specterSavingEnabled = true;
 
@@ -402,8 +367,7 @@ namespace Flavor.Forms
             label41.Visible = false;
             peakWidthLabel.Visible = false;
         }
-        internal void refreshGraphicsOnPreciseStep()
-        {
+        internal void refreshGraphicsOnPreciseStep() {
             peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;
             label39.Visible = true;
@@ -412,45 +376,35 @@ namespace Flavor.Forms
             label41.Visible = true;
             peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
             peakWidthLabel.Visible = true;
-            if (Graph.CurrentPeak.Collector == 1)
-            {
+            if (Graph.CurrentPeak.Collector == 1) {
                 detector1CountsLabel.Visible = true;
                 label15.Visible = true;
                 detector2CountsLabel.Visible = false;
                 label16.Visible = false;
-            }
-            else
-            {
+            } else {
                 detector1CountsLabel.Visible = false;
                 label15.Visible = false;
                 detector2CountsLabel.Visible = true;
                 label16.Visible = true;
             }
         }
-        internal void refreshGraphicsOnMonitorStep()
-        {
+        internal void refreshGraphicsOnMonitorStep() {
             //TODO: this is temporary
             refreshGraphicsOnPreciseStep();
         }
 
-        private void InvokeRefreshDeviceState()
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeRefreshDeviceState() {
+            if (this.InvokeRequired) {
                 DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshDeviceState);
                 this.Invoke(InvokeDelegate);
-            }
-            else
-            {
+            } else {
                 RefreshDeviceState();
             }
         }
-        private void RefreshDeviceState()
-        {
+        private void RefreshDeviceState() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
-            switch (Device.sysState)
-            {
+            switch (Device.sysState) {
                 case (byte)Device.DeviceStates.Start:
                     systemStateValueTreeNode.Text = "Запуск";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
@@ -512,20 +466,15 @@ namespace Flavor.Forms
             parameterPanel.ResumeLayout();
         }
 
-        private void InvokeRefreshTurboPumpStatus() 
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeRefreshTurboPumpStatus() {
+            if (this.InvokeRequired) {
                 DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshTurboPumpStatus);
                 this.Invoke(InvokeDelegate);
-            }
-            else
-            {
+            } else {
                 RefreshTurboPumpStatus();
             }
         }
-        private void RefreshTurboPumpStatus()
-        {
+        private void RefreshTurboPumpStatus() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
 
@@ -535,76 +484,56 @@ namespace Flavor.Forms
             pumpTemperatureValueTreeNode.Text = Device.TurboPump.PumpTemperature.ToString("f0");
             driveTemperatureValueTreeNode.Text = Device.TurboPump.DriveTemperature.ToString("f0");
             operationTimeValueTreeNode.Text = Device.TurboPump.OperationTime.ToString("f0");
-            
+
             statusTreeView.EndUpdate();
             parameterPanel.ResumeLayout();
         }
 
-        private void InvokeRefreshDeviceStatus()
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeRefreshDeviceStatus() {
+            if (this.InvokeRequired) {
                 DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshDeviceStatus);
                 this.Invoke(InvokeDelegate);
-            }
-            else
-            {
+            } else {
                 RefreshDeviceStatus();
             }
         }
-        private void RefreshDeviceStatus()
-        {
+        private void RefreshDeviceStatus() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
-            if (Device.fPumpOn)
-            {
+            if (Device.fPumpOn) {
                 forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
                 forPumpOnValueTreeNode.Text = "Включен";
-            }
-            else
-            {
+            } else {
                 forPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
                 forPumpOnValueTreeNode.Text = "Выключен";
             }
-            if (Device.tPumpOn)
-            {
+            if (Device.tPumpOn) {
                 turboPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
                 turboPumpOnValueTreeNode.Text = "Включен";
-            }
-            else
-            {
+            } else {
                 turboPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
                 turboPumpOnValueTreeNode.Text = "Выключен";
             }
             forVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.fVacuumReal);
             highVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.hVacuumReal);
-            if (Device.highVoltageOn)
-            {
+            if (Device.highVoltageOn) {
                 hardwareBlockValueTreeNode.State = TreeNodePlus.States.Ok;
                 hardwareBlockValueTreeNode.Text = "Включено";
-            }
-            else
-            {
+            } else {
                 hardwareBlockValueTreeNode.State = TreeNodePlus.States.Warning;
                 hardwareBlockValueTreeNode.Text = "Выключено";
             }
-            if (Device.highVacuumValve)
-            {
+            if (Device.highVacuumValve) {
                 vGate1ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate1ValueTreeNode.Text = "Открыт";
-            }
-            else
-            {
+            } else {
                 vGate1ValueTreeNode.State = TreeNodePlus.States.Warning;
                 vGate1ValueTreeNode.Text = "Закрыт";
             }
-            if (Device.probeValve)
-            {
+            if (Device.probeValve) {
                 vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
                 vGate2ValueTreeNode.Text = "Открыт";
-            }
-            else
-            {
+            } else {
                 vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate2ValueTreeNode.Text = "Закрыт";
             }
@@ -623,24 +552,18 @@ namespace Flavor.Forms
             parameterPanel.ResumeLayout();
         }
 
-        private void InvokeRefreshVacuumState()
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeRefreshVacuumState() {
+            if (this.InvokeRequired) {
                 DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshVacuumState);
                 this.Invoke(InvokeDelegate);
-            }
-            else
-            {
+            } else {
                 RefreshVacuumState();
             }
         }
-        private void RefreshVacuumState()
-        {
+        private void RefreshVacuumState() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
-            switch (Device.vacState) 
-            {
+            switch (Device.vacState) {
                 case (byte)Device.VacuumStates.Idle:
                     vacuumStateValueTreeNode.Text = "Бездействие";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
@@ -734,24 +657,18 @@ namespace Flavor.Forms
             parameterPanel.ResumeLayout();
         }
 
-        internal void InvokeRefreshButtons() 
-        {
-            if (this.InvokeRequired)
-            {
+        internal void InvokeRefreshButtons() {
+            if (this.InvokeRequired) {
                 Commander.ProgramEventHandler InvokeDelegate = new Commander.ProgramEventHandler(RefreshButtons);
                 this.Invoke(InvokeDelegate);
-            }
-            else 
-            {
-                RefreshButtons(); 
+            } else {
+                RefreshButtons();
             }
         }
-        private void RefreshButtons()
-        {
+        private void RefreshButtons() {
             //bool precPointsExist = (Config.PreciseData.Count != 0);
             bool precPointsExist = Commander.somePointsUsed();
-            switch (Commander.hBlock) 
-            {
+            switch (Commander.hBlock) {
                 case true:
                     unblock_butt.Text = "Снять блокировку";
                     unblock_butt.ForeColor = Color.Green;
@@ -761,17 +678,13 @@ namespace Flavor.Forms
                     unblock_butt.ForeColor = Color.Red;
                     break;
             }
-            switch (Commander.pState)
-            {
+            switch (Commander.pState) {
                 case Commander.programStates.Start:
                     connectToolStripButton.Enabled = true;
-                    if (Commander.deviceIsConnected)
-                    {
+                    if (Commander.deviceIsConnected) {
                         connectToolStripButton.Text = "Разъединить";
                         connectToolStripButton.ForeColor = Color.Red;
-                    }
-                    else
-                    {
+                    } else {
                         connectToolStripButton.Text = "Соединить";
                         connectToolStripButton.ForeColor = Color.Green;
                     }
@@ -782,15 +695,15 @@ namespace Flavor.Forms
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
                     monitorToolStripButton.Enabled = false;
-                    
+
                     connectToolStripMenuItem.Enabled = true;
                     measureToolStripMenuItem.Enabled = true;
 
                     measurePanelToolStripMenuItem.Checked = false;
                     measurePanelToolStripMenuItem.Enabled = false;
-                    
+
                     gForm.specterOpeningEnabled = true;
-                    
+
                     break;
                 case Commander.programStates.WaitInit:
                     connectToolStripButton.Enabled = false;
@@ -921,112 +834,86 @@ namespace Flavor.Forms
             }
         }
 
-        private void InvokeCancelScan()
-        {
-            if (this.InvokeRequired)
-            {
+        private void InvokeCancelScan() {
+            if (this.InvokeRequired) {
                 Commander.ProgramEventHandler InvokeDelegate = new Commander.ProgramEventHandler(CancelScan);
                 this.Invoke(InvokeDelegate);
-            }
-            else
-            {
+            } else {
                 CancelScan();
             }
         }
-        private void CancelScan()
-        {
+        private void CancelScan() {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             cancelScanButton.Enabled = false;
             cancelScanButton.Visible = false;
-            gForm.specterSavingEnabled = true; 
+            gForm.specterSavingEnabled = true;
         }
-        
-        private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+
+        private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
             controlToolStrip.Visible = toolBarToolStripMenuItem.Checked;
         }
 
-        private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
             statusStrip.Visible = statusBarToolStripMenuItem.Checked;
         }
 
-        private void GraphWindowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void GraphWindowToolStripMenuItem_Click(object sender, EventArgs e) {
             gForm.Visible = GraphWindowToolStripMenuItem.Checked;
             // and some action with measurePanel
         }
 
-        private void ParameterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void ParameterToolStripMenuItem_Click(object sender, EventArgs e) {
             parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
         }
 
-        private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
+        private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
             measurePanel.Visible = measurePanelToolStripMenuItem.Checked;
         }
 
-        private void mainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (Commander.pState != Commander.programStates.Start)
-            {
+        private void mainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            if (Commander.pState != Commander.programStates.Start) {
                 if (new ClosureDialog().ShowDialog() != DialogResult.OK)
                     e.Cancel = true;
-            }
-            else 
-            {
+            } else {
                 if (Commander.deviceIsConnected) Commander.Disconnect();
             }
         }
 
-        private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
+        private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
+            try {
                 Config.loadConfig();
-            }
-            catch (Config.ConfigLoadException cle)
-            {
+            } catch (Config.ConfigLoadException cle) {
                 cle.visualise();
             }
         }
 
-        private void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
             Config.saveAll();
         }
 
-        private void cancelScanButton_Click(object sender, EventArgs e)
-        {
+        private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
             Commander.measureCancelRequested = true;
             gForm.specterOpeningEnabled = true;
             //!!!
         }
 
-        private void connectToolStripButton_Click(object sender, EventArgs e)
-        {
-            if (Commander.deviceIsConnected)
-            {
+        private void connectToolStripButton_Click(object sender, EventArgs e) {
+            if (Commander.deviceIsConnected) {
                 Commander.Disconnect();
                 Commander.OnAsyncReply -= new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
-            }
-            else
-            {
+            } else {
                 Commander.OnAsyncReply += new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
                 Commander.Connect();
             }
         }
 
-        private void delaysToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void delaysToolStripMenuItem_Click(object sender, EventArgs e) {
             DelaysOptionsForm dForm = new DelaysOptionsForm();
             dForm.ShowDialog();
         }
 
-        private void mainForm_MdiChildActivate(object sender, EventArgs e)
-        {
+        private void mainForm_MdiChildActivate(object sender, EventArgs e) {
             // stub
             // set data source of measurePanel according to spectrum displayed
             // and refresh it

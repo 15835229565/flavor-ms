@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Timers;
 using Flavor.Common.Commands.UI;
 using Flavor.Common.Commands.Async;
@@ -9,12 +8,9 @@ using Flavor.Common.Measuring;
 using Flavor.Common.Messaging;
 using Flavor.Common.Commands.Interfaces;
 
-namespace Flavor.Common
-{
-    internal static class Commander
-    {
-        internal enum programStates : byte
-        {
+namespace Flavor.Common {
+    internal static class Commander {
+        internal enum programStates: byte {
             Start,
             Shutdown,
             Init,
@@ -39,73 +35,57 @@ namespace Flavor.Common
         private static bool onTheFly = true;
 
         private static MeasureMode measureMode = null;
-        internal static MeasureMode CurrentMeasureMode
-        {
+        internal static MeasureMode CurrentMeasureMode {
             get { return measureMode; }
         }
 
         internal static event AsyncReplyHandler OnAsyncReply;
-        
-        internal static Commander.programStates pState
-        {
-            get 
-            { 
-                return programState; 
+
+        internal static Commander.programStates pState {
+            get {
+                return programState;
             }
-            set 
-            {
-                if (programState != value) 
-                {
+            set {
+                if (programState != value) {
                     programState = value;
                     OnProgramStateChanged();
                 };
             }
         }
-        
-        internal static Commander.programStates pStatePrev
-        {
+
+        internal static Commander.programStates pStatePrev {
             get { return programStatePrev; }
             set { programStatePrev = value; }
         }
-        
-        internal static bool hBlock
-        {
-            get 
-            {
-                return handleBlock; 
+
+        internal static bool hBlock {
+            get {
+                return handleBlock;
             }
-            set
-            {
-                if (handleBlock != value)
-                {
+            set {
+                if (handleBlock != value) {
                     handleBlock = value;
                     OnProgramStateChanged();
                 };
             }
         }
 
-        internal static bool measureCancelRequested
-        {
+        internal static bool measureCancelRequested {
             get { return cancelMeasure; }
             set { cancelMeasure = value; }
         }
 
-        internal static bool notRareModeRequested
-        {
+        internal static bool notRareModeRequested {
             get { return notRareMode; }
             set { notRareMode = value; }
         }
 
-        internal static bool deviceIsConnected
-        {
-            get 
-            {
-                return isConnected; 
+        internal static bool deviceIsConnected {
+            get {
+                return isConnected;
             }
-            set 
-            {
-                if (isConnected != value)
-                { 
+            set {
+                if (isConnected != value) {
                     isConnected = value;
                     OnProgramStateChanged();
                 }
@@ -114,20 +94,16 @@ namespace Flavor.Common
 
         private static MessageQueueWithAutomatedStatusChecks toSend;
 
-        internal static void AddToSend(UserRequest command)
-        {
+        internal static void AddToSend(UserRequest command) {
             toSend.AddToSend(command);
         }
 
-        internal static void Realize(ServicePacket Command)
-        {
-            if (Command is AsyncErrorReply)
-            {
+        internal static void Realize(ServicePacket Command) {
+            if (Command is AsyncErrorReply) {
                 CheckInterfaces(Command);
                 Console.WriteLine("Device says: {0}", ((AsyncErrorReply)Command).errorMessage);
                 Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
-                if (Commander.pState != Commander.programStates.Start)
-                {
+                if (Commander.pState != Commander.programStates.Start) {
                     toSend.IsRareMode = false;
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
@@ -135,11 +111,9 @@ namespace Flavor.Common
                     Commander.measureCancelRequested = false;
                 }
             }
-            if (Command is AsyncReply)
-            {
+            if (Command is AsyncReply) {
                 CheckInterfaces(Command);
-                if (Command is confirmShutdowned)
-                {
+                if (Command is confirmShutdowned) {
                     Console.WriteLine("System is shutdowned");
                     Commander.pState = Commander.programStates.Start;
                     Commander.pStatePrev = Commander.pState;
@@ -147,12 +121,10 @@ namespace Flavor.Common
                     Console.WriteLine(Commander.pState);
                     Device.Init();
                 }
-                if (Command is SystemReseted)
-                {
+                if (Command is SystemReseted) {
                     Console.WriteLine("System reseted");
                     Commander.OnAsyncReply("Система переинициализировалась");
-                    if (Commander.pState != Commander.programStates.Start)
-                    {
+                    if (Commander.pState != Commander.programStates.Start) {
                         toSend.IsRareMode = false;
                         Commander.pState = Commander.programStates.Start;
                         Commander.pStatePrev = Commander.pState;
@@ -160,30 +132,23 @@ namespace Flavor.Common
                         Commander.measureCancelRequested = false;
                     }
                 }
-                if (Command is confirmVacuumReady)
-                {
-                    if (Commander.hBlock)
-                    {
+                if (Command is confirmVacuumReady) {
+                    if (Commander.hBlock) {
                         Commander.pState = Commander.programStates.WaitHighVoltage;
                         Commander.pStatePrev = Commander.pState;
-                    }
-                    else
-                    {
+                    } else {
                         Commander.pState = Commander.programStates.Ready;
                         Commander.pStatePrev = Commander.pState;
                     }
                 }
-                if (Command is confirmHighVoltageOff)
-                {
+                if (Command is confirmHighVoltageOff) {
                     Commander.hBlock = true;
                     Commander.pState = Commander.programStates.WaitHighVoltage;//???
                     Commander.pStatePrev = Commander.pState;
                 }
-                if (Command is confirmHighVoltageOn)
-                {
+                if (Command is confirmHighVoltageOn) {
                     Commander.hBlock = false;
-                    if (Commander.pState == Commander.programStates.WaitHighVoltage)
-                    {
+                    if (Commander.pState == Commander.programStates.WaitHighVoltage) {
                         Commander.pState = Commander.programStates.Ready;
                         Commander.pStatePrev = Commander.pState;
                     }
@@ -191,36 +156,29 @@ namespace Flavor.Common
                     toSend.AddToSend(new sendIVoltage());// и остальные напряжения затем
                 }
             }
-            if (Command is SyncErrorReply)
-            {
+            if (Command is SyncErrorReply) {
                 toSend.Dequeue();
                 CheckInterfaces(Command);
             }
-            if (Command is SyncReply)
-            {
-                if (null == toSend.Peek((SyncReply)Command))
-                {
+            if (Command is SyncReply) {
+                if (null == toSend.Peek((SyncReply)Command)) {
                     return;
                 }
                 CheckInterfaces(Command);
-                if (Command is confirmInit)
-                {
+                if (Command is confirmInit) {
                     Console.WriteLine("Init request confirmed");
                     Commander.pState = Commander.programStates.Init;
                     Commander.pStatePrev = Commander.pState;
                     Console.WriteLine(Commander.pState);
                 }
-                if (Command is confirmShutdown)
-                {
+                if (Command is confirmShutdown) {
                     Console.WriteLine("Shutdown request confirmed");
                     Commander.pState = Commander.programStates.Shutdown;
                     Commander.pStatePrev = Commander.pState;
                     Console.WriteLine(Commander.pState);
                 }
-                if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is updateStatus))
-                {
-                    switch (Device.sysState)
-                    {
+                if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is updateStatus)) {
+                    switch (Device.sysState) {
                         case (byte)Device.DeviceStates.Ready:
                             Commander.hBlock = false;
                             Commander.pState = Commander.programStates.Ready;
@@ -246,25 +204,19 @@ namespace Flavor.Common
                     Console.WriteLine(Commander.pState);
                     onTheFly = false;
                 }
-                if (Command is updateCounts)
-                {
-                    if (measureMode == null)
-                    {
+                if (Command is updateCounts) {
+                    if (measureMode == null) {
                         // error here
                         throw new Exception("No measure mode in operation.");
                     }
-                    if (!measureMode.onUpdateCounts())
-                    {
+                    if (!measureMode.onUpdateCounts()) {
                         // error (out of limits)
                     }
                 }
-                if (Command is confirmF2Voltage)
-                {
-                    if (Commander.pState == programStates.Measure)
-                    {
+                if (Command is confirmF2Voltage) {
+                    if (Commander.pState == programStates.Measure) {
                         toSend.IsRareMode = !notRareMode;
-                        if (!measureMode.start())
-                        {
+                        if (!measureMode.start()) {
                             // error (no points)
                         }
                     }
@@ -272,28 +224,22 @@ namespace Flavor.Common
             }
         }
 
-        private static void CheckInterfaces(ServicePacket Command)
-        {
-            if (Command is IAutomatedReply)
-            {
+        private static void CheckInterfaces(ServicePacket Command) {
+            if (Command is IAutomatedReply) {
                 ((IAutomatedReply)Command).AutomatedReply();
             }
-            if (Command is ISend)
-            {
+            if (Command is ISend) {
                 ((ISend)Command).Send();
             }
-            if (Command is IUpdateDevice)
-            {
+            if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
             }
-            if (Command is IUpdateGraph)
-            {
+            if (Command is IUpdateGraph) {
                 ((IUpdateGraph)Command).UpdateGraph();
             }
         }
-        
-        internal static void Init()
-        {
+
+        internal static void Init() {
             Console.WriteLine(pState);
 
             Commander.pStatePrev = Commander.pState;
@@ -302,56 +248,42 @@ namespace Flavor.Common
 
             Console.WriteLine(pState);
         }
-        internal static void Shutdown()
-        {
+        internal static void Shutdown() {
 
             toSend.AddToSend(new sendShutdown());
             Commander.pStatePrev = Commander.pState;
             Commander.pState = Commander.programStates.WaitShutdown;
             //добавить контрольное время ожидания выключения
         }
-        
-        internal static void Scan()
-        {
-            if (pState == Commander.programStates.Ready)
-            {
+
+        internal static void Scan() {
+            if (pState == Commander.programStates.Ready) {
                 initMeasure();                          //?
                 measureMode = new ScanMeasureMode();    //order
             }
         }
-        internal static void Sense()
-        {
-            if (pState == Commander.programStates.Ready)
-            {
-                if (somePointsUsed())
-                {
+        internal static void Sense() {
+            if (pState == Commander.programStates.Ready) {
+                if (somePointsUsed()) {
                     initMeasure();                          //?
                     measureMode = new PreciseMeasureMode(); //order
-                }
-                else
-                {
+                } else {
                     Console.WriteLine("No points for precise mode measure.");
                 }
             }
         }
-        internal static void Monitor()
-        {
-            if (pState == Commander.programStates.Ready)
-            {
-                if (somePointsUsed())
-                {
+        internal static void Monitor() {
+            if (pState == Commander.programStates.Ready) {
+                if (somePointsUsed()) {
                     initMeasure();                           //?
                     measureMode = new MonitorMeasureMode(0); //order
                     // TODO: feed measure mode with start shift value
-                }
-                else
-                {
+                } else {
                     Console.WriteLine("No points for monitor(precise) mode measure.");
                 }
             }
         }
-        internal static void cancelScan()
-        {
+        internal static void cancelScan() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
             Commander.pStatePrev = Commander.pState;
@@ -360,11 +292,9 @@ namespace Flavor.Common
             OnScanCancelled();
             measureMode = null;//?
         }
-        private static void initMeasure()
-        {
+        private static void initMeasure() {
             Console.WriteLine(pState);
-            if (measureMode != null && measureMode.isOperating)
-            {
+            if (measureMode != null && measureMode.isOperating) {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }
@@ -385,16 +315,14 @@ namespace Flavor.Common
             Commander.AddToSend(new sendF2Voltage());
             */
         }
-        internal static bool somePointsUsed()
-        {
+        internal static bool somePointsUsed() {
             if (Config.PreciseData.Count > 0)
                 foreach (Utility.PreciseEditorData ped in Config.PreciseData)
                     if (ped.Use) return true;
             return false;
         }
 
-        internal static void Unblock()
-        {
+        internal static void Unblock() {
             if (Commander.pState == programStates.Measure)//strange..
             {
                 Commander.measureCancelRequested = true;
@@ -402,10 +330,8 @@ namespace Flavor.Common
             toSend.AddToSend(new enableHighVoltage(Commander.hBlock));
         }
 
-        internal static void Connect()
-        {
-            switch (ModBus.Open())
-            {
+        internal static void Connect() {
+            switch (ModBus.Open()) {
                 case ModBus.PortStates.Opening:
                     Commander.deviceIsConnected = true;
                     toSend = new MessageQueueWithAutomatedStatusChecks();
@@ -421,12 +347,10 @@ namespace Flavor.Common
                     break;
             }
         }
-        internal static void Disconnect()
-        {
+        internal static void Disconnect() {
             toSend.IsOperating = false;
             toSend.Clear();
-            switch (ModBus.Close())
-            {
+            switch (ModBus.Close()) {
                 case ModBus.PortStates.Closing:
                     Commander.deviceIsConnected = false;
                     onTheFly = true;// надо ли здесь???

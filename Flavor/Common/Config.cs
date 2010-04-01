@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using System.Globalization;
 
-namespace Flavor.Common
-{
-    static class Config
-    {
+namespace Flavor.Common {
+    static class Config {
         private static XmlDocument _conf = new XmlDocument();
         private static string mainConfigPrefix = "/control/";
 
@@ -25,235 +22,180 @@ namespace Flavor.Common
         private static ushort endPoint = MAX_STEP;
 
         private static CommonOptions commonOpts = new CommonOptions();
-        internal static CommonOptions CommonOptions
-        {
+        internal static CommonOptions CommonOptions {
             get { return commonOpts; }
         }
-        
+
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataDiff = new List<Utility.PreciseEditorData>();
 
-        internal static List<Utility.PreciseEditorData> PreciseData
-        {
+        internal static List<Utility.PreciseEditorData> PreciseData {
             get { return preciseData; }
             //set { preciseData = value; }
         }
-        internal static List<Utility.PreciseEditorData> PreciseDataLoaded
-        {
+        internal static List<Utility.PreciseEditorData> PreciseDataLoaded {
             get { return preciseDataLoaded; }
             //set { preciseData = value; }
         }
-        internal static List<Utility.PreciseEditorData> PreciseDataDiff
-        {
+        internal static List<Utility.PreciseEditorData> PreciseDataDiff {
             get { return preciseDataDiff; }
             //set { preciseData = value; }
         }
 
         private static Utility.PreciseEditorData reperPeak = null;
-        internal static Utility.PreciseEditorData CheckerPeak
-        {
-            get 
-            {
-                if (reperPeak == null)
-                {
+        internal static Utility.PreciseEditorData CheckerPeak {
+            get {
+                if (reperPeak == null) {
                     return null;
                 }
                 ushort maxIteration = 0;
-                foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PeakIsUsed))
-                {
-                    maxIteration = maxIteration < ped.Iterations? ped.Iterations: maxIteration;
+                foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PeakIsUsed)) {
+                    maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
                 }
                 return new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak");
             }
         }
-        internal static List<Utility.PreciseEditorData> PreciseDataWithChecker
-        {
-            get
-            {
+        internal static List<Utility.PreciseEditorData> PreciseDataWithChecker {
+            get {
                 ushort maxIteration = 0;
                 List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PeakIsUsed);
-                if (res.Count == 0)
-                {
+                if (res.Count == 0) {
                     return null;
                 }
-                foreach (Utility.PreciseEditorData ped in res)
-                {
+                foreach (Utility.PreciseEditorData ped in res) {
                     maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
                 }
                 // mark checker peak with false flag
-                if (reperPeak != null)
-                {
+                if (reperPeak != null) {
                     res.Add(new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak"));
                 }
                 return res;
             }
         }
         private static int iterations = 0;
-        internal static int Iterations
-        {
+        internal static int Iterations {
             get { return iterations; }
-            set 
-            {
-                if (value < 0)
-                {
+            set {
+                if (value < 0) {
                     iterations = 0;
                     return;
                 }
-                iterations = value; 
+                iterations = value;
             }
         }
 
-        internal static string Port
-        {
+        internal static string Port {
             get { return SerialPort; }
             set { SerialPort = value; }
         }
-        internal static ushort BaudRate
-        {
+        internal static ushort BaudRate {
             get { return SerialBaudRate; }
             set { SerialBaudRate = value; }
         }
 
-        internal static byte Try
-        {
+        internal static byte Try {
             get { return SendTry; }
             set { SendTry = value; }
         }
 
-        internal static ushort sPoint
-        {
+        internal static ushort sPoint {
             get { return startPoint; }
             set { startPoint = value; }
         }
-        internal static ushort ePoint
-        {
+        internal static ushort ePoint {
             get { return endPoint; }
             set { endPoint = value; }
         }
 
-        internal static void getInitialDirectory()
-        {
+        internal static void getInitialDirectory() {
             initialDir = System.IO.Directory.GetCurrentDirectory();
             confName = initialDir + "\\config.xml";
             logName = initialDir + "\\MScrash.log";
         }
 
-        private static void fillInnerText(string prefix, string nodeName, object value)
-        {
-            try
-            {
+        private static void fillInnerText(string prefix, string nodeName, object value) {
+            try {
                 _conf.SelectSingleNode(prefix + "/" + nodeName).InnerText = value.ToString();
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 _conf.SelectSingleNode(prefix).AppendChild(_conf.CreateNode(XmlNodeType.Element, nodeName, ""));
                 _conf.SelectSingleNode(prefix + "/" + nodeName).InnerText = value.ToString();
             }
         }
 
-        internal static void loadConfig()
-        {
-            try
-            {
+        internal static void loadConfig() {
+            try {
                 _conf.Load(confName);
-            }
-            catch (Exception Error)
-            {
+            } catch (Exception Error) {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
             }
-            try
-            {
+            try {
                 SerialPort = (_conf.SelectSingleNode("/control/connect/port").InnerText);
                 SerialBaudRate = ushort.Parse(_conf.SelectSingleNode("/control/connect/baudrate").InnerText);
                 SendTry = byte.Parse(_conf.SelectSingleNode("/control/connect/try").InnerText);
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
             }
-            try
-            {
+            try {
                 sPoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/start").InnerText);
                 ePoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/end").InnerText);
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
             }
-            try
-            {
+            try {
                 loadMassCoeffs();
-            }
-            catch (ConfigLoadException)
-            {
+            } catch (ConfigLoadException) {
                 //cle.visualise();
                 //use hard-coded defaults
             }
-            try
-            {
+            try {
                 loadCommonOptions();
-            }
-            catch (ConfigLoadException cle)
-            {
+            } catch (ConfigLoadException cle) {
                 cle.visualise();
                 //use hard-coded defaults
             }
-            try
-            {
+            try {
                 LoadPreciseEditorData();
-            }
-            catch (ConfigLoadException cle)
-            {
+            } catch (ConfigLoadException cle) {
                 cle.visualise();
                 //use empty default ped
             }
-            try
-            {
+            try {
                 ushort step = ushort.Parse(_conf.SelectSingleNode("/control/check/peak").InnerText);
                 byte collector = byte.Parse(_conf.SelectSingleNode("/control/check/col").InnerText);
                 ushort width = ushort.Parse(_conf.SelectSingleNode("/control/check/width").InnerText);
                 reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
             }
-            try
-            {
+            try {
                 Iterations = int.Parse(_conf.SelectSingleNode("/control/check/iterations").InnerText);
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
             }
         }
 
-        private static void saveScanOptions()
-        {
+        private static void saveScanOptions() {
             fillInnerText("/control/overview", "start", sPoint);
             fillInnerText("/control/overview", "end", ePoint);
             _conf.Save(@confName);
         }
-        internal static void saveScanOptions(ushort sPointReal, ushort ePointReal)
-        {
+        internal static void saveScanOptions(ushort sPointReal, ushort ePointReal) {
             Config.sPoint = sPointReal;//!!!
             Config.ePoint = ePointReal;//!!!
             Config.saveScanOptions();
         }
 
-        private static void saveDelaysOptions()
-        {
+        private static void saveDelaysOptions() {
             fillInnerText("/control/common", "before", commonOpts.befTime);
             fillInnerText("/control/common", "equal", commonOpts.ForwardTimeEqualsBeforeTime);
             fillInnerText("/control/common", "forward", commonOpts.fTime);
             fillInnerText("/control/common", "back", commonOpts.bTime);
             _conf.Save(@confName);
         }
-        internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal)
-        {
+        internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
             Config.commonOpts.befTimeReal = befTimeReal;
             Config.commonOpts.fTimeReal = fTimeReal;
             Config.commonOpts.bTimeReal = bTimeReal;
@@ -261,37 +203,31 @@ namespace Flavor.Common
             Config.saveDelaysOptions();
         }
 
-        private static void saveMassCoeffs()
-        {
+        private static void saveMassCoeffs() {
             fillInnerText("/control", "interface", "");
             fillInnerText("/control/interface", "coeff1", col1Coeff.ToString("R"));
             fillInnerText("/control/interface", "coeff2", col2Coeff.ToString("R"));
             _conf.Save(@confName);
         }
 
-        private static void saveConnectOptions()
-        {
+        private static void saveConnectOptions() {
             fillInnerText("/control/connect", "port", Port);
             fillInnerText("/control/connect", "baudrate", BaudRate);
             _conf.Save(@confName);
         }
-        internal static void saveConnectOptions(string port, ushort baudrate)
-        {
+        internal static void saveConnectOptions(string port, ushort baudrate) {
             Config.Port = port;
             Config.BaudRate = baudrate;
             Config.saveConnectOptions();
         }
 
-        private static void saveCheckOptions()
-        {
+        private static void saveCheckOptions() {
             //checkpeak & iterations
-            if (_conf.SelectSingleNode("/control/check") == null)
-            {
+            if (_conf.SelectSingleNode("/control/check") == null) {
                 XmlNode checkRegion = _conf.CreateNode(XmlNodeType.Element, "check", "");
                 _conf.SelectSingleNode("/control").AppendChild(checkRegion);
             }
-            if (reperPeak != null)
-            {
+            if (reperPeak != null) {
                 fillInnerText("/control/check", "peak", reperPeak.Step);
                 fillInnerText("/control/check", "col", reperPeak.Collector);
                 fillInnerText("/control/check", "width", reperPeak.Width);
@@ -299,15 +235,13 @@ namespace Flavor.Common
             fillInnerText("/control/check", "iterations", iterations);
             _conf.Save(@confName);
         }
-        internal static void saveCheckOptions(int iter, Utility.PreciseEditorData peak)
-        {
+        internal static void saveCheckOptions(int iter, Utility.PreciseEditorData peak) {
             Config.Iterations = iter;
             reperPeak = peak;
             Config.saveCheckOptions();
         }
 
-        internal static void saveAll()
-        {
+        internal static void saveAll() {
             saveConnectOptions();
             saveScanOptions();
             saveCommonOptions();
@@ -317,27 +251,20 @@ namespace Flavor.Common
             SavePreciseOptions();
         }
 
-        internal static bool openSpectrumFile(string filename, bool hint)
-        {
+        internal static bool openSpectrumFile(string filename, bool hint) {
             bool result;
             ConfigLoadException resultException = null;
-            try
-            {
+            try {
                 result = hint ? OpenSpecterFile(filename) : OpenPreciseSpecterFile(filename);
-            }
-            catch (ConfigLoadException cle)
-            {
+            } catch (ConfigLoadException cle) {
                 resultException = cle;
                 result = false;
             }
             if (result)
                 return hint;
-            try
-            {
+            try {
                 result = (!hint) ? OpenSpecterFile(filename) : OpenPreciseSpecterFile(filename);
-            }
-            catch (ConfigLoadException cle)
-            {
+            } catch (ConfigLoadException cle) {
                 resultException = (resultException == null) ? cle : resultException;
                 result = false;
             }
@@ -345,9 +272,8 @@ namespace Flavor.Common
                 return (!hint);
             throw resultException;
         }
-        
-        private static string genAutoSaveFilename(string extension, out DateTime now)
-        {
+
+        private static string genAutoSaveFilename(string extension, out DateTime now) {
             string dirname;
             now = System.DateTime.Now;
             dirname = initialDir + string.Format("\\{0}-{1}-{2}", now.Year, now.Month, now.Day);
@@ -355,14 +281,12 @@ namespace Flavor.Common
                 System.IO.Directory.CreateDirectory(@dirname);
             return dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension;
         }
-        
-        private static bool OpenSpecterFile(string p)
-        {
+
+        private static bool OpenSpecterFile(string p) {
             PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
             Graph.Displaying result = OpenSpecterFile(p, pl1, pl2);
-            
-            switch (result)
-            {
+
+            switch (result) {
                 case Graph.Displaying.Measured:
                     Graph.ResetLoadedPointLists();
                     Graph.updateLoaded(pl1, pl2);
@@ -375,31 +299,22 @@ namespace Flavor.Common
                     return false;
             }
         }
-        private static Graph.Displaying OpenSpecterFile(string filename, PointPairListPlus pl1, PointPairListPlus pl2)
-        {
+        private static Graph.Displaying OpenSpecterFile(string filename, PointPairListPlus pl1, PointPairListPlus pl2) {
             XmlDocument sf = new XmlDocument();
             XmlNode headerNode = null;
             Graph.Displaying spectrumType = Graph.Displaying.Measured;
-            try
-            {
+            try {
                 sf.Load(filename);
-            }
-            catch (Exception Error)
-            {
+            } catch (Exception Error) {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения файла спектра", filename);
             }
             string prefix = "";
-            if (sf.SelectSingleNode("control/overview") != null)
-            {
+            if (sf.SelectSingleNode("control/overview") != null) {
                 prefix = mainConfigPrefix;
                 headerNode = sf.SelectSingleNode("control/header");
-            }
-            else if (sf.SelectSingleNode("overview") != null)
-            {
+            } else if (sf.SelectSingleNode("overview") != null) {
                 headerNode = sf.SelectSingleNode("overview/header");
-            }
-            else
-            {
+            } else {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
             if (headerNode != null && headerNode.InnerText == "Diff")
@@ -407,35 +322,27 @@ namespace Flavor.Common
 
             ushort X = 0;
             long Y = 0;
-            try
-            {
-                foreach (XmlNode pntNode in sf.SelectNodes(prefix + "overview/collector1/p"))
-                {
+            try {
+                foreach (XmlNode pntNode in sf.SelectNodes(prefix + "overview/collector1/p")) {
                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
                     Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                     pl1.Add(X, Y);
                 }
-                foreach (XmlNode pntNode in sf.SelectNodes(prefix + "overview/collector2/p"))
-                {
+                foreach (XmlNode pntNode in sf.SelectNodes(prefix + "overview/collector2/p")) {
                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
                     Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                     pl2.Add(X, Y);
                 }
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
             //the whole logic of displaying spertra must be modified
             //!!!!!!!!!!!!!!!!!!!!!!!!
             CommonOptions co = null;
-            try
-            {
+            try {
                 // what version of function will be called here?
                 loadCommonOptions(filename, sf, out co);
-            }
-            catch (structureErrorOnLoadCommonData)
-            {
+            } catch (structureErrorOnLoadCommonData) {
                 co = null;
             }
             //!!!!!!!!!!!!!!!!!!!!!!!!
@@ -443,13 +350,11 @@ namespace Flavor.Common
             pl2.Sort(ZedGraph.SortType.XValues);
             return spectrumType;
         }
-        internal static XmlDocument SaveSpecterFile(string p, Graph.Displaying displayMode)
-        {
+        internal static XmlDocument SaveSpecterFile(string p, Graph.Displaying displayMode) {
             XmlDocument sf = new XmlDocument();
             XmlNode temp;
             XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, "overview", ""));
-            switch (displayMode)
-            {
+            switch (displayMode) {
                 case Graph.Displaying.Loaded:
                     sf.SelectSingleNode("/control/header").InnerText = "Measure";
                     break;
@@ -469,15 +374,13 @@ namespace Flavor.Common
             }
             scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "collector1", ""));
             scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "collector2", ""));
-            foreach (ZedGraph.PointPair pp in Graph.Displayed1Steps[0])
-            {
+            foreach (ZedGraph.PointPair pp in Graph.Displayed1Steps[0]) {
                 temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
                 scanNode.SelectSingleNode("collector1").AppendChild(temp);
             }
-            foreach (ZedGraph.PointPair pp in Graph.Displayed2Steps[0])
-            {
+            foreach (ZedGraph.PointPair pp in Graph.Displayed2Steps[0]) {
                 temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
@@ -486,8 +389,7 @@ namespace Flavor.Common
             sf.Save(@p);
             return sf;
         }
-        internal static void AutoSaveSpecterFile()
-        {
+        internal static void AutoSaveSpecterFile() {
             DateTime dt;
             string filename = genAutoSaveFilename("sdf", out dt);
             XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured);
@@ -501,16 +403,12 @@ namespace Flavor.Common
             file.Save(filename);
         }
 
-        internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference)
-        {
-            if (Graph.isPreciseSpectrum)
-            {
+        internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
+            if (Graph.isPreciseSpectrum) {
                 PreciseSpectrum peds = new PreciseSpectrum();
-                if (OpenPreciseSpecterFile(what, peds))
-                {
+                if (OpenPreciseSpecterFile(what, peds)) {
                     List<Utility.PreciseEditorData> temp;
-                    switch (Graph.DisplayingMode)
-                    {
+                    switch (Graph.DisplayingMode) {
                         case Graph.Displaying.Loaded:
                             temp = new List<Utility.PreciseEditorData>(preciseDataLoaded);
                             break;
@@ -518,41 +416,31 @@ namespace Flavor.Common
                             temp = new List<Utility.PreciseEditorData>(preciseData);
                             break;
                         case Graph.Displaying.Diff:
-                            //diffs can't be distracted!
+                        //diffs can't be distracted!
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
                     temp.Sort(Utility.ComparePreciseEditorData);
-                    try
-                    {
+                    try {
                         temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
                         preciseDataDiff = temp;
                         Graph.updateGraphAfterPreciseDiff(temp);
-                    }
-                    catch (System.ArgumentException)
-                    {
+                    } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 PointPairListPlus pl12 = new PointPairListPlus();
                 PointPairListPlus pl22 = new PointPairListPlus();
-                if (OpenSpecterFile(what, pl12, pl22) == Graph.Displaying.Measured)
-                {
+                if (OpenSpecterFile(what, pl12, pl22) == Graph.Displaying.Measured) {
                     // coeff counting
                     double coeff = 1.0;
-                    if (plsReference != null)
-                    {
+                    if (plsReference != null) {
                         PointPairListPlus PL = plsReference.IsFirstCollector ? Graph.Displayed1Steps[0] : Graph.Displayed2Steps[0];
                         PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
-                        if (step != 0)
-                        {
-                            for (int i = 0; i < PL.Count; ++i)
-                            {
-                                if (step == PL[i].X)
-                                {
+                        if (step != 0) {
+                            for (int i = 0; i < PL.Count; ++i) {
+                                if (step == PL[i].X) {
                                     if (step != pl[i].X)
                                         throw new System.ArgumentException();
                                     if ((pl[i].Y != 0) && (PL[i].Y != 0))
@@ -562,41 +450,33 @@ namespace Flavor.Common
                             }
                         }
                     }
-                    try
-                    {
+                    try {
                         PointPairListPlus diff1 = PointPairListDiff(Graph.Displayed1Steps[0], pl12, coeff);
                         PointPairListPlus diff2 = PointPairListDiff(Graph.Displayed2Steps[0], pl22, coeff);
                         Graph.ResetDiffPointLists();
                         Graph.updateGraphAfterScanDiff(diff1, diff2);
-                    }
-                    catch (System.ArgumentException)
-                    {
+                    } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
-                }
-                else
-                {
+                } else {
                     //diffs can't be distracted!
                     throw new ArgumentOutOfRangeException();
                 }
             }
         }
-        private static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff)
-        {
+        private static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff) {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
-            
+
             PointPairListPlus res = new PointPairListPlus(from, null, null);
-            for (int i = 0; i < res.Count; ++i)
-            {
+            for (int i = 0; i < res.Count; ++i) {
                 if (res[i].X != what[i].X)
                     throw new System.ArgumentException();
                 res[i].Y -= what[i].Y * coeff;
             }
             return res;
         }
-        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData from, Utility.PreciseEditorData what, double coeff)
-        {
+        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData from, Utility.PreciseEditorData what, double coeff) {
             if (!from.Equals(what))
                 throw new System.ArgumentException();
             if (from.AssociatedPoints.Count != what.AssociatedPoints.Count)
@@ -604,23 +484,20 @@ namespace Flavor.Common
             if (from.AssociatedPoints.Count != 2 * from.Width + 1)
                 throw new System.ArgumentException();
             Utility.PreciseEditorData res = new Utility.PreciseEditorData(from);
-            for (int i = 0; i < res.AssociatedPoints.Count; ++i)
-            {
+            for (int i = 0; i < res.AssociatedPoints.Count; ++i) {
                 if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
                     throw new System.ArgumentException();
                 res.AssociatedPoints[i].Y -= what.AssociatedPoints[i].Y * coeff;
             }
             return res;
         }
-        private static List<Utility.PreciseEditorData> PreciseEditorDataListDiff(List<Utility.PreciseEditorData> from, List<Utility.PreciseEditorData> what, ushort step, Utility.PreciseEditorData pedReference)
-        {
+        private static List<Utility.PreciseEditorData> PreciseEditorDataListDiff(List<Utility.PreciseEditorData> from, List<Utility.PreciseEditorData> what, ushort step, Utility.PreciseEditorData pedReference) {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
-            
+
             // coeff counting
             double coeff = 1.0;
-            if (pedReference != null)
-            {
+            if (pedReference != null) {
                 int fromIndex = from.IndexOf(pedReference);
                 int whatIndex = what.IndexOf(pedReference);
                 if ((fromIndex == -1) || (whatIndex == -1))
@@ -632,23 +509,18 @@ namespace Flavor.Common
                 if (from[fromIndex].AssociatedPoints.Count != 2 * from[fromIndex].Width + 1)
                     throw new System.ArgumentException();
 
-                if ((step != ushort.MaxValue))
-                {
+                if ((step != ushort.MaxValue)) {
                     //diff on point
                     if ((what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y != 0) &&
                         (from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y != 0))
                         coeff = from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y /
                                 what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y;
-                }
-                else
-                {
+                } else {
                     //diff on peak sum
                     double sumFrom = from[fromIndex].AssociatedPoints.PLSreference.PeakSum;
-                    if (sumFrom != 0)
-                    {
+                    if (sumFrom != 0) {
                         double sumWhat = 0;
-                        foreach (ZedGraph.PointPair pp in what[whatIndex].AssociatedPoints)
-                        {
+                        foreach (ZedGraph.PointPair pp in what[whatIndex].AssociatedPoints) {
                             sumWhat += pp.Y;
                         }
                         if (sumWhat != 0)
@@ -656,65 +528,52 @@ namespace Flavor.Common
                     }
                 }
             }
-            
+
             List<Utility.PreciseEditorData> res = new List<Utility.PreciseEditorData>(from);
-            for (int i = 0; i < res.Count; ++i)
-            {
+            for (int i = 0; i < res.Count; ++i) {
                 res[i] = PreciseEditorDataDiff(res[i], what[i], coeff);
             }
             return res;
         }
 
-        private static bool OpenPreciseSpecterFile(string filename)
-        {
+        private static bool OpenPreciseSpecterFile(string filename) {
             PreciseSpectrum peds = new PreciseSpectrum();
             bool result = OpenPreciseSpecterFile(filename, peds);
-            if (result)
-            {
+            if (result) {
                 preciseDataLoaded = peds;
                 Graph.updateGraphAfterPreciseLoad();
             }
             return result;
         }
-        private static bool OpenPreciseSpecterFile(string filename, PreciseSpectrum peds)
-        {
+        private static bool OpenPreciseSpecterFile(string filename, PreciseSpectrum peds) {
             XmlDocument sf = new XmlDocument();
             string prefix = "";
-            try
-            {
+            try {
                 sf.Load(filename);
-            }
-            catch (Exception Error)
-            {
+            } catch (Exception Error) {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионного спектра", filename);
             }
             if (sf.SelectSingleNode("control/sense") != null)
                 prefix = mainConfigPrefix;
-            else if (sf.SelectSingleNode("sense") == null)
-            {
+            else if (sf.SelectSingleNode("sense") == null) {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
             }
 
             CommonOptions co = null;
-            try
-            {
+            try {
                 // what version of function will be called here?
                 loadCommonOptions(filename, sf, out co);
-            }
-            catch (structureErrorOnLoadCommonData)
-            {
+            } catch (structureErrorOnLoadCommonData) {
                 co = null;
             }
             peds.CommonOptions = co;
 
             return LoadPED(sf, filename, peds, true, prefix);
         }
-        internal static XmlDocument SavePreciseSpecterFile(string filename, Graph.Displaying displayMode)
-        {
+        internal static XmlDocument SavePreciseSpecterFile(string filename, Graph.Displaying displayMode) {
             List<Utility.PreciseEditorData> processed;
             string header;
-            switch (displayMode)
-            {
+            switch (displayMode) {
                 case Graph.Displaying.Loaded:
                     processed = Config.PreciseDataLoaded;
                     //!!!!
@@ -733,8 +592,7 @@ namespace Flavor.Common
             }
             return SavePreciseOptions(processed, filename, true, header);
         }
-        internal static void AutoSavePreciseSpecterFile()
-        {
+        internal static void AutoSavePreciseSpecterFile() {
             DateTime dt;
             string filename = genAutoSaveFilename("psf", out dt);
             XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
@@ -748,30 +606,23 @@ namespace Flavor.Common
             file.Save(filename);
         }
 
-        private static void SavePreciseOptions()
-        {
+        private static void SavePreciseOptions() {
             SavePreciseOptions(Config.PreciseData, confName, false, "Precise options");
         }
-        internal static void SavePreciseOptions(List<Utility.PreciseEditorData> peds)
-        {
+        internal static void SavePreciseOptions(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
             SavePreciseOptions(peds, confName, false, "Precise options");
         }
-        internal static XmlDocument SavePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePoints, string header)
-        {
+        internal static XmlDocument SavePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePoints, string header) {
             XmlDocument pedConf;
             string mainConfPrefix = "";
             mainConfPrefix = mainConfigPrefix;
 
-            if (newConfigFile(out pedConf, pedConfName))
-            {
+            if (newConfigFile(out pedConf, pedConfName)) {
                 XmlNode rootNode = createRootStub(pedConf, header);
                 createPEDStub(pedConf, rootNode);
-            }
-            else
-            {
-                for (int i = 1; i <= 20; ++i)
-                {
+            } else {
+                for (int i = 1; i <= 20; ++i) {
                     string prefix = string.Format("/control/sense/region{0}", i);
                     fillInnerText(prefix, "peak", "");
                     fillInnerText(prefix, "iteration", "");
@@ -783,8 +634,7 @@ namespace Flavor.Common
                 }
             }
 
-            foreach (Utility.PreciseEditorData ped in peds)
-            {
+            foreach (Utility.PreciseEditorData ped in peds) {
                 XmlNode regionNode = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}", ped.pNumber + 1));
                 regionNode.SelectSingleNode("peak").InnerText = ped.Step.ToString();
                 regionNode.SelectSingleNode("iteration").InnerText = ped.Iterations.ToString();
@@ -793,11 +643,9 @@ namespace Flavor.Common
                 regionNode.SelectSingleNode("col").InnerText = ped.Collector.ToString();
                 regionNode.SelectSingleNode("comment").InnerText = ped.Comment;
                 regionNode.SelectSingleNode("use").InnerText = ped.Use.ToString();
-                if (savePoints && (ped.AssociatedPoints != null))
-                {
+                if (savePoints && (ped.AssociatedPoints != null)) {
                     XmlNode temp;
-                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints)
-                    {
+                    foreach (ZedGraph.PointPair pp in ped.AssociatedPoints) {
                         temp = pedConf.CreateNode(XmlNodeType.Element, "p", "");
                         temp.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                         temp.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
@@ -809,32 +657,24 @@ namespace Flavor.Common
             return pedConf;
         }
 
-        internal static List<Utility.PreciseEditorData> LoadPreciseEditorData(string pedConfName)
-        {
+        internal static List<Utility.PreciseEditorData> LoadPreciseEditorData(string pedConfName) {
             List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
             XmlDocument pedConf;
             string mainConfPrefix = "";
 
-            if (!pedConfName.Equals(confName))
-            {
+            if (!pedConfName.Equals(confName)) {
                 pedConf = new XmlDocument();
-                try
-                {
+                try {
                     pedConf.Load(pedConfName);
-                }
-                catch (Exception Error)
-                {
+                } catch (Exception Error) {
                     throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионных точек", pedConfName);
                 }
                 if (pedConf.SelectSingleNode("control/sense") != null)
                     mainConfPrefix = mainConfigPrefix;
-                else if (pedConf.SelectSingleNode("sense") == null)
-                {
+                else if (pedConf.SelectSingleNode("sense") == null) {
                     throw new structureErrorOnLoadPrecise(pedConfName);
                 }
-            }
-            else 
-            {
+            } else {
                 pedConf = _conf;
                 mainConfPrefix = mainConfigPrefix;
             }
@@ -843,83 +683,62 @@ namespace Flavor.Common
                 return peds;
             return null;
         }
-        private static void LoadPreciseEditorData()
-        {
+        private static void LoadPreciseEditorData() {
             List<Utility.PreciseEditorData> pedl = LoadPreciseEditorData(confName);
-            if ((pedl != null) && (pedl.Count > 0)) 
-            { 
+            if ((pedl != null) && (pedl.Count > 0)) {
                 //BAD!!! cleaning previous points!!!
                 preciseData.Clear();
-                preciseData.AddRange(pedl); 
+                preciseData.AddRange(pedl);
             }
         }
 
-        private static bool LoadPED(XmlDocument pedConf, string pedConfName, List<Utility.PreciseEditorData> peds, bool readSpectrum, string mainConfPrefix)
-        {
-            for (int i = 1; i <= 20; ++i)
-            {
+        private static bool LoadPED(XmlDocument pedConf, string pedConfName, List<Utility.PreciseEditorData> peds, bool readSpectrum, string mainConfPrefix) {
+            for (int i = 1; i <= 20; ++i) {
                 Utility.PreciseEditorData temp = null;
                 string peak, iter, width, col;
-                try
-                {
+                try {
                     XmlNode regionNode = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}", i));
                     peak = regionNode.SelectSingleNode("peak").InnerText;
                     col = regionNode.SelectSingleNode("col").InnerText;
                     iter = regionNode.SelectSingleNode("iteration").InnerText;
                     width = regionNode.SelectSingleNode("width").InnerText;
                     bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
-                    if (allFilled)
-                    {
+                    if (allFilled) {
                         string comment = "";
-                        try
-                        {
+                        try {
                             comment = regionNode.SelectSingleNode("comment").InnerText;
-                        }
-                        catch (NullReferenceException) { }
+                        } catch (NullReferenceException) { }
                         bool use = true;
-                        try
-                        {
+                        try {
                             use = bool.Parse(regionNode.SelectSingleNode("use").InnerText);
-                        }
-                        catch (NullReferenceException) { }
-                        catch (FormatException) { }
-                        try
-                        {
+                        } catch (NullReferenceException) { } catch (FormatException) { }
+                        try {
                             temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
                                                          byte.Parse(col), ushort.Parse(iter),
                                                          ushort.Parse(width), (float)0, comment);
-                        }
-                        catch (FormatException)
-                        {
+                        } catch (FormatException) {
                             if (readSpectrum)
                                 throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", pedConfName);
                             else
                                 throw new wrongFormatOnLoadPrecise(pedConfName);
                         }
-                        if (readSpectrum)
-                        {
+                        if (readSpectrum) {
                             ushort X;
                             long Y;
                             PointPairListPlus tempPntLst = new PointPairListPlus();
-                            try
-                            {
-                                foreach (XmlNode pntNode in regionNode.SelectNodes("p"))
-                                {
+                            try {
+                                foreach (XmlNode pntNode in regionNode.SelectNodes("p")) {
                                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
                                     Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                                     tempPntLst.Add(X, Y);
                                 }
-                            }
-                            catch (FormatException)
-                            {
+                            } catch (FormatException) {
                                 throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", pedConfName);
                             }
                             temp.AssociatedPoints = tempPntLst;
                         }
                     }
-                }
-                catch (NullReferenceException)
-                {
+                } catch (NullReferenceException) {
                     if (readSpectrum)
                         throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", pedConfName);
                     else
@@ -931,16 +750,13 @@ namespace Flavor.Common
             return true;
         }
 
-        private static void saveCommonOptions()
-        {
+        private static void saveCommonOptions() {
             saveCommonOptions(confName);
         }
-        internal static void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
-        {
+        internal static void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
             saveCommonOptions(confName, eT, iT, iV, cp, eC, hC, fv1, fv2);
         }
-        internal static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2)
-        {
+        internal static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
             Config.commonOpts.eTimeReal = eT;
             Config.commonOpts.iTimeReal = iT;
             Config.commonOpts.iVoltageReal = iV;
@@ -952,25 +768,20 @@ namespace Flavor.Common
 
             saveCommonOptions(filename);
         }
-        private static void saveCommonOptions(string filename)
-        {
+        private static void saveCommonOptions(string filename) {
             XmlDocument cdConf;
             XmlNode commonNode;
 
-            if (newConfigFile(out cdConf, filename))
-            {
+            if (newConfigFile(out cdConf, filename)) {
                 XmlNode rootNode = createRootStub(cdConf, "Common options");
                 commonNode = createCommonOptsStub(cdConf, rootNode);
-            }
-            else 
-            {
+            } else {
                 commonNode = cdConf.SelectSingleNode("control/common");
             }
             saveCommonOptions(commonNode);
             cdConf.Save(filename);
         }
-        private static void saveCommonOptions(XmlNode commonNode)
-        {
+        private static void saveCommonOptions(XmlNode commonNode) {
             commonNode.SelectSingleNode("exptime").InnerText = Config.commonOpts.eTime.ToString();
             commonNode.SelectSingleNode("meastime").InnerText = Config.commonOpts.iTime.ToString();
             commonNode.SelectSingleNode("ivoltage").InnerText = Config.commonOpts.iVoltage.ToString();
@@ -986,53 +797,41 @@ namespace Flavor.Common
             commonNode.SelectSingleNode("back").InnerText = Config.commonOpts.bTime.ToString();
         }
 
-        private static void newCommonOptionsFileOnLoad(out XmlDocument conf, string filename)
-        {
-            if (newConfigFile(out conf, filename))
-            {
-                try
-                {
+        private static void newCommonOptionsFileOnLoad(out XmlDocument conf, string filename) {
+            if (newConfigFile(out conf, filename)) {
+                try {
                     conf.Load(filename);
-                }
-                catch (Exception Error)
-                {
+                } catch (Exception Error) {
                     throw new ConfigLoadException(Error.Message, "Ошибка чтения файла общих настроек", filename);
                 }
             }
         }
-        private static void loadCommonOptions() 
-        {
+        private static void loadCommonOptions() {
             loadCommonOptions(confName, out Config.commonOpts);// not good fix
         }
-        internal static void loadCommonOptions(string cdConfName)
-        {
+        internal static void loadCommonOptions(string cdConfName) {
             loadCommonOptions(cdConfName, out Config.commonOpts);// not good fix
         }
-        private static void loadCommonOptions(string cdConfName, out CommonOptions commonOpts)
-        {
+        private static void loadCommonOptions(string cdConfName, out CommonOptions commonOpts) {
             XmlDocument cdConf;
             newCommonOptionsFileOnLoad(out cdConf, cdConfName);
 
             loadCommonOptions(cdConfName, cdConf, out commonOpts);
         }
-        private static void loadCommonOptions(string cdConfName, XmlDocument cdConf, out CommonOptions commonOpts)
-        {
+        private static void loadCommonOptions(string cdConfName, XmlDocument cdConf, out CommonOptions commonOpts) {
             string mainConfPrefix = "";
 
             if (cdConf.SelectSingleNode("control/common") != null)
                 mainConfPrefix = mainConfigPrefix;
-            else if (cdConf.SelectSingleNode("common") == null)
-            {
+            else if (cdConf.SelectSingleNode("common") == null) {
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
             XmlNode commonNode = cdConf.SelectSingleNode(mainConfPrefix + "common");
 
             loadCommonOptions(cdConfName, commonNode, out commonOpts);
-        }        
-        private static void loadCommonOptions(string cdConfName, XmlNode commonNode, out CommonOptions commonOpts)
-        {
-            try
-            {
+        }
+        private static void loadCommonOptions(string cdConfName, XmlNode commonNode, out CommonOptions commonOpts) {
+            try {
                 ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
 
                 eT = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
@@ -1053,15 +852,12 @@ namespace Flavor.Common
                 commonOpts.hCurrent = hC;
                 commonOpts.fV1 = fV1;
                 commonOpts.fV2 = fV2;
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 commonOpts = null;
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
 
-            try
-            {
+            try {
                 ushort befT, fT, bT;
                 bool fAsbef;
 
@@ -1074,51 +870,42 @@ namespace Flavor.Common
                 commonOpts.ForwardTimeEqualsBeforeTime = fAsbef;
                 commonOpts.fTime = fT;
                 commonOpts.bTime = bT;
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 //Use hard-coded defaults
                 return;
             }
         }
         #region Error messages on loading different configs
-        internal class ConfigLoadException : System.Exception
-        {
-            internal ConfigLoadException(string message, string filestring, string confname): base(message)
-            {
+        internal class ConfigLoadException: System.Exception {
+            internal ConfigLoadException(string message, string filestring, string confname)
+                : base(message) {
                 this.Data["FS"] = filestring;
                 this.Data["CN"] = confname;
             }
-            internal void visualise()
-            {
+            internal void visualise() {
                 if (!(this.Data["CN"].Equals(confName)))
                     System.Windows.Forms.MessageBox.Show(this.Message, this.Data["FS"] as string);
                 else
                     System.Windows.Forms.MessageBox.Show(this.Message, "Ошибка чтения конфигурационного файла");
             }
         }
-        private class wrongFormatOnLoadPrecise : wrongFormatOnLoad
-        {
+        private class wrongFormatOnLoadPrecise: wrongFormatOnLoad {
             internal wrongFormatOnLoadPrecise(string configName)
-                : base (configName, "Ошибка чтения файла прецизионных точек") { }
+                : base(configName, "Ошибка чтения файла прецизионных точек") { }
         }
-        private class wrongFormatOnLoad : ConfigLoadException
-        {
+        private class wrongFormatOnLoad: ConfigLoadException {
             internal wrongFormatOnLoad(string configName, string errorFile)
                 : base("Неверный формат данных", errorFile, configName) { }
         }
-        private class structureErrorOnLoad : ConfigLoadException
-        {
+        private class structureErrorOnLoad: ConfigLoadException {
             internal structureErrorOnLoad(string configName, string errorFile)
                 : base("Ошибка структуры файла", errorFile, configName) { }
         }
-        private class structureErrorOnLoadCommonData : structureErrorOnLoad
-        {
+        private class structureErrorOnLoadCommonData: structureErrorOnLoad {
             internal structureErrorOnLoadCommonData(string configName)
                 : base(configName, "Ошибка чтения файла общих настроек") { }
         }
-        private class structureErrorOnLoadPrecise : structureErrorOnLoad
-        {
+        private class structureErrorOnLoadPrecise: structureErrorOnLoad {
             internal structureErrorOnLoadPrecise(string configName)
                 : base(configName, "Ошибка чтения файла прецизионных точек") { }
         }
@@ -1126,107 +913,82 @@ namespace Flavor.Common
         #region Graph scaling to mass coeffs
         private static double col1Coeff = 2770 * 28;
         private static double col2Coeff = 896.5 * 18;
-        private static void loadMassCoeffs()
-        {
+        private static void loadMassCoeffs() {
             loadMassCoeffs(confName);
         }
-        private static void loadMassCoeffs(string confName)
-        {
+        private static void loadMassCoeffs(string confName) {
             XmlDocument conf;
 
             newCommonOptionsFileOnLoad(out conf, confName);
             XmlNode interfaceNode = conf.SelectSingleNode(mainConfigPrefix + "interface");
 
-            try
-            {
+            try {
                 col1Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff1").InnerText);
                 col2Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff2").InnerText);
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 //!!!
                 throw new ConfigLoadException("", "", confName);
             }
         }
-        internal static void setScalingCoeff(byte col, ushort pnt, double mass)
-        {
+        internal static void setScalingCoeff(byte col, ushort pnt, double mass) {
             double value = mass * Config.commonOpts.scanVoltageReal(pnt);
-            if (col == 1)
-            {
-                if (value != col1Coeff)
-                {
+            if (col == 1) {
+                if (value != col1Coeff) {
                     col1Coeff = value;
                     Graph.RecomputeMassRows(col);
                 }
-            }
-            else
-            {
-                if (value != col2Coeff)
-                {
+            } else {
+                if (value != col2Coeff) {
                     col2Coeff = value;
                     Graph.RecomputeMassRows(col);
                 }
             }
             saveMassCoeffs();
         }
-        internal static double pointToMass(ushort pnt, bool isFirstCollector)
-        {
+        internal static double pointToMass(ushort pnt, bool isFirstCollector) {
             double coeff;
-            if (isFirstCollector) 
+            if (isFirstCollector)
                 coeff = col1Coeff;
-            else 
+            else
                 coeff = col2Coeff;
             return coeff / Config.commonOpts.scanVoltageReal(pnt);
         }
         #endregion
         #region Logging routines
-        private static System.IO.StreamWriter openLog()
-        {
-            try
-            {
+        private static System.IO.StreamWriter openLog() {
+            try {
                 System.IO.StreamWriter errorLog;
                 errorLog = new System.IO.StreamWriter(@logName, true);
                 errorLog.AutoFlush = true;
                 return errorLog;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 System.Windows.Forms.MessageBox.Show(e.Message, "Ошибка при открытии файла отказов");
                 return null;
             }
         }
-        private static string genMessage(string data, DateTime moment)
-        {
+        private static string genMessage(string data, DateTime moment) {
             return string.Format("{0}-{1}-{2}|", moment.Year, moment.Month, moment.Day) +
                 string.Format("{0}.{1}.{2}.{3}: ", moment.Hour, moment.Minute, moment.Second, moment.Millisecond) + data;
         }
-        private static void log(System.IO.StreamWriter errorLog, string msg)
-        {
+        private static void log(System.IO.StreamWriter errorLog, string msg) {
             DateTime now = System.DateTime.Now;
-            try
-            {
+            try {
                 errorLog.WriteLine(genMessage(msg, now));
                 //errorLog.Flush();
-            }
-            catch (Exception Error)
-            {
+            } catch (Exception Error) {
                 string message = "Error log write failure ";
                 string cause = "(" + msg + ") -- " + Error.Message;
                 Console.WriteLine(message + cause);
                 System.Windows.Forms.MessageBox.Show(cause, message);
-            }
-            finally
-            {
+            } finally {
                 errorLog.Close();
             }
         }
-        internal static void logCrash(byte[] commandline)
-        {
+        internal static void logCrash(byte[] commandline) {
             string cmd = "";
             List<byte> pack = new List<byte>();
             ModBus.buildPackBody(pack, commandline);
-            foreach (byte b in pack)
-            {
+            foreach (byte b in pack) {
                 cmd += (char)b;
             }
             System.IO.StreamWriter errorLog;
@@ -1234,39 +996,34 @@ namespace Flavor.Common
                 return;
             log(errorLog, cmd);
         }
-        internal static void logTurboPumpAlert(string message)
-        {
+        internal static void logTurboPumpAlert(string message) {
             System.IO.StreamWriter errorLog;
             if ((errorLog = openLog()) == null)
                 return;
             log(errorLog, message);
         }
         #endregion
-        private static bool newConfigFile(out XmlDocument conf, string filename)
-        {
-            if (!filename.Equals(confName))
-            {
+        private static bool newConfigFile(out XmlDocument conf, string filename) {
+            if (!filename.Equals(confName)) {
                 conf = new XmlDocument();
                 return true;
             }
             conf = _conf;
             return false;
         }
-        private static XmlNode createRootStub(XmlDocument conf, string header)
-        {
+        private static XmlNode createRootStub(XmlDocument conf, string header) {
             conf.AppendChild(conf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
             XmlNode rootNode = conf.CreateNode(XmlNodeType.Element, "control", "");
             conf.AppendChild(rootNode);
             XmlNode headerNode = conf.CreateNode(XmlNodeType.Element, "header", "");
             headerNode.InnerText = header;
 
-            
+
             rootNode.AppendChild(headerNode);
 
             return rootNode;
         }
-        private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint)
-        {
+        private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
             XmlNode commonNode = conf.CreateNode(XmlNodeType.Element, "common", "");
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "header", ""));
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "exptime", ""));
@@ -1285,12 +1042,10 @@ namespace Flavor.Common
             mountPoint.AppendChild(commonNode);
             return commonNode;
         }
-        private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint)
-        {
+        private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint) {
             XmlNode senseNode = pedConf.CreateNode(XmlNodeType.Element, "sense", "");
 
-            for (int i = 1; i <= 20; ++i)
-            {
+            for (int i = 1; i <= 20; ++i) {
                 XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
                 tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "peak", ""));
                 tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "col", ""));

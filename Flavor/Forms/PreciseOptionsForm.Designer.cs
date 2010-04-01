@@ -1,16 +1,13 @@
 ﻿using Flavor.Common;
-namespace Flavor.Forms
-{
-    partial class PreciseOptionsForm
-    {
+namespace Flavor.Forms {
+    partial class PreciseOptionsForm {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.preciseEditorGroupBox = new System.Windows.Forms.GroupBox();
             this.insertPointButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();

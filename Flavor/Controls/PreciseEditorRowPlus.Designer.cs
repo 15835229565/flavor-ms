@@ -1,17 +1,14 @@
 ﻿using System.Windows.Forms;
 using System;
-namespace Flavor.Controls
-{
-    partial class PreciseEditorRowPlus
-    {
+namespace Flavor.Controls {
+    partial class PreciseEditorRowPlus {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.peakNumberLabel = new System.Windows.Forms.Label();
             this.usePeakCheckBox = new System.Windows.Forms.CheckBox();
             this.clearPeakButton = new System.Windows.Forms.Button();

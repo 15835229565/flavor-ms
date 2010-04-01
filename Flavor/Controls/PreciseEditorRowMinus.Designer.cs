@@ -1,18 +1,15 @@
 ﻿using System.Windows.Forms;
 using Flavor.Common;
 
-namespace Flavor.Controls
-{
-    partial class PreciseEditorRowMinus
-    {
+namespace Flavor.Controls {
+    partial class PreciseEditorRowMinus {
         #region Component Designer generated code
 
         /// <summary> 
         /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.stepTextBox = new System.Windows.Forms.TextBox();
             this.colTextBox = new System.Windows.Forms.TextBox();
             this.widthTextBox = new System.Windows.Forms.TextBox();

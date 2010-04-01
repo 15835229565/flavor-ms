@@ -1,15 +1,12 @@
-﻿namespace Flavor.Forms
-{
-    partial class ScanOptionsForm
-    {
+﻿namespace Flavor.Forms {
+    partial class ScanOptionsForm {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.Windows.Forms.Label startScan;
             System.Windows.Forms.Label label1;
             this.scan_groupBox = new System.Windows.Forms.GroupBox();

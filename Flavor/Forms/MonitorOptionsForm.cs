@@ -1,48 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Flavor.Common;
 using Flavor.Controls;
 
-namespace Flavor.Forms
-{
-    internal partial class MonitorOptionsForm: PreciseOptionsForm
-    {
-        private MonitorOptionsForm()
-        {
+namespace Flavor.Forms {
+    internal partial class MonitorOptionsForm: PreciseOptionsForm {
+        private MonitorOptionsForm() {
             InitializeComponent();
-            iterationsNumericUpDown.Maximum = new decimal(new int[] {int.MaxValue, 0, 0, 0});
+            iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             iterationsNumericUpDown.Value = (decimal)Config.Iterations;
             Utility.PreciseEditorData peak = Config.CheckerPeak;
-            if (peak != null)
-            {
+            if (peak != null) {
                 checkPeakPreciseEditorRowMinus.setValues(peak);
             }
             bool enable = Graph.PointToAdd != null;
             this.checkPeakInsertButton.Enabled = enable;
-            if (!enable)
-            {
+            if (!enable) {
                 Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
             }
         }
 
         private static MonitorOptionsForm instance = null;
-        internal new static MonitorOptionsForm getInstance()
-        {
+        internal new static MonitorOptionsForm getInstance() {
             if (instance == null) instance = new MonitorOptionsForm();
             return instance;
         }
 
-        protected override bool checkTextBoxes()
-        {
+        protected override bool checkTextBoxes() {
             return checkPeakPreciseEditorRowMinus.checkTextBoxes() & base.checkTextBoxes();
         }
-        protected override void saveData()
-        {
+        protected override void saveData() {
             base.saveData();
             Config.saveCheckOptions((int)iterationsNumericUpDown.Value,
                                     new Utility.PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
@@ -50,25 +37,19 @@ namespace Flavor.Forms
                                                                   Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"));
         }
 
-        private void MonitorOptionsForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
+        private void MonitorOptionsForm_FormClosed(object sender, FormClosedEventArgs e) {
             instance = null;
         }
 
-        void Graph_OnPointAdded(bool notNull)
-        {
+        void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
             //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }
 
-        private void checkPeakInsertButton_Click(object sender, EventArgs e)
-        {
-            if (Graph.PointToAdd != null)
-            {
+        private void checkPeakInsertButton_Click(object sender, EventArgs e) {
+            if (Graph.PointToAdd != null) {
                 checkPeakPreciseEditorRowMinus.setValues(Graph.PointToAdd);
-            }
-            else
-            {
+            } else {
                 MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
             }
         }

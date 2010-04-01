@@ -1,15 +1,12 @@
-﻿namespace Flavor.Forms
-{
-    partial class OptionsForm
-    {
+﻿namespace Flavor.Forms {
+    partial class OptionsForm {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.Windows.Forms.Button loadFileButton;
             System.Windows.Forms.Button saveFileButton;
             System.Windows.Forms.Label label33;

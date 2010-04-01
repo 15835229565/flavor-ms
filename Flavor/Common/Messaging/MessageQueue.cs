@@ -4,10 +4,8 @@ using System.Text;
 using Flavor.Common.Commands.UI;
 using Flavor.Common.Commands.Sync;
 
-namespace Flavor.Common.Messaging
-{
-    class MessageQueue
-    {
+namespace Flavor.Common.Messaging {
+    class MessageQueue {
         private byte Try = 0;
         private bool statusToSend = false;
         private bool turboToSend = false;
@@ -16,23 +14,19 @@ namespace Flavor.Common.Messaging
         private System.Timers.Timer SendTimer;
         private System.Timers.ElapsedEventHandler elapsed;
 
-        internal MessageQueue(): base()
-        {
+        internal MessageQueue()
+            : base() {
             elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
             SendTimer = new System.Timers.Timer(1000);
             SendTimer.Enabled = false;
         }
-        internal void Clear()
-        {
-            lock (ToSend)
-            {
+        internal void Clear() {
+            lock (ToSend) {
                 ToSend.Clear();
                 statusToSend = false;
                 turboToSend = false;
-                lock (SendTimer)
-                {
-                    if (SendTimer.Enabled)
-                    {
+                lock (SendTimer) {
+                    if (SendTimer.Enabled) {
                         StopSending();
                     }
                 }
@@ -40,20 +34,14 @@ namespace Flavor.Common.Messaging
         }
         internal void AddToSend(UserRequest Command)//Enqueue
         {
-            lock (ToSend)
-            {
-                if (Command is requestStatus)
-                {
-                    if (statusToSend)
-                    {
+            lock (ToSend) {
+                if (Command is requestStatus) {
+                    if (statusToSend) {
                         return;
                     }
                     statusToSend = true;
-                }
-                else if (Command is getTurboPumpStatus)
-                {
-                    if (turboToSend)
-                    {
+                } else if (Command is getTurboPumpStatus) {
+                    if (turboToSend) {
                         return;
                     }
                     turboToSend = true;
@@ -63,35 +51,28 @@ namespace Flavor.Common.Messaging
                 trySend();
             }
         }
-        internal UserRequest Dequeue()
-        {
+        internal UserRequest Dequeue() {
             UserRequest packet = null;
-            lock (ToSend)
-            {
+            lock (ToSend) {
                 dequeueToSendInsideLock(ref packet);
                 StopSending();
             }
             trySend();
             return packet;
         }
-        internal UserRequest Peek(SyncReply command)
-        {
+        internal UserRequest Peek(SyncReply command) {
             UserRequest packet = null;
-            lock (ToSend)
-            {
-                if (ToSend.Count == 0)
-                {
+            lock (ToSend) {
+                if (ToSend.Count == 0) {
                     Console.WriteLine("Received {0}. While waiting for nothing.", command);
                     return null;
                 }
                 peekToSendInsideLock(ref packet);
-                if (packet == null)
-                {
+                if (packet == null) {
                     dequeueToSendInsideLock(ref packet);
                     return null;
                 }
-                if (packet.Id != ((SyncReply)command).Id)
-                {
+                if (packet.Id != ((SyncReply)command).Id) {
                     Console.WriteLine("Received {0}. While waiting for {1}.", command, packet);
                     return null;
                 }
@@ -103,24 +84,18 @@ namespace Flavor.Common.Messaging
             return packet;
         }
 
-        protected void addStatusRequest()
-        {
-            lock (ToSend)
-            {
-                if (!statusToSend)
-                {
+        protected void addStatusRequest() {
+            lock (ToSend) {
+                if (!statusToSend) {
                     ToSend.Enqueue(new requestStatus());
                     statusToSend = true;
                     trySend();
                 }
             }
         }
-        protected void addTurboPumpStatusRequest()
-        {
-            lock (ToSend)
-            {
-                if (!turboToSend)
-                {
+        protected void addTurboPumpStatusRequest() {
+            lock (ToSend) {
+                if (!turboToSend) {
                     ToSend.Enqueue(new getTurboPumpStatus());
                     turboToSend = true;
                 }
@@ -128,12 +103,9 @@ namespace Flavor.Common.Messaging
             }
         }
 
-        private void StartSending()
-        {
-            lock (SendTimer)
-            {
-                if (SendTimer.Enabled || Try != 0)
-                {
+        private void StartSending() {
+            lock (SendTimer) {
+                if (SendTimer.Enabled || Try != 0) {
                     Console.WriteLine("Error. SendTimer already started.");
                     return;
                 }
@@ -142,12 +114,9 @@ namespace Flavor.Common.Messaging
                 SendTimer.Enabled = true;
             }
         }
-        private void StopSending()
-        {
-            lock (SendTimer)
-            {
-                if (!SendTimer.Enabled || Try == 0)
-                {
+        private void StopSending() {
+            lock (SendTimer) {
+                if (!SendTimer.Enabled || Try == 0) {
                     Console.WriteLine("Error. SendTimer already stopped.");
                     return;
                 }
@@ -157,15 +126,11 @@ namespace Flavor.Common.Messaging
             }
         }
 
-        private void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            lock (ToSend)
-            {
-                lock (SendTimer)
-                {
+        private void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            lock (ToSend) {
+                lock (SendTimer) {
                     ++Try;
-                    if (Try <= Config.Try)
-                    {
+                    if (Try <= Config.Try) {
                         Send();
                         return;
                     }
@@ -174,10 +139,8 @@ namespace Flavor.Common.Messaging
                 UserRequest packet = null;
                 if (ToSend.Count == 0)
                     Console.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
-                else
-                {
-                    if (dequeueToSendInsideLock(ref packet))
-                    {
+                else {
+                    if (dequeueToSendInsideLock(ref packet)) {
                         if (packet == null)
                             Console.WriteLine("Error. In message queue null found.");
                     }
@@ -189,28 +152,20 @@ namespace Flavor.Common.Messaging
             }
         }
 
-        private void trySend()
-        {
-            lock (SendTimer)
-            {
-                if (!SendTimer.Enabled)
-                {
+        private void trySend() {
+            lock (SendTimer) {
+                if (!SendTimer.Enabled) {
                     Send();
                 }
             }
         }
-        private void Send()
-        {
-            lock (ToSend)
-            {
-                while (ToSend.Count > 0)
-                {
+        private void Send() {
+            lock (ToSend) {
+                while (ToSend.Count > 0) {
                     UserRequest packet = null;
                     peekToSendInsideLock(ref packet);
-                    if (packet != null)
-                    {
-                        if (0 == Try)
-                        {
+                    if (packet != null) {
+                        if (0 == Try) {
                             StartSending();
                         }
                         packet.Send();
@@ -223,34 +178,24 @@ namespace Flavor.Common.Messaging
             }
         }
 
-        private bool dequeueToSendInsideLock(ref UserRequest packet)
-        {
-            try
-            {
+        private bool dequeueToSendInsideLock(ref UserRequest packet) {
+            try {
                 packet = ToSend.Dequeue();
-                if (packet is requestStatus)
-                {
+                if (packet is requestStatus) {
                     statusToSend = false;
-                }
-                else if (packet is getTurboPumpStatus)
-                {
+                } else if (packet is getTurboPumpStatus) {
                     turboToSend = false;
                 }
                 return true;
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
                 Console.WriteLine("Error. Dequeue failed though someting must be in queue.");
             }
-            try
-            {
+            try {
                 ToSend.Clear();
                 statusToSend = false;
                 turboToSend = false;
                 return false;
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
                 Console.WriteLine("Error. Cannot clear message queue.");
             }
             Console.WriteLine("Message queue recreation.");
@@ -259,16 +204,12 @@ namespace Flavor.Common.Messaging
             turboToSend = false;
             return false;
         }
-        private void peekToSendInsideLock(ref UserRequest packet)
-        {
-            try
-            {
+        private void peekToSendInsideLock(ref UserRequest packet) {
+            try {
                 packet = ToSend.Peek();
                 if (packet == null)
                     Console.WriteLine("Error. In message queue null found.");
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
                 Console.WriteLine("Error. Peek failed though someting must be in queue.");
             }
         }

@@ -1,15 +1,12 @@
-﻿namespace Flavor.Forms
-{
-    partial class DelaysOptionsForm
-    {
+﻿namespace Flavor.Forms {
+    partial class DelaysOptionsForm {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label3;

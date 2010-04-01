@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace Flavor.Forms
-{
-    internal partial class ClosureDialog : Form
-    {
-        internal ClosureDialog()
-        {
+namespace Flavor.Forms {
+    internal partial class ClosureDialog: Form {
+        internal ClosureDialog() {
             InitializeComponent();
         }
     }

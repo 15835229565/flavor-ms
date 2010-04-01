@@ -1,15 +1,12 @@
-﻿namespace Flavor.Forms
-{
-    partial class AddPointForm
-    {
+﻿namespace Flavor.Forms {
+    partial class AddPointForm {
         #region Windows Form Designer generated code
 
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.oneRow = new Flavor.Controls.PreciseEditorRow();

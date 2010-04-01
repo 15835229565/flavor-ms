@@ -1,60 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Flavor.Common
-{
-    internal class CommonOptions
-    {
+namespace Flavor.Common {
+    internal class CommonOptions {
         // defaults
         private ushort beforeTime = 100;
         private ushort forwardTime = 100;
         private ushort backwardTime = 400;
         private bool forwardAsBefore = false;
 
-        internal ushort befTime
-        {
+        internal ushort befTime {
             get { return beforeTime; }
             set { beforeTime = value; }
         }
-        internal ushort befTimeReal
-        {
+        internal ushort befTimeReal {
             get { return (ushort)(beforeTime * 5); }
-            set
-            {
+            set {
                 beforeTime = (ushort)(value / 5);
             }
         }
-        internal ushort fTime
-        {
+        internal ushort fTime {
             get { return forwardTime; }
             set { forwardTime = value; }
         }
-        internal ushort fTimeReal
-        {
+        internal ushort fTimeReal {
             get { return (ushort)(forwardTime * 5); }
-            set
-            {
+            set {
                 forwardTime = (ushort)(value / 5);
             }
         }
-        internal ushort bTime
-        {
+        internal ushort bTime {
             get { return backwardTime; }
             set { backwardTime = value; }
         }
-        internal ushort bTimeReal
-        {
+        internal ushort bTimeReal {
             get { return (ushort)(backwardTime * 5); }
-            set
-            {
+            set {
                 backwardTime = (ushort)(value / 5);
             }
         }
-        internal bool ForwardTimeEqualsBeforeTime
-        {
+        internal bool ForwardTimeEqualsBeforeTime {
             get { return forwardAsBefore; }
             set { forwardAsBefore = value; }
         }
@@ -69,291 +56,233 @@ namespace Flavor.Common
         private ushort focusVoltage1 = 2730;
         private ushort focusVoltage2 = 2730;
 
-        internal ushort eTime
-        {
+        internal ushort eTime {
             get { return expTime; }
             set { expTime = value; }
         }
-        internal ushort eTimeReal
-        {
+        internal ushort eTimeReal {
             get { return (ushort)(expTime * 5); }
-            set
-            {
+            set {
                 expTime = (ushort)(value / 5);
             }
         }
 
-        internal ushort iTime
-        {
+        internal ushort iTime {
             get { return idleTime; }
             set { idleTime = value; }
         }
-        internal ushort iTimeReal
-        {
+        internal ushort iTimeReal {
             get { return (ushort)(5 * idleTime); }
-            set
-            {
+            set {
                 idleTime = (ushort)(value / 5);
             }
         }
 
-        internal ushort iVoltage
-        {
+        internal ushort iVoltage {
             get { return ionizationVoltage; }
             set { ionizationVoltage = value; }
         }
-        internal double iVoltageReal
-        {
+        internal double iVoltageReal {
             get { return iVoltageConvert(ionizationVoltage); }
-            set
-            {
+            set {
                 ionizationVoltage = iVoltageConvert(value);
             }
         }
-        internal double iVoltageConvert(ushort voltage)
-        {
+        internal double iVoltageConvert(ushort voltage) {
             return (double)(150 * (double)voltage / 4096);
         }
-        internal ushort iVoltageConvert(double voltage)
-        {
+        internal ushort iVoltageConvert(double voltage) {
             ushort x = (ushort)((voltage / 150) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
-        
-        internal ushort CP
-        {
+
+        internal ushort CP {
             get { return CPVoltage; }
             set { CPVoltage = value; }
         }
-        internal double CPReal
-        {
+        internal double CPReal {
             get { return CPConvert(CPVoltage); }
-            set
-            {
+            set {
                 CPVoltage = CPConvert(value);
             }
         }
-        internal double CPConvert(ushort coeff)
-        {
+        internal double CPConvert(ushort coeff) {
             return (double)((10 / (double)coeff) * 4096);
         }
-        internal ushort CPConvert(double coeff)
-        {
+        internal ushort CPConvert(double coeff) {
             ushort x = (ushort)((10 / coeff) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        internal ushort eCurrent
-        {
+        internal ushort eCurrent {
             get { return emissionCurrent; }
             set { emissionCurrent = value; }
         }
-        internal double eCurrentReal
-        {
+        internal double eCurrentReal {
             get { return eCurrentConvert(emissionCurrent); }
-            set
-            {
+            set {
                 emissionCurrent = eCurrentConvert(value);
             }
         }
-        internal double eCurrentConvert(ushort current)
-        {
+        internal double eCurrentConvert(ushort current) {
             return (double)((50 * (double)current) / 4096);
         }
-        internal ushort eCurrentConvert(double current)
-        {
+        internal ushort eCurrentConvert(double current) {
             ushort x = (ushort)((current / 50) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        internal ushort hCurrent
-        {
+        internal ushort hCurrent {
             get { return heatCurrent; }
             set { heatCurrent = value; }
         }
-        internal double hCurrentReal
-        {
+        internal double hCurrentReal {
             get { return hCurrentConvert(heatCurrent); }
-            set
-            {
+            set {
                 heatCurrent = hCurrentConvert(value);
             }
         }
-        internal double hCurrentConvert(ushort current)
-        {
+        internal double hCurrentConvert(ushort current) {
             return (double)((double)current / 4096);
         }
-        internal ushort hCurrentConvert(double current)
-        {
+        internal ushort hCurrentConvert(double current) {
             ushort x = (ushort)(current * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        internal ushort fV1
-        {
+        internal ushort fV1 {
             get { return focusVoltage1; }
             set { focusVoltage1 = value; }
         }
-        internal double fV1Real
-        {
+        internal double fV1Real {
             get { return fV1Convert(focusVoltage1); }
-            set
-            {
+            set {
                 focusVoltage1 = fV1Convert(value);
             }
         }
-        internal double fV1Convert(ushort voltage)
-        {
+        internal double fV1Convert(ushort voltage) {
             return (double)(150 * (double)voltage / 4096);
         }
-        internal ushort fV1Convert(double voltage)
-        {
+        internal ushort fV1Convert(double voltage) {
             ushort x = (ushort)((voltage / 150) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        internal ushort fV2
-        {
+        internal ushort fV2 {
             get { return focusVoltage2; }
             set { focusVoltage2 = value; }
         }
-        internal double fV2Real
-        {
+        internal double fV2Real {
             get { return fV2Convert(focusVoltage2); }
-            set
-            {
+            set {
                 focusVoltage2 = fV2Convert(value);
             }
         }
-        internal double fV2Convert(ushort voltage)
-        {
+        internal double fV2Convert(ushort voltage) {
             return (double)(150 * (double)voltage / 4096);
         }
-        internal ushort fV2Convert(double voltage)
-        {
+        internal ushort fV2Convert(double voltage) {
             ushort x = (ushort)((voltage / 150) * 4096);
             if (x >= 4096) x = 4095;
             return x;
         }
 
-        internal ushort scanVoltage(ushort step)
-        {
+        internal ushort scanVoltage(ushort step) {
             if (step > Config.MAX_STEP) step = Config.MAX_STEP;
             return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
-        internal double scanVoltageReal(ushort step)
-        {
+        internal double scanVoltageReal(ushort step) {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
     }
 
-    internal class Spectrum: List<List<Graph.pListScaled>>
-    {
+    internal class Spectrum: List<List<Graph.pListScaled>> {
         private CommonOptions myCommonOptions = null;
         internal Spectrum(CommonOptions cd)
-            : this()
-        {
+            : this() {
             // better to clone here..
             myCommonOptions = cd;
         }
         internal Spectrum()
-            : base()
-        {
+            : base() {
             List<Graph.pListScaled> temp1 = new List<Graph.pListScaled>();
             List<Graph.pListScaled> temp2 = new List<Graph.pListScaled>();
             this.Add(temp1);
             this.Add(temp2);
         }
-        internal CommonOptions CommonOptions
-        {
+        internal CommonOptions CommonOptions {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
         }
     }
-    
-    internal class PreciseSpectrum : List<Utility.PreciseEditorData>
-    {
+
+    internal class PreciseSpectrum: List<Utility.PreciseEditorData> {
         private CommonOptions myCommonOptions = null;
         internal PreciseSpectrum(CommonOptions cd)
-            : this()
-        {
+            : this() {
             // better to clone here..
             myCommonOptions = cd;
         }
         internal PreciseSpectrum()
-            : base()
-        {
+            : base() {
         }
-        internal CommonOptions CommonOptions
-        {
+        internal CommonOptions CommonOptions {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
         }
     }
 
-    internal class PointPairListPlus : ZedGraph.PointPairList
-    {
+    internal class PointPairListPlus: ZedGraph.PointPairList {
         private Utility.PreciseEditorData myPED;
         private Graph.pListScaled myPLS;
 
-        internal Utility.PreciseEditorData PEDreference
-        {
+        internal Utility.PreciseEditorData PEDreference {
             get { return myPED; }
             set { myPED = value; }
         }
-        internal Graph.pListScaled PLSreference
-        {
+        internal Graph.pListScaled PLSreference {
             get { return myPLS; }
             set { myPLS = value; }
         }
 
         internal PointPairListPlus()
-            : base()
-        {
+            : base() {
             myPED = null;
             myPLS = null;
         }
         internal PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
-            : base()
-        {
+            : base() {
             myPED = ped;
             myPLS = pls;
         }
         internal PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
-            : base(other)
-        {
+            : base(other) {
             myPED = ped;
             myPLS = pls;
         }
     }
     #region TreeNodes
-    internal class TreeNodePlus : System.Windows.Forms.TreeNode
-    {
-        internal enum States
-        {
+    internal class TreeNodePlus: System.Windows.Forms.TreeNode {
+        internal enum States {
             Ok,
             Warning,
             Error
         }
         protected States myState = States.Ok;
-        internal virtual States State
-        {
+        internal virtual States State {
             get { return myState; }
-            set 
-            {
-                if (myState != value)
-                {
+            set {
+                if (myState != value) {
                     States previous = myState;
                     myState = value;
-                    if (Parent is TreeNodePlus)
-                    {
+                    if (Parent is TreeNodePlus) {
                         (Parent as TreeNodePlus).computeState(previous, myState);
                     }
                     setStateImageKey();
@@ -364,10 +293,8 @@ namespace Flavor.Common
             : base(text, nodes) { }
         protected TreeNodePlus()
             : base() { }
-        private void setStateImageKey()
-        {
-            switch (myState)
-            {
+        private void setStateImageKey() {
+            switch (myState) {
                 case States.Ok:
                     StateImageKey = "";
                     break;
@@ -379,34 +306,26 @@ namespace Flavor.Common
                     break;
             }
         }
-        private void computeState(States previous, States current)
-        {
-            if (myState < previous)
-            {
+        private void computeState(States previous, States current) {
+            if (myState < previous) {
                 // illegal state
                 throw new InvalidOperationException();
             }
-            if (myState < current)
-            {
+            if (myState < current) {
                 State = current;
                 return;
             }
-            if (myState > current)
-            {
-                if (previous < current)
-                {
+            if (myState > current) {
+                if (previous < current) {
                     return;
                 }
                 State = computeState(current);
             }
         }
-        private States computeState(States hint)
-        {
+        private States computeState(States hint) {
             States result = hint;
-            foreach (TreeNodePlus node in Nodes)
-            {
-                if (result < node.State)
-                {
+            foreach (TreeNodePlus node in Nodes) {
+                if (result < node.State) {
                     result = node.State;
                     if (result == States.Error)
                         return result;
@@ -415,26 +334,20 @@ namespace Flavor.Common
             return result;
         }
     }
-    internal class TreeNodeLeaf : TreeNodePlus
-    {
-        internal override States State
-        {
+    internal class TreeNodeLeaf: TreeNodePlus {
+        internal override States State {
             get { return myState; }
-            set
-            {
-                if (myState != value)
-                {
+            set {
+                if (myState != value) {
                     myState = value;
-                    if (Parent is TreeNodePair)
-                    {
+                    if (Parent is TreeNodePair) {
                         (Parent as TreeNodePair).State = value;
                     }
                     setForeColor();
                 }
             }
         }
-        private new TreeNodeCollection Nodes
-        {
+        private new TreeNodeCollection Nodes {
             get { return base.Nodes; }
         }
         /*internal new string Text
@@ -447,10 +360,8 @@ namespace Flavor.Common
             }
         }*/
 
-        private void setForeColor()
-        {
-            switch (State)
-            {
+        private void setForeColor() {
+            switch (State) {
                 case States.Ok:
                     ForeColor = Color.Green;
                     break;
@@ -463,31 +374,25 @@ namespace Flavor.Common
             }
         }
         internal TreeNodeLeaf()
-            : base()
-        {
+            : base() {
             setForeColor();
         }
     }
-    internal class TreeNodePair : TreeNodePlus
-    {
-        private new TreeNodeCollection Nodes
-        {
+    internal class TreeNodePair: TreeNodePlus {
+        private new TreeNodeCollection Nodes {
             get { return base.Nodes; }
         }
-        internal TreeNodePair(string text, TreeNodeLeaf valueNode): base()
-        {
+        internal TreeNodePair(string text, TreeNodeLeaf valueNode)
+            : base() {
             Text = text;
             Nodes.Add(valueNode);
         }
     }
     #endregion
-    internal static class Utility
-    {
+    internal static class Utility {
         #region PreciseEditorData
-        internal class PreciseEditorData
-        {
-            internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr)
-            {
+        internal class PreciseEditorData {
+            internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
                 pointNumber = pn;
                 step = st;
                 collector = co;
@@ -496,18 +401,15 @@ namespace Flavor.Common
                 precision = pr;
             }
             internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
-                : this(pn, st, co, it, wi, pr)
-            {
+                : this(pn, st, co, it, wi, pr) {
                 comment = comm;
             }
             internal PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
-                :this(pn, st, co, it, wi, pr, comm)
-            {
+                : this(pn, st, co, it, wi, pr, comm) {
                 usethis = useit;
             }
             internal PreciseEditorData(PreciseEditorData other)
-                : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment)
-            {
+                : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment) {
                 associatedPoints = new PointPairListPlus(other.associatedPoints, this, null);
             }
             private bool usethis = true;
@@ -519,64 +421,50 @@ namespace Flavor.Common
             private float precision;
             private string comment = "";
             private PointPairListPlus associatedPoints = null;
-            internal PointPairListPlus AssociatedPoints
-            {
+            internal PointPairListPlus AssociatedPoints {
                 get { return associatedPoints; }
-                set
-                {
-                    if (value.PEDreference == null)
-                    {
+                set {
+                    if (value.PEDreference == null) {
                         associatedPoints = value;
                         associatedPoints.PEDreference = this;
-                    }
-                    else
-                        associatedPoints = new PointPairListPlus(value, this, null); 
+                    } else
+                        associatedPoints = new PointPairListPlus(value, this, null);
                 }
             }
-            internal bool Use
-            {
+            internal bool Use {
                 get { return usethis; }
                 //set { usethis = value; }
             }
-            internal byte pNumber
-            {
+            internal byte pNumber {
                 get { return pointNumber; }
                 //set { pointNumber = value; }
             }
-            internal ushort Step
-            {
+            internal ushort Step {
                 get { return step; }
                 //set { step = value; }
             }
-            internal byte Collector
-            {
+            internal byte Collector {
                 get { return collector; }
                 //set { collector = value; }
             }
-            internal ushort Iterations
-            {
+            internal ushort Iterations {
                 get { return iterations; }
                 //set { iterations = value; }
             }
-            internal ushort Width
-            {
+            internal ushort Width {
                 get { return width; }
                 //set { width = value; }
             }
-            internal float Precision
-            {
+            internal float Precision {
                 get { return precision; }
                 //set { precision = value; }
             }
-            internal string Comment
-            {
+            internal string Comment {
                 get { return comment; }
                 //set { comment = value; }
             }
-            public override bool Equals(object other)
-            {
-                if (other is PreciseEditorData)
-                {
+            public override bool Equals(object other) {
+                if (other is PreciseEditorData) {
                     PreciseEditorData o = other as PreciseEditorData;
                     bool result = (this.collector == o.collector) && (this.step == o.step) &&
                                   (this.iterations == o.iterations) && (this.width == o.width);
@@ -584,24 +472,21 @@ namespace Flavor.Common
                 }
                 return false;
             }
-            public override int GetHashCode()
-            {
+            public override int GetHashCode() {
                 //later it will be better!
                 return base.GetHashCode();
             }
         }
         #endregion
         #region PreciseEditorRows
-        internal class PreciseEditorLabelRow
-        {
+        internal class PreciseEditorLabelRow {
             protected System.Windows.Forms.Label label8;
             protected System.Windows.Forms.Label colNumLabel;
             protected System.Windows.Forms.Label label9;
             protected System.Windows.Forms.Label label10;
             protected System.Windows.Forms.Label label11;
             protected System.Windows.Forms.Label commentLabel;
-            internal PreciseEditorLabelRow()
-            {
+            internal PreciseEditorLabelRow() {
                 this.label8 = new System.Windows.Forms.Label();
                 this.colNumLabel = new System.Windows.Forms.Label();
                 this.label9 = new System.Windows.Forms.Label();
@@ -651,16 +536,14 @@ namespace Flavor.Common
                 this.commentLabel.Size = new System.Drawing.Size(54, 13);
                 this.commentLabel.Text = "Комментарий";
             }
-            internal PreciseEditorLabelRow(int x, int y): this()
-            {
+            internal PreciseEditorLabelRow(int x, int y)
+                : this() {
                 moveTo(x, y);
             }
-            internal virtual Control[] getControls()
-            {
+            internal virtual Control[] getControls() {
                 return new Control[] { colNumLabel, label11, label10, label9, label8, commentLabel };
             }
-            protected virtual void moveTo(int x, int y)
-            {
+            protected virtual void moveTo(int x, int y) {
                 this.label8.Location = new System.Drawing.Point(this.label8.Location.X + x, this.label8.Location.Y + y);
                 this.colNumLabel.Location = new System.Drawing.Point(this.colNumLabel.Location.X + x, this.colNumLabel.Location.Y + y);
                 this.label9.Location = new System.Drawing.Point(this.label9.Location.X + x, this.label9.Location.Y + y);
@@ -669,11 +552,10 @@ namespace Flavor.Common
                 this.commentLabel.Location = new System.Drawing.Point(this.commentLabel.Location.X + x, this.commentLabel.Location.Y + y);
             }
         }
-        internal class PreciseEditorLabelRowPlus: PreciseEditorLabelRow
-        {
+        internal class PreciseEditorLabelRowPlus: PreciseEditorLabelRow {
             private System.Windows.Forms.Label label1;
-            internal PreciseEditorLabelRowPlus(): base()
-            {
+            internal PreciseEditorLabelRowPlus()
+                : base() {
                 base.moveTo(49, 0);
                 this.label1 = new System.Windows.Forms.Label();
                 // label1
@@ -685,16 +567,14 @@ namespace Flavor.Common
                 this.label1.Text = "Номер\r\nпика";
                 this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             }
-            internal PreciseEditorLabelRowPlus(int x, int y): this()
-            {
+            internal PreciseEditorLabelRowPlus(int x, int y)
+                : this() {
                 moveTo(x, y);
             }
-            internal override Control[] getControls()
-            {
+            internal override Control[] getControls() {
                 return new Control[] { colNumLabel, label11, label10, label9, label8, commentLabel, label1 };
             }
-            protected override void moveTo(int x, int y)
-            {
+            protected override void moveTo(int x, int y) {
                 this.label1.Location = new System.Drawing.Point(this.label1.Location.X + x, this.label1.Location.Y + y);
                 this.label8.Location = new System.Drawing.Point(this.label8.Location.X + x, this.label8.Location.Y + y);
                 this.colNumLabel.Location = new System.Drawing.Point(this.colNumLabel.Location.X + x, this.colNumLabel.Location.Y + y);
@@ -706,21 +586,16 @@ namespace Flavor.Common
         }
         #endregion
         #region Comparers and predicate for sorting and finding Utility.PreciseEditorData objects in List
-        internal static int ComparePreciseEditorData(PreciseEditorData ped1, PreciseEditorData ped2)
-        {
-            if (ped1 == null)
-            {
+        internal static int ComparePreciseEditorData(PreciseEditorData ped1, PreciseEditorData ped2) {
+            if (ped1 == null) {
                 if (ped2 == null)
                     return 0;
                 else
                     return -1;
-            }
-            else
-            {
+            } else {
                 if (ped2 == null)
                     return 1;
-                else
-                {
+                else {
                     if (ped1.Collector != ped2.Collector)
                         return (int)(ped1.Collector - ped2.Collector);
                     if (ped1.Step != ped2.Step)
@@ -733,59 +608,46 @@ namespace Flavor.Common
                 }
             }
         }
-        internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
-        {
+        internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
             //Forward sort
-            if (ped1 == null)
-            {
+            if (ped1 == null) {
                 if (ped2 == null)
                     return 0;
                 else
                     return -1;
-            }
-            else
-            {
+            } else {
                 if (ped2 == null)
                     return 1;
                 else
                     return (int)(ped1.Step - ped2.Step);
             }
         }
-        internal static int ComparePreciseEditorDataByUseFlagAndPeakValue(PreciseEditorData ped1, PreciseEditorData ped2)
-        {
+        internal static int ComparePreciseEditorDataByUseFlagAndPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
             //Forward sort
-            if ((ped1 == null) || !ped1.Use)
-            {
+            if ((ped1 == null) || !ped1.Use) {
                 if ((ped2 == null) || !ped2.Use)
                     return 0;
                 else
                     return -1;
-            }
-            else
-            {
+            } else {
                 if ((ped2 == null) || !ped2.Use)
                     return 1;
                 else
                     return (int)(ped1.Step - ped2.Step);
             }
         }
-        internal static bool PeakIsUsed(PreciseEditorData ped)
-        {
+        internal static bool PeakIsUsed(PreciseEditorData ped) {
             return ped.Use;
         }
         #endregion
         #region Textbox charset limitations
-        internal static void oneDigitTextbox_TextChanged(object sender, EventArgs e)
-        {
+        internal static void oneDigitTextbox_TextChanged(object sender, EventArgs e) {
             char[] numbers = { '1', '2' };
             char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
             string outputString = "";
-            foreach (char ch in tempCharArray)
-            {
-                foreach (char compareChar in numbers)
-                {
-                    if (ch == compareChar)
-                    {
+            foreach (char ch in tempCharArray) {
+                foreach (char compareChar in numbers) {
+                    if (ch == compareChar) {
                         outputString += ch;
                         ((TextBox)sender).Text = outputString;
                         return;
@@ -794,17 +656,13 @@ namespace Flavor.Common
             }
             ((TextBox)sender).Text = outputString;
         }
-        internal static void integralTextbox_TextChanged(object sender, EventArgs e)
-        {
+        internal static void integralTextbox_TextChanged(object sender, EventArgs e) {
             char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
             char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
             string outputString = "";
-            foreach (char ch in tempCharArray)
-            {
-                foreach (char compareChar in numbers)
-                {
-                    if (ch == compareChar)
-                    {
+            foreach (char ch in tempCharArray) {
+                foreach (char compareChar in numbers) {
+                    if (ch == compareChar) {
                         outputString += ch;
                         break;
                     }
@@ -812,24 +670,19 @@ namespace Flavor.Common
             }
             ((TextBox)sender).Text = outputString;
         }
-        internal static void positiveNumericTextbox_TextChanged(object sender, EventArgs e)
-        {
+        internal static void positiveNumericTextbox_TextChanged(object sender, EventArgs e) {
             char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
             bool waitFirstDot = true;
             char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
             string outputString = "";
-            foreach (char ch in tempCharArray)
-            {
-                if (waitFirstDot && (ch == '.'))
-                {
+            foreach (char ch in tempCharArray) {
+                if (waitFirstDot && (ch == '.')) {
                     waitFirstDot = false;
                     outputString += ch;
                     continue;
                 }
-                foreach (char compareChar in numbers)
-                {
-                    if (ch == compareChar)
-                    {
+                foreach (char compareChar in numbers) {
+                    if (ch == compareChar) {
                         outputString += ch;
                         break;
                     }
