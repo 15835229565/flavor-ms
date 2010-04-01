@@ -292,6 +292,18 @@ namespace Flavor.Common {
             OnScanCancelled();
             measureMode = null;//?
         }
+        internal static void sendSettings() {
+            toSend.AddToSend(new sendIVoltage());
+            /*
+            Commander.AddToSend(new sendCP());
+            Commander.AddToSend(new enableECurrent());
+            Commander.AddToSend(new enableHCurrent());
+            Commander.AddToSend(new sendECurrent());
+            Commander.AddToSend(new sendHCurrent());
+            Commander.AddToSend(new sendF1Voltage());
+            Commander.AddToSend(new sendF2Voltage());
+            */
+        }
         private static void initMeasure() {
             Console.WriteLine(pState);
             if (measureMode != null && measureMode.isOperating) {
@@ -304,16 +316,7 @@ namespace Flavor.Common {
             Graph.ResetPointLists();
             toSend.IsRareMode = !Commander.notRareModeRequested;
             Commander.measureCancelRequested = false;
-            toSend.AddToSend(new sendIVoltage());
-            /*
-            Commander.AddToSend(new sendCP());
-            Commander.AddToSend(new enableECurrent());
-            Commander.AddToSend(new enableHCurrent());
-            Commander.AddToSend(new sendECurrent());
-            Commander.AddToSend(new sendHCurrent());
-            Commander.AddToSend(new sendF1Voltage());
-            Commander.AddToSend(new sendF2Voltage());
-            */
+            sendSettings();
         }
         internal static bool somePointsUsed() {
             if (Config.PreciseData.Count > 0)

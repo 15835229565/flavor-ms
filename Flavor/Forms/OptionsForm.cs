@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using Flavor.Common;
-using Flavor.Common.Commands.UI;
 
 namespace Flavor.Forms {
     internal partial class OptionsForm: Form {
@@ -93,7 +92,7 @@ namespace Flavor.Forms {
         }
 
         protected virtual void applyButton_Click(object sender, EventArgs e) {
-            Commander.AddToSend(new sendIVoltage());
+            Commander.sendSettings();
             ok_butt_Click(sender, e);
         }
 

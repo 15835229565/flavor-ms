@@ -83,6 +83,10 @@ namespace Flavor.Common {
 
         private static List<byte[]> PacketReceived = new List<byte[]>();
 
+        internal static string[] getAvailablePorts() {
+            return SerialPort.GetPortNames();
+        }
+        
         internal static PortStates Open() {
             if (!_serialPort.IsOpen) {
                 _serialPort.PortName = Config.Port;

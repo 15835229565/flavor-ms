@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.IO.Ports;
 using Flavor.Common;
 
 namespace Flavor.Forms {
@@ -17,7 +16,7 @@ namespace Flavor.Forms {
             InitializeComponent();
             serialPort_comboBox.Text = Config.Port;
             baudrate_comboBox.Text = Config.BaudRate.ToString();
-            foreach (string sp in SerialPort.GetPortNames()) serialPort_comboBox.Items.Add(sp);
+            foreach (string sp in ModBus.getAvailablePorts()) serialPort_comboBox.Items.Add(sp);
         }
 
         private void cancel_butt_Click(object sender, EventArgs e) {
