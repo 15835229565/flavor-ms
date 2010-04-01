@@ -61,6 +61,24 @@
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Utility.cs" />
+    <Compile Include="Controls\PreciseEditorLabelRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorLabelRow.Designer.cs">
+      <DependentUpon>PreciseEditorLabelRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorLabelRowMinus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorLabelRowMinus.Designer.cs">
+      <DependentUpon>PreciseEditorLabelRowMinus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorLabelRowPlus.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseEditorLabelRowPlus.Designer.cs">
+      <DependentUpon>PreciseEditorLabelRowPlus.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PreciseEditorRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -156,6 +174,18 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\PreciseEditorLabelRow.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PreciseEditorLabelRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreciseEditorLabelRowMinus.resx">
+      <DependentUpon>PreciseEditorLabelRowMinus.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreciseEditorLabelRowPlus.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PreciseEditorLabelRowPlus.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PreciseEditorRow.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PreciseEditorRow.cs</DependentUpon>

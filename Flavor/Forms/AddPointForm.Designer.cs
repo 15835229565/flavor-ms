@@ -7,9 +7,12 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.Windows.Forms.Button cancelButton;
+            Flavor.Controls.PreciseEditorLabelRow oneLabelRow;
             this.okButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
             this.oneRow = new Flavor.Controls.PreciseEditorRow();
+            cancelButton = new System.Windows.Forms.Button();
+            oneLabelRow = new Flavor.Controls.PreciseEditorLabelRow();
             this.SuspendLayout();
             // 
             // okButton
@@ -24,27 +27,40 @@
             // 
             // cancelButton
             // 
-            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(93, 64);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 1;
-            this.cancelButton.Text = "Отмена";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(93, 64);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.TabIndex = 1;
+            cancelButton.Text = "Отмена";
+            cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // oneRow
+            // 
             this.oneRow.Location = new System.Drawing.Point(13, 42);
+            this.oneRow.Name = "oneRow";
+            this.oneRow.Size = new System.Drawing.Size(330, 13);
+            this.oneRow.TabIndex = 2;
+            // 
+            // oneLabelRow
+            // 
+            oneLabelRow.Location = new System.Drawing.Point(12, 8);
+            oneLabelRow.Name = "oneLabelRow";
+            oneLabelRow.Size = new System.Drawing.Size(310, 26);
+            oneLabelRow.TabIndex = 3;
             // 
             // AddPointForm
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancelButton;
+            this.CancelButton = cancelButton;
             this.ClientSize = new System.Drawing.Size(354, 99);
-            this.Controls.Add(this.cancelButton);
+            this.Controls.Add(cancelButton);
             this.Controls.Add(this.okButton);
-            this.Controls.Add(oneRow);
+            this.Controls.Add(this.oneRow);
+            this.Controls.Add(oneLabelRow);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "AddPointForm";
@@ -53,12 +69,12 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Добавление точки";
             this.ResumeLayout(false);
+
         }
 
         #endregion
 
-        protected System.Windows.Forms.Button okButton;
-        protected System.Windows.Forms.Button cancelButton;
         protected Flavor.Controls.PreciseEditorRow oneRow;
+        protected System.Windows.Forms.Button okButton;
     }
 }

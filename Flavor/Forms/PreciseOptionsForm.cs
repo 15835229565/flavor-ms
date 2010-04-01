@@ -12,7 +12,6 @@ namespace Flavor.Forms {
             set { upLevel = value; }
         }
 
-        private Utility.PreciseEditorLabelRowPlus PElabelRow;
         private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[20];
         private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
 
@@ -37,8 +36,6 @@ namespace Flavor.Forms {
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
                 this.preciseEditorGroupBox.Controls.Add(PErows[i]);
             }
-            this.PElabelRow = new Utility.PreciseEditorLabelRowPlus(6, 16);
-            this.preciseEditorGroupBox.Controls.AddRange(this.PElabelRow.getControls());
 
             loadPreciseEditorData(Config.PreciseData);
             this.preciseEditorGroupBox.ResumeLayout(false);

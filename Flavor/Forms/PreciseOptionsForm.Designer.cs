@@ -1,4 +1,6 @@
 ﻿using Flavor.Common;
+using Flavor.Controls;
+
 namespace Flavor.Forms {
     partial class PreciseOptionsForm {
         #region Windows Form Designer generated code
@@ -8,6 +10,7 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            Flavor.Controls.PreciseEditorLabelRowPlus PElabelRow;
             this.preciseEditorGroupBox = new System.Windows.Forms.GroupBox();
             this.insertPointButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
@@ -15,6 +18,7 @@ namespace Flavor.Forms {
             this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
+            PElabelRow = new Flavor.Controls.PreciseEditorLabelRowPlus();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
@@ -55,19 +59,27 @@ namespace Flavor.Forms {
             // 
             this.rareModeCheckBox.Location = new System.Drawing.Point(432, 301);
             // 
-            // groupBox1
+            // preciseEditorGroupBox
             // 
             this.preciseEditorGroupBox.BackColor = System.Drawing.SystemColors.Control;
+            this.preciseEditorGroupBox.Controls.Add(PElabelRow);
             this.preciseEditorGroupBox.Controls.Add(this.insertPointButton);
             this.preciseEditorGroupBox.Controls.Add(this.clearButton);
             this.preciseEditorGroupBox.Controls.Add(this.loadPreciseEditorFromFileButton);
             this.preciseEditorGroupBox.Controls.Add(this.savePreciseEditorToFileButton);
             this.preciseEditorGroupBox.Location = new System.Drawing.Point(12, 12);
-            this.preciseEditorGroupBox.Name = "groupBox1";
+            this.preciseEditorGroupBox.Name = "preciseEditorGroupBox";
             this.preciseEditorGroupBox.Size = new System.Drawing.Size(414, 385);
             this.preciseEditorGroupBox.TabIndex = 3;
             this.preciseEditorGroupBox.TabStop = false;
             this.preciseEditorGroupBox.Text = "Редактор областей сканирования";
+            // 
+            // PElabelRow
+            // 
+            PElabelRow.Location = new System.Drawing.Point(6, 16);
+            PElabelRow.Name = "PElabelRow";
+            PElabelRow.Size = new System.Drawing.Size(359, 26);
+            PElabelRow.TabIndex = 0;
             // 
             // insertPointButton
             // 

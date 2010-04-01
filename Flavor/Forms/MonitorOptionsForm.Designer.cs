@@ -15,6 +15,7 @@ namespace Flavor.Forms {
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.preciseEditorLabelRowMinus1 = new Flavor.Controls.PreciseEditorLabelRowMinus();
             groupBox2 = new System.Windows.Forms.GroupBox();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
@@ -42,6 +43,7 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(this.preciseEditorLabelRowMinus1);
             groupBox2.Controls.Add(this.numericUpDown1);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(this.checkPeakInsertButton);
@@ -106,6 +108,13 @@ namespace Flavor.Forms {
             this.iterationsNumericUpDown.TabIndex = 0;
             this.iterationsNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // preciseEditorLabelRowMinus1
+            // 
+            this.preciseEditorLabelRowMinus1.Location = new System.Drawing.Point(194, 14);
+            this.preciseEditorLabelRowMinus1.Name = "preciseEditorLabelRowMinus1";
+            this.preciseEditorLabelRowMinus1.Size = new System.Drawing.Size(124, 26);
+            this.preciseEditorLabelRowMinus1.TabIndex = 6;
+            // 
             // MonitorOptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -136,6 +145,7 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -144,5 +154,6 @@ namespace Flavor.Forms {
         private Flavor.Controls.PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
         private System.Windows.Forms.Button checkPeakInsertButton;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private PreciseEditorLabelRowMinus preciseEditorLabelRowMinus1;
     }
 }

@@ -4,14 +4,9 @@ using Flavor.Common;
 
 namespace Flavor.Forms {
     partial class AddPointForm: Form {
-        protected Utility.PreciseEditorLabelRow oneLabelRow;
-
         internal AddPointForm()
             : base() {
             InitializeComponent();
-
-            this.oneLabelRow = new Utility.PreciseEditorLabelRow(12, 8);
-            this.Controls.AddRange(oneLabelRow.getControls());
         }
         internal AddPointForm(ushort step, byte col)
             : this() {
