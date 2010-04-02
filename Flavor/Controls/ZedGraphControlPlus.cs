@@ -1,22 +1,14 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using System.Windows.Forms;
-using System.Threading;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
 
-using System.Runtime.InteropServices;
 using ZedGraph;
 using Flavor.Common;
 using Flavor.Forms;
 
 namespace Flavor.Controls {
-    public partial class ZedGraphControlPlus: ZedGraph.ZedGraphControl {
+    public partial class ZedGraphControlPlus: ZedGraphControl {
         internal delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
         internal event DiffOnPointEventHandler OnDiffOnPoint;
         private CurveItem curveReference;
