@@ -247,8 +247,8 @@ namespace Flavor.Forms {
                 scanProgressBar.Style = ProgressBarStyle.Marquee;
             } else {
                 scanProgressBar.Style = ProgressBarStyle.Blocks;
+                scanProgressBar.Step = 1;
             }
-            scanProgressBar.Step = 1;
 
             Graph.ResetLoadedPointLists();
             gForm.setXScaleLimits();
@@ -325,17 +325,23 @@ namespace Flavor.Forms {
         private void RefreshGraph(Graph.Displaying displayMode, bool recreate) {
             switch (displayMode) {
                 case Graph.Displaying.Loaded:
-                    if (recreate)
+                    if (recreate) {
                         gForm.DisplayLoadedSpectrum();
-                    else
+                    } else {
                         gForm.RefreshGraph();
+                    }
                     break;
                 case Graph.Displaying.Measured:
-                    if (recreate)
+                    if (recreate) {
                         gForm.CreateGraph();
-                    else {
+                    } else {
                         gForm.RefreshGraph();
                         if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
+                            if (scanProgressBar.Value == scanProgressBar.Maximum) {
+                                // if already full line - reinit
+                                scanProgressBar.Value = 0;
+                                scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
+                            }
                             scanProgressBar.PerformStep();
                         }
                         stepNumberLabel.Text = Graph.LastPoint.ToString();
@@ -346,10 +352,11 @@ namespace Flavor.Forms {
                     }
                     break;
                 case Graph.Displaying.Diff:
-                    if (recreate)
+                    if (recreate) {
                         gForm.DisplayDiff();
-                    else
+                    } else {
                         gForm.RefreshGraph();
+                    }
                     break;
             }
         }

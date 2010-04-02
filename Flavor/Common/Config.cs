@@ -12,6 +12,9 @@ namespace Flavor.Common {
         private static string confName;
         private static string logName;
 
+        internal const string SPECTRUM_EXT = "sdf";
+        internal const string PRECISE_SPECTRUM_EXT = "psf";
+
         private static string SerialPort = "COM1";
         private static ushort SerialBaudRate = 38400;
         private static byte SendTry = 1;
@@ -110,8 +113,8 @@ namespace Flavor.Common {
 
         internal static void getInitialDirectory() {
             initialDir = System.IO.Directory.GetCurrentDirectory();
-            confName = initialDir + "\\config.xml";
-            logName = initialDir + "\\MScrash.log";
+            confName = System.IO.Path.Combine(initialDir, "config.xml");
+            logName = System.IO.Path.Combine(initialDir, "MScrash.log");
         }
 
         private static void fillInnerText(string prefix, string nodeName, object value) {
@@ -276,10 +279,10 @@ namespace Flavor.Common {
         private static string genAutoSaveFilename(string extension, out DateTime now) {
             string dirname;
             now = System.DateTime.Now;
-            dirname = initialDir + string.Format("\\{0}-{1}-{2}", now.Year, now.Month, now.Day);
+            dirname = System.IO.Path.Combine(initialDir, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
             if (!System.IO.Directory.Exists(@dirname))
                 System.IO.Directory.CreateDirectory(@dirname);
-            return dirname + "\\" + string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension;
+            return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
 
         private static bool OpenSpecterFile(string p) {
@@ -391,7 +394,7 @@ namespace Flavor.Common {
         }
         internal static void AutoSaveSpecterFile() {
             DateTime dt;
-            string filename = genAutoSaveFilename("sdf", out dt);
+            string filename = genAutoSaveFilename(SPECTRUM_EXT, out dt);
             XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured);
 
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, "time", "");
@@ -594,7 +597,7 @@ namespace Flavor.Common {
         }
         internal static void AutoSavePreciseSpecterFile() {
             DateTime dt;
-            string filename = genAutoSaveFilename("psf", out dt);
+            string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, out dt);
             XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
 
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, "time", "");
