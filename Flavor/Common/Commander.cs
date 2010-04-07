@@ -23,9 +23,11 @@ namespace Flavor.Common {
 
         internal delegate void ProgramEventHandler();
         internal delegate void AsyncReplyHandler(string msg);
+        internal delegate void ErrorHandler(string msg);
 
         internal static event ProgramEventHandler OnProgramStateChanged;
         internal static event ProgramEventHandler OnScanCancelled;
+        internal static event ErrorHandler OnError;
         private static Commander.programStates programState;
         private static Commander.programStates programStatePrev;
         private static bool handleBlock = true;
@@ -211,6 +213,10 @@ namespace Flavor.Common {
                     }
                     if (!measureMode.onUpdateCounts()) {
                         // error (out of limits), raise event here and notify in UI
+                        // TODO: lock here
+                        if (OnError != null) {
+                            OnError("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                        }
                     }
                 }
                 if (Command is confirmF2Voltage) {
@@ -218,6 +224,10 @@ namespace Flavor.Common {
                         toSend.IsRareMode = !notRareMode;
                         if (!measureMode.start()) {
                             // error (no points)
+                            // TODO: lock here
+                            if (OnError != null) {
+                                OnError("Нет точек для измерения.");
+                            }
                         }
                     }
                 }
@@ -289,7 +299,10 @@ namespace Flavor.Common {
             Commander.pStatePrev = Commander.pState;
             Commander.pState = Commander.programStates.Ready;
             Commander.pStatePrev = Commander.pState;
-            OnScanCancelled();
+            // TODO: lock here
+            if (OnScanCancelled != null) {
+                OnScanCancelled();
+            }
             measureMode = null;//?
         }
         internal static void sendSettings() {

@@ -303,10 +303,10 @@ namespace Flavor.Common {
             set {
                 if (peakToAdd != value) {
                     peakToAdd = value;
-                    if (OnPointAdded == null) {
-                        return;
+                    // TODO: lock here
+                    if (OnPointAdded != null) {
+                        OnPointAdded(value != null);
                     }
-                    OnPointAdded(value != null);
                 }
             }
         }

@@ -253,7 +253,13 @@ namespace Flavor.Forms {
             Graph.ResetLoadedPointLists();
             gForm.setXScaleLimits();
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
+            Commander.OnError += new Commander.ErrorHandler(Commander_OnError);
             gForm.specterSavingEnabled = false;
+        }
+
+        void Commander_OnError(string msg) {
+            // TODO: do this more accurately
+            MessageBox.Show(msg);
         }
         private void overview_button_Click(object sender, EventArgs e) {
             startScanTextLabel.Visible = true;
@@ -851,6 +857,7 @@ namespace Flavor.Forms {
         }
         private void CancelScan() {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
+            Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
             cancelScanButton.Enabled = false;
             cancelScanButton.Visible = false;
             gForm.specterSavingEnabled = true;
