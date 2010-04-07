@@ -79,13 +79,17 @@ namespace Flavor.Common {
         private static int iterations = 0;
         internal static int Iterations {
             get { return iterations; }
-            set {
+            /*set {
                 if (value < 0) {
                     iterations = 0;
                     return;
                 }
                 iterations = value;
-            }
+            }*/
+        }
+        private static int timeLimit = 0;
+        internal static int TimeLimit {
+            get { return timeLimit; }
         }
 
         internal static string Port {
@@ -174,7 +178,12 @@ namespace Flavor.Common {
                 //use hard-coded defaults (null checker peak)
             }
             try {
-                Iterations = int.Parse(_conf.SelectSingleNode("/control/check/iterations").InnerText);
+                iterations = int.Parse(_conf.SelectSingleNode("/control/check/iterations").InnerText);
+            } catch (NullReferenceException) {
+                //use hard-coded defaults (null checker peak)
+            }
+            try {
+                timeLimit = int.Parse(_conf.SelectSingleNode("/control/check/limit").InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
             }
@@ -236,12 +245,14 @@ namespace Flavor.Common {
                 fillInnerText("/control/check", "width", reperPeak.Width);
             }
             fillInnerText("/control/check", "iterations", iterations);
+            fillInnerText("/control/check", "limit", timeLimit);
             _conf.Save(@confName);
         }
-        internal static void saveCheckOptions(int iter, Utility.PreciseEditorData peak) {
-            Config.Iterations = iter;
+        internal static void saveCheckOptions(int iter, int timeLim, Utility.PreciseEditorData peak) {
+            iterations = iter;
+            timeLimit = timeLim;
             reperPeak = peak;
-            Config.saveCheckOptions();
+            saveCheckOptions();
         }
 
         internal static void saveAll() {

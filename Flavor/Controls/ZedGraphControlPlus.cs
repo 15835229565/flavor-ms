@@ -169,15 +169,18 @@ namespace Flavor.Controls {
                 collector = 2;
                 pp = (Graph.Displayed2Steps[curveIndex2])[pointIndex];
             }
-            if ((pp != null) && (collector != 0)) {
-                if (new AddPointForm((ushort)(pp.X), collector).ShowDialog() == DialogResult.OK) {
-                    PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
-                    pForm.UpLevel = (mainForm)((GraphForm)(this.ParentForm)).MdiParent;
-                    pForm.Show();
-                    pForm.BringToFront();
-                }
-            } else
+            if ((pp == null) || (collector == 0)) {
                 MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
+                return;
+            }
+            
+            // TODO: raise event here and move code below to mainform
+            if (new AddPointForm((ushort)(pp.X), collector).ShowDialog() == DialogResult.OK) {
+                /*PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
+                pForm.UpLevel = (mainForm)((GraphForm)(this.ParentForm)).MdiParent;
+                pForm.Show();
+                pForm.BringToFront();*/
+            }
         }
         private void DiffWithCoeff(object sender, EventArgs e) {
             Graph.pListScaled pls = ((PointPairListPlus)(curveReference.Points)).PLSreference;

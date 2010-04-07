@@ -12,7 +12,7 @@ namespace Flavor.Forms {
             Flavor.Controls.PreciseEditorLabelRowMinus preciseEditorLabelRowMinus1;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -30,7 +30,7 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.params_groupBox.SuspendLayout();
             groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
             this.SuspendLayout();
             this.params_groupBox.Controls.SetChildIndex(this.expTimeNumericUpDown, 0);
@@ -45,7 +45,7 @@ namespace Flavor.Forms {
             // groupBox2
             // 
             groupBox2.Controls.Add(preciseEditorLabelRowMinus1);
-            groupBox2.Controls.Add(this.numericUpDown1);
+            groupBox2.Controls.Add(this.timeLimitNumericUpDown);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(this.checkPeakInsertButton);
             groupBox2.Controls.Add(this.checkPeakPreciseEditorRowMinus);
@@ -65,13 +65,13 @@ namespace Flavor.Forms {
             preciseEditorLabelRowMinus1.Size = new System.Drawing.Size(124, 26);
             preciseEditorLabelRowMinus1.TabIndex = 6;
             // 
-            // numericUpDown1
+            // timeLimitNumericUpDown
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(128, 40);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown1.TabIndex = 5;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.timeLimitNumericUpDown.Location = new System.Drawing.Point(128, 40);
+            this.timeLimitNumericUpDown.Name = "timeLimitNumericUpDown";
+            this.timeLimitNumericUpDown.Size = new System.Drawing.Size(60, 20);
+            this.timeLimitNumericUpDown.TabIndex = 5;
+            this.timeLimitNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label8
             // 
@@ -142,7 +142,7 @@ namespace Flavor.Forms {
             this.params_groupBox.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -154,6 +154,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.NumericUpDown iterationsNumericUpDown;
         private Flavor.Controls.PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
         private System.Windows.Forms.Button checkPeakInsertButton;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown timeLimitNumericUpDown;
     }
 }

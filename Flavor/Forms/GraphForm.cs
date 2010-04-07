@@ -13,6 +13,8 @@ namespace Flavor.Forms {
         private string displayedFileName = "";
         private bool preciseSpecterDisplayed = false;
         private bool prevPreciseSpecterDisplayed = false;
+        private string spectrumFileDialogFilter = string.Format("Specter data files (*.{0})|*.{0}", Config.SPECTRUM_EXT);
+        private string preciseSpectrumFileDialogFilter = string.Format("Precise specter files (*.{0})|*.{0}", Config.PRECISE_SPECTRUM_EXT);
 
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
         private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };
@@ -197,14 +199,14 @@ namespace Flavor.Forms {
                     break;
             }
             if (preciseSpecterDisplayed) {
-                saveSpecterFileDialog.Filter = "Precise specter files (*.psf)|*.psf";
-                saveSpecterFileDialog.DefaultExt = "psf";
+                saveSpecterFileDialog.Filter = preciseSpectrumFileDialogFilter;
+                saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                     Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, Graph.DisplayingMode);
                 }
             } else {
-                saveSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf";
-                saveSpecterFileDialog.DefaultExt = "sdf";
+                saveSpecterFileDialog.Filter = spectrumFileDialogFilter;
+                saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                     Config.SaveSpecterFile(saveSpecterFileDialog.FileName, Graph.DisplayingMode);
                 }
@@ -289,7 +291,7 @@ namespace Flavor.Forms {
         }
         // move to mainForm
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf|Precise specter files (*.psf)|*.psf";
+            openSpecterFileDialog.Filter = string.Format("{0}|{1}", spectrumFileDialogFilter, preciseSpectrumFileDialogFilter);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 bool hint = (openSpecterFileDialog.FilterIndex == 1);
                 try {
@@ -319,9 +321,9 @@ namespace Flavor.Forms {
 
         private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
             if (preciseSpecterDisplayed) {
-                openSpecterFileDialog.Filter = "Precise specter files (*.psf)|*.psf";
+                openSpecterFileDialog.Filter = preciseSpectrumFileDialogFilter;
             } else {
-                openSpecterFileDialog.Filter = "Specter data files (*.sdf)|*.sdf";
+                openSpecterFileDialog.Filter = spectrumFileDialogFilter;
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {

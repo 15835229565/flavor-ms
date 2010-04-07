@@ -9,6 +9,8 @@ namespace Flavor.Forms {
             InitializeComponent();
             iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             iterationsNumericUpDown.Value = (decimal)Config.Iterations;
+            timeLimitNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            timeLimitNumericUpDown.Value = (decimal)Config.TimeLimit;
             Utility.PreciseEditorData peak = Config.CheckerPeak;
             if (peak != null) {
                 checkPeakPreciseEditorRowMinus.setValues(peak);
@@ -31,7 +33,7 @@ namespace Flavor.Forms {
         }
         protected override void saveData() {
             base.saveData();
-            Config.saveCheckOptions((int)iterationsNumericUpDown.Value,
+            Config.saveCheckOptions((int)iterationsNumericUpDown.Value, (int)timeLimitNumericUpDown.Value,
                                     checkPeakPreciseEditorRowMinus.AllFilled?
                                     new Utility.PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,

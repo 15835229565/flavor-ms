@@ -16,7 +16,6 @@ namespace Flavor.Controls {
         public PreciseEditorRow()
             : base() {
             InitializeComponent();
-            stepAndColModifiable = false;
             this.lapsTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
             this.precTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
         }

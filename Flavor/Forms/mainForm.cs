@@ -337,7 +337,7 @@ namespace Flavor.Forms {
                     } else {
                         gForm.RefreshGraph();
                         if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
-                            if (scanProgressBar.Value == scanProgressBar.Maximum) {
+                            if (scanProgressBar.Value > scanProgressBar.Maximum) {
                                 // if already full line - reinit
                                 scanProgressBar.Value = 0;
                                 scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();

@@ -16,7 +16,6 @@ namespace Flavor.Controls {
         internal string WidthText {
             get { return widthTextBox.Text; }
         }
-        protected bool stepAndColModifiable = true;
         protected bool allFilled = false;
         internal bool AllFilled {
             get { return allFilled; }

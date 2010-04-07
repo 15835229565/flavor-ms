@@ -51,10 +51,10 @@ namespace Flavor.Common.Measuring {
         private Utility.PreciseEditorData peak;
         private bool spectrumIsValid = true;
 
-        internal MonitorMeasureMode(short initialShift)
+        internal MonitorMeasureMode(short initialShift, int timeLimit)
             : base(Config.PreciseDataWithChecker) {
             shift = initialShift;
-            stopper = new MeasureStopper(Config.Iterations, 0);
+            stopper = new MeasureStopper(Config.Iterations, timeLimit);
             peak = Config.CheckerPeak;
         }
         protected override void onExit() {

@@ -210,7 +210,7 @@ namespace Flavor.Common {
                         throw new Exception("No measure mode in operation.");
                     }
                     if (!measureMode.onUpdateCounts()) {
-                        // error (out of limits)
+                        // error (out of limits), raise event here and notify in UI
                     }
                 }
                 if (Command is confirmF2Voltage) {
@@ -253,7 +253,7 @@ namespace Flavor.Common {
             toSend.AddToSend(new sendShutdown());
             Commander.pStatePrev = Commander.pState;
             Commander.pState = Commander.programStates.WaitShutdown;
-            //добавить контрольное время ожидания выключения
+            // TODO: добавить контрольное время ожидания выключения
         }
 
         internal static void Scan() {
@@ -275,9 +275,9 @@ namespace Flavor.Common {
         internal static void Monitor() {
             if (pState == Commander.programStates.Ready) {
                 if (somePointsUsed()) {
-                    initMeasure();                           //?
-                    measureMode = new MonitorMeasureMode(0); //order
-                    // TODO: feed measure mode with start shift value
+                    initMeasure();                                              //?
+                    measureMode = new MonitorMeasureMode(0, Config.TimeLimit);  //order
+                    // TODO: feed measure mode with start shift value (really?)
                 } else {
                     Console.WriteLine("No points for monitor(precise) mode measure.");
                 }
