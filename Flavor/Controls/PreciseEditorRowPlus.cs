@@ -11,7 +11,6 @@ namespace Flavor.Controls {
         internal bool UseChecked {
             get { return usePeakCheckBox.Checked; }
         }
-        private static ToolTip clearRowToolTip = new ToolTip();
         public PreciseEditorRowPlus()
             : base() {
             InitializeComponent();
@@ -33,9 +32,6 @@ namespace Flavor.Controls {
             commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
 
             usePeakCheckBox.Checked = false;
-        }
-        private void clearPeakButton_MouseHover(object sender, EventArgs e) {
-            PreciseEditorRowPlus.clearRowToolTip.Show("Очистить строку", (IWin32Window)sender);
         }
         private void clearPeakButton_Click(object sender, EventArgs e) {
             this.Clear();

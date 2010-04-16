@@ -2,6 +2,22 @@
 
 namespace Flavor.Controls {
     partial class PreciseEditorLabelRowMinus {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         #region Component Designer generated code
 
         /// <summary> 
@@ -9,22 +25,15 @@ namespace Flavor.Controls {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label colNumLabel;
             System.Windows.Forms.Label label10;
+            System.Windows.Forms.ToolTip colToolTip;
             this.peakCenterLabel = new System.Windows.Forms.Label();
             colNumLabel = new System.Windows.Forms.Label();
             label10 = new System.Windows.Forms.Label();
+            colToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
-            // 
-            // peakCenterLabel
-            // 
-            this.peakCenterLabel.AutoSize = true;
-            this.peakCenterLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.peakCenterLabel.Location = new System.Drawing.Point(0, 0);
-            this.peakCenterLabel.Name = "peakCenterLabel";
-            this.peakCenterLabel.Size = new System.Drawing.Size(0, 13);
-            this.peakCenterLabel.TabIndex = 0;
-            this.peakCenterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // colNumLabel
             // 
@@ -34,6 +43,7 @@ namespace Flavor.Controls {
             colNumLabel.Size = new System.Drawing.Size(29, 13);
             colNumLabel.TabIndex = 1;
             colNumLabel.Text = "Кол.";
+            colToolTip.SetToolTip(colNumLabel, "Коллектор");
             // 
             // label10
             // 
@@ -45,6 +55,16 @@ namespace Flavor.Controls {
             label10.TabIndex = 2;
             label10.Text = "Ширина";
             // 
+            // peakCenterLabel
+            // 
+            this.peakCenterLabel.AutoSize = true;
+            this.peakCenterLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.peakCenterLabel.Location = new System.Drawing.Point(0, 0);
+            this.peakCenterLabel.Name = "peakCenterLabel";
+            this.peakCenterLabel.Size = new System.Drawing.Size(0, 13);
+            this.peakCenterLabel.TabIndex = 0;
+            this.peakCenterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // PreciseEditorLabelRowMinus
             // 
             this.Controls.Add(colNumLabel);
@@ -54,6 +74,7 @@ namespace Flavor.Controls {
             this.Size = new System.Drawing.Size(124, 26);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
