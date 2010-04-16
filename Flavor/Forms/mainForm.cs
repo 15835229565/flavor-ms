@@ -310,11 +310,10 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshUserMessage(string msg) {
             if (this.InvokeRequired) {
-                Commander.AsyncReplyHandler InvokeDelegate = new Commander.AsyncReplyHandler(RefreshUserMessage);
-                this.Invoke(InvokeDelegate, msg);
-            } else {
-                RefreshUserMessage(msg);
+                this.Invoke(new Commander.AsyncReplyHandler(RefreshUserMessage), msg);
+                return;
             }
+            RefreshUserMessage(msg);
         }
         private void RefreshUserMessage(string msg) {
             measure_StatusLabel.Text = msg;
@@ -322,11 +321,10 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate) {
             if (this.InvokeRequired) {
-                Graph.GraphEventHandler InvokeDelegate = new Graph.GraphEventHandler(RefreshGraph);
-                this.Invoke(InvokeDelegate, displayMode, recreate);
-            } else {
-                RefreshGraph(displayMode, recreate);
+                this.Invoke(new Graph.GraphEventHandler(RefreshGraph), displayMode, recreate);
+                return;
             }
+            RefreshGraph(displayMode, recreate);
         }
         private void RefreshGraph(Graph.Displaying displayMode, bool recreate) {
             switch (displayMode) {
@@ -343,7 +341,7 @@ namespace Flavor.Forms {
                     } else {
                         gForm.RefreshGraph();
                         if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
-                            if (scanProgressBar.Value > scanProgressBar.Maximum) {
+                            if (scanProgressBar.Value == scanProgressBar.Maximum) {
                                 // if already full line - reinit
                                 scanProgressBar.Value = 0;
                                 scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
@@ -408,11 +406,10 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshDeviceState() {
             if (this.InvokeRequired) {
-                DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshDeviceState);
-                this.Invoke(InvokeDelegate);
-            } else {
-                RefreshDeviceState();
+                this.Invoke(new DeviceEventHandler(RefreshDeviceState));
+                return;
             }
+            RefreshDeviceState();
         }
         private void RefreshDeviceState() {
             parameterPanel.SuspendLayout();
@@ -481,11 +478,10 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshTurboPumpStatus() {
             if (this.InvokeRequired) {
-                DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshTurboPumpStatus);
-                this.Invoke(InvokeDelegate);
-            } else {
-                RefreshTurboPumpStatus();
+                this.Invoke(new DeviceEventHandler(RefreshTurboPumpStatus));
+                return;
             }
+            RefreshTurboPumpStatus();
         }
         private void RefreshTurboPumpStatus() {
             parameterPanel.SuspendLayout();
@@ -504,11 +500,10 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshDeviceStatus() {
             if (this.InvokeRequired) {
-                DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshDeviceStatus);
-                this.Invoke(InvokeDelegate);
-            } else {
-                RefreshDeviceStatus();
+                this.Invoke(new DeviceEventHandler(RefreshDeviceStatus));
+                return;
             }
+            RefreshDeviceStatus();
         }
         private void RefreshDeviceStatus() {
             parameterPanel.SuspendLayout();
@@ -567,11 +562,10 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshVacuumState() {
             if (this.InvokeRequired) {
-                DeviceEventHandler InvokeDelegate = new DeviceEventHandler(RefreshVacuumState);
-                this.Invoke(InvokeDelegate);
-            } else {
-                RefreshVacuumState();
+                this.Invoke(new DeviceEventHandler(RefreshVacuumState));
+                return;
             }
+            RefreshVacuumState();
         }
         private void RefreshVacuumState() {
             parameterPanel.SuspendLayout();
@@ -672,11 +666,10 @@ namespace Flavor.Forms {
 
         internal void InvokeRefreshButtons() {
             if (this.InvokeRequired) {
-                Commander.ProgramEventHandler InvokeDelegate = new Commander.ProgramEventHandler(RefreshButtons);
-                this.Invoke(InvokeDelegate);
-            } else {
-                RefreshButtons();
+                this.Invoke(new Commander.ProgramEventHandler(RefreshButtons));
+                return;
             }
+            RefreshButtons();
         }
         private void RefreshButtons() {
             //bool precPointsExist = (Config.PreciseData.Count != 0);
@@ -849,11 +842,10 @@ namespace Flavor.Forms {
 
         private void InvokeCancelScan() {
             if (this.InvokeRequired) {
-                Commander.ProgramEventHandler InvokeDelegate = new Commander.ProgramEventHandler(CancelScan);
-                this.Invoke(InvokeDelegate);
-            } else {
-                CancelScan();
+                this.Invoke(new Commander.ProgramEventHandler(CancelScan));
+                return;
             }
+            CancelScan();
         }
         private void CancelScan() {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
@@ -928,6 +920,7 @@ namespace Flavor.Forms {
         }
 
         private void mainForm_MdiChildActivate(object sender, EventArgs e) {
+            // TODO:
             // stub
             // set data source of measurePanel according to spectrum displayed
             // and refresh it

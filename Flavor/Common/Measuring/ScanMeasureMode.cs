@@ -43,7 +43,7 @@ namespace Flavor.Common.Measuring {
             form.refreshGraphicsOnScanStep();
         }
         internal override int stepsCount() {
-            return ePoint - sPoint;
+            return ePoint - sPoint + 1;
         }
     }
 }

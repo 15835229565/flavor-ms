@@ -61,19 +61,25 @@ namespace Flavor.Common.Measuring {
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
             Config.AutoSavePreciseSpecterFile();
         }
-        protected long[] peakCounts(Utility.PreciseEditorData peak) {
+        /*protected long[] peakCounts(Utility.PreciseEditorData peak) {
             int index = senseModePoints.IndexOf(peak);
             if (index == -1) {
                 return null;
             }
-            return senseModeCounts[index];
-        }
+            long[] temp = senseModeCounts[index];
+            // auto-reinitialize
+            senseModeCounts[index] = new long[senseModeCounts[index].Length];
+            return temp;
+        }*/
         protected long[] peakCounts(Predicate<Utility.PreciseEditorData> isCheckPeak) {
             int index = senseModePoints.FindIndex(isCheckPeak);
             if (index == -1) {
                 return null;
             }
-            return senseModeCounts[index];
+            long[] temp = senseModeCounts[index];
+            // auto-reinitialize
+            senseModeCounts[index] = new long[senseModeCounts[index].Length];
+            return temp;
         }
         protected override bool onNextStep() {
             int realValue = pointValue + shift;
@@ -132,17 +138,22 @@ namespace Flavor.Common.Measuring {
                 cancelScan();
                 return false;
             }
-            if (!init()) {
+            if (!init(false)) {
                 return false;
             }
             onNextStep();
             return true;
         }
-        protected bool init() {
+        protected bool init(bool initCounts) {
             smpiSum = smpiSumMax;
             senseModePeak = 0;
             senseModePeakIteration = senseModePeakIterationMax.Clone() as ushort[];
             pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+            if (initCounts) {
+                for (int i = 0; i < senseModeCounts.GetLength(0); ++i) {
+                    senseModeCounts[i] = new long[senseModeCounts[i].Length];
+                }
+            }
             return base.start();
         }
         internal override void updateGraph() {

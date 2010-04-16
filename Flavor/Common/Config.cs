@@ -176,16 +176,19 @@ namespace Flavor.Common {
                 reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
             } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
+            } catch (FormatException) {
+                // TODO: very bad..
+                //use hard-coded defaults (null checker peak)
             }
             try {
                 iterations = int.Parse(_conf.SelectSingleNode("/control/check/iterations").InnerText);
             } catch (NullReferenceException) {
-                //use hard-coded defaults (null checker peak)
+                //use hard-coded defaults (infinite iterations)
             }
             try {
                 timeLimit = int.Parse(_conf.SelectSingleNode("/control/check/limit").InnerText);
             } catch (NullReferenceException) {
-                //use hard-coded defaults (null checker peak)
+                //use hard-coded defaults (no time limit)
             }
         }
 
@@ -243,6 +246,10 @@ namespace Flavor.Common {
                 fillInnerText("/control/check", "peak", reperPeak.Step);
                 fillInnerText("/control/check", "col", reperPeak.Collector);
                 fillInnerText("/control/check", "width", reperPeak.Width);
+            } else {
+                fillInnerText("/control/check", "peak", "");
+                fillInnerText("/control/check", "col", "");
+                fillInnerText("/control/check", "width", "");
             }
             fillInnerText("/control/check", "iterations", iterations);
             fillInnerText("/control/check", "limit", timeLimit);

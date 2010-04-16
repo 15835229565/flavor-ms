@@ -11,7 +11,7 @@ namespace Flavor.Common.Measuring {
             private Timer timer;
             private bool timerElapsed = false;
             internal MeasureStopper(int counterLimit, int timeLimit) {
-                counter = counterLimit;
+                counter = counterLimit == 0? -1: counterLimit;
                 if (timeLimit > 0) {
                     timer = new Timer();
                     // time in minutes
@@ -23,6 +23,7 @@ namespace Flavor.Common.Measuring {
 
             void timer_Elapsed(object sender, ElapsedEventArgs e) {
                 timerElapsed = true;
+                timer.Elapsed -= new ElapsedEventHandler(timer_Elapsed);
             }
             internal void next() {
                 if (counter == -1) {
@@ -75,7 +76,7 @@ namespace Flavor.Common.Measuring {
                 return false;
             }
             onExit();
-            init();
+            init(true);
             return true;
         }
         protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
@@ -99,8 +100,6 @@ namespace Flavor.Common.Measuring {
                 }
             }
             
-            counts.Initialize(); //!!!
-
             if (index != width) {
                 shift += (short)(index - width);
                 return spectrumIsValid = false;
