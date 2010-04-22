@@ -198,7 +198,7 @@ namespace Flavor.Forms {
         private void savePreciseEditorToFileButton_Click(object sender, EventArgs e) {
             if (checkTextBoxes()) {
                 if (savePreciseEditorToFileDialog.ShowDialog() == DialogResult.OK) {
-                    Config.SavePreciseOptions(data, savePreciseEditorToFileDialog.FileName, false, "Precise options");
+                    Config.SavePreciseOptions(data, savePreciseEditorToFileDialog.FileName, Config.PRECISE_OPTIONS_HEADER, false, false);
                 }
             }
         }

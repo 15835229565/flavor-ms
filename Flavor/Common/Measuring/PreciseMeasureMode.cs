@@ -6,7 +6,7 @@ using Flavor.Forms;
 
 namespace Flavor.Common.Measuring {
     internal class PreciseMeasureMode: MeasureMode {
-        private List<Utility.PreciseEditorData> senseModePoints;
+        protected internal List<Utility.PreciseEditorData> senseModePoints;
         private long[][] senseModeCounts;
         private byte senseModePeak = 0;
         private Utility.PreciseEditorData SenseModePeak {
@@ -22,7 +22,7 @@ namespace Flavor.Common.Measuring {
 
         protected short shift = 0;
 
-        internal PreciseMeasureMode() : this(Config.PreciseData.FindAll(Utility.PeakIsUsed)) { }
+        internal PreciseMeasureMode(): this(Config.PreciseData.FindAll(Utility.PeakIsUsed)) { }
         internal PreciseMeasureMode(List<Utility.PreciseEditorData> peaks)
             : base() {
             senseModePoints = peaks;
@@ -53,24 +53,12 @@ namespace Flavor.Common.Measuring {
             }
         }
         protected override void onCancel() {
-            //finishMeasure();
         }
         protected override void onExit() {
             // order is important here: points are saved from graph..
-            //finishMeasure();
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
-            Config.AutoSavePreciseSpecterFile();
+            Config.AutoSavePreciseSpecterFile(shift);
         }
-        /*protected long[] peakCounts(Utility.PreciseEditorData peak) {
-            int index = senseModePoints.IndexOf(peak);
-            if (index == -1) {
-                return null;
-            }
-            long[] temp = senseModeCounts[index];
-            // auto-reinitialize
-            senseModeCounts[index] = new long[senseModeCounts[index].Length];
-            return temp;
-        }*/
         protected long[] peakCounts(Predicate<Utility.PreciseEditorData> isCheckPeak) {
             int index = senseModePoints.FindIndex(isCheckPeak);
             if (index == -1) {
@@ -126,9 +114,6 @@ namespace Flavor.Common.Measuring {
             }
             return true;
         }
-        /*private void finishMeasure() {
-            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
-        }*/
         protected virtual bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
             return true;
         }

@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Flavor.Common {
     static class Config {
         private static XmlDocument _conf = new XmlDocument();
-        private static string mainConfigPrefix = "/control/";
+        private static string mainConfigPrefix = string.Format("/{0}/", ROOT_CONFIG_TAG);
 
         private static string initialDir;
         private static string confName;
@@ -14,6 +14,15 @@ namespace Flavor.Common {
 
         internal const string SPECTRUM_EXT = "sdf";
         internal const string PRECISE_SPECTRUM_EXT = "psf";
+        internal const string MONITOR_SPECTRUM_EXT = "mon";
+
+        internal const string MONITOR_SPECTRUM_HEADER = "Monitor";
+        internal const string PRECISE_OPTIONS_HEADER = "Precise options";
+
+        internal const string ROOT_CONFIG_TAG = "control";
+
+        internal const string TIME_SPECTRUM_ATTRIBUTE = "time";
+        internal const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
 
         private static string SerialPort = "COM1";
         private static ushort SerialBaudRate = 38400;
@@ -137,16 +146,16 @@ namespace Flavor.Common {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
             }
             try {
-                SerialPort = (_conf.SelectSingleNode("/control/connect/port").InnerText);
-                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode("/control/connect/baudrate").InnerText);
-                SendTry = byte.Parse(_conf.SelectSingleNode("/control/connect/try").InnerText);
+                SerialPort = (_conf.SelectSingleNode(string.Format("/{0}/connect/port", ROOT_CONFIG_TAG)).InnerText);
+                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/connect/baudrate", ROOT_CONFIG_TAG)).InnerText);
+                SendTry = byte.Parse(_conf.SelectSingleNode(string.Format("/{0}/connect/try", ROOT_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
             }
             try {
-                sPoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/start").InnerText);
-                ePoint = ushort.Parse(_conf.SelectSingleNode("/control/overview/end").InnerText);
+                sPoint = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/overview/start", ROOT_CONFIG_TAG)).InnerText);
+                ePoint = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/overview/end", ROOT_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
@@ -170,9 +179,9 @@ namespace Flavor.Common {
                 //use empty default ped
             }
             try {
-                ushort step = ushort.Parse(_conf.SelectSingleNode("/control/check/peak").InnerText);
-                byte collector = byte.Parse(_conf.SelectSingleNode("/control/check/col").InnerText);
-                ushort width = ushort.Parse(_conf.SelectSingleNode("/control/check/width").InnerText);
+                ushort step = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/peak", ROOT_CONFIG_TAG)).InnerText);
+                byte collector = byte.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/col", ROOT_CONFIG_TAG)).InnerText);
+                ushort width = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/width", ROOT_CONFIG_TAG)).InnerText);
                 reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
             } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
@@ -181,12 +190,12 @@ namespace Flavor.Common {
                 //use hard-coded defaults (null checker peak)
             }
             try {
-                iterations = int.Parse(_conf.SelectSingleNode("/control/check/iterations").InnerText);
+                iterations = int.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/iterations", ROOT_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (infinite iterations)
             }
             try {
-                timeLimit = int.Parse(_conf.SelectSingleNode("/control/check/limit").InnerText);
+                timeLimit = int.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/limit", ROOT_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (no time limit)
             }
@@ -298,8 +307,9 @@ namespace Flavor.Common {
             string dirname;
             now = System.DateTime.Now;
             dirname = System.IO.Path.Combine(initialDir, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
-            if (!System.IO.Directory.Exists(@dirname))
+            if (!System.IO.Directory.Exists(@dirname)) {
                 System.IO.Directory.CreateDirectory(@dirname);
+            }
             return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
 
@@ -415,11 +425,11 @@ namespace Flavor.Common {
             string filename = genAutoSaveFilename(SPECTRUM_EXT, out dt);
             XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured);
 
-            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, "time", "");
+            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
             file.SelectSingleNode("/control/header").Attributes.Append(attr as XmlAttribute);
 
-            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode("control"));
+            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
             file.Save(filename);
         }
@@ -611,30 +621,54 @@ namespace Flavor.Common {
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return SavePreciseOptions(processed, filename, true, header);
+            return SavePreciseOptions(processed, filename, header, true, false);
         }
-        internal static void AutoSavePreciseSpecterFile() {
+        internal static void AutoSavePreciseSpecterFile(short shift) {
             DateTime dt;
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, out dt);
             XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
 
-            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, "time", "");
+            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
+            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-            file.SelectSingleNode("/control/header").Attributes.Append(attr as XmlAttribute);
+            headerNodeAttributes.Append(attr as XmlAttribute);
 
-            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode("control"));
+            attr = file.CreateNode(XmlNodeType.Attribute, SHIFT_SPECTRUM_ATTRIBUTE, "");
+            attr.Value = shift.ToString();
+            headerNodeAttributes.Append(attr as XmlAttribute);
+
+            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
+            saveCommonOptions(commonNode);
+            file.Save(filename);
+        }
+        // TODO: unify with previous!
+        internal static void autoSaveMonitorSpectrumFile(short shift) {
+            DateTime dt;
+            string filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, out dt);
+            XmlDocument file = SavePreciseOptions(Config.PreciseData, filename, MONITOR_SPECTRUM_HEADER, false, true);
+
+            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
+            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
+            attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
+            headerNodeAttributes.Append(attr as XmlAttribute);
+
+            attr = file.CreateNode(XmlNodeType.Attribute, SHIFT_SPECTRUM_ATTRIBUTE, "");
+            attr.Value = shift.ToString();
+            headerNodeAttributes.Append(attr as XmlAttribute);
+
+            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
             file.Save(filename);
         }
 
         private static void SavePreciseOptions() {
-            SavePreciseOptions(Config.PreciseData, confName, false, "Precise options");
+            SavePreciseOptions(Config.PreciseData, confName, PRECISE_OPTIONS_HEADER, false, false);
         }
         internal static void SavePreciseOptions(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
-            SavePreciseOptions(peds, confName, false, "Precise options");
+            SavePreciseOptions(peds, confName, PRECISE_OPTIONS_HEADER, false, false);
         }
-        internal static XmlDocument SavePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePoints, string header) {
+        internal static XmlDocument SavePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, string header, bool savePoints, bool savePeakSum) {
             XmlDocument pedConf;
             string mainConfPrefix = "";
             mainConfPrefix = mainConfigPrefix;
@@ -664,7 +698,15 @@ namespace Flavor.Common {
                 regionNode.SelectSingleNode("col").InnerText = ped.Collector.ToString();
                 regionNode.SelectSingleNode("comment").InnerText = ped.Comment;
                 regionNode.SelectSingleNode("use").InnerText = ped.Use.ToString();
-                if (savePoints && (ped.AssociatedPoints != null)) {
+
+                if (ped.AssociatedPoints == null) {
+                    break;
+                }
+
+                if (savePeakSum) {
+                    regionNode.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "sum", "")).InnerText = ped.AssociatedPoints.PLSreference.PeakSum.ToString();
+                }
+                if (savePoints) {
                     XmlNode temp;
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints) {
                         temp = pedConf.CreateNode(XmlNodeType.Element, "p", "");
@@ -1034,7 +1076,7 @@ namespace Flavor.Common {
         }
         private static XmlNode createRootStub(XmlDocument conf, string header) {
             conf.AppendChild(conf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-            XmlNode rootNode = conf.CreateNode(XmlNodeType.Element, "control", "");
+            XmlNode rootNode = conf.CreateNode(XmlNodeType.Element, ROOT_CONFIG_TAG, "");
             conf.AppendChild(rootNode);
             XmlNode headerNode = conf.CreateNode(XmlNodeType.Element, "header", "");
             headerNode.InnerText = header;
