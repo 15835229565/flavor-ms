@@ -34,6 +34,7 @@ namespace Flavor.Forms {
                 this.PErows[i] = new PreciseEditorRowPlus();
                 this.PErows[i].Location = new Point(21, 42 + 15 * i);
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
+                this.PErows[i].setClearToolTip(this.formToolTip);
                 this.preciseEditorGroupBox.Controls.Add(PErows[i]);
             }
 

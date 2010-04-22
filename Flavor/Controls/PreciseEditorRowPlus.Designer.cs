@@ -2,21 +2,6 @@
 using System;
 namespace Flavor.Controls {
     partial class PreciseEditorRowPlus {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
         #region Windows Form Designer generated code
 
@@ -25,13 +10,9 @@ namespace Flavor.Controls {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.Button clearPeakButton;
-            System.Windows.Forms.ToolTip clearPeakButtonToolTip;
+            this.clearPeakButton = new System.Windows.Forms.Button();
             this.peakNumberLabel = new System.Windows.Forms.Label();
             this.usePeakCheckBox = new System.Windows.Forms.CheckBox();
-            clearPeakButton = new System.Windows.Forms.Button();
-            clearPeakButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // lapsTextBox
@@ -65,13 +46,12 @@ namespace Flavor.Controls {
             // 
             // clearPeakButton
             // 
-            clearPeakButton.Location = new System.Drawing.Point(369, 0);
-            clearPeakButton.Margin = new System.Windows.Forms.Padding(1);
-            clearPeakButton.Name = "clearPeakButton";
-            clearPeakButton.Size = new System.Drawing.Size(13, 13);
-            clearPeakButton.TabIndex = 8;
-            clearPeakButtonToolTip.SetToolTip(clearPeakButton, "Очистить строку");
-            clearPeakButton.Click += new System.EventHandler(this.clearPeakButton_Click);
+            this.clearPeakButton.Location = new System.Drawing.Point(369, 0);
+            this.clearPeakButton.Margin = new System.Windows.Forms.Padding(1);
+            this.clearPeakButton.Name = "clearPeakButton";
+            this.clearPeakButton.Size = new System.Drawing.Size(13, 13);
+            this.clearPeakButton.TabIndex = 8;
+            this.clearPeakButton.Click += new System.EventHandler(this.clearPeakButton_Click);
             // 
             // peakNumberLabel
             // 
@@ -95,7 +75,7 @@ namespace Flavor.Controls {
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.Controls.Add(this.peakNumberLabel);
             this.Controls.Add(this.usePeakCheckBox);
-            this.Controls.Add(clearPeakButton);
+            this.Controls.Add(this.clearPeakButton);
             this.Name = "PreciseEditorRowPlus";
             this.Size = new System.Drawing.Size(382, 13);
             this.Controls.SetChildIndex(this.widthTextBox, 0);
@@ -104,7 +84,7 @@ namespace Flavor.Controls {
             this.Controls.SetChildIndex(this.lapsTextBox, 0);
             this.Controls.SetChildIndex(this.precTextBox, 0);
             this.Controls.SetChildIndex(this.commentTextBox, 0);
-            this.Controls.SetChildIndex(clearPeakButton, 0);
+            this.Controls.SetChildIndex(this.clearPeakButton, 0);
             this.Controls.SetChildIndex(this.usePeakCheckBox, 0);
             this.Controls.SetChildIndex(this.peakNumberLabel, 0);
             this.ResumeLayout(false);
@@ -116,5 +96,6 @@ namespace Flavor.Controls {
 
         private Label peakNumberLabel;
         private CheckBox usePeakCheckBox;
+        private Button clearPeakButton;
     }
 }

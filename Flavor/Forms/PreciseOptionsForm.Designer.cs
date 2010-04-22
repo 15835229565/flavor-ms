@@ -3,6 +3,22 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     partial class PreciseOptionsForm {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -10,6 +26,7 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             Flavor.Controls.PreciseEditorLabelRowPlus PElabelRow;
             this.preciseEditorGroupBox = new System.Windows.Forms.GroupBox();
             this.insertPointButton = new System.Windows.Forms.Button();
@@ -18,6 +35,7 @@ namespace Flavor.Forms {
             this.savePreciseEditorToFileButton = new System.Windows.Forms.Button();
             this.savePreciseEditorToFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.formToolTip = new System.Windows.Forms.ToolTip(this.components);
             PElabelRow = new Flavor.Controls.PreciseEditorLabelRowPlus();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
@@ -59,6 +77,13 @@ namespace Flavor.Forms {
             // 
             this.rareModeCheckBox.Location = new System.Drawing.Point(432, 301);
             // 
+            // PElabelRow
+            // 
+            PElabelRow.Location = new System.Drawing.Point(6, 16);
+            PElabelRow.Name = "PElabelRow";
+            PElabelRow.Size = new System.Drawing.Size(359, 26);
+            PElabelRow.TabIndex = 0;
+            // 
             // preciseEditorGroupBox
             // 
             this.preciseEditorGroupBox.BackColor = System.Drawing.SystemColors.Control;
@@ -73,13 +98,6 @@ namespace Flavor.Forms {
             this.preciseEditorGroupBox.TabIndex = 3;
             this.preciseEditorGroupBox.TabStop = false;
             this.preciseEditorGroupBox.Text = "Редактор областей сканирования";
-            // 
-            // PElabelRow
-            // 
-            PElabelRow.Location = new System.Drawing.Point(6, 16);
-            PElabelRow.Name = "PElabelRow";
-            PElabelRow.Size = new System.Drawing.Size(359, 26);
-            PElabelRow.TabIndex = 0;
             // 
             // insertPointButton
             // 
@@ -173,5 +191,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.Button insertPointButton;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.GroupBox preciseEditorGroupBox;
+        private System.Windows.Forms.ToolTip formToolTip;
     }
 }

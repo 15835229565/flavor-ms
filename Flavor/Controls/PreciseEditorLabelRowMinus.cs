@@ -1,7 +1,9 @@
 ﻿using System.Windows.Forms;
 using Flavor.Common;
+using System.ComponentModel;
 
 namespace Flavor.Controls {
+    [DefaultEvent("DoubleClick")]
     public partial class PreciseEditorLabelRowMinus: UserControl {
         public PreciseEditorLabelRowMinus()
             : base() {

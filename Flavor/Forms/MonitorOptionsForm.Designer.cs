@@ -9,7 +9,7 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.GroupBox groupBox2;
-            Flavor.Controls.PreciseEditorLabelRowMinus preciseEditorLabelRowMinus1;
+            Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -17,7 +17,7 @@ namespace Flavor.Forms {
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             groupBox2 = new System.Windows.Forms.GroupBox();
-            preciseEditorLabelRowMinus1 = new Flavor.Controls.PreciseEditorLabelRowMinus();
+            controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
@@ -44,7 +44,7 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(preciseEditorLabelRowMinus1);
+            groupBox2.Controls.Add(controlPeakLabelRow);
             groupBox2.Controls.Add(this.timeLimitNumericUpDown);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(this.checkPeakInsertButton);
@@ -58,12 +58,12 @@ namespace Flavor.Forms {
             groupBox2.TabStop = false;
             groupBox2.Text = "Параметры режима мониторинга";
             // 
-            // preciseEditorLabelRowMinus1
+            // controlPeakLabelRow
             // 
-            preciseEditorLabelRowMinus1.Location = new System.Drawing.Point(194, 14);
-            preciseEditorLabelRowMinus1.Name = "preciseEditorLabelRowMinus1";
-            preciseEditorLabelRowMinus1.Size = new System.Drawing.Size(124, 26);
-            preciseEditorLabelRowMinus1.TabIndex = 6;
+            controlPeakLabelRow.Location = new System.Drawing.Point(194, 14);
+            controlPeakLabelRow.Name = "controlPeakLabelRow";
+            controlPeakLabelRow.Size = new System.Drawing.Size(124, 26);
+            controlPeakLabelRow.TabIndex = 6;
             // 
             // timeLimitNumericUpDown
             // 

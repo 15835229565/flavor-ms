@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Common;
+using System.ComponentModel;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorRowPlus: PreciseEditorRow {
@@ -36,6 +37,14 @@ namespace Flavor.Controls {
         private void clearPeakButton_Click(object sender, EventArgs e) {
             this.Clear();
         }
+        
+        internal void setClearToolTip(ToolTip toolTip) {
+            if (toolTip == null) {
+                return;
+            }
+            toolTip.SetToolTip(this.clearPeakButton, "Очистить строку");
+        }
+        
         internal override bool checkTextBoxes() {
             return base.checkTextBoxes();
         }
