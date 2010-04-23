@@ -57,8 +57,12 @@ namespace Flavor.Common.Measuring {
         protected override void onExit() {
             // order is important here: points are saved from graph..
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
+            saveResults();
+        }
+        protected virtual void saveResults() {
             Config.AutoSavePreciseSpecterFile(shift);
         }
+
         protected long[] peakCounts(Predicate<Utility.PreciseEditorData> isCheckPeak) {
             int index = senseModePoints.FindIndex(isCheckPeak);
             if (index == -1) {

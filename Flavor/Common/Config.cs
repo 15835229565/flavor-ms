@@ -303,9 +303,8 @@ namespace Flavor.Common {
             throw resultException;
         }
 
-        private static string genAutoSaveFilename(string extension, out DateTime now) {
+        private static string genAutoSaveFilename(string extension, DateTime now) {
             string dirname;
-            now = System.DateTime.Now;
             dirname = System.IO.Path.Combine(initialDir, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
             if (!System.IO.Directory.Exists(@dirname)) {
                 System.IO.Directory.CreateDirectory(@dirname);
@@ -421,8 +420,8 @@ namespace Flavor.Common {
             return sf;
         }
         internal static void AutoSaveSpecterFile() {
-            DateTime dt;
-            string filename = genAutoSaveFilename(SPECTRUM_EXT, out dt);
+            DateTime dt = System.DateTime.Now;
+            string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
             XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured);
 
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
@@ -623,9 +622,9 @@ namespace Flavor.Common {
             }
             return SavePreciseOptions(processed, filename, header, true, false);
         }
-        internal static void AutoSavePreciseSpecterFile(short shift) {
-            DateTime dt;
-            string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, out dt);
+        internal static DateTime AutoSavePreciseSpecterFile(short shift) {
+            DateTime dt = System.DateTime.Now;
+            string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
             XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
 
             XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
@@ -640,11 +639,13 @@ namespace Flavor.Common {
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
             file.Save(filename);
+
+            return dt;
         }
         // TODO: unify with previous!
         internal static void autoSaveMonitorSpectrumFile(short shift) {
-            DateTime dt;
-            string filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, out dt);
+            DateTime dt = AutoSavePreciseSpecterFile(shift);// now both files are saved
+            string filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
             XmlDocument file = SavePreciseOptions(Config.PreciseData, filename, MONITOR_SPECTRUM_HEADER, false, true);
 
             XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
@@ -700,7 +701,7 @@ namespace Flavor.Common {
                 regionNode.SelectSingleNode("use").InnerText = ped.Use.ToString();
 
                 if (ped.AssociatedPoints == null) {
-                    break;
+                    continue;
                 }
 
                 if (savePeakSum) {
