@@ -135,7 +135,7 @@ namespace Flavor.Common.Commands.UI {
         }
         #region ISend Members
         public override void Send() {
-            Console.WriteLine("Measure intervals: {0} + {1}", itime * 5, etime * 5);
+            ConsoleWriter.WriteLine("Measure intervals: {0} + {1}", itime * 5, etime * 5);
             ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, itime, etime)));
             //ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, Config.iTime, Config.eTime)));
         }

@@ -64,7 +64,7 @@ namespace Flavor.Common.Messaging {
             UserRequest packet = null;
             lock (ToSend) {
                 if (ToSend.Count == 0) {
-                    Console.WriteLine("Received {0}. While waiting for nothing.", command);
+                    ConsoleWriter.WriteLine("Received {0}. While waiting for nothing.", command);
                     return null;
                 }
                 peekToSendInsideLock(ref packet);
@@ -73,7 +73,7 @@ namespace Flavor.Common.Messaging {
                     return null;
                 }
                 if (packet.Id != ((SyncReply)command).Id) {
-                    Console.WriteLine("Received {0}. While waiting for {1}.", command, packet);
+                    ConsoleWriter.WriteLine("Received {0}. While waiting for {1}.", command, packet);
                     return null;
                 }
                 StopSending();
@@ -106,7 +106,7 @@ namespace Flavor.Common.Messaging {
         private void StartSending() {
             lock (SendTimer) {
                 if (SendTimer.Enabled || Try != 0) {
-                    Console.WriteLine("Error. SendTimer already started.");
+                    ConsoleWriter.WriteLine("Error. SendTimer already started.");
                     return;
                 }
                 Try = 1;
@@ -117,7 +117,7 @@ namespace Flavor.Common.Messaging {
         private void StopSending() {
             lock (SendTimer) {
                 if (!SendTimer.Enabled || Try == 0) {
-                    Console.WriteLine("Error. SendTimer already stopped.");
+                    ConsoleWriter.WriteLine("Error. SendTimer already stopped.");
                     return;
                 }
                 SendTimer.Elapsed -= elapsed;
@@ -138,15 +138,15 @@ namespace Flavor.Common.Messaging {
                 }
                 UserRequest packet = null;
                 if (ToSend.Count == 0)
-                    Console.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
+                    ConsoleWriter.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
                 else {
                     if (dequeueToSendInsideLock(ref packet)) {
                         if (packet == null)
-                            Console.WriteLine("Error. In message queue null found.");
+                            ConsoleWriter.WriteLine("Error. In message queue null found.");
                     }
                 }
                 if (packet != null)
-                    Console.WriteLine("Device not answering to {0}", packet.Id);
+                    ConsoleWriter.WriteLine("Device not answering to {0}", packet.Id);
 
                 Commander.setProgramStateWithoutUndo(Commander.pStatePrev);
             }
@@ -188,7 +188,7 @@ namespace Flavor.Common.Messaging {
                 }
                 return true;
             } catch (InvalidOperationException) {
-                Console.WriteLine("Error. Dequeue failed though someting must be in queue.");
+                ConsoleWriter.WriteLine("Error. Dequeue failed though someting must be in queue.");
             }
             try {
                 ToSend.Clear();
@@ -196,9 +196,9 @@ namespace Flavor.Common.Messaging {
                 turboToSend = false;
                 return false;
             } catch (InvalidOperationException) {
-                Console.WriteLine("Error. Cannot clear message queue.");
+                ConsoleWriter.WriteLine("Error. Cannot clear message queue.");
             }
-            Console.WriteLine("Message queue recreation.");
+            ConsoleWriter.WriteLine("Message queue recreation.");
             ToSend = new Queue<UserRequest>();
             statusToSend = false;
             turboToSend = false;
@@ -208,9 +208,9 @@ namespace Flavor.Common.Messaging {
             try {
                 packet = ToSend.Peek();
                 if (packet == null)
-                    Console.WriteLine("Error. In message queue null found.");
+                    ConsoleWriter.WriteLine("Error. In message queue null found.");
             } catch (InvalidOperationException) {
-                Console.WriteLine("Error. Peek failed though someting must be in queue.");
+                ConsoleWriter.WriteLine("Error. Peek failed though someting must be in queue.");
             }
         }
     }

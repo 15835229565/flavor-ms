@@ -140,14 +140,14 @@ namespace Flavor.Common {
                 _serialPort.Write(message, 0, message.Length);
             } catch {
                 // BAD! consider revising
-                Console.WriteLine("Error writing this command to serial port:");
+                ConsoleWriter.WriteLine("Error writing this command to serial port:");
                 //throw new ModBusException();
             } finally {
-                Console.Write("[out]");
+                ConsoleWriter.Write("[out]");
                 foreach (byte b in message) {
-                    Console.Write((char)b);
+                    ConsoleWriter.Write((char)b);
                 }
-                Console.WriteLine();
+                ConsoleWriter.WriteLine();
             }
         }
 
@@ -166,11 +166,11 @@ namespace Flavor.Common {
                 try {
                     ch = (byte)port.ReadByte();
                 } catch {
-                    Console.WriteLine("Error(reading byte)");
+                    ConsoleWriter.WriteLine("Error(reading byte)");
                     continue;
                     // не получилось;
                 }
-                Console.Write((char)ch);
+                ConsoleWriter.Write((char)ch);
                 DispatchByte(ch);
             }
             foreach (byte[] raw_command in PacketReceived) {
@@ -187,7 +187,7 @@ namespace Flavor.Common {
                             ModBus.PacketBuffer.Clear();
                             ModBus.PackState = PacketingState.WaitUpper;
                         } else {
-                            Console.WriteLine("Error({0})", data);
+                            ConsoleWriter.WriteLine("Error({0})", data);
                             //Symbol outside packet
                         }
                         break;
@@ -196,7 +196,7 @@ namespace Flavor.Common {
                         if (data == 0x0d) {
                             ModBus.PacketReceived.Add((ModBus.PacketBuffer).ToArray());
                             ModBus.PacketBuffer.Clear();
-                            Console.WriteLine();
+                            ConsoleWriter.WriteLine();
                             ModBus.PackState = PacketingState.Idle;
                         } else {
                             ModBus.UpperNibble = GetInt(data);
@@ -218,7 +218,7 @@ namespace Flavor.Common {
             ///<summary> CS проверка <summary>
             if (raw_command.Length >= 2) {
                 if (checkCS(raw_command)) {
-                    //Console.WriteLine("Контрольная сумма в порядке");
+                    //ConsoleWriter.WriteLine("Контрольная сумма в порядке");
                     ///<summary> Отделяем функциональный код команды,
                     ///отталкиваясь от него принимаем решение о создании команды
                     ///<summary>
@@ -440,15 +440,15 @@ namespace Flavor.Common {
                             }
                             return new ServicePacket();
                         default:
-                            Console.WriteLine("Неверная команда");
+                            ConsoleWriter.WriteLine("Неверная команда");
                             return new ServicePacket();
                     }
                 } else {
-                    Console.WriteLine("Неверная контрольная сумма");
+                    ConsoleWriter.WriteLine("Неверная контрольная сумма");
                     return new ServicePacket();
                 }
             } else {
-                Console.WriteLine("Короткий пакет");
+                ConsoleWriter.WriteLine("Короткий пакет");
                 return new ServicePacket();
             }
         }

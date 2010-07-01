@@ -1034,7 +1034,7 @@ namespace Flavor.Common {
             } catch (Exception Error) {
                 string message = "Error log write failure ";
                 string cause = "(" + msg + ") -- " + Error.Message;
-                Console.WriteLine(message + cause);
+                ConsoleWriter.WriteLine(message + cause);
                 System.Windows.Forms.MessageBox.Show(cause, message);
             } finally {
                 errorLog.Close();

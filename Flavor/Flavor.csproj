@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -51,6 +52,7 @@
     <Compile Include="Common\Commands\UI\UI.cs" />
     <Compile Include="Common\Commander.cs" />
     <Compile Include="Common\Config.cs" />
+    <Compile Include="Common\ConsoleWriter.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
     <Compile Include="Common\Measuring\MonitorMeasureMode.cs" />
