@@ -32,8 +32,7 @@ namespace Flavor.Forms {
             Graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
 
             Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeRefreshButtons);
-            Commander.pState = Commander.programStates.Start;
-            Commander.pStatePrev = Commander.pState;
+            Commander.setProgramStateWithoutUndo(Commander.programStates.Start);
         }
         #region Status TreeView population
         private TreeNodePlus rootNode;
@@ -156,7 +155,7 @@ namespace Flavor.Forms {
             pwmValueTreeNode = new TreeNodeLeaf();
             pwmTextTreeNode = new TreeNodePair("pwm", pwmValueTreeNode);
             operationTimeValueTreeNode = new TreeNodeLeaf();
-            operationTimeTextTreeNode = new TreeNodePair("Время работы", operationTimeValueTreeNode);
+            operationTimeTextTreeNode = new TreeNodePair("Время работы, ч.", operationTimeValueTreeNode);
 
             turboPumpNode = new TreeNodePlus("Турбонасос",
                 new TreeNode[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,

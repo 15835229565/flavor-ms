@@ -627,27 +627,20 @@ namespace Flavor.Common {
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
             XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
 
-            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
-            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
-            attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-            headerNodeAttributes.Append(attr as XmlAttribute);
-
-            attr = file.CreateNode(XmlNodeType.Attribute, SHIFT_SPECTRUM_ATTRIBUTE, "");
-            attr.Value = shift.ToString();
-            headerNodeAttributes.Append(attr as XmlAttribute);
-
-            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
-            saveCommonOptions(commonNode);
+            writeSpectrumOptions(file, dt, shift);
             file.Save(filename);
 
             return dt;
         }
-        // TODO: unify with previous!
         internal static void autoSaveMonitorSpectrumFile(short shift) {
             DateTime dt = AutoSavePreciseSpecterFile(shift);// now both files are saved
             string filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
             XmlDocument file = SavePreciseOptions(Config.PreciseData, filename, MONITOR_SPECTRUM_HEADER, false, true);
 
+            writeSpectrumOptions(file, dt, shift);
+            file.Save(filename);
+        }
+        private static void writeSpectrumOptions(XmlDocument file, DateTime dt, short shift) {
             XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
@@ -659,9 +652,8 @@ namespace Flavor.Common {
 
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
-            file.Save(filename);
         }
-
+        
         private static void SavePreciseOptions() {
             SavePreciseOptions(Config.PreciseData, confName, PRECISE_OPTIONS_HEADER, false, false);
         }

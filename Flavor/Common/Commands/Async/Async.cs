@@ -10,7 +10,7 @@ namespace Flavor.Common.Commands.Async
     {
     }
 
-    internal class requestCounts : AsyncReply, IAutomatedReply
+    internal class requestCounts: AsyncReply, IAutomatedReply
     {
         #region IReply Members
         public void AutomatedReply()
@@ -21,7 +21,7 @@ namespace Flavor.Common.Commands.Async
         #endregion
     }
 
-    internal class confirmVacuumReady : AsyncReply, IUpdateDevice
+    internal class confirmVacuumReady: AsyncReply, IUpdateDevice
     {
         #region IUpdateDevice Members
         public void UpdateDevice()
@@ -30,19 +30,19 @@ namespace Flavor.Common.Commands.Async
         #endregion
     }
 
-    internal class confirmShutdowned : AsyncReply
+    internal class confirmShutdowned: AsyncReply
     {
     }
 
-    internal class SystemReseted : AsyncReply
+    internal class SystemReseted: AsyncReply
     {
     }
 
-    internal class confirmHighVoltageOff : AsyncReply
+    internal class confirmHighVoltageOff: AsyncReply
     {
     }
 
-    internal class confirmHighVoltageOn : AsyncReply
+    internal class confirmHighVoltageOn: AsyncReply
     {
     }
 }

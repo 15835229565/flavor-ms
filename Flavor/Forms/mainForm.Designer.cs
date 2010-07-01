@@ -24,7 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             System.Windows.Forms.MenuStrip menuStrip;
             System.Windows.Forms.ToolStripMenuItem fileMenu;
             System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -41,6 +40,7 @@
             System.Windows.Forms.ToolStripMenuItem helpMenu;
             System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
             System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
             System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
@@ -55,7 +55,6 @@
             System.Windows.Forms.Label label25;
             System.Windows.Forms.Label label35;
             System.Windows.Forms.Label label36;
-            this.initSys_butt = new System.Windows.Forms.ToolStripButton();
             this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,18 +62,6 @@
             this.measurePanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.overview_button = new System.Windows.Forms.ToolStripButton();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.measure_StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.sensmeasure_button = new System.Windows.Forms.ToolStripButton();
-            this.shutSys_butt = new System.Windows.Forms.ToolStripButton();
-            this.unblock_butt = new System.Windows.Forms.ToolStripButton();
-            this.controlToolStrip = new System.Windows.Forms.ToolStrip();
-            this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.parameterPanel = new System.Windows.Forms.Panel();
-            this.statusTreeView = new System.Windows.Forms.TreeView();
-            this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.f2_label = new System.Windows.Forms.Label();
             this.f1_label = new System.Windows.Forms.Label();
             this.heatCurLabel = new System.Windows.Forms.Label();
@@ -87,6 +74,19 @@
             this.firstStepLabel = new System.Windows.Forms.Label();
             this.startScanTextLabel = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.initSys_butt = new System.Windows.Forms.ToolStripButton();
+            this.overview_button = new System.Windows.Forms.ToolStripButton();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.measure_StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.sensmeasure_button = new System.Windows.Forms.ToolStripButton();
+            this.shutSys_butt = new System.Windows.Forms.ToolStripButton();
+            this.unblock_butt = new System.Windows.Forms.ToolStripButton();
+            this.controlToolStrip = new System.Windows.Forms.ToolStrip();
+            this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.parameterPanel = new System.Windows.Forms.Panel();
+            this.statusTreeView = new System.Windows.Forms.TreeView();
+            this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.scanProgressBar = new System.Windows.Forms.ProgressBar();
             this.scanRealTimeLabel = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -133,24 +133,12 @@
             label35 = new System.Windows.Forms.Label();
             label36 = new System.Windows.Forms.Label();
             menuStrip.SuspendLayout();
+            groupBox1.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.controlToolStrip.SuspendLayout();
             this.parameterPanel.SuspendLayout();
-            groupBox1.SuspendLayout();
             this.measurePanel.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // initSys_butt
-            // 
-            this.initSys_butt.BackColor = System.Drawing.Color.White;
-            this.initSys_butt.Enabled = false;
-            this.initSys_butt.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.initSys_butt.Image = ((System.Drawing.Image)(resources.GetObject("initSys_butt.Image")));
-            this.initSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.initSys_butt.Name = "initSys_butt";
-            this.initSys_butt.Size = new System.Drawing.Size(101, 22);
-            this.initSys_butt.Text = "Запуск системы";
-            this.initSys_butt.Click += new System.EventHandler(this.initSys_butt_Click);
             // 
             // menuStrip
             // 
@@ -177,7 +165,7 @@
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             exitToolStripMenuItem.Text = "В&ыход";
             exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -372,139 +360,6 @@
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             aboutToolStripMenuItem.Text = "&О программе ...";
-            // 
-            // overview_button
-            // 
-            this.overview_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.overview_button.BackColor = System.Drawing.Color.White;
-            this.overview_button.Enabled = false;
-            this.overview_button.Name = "overview_button";
-            this.overview_button.Size = new System.Drawing.Size(97, 22);
-            this.overview_button.Text = "Обзорный режим";
-            this.overview_button.Click += new System.EventHandler(this.overview_button_Click);
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.measure_StatusLabel});
-            this.statusStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.statusStrip.Location = new System.Drawing.Point(0, 944);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(992, 22);
-            this.statusStrip.SizingGrip = false;
-            this.statusStrip.TabIndex = 9;
-            // 
-            // measure_StatusLabel
-            // 
-            this.measure_StatusLabel.BackColor = System.Drawing.SystemColors.MenuBar;
-            this.measure_StatusLabel.Name = "measure_StatusLabel";
-            this.measure_StatusLabel.Size = new System.Drawing.Size(96, 17);
-            this.measure_StatusLabel.Text = "Info about System";
-            // 
-            // sensmeasure_button
-            // 
-            this.sensmeasure_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.sensmeasure_button.BackColor = System.Drawing.Color.White;
-            this.sensmeasure_button.Enabled = false;
-            this.sensmeasure_button.Name = "sensmeasure_button";
-            this.sensmeasure_button.Size = new System.Drawing.Size(84, 22);
-            this.sensmeasure_button.Text = "Точный режим";
-            this.sensmeasure_button.Click += new System.EventHandler(this.sensmeasure_button_Click);
-            // 
-            // shutSys_butt
-            // 
-            this.shutSys_butt.BackColor = System.Drawing.Color.White;
-            this.shutSys_butt.Enabled = false;
-            this.shutSys_butt.Image = ((System.Drawing.Image)(resources.GetObject("shutSys_butt.Image")));
-            this.shutSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.shutSys_butt.Name = "shutSys_butt";
-            this.shutSys_butt.Size = new System.Drawing.Size(123, 22);
-            this.shutSys_butt.Text = "Отключить систему";
-            this.shutSys_butt.Click += new System.EventHandler(this.shutSys_butt_Click);
-            // 
-            // unblock_butt
-            // 
-            this.unblock_butt.BackColor = System.Drawing.Color.White;
-            this.unblock_butt.Enabled = false;
-            this.unblock_butt.Image = ((System.Drawing.Image)(resources.GetObject("unblock_butt.Image")));
-            this.unblock_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.unblock_butt.Name = "unblock_butt";
-            this.unblock_butt.Size = new System.Drawing.Size(115, 22);
-            this.unblock_butt.Text = "Снять блокировку";
-            this.unblock_butt.Click += new System.EventHandler(this.unblock_butt_Click);
-            // 
-            // controlToolStrip
-            // 
-            this.controlToolStrip.AllowMerge = false;
-            this.controlToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.controlToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.connectToolStripButton,
-            this.initSys_butt,
-            this.shutSys_butt,
-            this.unblock_butt,
-            this.monitorToolStripButton,
-            this.sensmeasure_button,
-            this.overview_button});
-            this.controlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.controlToolStrip.Location = new System.Drawing.Point(0, 24);
-            this.controlToolStrip.Name = "controlToolStrip";
-            this.controlToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.controlToolStrip.Size = new System.Drawing.Size(992, 25);
-            this.controlToolStrip.TabIndex = 14;
-            this.controlToolStrip.Text = "Управление масс-спектрометром";
-            // 
-            // connectToolStripButton
-            // 
-            this.connectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.connectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.connectToolStripButton.Name = "connectToolStripButton";
-            this.connectToolStripButton.Size = new System.Drawing.Size(67, 22);
-            this.connectToolStripButton.Text = "Соединить";
-            this.connectToolStripButton.Click += new System.EventHandler(this.connectToolStripButton_Click);
-            // 
-            // monitorToolStripButton
-            // 
-            this.monitorToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.monitorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.monitorToolStripButton.Enabled = false;
-            this.monitorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("monitorToolStripButton.Image")));
-            this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.monitorToolStripButton.Name = "monitorToolStripButton";
-            this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
-            this.monitorToolStripButton.Text = "Режим мониторинга";
-            this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
-            // 
-            // parameterPanel
-            // 
-            this.parameterPanel.BackColor = System.Drawing.SystemColors.Control;
-            this.parameterPanel.Controls.Add(this.statusTreeView);
-            this.parameterPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.parameterPanel.Location = new System.Drawing.Point(0, 49);
-            this.parameterPanel.Name = "parameterPanel";
-            this.parameterPanel.Size = new System.Drawing.Size(234, 895);
-            this.parameterPanel.TabIndex = 16;
-            this.parameterPanel.Text = "Параметры системы";
-            // 
-            // statusTreeView
-            // 
-            this.statusTreeView.BackColor = System.Drawing.SystemColors.Control;
-            this.statusTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.statusTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.statusTreeView.Indent = 15;
-            this.statusTreeView.Location = new System.Drawing.Point(0, 0);
-            this.statusTreeView.Name = "statusTreeView";
-            this.statusTreeView.ShowLines = false;
-            this.statusTreeView.ShowPlusMinus = false;
-            this.statusTreeView.Size = new System.Drawing.Size(234, 895);
-            this.statusTreeView.StateImageList = this.statusTreeViewStateImageList;
-            this.statusTreeView.TabIndex = 0;
-            // 
-            // statusTreeViewStateImageList
-            // 
-            this.statusTreeViewStateImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusTreeViewStateImageList.ImageStream")));
-            this.statusTreeViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
-            this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
             // 
             // groupBox1
             // 
@@ -715,14 +570,6 @@
             label25.TabIndex = 9;
             label25.Text = "Коэффициент деления";
             // 
-            // scanProgressBar
-            // 
-            this.scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
-            this.scanProgressBar.Location = new System.Drawing.Point(3, 291);
-            this.scanProgressBar.Name = "scanProgressBar";
-            this.scanProgressBar.Size = new System.Drawing.Size(273, 23);
-            this.scanProgressBar.TabIndex = 2;
-            // 
             // label35
             // 
             label35.AutoSize = true;
@@ -731,6 +578,168 @@
             label35.Size = new System.Drawing.Size(143, 13);
             label35.TabIndex = 3;
             label35.Text = "Сканирующее напряжение";
+            // 
+            // label36
+            // 
+            label36.AutoSize = true;
+            label36.Location = new System.Drawing.Point(9, 317);
+            label36.Name = "label36";
+            label36.Size = new System.Drawing.Size(84, 13);
+            label36.TabIndex = 44;
+            label36.Text = "Номер ступени";
+            // 
+            // initSys_butt
+            // 
+            this.initSys_butt.BackColor = System.Drawing.Color.White;
+            this.initSys_butt.Enabled = false;
+            this.initSys_butt.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.initSys_butt.Image = ((System.Drawing.Image)(resources.GetObject("initSys_butt.Image")));
+            this.initSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.initSys_butt.Name = "initSys_butt";
+            this.initSys_butt.Size = new System.Drawing.Size(101, 22);
+            this.initSys_butt.Text = "Запуск системы";
+            this.initSys_butt.Click += new System.EventHandler(this.initSys_butt_Click);
+            // 
+            // overview_button
+            // 
+            this.overview_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.overview_button.BackColor = System.Drawing.Color.White;
+            this.overview_button.Enabled = false;
+            this.overview_button.Name = "overview_button";
+            this.overview_button.Size = new System.Drawing.Size(97, 22);
+            this.overview_button.Text = "Обзорный режим";
+            this.overview_button.Click += new System.EventHandler(this.overview_button_Click);
+            // 
+            // statusStrip
+            // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.measure_StatusLabel});
+            this.statusStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.statusStrip.Location = new System.Drawing.Point(0, 944);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(992, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 9;
+            // 
+            // measure_StatusLabel
+            // 
+            this.measure_StatusLabel.BackColor = System.Drawing.SystemColors.MenuBar;
+            this.measure_StatusLabel.Name = "measure_StatusLabel";
+            this.measure_StatusLabel.Size = new System.Drawing.Size(96, 17);
+            this.measure_StatusLabel.Text = "Info about System";
+            // 
+            // sensmeasure_button
+            // 
+            this.sensmeasure_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.sensmeasure_button.BackColor = System.Drawing.Color.White;
+            this.sensmeasure_button.Enabled = false;
+            this.sensmeasure_button.Name = "sensmeasure_button";
+            this.sensmeasure_button.Size = new System.Drawing.Size(84, 22);
+            this.sensmeasure_button.Text = "Точный режим";
+            this.sensmeasure_button.Click += new System.EventHandler(this.sensmeasure_button_Click);
+            // 
+            // shutSys_butt
+            // 
+            this.shutSys_butt.BackColor = System.Drawing.Color.White;
+            this.shutSys_butt.Enabled = false;
+            this.shutSys_butt.Image = ((System.Drawing.Image)(resources.GetObject("shutSys_butt.Image")));
+            this.shutSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.shutSys_butt.Name = "shutSys_butt";
+            this.shutSys_butt.Size = new System.Drawing.Size(123, 22);
+            this.shutSys_butt.Text = "Отключить систему";
+            this.shutSys_butt.Click += new System.EventHandler(this.shutSys_butt_Click);
+            // 
+            // unblock_butt
+            // 
+            this.unblock_butt.BackColor = System.Drawing.Color.White;
+            this.unblock_butt.Enabled = false;
+            this.unblock_butt.Image = ((System.Drawing.Image)(resources.GetObject("unblock_butt.Image")));
+            this.unblock_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.unblock_butt.Name = "unblock_butt";
+            this.unblock_butt.Size = new System.Drawing.Size(115, 22);
+            this.unblock_butt.Text = "Снять блокировку";
+            this.unblock_butt.Click += new System.EventHandler(this.unblock_butt_Click);
+            // 
+            // controlToolStrip
+            // 
+            this.controlToolStrip.AllowMerge = false;
+            this.controlToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.controlToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.connectToolStripButton,
+            this.initSys_butt,
+            this.shutSys_butt,
+            this.unblock_butt,
+            this.monitorToolStripButton,
+            this.sensmeasure_button,
+            this.overview_button});
+            this.controlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.controlToolStrip.Location = new System.Drawing.Point(0, 24);
+            this.controlToolStrip.Name = "controlToolStrip";
+            this.controlToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.controlToolStrip.Size = new System.Drawing.Size(992, 25);
+            this.controlToolStrip.TabIndex = 14;
+            this.controlToolStrip.Text = "Управление масс-спектрометром";
+            // 
+            // connectToolStripButton
+            // 
+            this.connectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.connectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.connectToolStripButton.Name = "connectToolStripButton";
+            this.connectToolStripButton.Size = new System.Drawing.Size(67, 22);
+            this.connectToolStripButton.Text = "Соединить";
+            this.connectToolStripButton.Click += new System.EventHandler(this.connectToolStripButton_Click);
+            // 
+            // monitorToolStripButton
+            // 
+            this.monitorToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.monitorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.monitorToolStripButton.Enabled = false;
+            this.monitorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("monitorToolStripButton.Image")));
+            this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.monitorToolStripButton.Name = "monitorToolStripButton";
+            this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
+            this.monitorToolStripButton.Text = "Режим мониторинга";
+            this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
+            // 
+            // parameterPanel
+            // 
+            this.parameterPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.parameterPanel.Controls.Add(this.statusTreeView);
+            this.parameterPanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.parameterPanel.Location = new System.Drawing.Point(0, 49);
+            this.parameterPanel.Name = "parameterPanel";
+            this.parameterPanel.Size = new System.Drawing.Size(234, 895);
+            this.parameterPanel.TabIndex = 16;
+            this.parameterPanel.Text = "Параметры системы";
+            // 
+            // statusTreeView
+            // 
+            this.statusTreeView.BackColor = System.Drawing.SystemColors.Control;
+            this.statusTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.statusTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.statusTreeView.Indent = 15;
+            this.statusTreeView.Location = new System.Drawing.Point(0, 0);
+            this.statusTreeView.Name = "statusTreeView";
+            this.statusTreeView.ShowLines = false;
+            this.statusTreeView.ShowPlusMinus = false;
+            this.statusTreeView.Size = new System.Drawing.Size(234, 895);
+            this.statusTreeView.StateImageList = this.statusTreeViewStateImageList;
+            this.statusTreeView.TabIndex = 0;
+            // 
+            // statusTreeViewStateImageList
+            // 
+            this.statusTreeViewStateImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("statusTreeViewStateImageList.ImageStream")));
+            this.statusTreeViewStateImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
+            this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
+            // 
+            // scanProgressBar
+            // 
+            this.scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+            this.scanProgressBar.Location = new System.Drawing.Point(3, 291);
+            this.scanProgressBar.Name = "scanProgressBar";
+            this.scanProgressBar.Size = new System.Drawing.Size(273, 23);
+            this.scanProgressBar.TabIndex = 2;
             // 
             // scanRealTimeLabel
             // 
@@ -794,15 +803,6 @@
             this.cancelScanButton.UseVisualStyleBackColor = true;
             this.cancelScanButton.Visible = false;
             this.cancelScanButton.Click += new System.EventHandler(this.cancelScanButton_Click);
-            // 
-            // label36
-            // 
-            label36.AutoSize = true;
-            label36.Location = new System.Drawing.Point(9, 317);
-            label36.Name = "label36";
-            label36.Size = new System.Drawing.Size(84, 13);
-            label36.TabIndex = 44;
-            label36.Text = "Номер ступени";
             // 
             // stepNumberLabel
             // 
@@ -923,13 +923,13 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.controlToolStrip.ResumeLayout(false);
             this.controlToolStrip.PerformLayout();
             this.parameterPanel.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             this.measurePanel.ResumeLayout(false);
             this.measurePanel.PerformLayout();
             this.ResumeLayout(false);

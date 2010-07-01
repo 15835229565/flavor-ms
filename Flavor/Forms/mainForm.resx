@@ -117,26 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="initSys_butt.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        R0lGODlhCgAKAPcAAAQCBNwefPROnOw2lIQCVPxutMxChMQqfORWlIQSVNxClAAAAABcAAAAABVQFQAA
-        AAlyMgAABwBvkQAAfABnRQIAAAByAAAAAABheAEAEwBtFQAAAFggAOkAABJGFQAAAOlpuOUAgIFsFXwA
-        AAAY7ADq6gESEgAAAFaY+ADV+wA2/QB+f2AgMOgG7RIVEgAAAGUgGAAA7gAAkAAAfICoOOkGBxIPkQAA
-        fBgBRO4A65AAEnwCAHABAAUAAJEAFXwAAP9gMv/qB/8Skf8AfG1FDwXVAJE2AHx+AIUgWOcGCYEVFXwA
-        AAAgWAAA6xUAEgAAAGCoAAMGAAAPFQAAAJBZMqbVBxk2kQB+fEDMD2v1ABUSAAAAAABwWAAmCQBGFQAA
-        AH4gAAAAAAAAFcAAAAAAIAAArgAAFQAAAP8AMP8A6/8AEv8AAP8AMv8AB/8Akf8AfAAwdADq7QASEgAA
-        AAAAGAAA7gAVkAAAfADoOAD1BxUSkQAAfI1XYA8EngA5gAB+fJBgwOnV/RI2FQB+AJ//AOv/AIH/AHz/
-        AEpZB+PVAIE2AHx+AEAHAHiLAFBGAAAAAEAgAGsG8AEVFQAAAGwgAAAAAAAAAAAAAMyNAOgPABIAAAAA
-        ADSoAADqAAASAMAAAAiFAPwrABKDAAB8ABgAaO4AnpAAgHwAfHAA/wUA/5EA/3wA//8AYP8Anv8AgP8A
-        fG0AOQUBAJEAAHwAAErpOfQrAICDAHx8AADMWADq8RUSEgAAAADE/wAr/wCD/wB8/0AAAGsAABUAAAAA
-        AADA1AH96wAVEgAAAAA0xgBkPACDTAB8AFf/tPT/64D/Enz/ALjQd+rrEBISTwAAAEBt6Gtk6xWDEgB8
-        AC1gNLQtZDZPg34AfCB0nQY27RVPEgAAACAAxQAB/wAA/wAAf6jMZAbq7Q8SEgAAAAEAwAAB/QAAFQIA
-        AACINABkZACDgwB8fJ4BwAIA/QAAFQAAAAEAjQAADwAAAAAAAMxkAPXrABISAAAAAHD8tib/6kb/RwD/
-        ACH5BAEAAAAALAAAAAAKAAoAAAg+AAEIHEiQgMGDBwUSEMCwQAEBBAYePKBgQMSCBA4EiEggQUePBDYK
-        TGAAQQIAIS8CIHkyJcEEJ1GqVCgRQEAAOw==
-</value>
-  </data>
   <metadata name="menuStrip.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
@@ -242,6 +222,7 @@
   <metadata name="indexToolStripMenuItem.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="indexToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -288,6 +269,82 @@
   <metadata name="aboutToolStripMenuItem.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <metadata name="groupBox1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label17.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label19.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label20.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label21.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label22.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label24.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label25.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label17.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label19.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label20.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label21.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label22.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label24.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label25.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label35.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label36.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="initSys_butt.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        R0lGODlhCgAKAPcAAAQCBNwefPROnOw2lIQCVPxutMxChMQqfORWlIQSVNxClAAAAABcAAAAABVQFQAA
+        AAlyMgAABwBvkQAAfABnRQIAAAByAAAAAABheAEAEwBtFQAAAFggAOkAABJGFQAAAOlpuOUAgIFsFXwA
+        AAAY7ADq6gESEgAAAFaY+ADV+wA2/QB+f2AgMOgG7RIVEgAAAGUgGAAA7gAAkAAAfICoOOkGBxIPkQAA
+        fBgBRO4A65AAEnwCAHABAAUAAJEAFXwAAP9gMv/qB/8Skf8AfG1FDwXVAJE2AHx+AIUgWOcGCYEVFXwA
+        AAAgWAAA6xUAEgAAAGCoAAMGAAAPFQAAAJBZMqbVBxk2kQB+fEDMD2v1ABUSAAAAAABwWAAmCQBGFQAA
+        AH4gAAAAAAAAFcAAAAAAIAAArgAAFQAAAP8AMP8A6/8AEv8AAP8AMv8AB/8Akf8AfAAwdADq7QASEgAA
+        AAAAGAAA7gAVkAAAfADoOAD1BxUSkQAAfI1XYA8EngA5gAB+fJBgwOnV/RI2FQB+AJ//AOv/AIH/AHz/
+        AEpZB+PVAIE2AHx+AEAHAHiLAFBGAAAAAEAgAGsG8AEVFQAAAGwgAAAAAAAAAAAAAMyNAOgPABIAAAAA
+        ADSoAADqAAASAMAAAAiFAPwrABKDAAB8ABgAaO4AnpAAgHwAfHAA/wUA/5EA/3wA//8AYP8Anv8AgP8A
+        fG0AOQUBAJEAAHwAAErpOfQrAICDAHx8AADMWADq8RUSEgAAAADE/wAr/wCD/wB8/0AAAGsAABUAAAAA
+        AADA1AH96wAVEgAAAAA0xgBkPACDTAB8AFf/tPT/64D/Enz/ALjQd+rrEBISTwAAAEBt6Gtk6xWDEgB8
+        AC1gNLQtZDZPg34AfCB0nQY27RVPEgAAACAAxQAB/wAA/wAAf6jMZAbq7Q8SEgAAAAEAwAAB/QAAFQIA
+        AACINABkZACDgwB8fJ4BwAIA/QAAFQAAAAEAjQAADwAAAAAAAMxkAPXrABISAAAAAHD8tib/6kb/RwD/
+        ACH5BAEAAAAALAAAAAAKAAoAAAg+AAEIHEiQgMGDBwUSEMCwQAEBBAYePKBgQMSCBA4EiEggQUePBDYK
+        TGAAQQIAIS8CIHkyJcEEJ1GqVCgRQEAAOw==
+</value>
+  </data>
   <metadata name="statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>126, 17</value>
   </metadata>
@@ -399,63 +456,6 @@
         Cw==
 </value>
   </data>
-  <metadata name="groupBox1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label17.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label19.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label20.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label21.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label22.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label24.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label25.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label17.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label19.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label20.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label21.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label22.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label24.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label25.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label35.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label36.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <metadata name="measurePanel.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

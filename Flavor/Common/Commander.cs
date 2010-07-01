@@ -47,7 +47,7 @@ namespace Flavor.Common {
             get {
                 return programState;
             }
-            set {
+            private set {
                 if (programState != value) {
                     programState = value;
                     OnProgramStateChanged();
@@ -57,7 +57,15 @@ namespace Flavor.Common {
 
         internal static Commander.programStates pStatePrev {
             get { return programStatePrev; }
-            set { programStatePrev = value; }
+            private set { programStatePrev = value; }
+        }
+        internal static void setProgramStateWithoutUndo(Commander.programStates state) {
+            pState = state;
+            pStatePrev = pState;
+        }
+        internal static void setProgramState(Commander.programStates state) {
+            pStatePrev = pState;
+            pState = state;
         }
 
         internal static bool hBlock {
@@ -107,60 +115,61 @@ namespace Flavor.Common {
                 Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 if (Commander.pState != Commander.programStates.Start) {
                     toSend.IsRareMode = false;
-                    Commander.pState = Commander.programStates.Start;
-                    Commander.pStatePrev = Commander.pState;
+                    setProgramStateWithoutUndo(Commander.programStates.Start);
                     //Commander.hBlock = true;//!!!
                     Commander.measureCancelRequested = false;
                 }
+                return;
             }
             if (Command is AsyncReply) {
                 CheckInterfaces(Command);
                 if (Command is confirmShutdowned) {
                     Console.WriteLine("System is shutdowned");
-                    Commander.pState = Commander.programStates.Start;
-                    Commander.pStatePrev = Commander.pState;
+                    setProgramStateWithoutUndo(Commander.programStates.Start);
                     Commander.hBlock = true;
                     Console.WriteLine(Commander.pState);
                     Device.Init();
+                    return;
                 }
                 if (Command is SystemReseted) {
                     Console.WriteLine("System reseted");
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start) {
                         toSend.IsRareMode = false;
-                        Commander.pState = Commander.programStates.Start;
-                        Commander.pStatePrev = Commander.pState;
+                        setProgramStateWithoutUndo(Commander.programStates.Start);
                         //Commander.hBlock = true;//!!!
                         Commander.measureCancelRequested = false;
                     }
+                    return;
                 }
                 if (Command is confirmVacuumReady) {
                     if (Commander.hBlock) {
-                        Commander.pState = Commander.programStates.WaitHighVoltage;
-                        Commander.pStatePrev = Commander.pState;
+                        setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);
                     } else {
-                        Commander.pState = Commander.programStates.Ready;
-                        Commander.pStatePrev = Commander.pState;
+                        setProgramStateWithoutUndo(Commander.programStates.Ready);
                     }
+                    return;
                 }
                 if (Command is confirmHighVoltageOff) {
                     Commander.hBlock = true;
-                    Commander.pState = Commander.programStates.WaitHighVoltage;//???
-                    Commander.pStatePrev = Commander.pState;
+                    setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);//???
+                    return;
                 }
                 if (Command is confirmHighVoltageOn) {
                     Commander.hBlock = false;
                     if (Commander.pState == Commander.programStates.WaitHighVoltage) {
-                        Commander.pState = Commander.programStates.Ready;
-                        Commander.pStatePrev = Commander.pState;
+                        setProgramStateWithoutUndo(Commander.programStates.Ready);
                     }
                     toSend.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
                     toSend.AddToSend(new sendIVoltage());// и остальные напряжения затем
+                    return;
                 }
+                return;
             }
             if (Command is SyncErrorReply) {
                 toSend.Dequeue();
                 CheckInterfaces(Command);
+                return;
             }
             if (Command is SyncReply) {
                 if (null == toSend.Peek((SyncReply)Command)) {
@@ -169,47 +178,58 @@ namespace Flavor.Common {
                 CheckInterfaces(Command);
                 if (Command is confirmInit) {
                     Console.WriteLine("Init request confirmed");
-                    Commander.pState = Commander.programStates.Init;
-                    Commander.pStatePrev = Commander.pState;
+                    setProgramStateWithoutUndo(Commander.programStates.Init);
                     Console.WriteLine(Commander.pState);
+                    return;
                 }
                 if (Command is confirmShutdown) {
                     Console.WriteLine("Shutdown request confirmed");
-                    Commander.pState = Commander.programStates.Shutdown;
-                    Commander.pStatePrev = Commander.pState;
+                    setProgramStateWithoutUndo(Commander.programStates.Shutdown);
                     Console.WriteLine(Commander.pState);
+                    return;
                 }
                 if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is updateStatus)) {
                     switch (Device.sysState) {
+                        case (byte)Device.DeviceStates.Init:
+                        case (byte)Device.DeviceStates.VacuumInit:
+                            Commander.hBlock = true;
+                            setProgramStateWithoutUndo(Commander.programStates.Init);
+                            break;
+                        
+                        case (byte)Device.DeviceStates.ShutdownInit:
+                        case (byte)Device.DeviceStates.Shutdowning:
+                            Commander.hBlock = true;
+                            setProgramStateWithoutUndo(Commander.programStates.Shutdown);
+                            break;
+
+                        case (byte)Device.DeviceStates.Measured:
+                            toSend.AddToSend(new getCounts());
+                            // waiting for fake counts reply
+                            break;
+                        case (byte)Device.DeviceStates.Measuring:
+                            // async message here with auto send-back
+                            // and waiting for fake counts reply
+                            break;
+                        
                         case (byte)Device.DeviceStates.Ready:
                             Commander.hBlock = false;
-                            Commander.pState = Commander.programStates.Ready;
-                            Commander.pStatePrev = Commander.pState;
+                            setProgramStateWithoutUndo(Commander.programStates.Ready);
                             break;
                         case (byte)Device.DeviceStates.WaitHighVoltage:
                             Commander.hBlock = true;
-                            Commander.pState = Commander.programStates.WaitHighVoltage;
-                            Commander.pStatePrev = Commander.pState;
-                            break;
-                        //!!!!
-                        case (byte)Device.DeviceStates.Measured:
-                            Commander.hBlock = false;
-                            Commander.pState = Commander.programStates.Ready;
-                            Commander.pStatePrev = Commander.pState;
-                            break;
-                        case (byte)Device.DeviceStates.Measuring:
-                            Commander.hBlock = false;
-                            Commander.pState = Commander.programStates.Ready;
-                            Commander.pStatePrev = Commander.pState;
+                            setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);
                             break;
                     }
                     Console.WriteLine(Commander.pState);
                     onTheFly = false;
+                    return;
                 }
                 if (Command is updateCounts) {
                     if (measureMode == null) {
-                        // error here
-                        throw new Exception("No measure mode in operation.");
+                        // fake reply caught here (in order to put device into proper state)
+                        Commander.hBlock = false;
+                        setProgramStateWithoutUndo(Commander.programStates.Ready);
+                        return;
                     }
                     if (!measureMode.onUpdateCounts()) {
                         // error (out of limits), raise event here and notify in UI
@@ -218,6 +238,7 @@ namespace Flavor.Common {
                             OnError("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
                         }
                     }
+                    return;
                 }
                 if (Command is confirmF2Voltage) {
                     if (Commander.pState == programStates.Measure) {
@@ -230,7 +251,9 @@ namespace Flavor.Common {
                             }
                         }
                     }
+                    return;
                 }
+                return;
             }
         }
 
@@ -252,8 +275,7 @@ namespace Flavor.Common {
         internal static void Init() {
             Console.WriteLine(pState);
 
-            Commander.pStatePrev = Commander.pState;
-            Commander.pState = Commander.programStates.WaitInit;
+            setProgramState(Commander.programStates.WaitInit);
             toSend.AddToSend(new sendInit());
 
             Console.WriteLine(pState);
@@ -261,8 +283,7 @@ namespace Flavor.Common {
         internal static void Shutdown() {
 
             toSend.AddToSend(new sendShutdown());
-            Commander.pStatePrev = Commander.pState;
-            Commander.pState = Commander.programStates.WaitShutdown;
+            setProgramState(Commander.programStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
         }
 
@@ -296,9 +317,7 @@ namespace Flavor.Common {
         internal static void cancelScan() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
-            Commander.pStatePrev = Commander.pState;
-            Commander.pState = Commander.programStates.Ready;
-            Commander.pStatePrev = Commander.pState;
+            setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
             // TODO: lock here
             if (OnScanCancelled != null) {
                 OnScanCancelled();
@@ -323,8 +342,7 @@ namespace Flavor.Common {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }
-            pStatePrev = pState;
-            pState = Commander.programStates.Measure;
+            setProgramState(Commander.programStates.Measure);
 
             Graph.ResetPointLists();
             toSend.IsRareMode = !Commander.notRareModeRequested;

@@ -79,7 +79,7 @@ namespace Flavor.Common {
 
         private static byte UpperNibble;
 
-        private static SerialPort _serialPort = new SerialPort();
+        private static SerialPort _serialPort = null;
 
         private static List<byte[]> PacketReceived = new List<byte[]>();
 
@@ -88,43 +88,51 @@ namespace Flavor.Common {
         }
         
         internal static PortStates Open() {
-            if (!_serialPort.IsOpen) {
-                _serialPort.PortName = Config.Port;
-                _serialPort.BaudRate = Config.BaudRate;
-                _serialPort.DataBits = 8;
-                _serialPort.Parity = System.IO.Ports.Parity.None;
-                _serialPort.StopBits = System.IO.Ports.StopBits.One;
-                _serialPort.ReadTimeout = 1000;
-                _serialPort.WriteTimeout = 1000;
-
-                try {
-                    _serialPort.Open();
-                } catch (Exception Error) {
-                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
-                    return PortStates.ErrorOpening;
+            if (_serialPort != null) {
+                if (_serialPort.IsOpen){
+                    return PortStates.Opened;
+                    //В лог: Уже открыт
                 }
-                Receiving();
-                return PortStates.Opening;
-            } else {
-                return PortStates.Opened;
-                //В лог: Уже открыт
+                _serialPort.Dispose();
             }
+            _serialPort = new SerialPort();
+            _serialPort.PortName = Config.Port;
+            _serialPort.BaudRate = Config.BaudRate;
+            _serialPort.DataBits = 8;
+            _serialPort.Parity = System.IO.Ports.Parity.None;
+            _serialPort.StopBits = System.IO.Ports.StopBits.One;
+            _serialPort.ReadTimeout = 1000;
+            _serialPort.WriteTimeout = 1000;
+
+            try {
+                _serialPort.Open();
+            } catch (Exception Error) {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                return PortStates.ErrorOpening;
+            }
+            Receiving();
+            return PortStates.Opening;
         }
 
         internal static PortStates Close() {
-            if (_serialPort.IsOpen) {
-                try {
-                    StopReceiving();
-                    _serialPort.Close();
-                } catch (Exception Error) {
-                    System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
-                    return PortStates.ErrorClosing;
-                }
-                return PortStates.Closing;
-            } else {
+            if (_serialPort == null) {
+                System.Windows.Forms.MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
+                return PortStates.ErrorClosing;
+            }
+            if (!_serialPort.IsOpen) {
                 return PortStates.Closed;
                 //В лог Уже закрыт
             }
+            try {
+                StopReceiving();
+                _serialPort.Close();
+                _serialPort.Dispose();
+                _serialPort = null;
+            } catch (Exception Error) {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                return PortStates.ErrorClosing;
+            }
+            return PortStates.Closing;
         }
 
         internal static void Send(byte[] message) {
@@ -132,7 +140,7 @@ namespace Flavor.Common {
                 _serialPort.Write(message, 0, message.Length);
             } catch {
                 // BAD! consider revising
-                Console.WriteLine("Ошибка записи в порт следующей команды:");
+                Console.WriteLine("Error writing this command to serial port:");
                 //throw new ModBusException();
             } finally {
                 Console.Write("[out]");
@@ -152,10 +160,11 @@ namespace Flavor.Common {
         }
 
         private static void _serialPort_DataReceived(object sender, EventArgs e) {
-            while (_serialPort.IsOpen && _serialPort.BytesToRead > 0) {
+            SerialPort port = sender as SerialPort;
+            while (port.IsOpen && port.BytesToRead > 0) {
                 byte ch;
                 try {
-                    ch = (byte)_serialPort.ReadByte();
+                    ch = (byte)port.ReadByte();
                 } catch {
                     Console.WriteLine("Error(reading byte)");
                     continue;

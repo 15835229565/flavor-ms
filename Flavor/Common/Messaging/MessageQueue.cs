@@ -147,8 +147,8 @@ namespace Flavor.Common.Messaging {
                 }
                 if (packet != null)
                     Console.WriteLine("Device not answering to {0}", packet.Id);
-                if (Commander.pState != Commander.pStatePrev)
-                    Commander.pState = Commander.pStatePrev;
+
+                Commander.setProgramStateWithoutUndo(Commander.pStatePrev);
             }
         }
 
