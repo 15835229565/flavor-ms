@@ -220,6 +220,10 @@ namespace Flavor.Common.Commands.Sync {
         #region IUpdateGraph Members
 
         public void UpdateGraph() {
+            if (Commander.CurrentMeasureMode == null) {
+                // fake packet. BAD solution
+                return;
+            }
             Commander.CurrentMeasureMode.updateGraph();
         }
 
