@@ -306,8 +306,8 @@ namespace Flavor.Common {
         internal static void Monitor() {
             if (pState == Commander.programStates.Ready) {
                 if (somePointsUsed()) {
-                    initMeasure();                                              //?
-                    measureMode = new MonitorMeasureMode(0, Config.TimeLimit);  //order
+                    initMeasure();                                                                   //?
+                    measureMode = new MonitorMeasureMode(0, Config.AllowedShift, Config.TimeLimit);  //order
                     // TODO: feed measure mode with start shift value (really?)
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");

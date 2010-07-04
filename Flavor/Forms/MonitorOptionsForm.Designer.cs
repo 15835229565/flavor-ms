@@ -9,14 +9,17 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.GroupBox groupBox2;
+            System.Windows.Forms.Label label2;
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
+            this.allowedShiftNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             groupBox2 = new System.Windows.Forms.GroupBox();
+            label2 = new System.Windows.Forms.Label();
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
@@ -30,6 +33,7 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.params_groupBox.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
             this.SuspendLayout();
@@ -44,6 +48,8 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(this.allowedShiftNumericUpDown);
+            groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(controlPeakLabelRow);
             groupBox2.Controls.Add(this.timeLimitNumericUpDown);
             groupBox2.Controls.Add(label8);
@@ -53,10 +59,32 @@ namespace Flavor.Forms {
             groupBox2.Controls.Add(this.iterationsNumericUpDown);
             groupBox2.Location = new System.Drawing.Point(12, 403);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new System.Drawing.Size(414, 70);
+            groupBox2.Size = new System.Drawing.Size(690, 70);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Параметры режима мониторинга";
+            // 
+            // allowedShiftNumericUpDown
+            // 
+            this.allowedShiftNumericUpDown.Location = new System.Drawing.Point(624, 14);
+            this.allowedShiftNumericUpDown.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.allowedShiftNumericUpDown.Name = "allowedShiftNumericUpDown";
+            this.allowedShiftNumericUpDown.Size = new System.Drawing.Size(60, 20);
+            this.allowedShiftNumericUpDown.TabIndex = 8;
+            this.allowedShiftNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(408, 16);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(180, 13);
+            label2.TabIndex = 7;
+            label2.Text = "Разрешенная отстройка (ступени)";
             // 
             // controlPeakLabelRow
             // 
@@ -142,6 +170,7 @@ namespace Flavor.Forms {
             this.params_groupBox.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
             this.ResumeLayout(false);
@@ -155,5 +184,6 @@ namespace Flavor.Forms {
         private Flavor.Controls.PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
         private System.Windows.Forms.Button checkPeakInsertButton;
         private System.Windows.Forms.NumericUpDown timeLimitNumericUpDown;
+        private System.Windows.Forms.NumericUpDown allowedShiftNumericUpDown;
     }
 }

@@ -6,7 +6,6 @@ using System.Globalization;
 namespace Flavor.Common {
     static class Config {
         private static XmlDocument _conf = new XmlDocument();
-        private static string mainConfigPrefix = string.Format("/{0}/", ROOT_CONFIG_TAG);
 
         private static string initialDir;
         private static string confName;
@@ -18,8 +17,15 @@ namespace Flavor.Common {
 
         internal const string MONITOR_SPECTRUM_HEADER = "Monitor";
         internal const string PRECISE_OPTIONS_HEADER = "Precise options";
+        internal const string COMMON_OPTIONS_HEADER = "Common options";
 
         internal const string ROOT_CONFIG_TAG = "control";
+        internal const string CONNECT_CONFIG_TAG = "connect";
+        internal const string COMMON_CONFIG_TAG = "common";
+        internal const string OVERVIEW_CONFIG_TAG = "overview";
+        internal const string SENSE_CONFIG_TAG = "sense";
+        internal const string CHECK_CONFIG_TAG = "check";
+        internal const string INTERFACE_CONFIG_TAG = "interface";
 
         internal const string TIME_SPECTRUM_ATTRIBUTE = "time";
         internal const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
@@ -100,6 +106,10 @@ namespace Flavor.Common {
         internal static int TimeLimit {
             get { return timeLimit; }
         }
+        private static ushort allowedShift = 0;
+        internal static ushort AllowedShift {
+            get { return allowedShift; }
+        }
 
         internal static string Port {
             get { return SerialPort; }
@@ -131,31 +141,41 @@ namespace Flavor.Common {
         }
 
         private static void fillInnerText(string prefix, string nodeName, object value) {
+            string fullName = combine(prefix, nodeName);
             try {
-                _conf.SelectSingleNode(prefix + "/" + nodeName).InnerText = value.ToString();
+                _conf.SelectSingleNode(fullName).InnerText = value.ToString();
             } catch (NullReferenceException) {
                 _conf.SelectSingleNode(prefix).AppendChild(_conf.CreateNode(XmlNodeType.Element, nodeName, ""));
-                _conf.SelectSingleNode(prefix + "/" + nodeName).InnerText = value.ToString();
+                _conf.SelectSingleNode(fullName).InnerText = value.ToString();
             }
+        }
+        /*private static string combine(string prefix, string nodeName) {
+            return string.Concat(prefix, "/", nodeName);
+        }*/
+        private static string combine(params string[] args) {
+            return string.Join("/", args);
         }
 
         internal static void loadConfig() {
+            string prefix;
             try {
                 _conf.Load(confName);
             } catch (Exception Error) {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
             }
             try {
-                SerialPort = (_conf.SelectSingleNode(string.Format("/{0}/connect/port", ROOT_CONFIG_TAG)).InnerText);
-                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/connect/baudrate", ROOT_CONFIG_TAG)).InnerText);
-                SendTry = byte.Parse(_conf.SelectSingleNode(string.Format("/{0}/connect/try", ROOT_CONFIG_TAG)).InnerText);
+                prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
+                SerialPort = (_conf.SelectSingleNode(combine(prefix, "port")).InnerText);
+                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "baudrate")).InnerText);
+                SendTry = byte.Parse(_conf.SelectSingleNode(combine(prefix, "try")).InnerText);
             } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
             }
             try {
-                sPoint = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/overview/start", ROOT_CONFIG_TAG)).InnerText);
-                ePoint = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/overview/end", ROOT_CONFIG_TAG)).InnerText);
+                prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                sPoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "start")).InnerText);
+                ePoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "end")).InnerText);
             } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
@@ -178,10 +198,11 @@ namespace Flavor.Common {
                 cle.visualise();
                 //use empty default ped
             }
+            prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
             try {
-                ushort step = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/peak", ROOT_CONFIG_TAG)).InnerText);
-                byte collector = byte.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/col", ROOT_CONFIG_TAG)).InnerText);
-                ushort width = ushort.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/width", ROOT_CONFIG_TAG)).InnerText);
+                ushort step = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "peak")).InnerText);
+                byte collector = byte.Parse(_conf.SelectSingleNode(combine(prefix, "col")).InnerText);
+                ushort width = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "width")).InnerText);
                 reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
             } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
@@ -190,20 +211,27 @@ namespace Flavor.Common {
                 //use hard-coded defaults (null checker peak)
             }
             try {
-                iterations = int.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/iterations", ROOT_CONFIG_TAG)).InnerText);
+                iterations = int.Parse(_conf.SelectSingleNode(combine(prefix, "iterations")).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (infinite iterations)
             }
             try {
-                timeLimit = int.Parse(_conf.SelectSingleNode(string.Format("/{0}/check/limit", ROOT_CONFIG_TAG)).InnerText);
+                timeLimit = int.Parse(_conf.SelectSingleNode(combine(prefix, "limit")).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (no time limit)
             }
+            try {
+                timeLimit = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "allowed")).InnerText);
+            } catch (NullReferenceException) {
+                //use hard-coded defaults (zero shift allowed)
+            }
+            // BAD: really uses previous values!
         }
 
         private static void saveScanOptions() {
-            fillInnerText("/control/overview", "start", sPoint);
-            fillInnerText("/control/overview", "end", ePoint);
+            string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+            fillInnerText(prefix, "start", sPoint);
+            fillInnerText(prefix, "end", ePoint);
             _conf.Save(@confName);
         }
         internal static void saveScanOptions(ushort sPointReal, ushort ePointReal) {
@@ -213,10 +241,11 @@ namespace Flavor.Common {
         }
 
         private static void saveDelaysOptions() {
-            fillInnerText("/control/common", "before", commonOpts.befTime);
-            fillInnerText("/control/common", "equal", commonOpts.ForwardTimeEqualsBeforeTime);
-            fillInnerText("/control/common", "forward", commonOpts.fTime);
-            fillInnerText("/control/common", "back", commonOpts.bTime);
+            string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
+            fillInnerText(prefix, "before", commonOpts.befTime);
+            fillInnerText(prefix, "equal", commonOpts.ForwardTimeEqualsBeforeTime);
+            fillInnerText(prefix, "forward", commonOpts.fTime);
+            fillInnerText(prefix, "back", commonOpts.bTime);
             _conf.Save(@confName);
         }
         internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
@@ -228,15 +257,17 @@ namespace Flavor.Common {
         }
 
         private static void saveMassCoeffs() {
-            fillInnerText("/control", "interface", "");
-            fillInnerText("/control/interface", "coeff1", col1Coeff.ToString("R"));
-            fillInnerText("/control/interface", "coeff2", col2Coeff.ToString("R"));
+            fillInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG, "");
+            string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
+            fillInnerText(prefix, "coeff1", col1Coeff.ToString("R"));
+            fillInnerText(prefix, "coeff2", col2Coeff.ToString("R"));
             _conf.Save(@confName);
         }
 
         private static void saveConnectOptions() {
-            fillInnerText("/control/connect", "port", Port);
-            fillInnerText("/control/connect", "baudrate", BaudRate);
+            string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
+            fillInnerText(prefix, "port", Port);
+            fillInnerText(prefix, "baudrate", BaudRate);
             _conf.Save(@confName);
         }
         internal static void saveConnectOptions(string port, ushort baudrate) {
@@ -247,26 +278,29 @@ namespace Flavor.Common {
 
         private static void saveCheckOptions() {
             //checkpeak & iterations
-            if (_conf.SelectSingleNode("/control/check") == null) {
-                XmlNode checkRegion = _conf.CreateNode(XmlNodeType.Element, "check", "");
-                _conf.SelectSingleNode("/control").AppendChild(checkRegion);
+            string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
+            if (_conf.SelectSingleNode(prefix) == null) {
+                XmlNode checkRegion = _conf.CreateNode(XmlNodeType.Element, CHECK_CONFIG_TAG, "");
+                _conf.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(checkRegion);
             }
             if (reperPeak != null) {
-                fillInnerText("/control/check", "peak", reperPeak.Step);
-                fillInnerText("/control/check", "col", reperPeak.Collector);
-                fillInnerText("/control/check", "width", reperPeak.Width);
+                fillInnerText(prefix, "peak", reperPeak.Step);
+                fillInnerText(prefix, "col", reperPeak.Collector);
+                fillInnerText(prefix, "width", reperPeak.Width);
             } else {
-                fillInnerText("/control/check", "peak", "");
-                fillInnerText("/control/check", "col", "");
-                fillInnerText("/control/check", "width", "");
+                fillInnerText(prefix, "peak", "");
+                fillInnerText(prefix, "col", "");
+                fillInnerText(prefix, "width", "");
             }
-            fillInnerText("/control/check", "iterations", iterations);
-            fillInnerText("/control/check", "limit", timeLimit);
+            fillInnerText(prefix, "iterations", iterations);
+            fillInnerText(prefix, "limit", timeLimit);
+            fillInnerText(prefix, "allowed", allowedShift);
             _conf.Save(@confName);
         }
-        internal static void saveCheckOptions(int iter, int timeLim, Utility.PreciseEditorData peak) {
+        internal static void saveCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak) {
             iterations = iter;
             timeLimit = timeLim;
+            allowedShift = shift;
             reperPeak = peak;
             saveCheckOptions();
         }
@@ -339,26 +373,28 @@ namespace Flavor.Common {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения файла спектра", filename);
             }
             string prefix = "";
-            if (sf.SelectSingleNode("control/overview") != null) {
-                prefix = mainConfigPrefix;
-                headerNode = sf.SelectSingleNode("control/header");
-            } else if (sf.SelectSingleNode("overview") != null) {
-                headerNode = sf.SelectSingleNode("overview/header");
+
+            if (sf.SelectSingleNode(OVERVIEW_CONFIG_TAG) != null) {
+                headerNode = sf.SelectSingleNode(combine(OVERVIEW_CONFIG_TAG, "header"));
+            } else if (sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "overview")) != null) {
+                prefix = ROOT_CONFIG_TAG;
+                headerNode = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header"));
             } else {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
+            
             if (headerNode != null && headerNode.InnerText == "Diff")
                 spectrumType = Graph.Displaying.Diff;
 
             ushort X = 0;
             long Y = 0;
             try {
-                foreach (XmlNode pntNode in sf.SelectNodes(prefix + "overview/collector1/p")) {
+                foreach (XmlNode pntNode in sf.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, "collector1/p"))) {
                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
                     Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                     pl1.Add(X, Y);
                 }
-                foreach (XmlNode pntNode in sf.SelectNodes(prefix + "overview/collector2/p")) {
+                foreach (XmlNode pntNode in sf.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, "collector2/p"))) {
                     X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
                     Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
                     pl2.Add(X, Y);
@@ -382,14 +418,14 @@ namespace Flavor.Common {
         }
         internal static XmlDocument SaveSpecterFile(string p, Graph.Displaying displayMode) {
             XmlDocument sf = new XmlDocument();
-            XmlNode temp;
-            XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, "overview", ""));
+            XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, OVERVIEW_CONFIG_TAG, ""));
+            XmlNode temp = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header"));
             switch (displayMode) {
                 case Graph.Displaying.Loaded:
-                    sf.SelectSingleNode("/control/header").InnerText = "Measure";
+                    temp.InnerText = "Measure";
                     break;
                 case Graph.Displaying.Measured:
-                    sf.SelectSingleNode("/control/header").InnerText = "Measure";
+                    temp.InnerText = "Measure";
                     scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "start", ""));
                     scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "end", ""));
                     scanNode.SelectSingleNode("start").InnerText = sPoint.ToString();
@@ -397,7 +433,7 @@ namespace Flavor.Common {
                     // In case of loaded (not auto) start/end points and measure parameters are not connected to spectrum data..
                     break;
                 case Graph.Displaying.Diff:
-                    sf.SelectSingleNode("/control/header").InnerText = "Diff";
+                    temp.InnerText = "Diff";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -426,7 +462,7 @@ namespace Flavor.Common {
 
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-            file.SelectSingleNode("/control/header").Attributes.Append(attr as XmlAttribute);
+            file.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header")).Attributes.Append(attr as XmlAttribute);
 
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
@@ -583,9 +619,9 @@ namespace Flavor.Common {
             } catch (Exception Error) {
                 throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионного спектра", filename);
             }
-            if (sf.SelectSingleNode("control/sense") != null)
-                prefix = mainConfigPrefix;
-            else if (sf.SelectSingleNode("sense") == null) {
+            if (sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
+                prefix = ROOT_CONFIG_TAG;
+            else if (sf.SelectSingleNode(SENSE_CONFIG_TAG) == null) {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
             }
 
@@ -641,7 +677,7 @@ namespace Flavor.Common {
             file.Save(filename);
         }
         private static void writeSpectrumOptions(XmlDocument file, DateTime dt, short shift) {
-            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode("/control/header").Attributes;
+            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header")).Attributes;
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
             headerNodeAttributes.Append(attr as XmlAttribute);
@@ -663,15 +699,13 @@ namespace Flavor.Common {
         }
         internal static XmlDocument SavePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, string header, bool savePoints, bool savePeakSum) {
             XmlDocument pedConf;
-            string mainConfPrefix = "";
-            mainConfPrefix = mainConfigPrefix;
 
             if (newConfigFile(out pedConf, pedConfName)) {
                 XmlNode rootNode = createRootStub(pedConf, header);
                 createPEDStub(pedConf, rootNode);
             } else {
                 for (int i = 1; i <= 20; ++i) {
-                    string prefix = string.Format("/control/sense/region{0}", i);
+                    string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format("region{0}", i));
                     fillInnerText(prefix, "peak", "");
                     fillInnerText(prefix, "iteration", "");
                     fillInnerText(prefix, "width", "");
@@ -683,7 +717,7 @@ namespace Flavor.Common {
             }
 
             foreach (Utility.PreciseEditorData ped in peds) {
-                XmlNode regionNode = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}", ped.pNumber + 1));
+                XmlNode regionNode = pedConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format("region{0}", ped.pNumber + 1)));
                 regionNode.SelectSingleNode("peak").InnerText = ped.Step.ToString();
                 regionNode.SelectSingleNode("iteration").InnerText = ped.Iterations.ToString();
                 regionNode.SelectSingleNode("width").InnerText = ped.Width.ToString();
@@ -725,14 +759,14 @@ namespace Flavor.Common {
                 } catch (Exception Error) {
                     throw new ConfigLoadException(Error.Message, "Ошибка чтения файла прецизионных точек", pedConfName);
                 }
-                if (pedConf.SelectSingleNode("control/sense") != null)
-                    mainConfPrefix = mainConfigPrefix;
-                else if (pedConf.SelectSingleNode("sense") == null) {
+                if (pedConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
+                    mainConfPrefix = ROOT_CONFIG_TAG;
+                else if (pedConf.SelectSingleNode(SENSE_CONFIG_TAG) == null) {
                     throw new structureErrorOnLoadPrecise(pedConfName);
                 }
             } else {
                 pedConf = _conf;
-                mainConfPrefix = mainConfigPrefix;
+                mainConfPrefix = ROOT_CONFIG_TAG;
             }
 
             if (LoadPED(pedConf, pedConfName, peds, false, mainConfPrefix))
@@ -753,7 +787,7 @@ namespace Flavor.Common {
                 Utility.PreciseEditorData temp = null;
                 string peak, iter, width, col;
                 try {
-                    XmlNode regionNode = pedConf.SelectSingleNode(string.Format(mainConfPrefix + "sense/region{0}", i));
+                    XmlNode regionNode = pedConf.SelectSingleNode(combine(mainConfPrefix, SENSE_CONFIG_TAG, string.Format("region{0}", i)));
                     peak = regionNode.SelectSingleNode("peak").InnerText;
                     col = regionNode.SelectSingleNode("col").InnerText;
                     iter = regionNode.SelectSingleNode("iteration").InnerText;
@@ -829,10 +863,10 @@ namespace Flavor.Common {
             XmlNode commonNode;
 
             if (newConfigFile(out cdConf, filename)) {
-                XmlNode rootNode = createRootStub(cdConf, "Common options");
+                XmlNode rootNode = createRootStub(cdConf, COMMON_OPTIONS_HEADER);
                 commonNode = createCommonOptsStub(cdConf, rootNode);
             } else {
-                commonNode = cdConf.SelectSingleNode("control/common");
+                commonNode = cdConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
             }
             saveCommonOptions(commonNode);
             cdConf.Save(filename);
@@ -877,12 +911,12 @@ namespace Flavor.Common {
         private static void loadCommonOptions(string cdConfName, XmlDocument cdConf, out CommonOptions commonOpts) {
             string mainConfPrefix = "";
 
-            if (cdConf.SelectSingleNode("control/common") != null)
-                mainConfPrefix = mainConfigPrefix;
-            else if (cdConf.SelectSingleNode("common") == null) {
+            if (cdConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG)) != null)
+                mainConfPrefix = ROOT_CONFIG_TAG;
+            else if (cdConf.SelectSingleNode(COMMON_CONFIG_TAG) == null) {
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
-            XmlNode commonNode = cdConf.SelectSingleNode(mainConfPrefix + "common");
+            XmlNode commonNode = cdConf.SelectSingleNode(combine(mainConfPrefix, COMMON_CONFIG_TAG));
 
             loadCommonOptions(cdConfName, commonNode, out commonOpts);
         }
@@ -976,7 +1010,7 @@ namespace Flavor.Common {
             XmlDocument conf;
 
             newCommonOptionsFileOnLoad(out conf, confName);
-            XmlNode interfaceNode = conf.SelectSingleNode(mainConfigPrefix + "interface");
+            XmlNode interfaceNode = conf.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
 
             try {
                 col1Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff1").InnerText);
@@ -1080,7 +1114,7 @@ namespace Flavor.Common {
             return rootNode;
         }
         private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
-            XmlNode commonNode = conf.CreateNode(XmlNodeType.Element, "common", "");
+            XmlNode commonNode = conf.CreateNode(XmlNodeType.Element, COMMON_CONFIG_TAG, "");
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "header", ""));
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "exptime", ""));
             commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "meastime", ""));
@@ -1099,7 +1133,7 @@ namespace Flavor.Common {
             return commonNode;
         }
         private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint) {
-            XmlNode senseNode = pedConf.CreateNode(XmlNodeType.Element, "sense", "");
+            XmlNode senseNode = pedConf.CreateNode(XmlNodeType.Element, SENSE_CONFIG_TAG, "");
 
             for (int i = 1; i <= 20; ++i) {
                 XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");

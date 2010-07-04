@@ -51,10 +51,12 @@ namespace Flavor.Common.Measuring {
         private MeasureStopper stopper;
         private Utility.PreciseEditorData peak;
         private bool spectrumIsValid = true;
+        private ushort allowedShift;
 
-        internal MonitorMeasureMode(short initialShift, int timeLimit)
+        internal MonitorMeasureMode(short initialShift, ushort allowedShift, int timeLimit)
             : base(Config.PreciseDataWithChecker) {
             shift = initialShift;
+            this.allowedShift = allowedShift;
             stopper = new MeasureStopper(Config.Iterations, timeLimit);
             peak = Config.CheckerPeak;
         }
@@ -104,9 +106,10 @@ namespace Flavor.Common.Measuring {
                     index = i;
                 }
             }
-            
-            if (index != width) {
-                shift += (short)(index - width);
+
+            short delta = (short)(index - width);
+            if (delta > allowedShift || delta < -allowedShift) {
+                shift += delta;
                 return spectrumIsValid = false;
             }
             return spectrumIsValid = true;
