@@ -142,7 +142,8 @@ namespace Flavor.Controls {
         }
 
         private void ViewItemCheckStateChanged(object sender, EventArgs e) {
-            switch (((ToolStripMenuItem)sender).Name) {
+            // TODO: move logic to subclasses..
+            switch ((sender as ToolStripMenuItem).Name) {
                 case "axis_mode_step":
                     Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
                     break;
