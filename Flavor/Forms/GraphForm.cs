@@ -52,6 +52,14 @@ namespace Flavor.Forms {
         private MeasurePanel panel;
 		
 		internal GraphForm() {
+            InitializeComponent();
+            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
+            graphs[0].GraphPane.Legend.IsVisible = false;
+            graphs[1].GraphPane.Legend.IsVisible = false;
+            Graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
+            graphs[0].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
+            graphs[1].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
+
             // 
             // measurePanel
             // 
@@ -62,13 +70,6 @@ namespace Flavor.Forms {
             panel.Size = new System.Drawing.Size(280, 895);
             panel.TabIndex = 18;
             panel.Visible = false;
-            InitializeComponent();
-            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
-            graphs[0].GraphPane.Legend.IsVisible = false;
-            graphs[1].GraphPane.Legend.IsVisible = false;
-            Graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
-            graphs[0].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
-            graphs[1].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
         }
 		/*~GraphForm(){
 			panel.Dispose();

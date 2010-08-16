@@ -16,7 +16,9 @@ namespace Flavor.Forms {
                 components.Dispose();
             }
             base.Dispose(disposing);
-			panel.Dispose();
+            if (disposing && (panel != null)) {
+                panel.Dispose();
+            }
 		}
 
         #region Windows Form Designer generated code

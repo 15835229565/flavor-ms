@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -9,22 +9,24 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class mainForm: Form {
-        private GraphForm gFormInternal = null;
         private GraphForm gForm {
             get {
-                if (gFormInternal == null) {
-                    gFormInternal = new GraphForm();
-                    gForm.MdiParent = this;
-                    gForm.Visible = GraphWindowToolStripMenuItem.Checked;
-                    gForm.WindowState = FormWindowState.Maximized;
-					collectorsForm = gForm;
+                if (collectorsForm == null) {
+                    collectorsForm = new GraphForm();
+                    collectorsForm.MdiParent = this;
+                    collectorsForm.Visible = GraphWindowToolStripMenuItem.Checked;
+                    collectorsForm.WindowState = FormWindowState.Maximized;
+                    return collectorsForm;
                 }
-                return gFormInternal;
+                Form child = ActiveMdiChild;
+                if (child == null)
+                    return collectorsForm;
+                return child as GraphForm;
             }
         }
 		// TODO: subclass here!
 		private GraphForm collectorsForm = null;
-        private MeasurePanel measurePanel;
+        private MeasurePanel measurePanel = null;
 
 		
         internal mainForm() {
@@ -867,9 +869,12 @@ namespace Flavor.Forms {
             // stub
             // set data source of measurePanel according to spectrum displayed
             // and refresh it
-        	gFormInternal = (sender as GraphForm);
-			this.Controls.Remove(measurePanel);
-			measurePanel = gForm.getPanel();
+            GraphForm g = gForm;
+            if (g == collectorsForm && measurePanel == collectorsForm.getPanel()) {
+                return;
+            }
+            this.Controls.Remove(measurePanel);
+			measurePanel = g.getPanel();
             this.Controls.Add(measurePanel);
 		}
     }
