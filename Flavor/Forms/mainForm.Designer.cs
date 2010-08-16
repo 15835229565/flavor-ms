@@ -1,5 +1,3 @@
-﻿using Flavor.Controls;
-
 namespace Flavor.Forms {
     partial class mainForm {
         /// <summary>
@@ -66,7 +64,6 @@ namespace Flavor.Forms {
             this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
-            this.measurePanel = new MeasurePanel();
             menuStrip = new System.Windows.Forms.MenuStrip();
             fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +87,6 @@ namespace Flavor.Forms {
             this.statusStrip.SuspendLayout();
             this.controlToolStrip.SuspendLayout();
             this.parameterPanel.SuspendLayout();
-            this.measurePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -459,22 +455,12 @@ namespace Flavor.Forms {
             this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
             this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
             // 
-            // measurePanel
-            // 
-            this.measurePanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.measurePanel.Location = new System.Drawing.Point(712, 49);
-            this.measurePanel.Name = "measurePanel";
-            this.measurePanel.Size = new System.Drawing.Size(280, 895);
-            this.measurePanel.TabIndex = 18;
-            this.measurePanel.Visible = false;
-            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(992, 966);
-            this.Controls.Add(this.measurePanel);
             this.Controls.Add(this.parameterPanel);
             this.Controls.Add(this.controlToolStrip);
             this.Controls.Add(menuStrip);
@@ -494,8 +480,6 @@ namespace Flavor.Forms {
             this.controlToolStrip.ResumeLayout(false);
             this.controlToolStrip.PerformLayout();
             this.parameterPanel.ResumeLayout(false);
-            this.measurePanel.ResumeLayout(false);
-            this.measurePanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -518,7 +502,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton connectToolStripButton;
 
-        private MeasurePanel measurePanel;
         private System.Windows.Forms.TreeView statusTreeView;
         private System.Windows.Forms.ImageList statusTreeViewStateImageList;
         private System.Windows.Forms.ToolStripButton monitorToolStripButton;

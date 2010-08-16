@@ -1,4 +1,4 @@
-﻿using Flavor.Controls;
+using Flavor.Controls;
 
 namespace Flavor.Forms {
     partial class GraphForm {
@@ -16,7 +16,8 @@ namespace Flavor.Forms {
                 components.Dispose();
             }
             base.Dispose(disposing);
-        }
+			panel.Dispose();
+		}
 
         #region Windows Form Designer generated code
 

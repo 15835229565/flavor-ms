@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -49,7 +49,19 @@ namespace Flavor.Forms {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
 
-        internal GraphForm() {
+        private MeasurePanel panel;
+		
+		internal GraphForm() {
+            // 
+            // measurePanel
+            // 
+            panel = new MeasurePanel();
+            panel.Dock = System.Windows.Forms.DockStyle.Right;
+            panel.Location = new System.Drawing.Point(712, 49);
+            panel.Name = "measurePanel";
+            panel.Size = new System.Drawing.Size(280, 895);
+            panel.TabIndex = 18;
+            panel.Visible = false;
             InitializeComponent();
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
             graphs[0].GraphPane.Legend.IsVisible = false;
@@ -58,8 +70,11 @@ namespace Flavor.Forms {
             graphs[0].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
             graphs[1].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
         }
-
-        private void Graph_OnAxisModeChanged() {
+		/*~GraphForm(){
+			panel.Dispose();
+		}*/
+        
+		private void Graph_OnAxisModeChanged() {
             switch (Graph.DisplayingMode) {
                 case Graph.Displaying.Loaded:
                     DisplayLoadedSpectrum(displayedFileName);
@@ -333,5 +348,8 @@ namespace Flavor.Forms {
                 }
             }
         }
+		internal MeasurePanel getPanel(){
+			return panel;
+		}
     }
 }
