@@ -3,7 +3,15 @@ using System.Collections.Generic;
 using ZedGraph;
 
 namespace Flavor.Common {
-    internal static class Graph {
+    internal class Graph {
+        private static Graph instance = null;
+        internal static Graph Instance {
+            get {
+                if (instance == null)
+                    instance = new Graph();
+                return instance;
+            }
+        }
         internal enum Displaying {
             Measured,
             Loaded,
@@ -138,11 +146,11 @@ namespace Flavor.Common {
             Col2,
             Both,
         }
-        internal static event GraphEventHandler OnNewGraphData;
-        internal static event AxisModeEventHandler OnAxisModeChanged;
+        internal event GraphEventHandler OnNewGraphData;
+        internal event AxisModeEventHandler OnAxisModeChanged;
 
-        private static pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
-        internal static pListScaled.DisplayValue AxisDisplayMode {
+        private pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
+        internal pListScaled.DisplayValue AxisDisplayMode {
             get {
                 return axisMode;
             }
@@ -153,8 +161,8 @@ namespace Flavor.Common {
                 }
             }
         }
-        private static Displaying displayMode = Displaying.Measured;
-        internal static Displaying DisplayingMode {
+        private Displaying displayMode = Displaying.Measured;
+        internal Displaying DisplayingMode {
             get {
                 return displayMode;
             }
@@ -165,10 +173,10 @@ namespace Flavor.Common {
             }
         }
 
-        private static Spectrum collectors = new Spectrum(Config.CommonOptions);
-        private static Spectrum loadedSpectra = new Spectrum();
-        private static Spectrum diffSpectra = new Spectrum();
-        private static List<PointPairListPlus> getPointPairs(Spectrum which, int col, bool useAxisMode) {
+        private Spectrum collectors = new Spectrum(Config.CommonOptions);
+        private Spectrum loadedSpectra = new Spectrum();
+        private Spectrum diffSpectra = new Spectrum();
+        private List<PointPairListPlus> getPointPairs(Spectrum which, int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
             if (useAxisMode) am = axisMode;
@@ -177,7 +185,7 @@ namespace Flavor.Common {
             }
             return temp;
         }
-        internal static List<PointPairListPlus> Displayed1 {
+        internal List<PointPairListPlus> Displayed1 {
             get {
                 switch (displayMode) {
                     case Displaying.Loaded:
@@ -191,7 +199,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static List<PointPairListPlus> Displayed2 {
+        internal List<PointPairListPlus> Displayed2 {
             get {
                 switch (displayMode) {
                     case Displaying.Loaded:
@@ -205,7 +213,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static List<PointPairListPlus> Displayed1Steps {
+        internal List<PointPairListPlus> Displayed1Steps {
             get {
                 switch (displayMode) {
                     case Displaying.Loaded:
@@ -219,7 +227,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static List<PointPairListPlus> Displayed2Steps {
+        internal List<PointPairListPlus> Displayed2Steps {
             get {
                 switch (displayMode) {
                     case Displaying.Loaded:
@@ -233,7 +241,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static List<pListScaled> DisplayedRows1 {
+        internal List<pListScaled> DisplayedRows1 {
             get {
                 switch (displayMode) {
                     case Displaying.Loaded:
@@ -247,7 +255,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static List<pListScaled> DisplayedRows2 {
+        internal List<pListScaled> DisplayedRows2 {
             get {
                 switch (displayMode) {
                     case Displaying.Loaded:
@@ -261,7 +269,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static bool isPreciseSpectrum {
+        internal bool isPreciseSpectrum {
             get {
                 int count1, count2;
                 switch (displayMode) {
@@ -287,18 +295,18 @@ namespace Flavor.Common {
             }
         }
 
-        private static ushort lastPoint;
-        internal static ushort LastPoint {
+        private ushort lastPoint;
+        internal ushort LastPoint {
             get { return lastPoint; }
             //set { lastPoint = value; }
         }
-        private static Utility.PreciseEditorData curPeak;
-        internal static Utility.PreciseEditorData CurrentPeak {
+        private Utility.PreciseEditorData curPeak;
+        internal Utility.PreciseEditorData CurrentPeak {
             get { return curPeak; }
             //set { curPeak = value; }
         }
-        private static Utility.PreciseEditorData peakToAdd = null;
-        internal static Utility.PreciseEditorData PointToAdd {
+        private Utility.PreciseEditorData peakToAdd = null;
+        internal Utility.PreciseEditorData PointToAdd {
             get { return peakToAdd; }
             set {
                 if (peakToAdd != value) {
@@ -311,9 +319,9 @@ namespace Flavor.Common {
             }
         }
         internal delegate void PointAddedDelegate(bool notNull);
-        internal static event PointAddedDelegate OnPointAdded;
+        internal event PointAddedDelegate OnPointAdded;
 
-        static Graph() {
+        internal Graph() {
             //Generating blank scan spectra for either collector
             collectors[0] = new List<pListScaled>();
             collectors[0].Add(new pListScaled(true));
@@ -329,14 +337,14 @@ namespace Flavor.Common {
             diffSpectra[1].Add(new pListScaled(false));
         }
 
-        internal static void updateGraph(int y1, int y2, ushort pnt) {
+        internal void updateGraph(int y1, int y2, ushort pnt) {
             (collectors[0])[0].Add(pnt, y1);
             (collectors[1])[0].Add(pnt, y2);
             lastPoint = pnt;
             OnNewGraphData(Displaying.Measured, false);
         }
 
-        internal static void ResetPointLists() {
+        internal void ResetPointLists() {
             collectors[0].Clear();
             collectors[0].Add(new pListScaled(true));
             collectors[1].Clear();
@@ -345,32 +353,32 @@ namespace Flavor.Common {
             OnNewGraphData(displayMode, true);//!!!!!!!!
         }
 
-        internal static void updateLoaded1Graph(ushort pnt, int y) {
+        internal void updateLoaded1Graph(ushort pnt, int y) {
             (loadedSpectra[0])[0].Add(pnt, y);
         }
 
-        internal static void updateLoaded2Graph(ushort pnt, int y) {
+        internal void updateLoaded2Graph(ushort pnt, int y) {
             (loadedSpectra[1])[0].Add(pnt, y);
         }
 
-        internal static void updateLoaded() {
+        internal void updateLoaded() {
             OnNewGraphData(Displaying.Loaded, false);
         }
 
-        internal static void updateLoaded(PointPairListPlus pl1, PointPairListPlus pl2) {
+        internal void updateLoaded(PointPairListPlus pl1, PointPairListPlus pl2) {
             (loadedSpectra[0])[0].SetRows(pl1);
             (loadedSpectra[1])[0].SetRows(pl2);
             OnNewGraphData(Displaying.Loaded, false);
         }
 
-        internal static void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
+        internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
             DisplayedRows1[0].SetRows(pl1);
             DisplayedRows2[0].SetRows(pl2);
             //displayMode = Displaying.Diff;
             OnNewGraphData(displayMode, true);
         }
 
-        internal static void ResetLoadedPointLists() {
+        internal void ResetLoadedPointLists() {
             loadedSpectra[0].Clear();
             loadedSpectra[0].Add(new pListScaled(true));
             loadedSpectra[1].Clear();
@@ -378,7 +386,7 @@ namespace Flavor.Common {
             displayMode = Displaying.Loaded;
             OnNewGraphData(displayMode, false/*true*/);
         }
-        internal static void ResetDiffPointLists() {
+        internal void ResetDiffPointLists() {
             diffSpectra[0].Clear();
             diffSpectra[0].Add(new pListScaled(true));
             diffSpectra[1].Clear();
@@ -387,7 +395,7 @@ namespace Flavor.Common {
             OnNewGraphData(displayMode, false/*true*/);
         }
 
-        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
+        internal void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
             ResetPointLists();
             for (int i = 0; i < peds.Count; ++i) {
                 if (!peds[i].Use) {
@@ -404,32 +412,32 @@ namespace Flavor.Common {
             }
             OnNewGraphData(displayMode/*Graph.Displaying.Measured*/, true);
         }
-        internal static void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
+        internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
             ResetDiffPointLists();
             foreach (Utility.PreciseEditorData ped in peds)
                 diffSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             displayMode = Displaying.Diff;
             OnNewGraphData(displayMode/*Graph.Displaying.Diff*/, true);
         }
-        internal static void updateGraphAfterPreciseLoad() {
+        internal void updateGraphAfterPreciseLoad() {
             ResetLoadedPointLists();
             foreach (Utility.PreciseEditorData ped in Config.PreciseDataLoaded)
                 loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             OnNewGraphData(displayMode/*Graph.Displaying.Loaded*/, false);
         }
 
-        internal static void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
+        internal void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
             lastPoint = pnt;
             curPeak = curped;
             OnNewGraphData(Displaying.Measured, false);
         }
-        /*internal static void updateGraphDuringMonitorMeasure(ushort pnt, Utility.PreciseEditorData curped)
+        /*internal void updateGraphDuringMonitorMeasure(ushort pnt, Utility.PreciseEditorData curped)
         {
             //temporary
             updateGraphDuringPreciseMeasure(pnt, curped);
         }*/
 
-        internal static void RecomputeMassRows(byte col) {
+        internal void RecomputeMassRows(byte col) {
             foreach (pListScaled pl in collectors[col - 1]) {
                 pl.RecomputeMassRow();
             }

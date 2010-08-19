@@ -57,8 +57,8 @@ namespace Flavor.Controls {
                 }
                 scanProgressBar.PerformStep();
             }
-            stepNumberLabel.Text = Graph.LastPoint.ToString();
-            scanRealTimeLabel.Text = Config.CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
+            stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
+            scanRealTimeLabel.Text = Config.CommonOptions.scanVoltageReal(Graph.Instance.LastPoint).ToString("f1");
             detector1CountsLabel.Text = Device.Detector1.ToString();
             detector2CountsLabel.Text = Device.Detector2.ToString();
         }
@@ -102,15 +102,15 @@ namespace Flavor.Controls {
             peakWidthLabel.Visible = false;
         }
         internal void refreshGraphicsOnPreciseStep() {
-            peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
+            peakNumberLabel.Text = (Graph.Instance.CurrentPeak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;
             label39.Visible = true;
-            peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
+            peakCenterLabel.Text = Graph.Instance.CurrentPeak.Step.ToString();
             peakCenterLabel.Visible = true;
             label41.Visible = true;
-            peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
+            peakWidthLabel.Text = Graph.Instance.CurrentPeak.Width.ToString();
             peakWidthLabel.Visible = true;
-            if (Graph.CurrentPeak.Collector == 1) {
+            if (Graph.Instance.CurrentPeak.Collector == 1) {
                 detector1CountsLabel.Visible = true;
                 label15.Visible = true;
                 detector2CountsLabel.Visible = false;

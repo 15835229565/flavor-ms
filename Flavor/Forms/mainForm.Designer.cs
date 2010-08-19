@@ -26,6 +26,7 @@ namespace Flavor.Forms {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.MenuStrip menuStrip;
             System.Windows.Forms.ToolStripMenuItem fileMenu;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem viewMenu;
             System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
@@ -40,10 +41,10 @@ namespace Flavor.Forms {
             System.Windows.Forms.ToolStripMenuItem helpMenu;
             System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
             System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
             System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+            this.openSpecterFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +65,7 @@ namespace Flavor.Forms {
             this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
+            this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
             menuStrip = new System.Windows.Forms.MenuStrip();
             fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -105,16 +107,29 @@ namespace Flavor.Forms {
             // fileMenu
             // 
             fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openSpecterFileToolStripMenuItem,
             exitToolStripMenuItem});
             fileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
             fileMenu.Name = "fileMenu";
             fileMenu.Size = new System.Drawing.Size(61, 20);
             fileMenu.Text = "&Главное";
             // 
+            // openSpecterFileToolStripMenuItem
+            // 
+            this.openSpecterFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openSpecterFileToolStripMenuItem.Image")));
+            this.openSpecterFileToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            this.openSpecterFileToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            this.openSpecterFileToolStripMenuItem.MergeIndex = 0;
+            this.openSpecterFileToolStripMenuItem.Name = "openSpecterFileToolStripMenuItem";
+            this.openSpecterFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openSpecterFileToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.openSpecterFileToolStripMenuItem.Text = "&Открыть файл спектра";
+            this.openSpecterFileToolStripMenuItem.Click += new System.EventHandler(this.openSpecterFileToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             exitToolStripMenuItem.Text = "В&ыход";
             exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -455,6 +470,10 @@ namespace Flavor.Forms {
             this.statusTreeViewStateImageList.Images.SetKeyName(0, "warning");
             this.statusTreeViewStateImageList.Images.SetKeyName(1, "error");
             // 
+            // openSpecterFileDialog
+            // 
+            this.openSpecterFileDialog.InitialDirectory = ".";
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -508,6 +527,8 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStripMenuItem measureToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStrip controlToolStrip;
+        private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
+        private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
     }
 }
 

@@ -55,8 +55,8 @@ namespace Flavor.Controls {
 
                 ToolStripMenuItem item1 = new ToolStripMenuItem();
 
-                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairListPlus)(nearestCurve.Points));
-                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairListPlus)(nearestCurve.Points));
+                int curveIndex1 = Graph.Instance.Displayed1.IndexOf((PointPairListPlus)(nearestCurve.Points));
+                int curveIndex2 = Graph.Instance.Displayed2.IndexOf((PointPairListPlus)(nearestCurve.Points));
                 if (-1 != curveIndex1) {
                     curveIndex = curveIndex1;
                     item1.Name = "axis_rescale_coeff1";
@@ -75,14 +75,14 @@ namespace Flavor.Controls {
                 item1.Click += new System.EventHandler(SetScalingCoeff);
                 menuStrip.Items.Add(item1);
 
-                if ((this.ParentForm as GraphForm).specterDiffEnabled) {
+                if ((this.ParentForm as CollectorsForm).specterDiffEnabled) {
                     ToolStripMenuItem item2 = new ToolStripMenuItem();
                     item2.Name = "custom_diff";
                     item2.Tag = "custom_diff";
                     item2.Text = "Вычесть из текущего с перенормировкой на точку";
                     item2.Click += new System.EventHandler(DiffWithCoeff);
                     menuStrip.Items.Add(item2);
-                    if (Graph.isPreciseSpectrum) {
+                    if (Graph.Instance.isPreciseSpectrum) {
                         ToolStripMenuItem item3 = new ToolStripMenuItem();
                         item3.Name = "custom_diff_peak";
                         item3.Tag = "custom_diff_peak";
@@ -96,7 +96,7 @@ namespace Flavor.Controls {
                 ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
                 ToolStripMenuItem massViewItem = new ToolStripMenuItem();
 
-                switch (Graph.AxisDisplayMode) {
+                switch (Graph.Instance.AxisDisplayMode) {
                     case Graph.pListScaled.DisplayValue.Step:
                         stepViewItem.Checked = true;
                         break;
@@ -145,13 +145,13 @@ namespace Flavor.Controls {
             // TODO: move logic to subclasses..
             switch ((sender as ToolStripMenuItem).Name) {
                 case "axis_mode_step":
-                    Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
+                    Graph.Instance.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
                     break;
                 case "axis_mode_voltage":
-                    Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
+                    Graph.Instance.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
                     break;
                 case "axis_mode_mass":
-                    Graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
+                    Graph.Instance.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
                     break;
                 default:
                     break;
@@ -161,14 +161,14 @@ namespace Flavor.Controls {
         private void AddPointToPreciseEditor(object sender, EventArgs e) {
             byte collector = 0;
             PointPair pp = null;
-            int curveIndex1 = Graph.Displayed1.IndexOf((PointPairListPlus)(curveReference.Points));
-            int curveIndex2 = Graph.Displayed2.IndexOf((PointPairListPlus)(curveReference.Points));
+            int curveIndex1 = Graph.Instance.Displayed1.IndexOf((PointPairListPlus)(curveReference.Points));
+            int curveIndex2 = Graph.Instance.Displayed2.IndexOf((PointPairListPlus)(curveReference.Points));
             if (-1 != curveIndex1) {
                 collector = 1;
-                pp = (Graph.Displayed1Steps[curveIndex1])[pointIndex];
+                pp = (Graph.Instance.Displayed1Steps[curveIndex1])[pointIndex];
             } else if (-1 != curveIndex2) {
                 collector = 2;
-                pp = (Graph.Displayed2Steps[curveIndex2])[pointIndex];
+                pp = (Graph.Instance.Displayed2Steps[curveIndex2])[pointIndex];
             }
             if ((pp == null) || (collector == 0)) {
                 MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
@@ -189,9 +189,9 @@ namespace Flavor.Controls {
                 MessageBox.Show("Не удалось корректно найти точку", "Ошибка");
                 return;
             }
-            if (Graph.isPreciseSpectrum) {
+            if (Graph.Instance.isPreciseSpectrum) {
                 List<Utility.PreciseEditorData> peds = null;
-                switch (Graph.DisplayingMode) {
+                switch (Graph.Instance.DisplayingMode) {
                     case Graph.Displaying.Measured:
                         peds = Config.PreciseData;
                         break;
@@ -223,10 +223,10 @@ namespace Flavor.Controls {
             PointPair pp = null;
             if (((ToolStripMenuItem)sender).Name == "axis_rescale_coeff1") {
                 collector = 1;
-                pp = (Graph.Displayed1Steps[curveIndex])[pointIndex];
+                pp = (Graph.Instance.Displayed1Steps[curveIndex])[pointIndex];
             } else if (((ToolStripMenuItem)sender).Name == "axis_rescale_coeff2") {
                 collector = 2;
-                pp = (Graph.Displayed2Steps[curveIndex])[pointIndex];
+                pp = (Graph.Instance.Displayed2Steps[curveIndex])[pointIndex];
             }
             if ((pp != null) && (collector != 0)) {
                 if (new SetScalingCoeffForm((ushort)(pp.X), collector).ShowDialog() == DialogResult.OK) {
@@ -241,7 +241,7 @@ namespace Flavor.Controls {
         private string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
             string tooltipData = "";
             PointPair pp = curve[iPt];
-            switch (Graph.AxisDisplayMode) {
+            switch (Graph.Instance.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
                     tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
                     break;
@@ -252,14 +252,14 @@ namespace Flavor.Controls {
                     tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
             }
-            if (Graph.isPreciseSpectrum) {
-                int curveIndex1 = Graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
-                int curveIndex2 = Graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
+            if (Graph.Instance.isPreciseSpectrum) {
+                int curveIndex1 = Graph.Instance.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
+                int curveIndex2 = Graph.Instance.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
                 long peakSum = -1;
                 if (-1 != curveIndex1) {
-                    peakSum = Graph.DisplayedRows1[curveIndex1].PeakSum;
+                    peakSum = Graph.Instance.DisplayedRows1[curveIndex1].PeakSum;
                 } else if (-1 != curveIndex2) {
-                    peakSum = Graph.DisplayedRows2[curveIndex2].PeakSum;
+                    peakSum = Graph.Instance.DisplayedRows2[curveIndex2].PeakSum;
                 }
                 if (peakSum != -1)
                     tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);

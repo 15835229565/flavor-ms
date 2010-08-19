@@ -16,10 +16,10 @@ namespace Flavor.Forms {
             if (peak != null) {
                 checkPeakPreciseEditorRowMinus.setValues(peak);
             }
-            bool enable = Graph.PointToAdd != null;
+            bool enable = Graph.Instance.PointToAdd != null;
             this.checkPeakInsertButton.Enabled = enable;
             if (!enable) {
-                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+                Graph.Instance.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
             }
         }
 
@@ -48,12 +48,12 @@ namespace Flavor.Forms {
 
         void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
-            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            //Graph.Instance.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }
 
         private void checkPeakInsertButton_Click(object sender, EventArgs e) {
-            if (Graph.PointToAdd != null) {
-                checkPeakPreciseEditorRowMinus.setValues(Graph.PointToAdd);
+            if (Graph.Instance.PointToAdd != null) {
+                checkPeakPreciseEditorRowMinus.setValues(Graph.Instance.PointToAdd);
             } else {
                 MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
             }
