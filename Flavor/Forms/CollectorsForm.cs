@@ -9,10 +9,19 @@ using ZedGraph;
 
 namespace Flavor.Forms {
     internal abstract partial class CollectorsForm: GraphForm {
-        protected const string COL1_TITLE = "Первый коллектор";
-        protected const string COL2_TITLE = "Второй коллектор";
-
-        private ZedGraphControlPlus[] graphs;
+        private const string COL1_TITLE = "Первый коллектор";
+        private const string COL2_TITLE = "Второй коллектор";
+		private const string DIFF_TITLE = "Diff - ";
+		private const string PREC_TITLE = " (прециз.)";
+		private const string SCAN_TITLE = " (скан.)";
+		
+		private string col1Text;
+		private string col2Text;
+		private string modeText;
+		
+        private Graph graph;
+		
+		private ZedGraphControlPlus[] graphs;
         protected bool preciseSpecterDisplayed;
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
         private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };
@@ -26,25 +35,31 @@ namespace Flavor.Forms {
         internal bool specterSavingEnabled {
             set {
                 saveToolStripMenuItem.Enabled = value;
-                //!!!
+                //!!!???
                 distractFromCurrentToolStripMenuItem.Enabled = value &&
-                    (Graph.Instance.DisplayingMode != Graph.Displaying.Diff);
+                    (graph.DisplayingMode != Graph.Displaying.Diff);
             }
         }
         internal bool specterDiffEnabled {
             set {
                 distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled &&
-                    value && (Graph.Instance.DisplayingMode != Graph.Displaying.Diff);
+                    value && (graph.DisplayingMode != Graph.Displaying.Diff);
             }
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
-        public CollectorsForm(bool isPrecise) {
-            InitializeComponent();
+        public CollectorsForm(bool isPrecise, Graph graph) {
+            this.graph = graph;
+			
+			InitializeComponent();
             preciseSpecterDisplayed = isPrecise;
-            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
+            modeText = preciseSpecterDisplayed ? PREC_TITLE : SCAN_TITLE;
+			col1Text = COL1_TITLE + modeText;
+			col2Text = COL2_TITLE + modeText;
+
+			graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
             graphs[0].GraphPane.Legend.IsVisible = false;
             graphs[1].GraphPane.Legend.IsVisible = false;
-            Graph.Instance.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
+            graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
             graphs[0].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
             graphs[1].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
 
@@ -61,11 +76,17 @@ namespace Flavor.Forms {
             Panel.TabIndex = 18;
             Panel.Visible = false;
         }
-        protected abstract void Graph_OnAxisModeChanged();
+        protected virtual bool Graph_OnAxisModeChanged() {
+            if (graph.DisplayingMode == Graph.Displaying.Diff) {
+	            DisplayDiff();
+                return true;
+            }
+			return false;
+		}
 
         internal sealed override void CreateGraph() {
-            ZedGraphRebirth(0, Graph.Instance.DisplayedRows1, COL1_TITLE);
-            ZedGraphRebirth(1, Graph.Instance.DisplayedRows2, COL2_TITLE);
+            ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
+            ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             RefreshGraph();
         }
         protected sealed override void SetSize() {
@@ -124,13 +145,11 @@ namespace Flavor.Forms {
         }
 
         internal void DisplayDiff() {
-            Graph.Instance.DisplayingMode = Graph.Displaying.Diff;
-            // TODO!
-            string modeText = preciseSpecterDisplayed ? " (прециз.)" : " (скан.)"/* + ":\n" + displayedFileName*/;
-            ZedGraphRebirth(0, Graph.Instance.DisplayedRows1, "Diff - Первый коллектор" + modeText);
-            ZedGraphRebirth(1, Graph.Instance.DisplayedRows2, "Diff - Второй коллектор" + modeText);
-            // ?
-            RefreshGraph();
+            graph.DisplayingMode = Graph.Displaying.Diff;
+            col1Text = DIFF_TITLE + COL1_TITLE + modeText;
+            col2Text = DIFF_TITLE + COL2_TITLE + modeText;
+			// multiple times?
+            CreateGraph();
             specterClosingEnabled = true;
         }
 
@@ -142,7 +161,7 @@ namespace Flavor.Forms {
             myPane.YAxis.Title.Text = "Интенсивность";
 
 
-            switch (Graph.Instance.AxisDisplayMode) {
+            switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
                     myPane.XAxis.Title.Text = "Ступени";
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = minX[zgcIndex];
@@ -169,13 +188,13 @@ namespace Flavor.Forms {
                 for (int i = 1; i < dataPoints.Count; ++i) {
                     if (dataPoints[i].Step.Count > 0)
                         specterSavingEnabled = true;
-                    LineItem temp = myPane.AddCurve(dataPoints[i].PeakSum.ToString(), dataPoints[i].Points(Graph.Instance.AxisDisplayMode), rowsColors[i % rowsColors.Length], SymbolType.None);
+                    LineItem temp = myPane.AddCurve(dataPoints[i].PeakSum.ToString(), dataPoints[i].Points(graph.AxisDisplayMode), rowsColors[i % rowsColors.Length], SymbolType.None);
                     temp.Symbol.Fill = new Fill(Color.White);
                 }
             } else {
                 if (dataPoints[0].Step.Count > 0)
                     specterSavingEnabled = true;
-                LineItem temp = myPane.AddCurve("My Curve", dataPoints[0].Points(Graph.Instance.AxisDisplayMode), Color.Blue, SymbolType.None);
+                LineItem temp = myPane.AddCurve("My Curve", dataPoints[0].Points(graph.AxisDisplayMode), Color.Blue, SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
             myPane.Legend.IsShowLegendSymbols = false;
@@ -206,11 +225,31 @@ namespace Flavor.Forms {
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference);
+					Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference, graph);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
             }
         }
-    }
+        protected override void saveData() {
+            if (saveSpecterFileDialog.FileName != "") {
+                saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(saveSpecterFileDialog.FileName);
+                if (Graph.Displaying.Diff == graph.DisplayingMode)
+					saveSpecterFileDialog.FileName += Config.DIFF_FILE_SUFFIX;
+			}
+			if (preciseSpecterDisplayed) {
+                saveSpecterFileDialog.Filter = Config.preciseSpectrumFileDialogFilter;
+                saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
+                if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
+                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, graph.DisplayingMode);
+                }
+            } else {
+                saveSpecterFileDialog.Filter = Config.spectrumFileDialogFilter;
+                saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
+                if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
+					Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph.DisplayingMode, graph);
+                }
+            }
+        }
+	}
 }

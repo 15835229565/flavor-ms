@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ZedGraph;
 
@@ -138,7 +138,7 @@ namespace Flavor.Common {
             }
         }
         internal delegate void GraphEventHandler(Displaying mode, bool recreate);
-        internal delegate void AxisModeEventHandler();
+        internal delegate bool AxisModeEventHandler();
 
         internal enum Recreate {
             None,

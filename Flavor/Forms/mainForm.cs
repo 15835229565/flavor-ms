@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -846,15 +846,17 @@ namespace Flavor.Forms {
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 bool hint = (openSpecterFileDialog.FilterIndex == 1);
                 try {
-                    bool result = Config.openSpectrumFile(openSpecterFileDialog.FileName, hint);
+                    Graph graph = new Graph();
+					bool result = Config.openSpectrumFile(openSpecterFileDialog.FileName, hint, graph);
                     LoadedCollectorsForm form;
-                    if (result) {
-                        form = new LoadedCollectorsForm(false);
-                        ushort minX = (ushort)(Graph.Instance.Displayed1Steps[0][0].X);
-                        ushort maxX = (ushort)(minX - 1 + Graph.Instance.Displayed1Steps[0].Count);
+                    //TODO: move scaling logic into subform
+					if (result) {
+                        form = new LoadedCollectorsForm(false, graph);
+                        ushort minX = (ushort)(graph.Displayed1Steps[0][0].X);
+                        ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
                         form.setXScaleLimits(minX, maxX, minX, maxX);
                     } else {
-                        form = new LoadedCollectorsForm(true);
+                        form = new LoadedCollectorsForm(true, graph);
                         form.setXScaleLimits(Config.PreciseDataLoaded);
                     }
                     form.MdiParent = this;

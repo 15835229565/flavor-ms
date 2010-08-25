@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Globalization;
@@ -14,6 +14,8 @@ namespace Flavor.Common {
         internal const string SPECTRUM_EXT = "sdf";
         internal const string PRECISE_SPECTRUM_EXT = "psf";
         internal const string MONITOR_SPECTRUM_EXT = "mon";
+		
+        internal const string DIFF_FILE_SUFFIX = "~diff";
 
         internal static string spectrumFileDialogFilter = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
         internal static string preciseSpectrumFileDialogFilter = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
@@ -318,11 +320,11 @@ namespace Flavor.Common {
             SavePreciseOptions();
         }
 
-        internal static bool openSpectrumFile(string filename, bool hint) {
+        internal static bool openSpectrumFile(string filename, bool hint, Graph graph) {
             bool result;
             ConfigLoadException resultException = null;
             try {
-                result = hint ? OpenSpecterFile(filename) : OpenPreciseSpecterFile(filename);
+                result = hint ? OpenSpecterFile(filename, graph) : OpenPreciseSpecterFile(filename, graph);
             } catch (ConfigLoadException cle) {
                 resultException = cle;
                 result = false;
@@ -330,7 +332,7 @@ namespace Flavor.Common {
             if (result)
                 return hint;
             try {
-                result = (!hint) ? OpenSpecterFile(filename) : OpenPreciseSpecterFile(filename);
+                result = (!hint) ? OpenSpecterFile(filename, graph) : OpenPreciseSpecterFile(filename, graph);
             } catch (ConfigLoadException cle) {
                 resultException = (resultException == null) ? cle : resultException;
                 result = false;
@@ -349,18 +351,18 @@ namespace Flavor.Common {
             return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
 
-        private static bool OpenSpecterFile(string p) {
+        private static bool OpenSpecterFile(string p, Graph graph) {
             PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
             Graph.Displaying result = OpenSpecterFile(p, pl1, pl2);
 
             switch (result) {
                 case Graph.Displaying.Measured:
-                    Graph.Instance.ResetLoadedPointLists();
-                    Graph.Instance.updateLoaded(pl1, pl2);
+                    graph.ResetLoadedPointLists();
+                    graph.updateLoaded(pl1, pl2);
                     return true;
                 case Graph.Displaying.Diff:
-                    Graph.Instance.ResetDiffPointLists();
-                    Graph.Instance.updateGraphAfterScanDiff(pl1, pl2);
+                    graph.ResetDiffPointLists();
+                    graph.updateGraphAfterScanDiff(pl1, pl2);
                     return true;
                 default:
                     return false;
@@ -419,7 +421,7 @@ namespace Flavor.Common {
             pl2.Sort(ZedGraph.SortType.XValues);
             return spectrumType;
         }
-        internal static XmlDocument SaveSpecterFile(string p, Graph.Displaying displayMode) {
+        internal static XmlDocument SaveSpecterFile(string p, Graph.Displaying displayMode, Graph graph) {
             XmlDocument sf = new XmlDocument();
             XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, OVERVIEW_CONFIG_TAG, ""));
             XmlNode temp = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header"));
@@ -443,13 +445,13 @@ namespace Flavor.Common {
             }
             scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "collector1", ""));
             scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "collector2", ""));
-            foreach (ZedGraph.PointPair pp in Graph.Instance.Displayed1Steps[0]) {
+            foreach (ZedGraph.PointPair pp in graph.Displayed1Steps[0]) {
                 temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
                 scanNode.SelectSingleNode("collector1").AppendChild(temp);
             }
-            foreach (ZedGraph.PointPair pp in Graph.Instance.Displayed2Steps[0]) {
+            foreach (ZedGraph.PointPair pp in graph.Displayed2Steps[0]) {
                 temp = sf.CreateNode(XmlNodeType.Element, "p", "");
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
                 temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
@@ -461,7 +463,7 @@ namespace Flavor.Common {
         internal static void AutoSaveSpecterFile() {
             DateTime dt = System.DateTime.Now;
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
-            XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured);
+            XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured, Graph.Instance);
 
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
@@ -472,12 +474,12 @@ namespace Flavor.Common {
             file.Save(filename);
         }
 
-        internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
-            if (Graph.Instance.isPreciseSpectrum) {
+        internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph) {
+            if (graph.isPreciseSpectrum) {
                 PreciseSpectrum peds = new PreciseSpectrum();
                 if (OpenPreciseSpecterFile(what, peds)) {
                     List<Utility.PreciseEditorData> temp;
-                    switch (Graph.Instance.DisplayingMode) {
+                    switch (graph.DisplayingMode) {
                         case Graph.Displaying.Loaded:
                             temp = new List<Utility.PreciseEditorData>(preciseDataLoaded);
                             break;
@@ -493,7 +495,7 @@ namespace Flavor.Common {
                     try {
                         temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
                         preciseDataDiff = temp;
-                        Graph.Instance.updateGraphAfterPreciseDiff(temp);
+                        graph.updateGraphAfterPreciseDiff(temp);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
@@ -505,7 +507,7 @@ namespace Flavor.Common {
                     // coeff counting
                     double coeff = 1.0;
                     if (plsReference != null) {
-                        PointPairListPlus PL = plsReference.IsFirstCollector ? Graph.Instance.Displayed1Steps[0] : Graph.Instance.Displayed2Steps[0];
+                        PointPairListPlus PL = plsReference.IsFirstCollector ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
                         PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
                         if (step != 0) {
                             for (int i = 0; i < PL.Count; ++i) {
@@ -520,10 +522,10 @@ namespace Flavor.Common {
                         }
                     }
                     try {
-                        PointPairListPlus diff1 = PointPairListDiff(Graph.Instance.Displayed1Steps[0], pl12, coeff);
-                        PointPairListPlus diff2 = PointPairListDiff(Graph.Instance.Displayed2Steps[0], pl22, coeff);
-                        Graph.Instance.ResetDiffPointLists();
-                        Graph.Instance.updateGraphAfterScanDiff(diff1, diff2);
+                        PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
+                        PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
+                        graph.ResetDiffPointLists();
+                        graph.updateGraphAfterScanDiff(diff1, diff2);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
@@ -605,12 +607,12 @@ namespace Flavor.Common {
             return res;
         }
 
-        private static bool OpenPreciseSpecterFile(string filename) {
+        private static bool OpenPreciseSpecterFile(string filename, Graph graph) {
             PreciseSpectrum peds = new PreciseSpectrum();
             bool result = OpenPreciseSpecterFile(filename, peds);
             if (result) {
                 preciseDataLoaded = peds;
-                Graph.Instance.updateGraphAfterPreciseLoad();
+                graph.updateGraphAfterPreciseLoad();
             }
             return result;
         }

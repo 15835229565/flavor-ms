@@ -19,7 +19,7 @@ namespace Flavor.Forms {
         }
 		
 		internal GraphForm() {
-            InitializeComponent();
+            this.InitializeComponent();
         }
         private void GraphForm_Load(object sender, EventArgs e) {
             CreateGraph();
