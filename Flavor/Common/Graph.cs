@@ -137,8 +137,8 @@ namespace Flavor.Common {
                 pp.X = Config.pointToMass((ushort)pp.Z, collector);
             }
         }
-        internal delegate void GraphEventHandler(Displaying mode, bool recreate);
-        internal delegate bool AxisModeEventHandler();
+        internal delegate void GraphEventHandler(bool recreate);
+        internal delegate void AxisModeEventHandler();
 
         internal enum Recreate {
             None,
@@ -169,6 +169,7 @@ namespace Flavor.Common {
             set {
                 if (displayMode != value) {
                     displayMode = value;
+                    // here can be event
                 }
             }
         }
@@ -341,7 +342,7 @@ namespace Flavor.Common {
             (collectors[0])[0].Add(pnt, y1);
             (collectors[1])[0].Add(pnt, y2);
             lastPoint = pnt;
-            OnNewGraphData(Displaying.Measured, false);
+            OnNewGraphData(false);
         }
 
         internal void ResetPointLists() {
@@ -350,7 +351,7 @@ namespace Flavor.Common {
             collectors[1].Clear();
             collectors[1].Add(new pListScaled(false));
             displayMode = Displaying.Measured;
-            OnNewGraphData(displayMode, true);//!!!!!!!!
+            OnNewGraphData(true);
         }
 
         internal void updateLoaded1Graph(ushort pnt, int y) {
@@ -369,7 +370,8 @@ namespace Flavor.Common {
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
             DisplayedRows1[0].SetRows(pl1);
             DisplayedRows2[0].SetRows(pl2);
-            OnNewGraphData(displayMode, true);
+            displayMode = Displaying.Diff;
+            OnNewGraphData(true);
         }
 
         internal void ResetLoadedPointLists() {
@@ -378,14 +380,6 @@ namespace Flavor.Common {
             loadedSpectra[1].Clear();
             loadedSpectra[1].Add(new pListScaled(false));
             displayMode = Displaying.Loaded;
-        }
-        internal void ResetDiffPointLists() {
-            diffSpectra[0].Clear();
-            diffSpectra[0].Add(new pListScaled(true));
-            diffSpectra[1].Clear();
-            diffSpectra[1].Add(new pListScaled(false));
-            displayMode = Displaying.Diff;
-            //OnNewGraphData(displayMode, false/*true*/);
         }
 
         internal void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
@@ -403,14 +397,13 @@ namespace Flavor.Common {
                 collectors[peds[i].Collector - 1].Add(temp);
                 peds[i].AssociatedPoints = temp.Step;
             }
-            OnNewGraphData(displayMode/*Graph.Displaying.Measured*/, true);
+            OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
-            ResetDiffPointLists();
             foreach (Utility.PreciseEditorData ped in peds)
                 diffSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             displayMode = Displaying.Diff;
-            OnNewGraphData(displayMode/*Graph.Displaying.Diff*/, true);
+            OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseLoad() {
             ResetLoadedPointLists();
@@ -421,13 +414,8 @@ namespace Flavor.Common {
         internal void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
             lastPoint = pnt;
             curPeak = curped;
-            OnNewGraphData(Displaying.Measured, false);
+            OnNewGraphData(false);
         }
-        /*internal void updateGraphDuringMonitorMeasure(ushort pnt, Utility.PreciseEditorData curped)
-        {
-            //temporary
-            updateGraphDuringPreciseMeasure(pnt, curped);
-        }*/
 
         internal void RecomputeMassRows(byte col) {
             foreach (pListScaled pl in collectors[col - 1]) {
@@ -441,7 +429,7 @@ namespace Flavor.Common {
             }
             if (axisMode == pListScaled.DisplayValue.Mass) {
                 //TODO: Нужно заменить recreate bool -> enum, чтобы перерисовывать только нужный коллектор
-                OnNewGraphData(displayMode, true);
+                OnNewGraphData(true);
             }
         }
     }

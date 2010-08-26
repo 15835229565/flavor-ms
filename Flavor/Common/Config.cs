@@ -361,7 +361,7 @@ namespace Flavor.Common {
                     graph.updateLoaded(pl1, pl2);
                     return true;
                 case Graph.Displaying.Diff:
-                    graph.ResetDiffPointLists();
+                    //graph.ResetDiffPointLists();
                     graph.updateGraphAfterScanDiff(pl1, pl2);
                     return true;
                 default:
@@ -524,7 +524,7 @@ namespace Flavor.Common {
                     try {
                         PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
                         PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
-                        graph.ResetDiffPointLists();
+                        //graph.ResetDiffPointLists();
                         graph.updateGraphAfterScanDiff(diff1, diff2);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);

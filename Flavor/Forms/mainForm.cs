@@ -9,22 +9,22 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class mainForm: Form {
-        private MeasuredCollectorsForm _collectorsForm = null;
-        private MeasuredCollectorsForm collectorsForm {
+        private MeasuredCollectorsForm collectorsForm = null;
+        private MeasuredCollectorsForm CollectorsForm {
             get {
-                if (_collectorsForm == null) {
-                    _collectorsForm = new MeasuredCollectorsForm(false);
-                    _collectorsForm.MdiParent = this;
-                    _collectorsForm.WindowState = FormWindowState.Maximized;
+                if (collectorsForm == null) {
+                    collectorsForm = new MeasuredCollectorsForm(false);
+                    collectorsForm.MdiParent = this;
+                    collectorsForm.WindowState = FormWindowState.Maximized;
                 }
-                return _collectorsForm;
+                return collectorsForm;
             }
         }
-        private GraphForm gForm {
+        private GraphForm GForm {
             get {
                 Form child = ActiveMdiChild;
                 if (child == null)
-                    return collectorsForm;
+                    return CollectorsForm;
                 return child as GraphForm;
             }
         }
@@ -33,7 +33,7 @@ namespace Flavor.Forms {
             InitializeComponent();
             populateStatusTreeView();
             this.LayoutMdi(MdiLayout.Cascade);
-            gForm.Show();
+            GForm.Show();
 
             Config.getInitialDirectory();
 
@@ -225,8 +225,8 @@ namespace Flavor.Forms {
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
 
-            collectorsForm.prepareControlsOnMeasureStart();
-            collectorsForm.Activate();
+            CollectorsForm.prepareControlsOnMeasureStart();
+            CollectorsForm.Activate();
 
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError += new Commander.ErrorHandler(Commander_OnError);
@@ -238,17 +238,17 @@ namespace Flavor.Forms {
         }
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
-            collectorsForm.startScan();
+            CollectorsForm.startScan();
             prepareControlsOnMeasureStart();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             Commander.Sense();
-            collectorsForm.startPrecise();
+            CollectorsForm.startPrecise();
             prepareControlsOnMeasureStart();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             Commander.Monitor();
-            collectorsForm.startMonitor();
+            CollectorsForm.startMonitor();
             prepareControlsOnMeasureStart();
         }
 
@@ -678,7 +678,7 @@ namespace Flavor.Forms {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
             
-            collectorsForm.cancelScan();
+            CollectorsForm.cancelScan();
         }
 
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -731,7 +731,7 @@ namespace Flavor.Forms {
         }
 
         private void mainForm_MdiChildActivate(object sender, EventArgs e) {
-            gForm.WindowState = FormWindowState.Maximized;
+            GForm.WindowState = FormWindowState.Maximized;
 		}
 
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {

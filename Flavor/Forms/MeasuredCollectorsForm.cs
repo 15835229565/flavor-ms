@@ -57,12 +57,25 @@ namespace Flavor.Forms {
             specterSavingEnabled = true;
         }
         
-        protected sealed override bool Graph_OnAxisModeChanged() {
-            if (base.Graph_OnAxisModeChanged()) {
+        protected sealed override bool axisModeChange() {
+            if (base.axisModeChange()) {
 				return false;
 			}
             CreateGraph();
 			return true;
+        }
+        protected sealed override bool refreshGraph(bool recreate) {
+            if (base.refreshGraph(recreate))
+                return false;
+            if (recreate) {
+                CreateGraph();
+            } else {
+                RefreshGraph();
+                // TODO: simplify code below
+                Panel.RefreshGraph();
+                Commander.CurrentMeasureMode.refreshGraphics(this);
+            }
+            return true;
         }
         protected sealed override void saveData() {
             saveSpecterFileDialog.FileName = "";

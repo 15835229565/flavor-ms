@@ -344,7 +344,6 @@ namespace Flavor.Common {
             }
             setProgramState(Commander.programStates.Measure);
 
-            //Graph.Instance.ResetPointLists();
             toSend.IsRareMode = !Commander.notRareModeRequested;
             Commander.measureCancelRequested = false;
             sendSettings();

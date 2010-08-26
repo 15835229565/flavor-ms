@@ -17,7 +17,6 @@
             this.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
             this.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
             this.ResumeLayout(false);
-
         }
 
         #endregion

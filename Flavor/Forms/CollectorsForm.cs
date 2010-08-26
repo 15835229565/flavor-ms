@@ -58,7 +58,7 @@ namespace Flavor.Forms {
 			graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
             graphs[0].GraphPane.Legend.IsVisible = false;
             graphs[1].GraphPane.Legend.IsVisible = false;
-            graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(Graph_OnAxisModeChanged);
+            graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
             graphs[0].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
             graphs[1].OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
 
@@ -75,7 +75,18 @@ namespace Flavor.Forms {
             Panel.TabIndex = 18;
             Panel.Visible = false;
         }
-        protected virtual bool Graph_OnAxisModeChanged() {
+        
+        private void InvokeAxisModeChange() {
+            if (this.InvokeRequired) {
+                this.Invoke(new Graph.AxisModeEventHandler(AxisModeChange));
+                return;
+            }
+            AxisModeChange();
+        }
+        private void AxisModeChange() {
+            axisModeChange();
+        }
+        protected virtual bool axisModeChange() {
             if (graph.DisplayingMode == Graph.Displaying.Diff) {
 	            DisplayDiff();
                 return true;
@@ -132,7 +143,7 @@ namespace Flavor.Forms {
             graphs[0].Refresh();
             graphs[1].Refresh();
         }
-        internal void yAxisChange() {
+        protected void yAxisChange() {
             graphs[0].AxisChange();
             graphs[1].AxisChange();
         }
@@ -218,42 +229,28 @@ namespace Flavor.Forms {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate) {
+        private void InvokeRefreshGraph(bool recreate) {
             if (this.InvokeRequired) {
-                this.Invoke(new Graph.GraphEventHandler(RefreshGraph), displayMode, recreate);
+                this.Invoke(new Graph.GraphEventHandler(RefreshGraph), recreate);
                 return;
             }
-            RefreshGraph(displayMode, recreate);
+            RefreshGraph(recreate);
         }
-        protected virtual void RefreshGraph(Graph.Displaying displayMode, bool recreate) {
-            //TODO: move switch logic into subclasses
-            switch (displayMode) {
-                case Graph.Displaying.Loaded:
-                    if (recreate) {
-                        (this as ILoaded).DisplayLoadedSpectrum();
-                    } else {
-                        RefreshGraph();
-                    }
-                    break;
-                case Graph.Displaying.Measured:
-                    if (recreate) {
-                        CreateGraph();
-                    } else {
-                        RefreshGraph();
-                        // TODO: simplify code below
-                        Panel.RefreshGraph();
-                        Commander.CurrentMeasureMode.refreshGraphics(this as MeasuredCollectorsForm);
-                    }
-                    break;
-                case Graph.Displaying.Diff:
-                    if (recreate) {
-                        DisplayDiff();
-                    } else {
-                        RefreshGraph();
-                    }
-                    break;
+        private void RefreshGraph(bool recreate) {
+            RefreshGraph(recreate);
+        }
+        protected virtual bool refreshGraph(bool recreate) {
+            if (graph.DisplayingMode == Graph.Displaying.Diff) {
+                if (recreate) {
+                    DisplayDiff();
+                } else {
+                    RefreshGraph();
+                }
+                return true;
             }
+            return false;
         }
+
         private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
             if (preciseSpecterDisplayed) {
                 openSpecterFileDialog.Filter = Config.preciseSpectrumFileDialogFilter;

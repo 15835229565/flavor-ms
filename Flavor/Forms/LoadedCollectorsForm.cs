@@ -28,13 +28,23 @@ namespace Flavor.Forms {
         private void DisplayLoadedSpectrum(string fileName) {
 			CreateGraph();
         }
-        protected sealed override bool Graph_OnAxisModeChanged() {
-            if (base.Graph_OnAxisModeChanged()) {
+        protected sealed override bool axisModeChange() {
+            if (base.axisModeChange()) {
 				return false;
 			}
             DisplayLoadedSpectrum(displayedFileName);
 			return true;
 		}
+        protected sealed override bool refreshGraph(bool recreate) {
+            if (base.refreshGraph(recreate))
+                return false;
+            if (recreate) {
+                DisplayLoadedSpectrum();
+            } else {
+                RefreshGraph();
+            }
+            return true;
+        }
         protected sealed override void saveData() {
 			saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(displayedFileName);
 			base.saveData();
