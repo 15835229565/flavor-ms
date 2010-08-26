@@ -15,7 +15,6 @@ namespace Flavor.Forms {
                 if (_collectorsForm == null) {
                     _collectorsForm = new MeasuredCollectorsForm(false);
                     _collectorsForm.MdiParent = this;
-                    _collectorsForm.Visible = GraphWindowToolStripMenuItem.Checked;
                     _collectorsForm.WindowState = FormWindowState.Maximized;
                 }
                 return _collectorsForm;
@@ -690,11 +689,6 @@ namespace Flavor.Forms {
             statusStrip.Visible = statusBarToolStripMenuItem.Checked;
         }
 
-        private void GraphWindowToolStripMenuItem_Click(object sender, EventArgs e) {
-            this.ActivateMdiChild(collectorsForm);
-            //collectorsForm.Activate();
-        }
-
         private void ParameterToolStripMenuItem_Click(object sender, EventArgs e) {
             parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
         }
@@ -751,6 +745,14 @@ namespace Flavor.Forms {
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
+            }
+        }
+
+        private void closeAllToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Form childForm in MdiChildren) {
+                if (childForm == collectorsForm)
+                    continue;
+                childForm.Close();
             }
         }
     }

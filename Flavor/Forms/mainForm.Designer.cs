@@ -38,6 +38,9 @@ namespace Flavor.Forms {
             System.Windows.Forms.ToolStripMenuItem overviewToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem senseToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem monitorToolStripMenuItem;
+            System.Windows.Forms.ToolStripMenuItem windowsMenu;
+            System.Windows.Forms.ToolStripMenuItem closeAllToolStripMenuItem;
+            System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
             System.Windows.Forms.ToolStripMenuItem helpMenu;
             System.Windows.Forms.ToolStripMenuItem contentsToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
@@ -48,7 +51,6 @@ namespace Flavor.Forms {
             this.toolBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.initSys_butt = new System.Windows.Forms.ToolStripButton();
@@ -78,6 +80,9 @@ namespace Flavor.Forms {
             overviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             senseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             monitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            windowsMenu = new System.Windows.Forms.ToolStripMenuItem();
+            closeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             helpMenu = new System.Windows.Forms.ToolStripMenuItem();
             contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,8 +101,10 @@ namespace Flavor.Forms {
             fileMenu,
             viewMenu,
             optionsToolStripMenuItem,
+            windowsMenu,
             helpMenu});
             menuStrip.Location = new System.Drawing.Point(0, 0);
+            menuStrip.MdiWindowListItem = windowsMenu;
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new System.Drawing.Size(992, 24);
             menuStrip.TabIndex = 1;
@@ -137,8 +144,7 @@ namespace Flavor.Forms {
             viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolBarToolStripMenuItem,
             this.ParameterToolStripMenuItem,
-            this.statusBarToolStripMenuItem,
-            this.GraphWindowToolStripMenuItem});
+            this.statusBarToolStripMenuItem});
             viewMenu.Name = "viewMenu";
             viewMenu.Size = new System.Drawing.Size(38, 20);
             viewMenu.Text = "&Вид";
@@ -172,13 +178,6 @@ namespace Flavor.Forms {
             this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
             this.statusBarToolStripMenuItem.Text = "Строка &состояния";
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
-            // 
-            // GraphWindowToolStripMenuItem
-            // 
-            this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
-            this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
-            this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -263,6 +262,27 @@ namespace Flavor.Forms {
             monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             monitorToolStripMenuItem.Text = "Режим мониторинга";
             monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
+            // 
+            // windowsMenu
+            // 
+            windowsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            closeAllToolStripMenuItem,
+            toolStripSeparator3});
+            windowsMenu.Name = "windowsMenu";
+            windowsMenu.Size = new System.Drawing.Size(119, 20);
+            windowsMenu.Text = "&Открытые спектры";
+            // 
+            // closeAllToolStripMenuItem
+            // 
+            closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
+            closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            closeAllToolStripMenuItem.Text = "&Закрыть все";
+            closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
             // 
             // helpMenu
             // 
@@ -510,7 +530,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ImageList statusTreeViewStateImageList;
         private System.Windows.Forms.ToolStripButton monitorToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem measureToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem GraphWindowToolStripMenuItem;
         private System.Windows.Forms.ToolStrip controlToolStrip;
         private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
         private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
