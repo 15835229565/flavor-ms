@@ -9,24 +9,26 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class mainForm: Form {
+        private MeasuredCollectorsForm _collectorsForm = null;
+        private MeasuredCollectorsForm collectorsForm {
+            get {
+                if (_collectorsForm == null) {
+                    _collectorsForm = new MeasuredCollectorsForm(false);
+                    _collectorsForm.MdiParent = this;
+                    _collectorsForm.Visible = GraphWindowToolStripMenuItem.Checked;
+                    _collectorsForm.WindowState = FormWindowState.Maximized;
+                }
+                return _collectorsForm;
+            }
+        }
         private GraphForm gForm {
             get {
-                if (collectorsForm == null) {
-                    collectorsForm = new MeasuredCollectorsForm(false);
-                    collectorsForm.MdiParent = this;
-                    collectorsForm.Visible = GraphWindowToolStripMenuItem.Checked;
-                    collectorsForm.WindowState = FormWindowState.Maximized;
-                    return collectorsForm;
-                }
                 Form child = ActiveMdiChild;
                 if (child == null)
                     return collectorsForm;
                 return child as GraphForm;
             }
         }
-		private MeasuredCollectorsForm collectorsForm = null;
-        private MeasurePanel measurePanel = null;
-
 		
         internal mainForm() {
             InitializeComponent();
@@ -42,8 +44,6 @@ namespace Flavor.Forms {
             Device.OnTurboPumpStatusChanged += new DeviceEventHandler(InvokeRefreshTurboPumpStatus);
             Device.OnTurboPumpAlert += new TurboPumpAlertEventHandler(InvokeProcessTurboPumpAlert);
             Device.Init();
-
-            Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
 
             Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeRefreshButtons);
             Commander.setProgramStateWithoutUndo(Commander.programStates.Start);
@@ -184,6 +184,7 @@ namespace Flavor.Forms {
         #endregion
         private void mainForm_Load(object sender, EventArgs e) {
             openConfigFileToolStripMenuItem_Click(sender, e);
+            this.Activate();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -225,16 +226,11 @@ namespace Flavor.Forms {
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
 
-            measurePanelToolStripMenuItem.Enabled = true;
-            measurePanelToolStripMenuItem.Checked = true;
+            collectorsForm.prepareControlsOnMeasureStart();
+            collectorsForm.Activate();
 
-            measurePanel.prepareControlsOnMeasureStart();
-
-            Graph.Instance.ResetLoadedPointLists();
-            collectorsForm.setXScaleLimits();
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError += new Commander.ErrorHandler(Commander_OnError);
-            collectorsForm.specterSavingEnabled = false;
         }
 
         void Commander_OnError(string msg) {
@@ -242,23 +238,18 @@ namespace Flavor.Forms {
             MessageBox.Show(msg);
         }
         private void overview_button_Click(object sender, EventArgs e) {
-            measurePanel.overview_button_Click();
-
             Commander.Scan();
+            collectorsForm.startScan();
             prepareControlsOnMeasureStart();
-            //collectorsForm?
-            gForm.CreateGraph();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
-            measurePanel.sensmeasure_button_Click();
-
             Commander.Sense();
+            collectorsForm.startPrecise();
             prepareControlsOnMeasureStart();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
-            measurePanel.monitorToolStripButton_Click();
-
             Commander.Monitor();
+            collectorsForm.startMonitor();
             prepareControlsOnMeasureStart();
         }
 
@@ -280,55 +271,6 @@ namespace Flavor.Forms {
         }
         private void RefreshUserMessage(string msg) {
             measure_StatusLabel.Text = msg;
-        }
-
-        private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate) {
-            if (this.InvokeRequired) {
-                this.Invoke(new Graph.GraphEventHandler(RefreshGraph), displayMode, recreate);
-                return;
-            }
-            RefreshGraph(displayMode, recreate);
-        }
-        private void RefreshGraph(Graph.Displaying displayMode, bool recreate) {
-            //TODO: move switch logic into subclasses
-			switch (displayMode) {
-                case Graph.Displaying.Loaded:
-                    if (recreate) {
-                        (gForm as ILoaded).DisplayLoadedSpectrum();
-                    } else {
-                        gForm.RefreshGraph();
-                    }
-                    break;
-                case Graph.Displaying.Measured:
-                    if (recreate) {
-                        collectorsForm.CreateGraph();
-                    } else {
-                        collectorsForm.RefreshGraph();
-                        measurePanel.RefreshGraph();
-                        Commander.CurrentMeasureMode.refreshGraphics(this);
-                    }
-                    break;
-                case Graph.Displaying.Diff:
-                    if (recreate) {
-                        (gForm as CollectorsForm).DisplayDiff();
-                    } else {
-                        gForm.RefreshGraph();
-                    }
-                    break;
-            }
-        }
-        internal void refreshGraphicsOnScanStep() {
-            collectorsForm.yAxisChange();
-            measurePanel.refreshGraphicsOnScanStep();
-        }
-        internal void refreshGraphicsOnPreciseStep() {
-            //collectorsForm?
-            measurePanel.refreshGraphicsOnPreciseStep();
-        }
-        internal void refreshGraphicsOnMonitorStep() {
-            //TODO: this is temporary
-            //collectorsForm?
-            refreshGraphicsOnPreciseStep();
         }
 
         private void InvokeRefreshDeviceState() {
@@ -631,9 +573,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = true;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
                 case Commander.programStates.WaitInit:
                     connectToolStripButton.Enabled = false;
@@ -647,9 +586,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
                 case Commander.programStates.Init:
                     connectToolStripButton.Enabled = false;
@@ -663,9 +599,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
                 case Commander.programStates.WaitHighVoltage:
                     connectToolStripButton.Enabled = false;
@@ -679,9 +612,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
                 case Commander.programStates.Ready:
                     connectToolStripButton.Enabled = false;
@@ -695,9 +625,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
                 case Commander.programStates.Measure:
                     connectToolStripButton.Enabled = false;
@@ -711,8 +638,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = false;
-
-                    measurePanelToolStripMenuItem.Enabled = true;
                     break;
                 case Commander.programStates.WaitShutdown:
                     connectToolStripButton.Enabled = false;
@@ -726,9 +651,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
                 case Commander.programStates.Shutdown:
                     connectToolStripButton.Enabled = false;
@@ -742,9 +664,6 @@ namespace Flavor.Forms {
 
                     connectToolStripMenuItem.Enabled = false;
                     measureToolStripMenuItem.Enabled = true;
-
-                    measurePanelToolStripMenuItem.Checked = false;
-                    measurePanelToolStripMenuItem.Enabled = false;
                     break;
             }
         }
@@ -760,8 +679,7 @@ namespace Flavor.Forms {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
             
-			measurePanel.CancelScan();
-            collectorsForm.specterSavingEnabled = true;
+            collectorsForm.cancelScan();
         }
 
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -773,17 +691,12 @@ namespace Flavor.Forms {
         }
 
         private void GraphWindowToolStripMenuItem_Click(object sender, EventArgs e) {
-            //collectorsForm?
-			gForm.Visible = GraphWindowToolStripMenuItem.Checked;
-            // and some action with measurePanel
+            this.ActivateMdiChild(collectorsForm);
+            //collectorsForm.Activate();
         }
 
         private void ParameterToolStripMenuItem_Click(object sender, EventArgs e) {
             parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
-        }
-
-        private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
-            measurePanel.Visible = measurePanelToolStripMenuItem.Checked;
         }
 
         private void mainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -808,10 +721,6 @@ namespace Flavor.Forms {
             Config.saveAll();
         }
 
-        internal void cancelScanButton_Click() {
-            Commander.measureCancelRequested = true;
-        }
-
         private void connectToolStripButton_Click(object sender, EventArgs e) {
             if (Commander.deviceIsConnected) {
                 Commander.Disconnect();
@@ -828,41 +737,16 @@ namespace Flavor.Forms {
         }
 
         private void mainForm_MdiChildActivate(object sender, EventArgs e) {
-            // TODO:
-            // stub
-            // set data source of measurePanel according to spectrum displayed
-            // and refresh it
-            GraphForm g = gForm;
-            if (g == collectorsForm && measurePanel == collectorsForm.Panel) {
-                return;
-            }
-            this.Controls.Remove(measurePanel);
-			measurePanel = g.Panel;
-            this.Controls.Add(measurePanel);
+            gForm.WindowState = FormWindowState.Maximized;
 		}
 
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
             openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.spectrumFileDialogFilter, Config.preciseSpectrumFileDialogFilter);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
-                bool hint = (openSpecterFileDialog.FilterIndex == 1);
                 try {
-                    Graph graph = new Graph();
-					bool result = Config.openSpectrumFile(openSpecterFileDialog.FileName, hint, graph);
-                    LoadedCollectorsForm form;
-                    //TODO: move scaling logic into subform
-					if (result) {
-                        form = new LoadedCollectorsForm(false, graph);
-                        ushort minX = (ushort)(graph.Displayed1Steps[0][0].X);
-                        ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
-                        form.setXScaleLimits(minX, maxX, minX, maxX);
-                    } else {
-                        form = new LoadedCollectorsForm(true, graph);
-                        form.setXScaleLimits(Config.PreciseDataLoaded);
-                    }
+                    bool hint = (openSpecterFileDialog.FilterIndex == 1);
+                    LoadedCollectorsForm form = new LoadedCollectorsForm(new Graph(), openSpecterFileDialog.FileName, hint);
                     form.MdiParent = this;
-                    form.WindowState = FormWindowState.Maximized;
-                    // YScaleLimits - auto!
-                    form.DisplayLoadedSpectrum(openSpecterFileDialog.FileName);
                     form.Show();
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();

@@ -11,7 +11,7 @@ namespace Flavor.Controls {
 
         private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
-            (Parent as mainForm).cancelScanButton_Click();
+            Commander.measureCancelRequested = true;
         }
 
         internal void prepareControlsOnMeasureStart() {
@@ -122,8 +122,7 @@ namespace Flavor.Controls {
                 label16.Visible = true;
             }
         }
-        internal void CancelScan() {
-            cancelScanButton.Enabled = false;
+        internal void cancelScan() {
             cancelScanButton.Visible = false;
         }
     }

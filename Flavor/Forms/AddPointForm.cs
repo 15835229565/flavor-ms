@@ -16,7 +16,7 @@ namespace Flavor.Forms {
 
         protected void okButton_Click(object sender, EventArgs e) {
             if (oneRow.checkTextBoxes() && oneRow.AllFilled) {
-                //Saving of point
+                //Saving of point Graph.Instance?
                 Graph.Instance.PointToAdd = new Utility.PreciseEditorData((byte)0, Convert.ToUInt16(oneRow.StepText),
                                        Convert.ToByte(oneRow.ColText), Convert.ToUInt16(oneRow.LapsText),
                                        Convert.ToUInt16(oneRow.WidthText), (float)0, oneRow.CommentText);

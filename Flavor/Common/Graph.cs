@@ -361,20 +361,14 @@ namespace Flavor.Common {
             (loadedSpectra[1])[0].Add(pnt, y);
         }
 
-        internal void updateLoaded() {
-            OnNewGraphData(Displaying.Loaded, false);
-        }
-
         internal void updateLoaded(PointPairListPlus pl1, PointPairListPlus pl2) {
             (loadedSpectra[0])[0].SetRows(pl1);
             (loadedSpectra[1])[0].SetRows(pl2);
-            OnNewGraphData(Displaying.Loaded, false);
         }
 
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
             DisplayedRows1[0].SetRows(pl1);
             DisplayedRows2[0].SetRows(pl2);
-            //displayMode = Displaying.Diff;
             OnNewGraphData(displayMode, true);
         }
 
@@ -384,7 +378,6 @@ namespace Flavor.Common {
             loadedSpectra[1].Clear();
             loadedSpectra[1].Add(new pListScaled(false));
             displayMode = Displaying.Loaded;
-            OnNewGraphData(displayMode, false/*true*/);
         }
         internal void ResetDiffPointLists() {
             diffSpectra[0].Clear();
@@ -392,7 +385,7 @@ namespace Flavor.Common {
             diffSpectra[1].Clear();
             diffSpectra[1].Add(new pListScaled(false));
             displayMode = Displaying.Diff;
-            OnNewGraphData(displayMode, false/*true*/);
+            //OnNewGraphData(displayMode, false/*true*/);
         }
 
         internal void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
@@ -423,7 +416,6 @@ namespace Flavor.Common {
             ResetLoadedPointLists();
             foreach (Utility.PreciseEditorData ped in Config.PreciseDataLoaded)
                 loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-            OnNewGraphData(displayMode/*Graph.Displaying.Loaded*/, false);
         }
 
         internal void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
@@ -448,7 +440,7 @@ namespace Flavor.Common {
                 pl.RecomputeMassRow();
             }
             if (axisMode == pListScaled.DisplayValue.Mass) {
-                //Нужно заменить recreate bool -> enum, чтобы перерисовывать только нужный коллектор
+                //TODO: Нужно заменить recreate bool -> enum, чтобы перерисовывать только нужный коллектор
                 OnNewGraphData(displayMode, true);
             }
         }

@@ -9,11 +9,13 @@ using ZedGraph;
 
 namespace Flavor.Forms {
     internal abstract partial class CollectorsForm: GraphForm {
-        private const string COL1_TITLE = "Первый коллектор";
-        private const string COL2_TITLE = "Второй коллектор";
+        private const string COL1_TITLE = "РџРµСЂРІС‹Р№ РєРѕР»Р»РµРєС‚РѕСЂ";
+        private const string COL2_TITLE = "Р’С‚РѕСЂРѕР№ РєРѕР»Р»РµРєС‚РѕСЂ";
 		private const string DIFF_TITLE = "Diff - ";
-		private const string PREC_TITLE = " (прециз.)";
-		private const string SCAN_TITLE = " (скан.)";
+		private const string PREC_TITLE = " (РїСЂРµС†РёР·.)";
+		private const string SCAN_TITLE = " (СЃРєР°РЅ.)";
+        private const int HORIZ_GRAPH_INDENT = 12;
+        private const int VERT_GRAPH_INDENT = 12;
 		
 		private string col1Text;
 		private string col2Text;
@@ -27,11 +29,6 @@ namespace Flavor.Forms {
         private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };
         private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
         Color.Black, Color.Magenta,};
-        protected bool specterClosingEnabled {
-            set {
-                closeSpecterFileToolStripMenuItem.Enabled = value;
-            }
-        }
         internal bool specterSavingEnabled {
             set {
                 saveToolStripMenuItem.Enabled = value;
@@ -48,9 +45,11 @@ namespace Flavor.Forms {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
         public CollectorsForm(bool isPrecise, Graph graph) {
-            this.graph = graph;
-			
 			InitializeComponent();
+            
+            this.graph = graph;
+            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
+
             preciseSpecterDisplayed = isPrecise;
             modeText = preciseSpecterDisplayed ? PREC_TITLE : SCAN_TITLE;
 			col1Text = COL1_TITLE + modeText;
@@ -90,14 +89,15 @@ namespace Flavor.Forms {
             RefreshGraph();
         }
         protected sealed override void SetSize() {
-            collect1_graph.Location = new Point(12, 12);
-            collect1_graph.Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
+            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (this.ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
+            collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
+            collect1_graph.Size = size;
 
-            collect2_graph.Location = new Point(12, 12 + (this.ClientSize.Height - (12)) / 2);
-            collect2_graph.Size = new Size(this.ClientSize.Width - (12 + 12), (this.ClientSize.Height - (12 + 12 + 12)) / 2);
+            collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (this.ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
+            collect2_graph.Size = size;
         }
 
-        internal void setXScaleLimits() {
+        protected void setXScaleLimits() {
             setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
         }
         internal void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
@@ -150,7 +150,8 @@ namespace Flavor.Forms {
             col2Text = DIFF_TITLE + COL2_TITLE + modeText;
 			// multiple times?
             CreateGraph();
-            specterClosingEnabled = true;
+            //here?
+            closeSpecterFileToolStripMenuItem.Enabled = true;
         }
 
         protected void ZedGraphRebirth(int zgcIndex, List<Graph.pListScaled> dataPoints, string title) {
@@ -158,22 +159,22 @@ namespace Flavor.Forms {
 
 
             myPane.Title.Text = title;
-            myPane.YAxis.Title.Text = "Интенсивность";
+            myPane.YAxis.Title.Text = "РРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ";
 
 
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
-                    myPane.XAxis.Title.Text = "Ступени";
+                    myPane.XAxis.Title.Text = "РЎС‚СѓРїРµРЅРё";
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = minX[zgcIndex];
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    myPane.XAxis.Title.Text = "Напряжение (В)";
+                    myPane.XAxis.Title.Text = "РќР°РїСЂСЏР¶РµРЅРёРµ (Р’)";
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    myPane.XAxis.Title.Text = "Масса (а.е.м.)";
+                    myPane.XAxis.Title.Text = "РњР°СЃСЃР° (Р°.Рµ.Рј.)";
                     //limits inverted due to point-to-mass law
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
                     graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
@@ -217,6 +218,42 @@ namespace Flavor.Forms {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
+        private void InvokeRefreshGraph(Graph.Displaying displayMode, bool recreate) {
+            if (this.InvokeRequired) {
+                this.Invoke(new Graph.GraphEventHandler(RefreshGraph), displayMode, recreate);
+                return;
+            }
+            RefreshGraph(displayMode, recreate);
+        }
+        protected virtual void RefreshGraph(Graph.Displaying displayMode, bool recreate) {
+            //TODO: move switch logic into subclasses
+            switch (displayMode) {
+                case Graph.Displaying.Loaded:
+                    if (recreate) {
+                        (this as ILoaded).DisplayLoadedSpectrum();
+                    } else {
+                        RefreshGraph();
+                    }
+                    break;
+                case Graph.Displaying.Measured:
+                    if (recreate) {
+                        CreateGraph();
+                    } else {
+                        RefreshGraph();
+                        // TODO: simplify code below
+                        Panel.RefreshGraph();
+                        Commander.CurrentMeasureMode.refreshGraphics(this as MeasuredCollectorsForm);
+                    }
+                    break;
+                case Graph.Displaying.Diff:
+                    if (recreate) {
+                        DisplayDiff();
+                    } else {
+                        RefreshGraph();
+                    }
+                    break;
+            }
+        }
         private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
             if (preciseSpecterDisplayed) {
                 openSpecterFileDialog.Filter = Config.preciseSpectrumFileDialogFilter;

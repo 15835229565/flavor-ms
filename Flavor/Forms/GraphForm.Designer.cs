@@ -1,3 +1,5 @@
+using Flavor.Controls;
+
 namespace Flavor.Forms {
     partial class GraphForm {
         /// <summary>
@@ -34,6 +36,7 @@ namespace Flavor.Forms {
             System.Windows.Forms.ToolStripMenuItem printPreviewToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem printSetupToolStripMenuItem;
             System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+            System.Windows.Forms.ToolStripMenuItem viewMenu;
             System.Windows.Forms.ToolStripMenuItem editMenu;
             System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
@@ -45,6 +48,7 @@ namespace Flavor.Forms {
             System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
             this.closeSpecterFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.measurePanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             graphFormMenuStrip = new System.Windows.Forms.MenuStrip();
             FileMenu = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -52,6 +56,7 @@ namespace Flavor.Forms {
             printPreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             printSetupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            viewMenu = new System.Windows.Forms.ToolStripMenuItem();
             editMenu = new System.Windows.Forms.ToolStripMenuItem();
             undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +73,7 @@ namespace Flavor.Forms {
             // 
             graphFormMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             FileMenu,
+            viewMenu,
             editMenu});
             graphFormMenuStrip.Location = new System.Drawing.Point(0, 0);
             graphFormMenuStrip.Name = "graphFormMenuStrip";
@@ -163,6 +169,23 @@ namespace Flavor.Forms {
             toolStripSeparator5.Size = new System.Drawing.Size(213, 6);
             toolStripSeparator5.Visible = false;
             // 
+            // viewMenu
+            // 
+            viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.measurePanelToolStripMenuItem});
+            viewMenu.MergeAction = System.Windows.Forms.MergeAction.MatchOnly;
+            viewMenu.Name = "viewMenu";
+            viewMenu.Size = new System.Drawing.Size(38, 20);
+            viewMenu.Text = "&Вид";
+            // 
+            // measurePanelToolStripMenuItem
+            // 
+            this.measurePanelToolStripMenuItem.CheckOnClick = true;
+            this.measurePanelToolStripMenuItem.Name = "measurePanelToolStripMenuItem";
+            this.measurePanelToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.measurePanelToolStripMenuItem.Text = "Панель режима";
+            this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
+            // 
             // editMenu
             // 
             editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -256,9 +279,13 @@ namespace Flavor.Forms {
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(773, 691);
+            this.ControlBox = false;
             this.Controls.Add(graphFormMenuStrip);
             this.MainMenuStrip = graphFormMenuStrip;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "GraphForm";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Load += new System.EventHandler(this.GraphForm_Load);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.GraphForm_Validating);
@@ -274,5 +301,6 @@ namespace Flavor.Forms {
 
         protected System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         protected System.Windows.Forms.ToolStripMenuItem closeSpecterFileToolStripMenuItem;
+        protected System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
     }
 }

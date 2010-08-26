@@ -25,11 +25,11 @@ namespace Flavor.Forms {
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.SuspendLayout();
+            this.closeSpecterFileToolStripMenuItem.Enabled = false;
             // 
             // MeasuredCollectorsForm
             // 
             this.ControlBox = false;
-            this.MinimizeBox = false;
             this.ResumeLayout(false);
             this.PerformLayout();
         }

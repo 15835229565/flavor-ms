@@ -59,7 +59,7 @@ namespace Flavor.Common.Measuring {
             return true;
         }
         abstract internal void updateGraph();
-        abstract internal void refreshGraphics(mainForm form);
+        abstract internal void refreshGraphics(MeasuredCollectorsForm form);
         abstract internal int stepsCount();
         internal void autoNextMeasure() {
             if (operating) {

@@ -39,7 +39,8 @@ namespace Flavor.Forms {
             this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
             this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
             this.distractFromCurrentToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.distractFromCurrentToolStripMenuItem.Text = "Вычесть из текущего";
+            this.distractFromCurrentToolStripMenuItem.Text = "Р’С‹С‡РµСЃС‚СЊ РёР· С‚РµРєСѓС‰РµРіРѕ";
+            this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
             // 
             // saveSpecterFileDialog
             // 
@@ -94,7 +95,7 @@ namespace Flavor.Forms {
             this.Controls.Add(this.collect2_graph);
             this.Controls.Add(this.collect1_graph);
             this.Name = "CollectorsForm";
-            this.Text = "Коллекторы";
+            this.Text = "РљРѕР»Р»РµРєС‚РѕСЂС‹";
             this.ResumeLayout(false);
             this.PerformLayout();
         }

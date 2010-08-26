@@ -371,7 +371,6 @@ namespace Flavor.Common {
         private static Graph.Displaying OpenSpecterFile(string filename, PointPairListPlus pl1, PointPairListPlus pl2) {
             XmlDocument sf = new XmlDocument();
             XmlNode headerNode = null;
-            Graph.Displaying spectrumType = Graph.Displaying.Measured;
             try {
                 sf.Load(filename);
             } catch (Exception Error) {
@@ -387,7 +386,8 @@ namespace Flavor.Common {
             } else {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
-            
+
+            Graph.Displaying spectrumType = Graph.Displaying.Measured;
             if (headerNode != null && headerNode.InnerText == "Diff")
                 spectrumType = Graph.Displaying.Diff;
 
@@ -407,7 +407,7 @@ namespace Flavor.Common {
             } catch (NullReferenceException) {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
-            //the whole logic of displaying spertra must be modified
+            //the whole logic of displaying spectra must be modified
             //!!!!!!!!!!!!!!!!!!!!!!!!
             CommonOptions co = null;
             try {

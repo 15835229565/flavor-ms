@@ -49,7 +49,6 @@ namespace Flavor.Forms {
             this.ParameterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.GraphWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.measurePanelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.initSys_butt = new System.Windows.Forms.ToolStripButton();
@@ -139,8 +138,7 @@ namespace Flavor.Forms {
             this.toolBarToolStripMenuItem,
             this.ParameterToolStripMenuItem,
             this.statusBarToolStripMenuItem,
-            this.GraphWindowToolStripMenuItem,
-            this.measurePanelToolStripMenuItem});
+            this.GraphWindowToolStripMenuItem});
             viewMenu.Name = "viewMenu";
             viewMenu.Size = new System.Drawing.Size(38, 20);
             viewMenu.Text = "&Вид";
@@ -177,22 +175,10 @@ namespace Flavor.Forms {
             // 
             // GraphWindowToolStripMenuItem
             // 
-            this.GraphWindowToolStripMenuItem.Checked = true;
-            this.GraphWindowToolStripMenuItem.CheckOnClick = true;
-            this.GraphWindowToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GraphWindowToolStripMenuItem.Name = "GraphWindowToolStripMenuItem";
             this.GraphWindowToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
             this.GraphWindowToolStripMenuItem.Text = "&Коллекторы";
             this.GraphWindowToolStripMenuItem.Click += new System.EventHandler(this.GraphWindowToolStripMenuItem_Click);
-            // 
-            // measurePanelToolStripMenuItem
-            // 
-            this.measurePanelToolStripMenuItem.CheckOnClick = true;
-            this.measurePanelToolStripMenuItem.Enabled = false;
-            this.measurePanelToolStripMenuItem.Name = "measurePanelToolStripMenuItem";
-            this.measurePanelToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.measurePanelToolStripMenuItem.Text = "Панель режима";
-            this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
             // 
             // optionsToolStripMenuItem
             // 
@@ -518,7 +504,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
         private System.Windows.Forms.Panel parameterPanel;
         private System.Windows.Forms.ToolStripMenuItem ParameterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton connectToolStripButton;
 
         private System.Windows.Forms.TreeView statusTreeView;

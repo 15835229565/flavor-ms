@@ -39,7 +39,7 @@ namespace Flavor.Common.Measuring {
             ushort pnt = pointValue;
             Graph.Instance.updateGraph(Device.Detector1, Device.Detector2, --pnt);
         }
-        internal override void refreshGraphics(mainForm form) {
+        internal override void refreshGraphics(MeasuredCollectorsForm form) {
             form.refreshGraphicsOnScanStep();
         }
         internal override int stepsCount() {
