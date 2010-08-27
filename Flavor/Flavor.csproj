@@ -214,6 +214,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Controls\MeasurePanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MeasurePanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ZedGraphControlMonitor.resx">
       <DependentUpon>ZedGraphControlMonitor.cs</DependentUpon>
       <SubType>Designer</SubType>

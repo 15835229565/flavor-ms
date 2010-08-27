@@ -52,6 +52,7 @@ namespace Flavor.Forms {
             // 
             // collect2_graph
             // 
+            this.collect2_graph.IsFirstCollector = false;
             this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect2_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.collect2_graph.IsEnableSelection = true;
@@ -69,9 +70,13 @@ namespace Flavor.Forms {
             this.collect2_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.collect2_graph.Size = new System.Drawing.Size(281, 192);
             this.collect2_graph.TabIndex = 10;
+            this.collect2_graph.OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
+            this.collect2_graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(ZedGraphControlPlus_ContextMenuBuilder);
+            this.collect2_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(ZedGraphControlPlus_PointValueEvent);
             // 
             // collect1_graph
             // 
+            this.collect1_graph.IsFirstCollector = true;
             this.collect1_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect1_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.collect1_graph.IsEnableSelection = true;
@@ -89,6 +94,9 @@ namespace Flavor.Forms {
             this.collect1_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.collect1_graph.Size = new System.Drawing.Size(281, 192);
             this.collect1_graph.TabIndex = 9;
+            this.collect1_graph.OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
+            this.collect1_graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(ZedGraphControlPlus_ContextMenuBuilder);
+            this.collect1_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(ZedGraphControlPlus_PointValueEvent);
             // 
             // CollectorsForm
             // 
