@@ -50,17 +50,17 @@ namespace Flavor.Common {
         }
 
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
-        private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
+        //private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataDiff = new List<Utility.PreciseEditorData>();
 
         internal static List<Utility.PreciseEditorData> PreciseData {
             get { return preciseData; }
             //set { preciseData = value; }
         }
-        internal static List<Utility.PreciseEditorData> PreciseDataLoaded {
+        /*internal static List<Utility.PreciseEditorData> PreciseDataLoaded {
             get { return preciseDataLoaded; }
             //set { preciseData = value; }
-        }
+        }*/
         internal static List<Utility.PreciseEditorData> PreciseDataDiff {
             get { return preciseDataDiff; }
             //set { preciseData = value; }
@@ -320,25 +320,24 @@ namespace Flavor.Common {
             SavePreciseOptions();
         }
 
-        internal static bool openSpectrumFile(string filename, bool hint, Graph graph) {
+        internal static bool openSpectrumFile(string filename, bool hint, out Graph graph) {
             bool result;
             ConfigLoadException resultException = null;
             try {
-                result = hint ? OpenSpecterFile(filename, graph) : OpenPreciseSpecterFile(filename, graph);
+                result = hint ? OpenSpecterFile(filename, out graph) : OpenPreciseSpecterFile(filename, out graph);
+                if (result)
+                    return hint;
             } catch (ConfigLoadException cle) {
                 resultException = cle;
-                result = false;
             }
-            if (result)
-                return hint;
             try {
-                result = (!hint) ? OpenSpecterFile(filename, graph) : OpenPreciseSpecterFile(filename, graph);
+                result = (!hint) ? OpenSpecterFile(filename, out graph) : OpenPreciseSpecterFile(filename, out graph);
+                if (result)
+                    return (!hint);
             } catch (ConfigLoadException cle) {
                 resultException = (resultException == null) ? cle : resultException;
-                result = false;
             }
-            if (result)
-                return (!hint);
+            //graph = null;
             throw resultException;
         }
 
@@ -351,10 +350,13 @@ namespace Flavor.Common {
             return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
 
-        private static bool OpenSpecterFile(string p, Graph graph) {
+        private static bool OpenSpecterFile(string filename, out Graph graph) {
             PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
-            Graph.Displaying result = OpenSpecterFile(p, pl1, pl2);
+            CommonOptions commonOpts;
+            Graph.Displaying result = OpenSpecterFile(filename, pl1, pl2, out commonOpts);
 
+            // TODO: other opts must be loaded from file
+            graph = new Graph(CommonOptions);
             switch (result) {
                 case Graph.Displaying.Measured:
                     graph.ResetLoadedPointLists();
@@ -368,7 +370,7 @@ namespace Flavor.Common {
                     return false;
             }
         }
-        private static Graph.Displaying OpenSpecterFile(string filename, PointPairListPlus pl1, PointPairListPlus pl2) {
+        private static Graph.Displaying OpenSpecterFile(string filename, PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
             XmlDocument sf = new XmlDocument();
             XmlNode headerNode = null;
             try {
@@ -409,23 +411,22 @@ namespace Flavor.Common {
             }
             //the whole logic of displaying spectra must be modified
             //!!!!!!!!!!!!!!!!!!!!!!!!
-            CommonOptions co = null;
             try {
                 // what version of function will be called here?
-                loadCommonOptions(filename, sf, out co);
+                loadCommonOptions(filename, sf, out commonOpts);
             } catch (structureErrorOnLoadCommonData) {
-                co = null;
+                commonOpts = null;
             }
             //!!!!!!!!!!!!!!!!!!!!!!!!
             pl1.Sort(ZedGraph.SortType.XValues);
             pl2.Sort(ZedGraph.SortType.XValues);
             return spectrumType;
         }
-        internal static XmlDocument SaveSpecterFile(string p, Graph.Displaying displayMode, Graph graph) {
+        internal static XmlDocument SaveSpecterFile(string p, Graph graph) {
             XmlDocument sf = new XmlDocument();
             XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, OVERVIEW_CONFIG_TAG, ""));
             XmlNode temp = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header"));
-            switch (displayMode) {
+            switch (graph.DisplayingMode) {
                 case Graph.Displaying.Loaded:
                     temp.InnerText = "Measure";
                     break;
@@ -463,7 +464,7 @@ namespace Flavor.Common {
         internal static void AutoSaveSpecterFile() {
             DateTime dt = System.DateTime.Now;
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
-            XmlDocument file = SaveSpecterFile(filename, Graph.Displaying.Measured, Graph.Instance);
+            XmlDocument file = SaveSpecterFile(filename, Graph.Instance);
 
             XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
@@ -481,7 +482,10 @@ namespace Flavor.Common {
                     List<Utility.PreciseEditorData> temp;
                     switch (graph.DisplayingMode) {
                         case Graph.Displaying.Loaded:
-                            temp = new List<Utility.PreciseEditorData>(preciseDataLoaded);
+                            // TODO:!
+                            //temp = new List<Utility.PreciseEditorData>(preciseDataLoaded);
+                            //!!!
+                            temp = new List<Utility.PreciseEditorData>(preciseData);
                             break;
                         case Graph.Displaying.Measured:
                             temp = new List<Utility.PreciseEditorData>(preciseData);
@@ -503,7 +507,10 @@ namespace Flavor.Common {
             } else {
                 PointPairListPlus pl12 = new PointPairListPlus();
                 PointPairListPlus pl22 = new PointPairListPlus();
-                if (OpenSpecterFile(what, pl12, pl22) == Graph.Displaying.Measured) {
+                CommonOptions commonOpts;
+                if (OpenSpecterFile(what, pl12, pl22, out commonOpts) == Graph.Displaying.Measured) {
+                    // TODO: check commonOpts for equality?
+                    
                     // coeff counting
                     double coeff = 1.0;
                     if (plsReference != null) {
@@ -607,12 +614,16 @@ namespace Flavor.Common {
             return res;
         }
 
-        private static bool OpenPreciseSpecterFile(string filename, Graph graph) {
+        private static bool OpenPreciseSpecterFile(string filename, out Graph graph) {
             PreciseSpectrum peds = new PreciseSpectrum();
             bool result = OpenPreciseSpecterFile(filename, peds);
             if (result) {
-                preciseDataLoaded = peds;
-                graph.updateGraphAfterPreciseLoad();
+                //preciseDataLoaded = peds;
+                graph = new Graph(peds.CommonOptions);
+                graph.updateGraphAfterPreciseLoad(peds);
+            } else {
+                //TODO: other solution!
+                graph = null;
             }
             return result;
         }
@@ -641,13 +652,16 @@ namespace Flavor.Common {
 
             return LoadPED(sf, filename, peds, true, prefix);
         }
-        internal static XmlDocument SavePreciseSpecterFile(string filename, Graph.Displaying displayMode) {
+        internal static XmlDocument SavePreciseSpecterFile(string filename, Graph graph) {
             List<Utility.PreciseEditorData> processed;
             string header;
-            switch (displayMode) {
+            switch (graph.DisplayingMode) {
                 case Graph.Displaying.Loaded:
-                    processed = Config.PreciseDataLoaded;
+                    // TODO:!
+                    //processed = Config.PreciseDataLoaded;
                     //!!!!
+                    processed = Config.PreciseData;
+                    //processed = graph.
                     header = "Measure";
                     break;
                 case Graph.Displaying.Measured:
@@ -666,7 +680,7 @@ namespace Flavor.Common {
         internal static DateTime AutoSavePreciseSpecterFile(short shift) {
             DateTime dt = System.DateTime.Now;
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
-            XmlDocument file = SavePreciseSpecterFile(filename, Graph.Displaying.Measured);
+            XmlDocument file = SavePreciseSpecterFile(filename, Graph.Instance);
 
             writeSpectrumOptions(file, dt, shift);
             file.Save(filename);

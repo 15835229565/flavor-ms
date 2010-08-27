@@ -739,7 +739,10 @@ namespace Flavor.Forms {
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
                     bool hint = (openSpecterFileDialog.FilterIndex == 1);
-                    LoadedCollectorsForm form = new LoadedCollectorsForm(new Graph(), openSpecterFileDialog.FileName, hint);
+                    Graph graph;
+                    string fileName = openSpecterFileDialog.FileName;
+                    bool result = !Config.openSpectrumFile(fileName, hint, out graph);
+                    LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName, result);
                     form.MdiParent = this;
                     form.Show();
                 } catch (Config.ConfigLoadException cle) {

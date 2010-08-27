@@ -8,15 +8,16 @@ using Flavor.Controls;
 namespace Flavor.Forms {
     internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {
         private string displayedFileName;
-        public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
-            : base(!Config.openSpectrumFile(fileName, hint, graph), graph) {
+        public LoadedCollectorsForm(Graph graph, string fileName, bool isPrecise)
+            : base(isPrecise, graph) {
             InitializeComponent();
             this.Text = displayedFileName = fileName;
             // TODO: may be Diff!
             graph.DisplayingMode = Graph.Displaying.Loaded;
 
             if (preciseSpecterDisplayed) {
-                setXScaleLimits(Config.PreciseDataLoaded);
+                // TODO:!
+                //setXScaleLimits(Config.PreciseDataLoaded);
             } else {
                 ushort minX = (ushort)(graph.Displayed1Steps[0][0].X);
                 ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);

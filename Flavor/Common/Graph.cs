@@ -8,7 +8,7 @@ namespace Flavor.Common {
         internal static Graph Instance {
             get {
                 if (instance == null)
-                    instance = new Graph();
+                    instance = new Graph(Config.CommonOptions);
                 return instance;
             }
         }
@@ -174,9 +174,9 @@ namespace Flavor.Common {
             }
         }
 
-        private Spectrum collectors = new Spectrum(Config.CommonOptions);
-        private Spectrum loadedSpectra = new Spectrum();
-        private Spectrum diffSpectra = new Spectrum();
+        private Spectrum collectors;
+        //private Spectrum loadedSpectra = new Spectrum();
+        //private Spectrum diffSpectra = new Spectrum();
         private List<PointPairListPlus> getPointPairs(Spectrum which, int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
@@ -188,7 +188,8 @@ namespace Flavor.Common {
         }
         internal List<PointPairListPlus> Displayed1 {
             get {
-                switch (displayMode) {
+                return getPointPairs(collectors, 1, true);
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         return getPointPairs(loadedSpectra, 1, true);
                     case Displaying.Measured:
@@ -197,12 +198,13 @@ namespace Flavor.Common {
                         return getPointPairs(diffSpectra, 1, true);
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
             }
         }
         internal List<PointPairListPlus> Displayed2 {
             get {
-                switch (displayMode) {
+                return getPointPairs(collectors, 2, true);
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         return getPointPairs(loadedSpectra, 2, true);
                     case Displaying.Measured:
@@ -211,12 +213,13 @@ namespace Flavor.Common {
                         return getPointPairs(diffSpectra, 2, true);
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
             }
         }
         internal List<PointPairListPlus> Displayed1Steps {
             get {
-                switch (displayMode) {
+                return getPointPairs(collectors, 1, false);
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         return getPointPairs(loadedSpectra, 1, false);
                     case Displaying.Measured:
@@ -225,12 +228,13 @@ namespace Flavor.Common {
                         return getPointPairs(diffSpectra, 1, false);
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
             }
         }
         internal List<PointPairListPlus> Displayed2Steps {
             get {
-                switch (displayMode) {
+                return getPointPairs(collectors, 2, false);
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         return getPointPairs(loadedSpectra, 2, false);
                     case Displaying.Measured:
@@ -239,12 +243,13 @@ namespace Flavor.Common {
                         return getPointPairs(diffSpectra, 2, false);
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
             }
         }
         internal List<pListScaled> DisplayedRows1 {
             get {
-                switch (displayMode) {
+                return collectors[0];
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         return loadedSpectra[0];
                     case Displaying.Measured:
@@ -253,12 +258,13 @@ namespace Flavor.Common {
                         return diffSpectra[0];
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
             }
         }
         internal List<pListScaled> DisplayedRows2 {
             get {
-                switch (displayMode) {
+                return collectors[1];
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         return loadedSpectra[1];
                     case Displaying.Measured:
@@ -267,13 +273,15 @@ namespace Flavor.Common {
                         return diffSpectra[1];
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
             }
         }
         internal bool isPreciseSpectrum {
             get {
                 int count1, count2;
-                switch (displayMode) {
+                count1 = collectors[0].Count;
+                count2 = collectors[1].Count;
+                /*switch (displayMode) {
                     case Displaying.Loaded:
                         count1 = loadedSpectra[0].Count;
                         count2 = loadedSpectra[1].Count;
@@ -288,7 +296,7 @@ namespace Flavor.Common {
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
-                }
+                }*/
                 if ((count1 == 1) && (count2 == 1)) {
                     return false;
                 }
@@ -322,20 +330,21 @@ namespace Flavor.Common {
         internal delegate void PointAddedDelegate(bool notNull);
         internal event PointAddedDelegate OnPointAdded;
 
-        internal Graph() {
+        internal Graph(CommonOptions commonOpts) {
+            collectors = new Spectrum(commonOpts);
             //Generating blank scan spectra for either collector
             collectors[0] = new List<pListScaled>();
             collectors[0].Add(new pListScaled(true));
             collectors[1] = new List<pListScaled>();
             collectors[1].Add(new pListScaled(false));
-            loadedSpectra[0] = new List<pListScaled>();
+            /*loadedSpectra[0] = new List<pListScaled>();
             loadedSpectra[0].Add(new pListScaled(true));
             loadedSpectra[1] = new List<pListScaled>();
             loadedSpectra[1].Add(new pListScaled(false));
             diffSpectra[0] = new List<pListScaled>();
             diffSpectra[0].Add(new pListScaled(true));
             diffSpectra[1] = new List<pListScaled>();
-            diffSpectra[1].Add(new pListScaled(false));
+            diffSpectra[1].Add(new pListScaled(false));*/
         }
 
         internal void updateGraph(int y1, int y2, ushort pnt) {
@@ -355,16 +364,20 @@ namespace Flavor.Common {
         }
 
         internal void updateLoaded1Graph(ushort pnt, int y) {
-            (loadedSpectra[0])[0].Add(pnt, y);
+            (collectors[0])[0].Add(pnt, y);
+            //(loadedSpectra[0])[0].Add(pnt, y);
         }
 
         internal void updateLoaded2Graph(ushort pnt, int y) {
-            (loadedSpectra[1])[0].Add(pnt, y);
+            (collectors[1])[0].Add(pnt, y);
+            //(loadedSpectra[1])[0].Add(pnt, y);
         }
 
         internal void updateLoaded(PointPairListPlus pl1, PointPairListPlus pl2) {
-            (loadedSpectra[0])[0].SetRows(pl1);
-            (loadedSpectra[1])[0].SetRows(pl2);
+            (collectors[0])[0].SetRows(pl1);
+            (collectors[1])[0].SetRows(pl2);
+            /*(loadedSpectra[0])[0].SetRows(pl1);
+            (loadedSpectra[1])[0].SetRows(pl2);*/
         }
 
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
@@ -375,10 +388,14 @@ namespace Flavor.Common {
         }
 
         internal void ResetLoadedPointLists() {
-            loadedSpectra[0].Clear();
+            collectors[0].Clear();
+            collectors[0].Add(new pListScaled(true));
+            collectors[1].Clear();
+            collectors[1].Add(new pListScaled(false));
+            /*loadedSpectra[0].Clear();
             loadedSpectra[0].Add(new pListScaled(true));
             loadedSpectra[1].Clear();
-            loadedSpectra[1].Add(new pListScaled(false));
+            loadedSpectra[1].Add(new pListScaled(false));*/
             displayMode = Displaying.Loaded;
         }
 
@@ -401,14 +418,16 @@ namespace Flavor.Common {
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
             foreach (Utility.PreciseEditorData ped in peds)
-                diffSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+                //diffSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             displayMode = Displaying.Diff;
             OnNewGraphData(true);
         }
-        internal void updateGraphAfterPreciseLoad() {
+        internal void updateGraphAfterPreciseLoad(PreciseSpectrum peds) {
             ResetLoadedPointLists();
-            foreach (Utility.PreciseEditorData ped in Config.PreciseDataLoaded)
-                loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+            foreach (Utility.PreciseEditorData ped in peds)
+                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+                //loadedSpectra[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
         }
 
         internal void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
@@ -421,12 +440,12 @@ namespace Flavor.Common {
             foreach (pListScaled pl in collectors[col - 1]) {
                 pl.RecomputeMassRow();
             }
-            foreach (pListScaled pl in loadedSpectra[col - 1]) {
+            /*foreach (pListScaled pl in loadedSpectra[col - 1]) {
                 pl.RecomputeMassRow();
             }
             foreach (pListScaled pl in diffSpectra[col - 1]) {
                 pl.RecomputeMassRow();
-            }
+            }*/
             if (axisMode == pListScaled.DisplayValue.Mass) {
                 //TODO: Нужно заменить recreate bool -> enum, чтобы перерисовывать только нужный коллектор
                 OnNewGraphData(true);

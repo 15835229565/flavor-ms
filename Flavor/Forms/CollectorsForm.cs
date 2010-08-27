@@ -444,13 +444,13 @@ namespace Flavor.Forms {
                 saveSpecterFileDialog.Filter = Config.preciseSpectrumFileDialogFilter;
                 saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
-                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, graph.DisplayingMode);
+                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, graph);
                 }
             } else {
                 saveSpecterFileDialog.Filter = Config.spectrumFileDialogFilter;
                 saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
-					Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph.DisplayingMode, graph);
+					Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph);
                 }
             }
         }
