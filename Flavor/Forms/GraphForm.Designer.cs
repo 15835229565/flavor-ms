@@ -67,7 +67,7 @@ namespace Flavor.Forms {
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             graphFormMenuStrip.SuspendLayout();
-            this.SuspendLayout();
+            //this.SuspendLayout();
             // 
             // graphFormMenuStrip
             // 
@@ -184,7 +184,7 @@ namespace Flavor.Forms {
             this.measurePanelToolStripMenuItem.Name = "measurePanelToolStripMenuItem";
             this.measurePanelToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.measurePanelToolStripMenuItem.Text = "Панель режима";
-            this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
+			this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
             // 
             // editMenu
             // 
@@ -292,8 +292,8 @@ namespace Flavor.Forms {
             this.Resize += new System.EventHandler(this.GraphForm_Resize);
             graphFormMenuStrip.ResumeLayout(false);
             graphFormMenuStrip.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            //this.ResumeLayout(false);
+            //this.PerformLayout();
 
         }
 

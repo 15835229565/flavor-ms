@@ -25,6 +25,7 @@ namespace Flavor.Forms {
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             this.closeSpecterFileToolStripMenuItem.Enabled = true;
+			this.measurePanelToolStripMenuItem.Checked = true;
         }
 
         #endregion

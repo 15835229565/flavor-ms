@@ -47,7 +47,7 @@ namespace Flavor.Forms {
             }
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
-        public CollectorsForm(bool isPrecise, Graph graph) {
+		public CollectorsForm(bool isPrecise, Graph graph) {
 			InitializeComponent();
             
             this.graph = graph;
@@ -69,7 +69,6 @@ namespace Flavor.Forms {
             // 
             // measurePanel
             // 
-            Panel = new MeasurePanel();
             //Panel.Dock = System.Windows.Forms.DockStyle.Right;
             //Panel.Location = new System.Drawing.Point(712, 49);
             //Panel.Name = "measurePanel";
@@ -77,7 +76,11 @@ namespace Flavor.Forms {
             //Panel.TabIndex = 18;
             //Panel.Visible = false;
         }
-        
+        protected override MeasurePanel initPanel() {
+            MeasurePanel panel = new MeasurePanel();
+			return panel;
+		}
+
         private void InvokeAxisModeChange() {
             if (this.InvokeRequired) {
                 this.Invoke(new Graph.AxisModeEventHandler(AxisModeChange));
@@ -96,31 +99,31 @@ namespace Flavor.Forms {
 			return false;
 		}
 
-        internal sealed override void CreateGraph() {
+        protected sealed override void CreateGraph() {
             ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
             ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             RefreshGraph();
         }
         protected sealed override void SetSize() {
-            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel != null && Panel.Visible ? Panel.Width : 0), (this.ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
+            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
 
-            collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (this.ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
+            collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
             collect2_graph.Size = size;
         }
 
         protected void setXScaleLimits() {
             setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
         }
-        internal void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
+        protected void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
             storeXScaleLimits();
             minX[0] = minX1;
             minX[1] = minX2;
             maxX[0] = maxX1;
             maxX[1] = maxX2;
         }
-        internal void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
+        protected void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
             storeXScaleLimits();
             ushort[] minX = { 1056, 1056 }, maxX = { 0, 0 };
             foreach (Utility.PreciseEditorData ped in peds) {
@@ -132,16 +135,16 @@ namespace Flavor.Forms {
             this.minX = minX;
             this.maxX = maxX;
         }
-        internal void storeXScaleLimits() {
+        private void storeXScaleLimits() {
             minXprev = minX;
             maxXprev = maxX;
         }
-        internal void restoreXScaleLimits() {
+        private void restoreXScaleLimits() {
             minX = minXprev;
             maxX = maxXprev;
         }
 
-        internal override void RefreshGraph() {
+        protected override void RefreshGraph() {
             graphs[0].Refresh();
             graphs[1].Refresh();
         }

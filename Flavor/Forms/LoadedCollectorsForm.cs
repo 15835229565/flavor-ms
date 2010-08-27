@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Flavor.Common;
+using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {
@@ -22,6 +23,11 @@ namespace Flavor.Forms {
                 setXScaleLimits(minX, maxX, minX, maxX);
             }
         }
+        /*protected override MeasurePanel initPanel() {
+            MeasurePanel panel = new MeasurePanel();
+			//panel.Visible = true;
+			return panel;
+		}*/
         public void DisplayLoadedSpectrum() {
             DisplayLoadedSpectrum(displayedFileName);
         }

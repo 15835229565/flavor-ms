@@ -9,14 +9,11 @@ using Flavor.Common;
 namespace Flavor.Forms {
     internal abstract partial class GraphForm: Form {
         private MeasurePanel panel = null;
-        public MeasurePanel Panel {
+        protected MeasurePanel Panel {
             get {
-                return panel;
-            }
-            protected set {
-                this.Controls.Remove(panel);
-                panel = value;
-                // 
+                if (panel == null) {
+					panel = initPanel();
+				// 
                 // panel
                 // 
                 panel.BackColor = System.Drawing.SystemColors.Control;
@@ -28,15 +25,23 @@ namespace Flavor.Forms {
                 panel.Visible = this.measurePanelToolStripMenuItem.Checked;
                 
                 this.Controls.Add(panel);
+				}
+				return panel;
             }
+            /*set {
+                this.Controls.Remove(panel);
+                panel = value;
+                this.Controls.Add(panel);
+			}*/
         }
-		
+		protected abstract MeasurePanel initPanel();
+
 		internal GraphForm() {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         private void GraphForm_Load(object sender, EventArgs e) {
             CreateGraph();
-            SetSize();
+            //SetSize();
         }
         private void GraphForm_Resize(object sender, EventArgs e) {
             SetSize();
@@ -48,15 +53,16 @@ namespace Flavor.Forms {
             saveData();
         }
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            this.Close();
+            // TODO: subclass-dependent on closing! also mini/max preventing!
+			this.Close();
         }
         private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
-            panel.Visible = measurePanelToolStripMenuItem.Checked;
+            Panel.Visible = measurePanelToolStripMenuItem.Checked;
             SetSize();
         }
 
-        internal abstract void RefreshGraph();
-        internal abstract void CreateGraph();
+        protected abstract void RefreshGraph();
+        protected abstract void CreateGraph();
         protected abstract void SetSize();
         protected abstract void saveData();
     }

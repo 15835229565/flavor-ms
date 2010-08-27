@@ -30,7 +30,7 @@ namespace Flavor.Forms {
             this.collect2_graph = new Flavor.Controls.ZedGraphControlPlus();
             this.collect1_graph = new Flavor.Controls.ZedGraphControlPlus();
             this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SuspendLayout();
+            //this.SuspendLayout();
             // 
             // distractFromCurrentToolStripMenuItem
             // 
@@ -103,9 +103,8 @@ namespace Flavor.Forms {
             this.Controls.Add(this.collect2_graph);
             this.Controls.Add(this.collect1_graph);
             this.Name = "CollectorsForm";
-            this.Text = "Коллекторы";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            //this.ResumeLayout(false);
+            //this.PerformLayout();
         }
 
         #endregion

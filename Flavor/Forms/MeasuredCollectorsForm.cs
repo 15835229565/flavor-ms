@@ -22,6 +22,11 @@ namespace Flavor.Forms {
             InitializeComponent();
             Graph.Instance.DisplayingMode = Graph.Displaying.Measured;
         }
+        /*protected override MeasurePanel initPanel() {
+            MeasurePanel panel = new MeasurePanel();
+			//panel.Visible = false;
+			return panel;
+		}*/
         internal void startScan() {
             // TODO: different types of panel
             //Panel = new MeasurePanel();
