@@ -70,12 +70,12 @@ namespace Flavor.Forms {
             // measurePanel
             // 
             Panel = new MeasurePanel();
-            Panel.Dock = System.Windows.Forms.DockStyle.Right;
-            Panel.Location = new System.Drawing.Point(712, 49);
-            Panel.Name = "measurePanel";
-            Panel.Size = new System.Drawing.Size(280, 895);
-            Panel.TabIndex = 18;
-            Panel.Visible = false;
+            //Panel.Dock = System.Windows.Forms.DockStyle.Right;
+            //Panel.Location = new System.Drawing.Point(712, 49);
+            //Panel.Name = "measurePanel";
+            //Panel.Size = new System.Drawing.Size(280, 895);
+            //Panel.TabIndex = 18;
+            //Panel.Visible = false;
         }
         
         private void InvokeAxisModeChange() {
@@ -102,7 +102,7 @@ namespace Flavor.Forms {
             RefreshGraph();
         }
         protected sealed override void SetSize() {
-            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (this.ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
+            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel != null && Panel.Visible ? Panel.Width : 0), (this.ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
 

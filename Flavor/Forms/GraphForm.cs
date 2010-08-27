@@ -25,7 +25,7 @@ namespace Flavor.Forms {
                 panel.Name = "panel";
                 panel.Size = new System.Drawing.Size(280, 667);
                 panel.TabIndex = 18;
-                panel.Visible = false;
+                panel.Visible = this.measurePanelToolStripMenuItem.Checked;
                 
                 this.Controls.Add(panel);
             }
