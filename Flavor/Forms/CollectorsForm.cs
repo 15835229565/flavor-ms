@@ -46,7 +46,7 @@ namespace Flavor.Forms {
         }
 		public CollectorsForm(bool isPrecise, Graph graph) {
 			InitializeComponent();
-            
+
             this.graph = graph;
             graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
 
@@ -64,8 +64,9 @@ namespace Flavor.Forms {
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
         }
-        protected override MeasurePanel initPanel() {
-            MeasurePanel panel = new MeasurePanel();
+        protected override GraphPanel initPanel() {
+            GraphPanel panel = new GraphPanel();
+            panel.Graph = graph;
 			return panel;
 		}
 
@@ -222,12 +223,13 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshGraph(bool recreate) {
             if (this.InvokeRequired) {
-                this.Invoke(new Graph.GraphEventHandler(RefreshGraph), recreate);
+                // TODO: NullPointerException here..
+                this.Invoke(new Graph.GraphEventHandler(_refreshGraph), recreate);
                 return;
             }
-            RefreshGraph(recreate);
+            _refreshGraph(recreate);
         }
-        private void RefreshGraph(bool recreate) {
+        private void _refreshGraph(bool recreate) {
             refreshGraph(recreate);
         }
         protected virtual bool refreshGraph(bool recreate) {

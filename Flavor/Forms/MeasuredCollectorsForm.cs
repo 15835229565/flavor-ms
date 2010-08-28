@@ -17,29 +17,30 @@ namespace Flavor.Forms {
             }
             return instance;
         }*/
+        
         internal MeasuredCollectorsForm(bool isPrecise)
             : base(isPrecise, Graph.Instance) {
             InitializeComponent();
             Graph.Instance.DisplayingMode = Graph.Displaying.Measured;
         }
-        /*protected override MeasurePanel initPanel() {
-            MeasurePanel panel = new MeasurePanel();
-			//panel.Visible = false;
+        protected sealed override GraphPanel initPanel() {
+            GraphPanel panel = new MeasureGraphPanel();
+            panel.Graph = Graph.Instance;
 			return panel;
-		}*/
+		}
         internal void startScan() {
             // TODO: different types of panel
             preciseSpecterDisplayed = false;
-            Panel.overview_button_Click();
+            (Panel as MeasureGraphPanel).overview_button_Click();
         }
         internal void startPrecise() {
             // TODO: different types of panel
             preciseSpecterDisplayed = true;
-            Panel.sensmeasure_button_Click();
+            (Panel as MeasureGraphPanel).sensmeasure_button_Click();
         }
         internal void startMonitor() {
             // TODO: move to other class
-            Panel.monitorToolStripButton_Click();
+            (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
         }
         internal void prepareControlsOnMeasureStart() {
             setXScaleLimits();
@@ -52,7 +53,7 @@ namespace Flavor.Forms {
             Graph.Instance.ResetPointLists();
         }
         internal void cancelScan() {
-            Panel.cancelScan();
+            (Panel as MeasureGraphPanel).cancelScan();
             //mandatory?
             measurePanelToolStripMenuItem.Checked = false;
             specterSavingEnabled = true;
@@ -73,7 +74,7 @@ namespace Flavor.Forms {
             } else {
                 RefreshGraph();
                 // TODO: simplify code below
-                Panel.RefreshGraph();
+                (Panel as MeasureGraphPanel).RefreshGraph();
                 Commander.CurrentMeasureMode.refreshGraphics(this);
             }
             return true;
@@ -85,10 +86,10 @@ namespace Flavor.Forms {
 
         internal void refreshGraphicsOnScanStep() {
             yAxisChange();
-            Panel.refreshGraphicsOnScanStep();
+            (Panel as MeasureGraphPanel).refreshGraphicsOnScanStep();
         }
         internal void refreshGraphicsOnPreciseStep() {
-            Panel.refreshGraphicsOnPreciseStep();
+            (Panel as MeasureGraphPanel).refreshGraphicsOnPreciseStep();
         }
         internal void refreshGraphicsOnMonitorStep() {
             //TODO: this is temporary

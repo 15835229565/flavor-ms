@@ -8,8 +8,8 @@ using Flavor.Common;
 
 namespace Flavor.Forms {
     internal abstract partial class GraphForm: Form {
-        private MeasurePanel panel = null;
-        protected MeasurePanel Panel {
+        private GraphPanel panel = null;
+        protected GraphPanel Panel {
             get {
                 if (panel == null) {
 					panel = initPanel();
@@ -34,7 +34,7 @@ namespace Flavor.Forms {
                 this.Controls.Add(panel);
 			}*/
         }
-		protected abstract MeasurePanel initPanel();
+		protected abstract GraphPanel initPanel();
 
 		internal GraphForm() {
             InitializeComponent();

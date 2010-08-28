@@ -174,33 +174,36 @@ namespace Flavor.Common {
         }
 
         private Spectrum collectors;
-        private List<PointPairListPlus> getPointPairs(Spectrum which, int col, bool useAxisMode) {
+        internal CommonOptions CommonOptions {
+            get { return collectors.CommonOptions; }
+        }
+        private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
             if (useAxisMode) am = axisMode;
-            foreach (pListScaled pLS in which[col - 1]) {
+            foreach (pListScaled pLS in collectors[col - 1]) {
                 temp.Add(pLS.Points(am));
             }
             return temp;
         }
         internal List<PointPairListPlus> Displayed1 {
             get {
-                return getPointPairs(collectors, 1, true);
+                return getPointPairs(1, true);
             }
         }
         internal List<PointPairListPlus> Displayed2 {
             get {
-                return getPointPairs(collectors, 2, true);
+                return getPointPairs(2, true);
             }
         }
         internal List<PointPairListPlus> Displayed1Steps {
             get {
-                return getPointPairs(collectors, 1, false);
+                return getPointPairs(1, false);
             }
         }
         internal List<PointPairListPlus> Displayed2Steps {
             get {
-                return getPointPairs(collectors, 2, false);
+                return getPointPairs(2, false);
             }
         }
         internal List<pListScaled> DisplayedRows1 {

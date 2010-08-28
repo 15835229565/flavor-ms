@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Flavor.Common;
 
 namespace Flavor.Forms {
-    partial class AddPointForm: Form {
+    internal partial class AddPointForm: Form {
         internal AddPointForm()
             : base() {
             InitializeComponent();
