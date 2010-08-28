@@ -16,11 +16,6 @@ namespace Flavor.Controls {
             get { return curveReference; }
             set { curveReference = value; }
         }
-        /*private int curveIndex = -1;
-        internal int CurveIndex {
-            get { return curveIndex; }
-            set { curveIndex = value; }
-        }*/
         private int pointIndex;
         internal int PointIndex {
             get { return pointIndex; }
@@ -39,10 +34,6 @@ namespace Flavor.Controls {
         internal void AddPointToPreciseEditor(object sender, EventArgs e) {
             // TODO: raise event here and move code below to mainform
             if (new AddPointForm((ushort)(curveReference[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {
-                /*PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
-                pForm.UpLevel = (mainForm)((GraphForm)(this.ParentForm)).MdiParent;
-                pForm.Show();
-                pForm.BringToFront();*/
             }
         }
         internal void DiffWithCoeff(object sender, EventArgs e) {

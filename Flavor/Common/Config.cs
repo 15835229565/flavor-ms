@@ -50,20 +50,13 @@ namespace Flavor.Common {
         }
 
         private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
-        //private static List<Utility.PreciseEditorData> preciseDataLoaded = new List<Utility.PreciseEditorData>();
         private static List<Utility.PreciseEditorData> preciseDataDiff = new List<Utility.PreciseEditorData>();
 
         internal static List<Utility.PreciseEditorData> PreciseData {
             get { return preciseData; }
-            //set { preciseData = value; }
         }
-        /*internal static List<Utility.PreciseEditorData> PreciseDataLoaded {
-            get { return preciseDataLoaded; }
-            //set { preciseData = value; }
-        }*/
         internal static List<Utility.PreciseEditorData> PreciseDataDiff {
             get { return preciseDataDiff; }
-            //set { preciseData = value; }
         }
 
         private static Utility.PreciseEditorData reperPeak = null;
@@ -99,13 +92,6 @@ namespace Flavor.Common {
         private static int iterations = 0;
         internal static int Iterations {
             get { return iterations; }
-            /*set {
-                if (value < 0) {
-                    iterations = 0;
-                    return;
-                }
-                iterations = value;
-            }*/
         }
         private static int timeLimit = 0;
         internal static int TimeLimit {
@@ -154,9 +140,6 @@ namespace Flavor.Common {
                 _conf.SelectSingleNode(fullName).InnerText = value.ToString();
             }
         }
-        /*private static string combine(string prefix, string nodeName) {
-            return string.Concat(prefix, "/", nodeName);
-        }*/
         private static string combine(params string[] args) {
             return string.Join("/", args);
         }
@@ -337,7 +320,6 @@ namespace Flavor.Common {
             } catch (ConfigLoadException cle) {
                 resultException = (resultException == null) ? cle : resultException;
             }
-            //graph = null;
             throw resultException;
         }
 
@@ -531,7 +513,6 @@ namespace Flavor.Common {
                     try {
                         PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
                         PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
-                        //graph.ResetDiffPointLists();
                         graph.updateGraphAfterScanDiff(diff1, diff2);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
@@ -618,7 +599,6 @@ namespace Flavor.Common {
             PreciseSpectrum peds = new PreciseSpectrum();
             bool result = OpenPreciseSpecterFile(filename, peds);
             if (result) {
-                //preciseDataLoaded = peds;
                 graph = new Graph(peds.CommonOptions);
                 graph.updateGraphAfterPreciseLoad(peds);
             } else {

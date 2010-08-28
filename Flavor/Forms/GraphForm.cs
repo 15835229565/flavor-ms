@@ -41,7 +41,6 @@ namespace Flavor.Forms {
         }
         private void GraphForm_Load(object sender, EventArgs e) {
             CreateGraph();
-            //SetSize();
         }
         private void GraphForm_Resize(object sender, EventArgs e) {
             SetSize();

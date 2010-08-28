@@ -9,9 +9,6 @@ using ZedGraph;
 
 namespace Flavor.Forms {
     internal abstract partial class CollectorsForm: GraphForm {
-        //internal delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
-        //private event DiffOnPointEventHandler OnDiffOnPoint;
-
         private const string COL1_TITLE = "Первый коллектор";
         private const string COL2_TITLE = "Второй коллектор";
 		private const string DIFF_TITLE = "Diff - ";
@@ -66,15 +63,6 @@ namespace Flavor.Forms {
 
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
-            // 
-            // measurePanel
-            // 
-            //Panel.Dock = System.Windows.Forms.DockStyle.Right;
-            //Panel.Location = new System.Drawing.Point(712, 49);
-            //Panel.Name = "measurePanel";
-            //Panel.Size = new System.Drawing.Size(280, 895);
-            //Panel.TabIndex = 18;
-            //Panel.Visible = false;
         }
         protected override MeasurePanel initPanel() {
             MeasurePanel panel = new MeasurePanel();
@@ -227,8 +215,6 @@ namespace Flavor.Forms {
             myPane.YAxis.Scale.MaxAuto = true;
             // Calculate the Axis Scale Ranges
             graphs[zgcIndex].AxisChange();
-
-            //RefreshGraph();
         }
         private void distractFromCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
             GraphForm_OnDiffOnPoint(0, null, null);

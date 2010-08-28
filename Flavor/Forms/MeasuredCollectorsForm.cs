@@ -29,13 +29,11 @@ namespace Flavor.Forms {
 		}*/
         internal void startScan() {
             // TODO: different types of panel
-            //Panel = new MeasurePanel();
             preciseSpecterDisplayed = false;
             Panel.overview_button_Click();
         }
         internal void startPrecise() {
             // TODO: different types of panel
-            //Panel = new MeasurePanel();
             preciseSpecterDisplayed = true;
             Panel.sensmeasure_button_Click();
         }
@@ -46,14 +44,12 @@ namespace Flavor.Forms {
         internal void prepareControlsOnMeasureStart() {
             setXScaleLimits();
             // TODO: make private to GraphForm
-            //measurePanelToolStripMenuItem.Enabled = true;
             measurePanelToolStripMenuItem.Checked = true;
 
             Panel.prepareControlsOnMeasureStart();
 
             specterSavingEnabled = false;
             Graph.Instance.ResetPointLists();
-            //CreateGraph();
         }
         internal void cancelScan() {
             Panel.cancelScan();
