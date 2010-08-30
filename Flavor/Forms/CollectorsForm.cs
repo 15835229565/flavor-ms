@@ -26,7 +26,6 @@ namespace Flavor.Forms {
 		private ZedGraphControlPlus[] graphs;
         protected bool preciseSpecterDisplayed;
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
-        /*private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };*/
         private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
         Color.Black, Color.Magenta,};
         internal bool specterSavingEnabled {
@@ -107,14 +106,12 @@ namespace Flavor.Forms {
             setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
         }
         protected void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
-            //storeXScaleLimits();
             minX[0] = minX1;
             minX[1] = minX2;
             maxX[0] = maxX1;
             maxX[1] = maxX2;
         }
         protected void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
-            //storeXScaleLimits();
             ushort[] minX = { 1056, 1056 }, maxX = { 0, 0 };
             foreach (Utility.PreciseEditorData ped in peds) {
                 if (minX[ped.Collector - 1] > ped.Step - ped.Width)
@@ -125,14 +122,6 @@ namespace Flavor.Forms {
             this.minX = minX;
             this.maxX = maxX;
         }
-        /*private void storeXScaleLimits() {
-            minXprev = minX;
-            maxXprev = maxX;
-        }*/
-        /*private void restoreXScaleLimits() {
-            minX = minXprev;
-            maxX = maxXprev;
-        }*/
 
         protected override void RefreshGraph() {
             graphs[0].Refresh();
@@ -142,13 +131,6 @@ namespace Flavor.Forms {
             graphs[0].AxisChange();
             graphs[1].AxisChange();
         }
-
-        /*private void setAutoScales() {
-            graphs[0].RestoreScale(graphs[0].GraphPane);
-            graphs[1].RestoreScale(graphs[1].GraphPane);
-            graphs[0].GraphPane.ZoomStack.Clear();
-            graphs[1].GraphPane.ZoomStack.Clear();
-        }*/
 
         internal void DisplayDiff() {
             graph.DisplayingMode = Graph.Displaying.Diff;

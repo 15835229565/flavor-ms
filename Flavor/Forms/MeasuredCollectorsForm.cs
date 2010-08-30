@@ -9,7 +9,7 @@ using Flavor.Common;
 using Flavor.Controls;
 
 namespace Flavor.Forms {
-    internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
+    internal partial class MeasuredCollectorsForm: CollectorsForm {
         /*private static MeasuredCollectorsForm instance = null;
         internal MeasuredCollectorsForm getInstance(bool isPrecise) {
             if (instance == null) {

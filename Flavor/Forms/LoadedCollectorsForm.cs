@@ -6,7 +6,7 @@ using Flavor.Common;
 using Flavor.Controls;
 
 namespace Flavor.Forms {
-    internal partial class LoadedCollectorsForm: CollectorsForm/*, ILoaded*/ {
+    internal partial class LoadedCollectorsForm: CollectorsForm {
         private string displayedFileName;
         public LoadedCollectorsForm(Graph graph, string fileName)
             : base(graph) {
