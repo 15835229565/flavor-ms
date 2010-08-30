@@ -33,8 +33,7 @@ namespace Flavor.Controls {
         }
         internal void AddPointToPreciseEditor(object sender, EventArgs e) {
             // TODO: raise event here and move code below to mainform
-            if (new AddPointForm((ushort)(curveReference[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {
-            }
+            if (new AddPointForm((ushort)(curveReference[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {}
         }
         internal void DiffWithCoeff(object sender, EventArgs e) {
             // can be NullPointerExceptions here..

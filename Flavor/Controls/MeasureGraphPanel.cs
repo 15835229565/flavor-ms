@@ -12,7 +12,7 @@ namespace Flavor.Controls {
             Commander.measureCancelRequested = true;
         }
 
-        protected override void prepareControls() {
+        protected sealed override void prepareControls() {
             // put here code that only changes data source and refreshes
             //Elements are not visible until first real information is ready
             peakNumberLabel.Visible = false;
@@ -39,7 +39,7 @@ namespace Flavor.Controls {
 
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
         }
-        internal void RefreshGraph() {
+        internal void performStep() {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
                 if (scanProgressBar.Value == scanProgressBar.Maximum) {
                     // if already full line - reinit
@@ -54,7 +54,7 @@ namespace Flavor.Controls {
             detector2CountsLabel.Text = Device.Detector2.ToString();
         }
 
-        internal void overview_button_Click() {
+        internal void overview_button_Click(ushort start, ushort end) {
             startScanTextLabel.Visible = true;
             label18.Visible = true;
             firstStepLabel.Visible = true;
@@ -62,9 +62,8 @@ namespace Flavor.Controls {
             label37.Visible = false;
             peakNumberLabel.Visible = false;
 
-            //TODO:!
-            firstStepLabel.Text = Config.sPoint.ToString();
-            lastStepLabel.Text = Config.ePoint.ToString();
+            firstStepLabel.Text = start.ToString();
+            lastStepLabel.Text = end.ToString();
         }
         internal void sensmeasure_button_Click() {
             startScanTextLabel.Visible = false;
@@ -114,7 +113,7 @@ namespace Flavor.Controls {
                 label16.Visible = true;
             }
         }
-        protected override void disableControls() {
+        protected sealed override void disableControls() {
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.Default;
             cancelScanButton.Visible = false;
         }

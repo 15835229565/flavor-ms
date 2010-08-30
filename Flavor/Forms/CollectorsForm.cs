@@ -24,7 +24,23 @@ namespace Flavor.Forms {
         private Graph graph;
 		
 		private ZedGraphControlPlus[] graphs;
-        protected bool preciseSpecterDisplayed;
+        private bool preciseSpectrumDisplayed;
+        protected bool PreciseSpectrumDisplayed {
+            get {
+                // TODO: make more clear here. now in Graph can be mistake
+                return preciseSpectrumDisplayed; 
+            }
+            set {
+                if (graph.isPreciseSpectrum != value) {
+                    // TODO: if was wrong false and new value is true - useless reset here!
+                    graph.ResetPointLists();
+                }
+                if (preciseSpectrumDisplayed != value) {
+                    preciseSpectrumDisplayed = value;
+                    setTitles();
+                }
+            }
+        }
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
         private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
         Color.Black, Color.Magenta,};
@@ -43,14 +59,12 @@ namespace Flavor.Forms {
             }
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
-		public CollectorsForm(Graph graph) {
+		public CollectorsForm(Graph graph, bool hint) {
             this.graph = graph;
             Panel.Graph = graph;
 
-            preciseSpecterDisplayed = graph.isPreciseSpectrum;
-            modeText = preciseSpecterDisplayed ? PREC_TITLE : SCAN_TITLE;
-            col1Text = COL1_TITLE + modeText;
-            col2Text = COL2_TITLE + modeText;
+            preciseSpectrumDisplayed = hint;
+            setTitles();
 
             InitializeComponent();
 
@@ -64,6 +78,12 @@ namespace Flavor.Forms {
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
         }
+        private void setTitles() {
+            modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
+            col1Text = COL1_TITLE + modeText;
+            col2Text = COL2_TITLE + modeText;
+        }
+
         protected override GraphPanel initPanel() {
             GraphPanel panel = new GraphPanel();
             panel.Graph = graph;
@@ -124,16 +144,15 @@ namespace Flavor.Forms {
         }
 
         protected override void RefreshGraph() {
-            graphs[0].Refresh();
-            graphs[1].Refresh();
+            collect1_graph.Refresh();
+            collect2_graph.Refresh();
         }
         protected void yAxisChange() {
-            graphs[0].AxisChange();
-            graphs[1].AxisChange();
+            collect1_graph.AxisChange();
+            collect2_graph.AxisChange();
         }
 
         internal void DisplayDiff() {
-            graph.DisplayingMode = Graph.Displaying.Diff;
             col1Text = DIFF_TITLE + COL1_TITLE + modeText;
             col2Text = DIFF_TITLE + COL2_TITLE + modeText;
 			// multiple times?
@@ -173,7 +192,7 @@ namespace Flavor.Forms {
 
             specterSavingEnabled = false;
 
-            if (preciseSpecterDisplayed) {
+            if (PreciseSpectrumDisplayed) {
                 for (int i = 1; i < dataPoints.Count; ++i) {
                     if (dataPoints[i].Step.Count > 0)
                         specterSavingEnabled = true;
@@ -400,10 +419,10 @@ namespace Flavor.Forms {
             return tooltipData;
         }
         private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
-            if (preciseSpecterDisplayed) {
-                openSpecterFileDialog.Filter = Config.preciseSpectrumFileDialogFilter;
+            if (PreciseSpectrumDisplayed) {
+                openSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
             } else {
-                openSpecterFileDialog.Filter = Config.spectrumFileDialogFilter;
+                openSpecterFileDialog.Filter = Config.SPECTRUM_FILE_DIALOG_FILTER;
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
@@ -419,14 +438,14 @@ namespace Flavor.Forms {
                 if (Graph.Displaying.Diff == graph.DisplayingMode)
 					saveSpecterFileDialog.FileName += Config.DIFF_FILE_SUFFIX;
 			}
-			if (preciseSpecterDisplayed) {
-                saveSpecterFileDialog.Filter = Config.preciseSpectrumFileDialogFilter;
+			if (PreciseSpectrumDisplayed) {
+                saveSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                     Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, graph);
                 }
             } else {
-                saveSpecterFileDialog.Filter = Config.spectrumFileDialogFilter;
+                saveSpecterFileDialog.Filter = Config.SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
 					Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph);

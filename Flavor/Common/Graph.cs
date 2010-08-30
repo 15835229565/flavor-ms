@@ -7,8 +7,11 @@ namespace Flavor.Common {
         private static Graph instance = null;
         internal static Graph Instance {
             get {
-                if (instance == null)
+                if (instance == null) {
                     instance = new Graph(Config.CommonOptions);
+                    instance.displayMode = Displaying.Measured;
+                    instance.preciseData = Config.PreciseData;
+                }
                 return instance;
             }
         }
@@ -160,22 +163,24 @@ namespace Flavor.Common {
                 }
             }
         }
-        private Displaying displayMode = Displaying.Measured;
+        private Displaying displayMode = Displaying.Loaded;
         internal Displaying DisplayingMode {
-            get {
-                return displayMode;
-            }
-            set {
+            get { return displayMode; }
+            /*set {
                 if (displayMode != value) {
                     displayMode = value;
                     // here can be event
                 }
-            }
+            }*/
         }
 
         private Spectrum collectors;
         internal CommonOptions CommonOptions {
             get { return collectors.CommonOptions; }
+        }
+        private PreciseSpectrum preciseData = null;
+        internal PreciseSpectrum PreciseData {
+            get { return preciseData; }
         }
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
@@ -221,6 +226,7 @@ namespace Flavor.Common {
                 int count1, count2;
                 count1 = collectors[0].Count;
                 count2 = collectors[1].Count;
+                // TODO: BAD - mistaken if no data is present
                 if ((count1 == 1) && (count2 == 1)) {
                     return false;
                 }
@@ -228,16 +234,58 @@ namespace Flavor.Common {
             }
         }
 
-        private ushort lastPoint;
-        internal ushort LastPoint {
+        #region only during measure (static)
+        private static ushort lastPoint;
+        internal static ushort LastPoint {
             get { return lastPoint; }
         }
-        private Utility.PreciseEditorData curPeak;
-        internal Utility.PreciseEditorData CurrentPeak {
+        private static Utility.PreciseEditorData curPeak;
+        internal static Utility.PreciseEditorData CurrentPeak {
             get { return curPeak; }
         }
-        private Utility.PreciseEditorData peakToAdd = null;
-        internal Utility.PreciseEditorData PointToAdd {
+
+        internal static void ResetPointListsWithEvent() {
+            instance.ResetPointLists();
+            instance.displayMode = Displaying.Measured;
+            instance.OnNewGraphData(true);
+        }
+
+        // scan mode
+        internal static void updateGraphDuringScanMeasure(int y1, int y2, ushort pnt) {
+            (instance.collectors[0])[0].Add(pnt, y1);
+            (instance.collectors[1])[0].Add(pnt, y2);
+            lastPoint = pnt;
+            instance.OnNewGraphData(false);
+        }
+
+        // precise mode
+        internal static void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
+            lastPoint = pnt;
+            curPeak = curped;
+            instance.OnNewGraphData(false);
+        }
+        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
+            instance.ResetPointLists();
+            for (int i = 0; i < peds.Count; ++i) {
+                if (!peds[i].Use) {
+                    // checker peak
+                    continue;
+                }
+                pListScaled temp = new pListScaled(peds[i].Collector == 1);
+                // really need? peds[i].Step += shift;
+                for (int j = 0; j < senseModeCounts[i].Length; ++j) {
+                    temp.Add((ushort)(peds[i].Step - peds[i].Width + j), senseModeCounts[i][j]);
+                }
+                instance.collectors[peds[i].Collector - 1].Add(temp);
+                peds[i].AssociatedPoints = temp.Step;
+            }
+            instance.OnNewGraphData(true);
+        }
+        #endregion
+        
+        #region peak to add (static)
+        private static Utility.PreciseEditorData peakToAdd = null;
+        internal static Utility.PreciseEditorData PointToAdd {
             get { return peakToAdd; }
             set {
                 if (peakToAdd != value) {
@@ -250,8 +298,9 @@ namespace Flavor.Common {
             }
         }
         internal delegate void PointAddedDelegate(bool notNull);
-        internal event PointAddedDelegate OnPointAdded;
-
+        internal static event PointAddedDelegate OnPointAdded;
+        #endregion
+        
         internal Graph(CommonOptions commonOpts) {
             collectors = new Spectrum(commonOpts);
             //Generating blank scan spectra for either collector
@@ -261,65 +310,27 @@ namespace Flavor.Common {
             collectors[1].Add(new pListScaled(false));
         }
 
-        internal void updateGraph(int y1, int y2, ushort pnt) {
-            (collectors[0])[0].Add(pnt, y1);
-            (collectors[1])[0].Add(pnt, y2);
-            lastPoint = pnt;
-            OnNewGraphData(false);
-        }
-
         internal void ResetPointLists() {
             collectors[0].Clear();
             collectors[0].Add(new pListScaled(true));
             collectors[1].Clear();
             collectors[1].Add(new pListScaled(false));
-            displayMode = Displaying.Measured;
-            OnNewGraphData(true);
         }
 
-        internal void updateLoaded1Graph(ushort pnt, int y) {
-            (collectors[0])[0].Add(pnt, y);
-        }
-
-        internal void updateLoaded2Graph(ushort pnt, int y) {
-            (collectors[1])[0].Add(pnt, y);
-        }
-
-        internal void updateLoaded(PointPairListPlus pl1, PointPairListPlus pl2) {
+        internal void updateGraphAfterScanLoad(PointPairListPlus pl1, PointPairListPlus pl2) {
             (collectors[0])[0].SetRows(pl1);
             (collectors[1])[0].SetRows(pl2);
         }
+        internal void updateGraphAfterPreciseLoad(PreciseSpectrum peds) {
+            preciseData = peds;
+            ResetPointLists();
+            foreach (Utility.PreciseEditorData ped in peds)
+                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+        }
 
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
-            DisplayedRows1[0].SetRows(pl1);
-            DisplayedRows2[0].SetRows(pl2);
+            updateGraphAfterScanLoad(pl1, pl2);
             displayMode = Displaying.Diff;
-            OnNewGraphData(true);
-        }
-
-        internal void ResetLoadedPointLists() {
-            collectors[0].Clear();
-            collectors[0].Add(new pListScaled(true));
-            collectors[1].Clear();
-            collectors[1].Add(new pListScaled(false));
-            displayMode = Displaying.Loaded;
-        }
-
-        internal void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
-            ResetPointLists();
-            for (int i = 0; i < peds.Count; ++i) {
-                if (!peds[i].Use) {
-                    // checker peak
-                    continue;
-                }
-                pListScaled temp = new pListScaled(peds[i].Collector == 1);
-                // really need? peds[i].Step += shift;
-                for (int j = 0; j < senseModeCounts[i].Length; ++j) {
-                    temp.Add((ushort)(peds[i].Step - peds[i].Width + j), senseModeCounts[i][j]);
-                }
-                collectors[peds[i].Collector - 1].Add(temp);
-                peds[i].AssociatedPoints = temp.Step;
-            }
             OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
@@ -327,17 +338,6 @@ namespace Flavor.Common {
                 collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             displayMode = Displaying.Diff;
             OnNewGraphData(true);
-        }
-        internal void updateGraphAfterPreciseLoad(PreciseSpectrum peds) {
-            ResetLoadedPointLists();
-            foreach (Utility.PreciseEditorData ped in peds)
-                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-        }
-
-        internal void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
-            lastPoint = pnt;
-            curPeak = curped;
-            OnNewGraphData(false);
         }
 
         internal void RecomputeMassRows(byte col) {

@@ -56,7 +56,7 @@ namespace Flavor.Common.Measuring {
         }
         protected override void onExit() {
             // order is important here: points are saved from graph..
-            Graph.Instance.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
+            Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
             saveResults();
         }
         protected virtual void saveResults() {
@@ -147,7 +147,7 @@ namespace Flavor.Common.Measuring {
         }
         internal override void updateGraph() {
             ushort pnt = pointValue;
-            Graph.Instance.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
+            Graph.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
         }
         internal override void refreshGraphics(MeasuredCollectorsForm form) {
             form.refreshGraphicsOnPreciseStep();

@@ -7,7 +7,11 @@ namespace Flavor.Common {
     static class Config {
         private static XmlDocument _conf = new XmlDocument();
 
-        private static string initialDir;
+        private static readonly string INITIAL_DIR = System.IO.Directory.GetCurrentDirectory();
+
+        private const string CONFIG_NAME = "config.xml";
+        private const string CRASH_LOG_NAME = "MScrash.log";
+
         private static string confName;
         private static string logName;
 
@@ -17,8 +21,8 @@ namespace Flavor.Common {
 		
         internal const string DIFF_FILE_SUFFIX = "~diff";
 
-        internal static string spectrumFileDialogFilter = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
-        internal static string preciseSpectrumFileDialogFilter = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
+        internal static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
+        internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
 
         internal const string MONITOR_SPECTRUM_HEADER = "Monitor";
         internal const string PRECISE_OPTIONS_HEADER = "Precise options";
@@ -49,14 +53,9 @@ namespace Flavor.Common {
             get { return commonOpts; }
         }
 
-        private static List<Utility.PreciseEditorData> preciseData = new List<Utility.PreciseEditorData>();
-        private static List<Utility.PreciseEditorData> preciseDataDiff = new List<Utility.PreciseEditorData>();
-
-        internal static List<Utility.PreciseEditorData> PreciseData {
+        private static PreciseSpectrum preciseData = new PreciseSpectrum();
+        internal static PreciseSpectrum PreciseData {
             get { return preciseData; }
-        }
-        internal static List<Utility.PreciseEditorData> PreciseDataDiff {
-            get { return preciseDataDiff; }
         }
 
         private static Utility.PreciseEditorData reperPeak = null;
@@ -126,9 +125,8 @@ namespace Flavor.Common {
         }
 
         internal static void getInitialDirectory() {
-            initialDir = System.IO.Directory.GetCurrentDirectory();
-            confName = System.IO.Path.Combine(initialDir, "config.xml");
-            logName = System.IO.Path.Combine(initialDir, "MScrash.log");
+            confName = System.IO.Path.Combine(INITIAL_DIR, CONFIG_NAME);
+            logName = System.IO.Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
         }
 
         private static void fillInnerText(string prefix, string nodeName, object value) {
@@ -325,7 +323,7 @@ namespace Flavor.Common {
 
         private static string genAutoSaveFilename(string extension, DateTime now) {
             string dirname;
-            dirname = System.IO.Path.Combine(initialDir, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
+            dirname = System.IO.Path.Combine(INITIAL_DIR, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
             if (!System.IO.Directory.Exists(@dirname)) {
                 System.IO.Directory.CreateDirectory(@dirname);
             }
@@ -337,15 +335,12 @@ namespace Flavor.Common {
             CommonOptions commonOpts;
             Graph.Displaying result = OpenSpecterFile(filename, pl1, pl2, out commonOpts);
 
-            // TODO: other opts must be loaded from file
-            graph = new Graph(CommonOptions);
+            graph = new Graph(commonOpts);
             switch (result) {
                 case Graph.Displaying.Measured:
-                    graph.ResetLoadedPointLists();
-                    graph.updateLoaded(pl1, pl2);
+                    graph.updateGraphAfterScanLoad(pl1, pl2);
                     return true;
                 case Graph.Displaying.Diff:
-                    //graph.ResetDiffPointLists();
                     graph.updateGraphAfterScanDiff(pl1, pl2);
                     return true;
                 default:
@@ -480,7 +475,7 @@ namespace Flavor.Common {
                     temp.Sort(Utility.ComparePreciseEditorData);
                     try {
                         temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
-                        preciseDataDiff = temp;
+                        //preciseDataDiff = temp;
                         graph.updateGraphAfterPreciseDiff(temp);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
@@ -633,29 +628,21 @@ namespace Flavor.Common {
             return LoadPED(sf, filename, peds, true, prefix);
         }
         internal static XmlDocument SavePreciseSpecterFile(string filename, Graph graph) {
-            List<Utility.PreciseEditorData> processed;
             string header;
             switch (graph.DisplayingMode) {
                 case Graph.Displaying.Loaded:
-                    // TODO:!
-                    //processed = Config.PreciseDataLoaded;
-                    //!!!!
-                    processed = Config.PreciseData;
-                    //processed = graph.
                     header = "Measure";
                     break;
                 case Graph.Displaying.Measured:
-                    processed = Config.PreciseData;
                     header = "Measure";
                     break;
                 case Graph.Displaying.Diff:
-                    processed = Config.PreciseDataDiff;
                     header = "Diff";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return SavePreciseOptions(processed, filename, header, true, false);
+            return SavePreciseOptions(graph.PreciseData, filename, header, true, false);
         }
         internal static DateTime AutoSavePreciseSpecterFile(short shift) {
             DateTime dt = System.DateTime.Now;
@@ -692,7 +679,7 @@ namespace Flavor.Common {
         private static void SavePreciseOptions() {
             SavePreciseOptions(Config.PreciseData, confName, PRECISE_OPTIONS_HEADER, false, false);
         }
-        internal static void SavePreciseOptions(List<Utility.PreciseEditorData> peds) {
+        internal static void SavePreciseOptions(PreciseSpectrum peds) {
             preciseData = peds;
             SavePreciseOptions(peds, confName, PRECISE_OPTIONS_HEADER, false, false);
         }

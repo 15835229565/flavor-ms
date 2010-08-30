@@ -19,10 +19,9 @@ namespace Flavor.Forms {
                     panel.BackColor = System.Drawing.SystemColors.Control;
                     panel.Dock = System.Windows.Forms.DockStyle.Right;
                     panel.Location = new System.Drawing.Point(493, 24);
-                    panel.Name = "panel";
                     panel.Size = new System.Drawing.Size(280, 667);
                     panel.TabIndex = 18;
-                    panel.Visible = this.measurePanelToolStripMenuItem.Checked;
+                    panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
                     panel.EnabledChanged += new EventHandler(toggleMeasurePanel);
                 
                     this.Controls.Add(panel);
@@ -57,17 +56,13 @@ namespace Flavor.Forms {
 			this.Close();
         }
         private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
-            Panel.Visible = measurePanelToolStripMenuItem.Checked;
+            Panel.Visible = Panel.Enabled && measurePanelToolStripMenuItem.Checked;
             SetSize();
         }
 
         private void toggleMeasurePanel(object sender, EventArgs e) {
-            measurePanelToolStripMenuItem.Enabled = Panel.Enabled;
-            if (Panel.Enabled) {
-                measurePanelToolStripMenuItem_CheckedChanged(sender, e);
-                return;
-            }
-            Panel.Visible = false;
+            measurePanelToolStripMenuItem.Visible = Panel.Enabled;
+            measurePanelToolStripMenuItem_CheckedChanged(sender, e);
         }
         protected abstract void RefreshGraph();
         protected abstract void CreateGraph();

@@ -13,7 +13,7 @@ namespace Flavor.Forms {
         }
 
         private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[20];
-        private List<Utility.PreciseEditorData> data = new List<Utility.PreciseEditorData>();
+        private PreciseSpectrum data = new PreciseSpectrum();
 
         private static PreciseOptionsForm instance = null;
         internal static PreciseOptionsForm getInstance() {
@@ -24,7 +24,7 @@ namespace Flavor.Forms {
         internal PreciseOptionsForm()
             : base() {
             InitializeComponent();
-            bool enable = Graph.Instance.PointToAdd != null;
+            bool enable = Graph.PointToAdd != null;
 
             this.SuspendLayout();
             this.preciseEditorGroupBox.SuspendLayout();
@@ -45,7 +45,7 @@ namespace Flavor.Forms {
             this.PerformLayout();
 
             if (!enable) {
-                Graph.Instance.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
             }
             Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeEnableForm);
         }
@@ -171,7 +171,7 @@ namespace Flavor.Forms {
         }
         protected virtual bool checkTextBoxes() {
             bool exitFlag = true;
-            data = new List<Utility.PreciseEditorData>();
+            data = new PreciseSpectrum();
             for (int i = 0; i < 20; ++i) {
                 if (exitFlag &= PErows[i].checkTextBoxes())
                     if (PErows[i].AllFilled)
@@ -219,15 +219,15 @@ namespace Flavor.Forms {
 
         void Graph_OnPointAdded(bool notNull) {
             insertPointButton.Enabled = notNull;
-            //Graph.Instance.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }
 
         private void insertPointButton_Click(object sender, EventArgs e) {
-            if (Graph.Instance.PointToAdd != null) {
-                PlacePointForm ppForm = new PlacePointForm(Graph.Instance.PointToAdd);
+            if (Graph.PointToAdd != null) {
+                PlacePointForm ppForm = new PlacePointForm(Graph.PointToAdd);
                 if (ppForm.ShowDialog() == DialogResult.OK) {
                     if (ppForm.PointNumber != -1)
-                        PErows[ppForm.PointNumber].setValues(Graph.Instance.PointToAdd);
+                        PErows[ppForm.PointNumber].setValues(Graph.PointToAdd);
                 }
             } else {
                 MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");

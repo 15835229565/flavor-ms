@@ -33,7 +33,7 @@ namespace Flavor.Controls {
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(143, 13);
             this.label35.TabIndex = 3;
-            this.label35.Text = "Сканирующее напряжение";
+            this.label35.Text = "РЎРєР°РЅРёСЂСѓСЋС‰РµРµ РЅР°РїСЂСЏР¶РµРЅРёРµ";
             // 
             // label36
             // 
@@ -42,7 +42,7 @@ namespace Flavor.Controls {
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(84, 13);
             this.label36.TabIndex = 44;
-            this.label36.Text = "Номер ступени";
+            this.label36.Text = "РќРѕРјРµСЂ СЃС‚СѓРїРµРЅРё";
             // 
             // scanRealTimeLabel
             // 
@@ -73,7 +73,7 @@ namespace Flavor.Controls {
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(119, 13);
             this.label37.TabIndex = 46;
-            this.label37.Text = "Номер текущего пика";
+            this.label37.Text = "РќРѕРјРµСЂ С‚РµРєСѓС‰РµРіРѕ РїРёРєР°";
             // 
             // peakNumberLabel
             // 
@@ -93,7 +93,7 @@ namespace Flavor.Controls {
             this.label39.Name = "label39";
             this.label39.Size = new System.Drawing.Size(109, 13);
             this.label39.TabIndex = 48;
-            this.label39.Text = "Центральная масса";
+            this.label39.Text = "Р¦РµРЅС‚СЂР°Р»СЊРЅР°СЏ РјР°СЃСЃР°";
             // 
             // peakCenterLabel
             // 
@@ -113,7 +113,7 @@ namespace Flavor.Controls {
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(124, 13);
             this.label41.TabIndex = 50;
-            this.label41.Text = "Ширина текущего пика";
+            this.label41.Text = "РЁРёСЂРёРЅР° С‚РµРєСѓС‰РµРіРѕ РїРёРєР°";
             // 
             // peakWidthLabel
             // 
@@ -133,7 +133,7 @@ namespace Flavor.Controls {
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(127, 13);
             this.label15.TabIndex = 39;
-            this.label15.Text = "Показания детектора 1";
+            this.label15.Text = "РџРѕРєР°Р·Р°РЅРёСЏ РґРµС‚РµРєС‚РѕСЂР° 1";
             // 
             // detector1CountsLabel
             // 
@@ -153,7 +153,7 @@ namespace Flavor.Controls {
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(127, 13);
             this.label16.TabIndex = 41;
-            this.label16.Text = "Показания детектора 2";
+            this.label16.Text = "РџРѕРєР°Р·Р°РЅРёСЏ РґРµС‚РµРєС‚РѕСЂР° 2";
             // 
             // detector2CountsLabel
             // 
@@ -180,7 +180,7 @@ namespace Flavor.Controls {
             this.cancelScanButton.Name = "cancelScanButton";
             this.cancelScanButton.Size = new System.Drawing.Size(75, 23);
             this.cancelScanButton.TabIndex = 43;
-            this.cancelScanButton.Text = "Остановить";
+            this.cancelScanButton.Text = "РћСЃС‚Р°РЅРѕРІРёС‚СЊ";
             this.cancelScanButton.UseVisualStyleBackColor = true;
             this.cancelScanButton.Visible = false;
             this.cancelScanButton.Click += new System.EventHandler(this.cancelScanButton_Click);

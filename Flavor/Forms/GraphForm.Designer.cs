@@ -180,12 +180,13 @@ namespace Flavor.Forms {
             // 
             // measurePanelToolStripMenuItem
             // 
+            this.measurePanelToolStripMenuItem.Checked = true;
             this.measurePanelToolStripMenuItem.CheckOnClick = true;
-            this.measurePanelToolStripMenuItem.Enabled = false;
             this.measurePanelToolStripMenuItem.Name = "measurePanelToolStripMenuItem";
             this.measurePanelToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.measurePanelToolStripMenuItem.Text = "Панель режима";
-			this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
+            this.measurePanelToolStripMenuItem.Visible = false;
+            this.measurePanelToolStripMenuItem.CheckedChanged += new System.EventHandler(this.measurePanelToolStripMenuItem_CheckedChanged);
             // 
             // editMenu
             // 

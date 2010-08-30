@@ -5,25 +5,26 @@ using Flavor.Forms;
 
 namespace Flavor.Controls {
     public partial class GraphPanel: Panel {
-		private Graph graph = null;
-		internal Graph Graph {
+        private Graph graph = null;
+        internal Graph Graph {
             get { return graph; }
             set { graph = value; }
         }
 
         public new bool Enabled {
             get { return base.Enabled; }
-            private set { base.Enabled = value;}
+            private set { base.Enabled = value; }
         }
 
         public GraphPanel() {
             InitializeComponent();
         }
-        internal void Enable()
-        {
-			if (graph == null)
+        internal void Enable() {
+            if (graph == null)
                 return;
             CommonOptions commonOpts = graph.CommonOptions;
+            if (commonOpts == null)
+                return;
 
             SuspendLayout();
 
@@ -36,21 +37,21 @@ namespace Flavor.Controls {
             f1_label.Text = commonOpts.fV1Real.ToString("f3");
             f2_label.Text = commonOpts.fV2Real.ToString("f3");
 
-			prepareControls();
+            prepareControls();
             this.Enabled = true;
-            
-			ResumeLayout (false);
-        	PerformLayout ();
+
+            ResumeLayout(false);
+            PerformLayout();
         }
-		protected virtual void prepareControls() {
-			// TODO: make abstract
-	    }
-		internal void Disable() {
-		    this.Enabled = false;
-			disableControls();
-		}
-		protected virtual void disableControls() {
+        protected virtual void prepareControls() {
             // TODO: make abstract
         }
- 	}
+        internal void Disable() {
+            this.Enabled = false;
+            disableControls();
+        }
+        protected virtual void disableControls() {
+            // TODO: make abstract
+        }
+    }
 }

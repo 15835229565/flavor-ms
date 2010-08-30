@@ -220,12 +220,12 @@ namespace Flavor.Forms {
             unblock_butt.Enabled = false;
             Commander.Unblock();
         }
-        private void Enable() {
+        private void prepareControlsOnMeasureStart() {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
 
-            CollectorsForm.Enable();
+            CollectorsForm.prepareControlsOnMeasureStart();
             CollectorsForm.Activate();
 
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
@@ -239,17 +239,17 @@ namespace Flavor.Forms {
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
             CollectorsForm.startScan();
-            Enable();
+            prepareControlsOnMeasureStart();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             Commander.Sense();
             CollectorsForm.startPrecise();
-            Enable();
+            prepareControlsOnMeasureStart();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             Commander.Monitor();
             CollectorsForm.startMonitor();
-            Enable();
+            prepareControlsOnMeasureStart();
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
@@ -678,7 +678,7 @@ namespace Flavor.Forms {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
             
-            CollectorsForm.Disable();
+            CollectorsForm.deactivateOnMeasureStop();
         }
 
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -735,14 +735,14 @@ namespace Flavor.Forms {
 		}
 
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.spectrumFileDialogFilter, Config.preciseSpectrumFileDialogFilter);
+            openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.SPECTRUM_FILE_DIALOG_FILTER, Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
                     bool hint = (openSpecterFileDialog.FilterIndex == 1);
                     Graph graph;
                     string fileName = openSpecterFileDialog.FileName;
-                    Config.openSpectrumFile(fileName, hint, out graph);
-                    LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName);
+                    bool res = !Config.openSpectrumFile(fileName, hint, out graph);
+                    LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName, res);
                     form.MdiParent = this;
                     form.Show();
                 } catch (Config.ConfigLoadException cle) {

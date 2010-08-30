@@ -19,9 +19,8 @@ namespace Flavor.Forms {
         }*/
         
         internal MeasuredCollectorsForm()
-            : base(Graph.Instance) {
+            : base(Graph.Instance, false) {
             InitializeComponent();
-            Graph.Instance.DisplayingMode = Graph.Displaying.Measured;
         }
         protected sealed override GraphPanel initPanel() {
             GraphPanel panel = new MeasureGraphPanel();
@@ -29,34 +28,40 @@ namespace Flavor.Forms {
 		}
         internal void startScan() {
             // TODO: different types of panel
-            preciseSpecterDisplayed = false;
-            (Panel as MeasureGraphPanel).overview_button_Click();
+            PreciseSpectrumDisplayed = false;
+            (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
         }
         internal void startPrecise() {
             // TODO: different types of panel
-            preciseSpecterDisplayed = true;
+            PreciseSpectrumDisplayed = true;
             (Panel as MeasureGraphPanel).sensmeasure_button_Click();
         }
         internal void startMonitor() {
             // TODO: move to other class
+            PreciseSpectrumDisplayed = true;
             (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
         }
-        internal void Enable() {
-            setXScaleLimits();
+        internal void prepareControlsOnMeasureStart() {
+            // not so good..
+            if (PreciseSpectrumDisplayed)
+                setXScaleLimits(Config.PreciseData);
+            else
+                setXScaleLimits();
 
             Panel.Enable();
+            // TODO: and set it visible together with menu item set checked!
 
             specterSavingEnabled = false;
-            Graph.Instance.ResetPointLists();
+            Graph.ResetPointListsWithEvent();
         }
-        internal void Disable() {
+        internal void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
         }
         
         protected sealed override void doSmthMore() {
             // TODO: simplify code below
-            (Panel as MeasureGraphPanel).RefreshGraph();
+            (Panel as MeasureGraphPanel).performStep();
             Commander.CurrentMeasureMode.refreshGraphics(this);
         }
         protected sealed override void saveData() {
