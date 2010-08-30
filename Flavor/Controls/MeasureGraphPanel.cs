@@ -12,9 +12,7 @@ namespace Flavor.Controls {
             Commander.measureCancelRequested = true;
         }
 
-        internal override void prepareControlsOnMeasureStart() {
-            base.prepareControlsOnMeasureStart();
-
+        protected override void prepareControls() {
             // put here code that only changes data source and refreshes
             //Elements are not visible until first real information is ready
             peakNumberLabel.Visible = false;
@@ -38,6 +36,8 @@ namespace Flavor.Controls {
                 scanProgressBar.Style = ProgressBarStyle.Blocks;
                 scanProgressBar.Step = 1;
             }
+
+            scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
         }
         internal void RefreshGraph() {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
@@ -114,7 +114,8 @@ namespace Flavor.Controls {
                 label16.Visible = true;
             }
         }
-        internal void cancelScan() {
+        protected override void disableControls() {
+            scanProgressBar.Cursor = System.Windows.Forms.Cursors.Default;
             cancelScanButton.Visible = false;
         }
     }

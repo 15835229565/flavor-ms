@@ -168,7 +168,6 @@ namespace Flavor.Controls {
             // 
             // scanProgressBar
             // 
-            this.scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
             this.scanProgressBar.Location = new System.Drawing.Point(3, 291);
             this.scanProgressBar.Name = "scanProgressBar";
             this.scanProgressBar.Size = new System.Drawing.Size(273, 23);

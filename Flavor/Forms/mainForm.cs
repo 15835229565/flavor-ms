@@ -13,7 +13,7 @@ namespace Flavor.Forms {
         private MeasuredCollectorsForm CollectorsForm {
             get {
                 if (collectorsForm == null) {
-                    collectorsForm = new MeasuredCollectorsForm(false);
+                    collectorsForm = new MeasuredCollectorsForm();
                     collectorsForm.MdiParent = this;
                     collectorsForm.WindowState = FormWindowState.Maximized;
                 }
@@ -220,12 +220,12 @@ namespace Flavor.Forms {
             unblock_butt.Enabled = false;
             Commander.Unblock();
         }
-        private void prepareControlsOnMeasureStart() {
+        private void Enable() {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
 
-            CollectorsForm.prepareControlsOnMeasureStart();
+            CollectorsForm.Enable();
             CollectorsForm.Activate();
 
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
@@ -239,17 +239,17 @@ namespace Flavor.Forms {
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
             CollectorsForm.startScan();
-            prepareControlsOnMeasureStart();
+            Enable();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             Commander.Sense();
             CollectorsForm.startPrecise();
-            prepareControlsOnMeasureStart();
+            Enable();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             Commander.Monitor();
             CollectorsForm.startMonitor();
-            prepareControlsOnMeasureStart();
+            Enable();
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
@@ -678,7 +678,7 @@ namespace Flavor.Forms {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
             
-            CollectorsForm.cancelScan();
+            CollectorsForm.Disable();
         }
 
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -741,8 +741,8 @@ namespace Flavor.Forms {
                     bool hint = (openSpecterFileDialog.FilterIndex == 1);
                     Graph graph;
                     string fileName = openSpecterFileDialog.FileName;
-                    bool result = !Config.openSpectrumFile(fileName, hint, out graph);
-                    LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName, result);
+                    Config.openSpectrumFile(fileName, hint, out graph);
+                    LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName);
                     form.MdiParent = this;
                     form.Show();
                 } catch (Config.ConfigLoadException cle) {

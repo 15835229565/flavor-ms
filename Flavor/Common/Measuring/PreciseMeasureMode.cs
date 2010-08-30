@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
@@ -124,7 +124,7 @@ namespace Flavor.Common.Measuring {
 
         internal override bool start() {
             if (noPoints) {
-                cancelScan();
+                Disable();
                 return false;
             }
             if (!init(false)) {

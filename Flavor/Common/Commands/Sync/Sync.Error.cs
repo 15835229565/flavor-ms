@@ -1,13 +1,13 @@
-﻿using Flavor.Common.Commands.Interfaces;
+using Flavor.Common.Commands.Interfaces;
 
 namespace Flavor.Common.Commands.Sync {
     internal abstract class SyncErrorReply: SyncServicePacket { }
 
     internal class logInvalidCommand: SyncErrorReply {
-        private byte[] command;
+        //private byte[] command;
 
         internal logInvalidCommand(byte[] errorcommand) {
-            command = errorcommand;
+            //command = errorcommand;
         }
 
         internal override ModBus.CommandCode Id {

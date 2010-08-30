@@ -18,14 +18,13 @@ namespace Flavor.Forms {
             return instance;
         }*/
         
-        internal MeasuredCollectorsForm(bool isPrecise)
-            : base(isPrecise, Graph.Instance) {
+        internal MeasuredCollectorsForm()
+            : base(Graph.Instance) {
             InitializeComponent();
             Graph.Instance.DisplayingMode = Graph.Displaying.Measured;
         }
         protected sealed override GraphPanel initPanel() {
             GraphPanel panel = new MeasureGraphPanel();
-            panel.Graph = Graph.Instance;
 			return panel;
 		}
         internal void startScan() {
@@ -42,42 +41,23 @@ namespace Flavor.Forms {
             // TODO: move to other class
             (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
         }
-        internal void prepareControlsOnMeasureStart() {
+        internal void Enable() {
             setXScaleLimits();
-            // TODO: make private to GraphForm
-            measurePanelToolStripMenuItem.Checked = true;
 
-            Panel.prepareControlsOnMeasureStart();
+            Panel.Enable();
 
             specterSavingEnabled = false;
             Graph.Instance.ResetPointLists();
         }
-        internal void cancelScan() {
-            (Panel as MeasureGraphPanel).cancelScan();
-            //mandatory?
-            measurePanelToolStripMenuItem.Checked = false;
+        internal void Disable() {
+            Panel.Disable();
             specterSavingEnabled = true;
         }
         
-        protected sealed override bool axisModeChange() {
-            if (base.axisModeChange()) {
-				return false;
-			}
-            CreateGraph();
-			return true;
-        }
-        protected sealed override bool refreshGraph(bool recreate) {
-            if (base.refreshGraph(recreate))
-                return false;
-            if (recreate) {
-                CreateGraph();
-            } else {
-                RefreshGraph();
-                // TODO: simplify code below
-                (Panel as MeasureGraphPanel).RefreshGraph();
-                Commander.CurrentMeasureMode.refreshGraphics(this);
-            }
-            return true;
+        protected sealed override void doSmthMore() {
+            // TODO: simplify code below
+            (Panel as MeasureGraphPanel).RefreshGraph();
+            Commander.CurrentMeasureMode.refreshGraphics(this);
         }
         protected sealed override void saveData() {
             saveSpecterFileDialog.FileName = "";

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Timers;
 using Flavor.Common.Commands.UI;
@@ -314,7 +314,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static void cancelScan() {
+        internal static void Disable() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
             setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?

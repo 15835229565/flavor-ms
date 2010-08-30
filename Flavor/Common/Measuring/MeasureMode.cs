@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
@@ -38,7 +38,7 @@ namespace Flavor.Common.Measuring {
                 }
                 if (!onNextStep()) {
                     // TODO: cannot perform step!
-                    cancelScan();
+                    Disable();
                     return false;
                 }
             } else {
@@ -70,13 +70,13 @@ namespace Flavor.Common.Measuring {
                 }
             }
         }
-        protected void cancelScan() {
-            Commander.cancelScan();
+        protected void Disable() {
+            Commander.Disable();
         }
         protected void stop() {
             operating = false;
             Commander.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
-            cancelScan();
+            Disable();
         }
     }
 }

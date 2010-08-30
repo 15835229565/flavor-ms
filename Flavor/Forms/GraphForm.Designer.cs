@@ -74,7 +74,7 @@ namespace Flavor.Forms {
             graphFormMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             FileMenu,
             viewMenu,
-            editMenu});
+            editMenu });
             graphFormMenuStrip.Location = new System.Drawing.Point(0, 0);
             graphFormMenuStrip.Name = "graphFormMenuStrip";
             graphFormMenuStrip.Size = new System.Drawing.Size(773, 24);
@@ -91,7 +91,7 @@ namespace Flavor.Forms {
             printToolStripMenuItem,
             printPreviewToolStripMenuItem,
             printSetupToolStripMenuItem,
-            toolStripSeparator5});
+            toolStripSeparator5 });
             FileMenu.MergeAction = System.Windows.Forms.MergeAction.MatchOnly;
             FileMenu.MergeIndex = 0;
             FileMenu.Name = "FileMenu";
@@ -172,7 +172,7 @@ namespace Flavor.Forms {
             // viewMenu
             // 
             viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.measurePanelToolStripMenuItem});
+            this.measurePanelToolStripMenuItem });
             viewMenu.MergeAction = System.Windows.Forms.MergeAction.MatchOnly;
             viewMenu.Name = "viewMenu";
             viewMenu.Size = new System.Drawing.Size(38, 20);
@@ -181,6 +181,7 @@ namespace Flavor.Forms {
             // measurePanelToolStripMenuItem
             // 
             this.measurePanelToolStripMenuItem.CheckOnClick = true;
+            this.measurePanelToolStripMenuItem.Enabled = false;
             this.measurePanelToolStripMenuItem.Name = "measurePanelToolStripMenuItem";
             this.measurePanelToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.measurePanelToolStripMenuItem.Text = "Панель режима";
@@ -301,6 +302,6 @@ namespace Flavor.Forms {
 
         protected System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         protected System.Windows.Forms.ToolStripMenuItem closeSpecterFileToolStripMenuItem;
-        protected System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem measurePanelToolStripMenuItem;
     }
 }

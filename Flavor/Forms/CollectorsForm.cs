@@ -26,7 +26,7 @@ namespace Flavor.Forms {
 		private ZedGraphControlPlus[] graphs;
         protected bool preciseSpecterDisplayed;
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
-        private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };
+        /*private ushort[] minXprev = { 0, 0 }, maxXprev = { 1056, 1056 };*/
         private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
         Color.Black, Color.Magenta,};
         internal bool specterSavingEnabled {
@@ -44,18 +44,19 @@ namespace Flavor.Forms {
             }
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
-		public CollectorsForm(bool isPrecise, Graph graph) {
-			InitializeComponent();
-
+		public CollectorsForm(Graph graph) {
             this.graph = graph;
-            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
+            Panel.Graph = graph;
 
-            preciseSpecterDisplayed = isPrecise;
+            preciseSpecterDisplayed = graph.isPreciseSpectrum;
             modeText = preciseSpecterDisplayed ? PREC_TITLE : SCAN_TITLE;
-			col1Text = COL1_TITLE + modeText;
-			col2Text = COL2_TITLE + modeText;
+            col1Text = COL1_TITLE + modeText;
+            col2Text = COL2_TITLE + modeText;
+
+            InitializeComponent();
 
             graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
+            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
 
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
             graphs[0].GraphPane.Legend.IsVisible = false;
@@ -80,13 +81,13 @@ namespace Flavor.Forms {
         private void AxisModeChange() {
             axisModeChange();
         }
-        protected virtual bool axisModeChange() {
+        protected void axisModeChange() {
             if (graph.DisplayingMode == Graph.Displaying.Diff) {
-	            DisplayDiff();
-                return true;
+                DisplayDiff();
+                return;
             }
-			return false;
-		}
+            CreateGraph();
+        }
 
         protected sealed override void CreateGraph() {
             ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
@@ -106,14 +107,14 @@ namespace Flavor.Forms {
             setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
         }
         protected void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
-            storeXScaleLimits();
+            //storeXScaleLimits();
             minX[0] = minX1;
             minX[1] = minX2;
             maxX[0] = maxX1;
             maxX[1] = maxX2;
         }
         protected void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
-            storeXScaleLimits();
+            //storeXScaleLimits();
             ushort[] minX = { 1056, 1056 }, maxX = { 0, 0 };
             foreach (Utility.PreciseEditorData ped in peds) {
                 if (minX[ped.Collector - 1] > ped.Step - ped.Width)
@@ -124,14 +125,14 @@ namespace Flavor.Forms {
             this.minX = minX;
             this.maxX = maxX;
         }
-        private void storeXScaleLimits() {
+        /*private void storeXScaleLimits() {
             minXprev = minX;
             maxXprev = maxX;
-        }
-        private void restoreXScaleLimits() {
+        }*/
+        /*private void restoreXScaleLimits() {
             minX = minXprev;
             maxX = maxXprev;
-        }
+        }*/
 
         protected override void RefreshGraph() {
             graphs[0].Refresh();
@@ -142,12 +143,12 @@ namespace Flavor.Forms {
             graphs[1].AxisChange();
         }
 
-        private void setAutoScales() {
+        /*private void setAutoScales() {
             graphs[0].RestoreScale(graphs[0].GraphPane);
             graphs[1].RestoreScale(graphs[1].GraphPane);
             graphs[0].GraphPane.ZoomStack.Clear();
             graphs[1].GraphPane.ZoomStack.Clear();
-        }
+        }*/
 
         internal void DisplayDiff() {
             graph.DisplayingMode = Graph.Displaying.Diff;
@@ -232,16 +233,24 @@ namespace Flavor.Forms {
         private void _refreshGraph(bool recreate) {
             refreshGraph(recreate);
         }
-        protected virtual bool refreshGraph(bool recreate) {
+        protected void refreshGraph(bool recreate) {
             if (graph.DisplayingMode == Graph.Displaying.Diff) {
                 if (recreate) {
                     DisplayDiff();
                 } else {
                     RefreshGraph();
                 }
-                return true;
+                return;
             }
-            return false;
+            if (recreate) {
+                CreateGraph();
+            } else {
+                RefreshGraph();
+                doSmthMore();
+            }
+        }
+        protected virtual void doSmthMore() {
+            //do nothing
         }
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraph.ZedGraphControl.ContextMenuObjectState objState) {
