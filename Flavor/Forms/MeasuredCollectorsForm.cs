@@ -24,7 +24,7 @@ namespace Flavor.Forms {
         }
         protected sealed override GraphPanel initPanel() {
             GraphPanel panel = new MeasureGraphPanel();
-			return panel;
+            return panel;
 		}
         internal void startScan() {
             // TODO: different types of panel

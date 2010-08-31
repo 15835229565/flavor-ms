@@ -51,7 +51,6 @@ namespace Flavor.Controls {
             this.scanRealTimeLabel.Name = "scanRealTimeLabel";
             this.scanRealTimeLabel.Size = new System.Drawing.Size(200, 13);
             this.scanRealTimeLabel.TabIndex = 38;
-            this.scanRealTimeLabel.Text = "*";
             this.scanRealTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // stepNumberLabel
@@ -62,7 +61,6 @@ namespace Flavor.Controls {
             this.stepNumberLabel.Name = "stepNumberLabel";
             this.stepNumberLabel.Size = new System.Drawing.Size(200, 13);
             this.stepNumberLabel.TabIndex = 45;
-            this.stepNumberLabel.Text = "*";
             this.stepNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label37
@@ -82,7 +80,6 @@ namespace Flavor.Controls {
             this.peakNumberLabel.Name = "peakNumberLabel";
             this.peakNumberLabel.Size = new System.Drawing.Size(200, 13);
             this.peakNumberLabel.TabIndex = 47;
-            this.peakNumberLabel.Text = "*";
             this.peakNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label39
@@ -102,7 +99,6 @@ namespace Flavor.Controls {
             this.peakCenterLabel.Name = "peakCenterLabel";
             this.peakCenterLabel.Size = new System.Drawing.Size(200, 13);
             this.peakCenterLabel.TabIndex = 49;
-            this.peakCenterLabel.Text = "*";
             this.peakCenterLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label41
@@ -122,7 +118,6 @@ namespace Flavor.Controls {
             this.peakWidthLabel.Name = "peakWidthLabel";
             this.peakWidthLabel.Size = new System.Drawing.Size(200, 13);
             this.peakWidthLabel.TabIndex = 51;
-            this.peakWidthLabel.Text = "*";
             this.peakWidthLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label15
@@ -142,7 +137,6 @@ namespace Flavor.Controls {
             this.detector1CountsLabel.Name = "detector1CountsLabel";
             this.detector1CountsLabel.Size = new System.Drawing.Size(200, 13);
             this.detector1CountsLabel.TabIndex = 40;
-            this.detector1CountsLabel.Text = "*";
             this.detector1CountsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label16
@@ -162,7 +156,6 @@ namespace Flavor.Controls {
             this.detector2CountsLabel.Name = "detector2CountsLabel";
             this.detector2CountsLabel.Size = new System.Drawing.Size(200, 13);
             this.detector2CountsLabel.TabIndex = 42;
-            this.detector2CountsLabel.Text = "*";
             this.detector2CountsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // scanProgressBar

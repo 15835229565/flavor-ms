@@ -6,6 +6,7 @@ namespace Flavor.Controls {
     public partial class MeasureGraphPanel: GraphPanel {
         public MeasureGraphPanel() {
             InitializeComponent();
+            Enabled = false;
         }
         private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;

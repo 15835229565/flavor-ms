@@ -13,7 +13,7 @@ namespace Flavor.Controls {
 
         public new bool Enabled {
             get { return base.Enabled; }
-            private set { base.Enabled = value; }
+            protected set { base.Enabled = value; }
         }
 
         public GraphPanel() {

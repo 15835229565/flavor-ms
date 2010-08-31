@@ -8,7 +8,7 @@ using Flavor.Common;
 using ZedGraph;
 
 namespace Flavor.Forms {
-    internal abstract partial class CollectorsForm: GraphForm {
+    internal partial class CollectorsForm: GraphForm {
         private const string COL1_TITLE = "Первый коллектор";
         private const string COL2_TITLE = "Второй коллектор";
 		private const string DIFF_TITLE = "Diff - ";
@@ -23,7 +23,7 @@ namespace Flavor.Forms {
 		
         private Graph graph;
 		
-		private ZedGraphControlPlus[] graphs;
+		private ZedGraphControlPlus[] graphs = null;
         private bool preciseSpectrumDisplayed;
         protected bool PreciseSpectrumDisplayed {
             get {
@@ -59,7 +59,7 @@ namespace Flavor.Forms {
             }
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
         }
-		public CollectorsForm(Graph graph, bool hint) {
+		internal protected CollectorsForm(Graph graph, bool hint) {
             this.graph = graph;
             Panel.Graph = graph;
 
@@ -86,8 +86,7 @@ namespace Flavor.Forms {
 
         protected override GraphPanel initPanel() {
             GraphPanel panel = new GraphPanel();
-            panel.Graph = graph;
-			return panel;
+            return panel;
 		}
 
         private void InvokeAxisModeChange() {
@@ -114,6 +113,8 @@ namespace Flavor.Forms {
             RefreshGraph();
         }
         protected sealed override void SetSize() {
+            if (graphs == null)
+                return;
             Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
@@ -250,9 +251,7 @@ namespace Flavor.Forms {
                 doSmthMore();
             }
         }
-        protected virtual void doSmthMore() {
-            //do nothing
-        }
+        protected virtual void doSmthMore() {}
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraph.ZedGraphControl.ContextMenuObjectState objState) {
             ZedGraphControlPlus sender = control as ZedGraphControlPlus;

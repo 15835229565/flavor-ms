@@ -43,7 +43,7 @@ namespace Flavor.Controls {
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(0, 0);
+            this.label19.Location = new System.Drawing.Point(6, 80);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(174, 13);
             this.label19.TabIndex = 6;
@@ -102,7 +102,105 @@ namespace Flavor.Controls {
             this.label25.Size = new System.Drawing.Size(122, 13);
             this.label25.TabIndex = 9;
             this.label25.Text = "Коэффициент деления";
+            //
+            // f2_label
             // 
+            this.f2_label.AutoSize = true;
+            this.f2_label.Location = new System.Drawing.Point(218, 248);
+            this.f2_label.Name = "f2_label";
+            this.f2_label.Size = new System.Drawing.Size(11, 13);
+            this.f2_label.TabIndex = 35;
+            //
+            // f1_label
+            // 
+            this.f1_label.AutoSize = true;
+            this.f1_label.Location = new System.Drawing.Point(218, 226);
+            this.f1_label.Name = "f1_label";
+            this.f1_label.Size = new System.Drawing.Size(11, 13);
+            this.f1_label.TabIndex = 34;
+            // 
+            // heatCurLabel
+            // 
+            this.heatCurLabel.AutoSize = true;
+            this.heatCurLabel.Location = new System.Drawing.Point(218, 203);
+            this.heatCurLabel.Name = "heatCurLabel";
+            this.heatCurLabel.Size = new System.Drawing.Size(11, 13);
+            this.heatCurLabel.TabIndex = 33;
+            //
+            // emCurLabel
+            // 
+            this.emCurLabel.AutoSize = true;
+            this.emCurLabel.Location = new System.Drawing.Point(0, 0);
+            this.emCurLabel.Name = "emCurLabel";
+            this.emCurLabel.Size = new System.Drawing.Size(11, 13);
+            this.emCurLabel.TabIndex = 32;
+            //
+            // cp_label
+            // 
+            this.cp_label.AutoSize = true;
+            this.cp_label.Location = new System.Drawing.Point(218, 156);
+            this.cp_label.Name = "cp_label";
+            this.cp_label.Size = new System.Drawing.Size(11, 13);
+            this.cp_label.TabIndex = 31;
+            //
+            // iVolt_label
+            // 
+            this.iVolt_label.AutoSize = true;
+            this.iVolt_label.Location = new System.Drawing.Point(218, 131);
+            this.iVolt_label.Name = "iVolt_label";
+            this.iVolt_label.Size = new System.Drawing.Size(11, 13);
+            this.iVolt_label.TabIndex = 30;
+            //
+            // itime_label
+            // 
+            this.itime_label.AutoSize = true;
+            this.itime_label.Location = new System.Drawing.Point(218, 105);
+            this.itime_label.Name = "itime_label";
+            this.itime_label.Size = new System.Drawing.Size(11, 13);
+            this.itime_label.TabIndex = 29;
+            //
+            // etime_label
+            // 
+            this.etime_label.AutoSize = true;
+            this.etime_label.Location = new System.Drawing.Point(218, 80);
+            this.etime_label.Name = "etime_label";
+            this.etime_label.Size = new System.Drawing.Size(11, 13);
+            this.etime_label.TabIndex = 28;
+            //
+            // lastStepLabel
+            // 
+            this.lastStepLabel.AutoSize = true;
+            this.lastStepLabel.Location = new System.Drawing.Point(218, 53);
+            this.lastStepLabel.Name = "lastStepLabel";
+            this.lastStepLabel.Size = new System.Drawing.Size(11, 13);
+            this.lastStepLabel.TabIndex = 27;
+            //
+            // firstStepLabel
+            // 
+            this.firstStepLabel.AutoSize = true;
+            this.firstStepLabel.Location = new System.Drawing.Point(218, 30);
+            this.firstStepLabel.Name = "firstStepLabel";
+            this.firstStepLabel.Size = new System.Drawing.Size(11, 13);
+            this.firstStepLabel.TabIndex = 26;
+            //
+            // startScanTextLabel
+            // 
+            this.startScanTextLabel.AutoSize = true;
+            this.startScanTextLabel.Location = new System.Drawing.Point(6, 30);
+            this.startScanTextLabel.Name = "startScanTextLabel";
+            this.startScanTextLabel.Size = new System.Drawing.Size(100, 13);
+            this.startScanTextLabel.TabIndex = 0;
+            this.startScanTextLabel.Text = "Первая ступенька";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 53);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(118, 13);
+            this.label18.TabIndex = 2;
+            this.label18.Text = "Последняя ступенька";
+            //
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.f2_label);
@@ -131,115 +229,7 @@ namespace Flavor.Controls {
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры режима";
-            // 
-            // f2_label
-            // 
-            this.f2_label.AutoSize = true;
-            this.f2_label.Location = new System.Drawing.Point(218, 248);
-            this.f2_label.Name = "f2_label";
-            this.f2_label.Size = new System.Drawing.Size(11, 13);
-            this.f2_label.TabIndex = 35;
-            this.f2_label.Text = "*";
-            // 
-            // f1_label
-            // 
-            this.f1_label.AutoSize = true;
-            this.f1_label.Location = new System.Drawing.Point(218, 226);
-            this.f1_label.Name = "f1_label";
-            this.f1_label.Size = new System.Drawing.Size(11, 13);
-            this.f1_label.TabIndex = 34;
-            this.f1_label.Text = "*";
-            // 
-            // heatCurLabel
-            // 
-            this.heatCurLabel.AutoSize = true;
-            this.heatCurLabel.Location = new System.Drawing.Point(218, 203);
-            this.heatCurLabel.Name = "heatCurLabel";
-            this.heatCurLabel.Size = new System.Drawing.Size(11, 13);
-            this.heatCurLabel.TabIndex = 33;
-            this.heatCurLabel.Text = "*";
-            // 
-            // emCurLabel
-            // 
-            this.emCurLabel.AutoSize = true;
-            this.emCurLabel.Location = new System.Drawing.Point(0, 0);
-            this.emCurLabel.Name = "emCurLabel";
-            this.emCurLabel.Size = new System.Drawing.Size(11, 13);
-            this.emCurLabel.TabIndex = 32;
-            this.emCurLabel.Text = "*";
-            // 
-            // cp_label
-            // 
-            this.cp_label.AutoSize = true;
-            this.cp_label.Location = new System.Drawing.Point(0, 0);
-            this.cp_label.Name = "cp_label";
-            this.cp_label.Size = new System.Drawing.Size(11, 13);
-            this.cp_label.TabIndex = 31;
-            this.cp_label.Text = "*";
-            // 
-            // iVolt_label
-            // 
-            this.iVolt_label.AutoSize = true;
-            this.iVolt_label.Location = new System.Drawing.Point(0, 0);
-            this.iVolt_label.Name = "iVolt_label";
-            this.iVolt_label.Size = new System.Drawing.Size(11, 13);
-            this.iVolt_label.TabIndex = 30;
-            this.iVolt_label.Text = "*";
-            // 
-            // itime_label
-            // 
-            this.itime_label.AutoSize = true;
-            this.itime_label.Location = new System.Drawing.Point(0, 0);
-            this.itime_label.Name = "itime_label";
-            this.itime_label.Size = new System.Drawing.Size(11, 13);
-            this.itime_label.TabIndex = 29;
-            this.itime_label.Text = "*";
-            // 
-            // etime_label
-            // 
-            this.etime_label.AutoSize = true;
-            this.etime_label.Location = new System.Drawing.Point(0, 0);
-            this.etime_label.Name = "etime_label";
-            this.etime_label.Size = new System.Drawing.Size(11, 13);
-            this.etime_label.TabIndex = 28;
-            this.etime_label.Text = "*";
-            // 
-            // lastStepLabel
-            // 
-            this.lastStepLabel.AutoSize = true;
-            this.lastStepLabel.Location = new System.Drawing.Point(0, 0);
-            this.lastStepLabel.Name = "lastStepLabel";
-            this.lastStepLabel.Size = new System.Drawing.Size(11, 13);
-            this.lastStepLabel.TabIndex = 27;
-            this.lastStepLabel.Text = "*";
-            // 
-            // firstStepLabel
-            // 
-            this.firstStepLabel.AutoSize = true;
-            this.firstStepLabel.Location = new System.Drawing.Point(0, 0);
-            this.firstStepLabel.Name = "firstStepLabel";
-            this.firstStepLabel.Size = new System.Drawing.Size(11, 13);
-            this.firstStepLabel.TabIndex = 26;
-            this.firstStepLabel.Text = "*";
-            // 
-            // startScanTextLabel
-            // 
-            this.startScanTextLabel.AutoSize = true;
-            this.startScanTextLabel.Location = new System.Drawing.Point(0, 0);
-            this.startScanTextLabel.Name = "startScanTextLabel";
-            this.startScanTextLabel.Size = new System.Drawing.Size(100, 13);
-            this.startScanTextLabel.TabIndex = 0;
-            this.startScanTextLabel.Text = "Первая ступенька";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(0, 0);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(118, 13);
-            this.label18.TabIndex = 2;
-            this.label18.Text = "Последняя ступенька";
-            // 
+            //
             // GraphPanel
             // 
             this.BackColor = System.Drawing.SystemColors.Control;

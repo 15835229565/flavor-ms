@@ -7,7 +7,7 @@ using Flavor.Controls;
 using Flavor.Common;
 
 namespace Flavor.Forms {
-    internal abstract partial class GraphForm: Form {
+    internal partial class GraphForm: Form {
         private GraphPanel panel = null;
         protected GraphPanel Panel {
             get {
@@ -40,11 +40,12 @@ namespace Flavor.Forms {
             set { base.WindowState = FormWindowState.Maximized; }
         }*/
         
-        internal GraphForm() {
+        internal protected GraphForm() {
             InitializeComponent();
         }
         private void GraphForm_Shown(object sender, EventArgs e) {
             CreateGraph();
+            SetSize();
         }
         private void GraphForm_Resize(object sender, EventArgs e) {
             SetSize();
@@ -68,11 +69,11 @@ namespace Flavor.Forms {
             measurePanelToolStripMenuItem_CheckedChanged(sender, e);
         }
 
-        protected abstract GraphPanel initPanel();
+        protected virtual GraphPanel initPanel() { return null; }
 
-        protected abstract void RefreshGraph();
-        protected abstract void CreateGraph();
-        protected abstract void SetSize();
-        protected abstract void saveData();
+        protected virtual void RefreshGraph() {}
+        protected virtual void CreateGraph() {}
+        protected virtual void SetSize() {}
+        protected virtual void saveData() {}
     }
 }
