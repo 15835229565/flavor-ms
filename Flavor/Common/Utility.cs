@@ -207,7 +207,7 @@ namespace Flavor.Common {
         private CommonOptions myCommonOptions = null;
         internal Spectrum(CommonOptions cd)
             : this() {
-            // better to clone here..
+            // better to clone here?
             myCommonOptions = cd;
         }
         internal Spectrum()
@@ -227,7 +227,7 @@ namespace Flavor.Common {
         private CommonOptions myCommonOptions = null;
         internal PreciseSpectrum(CommonOptions cd)
             : this() {
-            // better to clone here..
+            // better to clone here?
             myCommonOptions = cd;
         }
         internal PreciseSpectrum()

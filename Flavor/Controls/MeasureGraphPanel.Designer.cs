@@ -152,7 +152,7 @@ namespace Flavor.Controls {
             // 
             this.detector2CountsLabel.BackColor = System.Drawing.SystemColors.Control;
             this.detector2CountsLabel.ForeColor = System.Drawing.Color.Green;
-            this.detector2CountsLabel.Location = new System.Drawing.Point(0, 0);
+            this.detector2CountsLabel.Location = new System.Drawing.Point(9, 418);
             this.detector2CountsLabel.Name = "detector2CountsLabel";
             this.detector2CountsLabel.Size = new System.Drawing.Size(200, 13);
             this.detector2CountsLabel.TabIndex = 42;
@@ -160,7 +160,7 @@ namespace Flavor.Controls {
             // 
             // scanProgressBar
             // 
-            this.scanProgressBar.Location = new System.Drawing.Point(0, 0);
+            this.scanProgressBar.Location = new System.Drawing.Point(3, 291);
             this.scanProgressBar.Name = "scanProgressBar";
             this.scanProgressBar.Size = new System.Drawing.Size(273, 23);
             this.scanProgressBar.TabIndex = 2;
@@ -168,7 +168,7 @@ namespace Flavor.Controls {
             // cancelScanButton
             // 
             this.cancelScanButton.Enabled = false;
-            this.cancelScanButton.Location = new System.Drawing.Point(0, 0);
+            this.cancelScanButton.Location = new System.Drawing.Point(193, 428);
             this.cancelScanButton.Name = "cancelScanButton";
             this.cancelScanButton.Size = new System.Drawing.Size(75, 23);
             this.cancelScanButton.TabIndex = 43;

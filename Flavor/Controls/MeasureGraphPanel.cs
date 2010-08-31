@@ -29,6 +29,7 @@ namespace Flavor.Controls {
             stepNumberLabel.Visible = false;
             label35.Visible = false;
             label36.Visible = false;
+            label37.Visible = false;
 
             cancelScanButton.Enabled = true;
             cancelScanButton.Visible = true;
@@ -62,41 +63,23 @@ namespace Flavor.Controls {
         internal void overview_button_Click(ushort start, ushort end) {
             startScanTextLabel.Visible = true;
             label18.Visible = true;
-            firstStepLabel.Visible = true;
-            lastStepLabel.Visible = true;
-            label37.Visible = false;
-            peakNumberLabel.Visible = false;
 
             firstStepLabel.Text = start.ToString();
             lastStepLabel.Text = end.ToString();
+            firstStepLabel.Visible = true;
+            lastStepLabel.Visible = true;
         }
         internal void sensmeasure_button_Click() {
-            startScanTextLabel.Visible = false;
-            label18.Visible = false;
-            firstStepLabel.Visible = false;
-            lastStepLabel.Visible = false;
-            label37.Visible = true;
             peakNumberLabel.Visible = true;
         }
         internal void monitorToolStripButton_Click() {
-            startScanTextLabel.Visible = false;
-            label18.Visible = false;
-            firstStepLabel.Visible = false;
-            lastStepLabel.Visible = false;
-            label37.Visible = true;
             peakNumberLabel.Visible = true;
         }
         internal void refreshGraphicsOnScanStep() {
-            // TODO: optimize
             detector1CountsLabel.Visible = true;
             label15.Visible = true;
             detector2CountsLabel.Visible = true;
             label16.Visible = true;
-            peakNumberLabel.Visible = false;
-            label39.Visible = false;
-            peakCenterLabel.Visible = false;
-            label41.Visible = false;
-            peakWidthLabel.Visible = false;
             
             scanRealTimeLabel.Visible = true;
             stepNumberLabel.Visible = true;
@@ -104,7 +87,7 @@ namespace Flavor.Controls {
             label36.Visible = true;
         }
         internal void refreshGraphicsOnPreciseStep() {
-            // TODO: optimize
+            label37.Visible = true;
             peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;
             label39.Visible = true;

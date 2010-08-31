@@ -43,9 +43,7 @@ namespace Flavor.Controls {
             ResumeLayout(false);
             PerformLayout();
         }
-        protected virtual void prepareControls() {
-            // TODO: make abstract
-        }
+        protected virtual void prepareControls() {}
         internal void Disable() {
             this.Enabled = false;
             disableControls();

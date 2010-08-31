@@ -38,7 +38,7 @@ namespace Flavor.Controls {
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(184, 13);
             this.label17.TabIndex = 25;
-            this.label17.Text = "Фокусирующее напр. (2) (50-150 В)";
+            this.label17.Text = "Р¤РѕРєСѓСЃРёСЂСѓСЋС‰РµРµ РЅР°РїСЂ. (2) (50-150 Р’)";
             // 
             // label19
             // 
@@ -47,7 +47,7 @@ namespace Flavor.Controls {
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(174, 13);
             this.label19.TabIndex = 6;
-            this.label19.Text = "Время экспозиции (10-10000 мс)";
+            this.label19.Text = "Р’СЂРµРјСЏ СЌРєСЃРїРѕР·РёС†РёРё (10-10000 РјСЃ)";
             // 
             // label20
             // 
@@ -56,7 +56,7 @@ namespace Flavor.Controls {
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(184, 13);
             this.label20.TabIndex = 24;
-            this.label20.Text = "Фокусирующее напр. (1) (50-150 В)";
+            this.label20.Text = "Р¤РѕРєСѓСЃРёСЂСѓСЋС‰РµРµ РЅР°РїСЂ. (1) (50-150 Р’)";
             // 
             // label21
             // 
@@ -65,7 +65,7 @@ namespace Flavor.Controls {
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(149, 13);
             this.label21.TabIndex = 7;
-            this.label21.Text = "Время перехода (10-100 мс)";
+            this.label21.Text = "Р’СЂРµРјСЏ РїРµСЂРµС…РѕРґР° (10-100 РјСЃ)";
             // 
             // label22
             // 
@@ -74,7 +74,7 @@ namespace Flavor.Controls {
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(180, 13);
             this.label22.TabIndex = 8;
-            this.label22.Text = "Напряжение ионизации (20-120 В)";
+            this.label22.Text = "РќР°РїСЂСЏР¶РµРЅРёРµ РёРѕРЅРёР·Р°С†РёРё (20-120 Р’)";
             // 
             // label23
             // 
@@ -83,7 +83,7 @@ namespace Flavor.Controls {
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(104, 13);
             this.label23.TabIndex = 11;
-            this.label23.Text = "Ток нагрева (0-2 А)";
+            this.label23.Text = "РўРѕРє РЅР°РіСЂРµРІР° (0-2 Рђ)";
             // 
             // label24
             // 
@@ -92,7 +92,7 @@ namespace Flavor.Controls {
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(127, 13);
             this.label24.TabIndex = 10;
-            this.label24.Text = "Ток эмиссии (0-10 мкА)";
+            this.label24.Text = "РўРѕРє СЌРјРёСЃСЃРёРё (0-10 РјРєРђ)";
             // 
             // label25
             // 
@@ -101,7 +101,7 @@ namespace Flavor.Controls {
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(122, 13);
             this.label25.TabIndex = 9;
-            this.label25.Text = "Коэффициент деления";
+            this.label25.Text = "РљРѕСЌС„С„РёС†РёРµРЅС‚ РґРµР»РµРЅРёСЏ";
             //
             // f2_label
             // 
@@ -130,7 +130,7 @@ namespace Flavor.Controls {
             // emCurLabel
             // 
             this.emCurLabel.AutoSize = true;
-            this.emCurLabel.Location = new System.Drawing.Point(0, 0);
+            this.emCurLabel.Location = new System.Drawing.Point(218, 180);
             this.emCurLabel.Name = "emCurLabel";
             this.emCurLabel.Size = new System.Drawing.Size(11, 13);
             this.emCurLabel.TabIndex = 32;
@@ -190,7 +190,7 @@ namespace Flavor.Controls {
             this.startScanTextLabel.Name = "startScanTextLabel";
             this.startScanTextLabel.Size = new System.Drawing.Size(100, 13);
             this.startScanTextLabel.TabIndex = 0;
-            this.startScanTextLabel.Text = "Первая ступенька";
+            this.startScanTextLabel.Text = "РџРµСЂРІР°СЏ СЃС‚СѓРїРµРЅСЊРєР°";
             // 
             // label18
             // 
@@ -199,7 +199,7 @@ namespace Flavor.Controls {
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(118, 13);
             this.label18.TabIndex = 2;
-            this.label18.Text = "Последняя ступенька";
+            this.label18.Text = "РџРѕСЃР»РµРґРЅСЏСЏ СЃС‚СѓРїРµРЅСЊРєР°";
             //
             // groupBox1
             // 
@@ -228,7 +228,7 @@ namespace Flavor.Controls {
             this.groupBox1.Size = new System.Drawing.Size(273, 282);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Параметры режима";
+            this.groupBox1.Text = "РџР°СЂР°РјРµС‚СЂС‹ СЂРµР¶РёРјР°";
             //
             // GraphPanel
             // 

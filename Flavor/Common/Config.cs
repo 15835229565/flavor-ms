@@ -390,7 +390,8 @@ namespace Flavor.Common {
             //!!!!!!!!!!!!!!!!!!!!!!!!
             try {
                 // what version of function will be called here?
-                loadCommonOptions(filename, sf, out commonOpts);
+                commonOpts = new CommonOptions();
+                loadCommonOptions(filename, sf, commonOpts);
             } catch (structureErrorOnLoadCommonData) {
                 commonOpts = null;
             }
@@ -619,7 +620,7 @@ namespace Flavor.Common {
             CommonOptions co = null;
             try {
                 // what version of function will be called here?
-                loadCommonOptions(filename, sf, out co);
+                loadCommonOptions(filename, sf, co);
             } catch (structureErrorOnLoadCommonData) {
                 co = null;
             }
@@ -883,18 +884,18 @@ namespace Flavor.Common {
             }
         }
         private static void loadCommonOptions() {
-            loadCommonOptions(confName, out Config.commonOpts);// not good fix
+            loadCommonOptions(confName, Config.commonOpts);
         }
         internal static void loadCommonOptions(string cdConfName) {
-            loadCommonOptions(cdConfName, out Config.commonOpts);// not good fix
+            loadCommonOptions(cdConfName, Config.commonOpts);
         }
-        private static void loadCommonOptions(string cdConfName, out CommonOptions commonOpts) {
+        private static void loadCommonOptions(string cdConfName, CommonOptions commonOpts) {
             XmlDocument cdConf;
             newCommonOptionsFileOnLoad(out cdConf, cdConfName);
 
-            loadCommonOptions(cdConfName, cdConf, out commonOpts);
+            loadCommonOptions(cdConfName, cdConf, commonOpts);
         }
-        private static void loadCommonOptions(string cdConfName, XmlDocument cdConf, out CommonOptions commonOpts) {
+        private static void loadCommonOptions(string cdConfName, XmlDocument cdConf, CommonOptions commonOpts) {
             string mainConfPrefix = "";
 
             if (cdConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG)) != null)
@@ -904,9 +905,9 @@ namespace Flavor.Common {
             }
             XmlNode commonNode = cdConf.SelectSingleNode(combine(mainConfPrefix, COMMON_CONFIG_TAG));
 
-            loadCommonOptions(cdConfName, commonNode, out commonOpts);
+            loadCommonOptions(cdConfName, commonNode, commonOpts);
         }
-        private static void loadCommonOptions(string cdConfName, XmlNode commonNode, out CommonOptions commonOpts) {
+        private static void loadCommonOptions(string cdConfName, XmlNode commonNode, CommonOptions commonOpts) {
             try {
                 ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
 
@@ -919,7 +920,7 @@ namespace Flavor.Common {
                 fV1 = ushort.Parse(commonNode.SelectSingleNode("focus1").InnerText);
                 fV2 = ushort.Parse(commonNode.SelectSingleNode("focus2").InnerText);
 
-                commonOpts = new CommonOptions();
+                //commonOpts = new CommonOptions();
                 commonOpts.eTime = eT;
                 commonOpts.iTime = iT;
                 commonOpts.iVoltage = iV;
@@ -929,7 +930,7 @@ namespace Flavor.Common {
                 commonOpts.fV1 = fV1;
                 commonOpts.fV2 = fV2;
             } catch (NullReferenceException) {
-                commonOpts = null;
+                //commonOpts = null;
                 throw new structureErrorOnLoadCommonData(cdConfName);
             }
 
