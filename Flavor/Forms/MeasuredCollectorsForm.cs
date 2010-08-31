@@ -80,6 +80,11 @@ namespace Flavor.Forms {
             //TODO: this is temporary
             refreshGraphicsOnPreciseStep();
         }
+
+        void MeasuredCollectorsForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
+            if (e.CloseReason == CloseReason.UserClosing)
+                e.Cancel = true;
+        }
     }
 }
 

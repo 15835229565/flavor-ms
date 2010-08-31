@@ -8,6 +8,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.Label label2;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DelaysOptionsForm));
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Button ok_butt;
@@ -28,12 +29,33 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(12, 9);
+            resources.ApplyResources(label2, "label2");
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(162, 13);
-            label2.TabIndex = 7;
-            label2.Text = "Перед циклом измерений (мс)";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(label3, "label3");
+            label3.Name = "label3";
+            // 
+            // ok_butt
+            // 
+            resources.ApplyResources(ok_butt, "ok_butt");
+            ok_butt.Name = "ok_butt";
+            ok_butt.UseVisualStyleBackColor = true;
+            ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
+            // 
+            // cancel_butt
+            // 
+            cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(cancel_butt, "cancel_butt");
+            cancel_butt.Name = "cancel_butt";
+            cancel_butt.UseVisualStyleBackColor = true;
+            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
             // beforeTimeNumericUpDown
             // 
@@ -42,7 +64,7 @@
             0,
             0,
             0});
-            this.beforeTimeNumericUpDown.Location = new System.Drawing.Point(220, 7);
+            resources.ApplyResources(this.beforeTimeNumericUpDown, "beforeTimeNumericUpDown");
             this.beforeTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -54,9 +76,6 @@
             0,
             0});
             this.beforeTimeNumericUpDown.Name = "beforeTimeNumericUpDown";
-            this.beforeTimeNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.beforeTimeNumericUpDown.TabIndex = 27;
-            this.beforeTimeNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.beforeTimeNumericUpDown.Value = new decimal(new int[] {
             5000,
             0,
@@ -65,32 +84,10 @@
             // 
             // forwardAsBeforeCheckBox
             // 
-            this.forwardAsBeforeCheckBox.AutoSize = true;
-            this.forwardAsBeforeCheckBox.Location = new System.Drawing.Point(15, 59);
+            resources.ApplyResources(this.forwardAsBeforeCheckBox, "forwardAsBeforeCheckBox");
             this.forwardAsBeforeCheckBox.Name = "forwardAsBeforeCheckBox";
-            this.forwardAsBeforeCheckBox.Size = new System.Drawing.Size(224, 17);
-            this.forwardAsBeforeCheckBox.TabIndex = 28;
-            this.forwardAsBeforeCheckBox.Text = "Одинаково с задержкой перед циклом";
             this.forwardAsBeforeCheckBox.UseVisualStyleBackColor = true;
             this.forwardAsBeforeCheckBox.CheckedChanged += new System.EventHandler(this.forwardAsBeforeCheckBox_CheckedChanged);
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(12, 35);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(192, 13);
-            label1.TabIndex = 29;
-            label1.Text = "При скачке напряжения вперед (мс)";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(12, 84);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(186, 13);
-            label3.TabIndex = 30;
-            label3.Text = "При скачке напряжения назад (мс)";
             // 
             // forwardTimeNumericUpDown
             // 
@@ -99,7 +96,7 @@
             0,
             0,
             0});
-            this.forwardTimeNumericUpDown.Location = new System.Drawing.Point(220, 33);
+            resources.ApplyResources(this.forwardTimeNumericUpDown, "forwardTimeNumericUpDown");
             this.forwardTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -111,9 +108,6 @@
             0,
             0});
             this.forwardTimeNumericUpDown.Name = "forwardTimeNumericUpDown";
-            this.forwardTimeNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.forwardTimeNumericUpDown.TabIndex = 31;
-            this.forwardTimeNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.forwardTimeNumericUpDown.Value = new decimal(new int[] {
             5000,
             0,
@@ -127,7 +121,7 @@
             0,
             0,
             0});
-            this.backwardTimeNumericUpDown.Location = new System.Drawing.Point(220, 82);
+            resources.ApplyResources(this.backwardTimeNumericUpDown, "backwardTimeNumericUpDown");
             this.backwardTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -139,43 +133,18 @@
             0,
             0});
             this.backwardTimeNumericUpDown.Name = "backwardTimeNumericUpDown";
-            this.backwardTimeNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.backwardTimeNumericUpDown.TabIndex = 32;
-            this.backwardTimeNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.backwardTimeNumericUpDown.Value = new decimal(new int[] {
             5000,
             0,
             0,
             0});
             // 
-            // ok_butt
-            // 
-            ok_butt.Location = new System.Drawing.Point(12, 108);
-            ok_butt.Name = "ok_butt";
-            ok_butt.Size = new System.Drawing.Size(72, 23);
-            ok_butt.TabIndex = 33;
-            ok_butt.Text = "Сохранить";
-            ok_butt.UseVisualStyleBackColor = true;
-            ok_butt.Click += new System.EventHandler(this.ok_butt_Click);
-            // 
-            // cancel_butt
-            // 
-            cancel_butt.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            cancel_butt.Location = new System.Drawing.Point(226, 108);
-            cancel_butt.Name = "cancel_butt";
-            cancel_butt.Size = new System.Drawing.Size(54, 23);
-            cancel_butt.TabIndex = 34;
-            cancel_butt.Text = "Отмена";
-            cancel_butt.UseVisualStyleBackColor = true;
-            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
-            // 
             // DelaysOptionsForm
             // 
             this.AcceptButton = ok_butt;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = cancel_butt;
-            this.ClientSize = new System.Drawing.Size(292, 143);
             this.Controls.Add(cancel_butt);
             this.Controls.Add(ok_butt);
             this.Controls.Add(this.backwardTimeNumericUpDown);
@@ -189,8 +158,6 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DelaysOptionsForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Установка задержек";
             ((System.ComponentModel.ISupportInitialize)(this.beforeTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.forwardTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.backwardTimeNumericUpDown)).EndInit();

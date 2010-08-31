@@ -27,6 +27,7 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseOptionsForm));
             Flavor.Controls.PreciseEditorLabelRowPlus PElabelRow;
             this.preciseEditorGroupBox = new System.Windows.Forms.GroupBox();
             this.insertPointButton = new System.Windows.Forms.Button();
@@ -51,19 +52,19 @@ namespace Flavor.Forms {
             // 
             // cancel_butt
             // 
-            this.cancel_butt.Location = new System.Drawing.Point(642, 374);
+            resources.ApplyResources(this.cancel_butt, "cancel_butt");
             // 
             // applyButton
             // 
-            this.applyButton.Location = new System.Drawing.Point(432, 374);
+            resources.ApplyResources(this.applyButton, "applyButton");
             // 
             // ok_butt
             // 
-            this.ok_butt.Location = new System.Drawing.Point(510, 374);
+            resources.ApplyResources(this.ok_butt, "ok_butt");
             // 
             // params_groupBox
             // 
-            this.params_groupBox.Location = new System.Drawing.Point(432, 12);
+            resources.ApplyResources(this.params_groupBox, "params_groupBox");
             this.params_groupBox.Controls.SetChildIndex(this.expTimeNumericUpDown, 0);
             this.params_groupBox.Controls.SetChildIndex(this.idleTimeNumericUpDown, 0);
             this.params_groupBox.Controls.SetChildIndex(this.iVoltageNumericUpDown, 0);
@@ -75,14 +76,12 @@ namespace Flavor.Forms {
             // 
             // rareModeCheckBox
             // 
-            this.rareModeCheckBox.Location = new System.Drawing.Point(432, 301);
+            resources.ApplyResources(this.rareModeCheckBox, "rareModeCheckBox");
             // 
             // PElabelRow
             // 
-            PElabelRow.Location = new System.Drawing.Point(6, 16);
+            resources.ApplyResources(PElabelRow, "PElabelRow");
             PElabelRow.Name = "PElabelRow";
-            PElabelRow.Size = new System.Drawing.Size(359, 26);
-            PElabelRow.TabIndex = 0;
             // 
             // preciseEditorGroupBox
             // 
@@ -92,73 +91,55 @@ namespace Flavor.Forms {
             this.preciseEditorGroupBox.Controls.Add(this.clearButton);
             this.preciseEditorGroupBox.Controls.Add(this.loadPreciseEditorFromFileButton);
             this.preciseEditorGroupBox.Controls.Add(this.savePreciseEditorToFileButton);
-            this.preciseEditorGroupBox.Location = new System.Drawing.Point(12, 12);
+            resources.ApplyResources(this.preciseEditorGroupBox, "preciseEditorGroupBox");
             this.preciseEditorGroupBox.Name = "preciseEditorGroupBox";
-            this.preciseEditorGroupBox.Size = new System.Drawing.Size(414, 385);
-            this.preciseEditorGroupBox.TabIndex = 3;
             this.preciseEditorGroupBox.TabStop = false;
-            this.preciseEditorGroupBox.Text = "Редактор областей сканирования";
             // 
             // insertPointButton
             // 
-            this.insertPointButton.Location = new System.Drawing.Point(312, 356);
+            resources.ApplyResources(this.insertPointButton, "insertPointButton");
             this.insertPointButton.Name = "insertPointButton";
-            this.insertPointButton.Size = new System.Drawing.Size(90, 23);
-            this.insertPointButton.TabIndex = 0;
-            this.insertPointButton.Text = "Вставка точки";
             this.insertPointButton.UseVisualStyleBackColor = true;
             this.insertPointButton.Click += new System.EventHandler(this.insertPointButton_Click);
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(244, 356);
+            resources.ApplyResources(this.clearButton, "clearButton");
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(62, 23);
-            this.clearButton.TabIndex = 12;
-            this.clearButton.Text = "Очистить";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
             // loadPreciseEditorFromFileButton
             // 
-            this.loadPreciseEditorFromFileButton.Location = new System.Drawing.Point(118, 356);
+            resources.ApplyResources(this.loadPreciseEditorFromFileButton, "loadPreciseEditorFromFileButton");
             this.loadPreciseEditorFromFileButton.Name = "loadPreciseEditorFromFileButton";
-            this.loadPreciseEditorFromFileButton.Size = new System.Drawing.Size(120, 23);
-            this.loadPreciseEditorFromFileButton.TabIndex = 11;
-            this.loadPreciseEditorFromFileButton.Text = "Загрузить из файла";
             this.loadPreciseEditorFromFileButton.UseVisualStyleBackColor = true;
             this.loadPreciseEditorFromFileButton.Click += new System.EventHandler(this.loadPreciseEditorFromFileButton_Click);
             // 
             // savePreciseEditorToFileButton
             // 
-            this.savePreciseEditorToFileButton.Location = new System.Drawing.Point(6, 356);
+            resources.ApplyResources(this.savePreciseEditorToFileButton, "savePreciseEditorToFileButton");
             this.savePreciseEditorToFileButton.Name = "savePreciseEditorToFileButton";
-            this.savePreciseEditorToFileButton.Size = new System.Drawing.Size(106, 23);
-            this.savePreciseEditorToFileButton.TabIndex = 10;
-            this.savePreciseEditorToFileButton.Text = "Сохранить в файл";
             this.savePreciseEditorToFileButton.UseVisualStyleBackColor = true;
             this.savePreciseEditorToFileButton.Click += new System.EventHandler(this.savePreciseEditorToFileButton_Click);
             // 
             // savePreciseEditorToFileDialog
             // 
             this.savePreciseEditorToFileDialog.DefaultExt = "ped";
-            this.savePreciseEditorToFileDialog.Filter = "Precise Editor Data Files (*.ped)|*.ped";
+            resources.ApplyResources(this.savePreciseEditorToFileDialog, "savePreciseEditorToFileDialog");
             // 
             // loadPreciseEditorFromFileDialog
             // 
             this.loadPreciseEditorFromFileDialog.DefaultExt = "ped";
-            this.loadPreciseEditorFromFileDialog.Filter = "Precise editor data files (*.ped)|*.ped|Precise specter files (*.psf)|*.psf";
+            resources.ApplyResources(this.loadPreciseEditorFromFileDialog, "loadPreciseEditorFromFileDialog");
             // 
             // PreciseOptionsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(711, 409);
+            resources.ApplyResources(this, "$this");
             this.Controls.Add(this.preciseEditorGroupBox);
             this.MinimizeBox = true;
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Настройки точного режима";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PreciseOptionsForm_FormClosed);
             this.Controls.SetChildIndex(this.preciseEditorGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);

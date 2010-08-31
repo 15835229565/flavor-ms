@@ -34,12 +34,16 @@ namespace Flavor.Forms {
                 this.Controls.Add(panel);
 			}*/
         }
-		protected abstract GraphPanel initPanel();
 
-		internal GraphForm() {
+        /*public new FormWindowState WindowState {
+            get { return base.WindowState; }
+            set { base.WindowState = FormWindowState.Maximized; }
+        }*/
+        
+        internal GraphForm() {
             InitializeComponent();
         }
-        private void GraphForm_Load(object sender, EventArgs e) {
+        private void GraphForm_Shown(object sender, EventArgs e) {
             CreateGraph();
         }
         private void GraphForm_Resize(object sender, EventArgs e) {
@@ -52,8 +56,7 @@ namespace Flavor.Forms {
             saveData();
         }
         private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            // TODO: subclass-dependent on closing! also mini/max preventing!
-			this.Close();
+			Close();
         }
         private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
             Panel.Visible = Panel.Enabled && measurePanelToolStripMenuItem.Checked;
@@ -64,6 +67,9 @@ namespace Flavor.Forms {
             measurePanelToolStripMenuItem.Visible = Panel.Enabled;
             measurePanelToolStripMenuItem_CheckedChanged(sender, e);
         }
+
+        protected abstract GraphPanel initPanel();
+
         protected abstract void RefreshGraph();
         protected abstract void CreateGraph();
         protected abstract void SetSize();

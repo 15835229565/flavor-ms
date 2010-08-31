@@ -17,7 +17,6 @@ namespace Flavor.Controls {
             this.peakCenterLabel = new System.Windows.Forms.Label();
             this.label41 = new System.Windows.Forms.Label();
             this.peakWidthLabel = new System.Windows.Forms.Label();
-
             this.label15 = new System.Windows.Forms.Label();
             this.detector1CountsLabel = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -159,7 +158,7 @@ namespace Flavor.Controls {
             // 
             this.detector2CountsLabel.BackColor = System.Drawing.SystemColors.Control;
             this.detector2CountsLabel.ForeColor = System.Drawing.Color.Green;
-            this.detector2CountsLabel.Location = new System.Drawing.Point(9, 418);
+            this.detector2CountsLabel.Location = new System.Drawing.Point(0, 0);
             this.detector2CountsLabel.Name = "detector2CountsLabel";
             this.detector2CountsLabel.Size = new System.Drawing.Size(200, 13);
             this.detector2CountsLabel.TabIndex = 42;
@@ -168,7 +167,7 @@ namespace Flavor.Controls {
             // 
             // scanProgressBar
             // 
-            this.scanProgressBar.Location = new System.Drawing.Point(3, 291);
+            this.scanProgressBar.Location = new System.Drawing.Point(0, 0);
             this.scanProgressBar.Name = "scanProgressBar";
             this.scanProgressBar.Size = new System.Drawing.Size(273, 23);
             this.scanProgressBar.TabIndex = 2;
@@ -176,7 +175,7 @@ namespace Flavor.Controls {
             // cancelScanButton
             // 
             this.cancelScanButton.Enabled = false;
-            this.cancelScanButton.Location = new System.Drawing.Point(193, 428);
+            this.cancelScanButton.Location = new System.Drawing.Point(0, 0);
             this.cancelScanButton.Name = "cancelScanButton";
             this.cancelScanButton.Size = new System.Drawing.Size(75, 23);
             this.cancelScanButton.TabIndex = 43;
@@ -184,7 +183,9 @@ namespace Flavor.Controls {
             this.cancelScanButton.UseVisualStyleBackColor = true;
             this.cancelScanButton.Visible = false;
             this.cancelScanButton.Click += new System.EventHandler(this.cancelScanButton_Click);
-
+            // 
+            // MeasureGraphPanel
+            // 
             this.Controls.Add(this.peakWidthLabel);
             this.Controls.Add(this.label41);
             this.Controls.Add(this.peakCenterLabel);
@@ -195,7 +196,6 @@ namespace Flavor.Controls {
             this.Controls.Add(this.label36);
             this.Controls.Add(this.scanRealTimeLabel);
             this.Controls.Add(this.label35);
-
             this.Controls.Add(this.scanProgressBar);
             this.Controls.Add(this.cancelScanButton);
             this.Controls.Add(this.detector2CountsLabel);
@@ -204,6 +204,7 @@ namespace Flavor.Controls {
             this.Controls.Add(this.label15);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

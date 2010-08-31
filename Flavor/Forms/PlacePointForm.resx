@@ -117,70 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="cancelButton.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 64</value>
+  <data name="&gt;&gt;oneRow.Name" xml:space="preserve">
+    <value>oneRow</value>
   </data>
-  <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+  <data name="&gt;&gt;oneRow.Type" xml:space="preserve">
+    <value>Flavor.Controls.PreciseEditorRow, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;oneRow.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;oneRow.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="cancelButton.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="cancelButton.Text" xml:space="preserve">
-    <value>Отмена</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.Name" xml:space="preserve">
-    <value>cancelButton</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="oneLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="okButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <data name="oneLabelRow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 8</value>
-  </data>
-  <data name="oneLabelRow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>310, 26</value>
-  </data>
-  <data name="oneLabelRow.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;oneLabelRow.Name" xml:space="preserve">
-    <value>oneLabelRow</value>
-  </data>
-  <data name="&gt;&gt;oneLabelRow.Type" xml:space="preserve">
-    <value>Flavor.Controls.PreciseEditorLabelRow, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;oneLabelRow.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;oneLabelRow.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 64</value>
-  </data>
-  <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="okButton.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="okButton.Text" xml:space="preserve">
-    <value>OK</value>
   </data>
   <data name="&gt;&gt;okButton.Name" xml:space="preserve">
     <value>okButton</value>
@@ -194,26 +145,27 @@
   <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="oneRow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 42</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pNumComboBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>174, 64</value>
   </data>
-  <data name="oneRow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>330, 13</value>
+  <data name="pNumComboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>40, 21</value>
   </data>
-  <data name="oneRow.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="pNumComboBox.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
-  <data name="&gt;&gt;oneRow.Name" xml:space="preserve">
-    <value>oneRow</value>
+  <data name="&gt;&gt;pNumComboBox.Name" xml:space="preserve">
+    <value>pNumComboBox</value>
   </data>
-  <data name="&gt;&gt;oneRow.Type" xml:space="preserve">
-    <value>Flavor.Controls.PreciseEditorRow, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;pNumComboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;oneRow.Parent" xml:space="preserve">
+  <data name="&gt;&gt;pNumComboBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;oneRow.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;pNumComboBox.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -224,17 +176,13 @@
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>354, 99</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterParent</value>
-  </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Добавление точки</value>
+    <value>Вставка точки</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>AddPointForm</value>
+    <value>PlacePointForm</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Flavor.Forms.AddPointForm, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

@@ -7,14 +7,16 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ZedGraphControlMonitor));
             this.SuspendLayout();
             // 
             // ZedGraphControlMonitor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.IsShowPointValues = true;
             this.Name = "ZedGraphControlMonitor";
             this.ResumeLayout(false);
+
         }
 
         #endregion

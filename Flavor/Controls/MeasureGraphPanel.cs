@@ -24,6 +24,10 @@ namespace Flavor.Controls {
             label15.Visible = false;
             detector2CountsLabel.Visible = false;
             label16.Visible = false;
+            scanRealTimeLabel.Visible = false;
+            stepNumberLabel.Visible = false;
+            label35.Visible = false;
+            label36.Visible = false;
 
             cancelScanButton.Enabled = true;
             cancelScanButton.Visible = true;
@@ -82,6 +86,7 @@ namespace Flavor.Controls {
             peakNumberLabel.Visible = true;
         }
         internal void refreshGraphicsOnScanStep() {
+            // TODO: optimize
             detector1CountsLabel.Visible = true;
             label15.Visible = true;
             detector2CountsLabel.Visible = true;
@@ -91,8 +96,14 @@ namespace Flavor.Controls {
             peakCenterLabel.Visible = false;
             label41.Visible = false;
             peakWidthLabel.Visible = false;
+            
+            scanRealTimeLabel.Visible = true;
+            stepNumberLabel.Visible = true;
+            label35.Visible = true;
+            label36.Visible = true;
         }
         internal void refreshGraphicsOnPreciseStep() {
+            // TODO: optimize
             peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;
             label39.Visible = true;
@@ -101,6 +112,12 @@ namespace Flavor.Controls {
             label41.Visible = true;
             peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
             peakWidthLabel.Visible = true;
+            
+            scanRealTimeLabel.Visible = true;
+            stepNumberLabel.Visible = true;
+            label35.Visible = true;
+            label36.Visible = true;
+            
             if (Graph.CurrentPeak.Collector == 1) {
                 detector1CountsLabel.Visible = true;
                 label15.Visible = true;
@@ -114,6 +131,7 @@ namespace Flavor.Controls {
             }
         }
         protected sealed override void disableControls() {
+            // what about other controls?
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.Default;
             cancelScanButton.Visible = false;
         }

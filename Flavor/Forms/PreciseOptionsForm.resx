@@ -117,22 +117,394 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="&gt;&gt;fV1NumericUpDown.Name" xml:space="preserve">
+    <value>fV1NumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.Name" xml:space="preserve">
+    <value>hCurrentNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Name" xml:space="preserve">
+    <value>eCurrentNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.Name" xml:space="preserve">
+    <value>CPNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.Name" xml:space="preserve">
+    <value>iVoltageNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;idleTimeNumericUpDown.Name" xml:space="preserve">
+    <value>idleTimeNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;idleTimeNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;idleTimeNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;idleTimeNumericUpDown.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;expTimeNumericUpDown.Name" xml:space="preserve">
+    <value>expTimeNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;expTimeNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;expTimeNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;expTimeNumericUpDown.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.Name" xml:space="preserve">
+    <value>fV2NumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>207, 17</value>
   </metadata>
   <metadata name="saveCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="cancel_butt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>642, 374</value>
+  </data>
+  <data name="&gt;&gt;cancel_butt.Name" xml:space="preserve">
+    <value>cancel_butt</value>
+  </data>
+  <data name="&gt;&gt;cancel_butt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cancel_butt.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cancel_butt.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="applyButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>432, 374</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
+    <value>applyButton</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ok_butt.Location" type="System.Drawing.Point, System.Drawing">
+    <value>510, 374</value>
+  </data>
+  <data name="&gt;&gt;ok_butt.Name" xml:space="preserve">
+    <value>ok_butt</value>
+  </data>
+  <data name="&gt;&gt;ok_butt.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ok_butt.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ok_butt.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="params_groupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>432, 12</value>
+  </data>
+  <data name="&gt;&gt;params_groupBox.Name" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;params_groupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;params_groupBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;params_groupBox.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="rareModeCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>432, 301</value>
+  </data>
+  <data name="&gt;&gt;rareModeCheckBox.Name" xml:space="preserve">
+    <value>rareModeCheckBox</value>
+  </data>
+  <data name="&gt;&gt;rareModeCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rareModeCheckBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;rareModeCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="PElabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="PElabelRow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 16</value>
+  </data>
+  <data name="PElabelRow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>359, 26</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="PElabelRow.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;PElabelRow.Name" xml:space="preserve">
+    <value>PElabelRow</value>
+  </data>
+  <data name="&gt;&gt;PElabelRow.Type" xml:space="preserve">
+    <value>Flavor.Controls.PreciseEditorLabelRowPlus, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;PElabelRow.Parent" xml:space="preserve">
+    <value>preciseEditorGroupBox</value>
+  </data>
+  <data name="&gt;&gt;PElabelRow.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="insertPointButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>312, 356</value>
+  </data>
+  <data name="insertPointButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>90, 23</value>
+  </data>
+  <data name="insertPointButton.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="insertPointButton.Text" xml:space="preserve">
+    <value>Вставка точки</value>
+  </data>
+  <data name="&gt;&gt;insertPointButton.Name" xml:space="preserve">
+    <value>insertPointButton</value>
+  </data>
+  <data name="&gt;&gt;insertPointButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;insertPointButton.Parent" xml:space="preserve">
+    <value>preciseEditorGroupBox</value>
+  </data>
+  <data name="&gt;&gt;insertPointButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="clearButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>244, 356</value>
+  </data>
+  <data name="clearButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 23</value>
+  </data>
+  <data name="clearButton.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="clearButton.Text" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="&gt;&gt;clearButton.Name" xml:space="preserve">
+    <value>clearButton</value>
+  </data>
+  <data name="&gt;&gt;clearButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;clearButton.Parent" xml:space="preserve">
+    <value>preciseEditorGroupBox</value>
+  </data>
+  <data name="&gt;&gt;clearButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="loadPreciseEditorFromFileButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>118, 356</value>
+  </data>
+  <data name="loadPreciseEditorFromFileButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>120, 23</value>
+  </data>
+  <data name="loadPreciseEditorFromFileButton.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="loadPreciseEditorFromFileButton.Text" xml:space="preserve">
+    <value>Загрузить из файла</value>
+  </data>
+  <data name="&gt;&gt;loadPreciseEditorFromFileButton.Name" xml:space="preserve">
+    <value>loadPreciseEditorFromFileButton</value>
+  </data>
+  <data name="&gt;&gt;loadPreciseEditorFromFileButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;loadPreciseEditorFromFileButton.Parent" xml:space="preserve">
+    <value>preciseEditorGroupBox</value>
+  </data>
+  <data name="&gt;&gt;loadPreciseEditorFromFileButton.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="savePreciseEditorToFileButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 356</value>
+  </data>
+  <data name="savePreciseEditorToFileButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 23</value>
+  </data>
+  <data name="savePreciseEditorToFileButton.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="savePreciseEditorToFileButton.Text" xml:space="preserve">
+    <value>Сохранить в файл</value>
+  </data>
+  <data name="&gt;&gt;savePreciseEditorToFileButton.Name" xml:space="preserve">
+    <value>savePreciseEditorToFileButton</value>
+  </data>
+  <data name="&gt;&gt;savePreciseEditorToFileButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;savePreciseEditorToFileButton.Parent" xml:space="preserve">
+    <value>preciseEditorGroupBox</value>
+  </data>
+  <data name="&gt;&gt;savePreciseEditorToFileButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="preciseEditorGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="preciseEditorGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>414, 385</value>
+  </data>
+  <data name="preciseEditorGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="preciseEditorGroupBox.Text" xml:space="preserve">
+    <value>Редактор областей сканирования</value>
+  </data>
+  <data name="&gt;&gt;preciseEditorGroupBox.Name" xml:space="preserve">
+    <value>preciseEditorGroupBox</value>
+  </data>
+  <data name="&gt;&gt;preciseEditorGroupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;preciseEditorGroupBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;preciseEditorGroupBox.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
   <metadata name="savePreciseEditorToFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>399, 17</value>
   </metadata>
+  <data name="savePreciseEditorToFileDialog.Filter" xml:space="preserve">
+    <value>Precise Editor Data Files (*.ped)|*.ped</value>
+  </data>
   <metadata name="loadPreciseEditorFromFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>598, 17</value>
   </metadata>
+  <data name="loadPreciseEditorFromFileDialog.Filter" xml:space="preserve">
+    <value>Precise editor data files (*.ped)|*.ped|Precise specter files (*.psf)|*.psf</value>
+  </data>
   <metadata name="formToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>808, 17</value>
   </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>711, 409</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterScreen</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Настройки точного режима</value>
+  </data>
+  <data name="&gt;&gt;openCommonDataFileDialog.Name" xml:space="preserve">
+    <value>openCommonDataFileDialog</value>
+  </data>
+  <data name="&gt;&gt;openCommonDataFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveCommonDataFileDialog.Name" xml:space="preserve">
+    <value>saveCommonDataFileDialog</value>
+  </data>
+  <data name="&gt;&gt;saveCommonDataFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;savePreciseEditorToFileDialog.Name" xml:space="preserve">
+    <value>savePreciseEditorToFileDialog</value>
+  </data>
+  <data name="&gt;&gt;savePreciseEditorToFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;loadPreciseEditorFromFileDialog.Name" xml:space="preserve">
+    <value>loadPreciseEditorFromFileDialog</value>
+  </data>
+  <data name="&gt;&gt;loadPreciseEditorFromFileDialog.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;formToolTip.Name" xml:space="preserve">
+    <value>formToolTip</value>
+  </data>
+  <data name="&gt;&gt;formToolTip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>PreciseOptionsForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>Flavor.Forms.OptionsForm, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
 </root>

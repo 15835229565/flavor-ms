@@ -224,6 +224,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>GraphPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MeasureGraphPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MeasureGraphPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ZedGraphControlMonitor.resx">
       <DependentUpon>ZedGraphControlMonitor.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -271,6 +275,10 @@
     <EmbeddedResource Include="Forms\MonitorOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MonitorOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PlacePointForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PlacePointForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PreciseOptionsForm.resx">
       <SubType>Designer</SubType>

@@ -15,7 +15,7 @@ namespace Flavor.Forms {
                 if (collectorsForm == null) {
                     collectorsForm = new MeasuredCollectorsForm();
                     collectorsForm.MdiParent = this;
-                    collectorsForm.WindowState = FormWindowState.Maximized;
+                    //collectorsForm.WindowState = FormWindowState.Maximized;
                 }
                 return collectorsForm;
             }
@@ -181,13 +181,13 @@ namespace Flavor.Forms {
             statusTreeView.Nodes.AddRange(new TreeNode[] { rootNode });
         }
         #endregion
-        private void mainForm_Load(object sender, EventArgs e) {
+        private void mainForm_Shown(object sender, EventArgs e) {
             openConfigFileToolStripMenuItem_Click(sender, e);
-            this.Activate();
+            Activate();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            mainForm.ActiveForm.Close();
+            Close();
         }
         private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
             (new ConnectOptionsForm()).ShowDialog();
@@ -238,18 +238,18 @@ namespace Flavor.Forms {
         }
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
-            CollectorsForm.startScan();
             prepareControlsOnMeasureStart();
+            CollectorsForm.startScan();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             Commander.Sense();
-            CollectorsForm.startPrecise();
             prepareControlsOnMeasureStart();
+            CollectorsForm.startPrecise();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             Commander.Monitor();
-            CollectorsForm.startMonitor();
             prepareControlsOnMeasureStart();
+            CollectorsForm.startMonitor();
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {

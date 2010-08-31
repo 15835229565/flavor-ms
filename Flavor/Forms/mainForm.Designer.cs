@@ -103,40 +103,30 @@ namespace Flavor.Forms {
             optionsToolStripMenuItem,
             windowsMenu,
             helpMenu});
-            menuStrip.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(menuStrip, "menuStrip");
             menuStrip.MdiWindowListItem = windowsMenu;
             menuStrip.Name = "menuStrip";
-            menuStrip.Size = new System.Drawing.Size(992, 24);
-            menuStrip.TabIndex = 1;
-            menuStrip.Text = "menuStrip1";
             // 
             // fileMenu
             // 
             fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openSpecterFileToolStripMenuItem,
             exitToolStripMenuItem});
-            fileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
+            resources.ApplyResources(fileMenu, "fileMenu");
             fileMenu.Name = "fileMenu";
-            fileMenu.Size = new System.Drawing.Size(61, 20);
-            fileMenu.Text = "&Главное";
             // 
             // openSpecterFileToolStripMenuItem
             // 
-            this.openSpecterFileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openSpecterFileToolStripMenuItem.Image")));
-            this.openSpecterFileToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.openSpecterFileToolStripMenuItem, "openSpecterFileToolStripMenuItem");
             this.openSpecterFileToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
             this.openSpecterFileToolStripMenuItem.MergeIndex = 0;
             this.openSpecterFileToolStripMenuItem.Name = "openSpecterFileToolStripMenuItem";
-            this.openSpecterFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openSpecterFileToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.openSpecterFileToolStripMenuItem.Text = "&Открыть файл спектра";
             this.openSpecterFileToolStripMenuItem.Click += new System.EventHandler(this.openSpecterFileToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            exitToolStripMenuItem.Text = "В&ыход";
+            resources.ApplyResources(exitToolStripMenuItem, "exitToolStripMenuItem");
             exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // viewMenu
@@ -146,8 +136,7 @@ namespace Flavor.Forms {
             this.ParameterToolStripMenuItem,
             this.statusBarToolStripMenuItem});
             viewMenu.Name = "viewMenu";
-            viewMenu.Size = new System.Drawing.Size(38, 20);
-            viewMenu.Text = "&Вид";
+            resources.ApplyResources(viewMenu, "viewMenu");
             // 
             // toolBarToolStripMenuItem
             // 
@@ -155,8 +144,7 @@ namespace Flavor.Forms {
             this.toolBarToolStripMenuItem.CheckOnClick = true;
             this.toolBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolBarToolStripMenuItem.Name = "toolBarToolStripMenuItem";
-            this.toolBarToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.toolBarToolStripMenuItem.Text = "Панель &управления прибором";
+            resources.ApplyResources(this.toolBarToolStripMenuItem, "toolBarToolStripMenuItem");
             this.toolBarToolStripMenuItem.Click += new System.EventHandler(this.ToolBarToolStripMenuItem_Click);
             // 
             // ParameterToolStripMenuItem
@@ -165,8 +153,7 @@ namespace Flavor.Forms {
             this.ParameterToolStripMenuItem.CheckOnClick = true;
             this.ParameterToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ParameterToolStripMenuItem.Name = "ParameterToolStripMenuItem";
-            this.ParameterToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.ParameterToolStripMenuItem.Text = "&Параметры системы";
+            resources.ApplyResources(this.ParameterToolStripMenuItem, "ParameterToolStripMenuItem");
             this.ParameterToolStripMenuItem.Click += new System.EventHandler(this.ParameterToolStripMenuItem_Click);
             // 
             // statusBarToolStripMenuItem
@@ -175,8 +162,7 @@ namespace Flavor.Forms {
             this.statusBarToolStripMenuItem.CheckOnClick = true;
             this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
-            this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(236, 22);
-            this.statusBarToolStripMenuItem.Text = "Строка &состояния";
+            resources.ApplyResources(this.statusBarToolStripMenuItem, "statusBarToolStripMenuItem");
             this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
@@ -189,33 +175,29 @@ namespace Flavor.Forms {
             this.connectToolStripMenuItem,
             this.measureToolStripMenuItem});
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
-            optionsToolStripMenuItem.Text = "&Настройки";
+            resources.ApplyResources(optionsToolStripMenuItem, "optionsToolStripMenuItem");
             // 
             // openConfigFileToolStripMenuItem
             // 
             openConfigFileToolStripMenuItem.Name = "openConfigFileToolStripMenuItem";
-            openConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            openConfigFileToolStripMenuItem.Text = "Перечитать файл конфигурации";
+            resources.ApplyResources(openConfigFileToolStripMenuItem, "openConfigFileToolStripMenuItem");
             openConfigFileToolStripMenuItem.Click += new System.EventHandler(this.openConfigFileToolStripMenuItem_Click);
             // 
             // saveConfigFileToolStripMenuItem
             // 
             saveConfigFileToolStripMenuItem.Name = "saveConfigFileToolStripMenuItem";
-            saveConfigFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            saveConfigFileToolStripMenuItem.Text = "Перезаписать файл конфигурации";
+            resources.ApplyResources(saveConfigFileToolStripMenuItem, "saveConfigFileToolStripMenuItem");
             saveConfigFileToolStripMenuItem.Click += new System.EventHandler(this.saveConfigFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(258, 6);
+            resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
             // 
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.connectToolStripMenuItem.Text = "Соединение";
+            resources.ApplyResources(this.connectToolStripMenuItem, "connectToolStripMenuItem");
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // measureToolStripMenuItem
@@ -227,40 +209,35 @@ namespace Flavor.Forms {
             senseToolStripMenuItem,
             monitorToolStripMenuItem});
             this.measureToolStripMenuItem.Name = "measureToolStripMenuItem";
-            this.measureToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.measureToolStripMenuItem.Text = "Измерение";
+            resources.ApplyResources(this.measureToolStripMenuItem, "measureToolStripMenuItem");
             // 
             // delaysToolStripMenuItem
             // 
             delaysToolStripMenuItem.Name = "delaysToolStripMenuItem";
-            delaysToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            delaysToolStripMenuItem.Text = "Установка задержек";
+            resources.ApplyResources(delaysToolStripMenuItem, "delaysToolStripMenuItem");
             delaysToolStripMenuItem.Click += new System.EventHandler(this.delaysToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(189, 6);
+            resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
             // 
             // overviewToolStripMenuItem
             // 
             overviewToolStripMenuItem.Name = "overviewToolStripMenuItem";
-            overviewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            overviewToolStripMenuItem.Text = "Обзорный режим";
+            resources.ApplyResources(overviewToolStripMenuItem, "overviewToolStripMenuItem");
             overviewToolStripMenuItem.Click += new System.EventHandler(this.overviewToolStripMenuItem_Click);
             // 
             // senseToolStripMenuItem
             // 
             senseToolStripMenuItem.Name = "senseToolStripMenuItem";
-            senseToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            senseToolStripMenuItem.Text = "Точный режим";
+            resources.ApplyResources(senseToolStripMenuItem, "senseToolStripMenuItem");
             senseToolStripMenuItem.Click += new System.EventHandler(this.senseToolStripMenuItem_Click);
             // 
             // monitorToolStripMenuItem
             // 
             monitorToolStripMenuItem.Name = "monitorToolStripMenuItem";
-            monitorToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            monitorToolStripMenuItem.Text = "Режим мониторинга";
+            resources.ApplyResources(monitorToolStripMenuItem, "monitorToolStripMenuItem");
             monitorToolStripMenuItem.Click += new System.EventHandler(this.monitorToolStripMenuItem_Click);
             // 
             // windowsMenu
@@ -269,20 +246,18 @@ namespace Flavor.Forms {
             closeAllToolStripMenuItem,
             toolStripSeparator3});
             windowsMenu.Name = "windowsMenu";
-            windowsMenu.Size = new System.Drawing.Size(119, 20);
-            windowsMenu.Text = "&Открытые спектры";
+            resources.ApplyResources(windowsMenu, "windowsMenu");
             // 
             // closeAllToolStripMenuItem
             // 
             closeAllToolStripMenuItem.Name = "closeAllToolStripMenuItem";
-            closeAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            closeAllToolStripMenuItem.Text = "&Закрыть все";
+            resources.ApplyResources(closeAllToolStripMenuItem, "closeAllToolStripMenuItem");
             closeAllToolStripMenuItem.Click += new System.EventHandler(this.closeAllToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
             // 
             // helpMenu
             // 
@@ -293,64 +268,47 @@ namespace Flavor.Forms {
             toolStripSeparator8,
             aboutToolStripMenuItem});
             helpMenu.Name = "helpMenu";
-            helpMenu.Size = new System.Drawing.Size(59, 20);
-            helpMenu.Text = "&Помощь";
-            helpMenu.Visible = false;
+            resources.ApplyResources(helpMenu, "helpMenu");
             // 
             // contentsToolStripMenuItem
             // 
             contentsToolStripMenuItem.Name = "contentsToolStripMenuItem";
-            contentsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-            contentsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            contentsToolStripMenuItem.Text = "&Contents";
+            resources.ApplyResources(contentsToolStripMenuItem, "contentsToolStripMenuItem");
             // 
             // indexToolStripMenuItem
             // 
-            indexToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("indexToolStripMenuItem.Image")));
-            indexToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            resources.ApplyResources(indexToolStripMenuItem, "indexToolStripMenuItem");
             indexToolStripMenuItem.Name = "indexToolStripMenuItem";
-            indexToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            indexToolStripMenuItem.Text = "&Index";
             // 
             // searchToolStripMenuItem
             // 
-            searchToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("searchToolStripMenuItem.Image")));
-            searchToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
+            resources.ApplyResources(searchToolStripMenuItem, "searchToolStripMenuItem");
             searchToolStripMenuItem.Name = "searchToolStripMenuItem";
-            searchToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            searchToolStripMenuItem.Text = "&Search";
             // 
             // toolStripSeparator8
             // 
             toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new System.Drawing.Size(170, 6);
+            resources.ApplyResources(toolStripSeparator8, "toolStripSeparator8");
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            aboutToolStripMenuItem.Text = "&О программе ...";
+            resources.ApplyResources(aboutToolStripMenuItem, "aboutToolStripMenuItem");
             // 
             // initSys_butt
             // 
             this.initSys_butt.BackColor = System.Drawing.Color.White;
-            this.initSys_butt.Enabled = false;
+            resources.ApplyResources(this.initSys_butt, "initSys_butt");
             this.initSys_butt.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.initSys_butt.Image = ((System.Drawing.Image)(resources.GetObject("initSys_butt.Image")));
-            this.initSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.initSys_butt.Name = "initSys_butt";
-            this.initSys_butt.Size = new System.Drawing.Size(101, 22);
-            this.initSys_butt.Text = "Запуск системы";
             this.initSys_butt.Click += new System.EventHandler(this.initSys_butt_Click);
             // 
             // overview_button
             // 
             this.overview_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.overview_button.BackColor = System.Drawing.Color.White;
-            this.overview_button.Enabled = false;
+            resources.ApplyResources(this.overview_button, "overview_button");
             this.overview_button.Name = "overview_button";
-            this.overview_button.Size = new System.Drawing.Size(97, 22);
-            this.overview_button.Text = "Обзорный режим";
             this.overview_button.Click += new System.EventHandler(this.overview_button_Click);
             // 
             // statusStrip
@@ -358,49 +316,36 @@ namespace Flavor.Forms {
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.measure_StatusLabel});
             this.statusStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.statusStrip.Location = new System.Drawing.Point(0, 944);
+            resources.ApplyResources(this.statusStrip, "statusStrip");
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(992, 22);
             this.statusStrip.SizingGrip = false;
-            this.statusStrip.TabIndex = 9;
             // 
             // measure_StatusLabel
             // 
             this.measure_StatusLabel.BackColor = System.Drawing.SystemColors.MenuBar;
             this.measure_StatusLabel.Name = "measure_StatusLabel";
-            this.measure_StatusLabel.Size = new System.Drawing.Size(96, 17);
-            this.measure_StatusLabel.Text = "Info about System";
+            resources.ApplyResources(this.measure_StatusLabel, "measure_StatusLabel");
             // 
             // sensmeasure_button
             // 
             this.sensmeasure_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.sensmeasure_button.BackColor = System.Drawing.Color.White;
-            this.sensmeasure_button.Enabled = false;
+            resources.ApplyResources(this.sensmeasure_button, "sensmeasure_button");
             this.sensmeasure_button.Name = "sensmeasure_button";
-            this.sensmeasure_button.Size = new System.Drawing.Size(84, 22);
-            this.sensmeasure_button.Text = "Точный режим";
             this.sensmeasure_button.Click += new System.EventHandler(this.sensmeasure_button_Click);
             // 
             // shutSys_butt
             // 
             this.shutSys_butt.BackColor = System.Drawing.Color.White;
-            this.shutSys_butt.Enabled = false;
-            this.shutSys_butt.Image = ((System.Drawing.Image)(resources.GetObject("shutSys_butt.Image")));
-            this.shutSys_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            resources.ApplyResources(this.shutSys_butt, "shutSys_butt");
             this.shutSys_butt.Name = "shutSys_butt";
-            this.shutSys_butt.Size = new System.Drawing.Size(123, 22);
-            this.shutSys_butt.Text = "Отключить систему";
             this.shutSys_butt.Click += new System.EventHandler(this.shutSys_butt_Click);
             // 
             // unblock_butt
             // 
             this.unblock_butt.BackColor = System.Drawing.Color.White;
-            this.unblock_butt.Enabled = false;
-            this.unblock_butt.Image = ((System.Drawing.Image)(resources.GetObject("unblock_butt.Image")));
-            this.unblock_butt.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            resources.ApplyResources(this.unblock_butt, "unblock_butt");
             this.unblock_butt.Name = "unblock_butt";
-            this.unblock_butt.Size = new System.Drawing.Size(115, 22);
-            this.unblock_butt.Text = "Снять блокировку";
             this.unblock_butt.Click += new System.EventHandler(this.unblock_butt_Click);
             // 
             // controlToolStrip
@@ -416,58 +361,41 @@ namespace Flavor.Forms {
             this.sensmeasure_button,
             this.overview_button});
             this.controlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.controlToolStrip.Location = new System.Drawing.Point(0, 24);
+            resources.ApplyResources(this.controlToolStrip, "controlToolStrip");
             this.controlToolStrip.Name = "controlToolStrip";
             this.controlToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.controlToolStrip.Size = new System.Drawing.Size(992, 25);
-            this.controlToolStrip.TabIndex = 14;
-            this.controlToolStrip.Text = "Управление масс-спектрометром";
             // 
             // connectToolStripButton
             // 
             this.connectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.connectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            resources.ApplyResources(this.connectToolStripButton, "connectToolStripButton");
             this.connectToolStripButton.Name = "connectToolStripButton";
-            this.connectToolStripButton.Size = new System.Drawing.Size(67, 22);
-            this.connectToolStripButton.Text = "Соединить";
             this.connectToolStripButton.Click += new System.EventHandler(this.connectToolStripButton_Click);
             // 
             // monitorToolStripButton
             // 
             this.monitorToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.monitorToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.monitorToolStripButton.Enabled = false;
-            this.monitorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("monitorToolStripButton.Image")));
-            this.monitorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            resources.ApplyResources(this.monitorToolStripButton, "monitorToolStripButton");
             this.monitorToolStripButton.Name = "monitorToolStripButton";
-            this.monitorToolStripButton.Size = new System.Drawing.Size(111, 22);
-            this.monitorToolStripButton.Text = "Режим мониторинга";
             this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
             // 
             // parameterPanel
             // 
             this.parameterPanel.BackColor = System.Drawing.SystemColors.Control;
             this.parameterPanel.Controls.Add(this.statusTreeView);
-            this.parameterPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.parameterPanel.Location = new System.Drawing.Point(0, 49);
+            resources.ApplyResources(this.parameterPanel, "parameterPanel");
             this.parameterPanel.Name = "parameterPanel";
-            this.parameterPanel.Size = new System.Drawing.Size(234, 895);
-            this.parameterPanel.TabIndex = 16;
-            this.parameterPanel.Text = "Параметры системы";
             // 
             // statusTreeView
             // 
             this.statusTreeView.BackColor = System.Drawing.SystemColors.Control;
             this.statusTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.statusTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.statusTreeView.Indent = 15;
-            this.statusTreeView.Location = new System.Drawing.Point(0, 0);
+            resources.ApplyResources(this.statusTreeView, "statusTreeView");
             this.statusTreeView.Name = "statusTreeView";
             this.statusTreeView.ShowLines = false;
             this.statusTreeView.ShowPlusMinus = false;
-            this.statusTreeView.Size = new System.Drawing.Size(234, 895);
             this.statusTreeView.StateImageList = this.statusTreeViewStateImageList;
-            this.statusTreeView.TabIndex = 0;
             // 
             // statusTreeViewStateImageList
             // 
@@ -482,10 +410,9 @@ namespace Flavor.Forms {
             // 
             // mainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(992, 966);
             this.Controls.Add(this.parameterPanel);
             this.Controls.Add(this.controlToolStrip);
             this.Controls.Add(menuStrip);
@@ -493,9 +420,7 @@ namespace Flavor.Forms {
             this.IsMdiContainer = true;
             this.MainMenuStrip = menuStrip;
             this.Name = "mainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Управление масс-спектрометром";
-            this.Load += new System.EventHandler(this.mainForm_Load);
+            this.Shown += new System.EventHandler(this.mainForm_Shown);
             this.MdiChildActivate += new System.EventHandler(this.mainForm_MdiChildActivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             menuStrip.ResumeLayout(false);

@@ -8,6 +8,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.Label label1;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseEditorLabelRowPlus));
             Flavor.Controls.PreciseEditorLabelRow row;
             label1 = new System.Windows.Forms.Label();
             row = new Flavor.Controls.PreciseEditorLabelRow();
@@ -15,28 +16,21 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
+            resources.ApplyResources(label1, "label1");
             label1.BackColor = System.Drawing.SystemColors.Control;
-            label1.Location = new System.Drawing.Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(41, 26);
-            label1.TabIndex = 6;
-            label1.Text = "Номер\r\nпика";
-            label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // row
             // 
-            row.Location = new System.Drawing.Point(49, 0);
+            resources.ApplyResources(row, "row");
             row.Name = "row";
-            row.Size = new System.Drawing.Size(310, 26);
-            row.TabIndex = 7;
             // 
             // PreciseEditorLabelRowPlus
             // 
             this.Controls.Add(label1);
             this.Controls.Add(row);
             this.Name = "PreciseEditorLabelRowPlus";
-            this.Size = new System.Drawing.Size(359, 26);
+            resources.ApplyResources(this, "$this");
             this.ResumeLayout(false);
             this.PerformLayout();
 

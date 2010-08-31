@@ -8,6 +8,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.Label startScan;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanOptionsForm));
             System.Windows.Forms.Label label1;
             this.scan_groupBox = new System.Windows.Forms.GroupBox();
             this.endScanNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -38,12 +39,13 @@
             // 
             // startScan
             // 
-            startScan.AutoSize = true;
-            startScan.Location = new System.Drawing.Point(3, 18);
+            resources.ApplyResources(startScan, "startScan");
             startScan.Name = "startScan";
-            startScan.Size = new System.Drawing.Size(100, 13);
-            startScan.TabIndex = 0;
-            startScan.Text = "Первая ступенька";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
             // 
             // scan_groupBox
             // 
@@ -51,46 +53,25 @@
             this.scan_groupBox.Controls.Add(this.startScanNumericUpDown);
             this.scan_groupBox.Controls.Add(label1);
             this.scan_groupBox.Controls.Add(startScan);
-            this.scan_groupBox.Location = new System.Drawing.Point(10, 10);
-            this.scan_groupBox.Margin = new System.Windows.Forms.Padding(0);
+            resources.ApplyResources(this.scan_groupBox, "scan_groupBox");
             this.scan_groupBox.Name = "scan_groupBox";
-            this.scan_groupBox.Padding = new System.Windows.Forms.Padding(0);
-            this.scan_groupBox.Size = new System.Drawing.Size(270, 72);
-            this.scan_groupBox.TabIndex = 0;
             this.scan_groupBox.TabStop = false;
             // 
             // endScanNumericUpDown
             // 
-            this.endScanNumericUpDown.Location = new System.Drawing.Point(195, 42);
+            resources.ApplyResources(this.endScanNumericUpDown, "endScanNumericUpDown");
             this.endScanNumericUpDown.Name = "endScanNumericUpDown";
-            this.endScanNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.endScanNumericUpDown.TabIndex = 4;
-            this.endScanNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // startScanNumericUpDown
             // 
-            this.startScanNumericUpDown.Location = new System.Drawing.Point(195, 16);
+            resources.ApplyResources(this.startScanNumericUpDown, "startScanNumericUpDown");
             this.startScanNumericUpDown.Name = "startScanNumericUpDown";
-            this.startScanNumericUpDown.Size = new System.Drawing.Size(60, 20);
-            this.startScanNumericUpDown.TabIndex = 3;
-            this.startScanNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(3, 44);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(118, 13);
-            label1.TabIndex = 2;
-            label1.Text = "Последняя ступенька";
             // 
             // ScanOptionsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.ClientSize = new System.Drawing.Size(292, 432);
+            resources.ApplyResources(this, "$this");
             this.Controls.Add(this.scan_groupBox);
             this.Name = "ScanOptionsForm";
-            this.Text = "Настройки обзорного режима";
             this.Controls.SetChildIndex(this.scan_groupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
@@ -113,6 +94,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.startScanNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

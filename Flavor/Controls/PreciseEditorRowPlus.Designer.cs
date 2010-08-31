@@ -10,6 +10,7 @@ namespace Flavor.Controls {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseEditorRowPlus));
             this.clearPeakButton = new System.Windows.Forms.Button();
             this.peakNumberLabel = new System.Windows.Forms.Label();
             this.usePeakCheckBox = new System.Windows.Forms.CheckBox();
@@ -17,67 +18,55 @@ namespace Flavor.Controls {
             // 
             // lapsTextBox
             // 
-            this.lapsTextBox.Location = new System.Drawing.Point(163, 0);
+            resources.ApplyResources(this.lapsTextBox, "lapsTextBox");
             // 
             // precTextBox
             // 
-            this.precTextBox.Location = new System.Drawing.Point(215, 0);
+            resources.ApplyResources(this.precTextBox, "precTextBox");
             // 
             // commentTextBox
             // 
-            this.commentTextBox.Location = new System.Drawing.Point(267, 0);
+            resources.ApplyResources(this.commentTextBox, "commentTextBox");
             // 
             // stepTextBox
             // 
             this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.stepTextBox.Enabled = true;
-            this.stepTextBox.Location = new System.Drawing.Point(37, 0);
+            resources.ApplyResources(this.stepTextBox, "stepTextBox");
             this.stepTextBox.ReadOnly = false;
             // 
             // colTextBox
             // 
             this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.colTextBox.Enabled = true;
-            this.colTextBox.Location = new System.Drawing.Point(89, 0);
+            resources.ApplyResources(this.colTextBox, "colTextBox");
             // 
             // widthTextBox
             // 
-            this.widthTextBox.Location = new System.Drawing.Point(111, 0);
+            resources.ApplyResources(this.widthTextBox, "widthTextBox");
             // 
             // clearPeakButton
             // 
-            this.clearPeakButton.Location = new System.Drawing.Point(369, 0);
-            this.clearPeakButton.Margin = new System.Windows.Forms.Padding(1);
+            resources.ApplyResources(this.clearPeakButton, "clearPeakButton");
             this.clearPeakButton.Name = "clearPeakButton";
-            this.clearPeakButton.Size = new System.Drawing.Size(13, 13);
-            this.clearPeakButton.TabIndex = 8;
             this.clearPeakButton.Click += new System.EventHandler(this.clearPeakButton_Click);
             // 
             // peakNumberLabel
             // 
-            this.peakNumberLabel.AutoSize = true;
+            resources.ApplyResources(this.peakNumberLabel, "peakNumberLabel");
             this.peakNumberLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.peakNumberLabel.Location = new System.Drawing.Point(0, 0);
             this.peakNumberLabel.Name = "peakNumberLabel";
-            this.peakNumberLabel.Size = new System.Drawing.Size(0, 13);
-            this.peakNumberLabel.TabIndex = 6;
-            this.peakNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // usePeakCheckBox
             // 
-            this.usePeakCheckBox.Location = new System.Drawing.Point(22, 0);
+            resources.ApplyResources(this.usePeakCheckBox, "usePeakCheckBox");
             this.usePeakCheckBox.Name = "usePeakCheckBox";
-            this.usePeakCheckBox.Size = new System.Drawing.Size(13, 13);
-            this.usePeakCheckBox.TabIndex = 7;
             // 
             // PreciseEditorRowPlus
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.Controls.Add(this.peakNumberLabel);
             this.Controls.Add(this.usePeakCheckBox);
             this.Controls.Add(this.clearPeakButton);
             this.Name = "PreciseEditorRowPlus";
-            this.Size = new System.Drawing.Size(382, 13);
             this.Controls.SetChildIndex(this.widthTextBox, 0);
             this.Controls.SetChildIndex(this.colTextBox, 0);
             this.Controls.SetChildIndex(this.stepTextBox, 0);
