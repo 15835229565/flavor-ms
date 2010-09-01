@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ZedGraph;
 
 namespace Flavor.Common {
-    internal class Graph {
+    public class Graph {
         private static Graph instance = null;
         internal static Graph Instance {
             get {
@@ -20,7 +20,7 @@ namespace Flavor.Common {
             Loaded,
             Diff
         }
-        internal class pListScaled {
+        public class pListScaled {
             internal enum DisplayValue {
                 Step = 0,
                 Voltage = 1,

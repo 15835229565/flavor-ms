@@ -1,21 +1,7 @@
+using Flavor.Controls;
+
 namespace Flavor.Forms {
     partial class MonitorForm {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -24,17 +10,39 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorForm));
+            this.graph = new Flavor.Controls.ZedGraphControlMonitor();
             this.SuspendLayout();
+            //
+            // graph
             // 
+            this.graph.EditButtons = System.Windows.Forms.MouseButtons.None;
+            this.graph.EditModifierKeys = System.Windows.Forms.Keys.None;
+            this.graph.IsEnableSelection = true;
+            this.graph.IsShowPointValues = true;
+            resources.ApplyResources(this.graph, "graph");
+            this.graph.Name = "graph";
+            this.graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
+            this.graph.ScrollGrace = 0;
+            this.graph.ScrollMaxX = 1056;
+            this.graph.ScrollMaxY = 2000000;
+            this.graph.ScrollMaxY2 = 0;
+            this.graph.ScrollMinX = 0;
+            this.graph.ScrollMinY = 0;
+            this.graph.ScrollMinY2 = 0;
+            this.graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
+            this.graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlMonitor_ContextMenuBuilder);
+            //
             // MonitorForm
             // 
             resources.ApplyResources(this, "$this");
+            this.Controls.Add(this.graph);
             this.Name = "MonitorForm";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
+
+        private ZedGraphControlMonitor graph;
     }
 }

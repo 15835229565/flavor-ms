@@ -8,6 +8,12 @@ using Flavor.Common;
 
 namespace Flavor.Forms {
     internal partial class GraphForm: Form {
+        protected const int HORIZ_GRAPH_INDENT = 12;
+        protected const int VERT_GRAPH_INDENT = 12;
+        protected readonly Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
+        Color.Black, Color.Magenta,};
+        protected const string Y_AXIS_TITLE = "Интенсивность";
+
         private GraphPanel panel = null;
         protected GraphPanel Panel {
             get {

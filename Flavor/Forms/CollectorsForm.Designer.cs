@@ -101,7 +101,6 @@ namespace Flavor.Forms {
             this.Name = "CollectorsForm";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

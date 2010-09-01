@@ -14,10 +14,12 @@ namespace Flavor.Forms {
 		private const string DIFF_TITLE = "Diff - ";
 		private const string PREC_TITLE = " (прециз.)";
 		private const string SCAN_TITLE = " (скан.)";
-        private const int HORIZ_GRAPH_INDENT = 12;
-        private const int VERT_GRAPH_INDENT = 12;
-		
-		private string col1Text;
+
+        private const string X_AXIS_TITLE_STEP = "Ступени";
+        private const string X_AXIS_TITLE_MASS = "Масса (а.е.м.)";
+        private const string X_AXIS_TITLE_VOLT = "Напряжение (В)";
+
+        private string col1Text;
 		private string col2Text;
 		private string modeText;
 		
@@ -42,8 +44,6 @@ namespace Flavor.Forms {
             }
         }
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
-        private Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
-        Color.Black, Color.Magenta,};
         internal bool specterSavingEnabled {
             set {
                 saveToolStripMenuItem.Enabled = value;
@@ -144,7 +144,7 @@ namespace Flavor.Forms {
             this.maxX = maxX;
         }
 
-        protected override void RefreshGraph() {
+        protected sealed override void RefreshGraph() {
             collect1_graph.Refresh();
             collect2_graph.Refresh();
         }
@@ -165,27 +165,25 @@ namespace Flavor.Forms {
         protected void ZedGraphRebirth(int zgcIndex, List<Graph.pListScaled> dataPoints, string title) {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
 
-
             myPane.Title.Text = title;
-            myPane.YAxis.Title.Text = "Интенсивность";
-
+            myPane.YAxis.Title.Text = Y_AXIS_TITLE;
 
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
-                    myPane.XAxis.Title.Text = "Ступени";
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = minX[zgcIndex];
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = maxX[zgcIndex];
+                    myPane.XAxis.Title.Text = X_AXIS_TITLE_STEP;
+                    myPane.XAxis.Scale.Min = minX[zgcIndex];
+                    myPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    myPane.XAxis.Title.Text = "Напряжение (В)";
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
+                    myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
+                    myPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
+                    myPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    myPane.XAxis.Title.Text = "Масса (а.е.м.)";
+                    myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
                     //limits inverted due to point-to-mass law
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
-                    graphs[zgcIndex].GraphPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
+                    myPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
+                    myPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
                     break;
             }
 
@@ -253,7 +251,7 @@ namespace Flavor.Forms {
         }
         protected virtual void doSmthMore() {}
 
-        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraph.ZedGraphControl.ContextMenuObjectState objState) {
+        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             ZedGraphControlPlus sender = control as ZedGraphControlPlus;
             if (sender == null)
                 return;

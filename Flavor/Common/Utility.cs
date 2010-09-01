@@ -389,9 +389,9 @@ namespace Flavor.Common {
         }
     }
     #endregion
-    internal static class Utility {
+    public static class Utility {
         #region PreciseEditorData
-        internal class PreciseEditorData {
+        public class PreciseEditorData {
             internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
                 pointNumber = pn;
                 step = st;
