@@ -14,7 +14,6 @@ namespace Flavor.Forms {
             this.Text = displayedFileName = fileName;
 
             if (PreciseSpectrumDisplayed) {
-                // TODO:!
                 setXScaleLimits(graph.PreciseData);
             } else {
                 ushort minX = (ushort)(graph.Displayed1Steps[0][0].X);

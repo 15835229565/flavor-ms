@@ -6,7 +6,6 @@ namespace Flavor.Controls {
     public partial class MeasureGraphPanel: GraphPanel {
         public MeasureGraphPanel() {
             InitializeComponent();
-            Enabled = false;
         }
         private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
@@ -61,13 +60,7 @@ namespace Flavor.Controls {
         }
 
         internal void overview_button_Click(ushort start, ushort end) {
-            startScanTextLabel.Visible = true;
-            label18.Visible = true;
-
-            firstStepLabel.Text = start.ToString();
-            lastStepLabel.Text = end.ToString();
-            firstStepLabel.Visible = true;
-            lastStepLabel.Visible = true;
+            setScanBounds(start, end);
         }
         internal void sensmeasure_button_Click() {
             peakNumberLabel.Visible = true;

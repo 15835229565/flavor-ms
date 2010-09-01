@@ -117,67 +117,510 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="lastStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 387</value>
-  </metadata>
-  <metadata name="firstStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1234, 350</value>
-  </metadata>
-  <metadata name="label18.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1147, 350</value>
-  </metadata>
-  <metadata name="startScanTextLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>158, 350</value>
-  </metadata>
-  <metadata name="label35.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1060, 350</value>
-  </metadata>
-  <metadata name="label36.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>973, 350</value>
-  </metadata>
-  <metadata name="scanRealTimeLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>827, 350</value>
-  </metadata>
-  <metadata name="stepNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>689, 350</value>
-  </metadata>
-  <metadata name="label37.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>304, 350</value>
-  </metadata>
-  <metadata name="peakNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 350</value>
-  </metadata>
-  <metadata name="label39.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 276</value>
-  </metadata>
-  <metadata name="peakCenterLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 239</value>
-  </metadata>
-  <metadata name="label41.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 202</value>
-  </metadata>
-  <metadata name="peakWidthLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 165</value>
-  </metadata>
-  <metadata name="label15.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 128</value>
-  </metadata>
-  <metadata name="detector1CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 91</value>
-  </metadata>
-  <metadata name="label16.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lastStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>909, 54</value>
+  </data>
+  <data name="&gt;&gt;lastStepLabel.Name" xml:space="preserve">
+    <value>lastStepLabel</value>
+  </data>
+  <data name="&gt;&gt;lastStepLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="firstStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>703, 54</value>
+  </data>
+  <data name="&gt;&gt;firstStepLabel.Name" xml:space="preserve">
+    <value>firstStepLabel</value>
+  </data>
+  <data name="&gt;&gt;firstStepLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="label18.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>594, 17</value>
+  </data>
+  <data name="&gt;&gt;label18.Name" xml:space="preserve">
+    <value>label18</value>
+  </data>
+  <data name="&gt;&gt;label18.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="startScanTextLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 17</value>
+  </data>
+  <data name="&gt;&gt;startScanTextLabel.Name" xml:space="preserve">
+    <value>startScanTextLabel</value>
+  </data>
+  <data name="&gt;&gt;startScanTextLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="label35.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>822, 54</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label35.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label35.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 343</value>
+  </data>
+  <data name="label35.Size" type="System.Drawing.Size, System.Drawing">
+    <value>143, 13</value>
+  </data>
+  <data name="label35.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="label35.Text" xml:space="preserve">
+    <value>Сканирующее напряжение</value>
+  </data>
+  <data name="&gt;&gt;label35.Name" xml:space="preserve">
+    <value>label35</value>
+  </data>
+  <data name="&gt;&gt;label35.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label35.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label35.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="label36.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>470, 54</value>
+  </data>
+  <data name="label36.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label36.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 317</value>
+  </data>
+  <data name="label36.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 13</value>
+  </data>
+  <data name="label36.TabIndex" type="System.Int32, mscorlib">
+    <value>44</value>
+  </data>
+  <data name="label36.Text" xml:space="preserve">
+    <value>Номер ступени</value>
+  </data>
+  <data name="&gt;&gt;label36.Name" xml:space="preserve">
+    <value>label36</value>
+  </data>
+  <data name="&gt;&gt;label36.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label36.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label36.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="scanRealTimeLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>557, 54</value>
+  </data>
+  <data name="scanRealTimeLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 358</value>
+  </data>
+  <data name="scanRealTimeLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="scanRealTimeLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>38</value>
+  </data>
+  <data name="scanRealTimeLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;scanRealTimeLabel.Name" xml:space="preserve">
+    <value>scanRealTimeLabel</value>
+  </data>
+  <data name="&gt;&gt;scanRealTimeLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;scanRealTimeLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;scanRealTimeLabel.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="stepNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>245, 54</value>
+  </data>
+  <data name="stepNumberLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 330</value>
+  </data>
+  <data name="stepNumberLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="stepNumberLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>45</value>
+  </data>
+  <data name="stepNumberLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;stepNumberLabel.Name" xml:space="preserve">
+    <value>stepNumberLabel</value>
+  </data>
+  <data name="&gt;&gt;stepNumberLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;stepNumberLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;stepNumberLabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="label37.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>383, 54</value>
+  </data>
+  <data name="label37.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label37.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 431</value>
+  </data>
+  <data name="label37.Size" type="System.Drawing.Size, System.Drawing">
+    <value>119, 13</value>
+  </data>
+  <data name="label37.TabIndex" type="System.Int32, mscorlib">
+    <value>46</value>
+  </data>
+  <data name="label37.Text" xml:space="preserve">
+    <value>Номер текущего пика</value>
+  </data>
+  <data name="&gt;&gt;label37.Name" xml:space="preserve">
+    <value>label37</value>
+  </data>
+  <data name="&gt;&gt;label37.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label37.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label37.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="peakNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 54</value>
-  </metadata>
-  <metadata name="detector2CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>530, 350</value>
-  </metadata>
-  <metadata name="scanProgressBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 313</value>
-  </metadata>
-  <metadata name="cancelScanButton.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>391, 350</value>
-  </metadata>
-  <metadata name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="peakNumberLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 454</value>
+  </data>
+  <data name="peakNumberLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="peakNumberLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>47</value>
+  </data>
+  <data name="peakNumberLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;peakNumberLabel.Name" xml:space="preserve">
+    <value>peakNumberLabel</value>
+  </data>
+  <data name="&gt;&gt;peakNumberLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;peakNumberLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;peakNumberLabel.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="label39.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>158, 54</value>
+  </data>
+  <data name="label39.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label39.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 467</value>
+  </data>
+  <data name="label39.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 13</value>
+  </data>
+  <data name="label39.TabIndex" type="System.Int32, mscorlib">
+    <value>48</value>
+  </data>
+  <data name="label39.Text" xml:space="preserve">
+    <value>Центральная масса</value>
+  </data>
+  <data name="&gt;&gt;label39.Name" xml:space="preserve">
+    <value>label39</value>
+  </data>
+  <data name="&gt;&gt;label39.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label39.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label39.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="peakCenterLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>1145, 17</value>
+  </data>
+  <data name="peakCenterLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 490</value>
+  </data>
+  <data name="peakCenterLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="peakCenterLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>49</value>
+  </data>
+  <data name="peakCenterLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.Name" xml:space="preserve">
+    <value>peakCenterLabel</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="label41.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>1279, 17</value>
+  </data>
+  <data name="label41.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label41.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 503</value>
+  </data>
+  <data name="label41.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 13</value>
+  </data>
+  <data name="label41.TabIndex" type="System.Int32, mscorlib">
+    <value>50</value>
+  </data>
+  <data name="label41.Text" xml:space="preserve">
+    <value>Ширина текущего пика</value>
+  </data>
+  <data name="&gt;&gt;label41.Name" xml:space="preserve">
+    <value>label41</value>
+  </data>
+  <data name="&gt;&gt;label41.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label41.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label41.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="peakWidthLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>927, 17</value>
+  </data>
+  <data name="peakWidthLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 526</value>
+  </data>
+  <data name="peakWidthLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="peakWidthLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>51</value>
+  </data>
+  <data name="peakWidthLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;peakWidthLabel.Name" xml:space="preserve">
+    <value>peakWidthLabel</value>
+  </data>
+  <data name="&gt;&gt;peakWidthLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;peakWidthLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;peakWidthLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="label15.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>1058, 17</value>
+  </data>
+  <data name="label15.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label15.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 371</value>
+  </data>
+  <data name="label15.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 13</value>
+  </data>
+  <data name="label15.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
+  </data>
+  <data name="label15.Text" xml:space="preserve">
+    <value>Показания детектора 1</value>
+  </data>
+  <data name="&gt;&gt;label15.Name" xml:space="preserve">
+    <value>label15</value>
+  </data>
+  <data name="&gt;&gt;label15.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label15.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label15.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="detector1CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>163, 17</value>
+  </data>
+  <data name="detector1CountsLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 388</value>
+  </data>
+  <data name="detector1CountsLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="detector1CountsLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>40</value>
+  </data>
+  <data name="detector1CountsLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;detector1CountsLabel.Name" xml:space="preserve">
+    <value>detector1CountsLabel</value>
+  </data>
+  <data name="&gt;&gt;detector1CountsLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;detector1CountsLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;detector1CountsLabel.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="label16.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>840, 17</value>
+  </data>
+  <data name="label16.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label16.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 401</value>
+  </data>
+  <data name="label16.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 13</value>
+  </data>
+  <data name="label16.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
+  </data>
+  <data name="label16.Text" xml:space="preserve">
+    <value>Показания детектора 2</value>
+  </data>
+  <data name="&gt;&gt;label16.Name" xml:space="preserve">
+    <value>label16</value>
+  </data>
+  <data name="&gt;&gt;label16.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label16.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;label16.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="detector2CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>681, 17</value>
+  </data>
+  <data name="detector2CountsLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 418</value>
+  </data>
+  <data name="detector2CountsLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="detector2CountsLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>42</value>
+  </data>
+  <data name="detector2CountsLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;detector2CountsLabel.Name" xml:space="preserve">
+    <value>detector2CountsLabel</value>
+  </data>
+  <data name="&gt;&gt;detector2CountsLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;detector2CountsLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;detector2CountsLabel.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="scanProgressBar.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>461, 17</value>
+  </data>
+  <data name="scanProgressBar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 291</value>
+  </data>
+  <data name="scanProgressBar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>273, 23</value>
+  </data>
+  <data name="scanProgressBar.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;scanProgressBar.Name" xml:space="preserve">
+    <value>scanProgressBar</value>
+  </data>
+  <data name="&gt;&gt;scanProgressBar.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;scanProgressBar.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;scanProgressBar.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="cancelScanButton.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>322, 17</value>
+  </data>
+  <data name="cancelScanButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
+  <data name="cancelScanButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>193, 428</value>
+  </data>
+  <data name="cancelScanButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="cancelScanButton.TabIndex" type="System.Int32, mscorlib">
+    <value>43</value>
+  </data>
+  <data name="cancelScanButton.Text" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="cancelScanButton.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;cancelScanButton.Name" xml:space="preserve">
+    <value>cancelScanButton</value>
+  </data>
+  <data name="&gt;&gt;cancelScanButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cancelScanButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cancelScanButton.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="$this.TrayLargeIcon" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>MeasureGraphPanel</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>Flavor.Controls.GraphPanel, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
 </root>

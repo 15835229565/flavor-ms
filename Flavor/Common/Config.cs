@@ -617,7 +617,7 @@ namespace Flavor.Common {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
             }
 
-            CommonOptions co = null;
+            CommonOptions co = new CommonOptions();
             try {
                 // what version of function will be called here?
                 loadCommonOptions(filename, sf, co);

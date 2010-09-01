@@ -43,13 +43,30 @@ namespace Flavor.Controls {
             ResumeLayout(false);
             PerformLayout();
         }
-        protected virtual void prepareControls() {}
+        protected virtual void prepareControls() {
+            firstStepLabel.Visible = false;
+            startScanTextLabel.Visible = false;
+            lastStepLabel.Visible = false;
+            label18.Visible = false;
+            if (graph.isPreciseSpectrum)
+                return;
+            // TODO: can be null on empty spectrum..
+            setScanBounds((ushort)((graph.Displayed1Steps[0])[0].X), (ushort)((graph.Displayed1Steps[0])[graph.Displayed1Steps[0].Count - 1].X));
+        }
+        protected void setScanBounds(ushort start, ushort end) {
+            startScanTextLabel.Visible = true;
+            label18.Visible = true;
+
+            firstStepLabel.Text = start.ToString();
+            lastStepLabel.Text = end.ToString();
+            firstStepLabel.Visible = true;
+            lastStepLabel.Visible = true;
+        }
+            
         internal void Disable() {
             this.Enabled = false;
             disableControls();
         }
-        protected virtual void disableControls() {
-            // TODO: make abstract
-        }
+        protected virtual void disableControls() {}
     }
 }
