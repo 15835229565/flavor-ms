@@ -25,21 +25,13 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CollectorsForm));
             this.saveSpecterFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.collect2_graph = new Flavor.Controls.ZedGraphControlPlus();
             this.collect1_graph = new Flavor.Controls.ZedGraphControlPlus();
             this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            // 
-            // distractFromCurrentToolStripMenuItem
-            // 
-            this.distractFromCurrentToolStripMenuItem.Enabled = false;
-            this.distractFromCurrentToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
-            this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
-            this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
-            this.distractFromCurrentToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.distractFromCurrentToolStripMenuItem.Text = "Вычесть из текущего";
-            this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
+            this.SuspendLayout();
             // 
             // saveSpecterFileDialog
             // 
@@ -51,12 +43,12 @@ namespace Flavor.Forms {
             // 
             // collect2_graph
             // 
-            this.collect2_graph.IsFirstCollector = false;
             this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect2_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.collect2_graph.IsEnableSelection = true;
+            this.collect2_graph.IsFirstCollector = false;
             this.collect2_graph.IsShowPointValues = true;
-            this.collect2_graph.Location = new System.Drawing.Point(12, 210);
+            resources.ApplyResources(this.collect2_graph, "collect2_graph");
             this.collect2_graph.Name = "collect2_graph";
             this.collect2_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect2_graph.ScrollGrace = 0;
@@ -67,20 +59,18 @@ namespace Flavor.Forms {
             this.collect2_graph.ScrollMinY = 0;
             this.collect2_graph.ScrollMinY2 = 0;
             this.collect2_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
-            this.collect2_graph.Size = new System.Drawing.Size(281, 192);
-            this.collect2_graph.TabIndex = 10;
-            this.collect2_graph.OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
-            this.collect2_graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(ZedGraphControlPlus_ContextMenuBuilder);
-            this.collect2_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(ZedGraphControlPlus_PointValueEvent);
+            this.collect2_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
+            this.collect2_graph.OnDiffOnPoint += new Flavor.Controls.ZedGraphControlPlus.DiffOnPointEventHandler(this.GraphForm_OnDiffOnPoint);
+            this.collect2_graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
             // 
             // collect1_graph
             // 
-            this.collect1_graph.IsFirstCollector = true;
             this.collect1_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect1_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.collect1_graph.IsEnableSelection = true;
+            this.collect1_graph.IsFirstCollector = true;
             this.collect1_graph.IsShowPointValues = true;
-            this.collect1_graph.Location = new System.Drawing.Point(12, 12);
+            resources.ApplyResources(this.collect1_graph, "collect1_graph");
             this.collect1_graph.Name = "collect1_graph";
             this.collect1_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect1_graph.ScrollGrace = 0;
@@ -91,17 +81,27 @@ namespace Flavor.Forms {
             this.collect1_graph.ScrollMinY = 0;
             this.collect1_graph.ScrollMinY2 = 0;
             this.collect1_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
-            this.collect1_graph.Size = new System.Drawing.Size(281, 192);
-            this.collect1_graph.TabIndex = 9;
-            this.collect1_graph.OnDiffOnPoint += new ZedGraphControlPlus.DiffOnPointEventHandler(GraphForm_OnDiffOnPoint);
-            this.collect1_graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(ZedGraphControlPlus_ContextMenuBuilder);
-            this.collect1_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(ZedGraphControlPlus_PointValueEvent);
+            this.collect1_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
+            this.collect1_graph.OnDiffOnPoint += new Flavor.Controls.ZedGraphControlPlus.DiffOnPointEventHandler(this.GraphForm_OnDiffOnPoint);
+            this.collect1_graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
+            // 
+            // distractFromCurrentToolStripMenuItem
+            // 
+            resources.ApplyResources(this.distractFromCurrentToolStripMenuItem, "distractFromCurrentToolStripMenuItem");
+            this.distractFromCurrentToolStripMenuItem.MergeAction = System.Windows.Forms.MergeAction.Insert;
+            this.distractFromCurrentToolStripMenuItem.MergeIndex = 1;
+            this.distractFromCurrentToolStripMenuItem.Name = "distractFromCurrentToolStripMenuItem";
+            this.distractFromCurrentToolStripMenuItem.Click += new System.EventHandler(this.distractFromCurrentToolStripMenuItem_Click);
             // 
             // CollectorsForm
             // 
+            resources.ApplyResources(this, "$this");
             this.Controls.Add(this.collect2_graph);
             this.Controls.Add(this.collect1_graph);
             this.Name = "CollectorsForm";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion

@@ -268,9 +268,17 @@
       <SubType>Designer</SubType>
       <DependentUpon>ClosureDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CollectorsForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CollectorsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConnectOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MonitorForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MonitorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MonitorOptionsForm.resx">
       <SubType>Designer</SubType>

@@ -23,7 +23,16 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorForm));
+            this.SuspendLayout();
+            // 
+            // MonitorForm
+            // 
+            resources.ApplyResources(this, "$this");
+            this.Name = "MonitorForm";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion

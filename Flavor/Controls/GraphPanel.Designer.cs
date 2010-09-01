@@ -172,9 +172,9 @@ namespace Flavor.Controls {
 
         #endregion
 
-        protected System.Windows.Forms.Label lastStepLabel;
-        protected System.Windows.Forms.Label firstStepLabel;
-        protected System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label lastStepLabel;
+        private System.Windows.Forms.Label firstStepLabel;
+        private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label f2_label;
         private System.Windows.Forms.Label f1_label;
         private System.Windows.Forms.Label heatCurLabel;
@@ -183,7 +183,7 @@ namespace Flavor.Controls {
         private System.Windows.Forms.Label iVolt_label;
         private System.Windows.Forms.Label itime_label;
         private System.Windows.Forms.Label etime_label;
-        protected System.Windows.Forms.Label startScanTextLabel;
+        private System.Windows.Forms.Label startScanTextLabel;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label20;

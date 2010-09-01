@@ -9,8 +9,8 @@ using Flavor.Forms;
 
 namespace Flavor.Controls {
     public partial class ZedGraphControlPlus: ZedGraphControl {
-        internal delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
-        internal event DiffOnPointEventHandler OnDiffOnPoint;
+        public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
+        public event DiffOnPointEventHandler OnDiffOnPoint;
         private CurveItem curveReference;
         internal CurveItem CurveReference {
             get { return curveReference; }
@@ -22,7 +22,7 @@ namespace Flavor.Controls {
             set { pointIndex = value; }
         }
         private bool isFirstCollector;
-        internal bool IsFirstCollector {
+        public bool IsFirstCollector {
             get { return isFirstCollector; }
             set { isFirstCollector = value; }
         }
