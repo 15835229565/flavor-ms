@@ -421,7 +421,6 @@ namespace Flavor.Forms {
             this.MainMenuStrip = menuStrip;
             this.Name = "mainForm";
             this.Shown += new System.EventHandler(this.mainForm_Shown);
-            this.MdiChildActivate += new System.EventHandler(this.mainForm_MdiChildActivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();

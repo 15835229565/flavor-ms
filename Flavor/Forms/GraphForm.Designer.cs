@@ -229,6 +229,7 @@ namespace Flavor.Forms {
             this.Name = "GraphForm";
             this.ShowIcon = false;
             this.Shown += new System.EventHandler(this.GraphForm_Shown);
+            this.Activated += new System.EventHandler(this.GraphForm_Activated);
             this.Validating += new System.ComponentModel.CancelEventHandler(this.GraphForm_Validating);
             this.Resize += new System.EventHandler(this.GraphForm_Resize);
             graphFormMenuStrip.ResumeLayout(false);

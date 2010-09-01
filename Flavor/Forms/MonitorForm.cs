@@ -8,14 +8,15 @@ using Flavor.Common;
 
 namespace Flavor.Forms
 {
-    internal partial class MonitorForm : GraphForm {
+    internal partial class MonitorForm : GraphForm, IMeasured {
         private const string X_AXIS_TITLE = "Время";
 
         public MonitorForm() {
             InitializeComponent();
         }
         protected override GraphPanel initPanel() {
-            return base.initPanel();
+            GraphPanel panel = new MeasureGraphPanel();
+            return panel;
         }
 
         protected override sealed void CreateGraph() {
@@ -65,5 +66,18 @@ namespace Flavor.Forms
                 return;
             GraphPane pane = sender.MasterPane.FindChartRect(mousePt);*/
         }
-   }
+
+        #region IMeasured Members
+
+        public void prepareControlsOnMeasureStart() {
+            Panel.Enable();
+        }
+        public void initMeasure(bool isPrecise) {
+            (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
+            Show();
+            Activate();
+        }
+
+        #endregion
+    }
 }

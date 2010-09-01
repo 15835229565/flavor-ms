@@ -28,7 +28,7 @@ namespace Flavor.Common {
         internal static event ProgramEventHandler OnProgramStateChanged;
         internal static event ProgramEventHandler OnScanCancelled;
         internal static event ErrorHandler OnError;
-        private static Commander.programStates programState;
+        private static Commander.programStates programState = programStates.Start;
         private static Commander.programStates programStatePrev;
         private static bool handleBlock = true;
         private static bool cancelMeasure = false;
@@ -50,6 +50,8 @@ namespace Flavor.Common {
             private set {
                 if (programState != value) {
                     programState = value;
+                    if (value == programStates.Start)
+                        measureMode = null;
                     OnProgramStateChanged();
                 };
             }

@@ -15,9 +15,18 @@ namespace Flavor.Forms {
                 if (collectorsForm == null) {
                     collectorsForm = new MeasuredCollectorsForm();
                     collectorsForm.MdiParent = this;
-                    //collectorsForm.WindowState = FormWindowState.Maximized;
                 }
                 return collectorsForm;
+            }
+        }
+        private MonitorForm monitorForm = null;
+        private MonitorForm MonitorForm {
+            get {
+                if (monitorForm == null) {
+                    monitorForm = new MonitorForm();
+                    monitorForm.MdiParent = this;
+                }
+                return monitorForm;
             }
         }
         private GraphForm GForm {
@@ -32,8 +41,8 @@ namespace Flavor.Forms {
         internal mainForm() {
             InitializeComponent();
             populateStatusTreeView();
-            this.LayoutMdi(MdiLayout.Cascade);
-            GForm.Show();
+            CollectorsForm.Visible = true;
+            MonitorForm.Visible = false;
 
             Config.getInitialDirectory();
 
@@ -220,13 +229,12 @@ namespace Flavor.Forms {
             unblock_butt.Enabled = false;
             Commander.Unblock();
         }
-        private void prepareControlsOnMeasureStart() {
+        private void prepareControlsOnMeasureStart(IMeasured form) {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
 
-            CollectorsForm.prepareControlsOnMeasureStart();
-            CollectorsForm.Activate();
+            form.prepareControlsOnMeasureStart();
 
             Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError += new Commander.ErrorHandler(Commander_OnError);
@@ -238,18 +246,23 @@ namespace Flavor.Forms {
         }
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
-            prepareControlsOnMeasureStart();
-            CollectorsForm.startScan();
+            prepareControlsOnMeasureStart(CollectorsForm);
+            CollectorsForm.initMeasure(false);
+            MonitorForm.Hide();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             Commander.Sense();
-            prepareControlsOnMeasureStart();
-            CollectorsForm.startPrecise();
+            prepareControlsOnMeasureStart(CollectorsForm);
+            CollectorsForm.initMeasure(true);
+            MonitorForm.Hide();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             Commander.Monitor();
-            prepareControlsOnMeasureStart();
-            CollectorsForm.startMonitor();
+            //prepareControlsOnMeasureStart(CollectorsForm);
+            prepareControlsOnMeasureStart(MonitorForm);
+            //CollectorsForm.startMonitor();
+            MonitorForm.initMeasure(true);
+            CollectorsForm.Hide();
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
@@ -730,9 +743,9 @@ namespace Flavor.Forms {
             dForm.ShowDialog();
         }
 
-        private void mainForm_MdiChildActivate(object sender, EventArgs e) {
-            GForm.WindowState = FormWindowState.Maximized;
-		}
+        /*private void mainForm_MdiChildActivate(object sender, EventArgs e) {
+            ActiveMdiChild.WindowState = FormWindowState.Maximized;
+		}*/
 
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
             openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.SPECTRUM_FILE_DIALOG_FILTER, Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER);

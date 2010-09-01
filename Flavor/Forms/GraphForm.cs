@@ -48,7 +48,13 @@ namespace Flavor.Forms {
         
         internal protected GraphForm() {
             InitializeComponent();
+            //Dock = DockStyle.Fill;
+            //FormBorderStyle = FormBorderStyle.None;
         }
+        /*protected override void OnCreateControl() {
+            ControlBox = false;
+            base.OnCreateControl();
+        }*/
         private void GraphForm_Shown(object sender, EventArgs e) {
             CreateGraph();
             SetSize();
@@ -81,5 +87,9 @@ namespace Flavor.Forms {
         protected virtual void CreateGraph() {}
         protected virtual void SetSize() {}
         protected virtual void saveData() {}
+
+        private void GraphForm_Activated(object sender, EventArgs e) {
+            WindowState = FormWindowState.Maximized;
+        }
     }
 }

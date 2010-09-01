@@ -9,7 +9,7 @@ using Flavor.Common;
 using Flavor.Controls;
 
 namespace Flavor.Forms {
-    internal partial class MeasuredCollectorsForm: CollectorsForm {
+    internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
         /*private static MeasuredCollectorsForm instance = null;
         internal MeasuredCollectorsForm getInstance(bool isPrecise) {
             if (instance == null) {
@@ -26,22 +26,22 @@ namespace Flavor.Forms {
             GraphPanel panel = new MeasureGraphPanel();
             return panel;
 		}
-        internal void startScan() {
+        public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
-            PreciseSpectrumDisplayed = false;
-            (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
-        }
-        internal void startPrecise() {
-            // TODO: different types of panel
-            PreciseSpectrumDisplayed = true;
-            (Panel as MeasureGraphPanel).sensmeasure_button_Click();
+            PreciseSpectrumDisplayed = isPrecise;
+            if (isPrecise)
+                (Panel as MeasureGraphPanel).sensmeasure_button_Click();
+            else
+                (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
+            Show();
+            Activate();
         }
         internal void startMonitor() {
             // TODO: move to other class
             PreciseSpectrumDisplayed = true;
             (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
         }
-        internal void prepareControlsOnMeasureStart() {
+        public void prepareControlsOnMeasureStart() {
             // not so good..
             if (PreciseSpectrumDisplayed)
                 setXScaleLimits(Config.PreciseData);
