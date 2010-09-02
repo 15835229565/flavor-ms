@@ -94,8 +94,9 @@ namespace Flavor.Forms {
 
         private void setTitles() {
             modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
-            col1Text = COL1_TITLE + modeText;
-            col2Text = COL2_TITLE + modeText;
+            string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
+            col1Text = prefix + COL1_TITLE + modeText;
+            col2Text = prefix + COL2_TITLE + modeText;
         }
 
         protected override GraphPanel initPanel() {
@@ -126,6 +127,7 @@ namespace Flavor.Forms {
         }
         private void GraphModified(Graph.Displaying mode) {
             if (mode == Graph.Displaying.Diff) {
+                setTitles();
                 Modified = true;
             }
         }
