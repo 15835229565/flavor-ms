@@ -59,7 +59,6 @@ namespace Flavor.Common.Measuring {
             return true;
         }
         abstract internal void updateGraph();
-        abstract internal void refreshGraphics(MeasuredCollectorsForm form);
         abstract internal int stepsCount();
         internal void autoNextMeasure() {
             if (operating) {
@@ -72,6 +71,7 @@ namespace Flavor.Common.Measuring {
         }
         protected void Disable() {
             Commander.Disable();
+            Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
         }
         protected void stop() {
             operating = false;

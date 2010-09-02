@@ -149,9 +149,6 @@ namespace Flavor.Common.Measuring {
             ushort pnt = pointValue;
             Graph.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
         }
-        internal override void refreshGraphics(MeasuredCollectorsForm form) {
-            form.refreshGraphicsOnPreciseStep();
-        }
         internal override int stepsCount() {
             return stepPoints;
         }

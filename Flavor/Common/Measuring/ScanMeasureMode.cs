@@ -39,9 +39,6 @@ namespace Flavor.Common.Measuring {
             ushort pnt = pointValue;
             Graph.updateGraphDuringScanMeasure(Device.Detector1, Device.Detector2, --pnt);
         }
-        internal override void refreshGraphics(MeasuredCollectorsForm form) {
-            form.refreshGraphicsOnScanStep();
-        }
         internal override int stepsCount() {
             return ePoint - sPoint + 1;
         }

@@ -1,6 +1,8 @@
 namespace Flavor.Forms {
     internal interface IMeasured {
-        void prepareControlsOnMeasureStart();
         void initMeasure(bool isPrecise);
+        void prepareControlsOnMeasureStart();
+        void refreshGraphicsOnMeasureStep();
+        void deactivateOnMeasureStop();
     }
 }

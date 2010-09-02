@@ -28,8 +28,8 @@ namespace Flavor.Forms
             graph.Refresh();
         }
 
-        protected override void saveData() {
-            base.saveData();
+        protected override bool saveData() {
+            return base.saveData();
         }
 
         protected override sealed void SetSize() {
@@ -69,13 +69,19 @@ namespace Flavor.Forms
 
         #region IMeasured Members
 
-        public void prepareControlsOnMeasureStart() {
-            Panel.Enable();
-        }
         public void initMeasure(bool isPrecise) {
             (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
             Show();
             Activate();
+        }
+        public void prepareControlsOnMeasureStart() {
+            Panel.Enable();
+        }
+        public void refreshGraphicsOnMeasureStep() {
+            (Panel as MeasureGraphPanel).refreshGraphicsOnPreciseStep();
+        }
+        public void deactivateOnMeasureStop() {
+            Panel.Disable();
         }
 
         #endregion

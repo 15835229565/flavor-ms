@@ -743,13 +743,17 @@ namespace Flavor.Forms {
             dForm.ShowDialog();
         }
 
-        /*private void mainForm_MdiChildActivate(object sender, EventArgs e) {
-            ActiveMdiChild.WindowState = FormWindowState.Maximized;
-		}*/
-
         private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
             openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.SPECTRUM_FILE_DIALOG_FILTER, Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
+                foreach (Form childForm in MdiChildren) {
+                    if (childForm is ILoaded) {
+                        if ((childForm as ILoaded).FileName == openSpecterFileDialog.FileName) {
+                            childForm.Activate();
+                            return;
+                        }
+                    }
+                }
                 try {
                     bool hint = (openSpecterFileDialog.FilterIndex == 1);
                     Graph graph;
@@ -767,6 +771,8 @@ namespace Flavor.Forms {
         private void closeAllToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (Form childForm in MdiChildren) {
                 if (childForm == collectorsForm)
+                    continue;
+                if (childForm == monitorForm)
                     continue;
                 childForm.Close();
             }

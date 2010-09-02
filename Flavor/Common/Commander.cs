@@ -51,7 +51,7 @@ namespace Flavor.Common {
                 if (programState != value) {
                     programState = value;
                     if (value == programStates.Start)
-                        measureMode = null;
+                        Disable();
                     OnProgramStateChanged();
                 };
             }
@@ -283,7 +283,7 @@ namespace Flavor.Common {
             ConsoleWriter.WriteLine(pState);
         }
         internal static void Shutdown() {
-
+            Disable();
             toSend.AddToSend(new sendShutdown());
             setProgramState(Commander.programStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
@@ -319,7 +319,6 @@ namespace Flavor.Common {
         internal static void Disable() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
-            setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
             // TODO: lock here
             if (OnScanCancelled != null) {
                 OnScanCancelled();

@@ -86,7 +86,7 @@ namespace Flavor.Forms {
         protected virtual void RefreshGraph() {}
         protected virtual void CreateGraph() {}
         protected virtual void SetSize() {}
-        protected virtual void saveData() {}
+        protected virtual bool saveData() { return false; }
 
         private void GraphForm_Activated(object sender, EventArgs e) {
             WindowState = FormWindowState.Maximized;

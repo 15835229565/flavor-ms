@@ -26,6 +26,13 @@ namespace Flavor.Forms {
             GraphPanel panel = new MeasureGraphPanel();
             return panel;
 		}
+        internal void startMonitor() {
+            // TODO: move to other class
+            PreciseSpectrumDisplayed = true;
+            (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
+        }
+        #region IMeasured Members
+
         public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
             PreciseSpectrumDisplayed = isPrecise;
@@ -35,11 +42,6 @@ namespace Flavor.Forms {
                 (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
             Show();
             Activate();
-        }
-        internal void startMonitor() {
-            // TODO: move to other class
-            PreciseSpectrumDisplayed = true;
-            (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
         }
         public void prepareControlsOnMeasureStart() {
             // not so good..
@@ -54,32 +56,26 @@ namespace Flavor.Forms {
             specterSavingEnabled = false;
             Graph.ResetPointListsWithEvent();
         }
-        internal void deactivateOnMeasureStop() {
+        public void refreshGraphicsOnMeasureStep() {
+            (Panel as MeasureGraphPanel).performStep();
+            if (PreciseSpectrumDisplayed)
+                (Panel as MeasureGraphPanel).refreshGraphicsOnPreciseStep();
+            else {
+                yAxisChange();
+                (Panel as MeasureGraphPanel).refreshGraphicsOnScanStep();
+            }
+        }
+        public void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
         }
-        
-        protected sealed override void doSmthMore() {
-            // TODO: simplify code below
-            (Panel as MeasureGraphPanel).performStep();
-            Commander.CurrentMeasureMode.refreshGraphics(this);
-        }
-        protected sealed override void saveData() {
-            saveSpecterFileDialog.FileName = "";
-			base.saveData();        
-		}
 
-        internal void refreshGraphicsOnScanStep() {
-            yAxisChange();
-            (Panel as MeasureGraphPanel).refreshGraphicsOnScanStep();
-        }
-        internal void refreshGraphicsOnPreciseStep() {
-            (Panel as MeasureGraphPanel).refreshGraphicsOnPreciseStep();
-        }
-        internal void refreshGraphicsOnMonitorStep() {
-            //TODO: this is temporary
-            refreshGraphicsOnPreciseStep();
-        }
+        #endregion
+        
+        protected sealed override bool saveData() {
+            saveSpecterFileDialog.FileName = "";
+			return base.saveData();        
+		}
 
         void MeasuredCollectorsForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
             if (e.CloseReason == CloseReason.UserClosing)

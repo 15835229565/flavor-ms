@@ -1,5 +1,7 @@
 namespace Flavor.Forms {
     internal interface ILoaded {
-        void DisplayLoadedSpectrum();
+        string FileName {
+            get;
+        }
     }
 }

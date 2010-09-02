@@ -9,7 +9,7 @@ namespace Flavor.Common {
             get {
                 if (instance == null) {
                     instance = new Graph(Config.CommonOptions);
-                    instance.displayMode = Displaying.Measured;
+                    instance.DisplayingMode = Displaying.Measured;
                     instance.preciseData = Config.PreciseData;
                 }
                 return instance;
@@ -19,6 +19,12 @@ namespace Flavor.Common {
             Measured,
             Loaded,
             Diff
+        }
+        internal enum Recreate {
+            None,
+            Col1,
+            Col2,
+            Both,
         }
         public class pListScaled {
             internal enum DisplayValue {
@@ -139,17 +145,14 @@ namespace Flavor.Common {
                 pp.X = Config.pointToMass((ushort)pp.Z, collector);
             }
         }
+        
         internal delegate void GraphEventHandler(bool recreate);
         internal delegate void AxisModeEventHandler();
+        internal delegate void DisplayModeEventHandler(Displaying mode);
 
-        internal enum Recreate {
-            None,
-            Col1,
-            Col2,
-            Both,
-        }
         internal event GraphEventHandler OnNewGraphData;
         internal event AxisModeEventHandler OnAxisModeChanged;
+        internal event DisplayModeEventHandler OnDisplayModeChanged;
 
         private pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
         internal pListScaled.DisplayValue AxisDisplayMode {
@@ -166,12 +169,15 @@ namespace Flavor.Common {
         private Displaying displayMode = Displaying.Loaded;
         internal Displaying DisplayingMode {
             get { return displayMode; }
-            /*set {
+            private set {
                 if (displayMode != value) {
                     displayMode = value;
-                    // here can be event
+                    //lock here?
+                    if (OnDisplayModeChanged != null) {
+                        OnDisplayModeChanged(value);
+                    }
                 }
-            }*/
+            }
         }
 
         private Spectrum collectors;
@@ -246,7 +252,7 @@ namespace Flavor.Common {
 
         internal static void ResetPointListsWithEvent() {
             instance.ResetPointLists();
-            instance.displayMode = Displaying.Measured;
+            instance.DisplayingMode = Displaying.Measured;
             instance.OnNewGraphData(true);
         }
 
@@ -330,13 +336,15 @@ namespace Flavor.Common {
 
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
             updateGraphAfterScanLoad(pl1, pl2);
-            displayMode = Displaying.Diff;
-            OnNewGraphData(true);
+            DisplayingMode = Displaying.Diff;
+            //lock here?
+            if (OnNewGraphData != null)
+                OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
             foreach (Utility.PreciseEditorData ped in peds)
                 collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
-            displayMode = Displaying.Diff;
+            DisplayingMode = Displaying.Diff;
             OnNewGraphData(true);
         }
 

@@ -128,9 +128,6 @@ namespace Flavor.Common.Measuring {
             stopper.startTimer();
             return true;
         }
-        internal override void refreshGraphics(MeasuredCollectorsForm form) {
-            form.refreshGraphicsOnMonitorStep();
-        }
         internal override int stepsCount() {
             int stopperTurns = stopper.estimatedTurns();
             if (stopperTurns <= 0) {

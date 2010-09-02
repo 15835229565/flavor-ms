@@ -7,16 +7,16 @@ namespace Flavor.Controls {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.Windows.Forms.Label label17;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GraphPanel));
-            this.label17 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            System.Windows.Forms.Label label19;
+            System.Windows.Forms.Label label20;
+            System.Windows.Forms.Label label21;
+            System.Windows.Forms.Label label22;
+            System.Windows.Forms.Label label23;
+            System.Windows.Forms.Label label24;
+            System.Windows.Forms.Label label25;
+            System.Windows.Forms.GroupBox groupBox1;
             this.f2_label = new System.Windows.Forms.Label();
             this.f1_label = new System.Windows.Forms.Label();
             this.heatCurLabel = new System.Windows.Forms.Label();
@@ -29,74 +29,83 @@ namespace Flavor.Controls {
             this.firstStepLabel = new System.Windows.Forms.Label();
             this.startScanTextLabel = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
+            label17 = new System.Windows.Forms.Label();
+            label19 = new System.Windows.Forms.Label();
+            label20 = new System.Windows.Forms.Label();
+            label21 = new System.Windows.Forms.Label();
+            label22 = new System.Windows.Forms.Label();
+            label23 = new System.Windows.Forms.Label();
+            label24 = new System.Windows.Forms.Label();
+            label25 = new System.Windows.Forms.Label();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label17
             // 
-            resources.ApplyResources(this.label17, "label17");
-            this.label17.Name = "label17";
+            resources.ApplyResources(label17, "label17");
+            label17.Name = "label17";
             // 
             // label19
             // 
-            resources.ApplyResources(this.label19, "label19");
-            this.label19.Name = "label19";
+            resources.ApplyResources(label19, "label19");
+            label19.Name = "label19";
             // 
             // label20
             // 
-            resources.ApplyResources(this.label20, "label20");
-            this.label20.Name = "label20";
+            resources.ApplyResources(label20, "label20");
+            label20.Name = "label20";
             // 
             // label21
             // 
-            resources.ApplyResources(this.label21, "label21");
-            this.label21.Name = "label21";
+            resources.ApplyResources(label21, "label21");
+            label21.Name = "label21";
             // 
             // label22
             // 
-            resources.ApplyResources(this.label22, "label22");
-            this.label22.Name = "label22";
+            resources.ApplyResources(label22, "label22");
+            label22.Name = "label22";
             // 
             // label23
             // 
-            resources.ApplyResources(this.label23, "label23");
-            this.label23.Name = "label23";
+            resources.ApplyResources(label23, "label23");
+            label23.Name = "label23";
             // 
             // label24
             // 
-            resources.ApplyResources(this.label24, "label24");
-            this.label24.Name = "label24";
+            resources.ApplyResources(label24, "label24");
+            label24.Name = "label24";
             // 
             // label25
             // 
-            resources.ApplyResources(this.label25, "label25");
-            this.label25.Name = "label25";
+            resources.ApplyResources(label25, "label25");
+            label25.Name = "label25";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.f2_label);
-            this.groupBox1.Controls.Add(this.f1_label);
-            this.groupBox1.Controls.Add(this.heatCurLabel);
-            this.groupBox1.Controls.Add(this.emCurLabel);
-            this.groupBox1.Controls.Add(this.cp_label);
-            this.groupBox1.Controls.Add(this.iVolt_label);
-            this.groupBox1.Controls.Add(this.itime_label);
-            this.groupBox1.Controls.Add(this.etime_label);
-            this.groupBox1.Controls.Add(this.lastStepLabel);
-            this.groupBox1.Controls.Add(this.firstStepLabel);
-            this.groupBox1.Controls.Add(this.startScanTextLabel);
-            this.groupBox1.Controls.Add(this.label17);
-            this.groupBox1.Controls.Add(this.label18);
-            this.groupBox1.Controls.Add(this.label19);
-            this.groupBox1.Controls.Add(this.label20);
-            this.groupBox1.Controls.Add(this.label21);
-            this.groupBox1.Controls.Add(this.label22);
-            this.groupBox1.Controls.Add(this.label23);
-            this.groupBox1.Controls.Add(this.label24);
-            this.groupBox1.Controls.Add(this.label25);
-            resources.ApplyResources(this.groupBox1, "groupBox1");
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.TabStop = false;
+            groupBox1.Controls.Add(this.f2_label);
+            groupBox1.Controls.Add(this.f1_label);
+            groupBox1.Controls.Add(this.heatCurLabel);
+            groupBox1.Controls.Add(this.emCurLabel);
+            groupBox1.Controls.Add(this.cp_label);
+            groupBox1.Controls.Add(this.iVolt_label);
+            groupBox1.Controls.Add(this.itime_label);
+            groupBox1.Controls.Add(this.etime_label);
+            groupBox1.Controls.Add(this.lastStepLabel);
+            groupBox1.Controls.Add(this.firstStepLabel);
+            groupBox1.Controls.Add(this.startScanTextLabel);
+            groupBox1.Controls.Add(label17);
+            groupBox1.Controls.Add(this.label18);
+            groupBox1.Controls.Add(label19);
+            groupBox1.Controls.Add(label20);
+            groupBox1.Controls.Add(label21);
+            groupBox1.Controls.Add(label22);
+            groupBox1.Controls.Add(label23);
+            groupBox1.Controls.Add(label24);
+            groupBox1.Controls.Add(label25);
+            resources.ApplyResources(groupBox1, "groupBox1");
+            groupBox1.Name = "groupBox1";
+            groupBox1.TabStop = false;
             // 
             // f2_label
             // 
@@ -162,10 +171,10 @@ namespace Flavor.Controls {
             // 
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(groupBox1);
             resources.ApplyResources(this, "$this");
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -184,14 +193,5 @@ namespace Flavor.Controls {
         private System.Windows.Forms.Label itime_label;
         private System.Windows.Forms.Label etime_label;
         private System.Windows.Forms.Label startScanTextLabel;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

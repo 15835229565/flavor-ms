@@ -24,23 +24,34 @@ namespace Flavor.Forms {
 		private string modeText;
 		
         private Graph graph;
+        private bool modified = false;
+
+        protected bool Modified {
+            get { return modified; }
+            private set {
+                if (modified == value)
+                    return;
+                modified = value;
+                updateOnModification();
+            }
+        }
+        protected virtual void updateOnModification() {
+            Activate();
+        }
 		
 		private ZedGraphControlPlus[] graphs = null;
         private bool preciseSpectrumDisplayed;
+        // TODO: make more clear here. now in Graph can be mistake
         protected bool PreciseSpectrumDisplayed {
             get {
-                // TODO: make more clear here. now in Graph can be mistake
                 return preciseSpectrumDisplayed; 
             }
             set {
-                if (graph.isPreciseSpectrum != value) {
-                    // TODO: if was wrong false and new value is true - useless reset here!
-                    graph.ResetPointLists();
-                }
-                if (preciseSpectrumDisplayed != value) {
-                    preciseSpectrumDisplayed = value;
-                    setTitles();
-                }
+                if (preciseSpectrumDisplayed == value)
+                    return;
+                preciseSpectrumDisplayed = value;
+                graph.ResetPointLists();
+                setTitles();
             }
         }
         private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
@@ -70,14 +81,17 @@ namespace Flavor.Forms {
 
             graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
             graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
+            graph.OnDisplayModeChanged += new Graph.DisplayModeEventHandler(InvokeGraphModified);
 
+            collect1_graph.GraphPane.Legend.IsVisible = false;
+            collect2_graph.GraphPane.Legend.IsVisible = false;
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
-            graphs[0].GraphPane.Legend.IsVisible = false;
-            graphs[1].GraphPane.Legend.IsVisible = false;
 
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
+
         }
+
         private void setTitles() {
             modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
             col1Text = COL1_TITLE + modeText;
@@ -97,14 +111,23 @@ namespace Flavor.Forms {
             AxisModeChange();
         }
         private void AxisModeChange() {
-            axisModeChange();
-        }
-        protected void axisModeChange() {
             if (graph.DisplayingMode == Graph.Displaying.Diff) {
                 DisplayDiff();
                 return;
             }
             CreateGraph();
+        }
+        private void InvokeGraphModified(Graph.Displaying mode) {
+            if (this.InvokeRequired) {
+                this.Invoke(new Graph.DisplayModeEventHandler(GraphModified), mode);
+                return;
+            }
+            GraphModified(mode);
+        }
+        private void GraphModified(Graph.Displaying mode) {
+            if (mode == Graph.Displaying.Diff) {
+                Modified = true;
+            }
         }
 
         protected sealed override void CreateGraph() {
@@ -246,10 +269,10 @@ namespace Flavor.Forms {
                 CreateGraph();
             } else {
                 RefreshGraph();
-                doSmthMore();
+                if (this is IMeasured)
+                    (this as IMeasured).refreshGraphicsOnMeasureStep();
             }
         }
-        protected virtual void doSmthMore() {}
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             ZedGraphControlPlus sender = control as ZedGraphControlPlus;
@@ -429,7 +452,7 @@ namespace Flavor.Forms {
                 }
             }
         }
-        protected override void saveData() {
+        protected override bool saveData() {
             if (saveSpecterFileDialog.FileName != "") {
                 saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(saveSpecterFileDialog.FileName);
                 if (Graph.Displaying.Diff == graph.DisplayingMode)
@@ -440,14 +463,19 @@ namespace Flavor.Forms {
                 saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                     Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, graph);
+                    Modified = false;
+                    return true;
                 }
             } else {
                 saveSpecterFileDialog.Filter = Config.SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
 					Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph);
+                    Modified = false;
+                    return true;
                 }
             }
+            return false;
         }
 	}
 }
