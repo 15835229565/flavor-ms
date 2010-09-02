@@ -80,7 +80,6 @@ namespace Flavor.Forms {
             InitializeComponent();
 
             graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
-            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             graph.OnDisplayModeChanged += new Graph.DisplayModeEventHandler(InvokeGraphModified);
 
             collect1_graph.GraphPane.Legend.IsVisible = false;
@@ -89,7 +88,6 @@ namespace Flavor.Forms {
 
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
-
         }
 
         private void setTitles() {
@@ -106,14 +104,7 @@ namespace Flavor.Forms {
 
         private void InvokeAxisModeChange() {
             if (this.InvokeRequired) {
-                this.Invoke(new Graph.AxisModeEventHandler(AxisModeChange));
-                return;
-            }
-            AxisModeChange();
-        }
-        private void AxisModeChange() {
-            if (graph.DisplayingMode == Graph.Displaying.Diff) {
-                DisplayDiff();
+                this.Invoke(new Graph.AxisModeEventHandler(CreateGraph));
                 return;
             }
             CreateGraph();
@@ -178,15 +169,6 @@ namespace Flavor.Forms {
             collect2_graph.AxisChange();
         }
 
-        internal void DisplayDiff() {
-            col1Text = DIFF_TITLE + COL1_TITLE + modeText;
-            col2Text = DIFF_TITLE + COL2_TITLE + modeText;
-			// multiple times?
-            CreateGraph();
-            //here?
-            closeSpecterFileToolStripMenuItem.Enabled = true;
-        }
-
         protected void ZedGraphRebirth(int zgcIndex, List<Graph.pListScaled> dataPoints, string title) {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
 
@@ -247,26 +229,15 @@ namespace Flavor.Forms {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        private void InvokeRefreshGraph(bool recreate) {
+        protected void InvokeRefreshGraph(bool recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
-                this.Invoke(new Graph.GraphEventHandler(_refreshGraph), recreate);
+                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
                 return;
             }
-            _refreshGraph(recreate);
-        }
-        private void _refreshGraph(bool recreate) {
             refreshGraph(recreate);
         }
-        protected void refreshGraph(bool recreate) {
-            if (graph.DisplayingMode == Graph.Displaying.Diff) {
-                if (recreate) {
-                    DisplayDiff();
-                } else {
-                    RefreshGraph();
-                }
-                return;
-            }
+        private void refreshGraph(bool recreate) {
             if (recreate) {
                 CreateGraph();
             } else {
@@ -278,8 +249,8 @@ namespace Flavor.Forms {
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             ZedGraphControlPlus sender = control as ZedGraphControlPlus;
-            if (sender == null)
-                return;
+            /*if (sender == null)
+                return;*/
             GraphPane pane = sender.MasterPane.FindChartRect(mousePt);
             CurveItem nearestCurve;
             int iNearest;
@@ -425,9 +396,9 @@ namespace Flavor.Forms {
                     break;
             }
             if (graph.isPreciseSpectrum) {
+                long peakSum = -1;
                 int curveIndex1 = graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
                 int curveIndex2 = graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
-                long peakSum = -1;
                 if (-1 != curveIndex1) {
                     peakSum = graph.DisplayedRows1[curveIndex1].PeakSum;
                 } else if (-1 != curveIndex2) {

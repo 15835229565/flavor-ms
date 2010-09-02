@@ -13,6 +13,7 @@ namespace Flavor.Forms
 
         public MonitorForm() {
             InitializeComponent();
+            Panel.Graph = Graph.Instance;
         }
         protected override GraphPanel initPanel() {
             GraphPanel panel = new MeasureGraphPanel();
@@ -62,15 +63,33 @@ namespace Flavor.Forms
 
         private void ZedGraphControlMonitor_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             /*ZedGraphControlMonitor sender = control as ZedGraphControlMonitor;
-            if (sender == null)
-                return;
             GraphPane pane = sender.MasterPane.FindChartRect(mousePt);*/
+        }
+
+        // temporary?
+        private void InvokeRefreshGraph(bool recreate) {
+            if (this.InvokeRequired) {
+                // TODO: NullPointerException here..
+                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
+                return;
+            }
+            refreshGraph(recreate);
+        }
+        private void refreshGraph(bool recreate) {
+            if (recreate) {
+                CreateGraph();
+            } else {
+                RefreshGraph();
+                refreshGraphicsOnMeasureStep();
+            }
         }
 
         #region IMeasured Members
 
         public void initMeasure(bool isPrecise) {
-            (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
+            // temporary?
+            Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
+            //(Panel as MeasureGraphPanel).monitorToolStripButton_Click();
             Show();
             Activate();
         }
@@ -78,10 +97,14 @@ namespace Flavor.Forms
             Panel.Enable();
         }
         public void refreshGraphicsOnMeasureStep() {
-            (Panel as MeasureGraphPanel).refreshGraphicsOnPreciseStep();
+            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
+            panel.performStep();
+            panel.refreshGraphicsOnPreciseStep();
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
+            // temporary?
+            Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
         }
 
         #endregion

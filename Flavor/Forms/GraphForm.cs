@@ -26,7 +26,6 @@ namespace Flavor.Forms {
                     panel.Dock = System.Windows.Forms.DockStyle.Right;
                     panel.Location = new System.Drawing.Point(493, 24);
                     panel.Size = new System.Drawing.Size(280, 667);
-                    panel.TabIndex = 18;
                     panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
                     panel.EnabledChanged += new EventHandler(toggleMeasurePanel);
                 

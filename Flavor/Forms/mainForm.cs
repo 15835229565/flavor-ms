@@ -9,6 +9,9 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class mainForm: Form {
+        private const string EXIT_CAPTION = "Предупреждение об отключении";
+        private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
+
         private MeasuredCollectorsForm collectorsForm = null;
         private MeasuredCollectorsForm CollectorsForm {
             get {
@@ -241,27 +244,26 @@ namespace Flavor.Forms {
         }
 
         void Commander_OnError(string msg) {
-            // TODO: do this more accurately
-            MessageBox.Show(msg);
+            MessageBox.Show(this, msg);
         }
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
-            prepareControlsOnMeasureStart(CollectorsForm);
+            // order is important here!
             CollectorsForm.initMeasure(false);
+            prepareControlsOnMeasureStart(CollectorsForm);
             MonitorForm.Hide();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             Commander.Sense();
-            prepareControlsOnMeasureStart(CollectorsForm);
+            // order is important here!
             CollectorsForm.initMeasure(true);
+            prepareControlsOnMeasureStart(CollectorsForm);
             MonitorForm.Hide();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             Commander.Monitor();
-            //prepareControlsOnMeasureStart(CollectorsForm);
-            prepareControlsOnMeasureStart(MonitorForm);
-            //CollectorsForm.startMonitor();
             MonitorForm.initMeasure(true);
+            prepareControlsOnMeasureStart(MonitorForm);
             CollectorsForm.Hide();
         }
 
@@ -691,7 +693,10 @@ namespace Flavor.Forms {
             Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
             Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
             
-            CollectorsForm.deactivateOnMeasureStop();
+            if (CollectorsForm.Visible)
+                CollectorsForm.deactivateOnMeasureStop();
+            if (MonitorForm.Visible)
+                MonitorForm.deactivateOnMeasureStop();
         }
 
         private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -708,12 +713,19 @@ namespace Flavor.Forms {
 
         private void mainForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (Commander.pState != Commander.programStates.Start) {
-                if (new ClosureDialog().ShowDialog() != DialogResult.OK)
+                if (MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo) != DialogResult.Yes)
                     e.Cancel = true;
-            } else {
-                if (Commander.deviceIsConnected)
-					Commander.Disconnect();
+                return;
             }
+            if (Commander.deviceIsConnected)
+                Commander.Disconnect();
+            Device.OnDeviceStateChanged -= new DeviceEventHandler(InvokeRefreshDeviceState);
+            Device.OnDeviceStatusChanged -= new DeviceEventHandler(InvokeRefreshDeviceStatus);
+            Device.OnVacuumStateChanged -= new DeviceEventHandler(InvokeRefreshVacuumState);
+            Device.OnTurboPumpStatusChanged -= new DeviceEventHandler(InvokeRefreshTurboPumpStatus);
+            Device.OnTurboPumpAlert -= new TurboPumpAlertEventHandler(InvokeProcessTurboPumpAlert);
+
+            Commander.OnProgramStateChanged -= new Commander.ProgramEventHandler(InvokeRefreshButtons);
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {

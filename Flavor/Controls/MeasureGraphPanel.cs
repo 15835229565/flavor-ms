@@ -62,12 +62,12 @@ namespace Flavor.Controls {
         internal void overview_button_Click(ushort start, ushort end) {
             setScanBounds(start, end);
         }
-        internal void sensmeasure_button_Click() {
+        /*internal void sensmeasure_button_Click() {
             peakNumberLabel.Visible = true;
         }
         internal void monitorToolStripButton_Click() {
             peakNumberLabel.Visible = true;
-        }
+        }*/
         internal void refreshGraphicsOnScanStep() {
             detector1CountsLabel.Visible = true;
             label15.Visible = true;

@@ -9,10 +9,11 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorForm));
             this.graph = new Flavor.Controls.ZedGraphControlMonitor();
             this.SuspendLayout();
-            //
+            // 
             // graph
             // 
             this.graph.EditButtons = System.Windows.Forms.MouseButtons.None;
@@ -31,7 +32,7 @@ namespace Flavor.Forms {
             this.graph.ScrollMinY2 = 0;
             this.graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlMonitor_ContextMenuBuilder);
-            //
+            // 
             // MonitorForm
             // 
             resources.ApplyResources(this, "$this");
@@ -39,10 +40,12 @@ namespace Flavor.Forms {
             this.Name = "MonitorForm";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
 
         private ZedGraphControlMonitor graph;
+        private System.ComponentModel.IContainer components;
     }
 }

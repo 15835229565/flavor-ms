@@ -26,19 +26,16 @@ namespace Flavor.Forms {
             GraphPanel panel = new MeasureGraphPanel();
             return panel;
 		}
-        internal void startMonitor() {
-            // TODO: move to other class
-            PreciseSpectrumDisplayed = true;
-            (Panel as MeasureGraphPanel).monitorToolStripButton_Click();
-        }
+
         #region IMeasured Members
 
         public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
+            Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             PreciseSpectrumDisplayed = isPrecise;
-            if (isPrecise)
-                (Panel as MeasureGraphPanel).sensmeasure_button_Click();
-            else
+            if (isPrecise) {
+                //(Panel as MeasureGraphPanel).sensmeasure_button_Click();
+            } else
                 (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
             Show();
             Activate();
@@ -57,17 +54,19 @@ namespace Flavor.Forms {
             Graph.ResetPointListsWithEvent();
         }
         public void refreshGraphicsOnMeasureStep() {
-            (Panel as MeasureGraphPanel).performStep();
+            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
+            panel.performStep();
             if (PreciseSpectrumDisplayed)
-                (Panel as MeasureGraphPanel).refreshGraphicsOnPreciseStep();
+                panel.refreshGraphicsOnPreciseStep();
             else {
                 yAxisChange();
-                (Panel as MeasureGraphPanel).refreshGraphicsOnScanStep();
+                panel.refreshGraphicsOnScanStep();
             }
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
+            Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
         }
 
         #endregion

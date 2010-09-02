@@ -129,12 +129,6 @@
     <Compile Include="Forms\AddPointForm.Designer.cs">
       <DependentUpon>AddPointForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ClosureDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ClosureDialog.Designer.cs">
-      <DependentUpon>ClosureDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\CollectorsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -263,10 +257,6 @@
     <EmbeddedResource Include="Forms\AddPointForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AddPointForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ClosureDialog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ClosureDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CollectorsForm.resx">
       <SubType>Designer</SubType>

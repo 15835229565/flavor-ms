@@ -22,6 +22,8 @@ namespace Flavor.Forms {
                 ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
                 setXScaleLimits(minX, maxX, minX, maxX);
             }
+
+            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
         }
         /*protected override MeasurePanel initPanel() {
             MeasurePanel panel = new MeasurePanel();
