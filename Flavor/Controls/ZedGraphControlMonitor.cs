@@ -12,7 +12,7 @@ namespace Flavor.Controls {
         public ZedGraphControlMonitor()
             : base() {
             InitializeComponent();
-            this.GraphPane.YAxis.Type = AxisType.Log;
+            //this.GraphPane.YAxis.Type = AxisType.Log;
         }
     }
 }

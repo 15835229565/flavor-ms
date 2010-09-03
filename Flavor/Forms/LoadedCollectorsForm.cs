@@ -8,10 +8,14 @@ using Flavor.Controls;
 namespace Flavor.Forms {
     internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {
         private string displayedFileName;
+        private string DisplayedFileName {
+            get { return System.IO.Path.GetFileName(displayedFileName); }
+        }
         public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
             : base(graph, hint) {
             InitializeComponent();
-            this.Text = displayedFileName = fileName;
+            displayedFileName = fileName;
+            this.Text = DisplayedFileName;
 
             Panel.Enable();
 
@@ -30,7 +34,7 @@ namespace Flavor.Forms {
 			return panel;
 		}*/
         protected sealed override void updateOnModification() {
-            this.Text = displayedFileName + (Modified ? "*" : "");
+            this.Text = DisplayedFileName + (Modified ? "*" : "");
             base.updateOnModification();
         }
         protected sealed override bool saveData() {
@@ -38,7 +42,7 @@ namespace Flavor.Forms {
             bool res = base.saveData();
             if (res) {
                 displayedFileName = saveSpecterFileDialog.FileName;
-                this.Text = displayedFileName;
+                this.Text = DisplayedFileName;
             }
             return res;
 		}

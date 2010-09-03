@@ -211,7 +211,7 @@ namespace Flavor.Forms {
                 LineItem temp = myPane.AddCurve("My Curve", dataPoints[0].Points(graph.AxisDisplayMode), Color.Blue, SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
-            myPane.Legend.IsShowLegendSymbols = false;
+            myPane.Legend.IsVisible = false;
 
             // Fill the axis background with a color gradient
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);

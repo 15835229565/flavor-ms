@@ -11,6 +11,9 @@ namespace Flavor.Forms
     internal partial class MonitorForm : GraphForm, IMeasured {
         private const string X_AXIS_TITLE = "Время";
 
+        private double time = -1;
+        private List<PointPairList> list;
+
         public MonitorForm() {
             InitializeComponent();
             Panel.Graph = Graph.Instance;
@@ -21,11 +24,22 @@ namespace Flavor.Forms
         }
 
         protected override sealed void CreateGraph() {
-            ZedGraphRebirth(new List<PointPairList>(), "MonitorForm graph test title");
-            RefreshGraph();
+            ZedGraphRebirth(list, "Режим мониторинга");
         }
 
         protected override sealed void RefreshGraph() {
+            PreciseSpectrum pspec = Config.PreciseData;
+            int count = pspec.Count;
+            int j = 0;
+            for (int i = 0; i < count; ++i) {
+                Utility.PreciseEditorData ped = pspec[i];
+                if (!ped.Use) {
+                    continue;
+                }
+                list[j].Add(new PointPair(time, ped.AssociatedPoints.PLSreference.PeakSum));
+                ++j;
+            }
+            graph.AxisChange();
             graph.Refresh();
         }
 
@@ -49,15 +63,19 @@ namespace Flavor.Forms
             myPane.CurveList.Clear();
 
             for (int i = 0; i < dataPoints.Count; ++i) {
-                LineItem temp = myPane.AddCurve(dataPoints[i].ToString(), dataPoints[i], rowsColors[i % rowsColors.Length], SymbolType.None);
+                LineItem temp = myPane.AddCurve("My Curve", dataPoints[i], rowsColors[i % rowsColors.Length], SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
-            myPane.Legend.IsShowLegendSymbols = false;
+
+            myPane.Legend.IsVisible = false;
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
             myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 10000;
             myPane.YAxis.Scale.MaxAuto = true;
+            myPane.XAxis.Scale.Min = 0;
+            myPane.XAxis.Scale.Max = 10000;
+            myPane.XAxis.Scale.MaxAuto = true;
             graph.AxisChange();
         }
 
@@ -77,16 +95,32 @@ namespace Flavor.Forms
         }
         private void refreshGraph(bool recreate) {
             if (recreate) {
-                CreateGraph();
-            } else {
-                RefreshGraph();
-                refreshGraphicsOnMeasureStep();
+                if (time == -1)
+                    CreateGraph();
+                else {
+                    RefreshGraph();
+                    time += 1;
+                }
             }
+            refreshGraphicsOnMeasureStep();
         }
 
         #region IMeasured Members
 
         public void initMeasure(bool isPrecise) {
+            list = new List<PointPairList>();
+            PreciseSpectrum pspec = Config.PreciseData;
+            int count = pspec.Count;
+            for (int i = 0; i < count; ++i) {
+                Utility.PreciseEditorData ped = pspec[i];
+                if (!ped.Use) {
+                    continue;
+                }
+                list.Add(new PointPairListPlus(ped, null));
+            }
+            time = 0;
+            CreateGraph();
+
             // temporary?
             Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             //(Panel as MeasureGraphPanel).monitorToolStripButton_Click();
@@ -105,8 +139,19 @@ namespace Flavor.Forms
             Panel.Disable();
             // temporary?
             Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
+            time = -1;
         }
 
         #endregion
+        private string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
+            PointPair pp = curve[iPt];
+            string tooltipData = string.Format("итерация={0:G},счеты={1:F0}", pp.X, pp.Y);
+            string comment = (curve.Points as PointPairListPlus).PEDreference.Comment;
+            if (comment != null && comment != "") {
+                tooltipData += "\n";
+                tooltipData += comment;
+            }
+            return tooltipData;
+        }
     }
 }
