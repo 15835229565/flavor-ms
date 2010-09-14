@@ -9,7 +9,6 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorForm));
             this.graph = new Flavor.Controls.ZedGraphControlMonitor();
             this.SuspendLayout();
@@ -47,6 +46,5 @@ namespace Flavor.Forms {
         #endregion
 
         private ZedGraphControlMonitor graph;
-        private System.ComponentModel.IContainer components;
     }
 }

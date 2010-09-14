@@ -33,7 +33,7 @@ namespace Flavor.Common.Measuring {
             if (toContinue()) {
                 if (Commander.measureCancelRequested) {
                     stop();
-                    onCancel();
+                    //onCancel();
                     return true;
                 }
                 if (!onNextStep()) {
@@ -41,14 +41,13 @@ namespace Flavor.Common.Measuring {
                     Disable();
                     return false;
                 }
-            } else {
-                onExit();
-                stop();
             }
+            onExit();
+            stop();
             return true;
         }
         abstract protected void saveData();
-        abstract protected void onCancel();
+        //abstract protected void onCancel();
         abstract protected void onExit();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();

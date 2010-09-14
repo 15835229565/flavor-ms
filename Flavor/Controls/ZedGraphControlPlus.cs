@@ -33,7 +33,9 @@ namespace Flavor.Controls {
         }
         internal void AddPointToPreciseEditor(object sender, EventArgs e) {
             // TODO: raise event here and move code below to mainform
-            if (new AddPointForm((ushort)(curveReference[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {}
+            // can be NullPointerExceptions here..
+            Graph.pListScaled pls = (curveReference.Points as PointPairListPlus).PLSreference;
+            if (new AddPointForm((ushort)(pls.Step[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {}
         }
         internal void DiffWithCoeff(object sender, EventArgs e) {
             // can be NullPointerExceptions here..
@@ -49,7 +51,9 @@ namespace Flavor.Controls {
         }
         internal void SetScalingCoeff(object sender, EventArgs e) {
             // TODO: raise event here and move code below to mainform
-            if (new SetScalingCoeffForm((ushort)(curveReference[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {
+            // can be NullPointerExceptions here..
+            Graph.pListScaled pls = (curveReference.Points as PointPairListPlus).PLSreference;
+            if (new SetScalingCoeffForm((ushort)(pls.Step[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog() == DialogResult.OK) {
                 //Recompute of mass rows
                 //Repaint with new coeffs if needed (mass displaying mode)
                 //Implemented in Config & Graph respectively

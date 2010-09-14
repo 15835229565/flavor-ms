@@ -123,7 +123,6 @@ namespace Flavor.Forms
 
             // temporary?
             Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
-            //(Panel as MeasureGraphPanel).monitorToolStripButton_Click();
             Show();
             Activate();
         }
