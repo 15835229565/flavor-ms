@@ -47,7 +47,6 @@ namespace Flavor.Common.Measuring {
             return true;
         }
         abstract protected void saveData();
-        //abstract protected void onCancel();
         abstract protected void onExit();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();

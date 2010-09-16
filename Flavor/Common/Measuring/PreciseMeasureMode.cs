@@ -52,7 +52,6 @@ namespace Flavor.Common.Measuring {
                 senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
             }
         }
-        //*protected override void onCancel() {}
         protected override void onExit() {
             // order is important here: points are saved from graph..
             Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);

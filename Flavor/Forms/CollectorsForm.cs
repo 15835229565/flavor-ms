@@ -7,22 +7,30 @@ using Flavor.Controls;
 using Flavor.Common;
 using ZedGraph;
 
-namespace Flavor.Forms {
-    internal partial class CollectorsForm: GraphForm {
+namespace Flavor.Forms
+{
+    internal partial class CollectorsForm : GraphForm {
         private const string COL1_TITLE = "Первый коллектор";
         private const string COL2_TITLE = "Второй коллектор";
-		private const string DIFF_TITLE = "Diff - ";
-		private const string PREC_TITLE = " (прециз.)";
-		private const string SCAN_TITLE = " (скан.)";
+        private const string DIFF_TITLE = "Diff - ";
+        private const string PREC_TITLE = " (прециз.)";
+        private const string SCAN_TITLE = " (скан.)";
 
         private const string X_AXIS_TITLE_STEP = "Ступени";
         private const string X_AXIS_TITLE_MASS = "Масса (а.е.м.)";
         private const string X_AXIS_TITLE_VOLT = "Напряжение (В)";
 
+        private const string DIFF_ON_POINT_TAG = "custom_diff";
+        public const string DIFF_ON_PEAK_TAG = "custom_diff_peak";
+        private const string VIEW_MODE_TAG = "view_mode";
+        private const string STEP_VIEW_MODE_TAG = "axis_mode_step";
+        private const string MASS_VIEW_MODE_TAG = "axis_mode_voltage";
+        private const string VOLT_VIEW_MODE_TAG = "axis_mode_mass";
+
         private string col1Text;
-		private string col2Text;
-		private string modeText;
-		
+        private string col2Text;
+        private string modeText;
+
         private Graph graph;
         private bool modified = false;
 
@@ -38,14 +46,12 @@ namespace Flavor.Forms {
         protected virtual void updateOnModification() {
             Activate();
         }
-		
-		private ZedGraphControlPlus[] graphs = null;
+
+        private ZedGraphControlPlus[] graphs = null;
         private bool preciseSpectrumDisplayed;
         // TODO: make more clear here. now in Graph can be mistake
         protected bool PreciseSpectrumDisplayed {
-            get {
-                return preciseSpectrumDisplayed; 
-            }
+            get { return preciseSpectrumDisplayed; }
             set {
                 if (preciseSpectrumDisplayed == value)
                     return;
@@ -59,33 +65,29 @@ namespace Flavor.Forms {
             set {
                 saveToolStripMenuItem.Enabled = value;
                 //!!!???
-                distractFromCurrentToolStripMenuItem.Enabled = value &&
-                    (graph.DisplayingMode != Graph.Displaying.Diff);
+                distractFromCurrentToolStripMenuItem.Enabled = value && (graph.DisplayingMode != Graph.Displaying.Diff);
             }
         }
         internal bool specterDiffEnabled {
-            set {
-                distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled &&
-                    value && (graph.DisplayingMode != Graph.Displaying.Diff);
-            }
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
+            set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
-		internal protected CollectorsForm(Graph graph, bool hint) {
+        protected CollectorsForm(Graph graph, bool hint) {
             this.graph = graph;
             Panel.Graph = graph;
-
+            
             preciseSpectrumDisplayed = hint;
             setTitles();
-
+            
             InitializeComponent();
-
+            
             graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
             graph.OnDisplayModeChanged += new Graph.DisplayModeEventHandler(InvokeGraphModified);
-
+            
             collect1_graph.GraphPane.Legend.IsVisible = false;
             collect2_graph.GraphPane.Legend.IsVisible = false;
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
-
+            
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
         }
@@ -100,7 +102,7 @@ namespace Flavor.Forms {
         protected override GraphPanel initPanel() {
             GraphPanel panel = new GraphPanel();
             return panel;
-		}
+        }
 
         private void InvokeAxisModeChange() {
             if (this.InvokeRequired) {
@@ -123,18 +125,18 @@ namespace Flavor.Forms {
             }
         }
 
-        protected sealed override void CreateGraph() {
+        protected override sealed void CreateGraph() {
             ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
             ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             RefreshGraph();
         }
-        protected sealed override void SetSize() {
+        protected override sealed void SetSize() {
             if (graphs == null)
                 return;
             Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
-
+            
             collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
             collect2_graph.Size = size;
         }
@@ -160,7 +162,7 @@ namespace Flavor.Forms {
             this.maxX = maxX;
         }
 
-        protected sealed override void RefreshGraph() {
+        protected override sealed void RefreshGraph() {
             collect1_graph.Refresh();
             collect2_graph.Refresh();
         }
@@ -171,33 +173,33 @@ namespace Flavor.Forms {
 
         protected void ZedGraphRebirth(int zgcIndex, List<Graph.pListScaled> dataPoints, string title) {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
-
+            
             myPane.Title.Text = title;
             myPane.YAxis.Title.Text = Y_AXIS_TITLE;
-
+            
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
-                    myPane.XAxis.Title.Text = X_AXIS_TITLE_STEP;
-                    myPane.XAxis.Scale.Min = minX[zgcIndex];
-                    myPane.XAxis.Scale.Max = maxX[zgcIndex];
+                myPane.XAxis.Title.Text = X_AXIS_TITLE_STEP;
+                myPane.XAxis.Scale.Min = minX[zgcIndex];
+                myPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
-                    myPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
-                    myPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
+                myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
+                myPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
+                myPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
-                    //limits inverted due to point-to-mass law
-                    myPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
-                    myPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
+                myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
+                //limits inverted due to point-to-mass law
+                myPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
+                myPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
                     break;
             }
-
+            
             myPane.CurveList.Clear();
-
+            
             specterSavingEnabled = false;
-
+            
             if (PreciseSpectrumDisplayed) {
                 for (int i = 1; i < dataPoints.Count; ++i) {
                     if (dataPoints[i].Step.Count > 0)
@@ -212,11 +214,11 @@ namespace Flavor.Forms {
                 temp.Symbol.Fill = new Fill(Color.White);
             }
             myPane.Legend.IsVisible = false;
-
+            
             // Fill the axis background with a color gradient
-            myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45F);
+            myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
             // Fill the pane background with a color gradient
-            myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45F);
+            myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             // Y-scale needs to be computed more properly!
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 10000;
@@ -249,134 +251,91 @@ namespace Flavor.Forms {
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             ZedGraphControlPlus sender = control as ZedGraphControlPlus;
-            /*if (sender == null)
-                return;*/
+            if (sender == null)
+                return;
+
             GraphPane pane = sender.MasterPane.FindChartRect(mousePt);
             CurveItem nearestCurve;
             int iNearest;
+            ToolStripMenuItem item;
             if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out iNearest)) {
-                /*foreach (ToolStripMenuItem it in menuStrip.Items)
-                {
-                    if ((string)it.Tag == "set_default")
-                    {
-                        // remove the menu item
-                        menuStrip.Items.Remove(it);
-                        // or, just disable the item with this
-                        //item.Enabled = false; 
-
-                        break;
-                    }
-                }*/
-                sender.CurveReference = nearestCurve;
+                sender.CurveRef = (nearestCurve.Points as PointPairListPlus).PLSreference;
                 sender.PointIndex = iNearest;
-
-                // create a new menu item for point
-                ToolStripMenuItem item = new ToolStripMenuItem();
-                // This is the user-defined Tag so you can find this menu item later if necessary
-                item.Name = "point_add";
-                item.Tag = "point_add";
-                // This is the text that will show up in the menu
+                
+                item = new ToolStripMenuItem();
                 item.Text = "Добавить точку в редактор";
-
-                // Add a handler that will respond when that menu item is selected
                 item.Click += new System.EventHandler(sender.AddPointToPreciseEditor);
-                // Add the menu item to the menu
                 menuStrip.Items.Add(item);
 
-                ToolStripMenuItem item1 = new ToolStripMenuItem();
-
-                if (sender.IsFirstCollector) {
-                    //sender.CurveIndex = graph.Displayed1.IndexOf((PointPairListPlus)(nearestCurve.Points));
-                    item1.Name = "axis_rescale_coeff1";
-                    item1.Tag = "axis_rescale_coeff1";
-                    item1.Text = "Коэффициент коллектора 1";
-                } else {
-                    //sender.CurveIndex = graph.Displayed2.IndexOf((PointPairListPlus)(nearestCurve.Points));
-                    item1.Name = "axis_rescale_coeff2";
-                    item1.Tag = "axis_rescale_coeff2";
-                    item1.Text = "Коэффициент коллектора 2";
-                }
-
-                item1.Click += new System.EventHandler(sender.SetScalingCoeff);
-                menuStrip.Items.Add(item1);
-
+                item = new ToolStripMenuItem();
+                item.Text = "Коэффициент коллектора" + (sender.IsFirstCollector ? " 1" : " 2");
+                item.Click += new System.EventHandler(sender.SetScalingCoeff);
+                menuStrip.Items.Add(item);
+                
                 if (specterDiffEnabled) {
-                    ToolStripMenuItem item2 = new ToolStripMenuItem();
-                    item2.Name = "custom_diff";
-                    item2.Tag = "custom_diff";
-                    item2.Text = "Вычесть из текущего с перенормировкой на точку";
-                    item2.Click += new System.EventHandler(sender.DiffWithCoeff);
-                    menuStrip.Items.Add(item2);
+                    item = new ToolStripMenuItem();
+                    item.Name = DIFF_ON_POINT_TAG;
+                    item.Text = "Вычесть из текущего с перенормировкой на точку";
+                    item.Click += new System.EventHandler(sender.DiffWithCoeff);
+                    menuStrip.Items.Add(item);
+                    
                     if (graph.isPreciseSpectrum) {
-                        ToolStripMenuItem item3 = new ToolStripMenuItem();
-                        item3.Name = "custom_diff_peak";
-                        item3.Tag = "custom_diff_peak";
-                        item3.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
-                        item3.Click += new System.EventHandler(sender.DiffWithCoeff);
-                        menuStrip.Items.Add(item3);
+                        item = new ToolStripMenuItem();
+                        item.Name = DIFF_ON_PEAK_TAG;
+                        item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                        item.Click += new System.EventHandler(sender.DiffWithCoeff);
+                        menuStrip.Items.Add(item);
                     }
                 }
-            } else {
-                ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
-                ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
-                ToolStripMenuItem massViewItem = new ToolStripMenuItem();
-
-                switch (graph.AxisDisplayMode) {
-                    case Graph.pListScaled.DisplayValue.Step:
-                        stepViewItem.Checked = true;
-                        break;
-                    case Graph.pListScaled.DisplayValue.Voltage:
-                        voltageViewItem.Checked = true;
-                        break;
-                    case Graph.pListScaled.DisplayValue.Mass:
-                        massViewItem.Checked = true;
-                        break;
-                }
-
-                stepViewItem.Name = "axis_mode_step";
-                stepViewItem.Tag = "axis_mode_step";
-                stepViewItem.Text = "Ступени";
-                stepViewItem.CheckOnClick = true;
-                stepViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
-
-                voltageViewItem.Name = "axis_mode_voltage";
-                voltageViewItem.Tag = "axis_mode_voltage";
-                voltageViewItem.Text = "Напряжение";
-                voltageViewItem.CheckOnClick = true;
-                voltageViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
-
-                massViewItem.Name = "axis_mode_mass";
-                massViewItem.Tag = "axis_mode_mass";
-                massViewItem.Text = "Масса";
-                massViewItem.CheckOnClick = true;
-                massViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
-
-                // create a new general menu item
-                ToolStripMenuItem item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
-                // This is the user-defined Tag so you can find this menu item later if necessary
-                item.Name = "axis_mode";
-                item.Tag = "axis_mode";
-                // This is the text that will show up in the menu
-                item.Text = "Выбрать шкалу";
-
-                // Add a handler that will respond when that menu item is selected
-                //item.Click += new System.EventHandler(CustomZoom);
-                // Add the menu item to the menu
-                menuStrip.Items.Add(item);
             }
-        }
+            ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
+            ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
+            ToolStripMenuItem massViewItem = new ToolStripMenuItem();
+            
+            switch (graph.AxisDisplayMode) {
+                case Graph.pListScaled.DisplayValue.Step:
+                    stepViewItem.Checked = true;
+                    break;
+                case Graph.pListScaled.DisplayValue.Voltage:
+                    voltageViewItem.Checked = true;
+                    break;
+                case Graph.pListScaled.DisplayValue.Mass:
+                    massViewItem.Checked = true;
+                    break;
+            }
+            
+            stepViewItem.Name = STEP_VIEW_MODE_TAG;
+            stepViewItem.Text = "Ступени";
+            stepViewItem.CheckOnClick = true;
+            stepViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+            
+            voltageViewItem.Name = VOLT_VIEW_MODE_TAG;
+            voltageViewItem.Text = "Напряжение";
+            voltageViewItem.CheckOnClick = true;
+            voltageViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+            
+            massViewItem.Name = MASS_VIEW_MODE_TAG;
+            massViewItem.Text = "Масса";
+            massViewItem.CheckOnClick = true;
+            massViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
 
+            item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
+            item.Name = VIEW_MODE_TAG;
+            item.Text = "Выбрать шкалу";
+            
+            menuStrip.Items.Add(item);
+        }
         private void ViewItemCheckStateChanged(object sender, EventArgs e) {
             // TODO: move logic to subclasses..
             switch ((sender as ToolStripMenuItem).Name) {
-                case "axis_mode_step":
-                    graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
+                case STEP_VIEW_MODE_TAG:
+                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
                     break;
-                case "axis_mode_voltage":
-                    graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
+                case VOLT_VIEW_MODE_TAG:
+                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
                     break;
-                case "axis_mode_mass":
-                    graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
+                case MASS_VIEW_MODE_TAG:
+                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
                     break;
             }
         }
@@ -386,13 +345,13 @@ namespace Flavor.Forms {
             PointPair pp = curve[iPt];
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
-                    tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
+                tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                    tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
+                tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                    tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
+                tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
             }
             if (graph.isPreciseSpectrum) {
@@ -419,7 +378,7 @@ namespace Flavor.Forms {
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-					Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference, graph);
+                    Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference, graph);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
@@ -429,9 +388,9 @@ namespace Flavor.Forms {
             if (saveSpecterFileDialog.FileName != "") {
                 saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(saveSpecterFileDialog.FileName);
                 if (Graph.Displaying.Diff == graph.DisplayingMode)
-					saveSpecterFileDialog.FileName += Config.DIFF_FILE_SUFFIX;
-			}
-			if (PreciseSpectrumDisplayed) {
+                    saveSpecterFileDialog.FileName += Config.DIFF_FILE_SUFFIX;
+            }
+            if (PreciseSpectrumDisplayed) {
                 saveSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
@@ -443,12 +402,12 @@ namespace Flavor.Forms {
                 saveSpecterFileDialog.Filter = Config.SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
-					Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph);
+                    Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph);
                     Modified = false;
                     return true;
                 }
             }
             return false;
         }
-	}
-}
+        }
+    }

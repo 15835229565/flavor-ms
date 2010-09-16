@@ -14,7 +14,6 @@ namespace Flavor.Common.Measuring {
             ePoint = Config.ePoint;
         }
         protected override void saveData() { }
-        //protected override void onCancel() { }
         protected override void onExit() {
             Config.AutoSaveSpecterFile();
         }

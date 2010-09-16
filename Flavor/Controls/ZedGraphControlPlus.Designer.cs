@@ -16,7 +16,6 @@
             this.IsShowPointValues = true;
             this.Name = "ZedGraphControlPlus";
             this.ResumeLayout(false);
-
         }
 
         #endregion

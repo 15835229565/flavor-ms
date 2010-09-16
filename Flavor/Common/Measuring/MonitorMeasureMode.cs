@@ -64,7 +64,7 @@ namespace Flavor.Common.Measuring {
             if (spectrumIsValid) {
                 base.onExit();
                 // TODO: save monitor mode-specific data
-            }// else {base.onCancel();}
+            }
         }
         protected override void saveResults() {
             Config.autoSaveMonitorSpectrumFile(shift);
