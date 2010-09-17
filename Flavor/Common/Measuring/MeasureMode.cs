@@ -30,20 +30,25 @@ namespace Flavor.Common.Measuring {
             customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
             saveData();
-            if (toContinue()) {
-                if (Commander.measureCancelRequested) {
+            if (toContinue())
+            {
+                if (Commander.measureCancelRequested)
+                {
                     stop();
                     //onCancel();
                     return true;
                 }
-                if (!onNextStep()) {
+                if (!onNextStep())
+                {
                     // TODO: cannot perform step!
                     Disable();
                     return false;
                 }
             }
-            onExit();
-            stop();
+            else {
+                onExit();
+                stop();
+            }
             return true;
         }
         abstract protected void saveData();

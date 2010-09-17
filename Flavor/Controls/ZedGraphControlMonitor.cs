@@ -26,6 +26,7 @@ namespace Flavor.Controls
         }
         private void LogItemCheckStateChanged(object sender, EventArgs e) {
             GraphPane.YAxis.Type = (sender as ToolStripMenuItem).Checked ? AxisType.Log : AxisType.Linear;
+            this.Refresh();
         }
     }
 }
