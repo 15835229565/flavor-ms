@@ -11,6 +11,10 @@ namespace Flavor.Forms {
     internal partial class mainForm: Form {
         private const string EXIT_CAPTION = "Предупреждение об отключении";
         private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
+        private const string SHUTDOWN_CAPTION = "Предупреждение об отключении";
+        private const string SHUTDOWN_MESSAGE = "Внимание!\n" +
+                                                "Проверьте герметичность вакуумной системы перед отключением прибора (закрыт ли вакуумный вентиль).\n" +
+                                                "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Cancel.";
 
         private MeasuredCollectorsForm collectorsForm = null;
         private MeasuredCollectorsForm CollectorsForm {
@@ -225,6 +229,11 @@ namespace Flavor.Forms {
             Commander.Init();
         }
         private void shutSys_butt_Click(object sender, EventArgs e) {
+            if (Commander.pState != Commander.programStates.Start)
+            {
+                if (MessageBox.Show(this, SHUTDOWN_MESSAGE, SHUTDOWN_CAPTION, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.OK)
+                    return;
+            }
             shutSys_butt.Enabled = false;
             Commander.Shutdown();
         }
@@ -713,9 +722,10 @@ namespace Flavor.Forms {
 
         private void mainForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (Commander.pState != Commander.programStates.Start) {
-                if (MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo) != DialogResult.Yes)
+                if (MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes) {
                     e.Cancel = true;
-                return;
+                    return;
+                }
             }
             if (Commander.deviceIsConnected)
                 Commander.Disconnect();
