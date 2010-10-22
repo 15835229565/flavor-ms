@@ -107,9 +107,15 @@ namespace Flavor.Forms
         }
         private void refreshGraph(bool recreate) {
             if (recreate) {
-                if (time == -1)
+                if (time == -1) {
+                    /*if (normalizedList != null) {
+                        int index = sums.Count - 1;
+                        foreach (PointPairList ppl in normalizedList) {
+                            ppl[index].Y /= sums[index];
+                        }
+                    }*/
                     CreateGraph();
-                else {
+                } else {
                     RefreshGraph();
                     time += 1;
                 }
@@ -132,7 +138,15 @@ namespace Flavor.Forms
                 list.Add(new PointPairListPlus(ped, null));
             }
             time = 0;
-            CreateGraph();
+            if (normalizedList == null) {
+                CreateGraph();
+            } else {
+                normalizedList = new List<PointPairList>();
+                foreach (PointPairListPlus ppl in list) {
+                    normalizedList.Add(new PointPairListPlus(ppl, ppl.PEDreference, null));
+                }
+                ZedGraphRebirth(normalizedList, FORM_TITLE);
+            }
 
             // temporary?
             Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
@@ -173,6 +187,7 @@ namespace Flavor.Forms
             items.Add(item);
         }
         private void NormItemCheckStateChanged(object sender, EventArgs e) {
+            // TODO: modify graph title
             if (normalizedList != null) {
                 normalizedList = null;
                 CreateGraph();

@@ -13,8 +13,8 @@ namespace Flavor.Forms {
         private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
         private const string SHUTDOWN_CAPTION = "Предупреждение об отключении";
         private const string SHUTDOWN_MESSAGE = "Внимание!\n" +
-                                                "Проверьте герметичность вакуумной системы перед отключением прибора (закрыт ли вакуумный вентиль).\n" +
-                                                "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Cancel.";
+                                                "Проверьте герметизацию системы ввода перед отключением прибора (установку заглушки).\n" +
+                                                "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Отмена.";
 
         private MeasuredCollectorsForm collectorsForm = null;
         private MeasuredCollectorsForm CollectorsForm {
