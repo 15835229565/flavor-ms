@@ -9,19 +9,19 @@ using Flavor.Forms;
 
 namespace Flavor.Controls
 {
-    public partial class ZedGraphControlMonitor : ZedGraphControl {
-        public ZedGraphControlMonitor() : base() {
+    public partial class ZedGraphControlMonitor: ZedGraphControl {
+        private const string LOG_ITEM_TEXT = "Логарифмическая шкала";
+        public ZedGraphControlMonitor()
+            : base() {
             InitializeComponent();
-            //GraphPane.YAxis.Type = AxisType.Log;
         }
-        private void ZedGraphControlMonitor_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
-            if (control != this)
-                return;
+        internal void CommonContextMenuBuilder(ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Text = "Логарифмическая шкала";
+            item.Text = LOG_ITEM_TEXT;
             item.Checked = (GraphPane.YAxis.Type == AxisType.Log);
             item.CheckOnClick = true;
             item.CheckedChanged += new System.EventHandler(LogItemCheckStateChanged);
+
             menuStrip.Items.Add(item);
         }
         private void LogItemCheckStateChanged(object sender, EventArgs e) {

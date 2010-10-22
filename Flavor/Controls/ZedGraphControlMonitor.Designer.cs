@@ -15,9 +15,7 @@
             resources.ApplyResources(this, "$this");
             this.IsShowPointValues = true;
             this.Name = "ZedGraphControlMonitor";
-            this.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlMonitor_ContextMenuBuilder);
             this.ResumeLayout(false);
-
         }
 
         #endregion

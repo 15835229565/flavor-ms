@@ -258,6 +258,7 @@ namespace Flavor.Forms
             CurveItem nearestCurve;
             int iNearest;
             ToolStripMenuItem item;
+            ToolStripItemCollection items = menuStrip.Items;
             if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out iNearest)) {
                 sender.CurveRef = (nearestCurve.Points as PointPairListPlus).PLSreference;
                 sender.PointIndex = iNearest;
@@ -265,26 +266,26 @@ namespace Flavor.Forms
                 item = new ToolStripMenuItem();
                 item.Text = "Добавить точку в редактор";
                 item.Click += new System.EventHandler(sender.AddPointToPreciseEditor);
-                menuStrip.Items.Add(item);
+                items.Add(item);
 
                 item = new ToolStripMenuItem();
                 item.Text = "Коэффициент коллектора" + (sender.IsFirstCollector ? " 1" : " 2");
                 item.Click += new System.EventHandler(sender.SetScalingCoeff);
-                menuStrip.Items.Add(item);
+                items.Add(item);
                 
                 if (specterDiffEnabled) {
                     item = new ToolStripMenuItem();
                     item.Name = DIFF_ON_POINT_TAG;
                     item.Text = "Вычесть из текущего с перенормировкой на точку";
                     item.Click += new System.EventHandler(sender.DiffWithCoeff);
-                    menuStrip.Items.Add(item);
+                    items.Add(item);
                     
                     if (graph.isPreciseSpectrum) {
                         item = new ToolStripMenuItem();
                         item.Name = DIFF_ON_PEAK_TAG;
                         item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
                         item.Click += new System.EventHandler(sender.DiffWithCoeff);
-                        menuStrip.Items.Add(item);
+                        items.Add(item);
                     }
                 }
             }
@@ -322,8 +323,8 @@ namespace Flavor.Forms
             item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
             item.Name = VIEW_MODE_TAG;
             item.Text = "Выбрать шкалу";
-            
-            menuStrip.Items.Add(item);
+
+            items.Add(item);
         }
         private void ViewItemCheckStateChanged(object sender, EventArgs e) {
             // TODO: move logic to subclasses..
