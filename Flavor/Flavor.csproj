@@ -338,7 +338,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="config.xsd">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </None>
     <None Include="config.xsx">
       <DependentUpon>config.xsd</DependentUpon>

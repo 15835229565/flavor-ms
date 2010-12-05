@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace Flavor.Common {
     static class Config {
-        private static XmlDocument _conf = new XmlDocument();
+        private static readonly XmlDocument _conf = new XmlDocument();
 
         private static readonly string INITIAL_DIR = System.IO.Directory.GetCurrentDirectory();
 
@@ -15,40 +15,94 @@ namespace Flavor.Common {
         private static string confName;
         private static string logName;
 
+        #region Extensions
         internal const string SPECTRUM_EXT = "sdf";
         internal const string PRECISE_SPECTRUM_EXT = "psf";
         internal const string MONITOR_SPECTRUM_EXT = "mon";
-		
+        #endregion
         internal const string DIFF_FILE_SUFFIX = "~diff";
-
+        #region Dialog filters
         internal static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
         internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
-
-        internal const string MONITOR_SPECTRUM_HEADER = "Monitor";
+        #endregion
+        #region Spectra headers
+        private const string MONITOR_SPECTRUM_HEADER = "Monitor";
         internal const string PRECISE_OPTIONS_HEADER = "Precise options";
-        internal const string COMMON_OPTIONS_HEADER = "Common options";
+        private const string COMMON_OPTIONS_HEADER = "Common options";
+        private const string MEASURED_SPECTRUM_HEADER = "Measure";
+        private const string DIFF_SPECTRUM_HEADER = "Diff";
+        #endregion
+        #region Tags
+        private const string ROOT_CONFIG_TAG = "control";
+        private const string VERSION_ATTRIBUTE = "version";
+        private const string CONFIG_VERSION = "1.0";
 
-        internal const string ROOT_CONFIG_TAG = "control";
-        internal const string CONNECT_CONFIG_TAG = "connect";
-        internal const string COMMON_CONFIG_TAG = "common";
-        internal const string OVERVIEW_CONFIG_TAG = "overview";
-        internal const string SENSE_CONFIG_TAG = "sense";
-        internal const string CHECK_CONFIG_TAG = "check";
-        internal const string INTERFACE_CONFIG_TAG = "interface";
+        private const string HEADER_CONFIG_TAG = "header";
+        
+        private const string CONNECT_CONFIG_TAG = "connect";
+        private const string PORT_CONFIG_TAG = "port";
+        private const string BAUDRATE_CONFIG_TAG = "baudrate";
+        private const string TRY_NUMBER_CONFIG_TAG = "try";
+        
+        private const string COMMON_CONFIG_TAG = "common";
+        private const string EXPOSITURE_TIME_CONFIG_TAG = "exptime";
+        private const string TRANSITION_TIME_CONFIG_TAG = "meastime";
+        private const string IONIZATION_VOLTAGE_CONFIG_TAG = "ivoltage";
+        private const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "cp";
+        private const string EMISSION_CURRENT_CONFIG_TAG = "ecurrent";
+        private const string HEAT_CURRENT_CONFIG_TAG = "hcurrent";
+        private const string FOCUS_VOLTAGE1_CONFIG_TAG = "focus1";
+        private const string FOCUS_VOLTAGE2_CONFIG_TAG = "focus2";
 
-        internal const string TIME_SPECTRUM_ATTRIBUTE = "time";
-        internal const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
+        private const string DELAY_BEFORE_MEASURE_CONFIG_TAG = "before";
+        private const string EQUAL_DELAYS_CONFIG_TAG = "equal";
+        private const string DELAY_FORWARD_MEASURE_CONFIG_TAG = "forward";
+        private const string DELAY_BACKWARD_MEASURE_CONFIG_TAG = "back";
 
+        private const string POINT_CONFIG_TAG = "p";
+        private const string POINT_STEP_CONFIG_TAG = "s";
+        private const string POINT_COUNT_CONFIG_TAG = "c";
+
+        private const string OVERVIEW_CONFIG_TAG = "overview";
+        private const string START_SCAN_CONFIG_TAG = "start";
+        private const string END_SCAN_CONFIG_TAG = "end";
+        private const string COL1_CONFIG_TAG = "collector1";
+        private const string COL2_CONFIG_TAG = "collector2";
+
+        private const string SENSE_CONFIG_TAG = "sense";
+        private const string PEAK_TAGS_FORMAT = "region{0}";
+        private const string PEAK_NUMBER_CONFIG_TAG = "peak";
+        private const string PEAK_COL_NUMBER_CONFIG_TAG = "col";
+        private const string PEAK_WIDTH_CONFIG_TAG = "width";
+        private const string PEAK_ITER_NUMBER_CONFIG_TAG = "iteration";
+        private const string PEAK_PRECISION_CONFIG_TAG = "error";
+        private const string PEAK_COMMENT_CONFIG_TAG = "comment";
+        private const string PEAK_USE_CONFIG_TAG = "use";
+        
+        private const string PEAK_COUNT_SUM_CONFIG_TAG = "sum";
+
+        private const string CHECK_CONFIG_TAG = "check";
+        private const string CHECK_ITER_NUMBER_CONFIG_TAG = "iterations";
+        private const string CHECK_TIME_LIMIT_CONFIG_TAG = "limit";
+        private const string CHECK_MAX_SHIFT_CONFIG_TAG = "allowed";
+        
+        private const string INTERFACE_CONFIG_TAG = "interface";
+        private const string C1_CONFIG_TAG = "coeff1";
+        private const string C2_CONFIG_TAG = "coeff2";
+
+        private const string TIME_SPECTRUM_ATTRIBUTE = "time";
+        private const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
+        #endregion
         private static string SerialPort = "COM1";
         private static ushort SerialBaudRate = 38400;
-        private static byte SendTry = 1;
+        private static byte sendTry = 1;
 
         internal const ushort MIN_STEP = 0;
         internal const ushort MAX_STEP = 1056;
         private static ushort startPoint = MIN_STEP;
         private static ushort endPoint = MAX_STEP;
 
-        private static CommonOptions commonOpts = new CommonOptions();
+        private static readonly CommonOptions commonOpts = new CommonOptions();
         internal static CommonOptions CommonOptions {
             get { return commonOpts; }
         }
@@ -111,8 +165,7 @@ namespace Flavor.Common {
         }
 
         internal static byte Try {
-            get { return SendTry; }
-            set { SendTry = value; }
+            get { return sendTry; }
         }
 
         internal static ushort sPoint {
@@ -129,12 +182,15 @@ namespace Flavor.Common {
             logName = System.IO.Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
         }
 
+        private static void fillInnerText(string prefix, string nodeName) {
+            fillInnerText(prefix, nodeName, "");
+        }
         private static void fillInnerText(string prefix, string nodeName, object value) {
             string fullName = combine(prefix, nodeName);
             try {
                 _conf.SelectSingleNode(fullName).InnerText = value.ToString();
             } catch (NullReferenceException) {
-                _conf.SelectSingleNode(prefix).AppendChild(_conf.CreateNode(XmlNodeType.Element, nodeName, ""));
+                _conf.SelectSingleNode(prefix).AppendChild(_conf.CreateElement(nodeName));
                 _conf.SelectSingleNode(fullName).InnerText = value.ToString();
             }
         }
@@ -151,17 +207,17 @@ namespace Flavor.Common {
             }
             try {
                 prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                SerialPort = (_conf.SelectSingleNode(combine(prefix, "port")).InnerText);
-                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "baudrate")).InnerText);
-                SendTry = byte.Parse(_conf.SelectSingleNode(combine(prefix, "try")).InnerText);
+                SerialPort = (_conf.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
+                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                sendTry = byte.Parse(_conf.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
             }
             try {
                 prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-                sPoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "start")).InnerText);
-                ePoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "end")).InnerText);
+                sPoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
+                ePoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
                 //use hard-coded defaults
@@ -186,9 +242,9 @@ namespace Flavor.Common {
             }
             prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
             try {
-                ushort step = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "peak")).InnerText);
-                byte collector = byte.Parse(_conf.SelectSingleNode(combine(prefix, "col")).InnerText);
-                ushort width = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "width")).InnerText);
+                ushort step = ushort.Parse(_conf.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
+                byte collector = byte.Parse(_conf.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
+                ushort width = ushort.Parse(_conf.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
                 reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
             } catch (NullReferenceException) {
                 //use hard-coded defaults (null checker peak)
@@ -197,17 +253,17 @@ namespace Flavor.Common {
                 //use hard-coded defaults (null checker peak)
             }
             try {
-                iterations = int.Parse(_conf.SelectSingleNode(combine(prefix, "iterations")).InnerText);
+                iterations = int.Parse(_conf.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (infinite iterations)
             }
             try {
-                timeLimit = int.Parse(_conf.SelectSingleNode(combine(prefix, "limit")).InnerText);
+                timeLimit = int.Parse(_conf.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (no time limit)
             }
             try {
-                timeLimit = ushort.Parse(_conf.SelectSingleNode(combine(prefix, "allowed")).InnerText);
+                allowedShift = ushort.Parse(_conf.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
             } catch (NullReferenceException) {
                 //use hard-coded defaults (zero shift allowed)
             }
@@ -216,8 +272,8 @@ namespace Flavor.Common {
 
         private static void saveScanOptions() {
             string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-            fillInnerText(prefix, "start", sPoint);
-            fillInnerText(prefix, "end", ePoint);
+            fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
+            fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
             _conf.Save(@confName);
         }
         internal static void saveScanOptions(ushort sPointReal, ushort ePointReal) {
@@ -228,10 +284,10 @@ namespace Flavor.Common {
 
         private static void saveDelaysOptions() {
             string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
-            fillInnerText(prefix, "before", commonOpts.befTime);
-            fillInnerText(prefix, "equal", commonOpts.ForwardTimeEqualsBeforeTime);
-            fillInnerText(prefix, "forward", commonOpts.fTime);
-            fillInnerText(prefix, "back", commonOpts.bTime);
+            fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
+            fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
+            fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
+            fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
             _conf.Save(@confName);
         }
         internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
@@ -243,17 +299,18 @@ namespace Flavor.Common {
         }
 
         private static void saveMassCoeffs() {
-            fillInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG, "");
+            fillInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
             string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-            fillInnerText(prefix, "coeff1", col1Coeff.ToString("R"));
-            fillInnerText(prefix, "coeff2", col2Coeff.ToString("R"));
+            fillInnerText(prefix, C1_CONFIG_TAG, col1Coeff.ToString("R", CultureInfo.InvariantCulture));
+            fillInnerText(prefix, C2_CONFIG_TAG, col2Coeff.ToString("R", CultureInfo.InvariantCulture));
             _conf.Save(@confName);
         }
 
         private static void saveConnectOptions() {
             string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-            fillInnerText(prefix, "port", Port);
-            fillInnerText(prefix, "baudrate", BaudRate);
+            fillInnerText(prefix, PORT_CONFIG_TAG, Port);
+            fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
+            fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
             _conf.Save(@confName);
         }
         internal static void saveConnectOptions(string port, ushort baudrate) {
@@ -266,21 +323,21 @@ namespace Flavor.Common {
             //checkpeak & iterations
             string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
             if (_conf.SelectSingleNode(prefix) == null) {
-                XmlNode checkRegion = _conf.CreateNode(XmlNodeType.Element, CHECK_CONFIG_TAG, "");
+                XmlNode checkRegion = _conf.CreateElement(CHECK_CONFIG_TAG);
                 _conf.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(checkRegion);
             }
             if (reperPeak != null) {
-                fillInnerText(prefix, "peak", reperPeak.Step);
-                fillInnerText(prefix, "col", reperPeak.Collector);
-                fillInnerText(prefix, "width", reperPeak.Width);
+                fillInnerText(prefix, PEAK_NUMBER_CONFIG_TAG, reperPeak.Step);
+                fillInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG, reperPeak.Collector);
+                fillInnerText(prefix, PEAK_WIDTH_CONFIG_TAG, reperPeak.Width);
             } else {
-                fillInnerText(prefix, "peak", "");
-                fillInnerText(prefix, "col", "");
-                fillInnerText(prefix, "width", "");
+                fillInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
+                fillInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
+                fillInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
             }
-            fillInnerText(prefix, "iterations", iterations);
-            fillInnerText(prefix, "limit", timeLimit);
-            fillInnerText(prefix, "allowed", allowedShift);
+            fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, iterations);
+            fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
+            fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
             _conf.Save(@confName);
         }
         internal static void saveCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak) {
@@ -358,29 +415,29 @@ namespace Flavor.Common {
             string prefix = "";
 
             if (sf.SelectSingleNode(OVERVIEW_CONFIG_TAG) != null) {
-                headerNode = sf.SelectSingleNode(combine(OVERVIEW_CONFIG_TAG, "header"));
-            } else if (sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "overview")) != null) {
+                headerNode = sf.SelectSingleNode(combine(OVERVIEW_CONFIG_TAG, HEADER_CONFIG_TAG));
+            } else if (sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG)) != null) {
                 prefix = ROOT_CONFIG_TAG;
-                headerNode = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header"));
+                headerNode = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
             } else {
                 throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
             }
 
             Graph.Displaying spectrumType = Graph.Displaying.Measured;
-            if (headerNode != null && headerNode.InnerText == "Diff")
+            if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
                 spectrumType = Graph.Displaying.Diff;
 
             ushort X = 0;
             long Y = 0;
             try {
-                foreach (XmlNode pntNode in sf.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, "collector1/p"))) {
-                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
+                foreach (XmlNode pntNode in sf.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL1_CONFIG_TAG, POINT_CONFIG_TAG))) {
+                    X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                    Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
                     pl1.Add(X, Y);
                 }
-                foreach (XmlNode pntNode in sf.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, "collector2/p"))) {
-                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                    Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
+                foreach (XmlNode pntNode in sf.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL2_CONFIG_TAG, POINT_CONFIG_TAG))) {
+                    X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                    Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
                     pl2.Add(X, Y);
                 }
             } catch (NullReferenceException) {
@@ -402,39 +459,41 @@ namespace Flavor.Common {
         }
         internal static XmlDocument SaveSpecterFile(string p, Graph graph) {
             XmlDocument sf = new XmlDocument();
-            XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateNode(XmlNodeType.Element, OVERVIEW_CONFIG_TAG, ""));
-            XmlNode temp = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header"));
+            XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateElement(OVERVIEW_CONFIG_TAG));
+            XmlNode temp = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
             switch (graph.DisplayingMode) {
                 case Graph.Displaying.Loaded:
-                    temp.InnerText = "Measure";
+                    temp.InnerText = MEASURED_SPECTRUM_HEADER;
                     break;
                 case Graph.Displaying.Measured:
-                    temp.InnerText = "Measure";
-                    scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "start", ""));
-                    scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "end", ""));
-                    scanNode.SelectSingleNode("start").InnerText = sPoint.ToString();
-                    scanNode.SelectSingleNode("end").InnerText = ePoint.ToString();
+                    temp.InnerText = MEASURED_SPECTRUM_HEADER;
+                    XmlElement elem = sf.CreateElement(START_SCAN_CONFIG_TAG);
+                    elem.InnerText = sPoint.ToString();
+                    scanNode.AppendChild(elem);
+                    elem = sf.CreateElement(END_SCAN_CONFIG_TAG);
+                    elem.InnerText = ePoint.ToString();
+                    scanNode.AppendChild(elem);
                     // In case of loaded (not auto) start/end points and measure parameters are not connected to spectrum data..
                     break;
                 case Graph.Displaying.Diff:
-                    temp.InnerText = "Diff";
+                    temp.InnerText = DIFF_SPECTRUM_HEADER;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "collector1", ""));
-            scanNode.AppendChild(sf.CreateNode(XmlNodeType.Element, "collector2", ""));
+            scanNode.AppendChild(sf.CreateElement(COL1_CONFIG_TAG));
+            scanNode.AppendChild(sf.CreateElement(COL2_CONFIG_TAG));
             foreach (ZedGraph.PointPair pp in graph.Displayed1Steps[0]) {
-                temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
-                scanNode.SelectSingleNode("collector1").AppendChild(temp);
+                temp = sf.CreateElement(POINT_CONFIG_TAG);
+                temp.AppendChild(sf.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
+                temp.AppendChild(sf.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
+                scanNode.SelectSingleNode(COL1_CONFIG_TAG).AppendChild(temp);
             }
             foreach (ZedGraph.PointPair pp in graph.Displayed2Steps[0]) {
-                temp = sf.CreateNode(XmlNodeType.Element, "p", "");
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                temp.AppendChild(sf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
-                scanNode.SelectSingleNode("collector2").AppendChild(temp);
+                temp = sf.CreateElement(POINT_CONFIG_TAG);
+                temp.AppendChild(sf.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
+                temp.AppendChild(sf.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
+                scanNode.SelectSingleNode(COL2_CONFIG_TAG).AppendChild(temp);
             }
             sf.Save(@p);
             return sf;
@@ -444,9 +503,9 @@ namespace Flavor.Common {
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
             XmlDocument file = SaveSpecterFile(filename, Graph.Instance);
 
-            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
+            XmlAttribute attr = file.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-            file.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header")).Attributes.Append(attr as XmlAttribute);
+            file.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
 
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
@@ -632,13 +691,13 @@ namespace Flavor.Common {
             string header;
             switch (graph.DisplayingMode) {
                 case Graph.Displaying.Loaded:
-                    header = "Measure";
+                    header = MEASURED_SPECTRUM_HEADER;
                     break;
                 case Graph.Displaying.Measured:
-                    header = "Measure";
+                    header = MEASURED_SPECTRUM_HEADER;
                     break;
                 case Graph.Displaying.Diff:
-                    header = "Diff";
+                    header = DIFF_SPECTRUM_HEADER;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -664,14 +723,14 @@ namespace Flavor.Common {
             file.Save(filename);
         }
         private static void writeSpectrumOptions(XmlDocument file, DateTime dt, short shift) {
-            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode(combine(ROOT_CONFIG_TAG, "header")).Attributes;
-            XmlNode attr = file.CreateNode(XmlNodeType.Attribute, TIME_SPECTRUM_ATTRIBUTE, "");
+            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes;
+            XmlAttribute attr = file.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
             attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-            headerNodeAttributes.Append(attr as XmlAttribute);
+            headerNodeAttributes.Append(attr);
 
-            attr = file.CreateNode(XmlNodeType.Attribute, SHIFT_SPECTRUM_ATTRIBUTE, "");
+            attr = file.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
             attr.Value = shift.ToString();
-            headerNodeAttributes.Append(attr as XmlAttribute);
+            headerNodeAttributes.Append(attr);
 
             XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
             saveCommonOptions(commonNode);
@@ -692,40 +751,40 @@ namespace Flavor.Common {
                 createPEDStub(pedConf, rootNode);
             } else {
                 for (int i = 1; i <= 20; ++i) {
-                    string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format("region{0}", i));
-                    fillInnerText(prefix, "peak", "");
-                    fillInnerText(prefix, "iteration", "");
-                    fillInnerText(prefix, "width", "");
-                    fillInnerText(prefix, "error", "");
-                    fillInnerText(prefix, "col", "");
-                    fillInnerText(prefix, "comment", "");
-                    fillInnerText(prefix, "use", "");
+                    string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i));
+                    fillInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
+                    fillInnerText(prefix, PEAK_ITER_NUMBER_CONFIG_TAG);
+                    fillInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
+                    fillInnerText(prefix, PEAK_PRECISION_CONFIG_TAG);
+                    fillInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
+                    fillInnerText(prefix, PEAK_COMMENT_CONFIG_TAG);
+                    fillInnerText(prefix, PEAK_USE_CONFIG_TAG);
                 }
             }
 
             foreach (Utility.PreciseEditorData ped in peds) {
-                XmlNode regionNode = pedConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format("region{0}", ped.pNumber + 1)));
-                regionNode.SelectSingleNode("peak").InnerText = ped.Step.ToString();
-                regionNode.SelectSingleNode("iteration").InnerText = ped.Iterations.ToString();
-                regionNode.SelectSingleNode("width").InnerText = ped.Width.ToString();
-                regionNode.SelectSingleNode("error").InnerText = ped.Precision.ToString();
-                regionNode.SelectSingleNode("col").InnerText = ped.Collector.ToString();
-                regionNode.SelectSingleNode("comment").InnerText = ped.Comment;
-                regionNode.SelectSingleNode("use").InnerText = ped.Use.ToString();
+                XmlNode regionNode = pedConf.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
+                regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
+                regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
+                regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText = ped.Width.ToString();
+                regionNode.SelectSingleNode(PEAK_PRECISION_CONFIG_TAG).InnerText = ped.Precision.ToString();
+                regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText = ped.Collector.ToString();
+                regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText = ped.Comment;
+                regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText = ped.Use.ToString();
 
                 if (ped.AssociatedPoints == null) {
                     continue;
                 }
 
                 if (savePeakSum) {
-                    regionNode.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "sum", "")).InnerText = ped.AssociatedPoints.PLSreference.PeakSum.ToString();
+                    regionNode.AppendChild(pedConf.CreateElement(PEAK_COUNT_SUM_CONFIG_TAG)).InnerText = ped.AssociatedPoints.PLSreference.PeakSum.ToString();
                 }
                 if (savePoints) {
                     XmlNode temp;
                     foreach (ZedGraph.PointPair pp in ped.AssociatedPoints) {
-                        temp = pedConf.CreateNode(XmlNodeType.Element, "p", "");
-                        temp.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "s", "")).InnerText = pp.X.ToString();
-                        temp.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "c", "")).InnerText = ((long)(pp.Y)).ToString();
+                        temp = pedConf.CreateElement(POINT_CONFIG_TAG);
+                        temp.AppendChild(pedConf.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
+                        temp.AppendChild(pedConf.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
                         regionNode.AppendChild(temp);
                     }
                 }
@@ -774,20 +833,20 @@ namespace Flavor.Common {
                 Utility.PreciseEditorData temp = null;
                 string peak, iter, width, col;
                 try {
-                    XmlNode regionNode = pedConf.SelectSingleNode(combine(mainConfPrefix, SENSE_CONFIG_TAG, string.Format("region{0}", i)));
-                    peak = regionNode.SelectSingleNode("peak").InnerText;
-                    col = regionNode.SelectSingleNode("col").InnerText;
-                    iter = regionNode.SelectSingleNode("iteration").InnerText;
-                    width = regionNode.SelectSingleNode("width").InnerText;
+                    XmlNode regionNode = pedConf.SelectSingleNode(combine(mainConfPrefix, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i)));
+                    peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
+                    col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
+                    iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
+                    width = regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText;
                     bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
                     if (allFilled) {
                         string comment = "";
                         try {
-                            comment = regionNode.SelectSingleNode("comment").InnerText;
+                            comment = regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText;
                         } catch (NullReferenceException) { }
                         bool use = true;
                         try {
-                            use = bool.Parse(regionNode.SelectSingleNode("use").InnerText);
+                            use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
                         } catch (NullReferenceException) { } catch (FormatException) { }
                         try {
                             temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
@@ -804,9 +863,9 @@ namespace Flavor.Common {
                             long Y;
                             PointPairListPlus tempPntLst = new PointPairListPlus();
                             try {
-                                foreach (XmlNode pntNode in regionNode.SelectNodes("p")) {
-                                    X = ushort.Parse(pntNode.SelectSingleNode("s").InnerText);
-                                    Y = long.Parse(pntNode.SelectSingleNode("c").InnerText);
+                                foreach (XmlNode pntNode in regionNode.SelectNodes(POINT_CONFIG_TAG)) {
+                                    X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                                    Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
                                     tempPntLst.Add(X, Y);
                                 }
                             } catch (FormatException) {
@@ -859,19 +918,19 @@ namespace Flavor.Common {
             cdConf.Save(filename);
         }
         private static void saveCommonOptions(XmlNode commonNode) {
-            commonNode.SelectSingleNode("exptime").InnerText = Config.commonOpts.eTime.ToString();
-            commonNode.SelectSingleNode("meastime").InnerText = Config.commonOpts.iTime.ToString();
-            commonNode.SelectSingleNode("ivoltage").InnerText = Config.commonOpts.iVoltage.ToString();
-            commonNode.SelectSingleNode("cp").InnerText = Config.commonOpts.CP.ToString();
-            commonNode.SelectSingleNode("ecurrent").InnerText = Config.commonOpts.eCurrent.ToString();
-            commonNode.SelectSingleNode("hcurrent").InnerText = Config.commonOpts.hCurrent.ToString();
-            commonNode.SelectSingleNode("focus1").InnerText = Config.commonOpts.fV1.ToString();
-            commonNode.SelectSingleNode("focus2").InnerText = Config.commonOpts.fV2.ToString();
+            commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = Config.commonOpts.eTime.ToString();
+            commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = Config.commonOpts.iTime.ToString();
+            commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = Config.commonOpts.iVoltage.ToString();
+            commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = Config.commonOpts.CP.ToString();
+            commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = Config.commonOpts.eCurrent.ToString();
+            commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = Config.commonOpts.hCurrent.ToString();
+            commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = Config.commonOpts.fV1.ToString();
+            commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = Config.commonOpts.fV2.ToString();
 
-            commonNode.SelectSingleNode("before").InnerText = Config.commonOpts.befTime.ToString();
-            commonNode.SelectSingleNode("equal").InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
-            commonNode.SelectSingleNode("forward").InnerText = Config.commonOpts.fTime.ToString();
-            commonNode.SelectSingleNode("back").InnerText = Config.commonOpts.bTime.ToString();
+            commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();
+            commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
+            commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
+            commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();
         }
 
         private static void newCommonOptionsFileOnLoad(out XmlDocument conf, string filename) {
@@ -911,14 +970,14 @@ namespace Flavor.Common {
             try {
                 ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
 
-                eT = ushort.Parse(commonNode.SelectSingleNode("exptime").InnerText);
-                iT = ushort.Parse(commonNode.SelectSingleNode("meastime").InnerText);
-                iV = ushort.Parse(commonNode.SelectSingleNode("ivoltage").InnerText);
-                CP = ushort.Parse(commonNode.SelectSingleNode("cp").InnerText);
-                eC = ushort.Parse(commonNode.SelectSingleNode("ecurrent").InnerText);
-                hC = ushort.Parse(commonNode.SelectSingleNode("hcurrent").InnerText);
-                fV1 = ushort.Parse(commonNode.SelectSingleNode("focus1").InnerText);
-                fV2 = ushort.Parse(commonNode.SelectSingleNode("focus2").InnerText);
+                eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
+                iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
+                iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
+                CP = ushort.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+                eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
+                hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
+                fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
+                fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
 
                 //commonOpts = new CommonOptions();
                 commonOpts.eTime = eT;
@@ -938,10 +997,10 @@ namespace Flavor.Common {
                 ushort befT, fT, bT;
                 bool fAsbef;
 
-                befT = ushort.Parse(commonNode.SelectSingleNode("before").InnerText);
-                fT = ushort.Parse(commonNode.SelectSingleNode("forward").InnerText);
-                bT = ushort.Parse(commonNode.SelectSingleNode("back").InnerText);
-                fAsbef = bool.Parse(commonNode.SelectSingleNode("equal").InnerText);
+                befT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText);
+                fT = ushort.Parse(commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText);
+                bT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText);
+                fAsbef = bool.Parse(commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText);
 
                 commonOpts.befTime = befT;
                 commonOpts.ForwardTimeEqualsBeforeTime = fAsbef;
@@ -1000,8 +1059,8 @@ namespace Flavor.Common {
             XmlNode interfaceNode = conf.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
 
             try {
-                col1Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff1").InnerText);
-                col2Coeff = double.Parse(interfaceNode.SelectSingleNode("coeff2").InnerText);
+                col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
             } catch (NullReferenceException) {
                 //!!!
                 throw new ConfigLoadException("", "", confName);
@@ -1089,48 +1148,51 @@ namespace Flavor.Common {
             return false;
         }
         private static XmlNode createRootStub(XmlDocument conf, string header) {
-            conf.AppendChild(conf.CreateNode(XmlNodeType.XmlDeclaration, "?xml version=\"1.0\" encoding=\"utf-8\" ?", ""));
-            XmlNode rootNode = conf.CreateNode(XmlNodeType.Element, ROOT_CONFIG_TAG, "");
+            conf.AppendChild(conf.CreateXmlDeclaration("1.0", "utf-8", ""));
+            XmlElement rootNode = conf.CreateElement(ROOT_CONFIG_TAG);
             conf.AppendChild(rootNode);
-            XmlNode headerNode = conf.CreateNode(XmlNodeType.Element, "header", "");
+
+            XmlAttribute attr = conf.CreateAttribute(VERSION_ATTRIBUTE);
+            attr.Value = CONFIG_VERSION;
+            rootNode.Attributes.Append(attr);
+
+            XmlElement headerNode = conf.CreateElement(HEADER_CONFIG_TAG);
             headerNode.InnerText = header;
-
-
             rootNode.AppendChild(headerNode);
 
             return rootNode;
         }
         private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
-            XmlNode commonNode = conf.CreateNode(XmlNodeType.Element, COMMON_CONFIG_TAG, "");
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "header", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "exptime", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "meastime", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "ivoltage", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "cp", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "ecurrent", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "hcurrent", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "focus1", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "focus2", ""));
+            XmlNode commonNode = conf.CreateElement(COMMON_CONFIG_TAG);
+            commonNode.AppendChild(conf.CreateElement(HEADER_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(EXPOSITURE_TIME_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(TRANSITION_TIME_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(IONIZATION_VOLTAGE_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(EMISSION_CURRENT_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(HEAT_CURRENT_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(FOCUS_VOLTAGE1_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(FOCUS_VOLTAGE2_CONFIG_TAG));
 
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "before", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "equal", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "forward", ""));
-            commonNode.AppendChild(conf.CreateNode(XmlNodeType.Element, "back", ""));
+            commonNode.AppendChild(conf.CreateElement(DELAY_BEFORE_MEASURE_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(EQUAL_DELAYS_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(DELAY_FORWARD_MEASURE_CONFIG_TAG));
+            commonNode.AppendChild(conf.CreateElement(DELAY_BACKWARD_MEASURE_CONFIG_TAG));
             mountPoint.AppendChild(commonNode);
             return commonNode;
         }
         private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint) {
-            XmlNode senseNode = pedConf.CreateNode(XmlNodeType.Element, SENSE_CONFIG_TAG, "");
+            XmlNode senseNode = pedConf.CreateElement(SENSE_CONFIG_TAG);
 
             for (int i = 1; i <= 20; ++i) {
-                XmlNode tempRegion = pedConf.CreateNode(XmlNodeType.Element, string.Format("region{0}", i), "");
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "peak", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "col", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "iteration", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "width", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "error", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "comment", ""));
-                tempRegion.AppendChild(pedConf.CreateNode(XmlNodeType.Element, "use", ""));
+                XmlNode tempRegion = pedConf.CreateElement(string.Format(PEAK_TAGS_FORMAT, i));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_NUMBER_CONFIG_TAG));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_COL_NUMBER_CONFIG_TAG));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_ITER_NUMBER_CONFIG_TAG));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_WIDTH_CONFIG_TAG));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_PRECISION_CONFIG_TAG));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_COMMENT_CONFIG_TAG));
+                tempRegion.AppendChild(pedConf.CreateElement(PEAK_USE_CONFIG_TAG));
                 senseNode.AppendChild(tempRegion);
             }
             mountPoint.AppendChild(senseNode);
