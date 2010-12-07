@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace Flavor.Common {
     static class Config {
-        private static readonly XmlDocument _conf = new XmlDocument();
+        private static XmlDocument _conf;
 
         private static readonly string INITIAL_DIR = System.IO.Directory.GetCurrentDirectory();
 
@@ -199,7 +199,10 @@ namespace Flavor.Common {
         }
 
         internal static void loadConfig() {
-            string prefix;
+            IMainConfig conf = TagHolder.getMainConfig(confName);
+            _conf = conf.Config;
+            conf.readConfig();
+            /*string prefix;
             try {
                 _conf.Load(confName);
             } catch (Exception Error) {
@@ -268,6 +271,7 @@ namespace Flavor.Common {
                 //use hard-coded defaults (zero shift allowed)
             }
             // BAD: really uses previous values!
+            */
         }
 
         private static void saveScanOptions() {
@@ -1026,18 +1030,110 @@ namespace Flavor.Common {
         private interface ISpectrumWriter {
             void writeSpectrum();
         }
+        private interface IMainConfig {
+            void readConfig();
+            void writeConfig();
+            XmlDocument Config {
+                get;
+            }
+        }
         private abstract class TagHolder {
-            protected const string TEST_TAG = "test";
+        protected const string TEST_TAG = "test";
 
+            private readonly string filename;
+            private readonly XmlDocument sf;
+            public TagHolder(string filename, XmlDocument doc) {
+                this.filename = filename;
+                this.sf = doc;
+            }
+            private class LegacyMainConfig: TagHolder, IMainConfig {
+                public LegacyMainConfig(string filename, XmlDocument doc): base(filename, doc) {
+                }
+                #region IMainConfig implementation
+                public void readConfig ()
+                {
+                    string prefix;
+                    try {
+                        prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
+                        SerialPort = (sf.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
+                        SerialBaudRate = ushort.Parse(sf.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                        sendTry = byte.Parse(sf.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
+                    } catch (NullReferenceException) {
+                        (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                        //use hard-coded defaults
+                    }
+                    try {
+                        prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                        sPoint = ushort.Parse(sf.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
+                        ePoint = ushort.Parse(sf.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
+                    } catch (NullReferenceException) {
+                        (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
+                        //use hard-coded defaults
+                    }
+                    try {
+                        loadMassCoeffs();
+                    } catch (ConfigLoadException) {
+                        //cle.visualise();
+                        //use hard-coded defaults
+                    }
+                    try {
+                        loadCommonOptions();
+                    } catch (ConfigLoadException cle) {
+                        cle.visualise();
+                        //use hard-coded defaults
+                    }
+                    try {
+                        LoadPreciseEditorData();
+                    } catch (ConfigLoadException cle) {
+                        cle.visualise();
+                        //use empty default ped
+                    }
+                    prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
+                    try {
+                        ushort step = ushort.Parse(sf.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
+                        byte collector = byte.Parse(sf.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
+                        ushort width = ushort.Parse(sf.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
+                        reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
+                    } catch (NullReferenceException) {
+                        //use hard-coded defaults (null checker peak)
+                    } catch (FormatException) {
+                        // TODO: very bad..
+                        //use hard-coded defaults (null checker peak)
+                    }
+                    try {
+                        iterations = int.Parse(sf.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
+                    } catch (NullReferenceException) {
+                        //use hard-coded defaults (infinite iterations)
+                    }
+                    try {
+                        timeLimit = int.Parse(sf.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
+                    } catch (NullReferenceException) {
+                        //use hard-coded defaults (no time limit)
+                    }
+                    try {
+                        allowedShift = ushort.Parse(sf.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
+                    } catch (NullReferenceException) {
+                        //use hard-coded defaults (zero shift allowed)
+                    }
+                    // BAD: really uses previous values!
+                }
+                public void writeConfig ()
+                {
+                    sf.Save(@filename);
+                }
+                public XmlDocument Config {
+                    get {
+                        return sf;
+                    }
+                }
+                #endregion
+            }
             private class LegacySpectrumReader: TagHolder, ISpectrumReader {
-                private readonly string filename;
+                protected new const string TEST_TAG = "test2";
                 private readonly bool hint;
-                private readonly XmlDocument sf;
-                public LegacySpectrumReader(string filename, bool hint, XmlDocument doc) {
+                public LegacySpectrumReader(string filename, bool hint, XmlDocument doc): base(filename, doc) {
                     // TODO: continue loading here, modify hint?
-                    this.filename = filename;
                     this.hint = hint;
-                    this.sf = doc;
                 }
 
                 #region ISpectrumReader Members
@@ -1221,6 +1317,8 @@ namespace Flavor.Common {
                 }
             }
             private class AlwaysCurrentSpectrumWriter: TagHolder, ISpectrumWriter {
+                public AlwaysCurrentSpectrumWriter(string filename, XmlDocument doc): base(filename, doc) {
+                }
                 public void writeSpectrum() {
                     // TODO
                 }
@@ -1251,9 +1349,63 @@ namespace Flavor.Common {
                         return new LegacySpectrumReader(filename, hint, sf);
                 }
             }
-            public static ISpectrumWriter getSpectrumWriter() {
-                return new AlwaysCurrentSpectrumWriter();
+            public static ISpectrumWriter getSpectrumWriter(string filename) {
+                // TODO: form document here
+                return new AlwaysCurrentSpectrumWriter(filename, new XmlDocument());
             }
+            public static IMainConfig getMainConfig(string confName) {
+                XmlDocument sf = new XmlDocument();
+                try {
+                    sf.Load(confName);
+                } catch (Exception Error) {
+                    throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
+                }
+                XmlNode rootNode = sf.SelectSingleNode(ROOT_CONFIG_TAG);
+                if (rootNode == null) {
+                    return new LegacyMainConfig(confName, sf);
+                }
+                XmlNode version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
+                if (version == null) {
+                    return new LegacyMainConfig(confName, sf);
+                }
+                string versionText = version.Value;
+                switch (versionText) {
+                    case "1.0":
+                        //CONFIG_VERSION
+                        // TODO: return version-specific reader here!
+                        return new LegacyMainConfig(confName, sf);
+                    default:
+                        // try load anyway
+                        return new LegacyMainConfig(confName, sf);
+                }
+            }
+            /*private static TYPE findCorrespondingVersion<TYPE>(string filename, string errorMessage, params object[] args) where TYPE: TagHolder, new() {
+                // TODO: implement this unification
+                XmlDocument sf = new XmlDocument();
+                try {
+                    sf.Load(filename);
+                } catch (Exception Error) {
+                    throw new ConfigLoadException(Error.Message, errorMessage, filename);
+                }
+                XmlNode rootNode = sf.SelectSingleNode(ROOT_CONFIG_TAG);
+                if (rootNode == null) {
+                    return new TYPE();
+                }
+                XmlNode version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
+                if (version == null) {
+                    return new TYPE(args);
+                }
+                string versionText = version.Value;
+                switch (versionText) {
+                    case "1.0":
+                        //CONFIG_VERSION
+                        // TODO: return version-specific reader here!
+                        return new TYPE(args);
+                    default:
+                        // try load anyway
+                        return new TYPE(args);
+                }
+            }*/
         }
     }
 }
