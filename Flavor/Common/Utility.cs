@@ -424,11 +424,16 @@ namespace Flavor.Common {
             internal PointPairListPlus AssociatedPoints {
                 get { return associatedPoints; }
                 set {
+                    if (value == null) {
+                        associatedPoints = null;
+                        return;
+                    }
                     if (value.PEDreference == null) {
                         associatedPoints = value;
                         associatedPoints.PEDreference = this;
-                    } else
-                        associatedPoints = new PointPairListPlus(value, this, null);
+                        return;
+                    }
+                    associatedPoints = new PointPairListPlus(value, this, null);
                 }
             }
             internal bool Use {
