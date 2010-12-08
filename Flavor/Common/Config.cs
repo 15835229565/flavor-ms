@@ -199,79 +199,9 @@ namespace Flavor.Common {
         }
 
         internal static void loadConfig() {
-            IMainConfig conf = TagHolder.getMainConfig(confName);
+            IMainConfig conf = TagHolder<IMainConfig>.getMainConfig(confName);
             _conf = conf.Config;
             conf.readConfig();
-            /*string prefix;
-            try {
-                _conf.Load(confName);
-            } catch (Exception Error) {
-                throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
-            }
-            try {
-                prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                SerialPort = (_conf.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                SerialBaudRate = ushort.Parse(_conf.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
-                sendTry = byte.Parse(_conf.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
-            } catch (NullReferenceException) {
-                (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
-                //use hard-coded defaults
-            }
-            try {
-                prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-                sPoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
-                ePoint = ushort.Parse(_conf.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
-            } catch (NullReferenceException) {
-                (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", confName)).visualise();
-                //use hard-coded defaults
-            }
-            try {
-                loadMassCoeffs();
-            } catch (ConfigLoadException) {
-                //cle.visualise();
-                //use hard-coded defaults
-            }
-            try {
-                loadCommonOptions();
-            } catch (ConfigLoadException cle) {
-                cle.visualise();
-                //use hard-coded defaults
-            }
-            try {
-                LoadPreciseEditorData();
-            } catch (ConfigLoadException cle) {
-                cle.visualise();
-                //use empty default ped
-            }
-            prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
-            try {
-                ushort step = ushort.Parse(_conf.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
-                byte collector = byte.Parse(_conf.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
-                ushort width = ushort.Parse(_conf.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
-                reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
-            } catch (NullReferenceException) {
-                //use hard-coded defaults (null checker peak)
-            } catch (FormatException) {
-                // TODO: very bad..
-                //use hard-coded defaults (null checker peak)
-            }
-            try {
-                iterations = int.Parse(_conf.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
-            } catch (NullReferenceException) {
-                //use hard-coded defaults (infinite iterations)
-            }
-            try {
-                timeLimit = int.Parse(_conf.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
-            } catch (NullReferenceException) {
-                //use hard-coded defaults (no time limit)
-            }
-            try {
-                allowedShift = ushort.Parse(_conf.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
-            } catch (NullReferenceException) {
-                //use hard-coded defaults (zero shift allowed)
-            }
-            // BAD: really uses previous values!
-            */
         }
 
         private static void saveScanOptions() {
@@ -363,7 +293,7 @@ namespace Flavor.Common {
         }
 
         internal static bool openSpectrumFile(string filename, bool hint, out Graph graph) {
-            ISpectrumReader reader = TagHolder.getSpectrumReader(filename, hint);
+            ISpectrumReader reader = TagHolder<ISpectrumReader>.getSpectrumReader(filename, hint);
             return reader.readSpectrum(out graph);
         }
 
@@ -432,7 +362,7 @@ namespace Flavor.Common {
         }
 
         internal static void DistractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph) {
-            ISpectrumReader reader = TagHolder.getSpectrumReader(what, !graph.isPreciseSpectrum);
+            ISpectrumReader reader = TagHolder<ISpectrumReader>.getSpectrumReader(what, !graph.isPreciseSpectrum);
             reader.distractSpectrum(step, plsReference, pedReference, graph);
         }
         private static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff) {
@@ -1023,32 +953,35 @@ namespace Flavor.Common {
             return senseNode;
         }
 
-        private interface ISpectrumReader {
+        private interface IAnyConfig {}
+        private interface IAnyReader: IAnyConfig {}
+        private interface IAnyWriter: IAnyConfig { }
+        private interface ISpectrumReader: IAnyReader {
             bool readSpectrum(out Graph graph);
+            bool Hint {
+                set;
+            }
             void distractSpectrum(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph);
         }
-        private interface ISpectrumWriter {
+        private interface ISpectrumWriter: IAnyWriter {
             void writeSpectrum();
         }
-        private interface IMainConfig {
+        private interface IMainConfig: IAnyReader, IAnyWriter {
             void readConfig();
             void writeConfig();
             XmlDocument Config {
                 get;
             }
         }
-        private abstract class TagHolder {
-        protected const string TEST_TAG = "test";
-
-            private readonly string filename;
-            private readonly XmlDocument sf;
-            public TagHolder(string filename, XmlDocument doc) {
+        private abstract class TagHolder<INTERFACE> where INTERFACE: IAnyConfig {
+            private string filename;
+            private XmlDocument sf;
+            protected void initialize(string filename, XmlDocument doc) {
                 this.filename = filename;
                 this.sf = doc;
             }
-            private class LegacyMainConfig: TagHolder, IMainConfig {
-                public LegacyMainConfig(string filename, XmlDocument doc): base(filename, doc) {
-                }
+            private abstract class LegacyTagHolder<T>: TagHolder<T> where T: IAnyConfig {}
+            private class LegacyMainConfig: LegacyTagHolder<IMainConfig>, IMainConfig {
                 #region IMainConfig implementation
                 public void readConfig ()
                 {
@@ -1128,15 +1061,15 @@ namespace Flavor.Common {
                 }
                 #endregion
             }
-            private class LegacySpectrumReader: TagHolder, ISpectrumReader {
-                protected new const string TEST_TAG = "test2";
-                private readonly bool hint;
-                public LegacySpectrumReader(string filename, bool hint, XmlDocument doc): base(filename, doc) {
-                    // TODO: continue loading here, modify hint?
-                    this.hint = hint;
-                }
-
+            private class LegacySpectrumReader: LegacyTagHolder<ISpectrumReader>, ISpectrumReader {
+                private bool hint;
                 #region ISpectrumReader Members
+                public bool Hint {
+                    set {
+                        // TODO: continue loading here, modify hint?
+                        this.hint = value;
+                    }
+                }
                 public bool readSpectrum(out Graph graph) {
                     bool result;
                     ConfigLoadException resultException = null;
@@ -1316,71 +1249,30 @@ namespace Flavor.Common {
                     return LoadPED(sf, filename, peds, true, prefix);
                 }
             }
-            private class AlwaysCurrentSpectrumWriter: TagHolder, ISpectrumWriter {
-                public AlwaysCurrentSpectrumWriter(string filename, XmlDocument doc): base(filename, doc) {
+            private class AlwaysCurrentSpectrumWriter: LegacyTagHolder<ISpectrumWriter>, ISpectrumWriter {
+                public AlwaysCurrentSpectrumWriter(string filename, XmlDocument doc) {
+                    initialize(filename, doc);
                 }
                 public void writeSpectrum() {
                     // TODO
                 }
             }
             public static ISpectrumReader getSpectrumReader(string filename, bool hint) {
-                XmlDocument sf = new XmlDocument();
-                try {
-                    sf.Load(filename);
-                } catch (Exception Error) {
-                    throw new ConfigLoadException(Error.Message, "Ошибка чтения файла спектра", filename);
-                }
-                XmlNode rootNode = sf.SelectSingleNode(ROOT_CONFIG_TAG);
-                if (rootNode == null) {
-                    return new LegacySpectrumReader(filename, hint, sf);
-                }
-                XmlNode version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
-                if (version == null) {
-                    return new LegacySpectrumReader(filename, hint, sf);
-                }
-                string versionText = version.Value;
-                switch (versionText) {
-                    case "1.0":
-                        //CONFIG_VERSION
-                        // TODO: return version-specific reader here!
-                        return new LegacySpectrumReader(filename, hint, sf);
-                    default:
-                        // try load anyway
-                        return new LegacySpectrumReader(filename, hint, sf);
-                }
+                ISpectrumReader reader = findCorrespondingReaderVersion<ISpectrumReader, LegacySpectrumReader, LegacySpectrumReader>(filename, "Ошибка чтения файла спектра");
+                reader.Hint = hint;
+                return reader;
             }
             public static ISpectrumWriter getSpectrumWriter(string filename) {
                 // TODO: form document here
                 return new AlwaysCurrentSpectrumWriter(filename, new XmlDocument());
             }
             public static IMainConfig getMainConfig(string confName) {
-                XmlDocument sf = new XmlDocument();
-                try {
-                    sf.Load(confName);
-                } catch (Exception Error) {
-                    throw new ConfigLoadException(Error.Message, "Ошибка чтения конфигурационного файла", confName);
-                }
-                XmlNode rootNode = sf.SelectSingleNode(ROOT_CONFIG_TAG);
-                if (rootNode == null) {
-                    return new LegacyMainConfig(confName, sf);
-                }
-                XmlNode version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
-                if (version == null) {
-                    return new LegacyMainConfig(confName, sf);
-                }
-                string versionText = version.Value;
-                switch (versionText) {
-                    case "1.0":
-                        //CONFIG_VERSION
-                        // TODO: return version-specific reader here!
-                        return new LegacyMainConfig(confName, sf);
-                    default:
-                        // try load anyway
-                        return new LegacyMainConfig(confName, sf);
-                }
+                return findCorrespondingReaderVersion<IMainConfig, LegacyMainConfig, LegacyMainConfig>(confName, "Ошибка чтения конфигурационного файла");
             }
-            /*private static TYPE findCorrespondingVersion<TYPE>(string filename, string errorMessage, params object[] args) where TYPE: TagHolder, new() {
-                // TODO: implement this unification
+            private static RETURN_INTERFACE findCorrespondingReaderVersion<RETURN_INTERFACE, LEGACY_TYPE, TYPE0>(string filename, string errorMessage)
+                where RETURN_INTERFACE: IAnyReader
+                where LEGACY_TYPE: TagHolder<RETURN_INTERFACE>, RETURN_INTERFACE, new()
+                where TYPE0: TagHolder<RETURN_INTERFACE>, RETURN_INTERFACE, new() {
                 XmlDocument sf = new XmlDocument();
                 try {
                     sf.Load(filename);
@@ -1389,23 +1281,29 @@ namespace Flavor.Common {
                 }
                 XmlNode rootNode = sf.SelectSingleNode(ROOT_CONFIG_TAG);
                 if (rootNode == null) {
-                    return new TYPE();
+                    return getInitializedConfig<RETURN_INTERFACE, LEGACY_TYPE>(confName, sf);
                 }
                 XmlNode version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
                 if (version == null) {
-                    return new TYPE(args);
+                    return getInitializedConfig<RETURN_INTERFACE, LEGACY_TYPE>(confName, sf);
                 }
                 string versionText = version.Value;
                 switch (versionText) {
-                    case "1.0":
-                        //CONFIG_VERSION
-                        // TODO: return version-specific reader here!
-                        return new TYPE(args);
+                    case CONFIG_VERSION:
+                        return getInitializedConfig<RETURN_INTERFACE, TYPE0>(confName, sf);
                     default:
                         // try load anyway
-                        return new TYPE(args);
+                        return getInitializedConfig<RETURN_INTERFACE, LEGACY_TYPE>(confName, sf);
                 }
-            }*/
+            }
+            private static RETURN_INTERFACE getInitializedConfig<RETURN_INTERFACE, TYPE>(string filename, XmlDocument doc)                
+                where RETURN_INTERFACE: IAnyConfig
+                where TYPE: TagHolder<RETURN_INTERFACE>, RETURN_INTERFACE, new() {
+                RETURN_INTERFACE config;
+                config = new TYPE();
+                (config as TagHolder<RETURN_INTERFACE>).initialize(confName, doc);
+                return config;
+            }
         }
     }
 }
