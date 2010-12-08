@@ -190,61 +190,25 @@ namespace Flavor.Common {
 
         internal static void loadConfig() {
             IMainConfig conf = TagHolder<IMainConfig>.getMainConfig(confName);
-            //_conf = conf.Config;
             mainConfig = conf;
             conf.read();
             mainConfigWriter = TagHolder<IMainConfig>.getMainConfigWriter(confName, conf.Config);
         }
-
-        /*private static void saveScanOptions() {
-            string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-            fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
-            fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
-            _conf.Save(@confName);
-        }*/
         internal static void saveScanOptions(ushort sPointReal, ushort ePointReal) {
             Config.sPoint = sPointReal;//!!!
             Config.ePoint = ePointReal;//!!!
-            //Config.saveScanOptions();
             mainConfigWriter.write();
         }
-
-        /*private static void saveDelaysOptions() {
-            string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
-            fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
-            fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
-            fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
-            fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
-            _conf.Save(@confName);
-        }*/
         internal static void saveDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
             Config.commonOpts.befTimeReal = befTimeReal;
             Config.commonOpts.fTimeReal = fTimeReal;
             Config.commonOpts.bTimeReal = bTimeReal;
             Config.commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
-            //Config.saveDelaysOptions();
             mainConfigWriter.write();
         }
-
-        /*private static void saveMassCoeffs() {
-            fillInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-            string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-            fillInnerText(prefix, C1_CONFIG_TAG, col1Coeff.ToString("R", CultureInfo.InvariantCulture));
-            fillInnerText(prefix, C2_CONFIG_TAG, col2Coeff.ToString("R", CultureInfo.InvariantCulture));
-            _conf.Save(@confName);
-        }*/
-
-        /*private static void saveConnectOptions() {
-            string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-            fillInnerText(prefix, PORT_CONFIG_TAG, Port);
-            fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
-            fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
-            _conf.Save(@confName);
-        }*/
         internal static void saveConnectOptions(string port, ushort baudrate) {
             Config.Port = port;
             Config.BaudRate = baudrate;
-            //Config.saveConnectOptions();
             mainConfigWriter.write();
         }
 
@@ -254,7 +218,6 @@ namespace Flavor.Common {
             allowedShift = shift;
             reperPeak = peak;
             mainConfigWriter.write();
-            //saveCheckOptions();
         }
 
         internal static void saveAll() {
@@ -278,45 +241,6 @@ namespace Flavor.Common {
         internal static void SaveSpecterFile(string filename, Graph graph) {
             ISpectrumWriter writer = TagHolder<ISpectrumWriter>.getSpectrumWriter(filename, graph);
             writer.write();
-            /*XmlDocument sf = new XmlDocument();
-            XmlNode scanNode = createRootStub(sf, "").AppendChild(sf.CreateElement(OVERVIEW_CONFIG_TAG));
-            XmlNode temp = sf.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
-            switch (graph.DisplayingMode) {
-                case Graph.Displaying.Loaded:
-                    temp.InnerText = MEASURED_SPECTRUM_HEADER;
-                    break;
-                case Graph.Displaying.Measured:
-                    temp.InnerText = MEASURED_SPECTRUM_HEADER;
-                    XmlElement elem = sf.CreateElement(START_SCAN_CONFIG_TAG);
-                    elem.InnerText = sPoint.ToString();
-                    scanNode.AppendChild(elem);
-                    elem = sf.CreateElement(END_SCAN_CONFIG_TAG);
-                    elem.InnerText = ePoint.ToString();
-                    scanNode.AppendChild(elem);
-                    // In case of loaded (not auto) start/end points and measure parameters are not connected to spectrum data..
-                    break;
-                case Graph.Displaying.Diff:
-                    temp.InnerText = DIFF_SPECTRUM_HEADER;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            scanNode.AppendChild(sf.CreateElement(COL1_CONFIG_TAG));
-            scanNode.AppendChild(sf.CreateElement(COL2_CONFIG_TAG));
-            foreach (ZedGraph.PointPair pp in graph.Displayed1Steps[0]) {
-                temp = sf.CreateElement(POINT_CONFIG_TAG);
-                temp.AppendChild(sf.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
-                temp.AppendChild(sf.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
-                scanNode.SelectSingleNode(COL1_CONFIG_TAG).AppendChild(temp);
-            }
-            foreach (ZedGraph.PointPair pp in graph.Displayed2Steps[0]) {
-                temp = sf.CreateElement(POINT_CONFIG_TAG);
-                temp.AppendChild(sf.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
-                temp.AppendChild(sf.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
-                scanNode.SelectSingleNode(COL2_CONFIG_TAG).AppendChild(temp);
-            }
-            sf.Save(@p);
-            return sf;*/
         }
         internal static void AutoSaveSpecterFile() {
             DateTime dt = System.DateTime.Now;
@@ -408,21 +332,6 @@ namespace Flavor.Common {
         }
 
         internal static void SavePreciseSpecterFile(string filename, Graph graph) {
-            /*string header;
-            switch (graph.DisplayingMode) {
-                case Graph.Displaying.Loaded:
-                    header = MEASURED_SPECTRUM_HEADER;
-                    break;
-                case Graph.Displaying.Measured:
-                    header = MEASURED_SPECTRUM_HEADER;
-                    break;
-                case Graph.Displaying.Diff:
-                    header = DIFF_SPECTRUM_HEADER;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }*/
-            //SavePreciseOptions(graph.PreciseData, filename, header, true, false);
             ISpectrumWriter writer = TagHolder<ISpectrumWriter>.getSpectrumWriter(filename, graph);
             writer.savePreciseData(graph.PreciseData, true, false);
             writer.write();
@@ -436,14 +345,6 @@ namespace Flavor.Common {
             writer.setShift(shift);
             writer.savePreciseData(Graph.Instance.PreciseData, true, false);
             writer.write();
-            //SavePreciseSpecterFile(filename, Graph.Instance);
-
-            /*DateTime dt = System.DateTime.Now;
-            string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
-            XmlDocument file = SavePreciseSpecterFile(filename, Graph.Instance);
-
-            writeSpectrumOptions(file, dt, shift);
-            file.Save(@filename);*/
 
             return dt;
         }
@@ -455,24 +356,7 @@ namespace Flavor.Common {
             writer.setShift(shift);
             writer.savePreciseData(Graph.Instance.PreciseData, false, true);
             writer.write();
-            /*XmlDocument file = SavePreciseOptions(Config.PreciseData, filename, MONITOR_SPECTRUM_HEADER, false, true);
-
-            writeSpectrumOptions(file, dt, shift);
-            file.Save(@filename);*/
         }
-        /*private static void writeSpectrumOptions(XmlDocument file, DateTime dt, short shift) {
-            XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes;
-            XmlAttribute attr = file.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
-            attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-            headerNodeAttributes.Append(attr);
-
-            attr = file.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
-            attr.Value = shift.ToString();
-            headerNodeAttributes.Append(attr);
-
-            XmlNode commonNode = createCommonOptsStub(file, file.SelectSingleNode(ROOT_CONFIG_TAG));
-            saveCommonOptions(commonNode);
-        }*/
         
         internal static void SavePreciseOptions(PreciseSpectrum peds) {
             preciseData = peds;
@@ -593,7 +477,6 @@ namespace Flavor.Common {
                 }
             }
             mainConfigWriter.write();
-            //saveMassCoeffs();
         }
         internal static double pointToMass(ushort pnt, bool isFirstCollector) {
             double coeff;
@@ -659,7 +542,6 @@ namespace Flavor.Common {
                 return true;
             }
             conf = mainConfig.Config;
-            //conf = _conf;
             return false;
         }
         private static XmlNode createRootStub(XmlDocument conf, string header) {
@@ -1167,22 +1049,11 @@ namespace Flavor.Common {
                     XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
                     attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
                     xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
-
-                    //XmlNode commonNode = createCommonOptsStub(xmlData, xmlData.SelectSingleNode(ROOT_CONFIG_TAG));
-                    //saveCommonOptions(commonNode);
                 }
                 public void setShift(short shift) {
-                    //XmlAttributeCollection headerNodeAttributes = file.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes;
-                    //XmlAttribute attr = file.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
-                    //attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-                    //headerNodeAttributes.Append(attr);
-
                     XmlAttribute attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
                     attr.Value = shift.ToString();
                     xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
-
-                    //XmlNode commonNode = createCommonOptsStub(xmlData, xmlData.SelectSingleNode(ROOT_CONFIG_TAG));
-                    //saveCommonOptions(commonNode);
                 }
                 public virtual void write() {
                     xmlData.Save(@filename);
@@ -1191,10 +1062,9 @@ namespace Flavor.Common {
                     string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                     fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
                     fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
-                    //_conf.Save(@confName);
                 }
                 protected void SavePreciseOptions() {
-                    savePreciseData(PreciseData/*, confName, PRECISE_OPTIONS_HEADER*/, false, false);
+                    savePreciseData(PreciseData, false, false);
                 }
                 public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePoints, bool savePeakSum) {
                     clearOldValues();
@@ -1225,8 +1095,6 @@ namespace Flavor.Common {
                             }
                         }
                     }
-                    //xmlData.Save(filename);
-                    //return xmlData;
                 }
 
                 protected virtual void clearOldValues() {}
@@ -1273,7 +1141,6 @@ namespace Flavor.Common {
                     fillInnerText(prefix, PORT_CONFIG_TAG, Port);
                     fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
                     fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
-                    //_conf.Save(@confName);
                 }
                 private void saveDelaysOptions() {
                     string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
@@ -1281,7 +1148,6 @@ namespace Flavor.Common {
                     fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
                     fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
                     fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
-                    //_conf.Save(@confName);
                 }
                 private void saveMassCoeffs() {
                     fillInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
@@ -1308,7 +1174,6 @@ namespace Flavor.Common {
                     fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, iterations);
                     fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
                     fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
-                    //_conf.Save(@confName);
                 }
                 protected override void clearOldValues() {
                     for (int i = 1; i <= 20; ++i) {
