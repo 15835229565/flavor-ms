@@ -34,7 +34,7 @@ namespace Flavor.Forms {
         }
         protected override void saveData() {
             base.saveData();
-            Config.saveCheckOptions((int)iterationsNumericUpDown.Value, (int)timeLimitNumericUpDown.Value, (ushort)allowedShiftNumericUpDown.Value,
+            Config.saveGlobalCheckOptions((int)iterationsNumericUpDown.Value, (int)timeLimitNumericUpDown.Value, (ushort)allowedShiftNumericUpDown.Value,
                                     checkPeakPreciseEditorRowMinus.AllFilled?
                                     new Utility.PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,

@@ -25,7 +25,7 @@ namespace Flavor.Forms {
 
         private void ok_butt_Click(object sender, EventArgs e) {
             ModBus.Close();
-            Config.saveConnectOptions(Port, BaudRate);
+            Config.saveGlobalConnectOptions(Port, BaudRate);
             ModBus.Open();
             this.Close();
         }

@@ -740,14 +740,14 @@ namespace Flavor.Forms {
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
-                Config.loadConfig();
+                Config.loadGlobalConfig();
             } catch (Config.ConfigLoadException cle) {
                 cle.visualise();
             }
         }
 
         private void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            Config.saveAll();
+            Config.saveGlobalConfig();
         }
 
         private void connectToolStripButton_Click(object sender, EventArgs e) {

@@ -22,7 +22,7 @@ namespace Flavor.Forms {
         }
 
         private void ok_butt_Click(object sender, EventArgs e) {
-            Config.saveDelaysOptions(forwardAsBeforeCheckBox.Checked, (ushort)beforeTimeNumericUpDown.Value,
+            Config.saveGlobalDelaysOptions(forwardAsBeforeCheckBox.Checked, (ushort)beforeTimeNumericUpDown.Value,
                                      (ushort)forwardTimeNumericUpDown.Value, (ushort)backwardTimeNumericUpDown.Value);
             this.DialogResult = DialogResult.OK;
             this.Close();

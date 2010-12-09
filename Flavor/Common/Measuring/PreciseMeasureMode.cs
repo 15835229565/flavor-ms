@@ -58,7 +58,7 @@ namespace Flavor.Common.Measuring {
             saveResults();
         }
         protected virtual void saveResults() {
-            Config.AutoSavePreciseSpecterFile(shift);
+            Config.autoSavePreciseSpectrumFile(shift);
         }
 
         protected long[] peakCounts(Predicate<Utility.PreciseEditorData> isCheckPeak) {

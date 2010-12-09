@@ -379,7 +379,7 @@ namespace Flavor.Forms
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    Config.DistractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference, graph);
+                    Config.distractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference, graph);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
@@ -395,7 +395,7 @@ namespace Flavor.Forms
                 saveSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
-                    Config.SavePreciseSpecterFile(saveSpecterFileDialog.FileName, graph);
+                    Config.savePreciseSpectrumFile(saveSpecterFileDialog.FileName, graph);
                     Modified = false;
                     return true;
                 }
@@ -403,7 +403,7 @@ namespace Flavor.Forms
                 saveSpecterFileDialog.Filter = Config.SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.SPECTRUM_EXT;
                 if (saveSpecterFileDialog.ShowDialog() == DialogResult.OK) {
-                    Config.SaveSpecterFile(saveSpecterFileDialog.FileName, graph);
+                    Config.saveSpectrumFile(saveSpecterFileDialog.FileName, graph);
                     Modified = false;
                     return true;
                 }

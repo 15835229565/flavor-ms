@@ -185,12 +185,12 @@ namespace Flavor.Forms {
             return exitFlag;
         }
         protected virtual void saveData() {
-            Config.SavePreciseOptions(data);
+            Config.saveGlobalPreciseOptions(data);
         }
 
         protected override void applyButton_Click(object sender, EventArgs e) {
             if (checkTextBoxes()) {
-                Config.SavePreciseOptions(data);
+                Config.saveGlobalPreciseOptions(data);
                 base.applyButton_Click(sender, e);
             }
         }
@@ -198,7 +198,7 @@ namespace Flavor.Forms {
         private void savePreciseEditorToFileButton_Click(object sender, EventArgs e) {
             if (checkTextBoxes()) {
                 if (savePreciseEditorToFileDialog.ShowDialog() == DialogResult.OK) {
-                    Config.SavePreciseOptions(data, savePreciseEditorToFileDialog.FileName, false, false);
+                    Config.savePreciseOptions(data, savePreciseEditorToFileDialog.FileName, false, false);
                 }
             }
         }
@@ -206,7 +206,7 @@ namespace Flavor.Forms {
         private void loadPreciseEditorFromFileButton_Click(object sender, EventArgs e) {
             if (loadPreciseEditorFromFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    loadPreciseEditorData(Config.LoadPreciseEditorData(loadPreciseEditorFromFileDialog.FileName));
+                    loadPreciseEditorData(Config.loadPreciseOptions(loadPreciseEditorFromFileDialog.FileName));
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }

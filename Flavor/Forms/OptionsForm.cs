@@ -84,7 +84,7 @@ namespace Flavor.Forms {
         }
 
         protected virtual void ok_butt_Click(object sender, EventArgs e) {
-            Config.saveCommonOptions((ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
+            Config.saveGlobalCommonOptions((ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
                                    (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
             Commander.notRareModeRequested = rareModeCheckBox.Checked;
             this.DialogResult = DialogResult.OK;

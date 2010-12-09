@@ -184,8 +184,8 @@ namespace Flavor.Common {
         internal CommonOptions CommonOptions {
             get { return collectors.CommonOptions; }
         }
-        private PreciseSpectrum preciseData = null;
-        internal PreciseSpectrum PreciseData {
+        private List<Utility.PreciseEditorData> preciseData = null;
+        internal List<Utility.PreciseEditorData> PreciseData {
             get { return preciseData; }
         }
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
@@ -229,14 +229,13 @@ namespace Flavor.Common {
         }
         internal bool isPreciseSpectrum {
             get {
-                int count1, count2;
-                count1 = collectors[0].Count;
-                count2 = collectors[1].Count;
-                // TODO: BAD - mistaken if no data is present
-                if ((count1 == 1) && (count2 == 1)) {
-                    return false;
+                if (this != instance && preciseData != null) {
+                    return true;
                 }
-                return true;
+                if ((collectors[0].Count > 1) || (collectors[1].Count > 1)) {
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -327,11 +326,15 @@ namespace Flavor.Common {
             (collectors[0])[0].SetRows(pl1);
             (collectors[1])[0].SetRows(pl2);
         }
-        internal void updateGraphAfterPreciseLoad(PreciseSpectrum peds) {
+        internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
             ResetPointLists();
-            foreach (Utility.PreciseEditorData ped in peds)
+            foreach (Utility.PreciseEditorData ped in peds) {
+                if (ped == null || ped.AssociatedPoints == null || ped.AssociatedPoints.Count == 0)
+                    continue;
+                // TODO: check if skipping of empty data rows can lead to program misbehaviour
                 collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+            }
         }
 
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
@@ -342,8 +345,11 @@ namespace Flavor.Common {
                 OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
+            /*preciseData = peds;
+            ResetPointLists();
             foreach (Utility.PreciseEditorData ped in peds)
-                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
+                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));*/
+            updateGraphAfterPreciseLoad(peds);
             DisplayingMode = Displaying.Diff;
             OnNewGraphData(true);
         }

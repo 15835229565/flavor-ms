@@ -15,7 +15,7 @@ namespace Flavor.Common.Measuring {
         }
         protected override void saveData() { }
         protected override void onExit() {
-            Config.AutoSaveSpecterFile();
+            Config.autoSaveSpectrumFile();
         }
         protected override bool onNextStep() {
             Commander.AddToSend(new sendSVoltage(pointValue++));

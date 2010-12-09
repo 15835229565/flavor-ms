@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<control>
+<control version="1.0">
   <connect>
     <port>COM1</port>
     <baudrate>38400</baudrate>
