@@ -186,7 +186,63 @@ namespace Flavor.Common {
         }
         #region Spectra Distraction
         internal static void distractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph) {
-            TagHolder.getSpectrumReader(what, !graph.isPreciseSpectrum).distractSpectrum(step, plsReference, pedReference, graph);
+            bool hint = !graph.isPreciseSpectrum;
+            ISpectrumReader reader = TagHolder.getSpectrumReader(what, hint);
+            if (reader.Hint != hint) {
+                throw new ConfigLoadException("Несовпадение типов спектров", "Ошибка при вычитании спектров", what);
+            }
+            if (graph.DisplayingMode == Graph.Displaying.Diff) {
+                //diffs can't be distracted!
+                throw new ArgumentOutOfRangeException();
+            }
+            if (hint) {
+                PointPairListPlus pl12 = new PointPairListPlus();
+                PointPairListPlus pl22 = new PointPairListPlus();
+                CommonOptions commonOpts;
+                if (reader.openSpectrumFile(pl12, pl22, out commonOpts) == Graph.Displaying.Measured) {
+                    // TODO: check commonOpts for equality?
+
+                    // coeff counting
+                    double coeff = 1.0;
+                    if (plsReference != null) {
+                        PointPairListPlus PL = plsReference.IsFirstCollector ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
+                        PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
+                        if (step != 0) {
+                            for (int i = 0; i < PL.Count; ++i) {
+                                if (step == PL[i].X) {
+                                    if (step != pl[i].X)
+                                        throw new System.ArgumentException();
+                                    if ((pl[i].Y != 0) && (PL[i].Y != 0))
+                                        coeff = PL[i].Y / pl[i].Y;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    try {
+                        PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
+                        PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
+                        graph.updateGraphAfterScanDiff(diff1, diff2);
+                    } catch (System.ArgumentException) {
+                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
+                    }
+                } else {
+                    //diffs can't be distracted!
+                    throw new ArgumentOutOfRangeException();
+                }
+                return;
+            }
+            PreciseSpectrum peds = new PreciseSpectrum();
+            if (reader.openPreciseSpectrumFile(peds)) {
+                List<Utility.PreciseEditorData> temp = new List<Utility.PreciseEditorData>(graph.PreciseData);
+                temp.Sort(Utility.ComparePreciseEditorData);
+                try {
+                    temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
+                    graph.updateGraphAfterPreciseDiff(temp);
+                } catch (System.ArgumentException) {
+                    throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
+                }
+            }
         }
         private static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff) {
             if (from.Count != what.Count)
@@ -453,9 +509,11 @@ namespace Flavor.Common {
         private interface ISpectrumReader: ICommonOptionsReader, IPreciseDataReader {
             bool readSpectrum(out Graph graph);
             bool Hint {
+                get;
                 set;
             }
-            void distractSpectrum(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph);
+            Graph.Displaying openSpectrumFile(PointPairListPlus pl12, PointPairListPlus pl22, out CommonOptions commonOpts);
+            bool openPreciseSpectrumFile(PreciseSpectrum peds);
         }
         private interface IMainConfig: ICommonOptionsReader, IPreciseDataReader {
             void read();
@@ -756,9 +814,11 @@ namespace Flavor.Common {
                 private bool hint;
                 #region ISpectrumReader Members
                 public bool Hint {
+                    get {
+                        return hint;
+                    }
                     set {
-                        // TODO: continue loading here, modify hint?
-                        this.hint = value;
+                        hint = value;
                     }
                 }
                 public bool readSpectrum(out Graph graph) {
@@ -774,94 +834,13 @@ namespace Flavor.Common {
                     try {
                         result = (!hint) ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
                         if (result)
-                            return (!hint);
+                            return (hint = !hint);
                     } catch (ConfigLoadException cle) {
                         resultException = (resultException == null) ? cle : resultException;
                     }
                     throw resultException;
                 }
-                public void distractSpectrum(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph) {
-                    // TODO: hint != graph.isPreciseSpectrum
-                    if (graph.isPreciseSpectrum) {
-                        PreciseSpectrum peds = new PreciseSpectrum();
-                        if (OpenPreciseSpecterFile(peds)) {
-                            List<Utility.PreciseEditorData> temp;
-                            switch (graph.DisplayingMode) {
-                                case Graph.Displaying.Loaded:
-                                    temp = new List<Utility.PreciseEditorData>(graph.PreciseData);
-                                    break;
-                                case Graph.Displaying.Measured:
-                                    temp = new List<Utility.PreciseEditorData>(preciseData);
-                                    break;
-                                case Graph.Displaying.Diff:
-                                //diffs can't be distracted!
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-                            temp.Sort(Utility.ComparePreciseEditorData);
-                            try {
-                                temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
-                                graph.updateGraphAfterPreciseDiff(temp);
-                            } catch (System.ArgumentException) {
-                                throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", filename);
-                            }
-                        }
-                    } else {
-                        PointPairListPlus pl12 = new PointPairListPlus();
-                        PointPairListPlus pl22 = new PointPairListPlus();
-                        CommonOptions commonOpts;
-                        if (OpenSpecterFile(pl12, pl22, out commonOpts) == Graph.Displaying.Measured) {
-                            // TODO: check commonOpts for equality?
-
-                            // coeff counting
-                            double coeff = 1.0;
-                            if (plsReference != null) {
-                                PointPairListPlus PL = plsReference.IsFirstCollector ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
-                                PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
-                                if (step != 0) {
-                                    for (int i = 0; i < PL.Count; ++i) {
-                                        if (step == PL[i].X) {
-                                            if (step != pl[i].X)
-                                                throw new System.ArgumentException();
-                                            if ((pl[i].Y != 0) && (PL[i].Y != 0))
-                                                coeff = PL[i].Y / pl[i].Y;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            try {
-                                PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
-                                PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
-                                graph.updateGraphAfterScanDiff(diff1, diff2);
-                            } catch (System.ArgumentException) {
-                                throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", filename);
-                            }
-                        } else {
-                            //diffs can't be distracted!
-                            throw new ArgumentOutOfRangeException();
-                        }
-                    }
-                }
-                #endregion
-                private bool OpenSpecterFile(out Graph graph) {
-                    PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
-                    CommonOptions commonOpts;
-                    Graph.Displaying result = OpenSpecterFile(pl1, pl2, out commonOpts);
-
-                    graph = new Graph(commonOpts);
-                    switch (result) {
-                        case Graph.Displaying.Measured:
-                            graph.updateGraphAfterScanLoad(pl1, pl2);
-                            return true;
-                        case Graph.Displaying.Diff:
-                            graph.updateGraphAfterScanDiff(pl1, pl2);
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-                private Graph.Displaying OpenSpecterFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
+                public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
                     XmlNode headerNode = null;
                     string prefix = "";
 
@@ -894,33 +873,17 @@ namespace Flavor.Common {
                     } catch (NullReferenceException) {
                         throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
                     }
-                    //the whole logic of displaying spectra must be modified
-                    //!!!!!!!!!!!!!!!!!!!!!!!!
                     try {
-                        // what version of function will be called here?
                         commonOpts = new CommonOptions();
                         loadCommonOptions(commonOpts);
                     } catch (structureErrorOnLoadCommonData) {
                         commonOpts = null;
                     }
-                    //!!!!!!!!!!!!!!!!!!!!!!!!
                     pl1.Sort(ZedGraph.SortType.XValues);
                     pl2.Sort(ZedGraph.SortType.XValues);
                     return spectrumType;
                 }
-                private bool OpenPreciseSpecterFile(out Graph graph) {
-                    PreciseSpectrum peds = new PreciseSpectrum();
-                    bool result = OpenPreciseSpecterFile(peds);
-                    if (result) {
-                        graph = new Graph(peds.CommonOptions);
-                        graph.updateGraphAfterPreciseLoad(peds);
-                    } else {
-                        //TODO: other solution!
-                        graph = null;
-                    }
-                    return result;
-                }
-                private bool OpenPreciseSpecterFile(PreciseSpectrum peds) {
+                public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
                     string prefix = "";
                     if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
                         prefix = ROOT_CONFIG_TAG;
@@ -937,6 +900,36 @@ namespace Flavor.Common {
                     peds.CommonOptions = co;
 
                     return LoadPED(xmlData, "Ошибка чтения файла прецизионного спектра", peds, prefix);
+                }
+                #endregion
+                private bool OpenSpecterFile(out Graph graph) {
+                    PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
+                    CommonOptions commonOpts;
+                    Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
+
+                    graph = new Graph(commonOpts);
+                    switch (result) {
+                        case Graph.Displaying.Measured:
+                            graph.updateGraphAfterScanLoad(pl1, pl2);
+                            return true;
+                        case Graph.Displaying.Diff:
+                            graph.updateGraphAfterScanDiff(pl1, pl2);
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+                private bool OpenPreciseSpecterFile(out Graph graph) {
+                    PreciseSpectrum peds = new PreciseSpectrum();
+                    bool result = openPreciseSpectrumFile(peds);
+                    if (result) {
+                        graph = new Graph(peds.CommonOptions);
+                        graph.updateGraphAfterPreciseLoad(peds);
+                    } else {
+                        //TODO: other solution!
+                        graph = null;
+                    }
+                    return result;
                 }
                 protected sealed override PointPairListPlus readPeaks(XmlNode regionNode) {
                     ushort X;
@@ -955,8 +948,8 @@ namespace Flavor.Common {
                 }
             }
             #endregion
-            #region Current Readers
             private abstract class CurrentTagHolder: TagHolder {}
+            #region Current Readers
             private abstract class CurrentReader: CurrentTagHolder {
                 public void loadCommonOptions(CommonOptions opts) {
                     XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
@@ -1146,9 +1139,11 @@ namespace Flavor.Common {
                 private bool hint;
                 #region ISpectrumReader Members
                 public bool Hint {
+                    get {
+                        return hint;
+                    }
                     set {
-                        // TODO: continue loading here, modify hint?
-                        this.hint = value;
+                        hint = value;
                     }
                 }
                 public bool readSpectrum(out Graph graph) {
@@ -1164,72 +1159,65 @@ namespace Flavor.Common {
                     try {
                         result = (!hint) ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
                         if (result)
-                            return (!hint);
+                            return (hint = !hint);
                     } catch (ConfigLoadException cle) {
                         resultException = (resultException == null) ? cle : resultException;
                     }
                     throw resultException;
                 }
-                public void distractSpectrum(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph) {
-                    // TODO: hint != graph.isPreciseSpectrum
-                    if (graph.DisplayingMode == Graph.Displaying.Diff) {
-                        //diffs can't be distracted!
-                        throw new ArgumentOutOfRangeException();
-                    }
-                    if (graph.isPreciseSpectrum) {
-                        PreciseSpectrum peds = new PreciseSpectrum();
-                        if (OpenPreciseSpecterFile(peds)) {
-                            List<Utility.PreciseEditorData> temp = new List<Utility.PreciseEditorData>(graph.PreciseData);
-                            temp.Sort(Utility.ComparePreciseEditorData);
-                            try {
-                                temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
-                                graph.updateGraphAfterPreciseDiff(temp);
-                            } catch (System.ArgumentException) {
-                                throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", filename);
-                            }
-                        }
-                    } else {
-                        PointPairListPlus pl12 = new PointPairListPlus();
-                        PointPairListPlus pl22 = new PointPairListPlus();
-                        CommonOptions commonOpts;
-                        if (OpenSpecterFile(pl12, pl22, out commonOpts) == Graph.Displaying.Measured) {
-                            // TODO: check commonOpts for equality?
+                public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
+                    XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                    string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
 
-                            // coeff counting
-                            double coeff = 1.0;
-                            if (plsReference != null) {
-                                PointPairListPlus PL = plsReference.IsFirstCollector ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
-                                PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
-                                if (step != 0) {
-                                    for (int i = 0; i < PL.Count; ++i) {
-                                        if (step == PL[i].X) {
-                                            if (step != pl[i].X)
-                                                throw new System.ArgumentException();
-                                            if ((pl[i].Y != 0) && (PL[i].Y != 0))
-                                                coeff = PL[i].Y / pl[i].Y;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            try {
-                                PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
-                                PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
-                                graph.updateGraphAfterScanDiff(diff1, diff2);
-                            } catch (System.ArgumentException) {
-                                throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", filename);
-                            }
-                        } else {
-                            //diffs can't be distracted!
-                            throw new ArgumentOutOfRangeException();
+                    Graph.Displaying spectrumType = Graph.Displaying.Measured;
+                    if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
+                        spectrumType = Graph.Displaying.Diff;
+
+                    ushort X = 0;
+                    long Y = 0;
+                    try {
+                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, COL1_CONFIG_TAG, POINT_CONFIG_TAG))) {
+                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
+                            pl1.Add(X, Y);
                         }
+                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, COL2_CONFIG_TAG, POINT_CONFIG_TAG))) {
+                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
+                            pl2.Add(X, Y);
+                        }
+                    } catch (NullReferenceException) {
+                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
                     }
+                    //the whole logic of displaying spectra must be modified
+                    //!!!!!!!!!!!!!!!!!!!!!!!!
+                    try {
+                        commonOpts = new CommonOptions();
+                        loadCommonOptions(commonOpts);
+                    } catch (structureErrorOnLoadCommonData) {
+                        commonOpts = null;
+                    }
+                    //!!!!!!!!!!!!!!!!!!!!!!!!
+                    pl1.Sort(ZedGraph.SortType.XValues);
+                    pl2.Sort(ZedGraph.SortType.XValues);
+                    return spectrumType;
+                }
+                public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
+                    CommonOptions co = new CommonOptions();
+                    try {
+                        loadCommonOptions(co);
+                    } catch (structureErrorOnLoadCommonData) {
+                        co = null;
+                    }
+                    peds.CommonOptions = co;
+
+                    return LoadPED(xmlData, "Ошибка чтения файла прецизионного спектра", peds);
                 }
                 #endregion
                 private bool OpenSpecterFile(out Graph graph) {
                     PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
                     CommonOptions commonOpts;
-                    Graph.Displaying result = OpenSpecterFile(pl1, pl2, out commonOpts);
+                    Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
                     graph = new Graph(commonOpts);
                     switch (result) {
@@ -1243,56 +1231,9 @@ namespace Flavor.Common {
                             return false;
                     }
                 }
-                private Graph.Displaying OpenSpecterFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
-                    XmlNode headerNode = null;
-                    string prefix = "";
-
-                    if (xmlData.SelectSingleNode(OVERVIEW_CONFIG_TAG) != null) {
-                        headerNode = xmlData.SelectSingleNode(combine(OVERVIEW_CONFIG_TAG, HEADER_CONFIG_TAG));
-                    } else if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG)) != null) {
-                        prefix = ROOT_CONFIG_TAG;
-                        headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
-                    } else {
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
-                    }
-
-                    Graph.Displaying spectrumType = Graph.Displaying.Measured;
-                    if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
-                        spectrumType = Graph.Displaying.Diff;
-
-                    ushort X = 0;
-                    long Y = 0;
-                    try {
-                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL1_CONFIG_TAG, POINT_CONFIG_TAG))) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            pl1.Add(X, Y);
-                        }
-                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL2_CONFIG_TAG, POINT_CONFIG_TAG))) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            pl2.Add(X, Y);
-                        }
-                    } catch (NullReferenceException) {
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
-                    }
-                    //the whole logic of displaying spectra must be modified
-                    //!!!!!!!!!!!!!!!!!!!!!!!!
-                    try {
-                        // what version of function will be called here?
-                        commonOpts = new CommonOptions();
-                        loadCommonOptions(commonOpts);
-                    } catch (structureErrorOnLoadCommonData) {
-                        commonOpts = null;
-                    }
-                    //!!!!!!!!!!!!!!!!!!!!!!!!
-                    pl1.Sort(ZedGraph.SortType.XValues);
-                    pl2.Sort(ZedGraph.SortType.XValues);
-                    return spectrumType;
-                }
                 private bool OpenPreciseSpecterFile(out Graph graph) {
                     PreciseSpectrum peds = new PreciseSpectrum();
-                    bool result = OpenPreciseSpecterFile(peds);
+                    bool result = openPreciseSpectrumFile(peds);
                     if (result) {
                         graph = new Graph(peds.CommonOptions);
                         graph.updateGraphAfterPreciseLoad(peds);
@@ -1301,17 +1242,6 @@ namespace Flavor.Common {
                         graph = null;
                     }
                     return result;
-                }
-                private bool OpenPreciseSpecterFile(PreciseSpectrum peds) {
-                    CommonOptions co = new CommonOptions();
-                    try {
-                        loadCommonOptions(co);
-                    } catch (structureErrorOnLoadCommonData) {
-                        co = null;
-                    }
-                    peds.CommonOptions = co;
-
-                    return LoadPED(xmlData, "Ошибка чтения файла прецизионного спектра", peds);
                 }
                 protected sealed override PointPairListPlus readPeaks(XmlNode regionNode) {
                     ushort X;
@@ -1331,8 +1261,7 @@ namespace Flavor.Common {
             }
             #endregion
             #region Current Writers
-            private abstract class AlwaysCurrentTagHolder: TagHolder {}
-            private abstract class AlwaysCurrentWriter: AlwaysCurrentTagHolder {
+            private abstract class CurrentWriter: CurrentTagHolder {
                 public void setTimeStamp(DateTime dt) {
                     XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
                     attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
@@ -1416,10 +1345,10 @@ namespace Flavor.Common {
                 }
                 protected virtual void clearOldValues() {}
             }
-            private class AlwaysCurrentCommonOptionsWriter: AlwaysCurrentWriter, ICommonOptionsWriter {}
-            private class AlwaysCurrentPreciseDataWriter: AlwaysCurrentWriter, IPreciseDataWriter {}
-            private class AlwaysCurrentSpectrumWriter: AlwaysCurrentWriter, ISpectrumWriter {}
-            private class AlwaysCurrentMainConfig: AlwaysCurrentWriter, IMainConfigWriter {
+            private class CurrentCommonOptionsWriter: CurrentWriter, ICommonOptionsWriter {}
+            private class CurrentPreciseDataWriter: CurrentWriter, IPreciseDataWriter {}
+            private class CurrentSpectrumWriter: CurrentWriter, ISpectrumWriter {}
+            private class CurrentMainConfigWriter: CurrentWriter, IMainConfigWriter {
                 #region IAnyWriter Members
                 public override void write() {
                     saveConnectOptions();
@@ -1529,7 +1458,7 @@ namespace Flavor.Common {
                         scanNode.SelectSingleNode(COL2_CONFIG_TAG).AppendChild(temp);
                     }
                 }
-                ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, AlwaysCurrentSpectrumWriter>(confName, doc);
+                ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, CurrentSpectrumWriter>(confName, doc);
                 writer.saveCommonOptions(graph.CommonOptions);
                 return writer;
             }
@@ -1545,15 +1474,15 @@ namespace Flavor.Common {
             public static ICommonOptionsWriter getCommonOptionsWriter(string confName) {
                 XmlDocument doc = new XmlDocument();
                 createCommonOptsStub(doc, createRootStub(doc, COMMON_OPTIONS_HEADER));
-                return getInitializedConfig<ICommonOptionsWriter, AlwaysCurrentCommonOptionsWriter>(confName, doc);
+                return getInitializedConfig<ICommonOptionsWriter, CurrentCommonOptionsWriter>(confName, doc);
             }
             public static IPreciseDataWriter getPreciseDataWriter(string confName, string header) {
                 XmlDocument doc = new XmlDocument();
                 createPEDStub(doc, createRootStub(doc, header));
-                return getInitializedConfig<IPreciseDataWriter, AlwaysCurrentPreciseDataWriter>(confName, doc);
+                return getInitializedConfig<IPreciseDataWriter, CurrentPreciseDataWriter>(confName, doc);
             }
             public static IMainConfigWriter getMainConfigWriter(string confName, XmlDocument doc) {
-                return getInitializedConfig<IMainConfigWriter, AlwaysCurrentMainConfig>(confName, doc);
+                return getInitializedConfig<IMainConfigWriter, CurrentMainConfigWriter>(confName, doc);
             }
             #endregion
             #region Private Service Methods
