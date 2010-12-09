@@ -60,7 +60,7 @@ namespace Flavor.Forms
                 setTitles();
             }
         }
-        private ushort[] minX = { 0, 0 }, maxX = { 1056, 1056 };
+        private ushort[] minX = { Config.MIN_STEP, Config.MIN_STEP }, maxX = { Config.MAX_STEP, Config.MAX_STEP };
         internal bool specterSavingEnabled {
             set {
                 saveToolStripMenuItem.Enabled = value;
@@ -72,24 +72,26 @@ namespace Flavor.Forms
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
             set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
-        protected CollectorsForm(Graph graph, bool hint) {
+        protected CollectorsForm() {
+            // do not use! for designer only!
+            InitializeComponent();
+
+            collect1_graph.GraphPane.Legend.IsVisible = false;
+            collect2_graph.GraphPane.Legend.IsVisible = false;
+            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
+
+            ToolStripItemCollection items = this.MainMenuStrip.Items;
+            (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
+        }
+        protected CollectorsForm(Graph graph, bool hint): this() {
             this.graph = graph;
             Panel.Graph = graph;
             
             preciseSpectrumDisplayed = hint;
             setTitles();
             
-            InitializeComponent();
-            
             graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
             graph.OnDisplayModeChanged += new Graph.DisplayModeEventHandler(InvokeGraphModified);
-            
-            collect1_graph.GraphPane.Legend.IsVisible = false;
-            collect2_graph.GraphPane.Legend.IsVisible = false;
-            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
-            
-            ToolStripItemCollection items = this.MainMenuStrip.Items;
-            (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
         }
 
         private void setTitles() {
@@ -126,8 +128,10 @@ namespace Flavor.Forms
         }
 
         protected override sealed void CreateGraph() {
-            ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
-            ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
+            if (graph != null) {
+                ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
+                ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
+            }
             RefreshGraph();
         }
         protected override sealed void SetSize() {

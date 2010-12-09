@@ -11,6 +11,11 @@ namespace Flavor.Forms {
         private string DisplayedFileName {
             get { return System.IO.Path.GetFileName(displayedFileName); }
         }
+        protected LoadedCollectorsForm(): base() {
+            // do not use! for designer only!
+            InitializeComponent();
+            Panel.Enable();
+        }
         public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
             : base(graph, hint) {
             InitializeComponent();
