@@ -61,7 +61,10 @@ namespace Flavor.Forms
             }
         }
         private ushort[] minX = { Config.MIN_STEP, Config.MIN_STEP }, maxX = { Config.MAX_STEP, Config.MAX_STEP };
-        internal bool specterSavingEnabled {
+        internal protected bool specterSavingEnabled {
+            private get {
+                return saveToolStripMenuItem.Enabled;
+            }
             set {
                 saveToolStripMenuItem.Enabled = value;
                 //!!!???
@@ -70,7 +73,7 @@ namespace Flavor.Forms
         }
         internal bool specterDiffEnabled {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
-            set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
+            //set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
         protected CollectorsForm() {
             // do not use! for designer only!
@@ -78,6 +81,11 @@ namespace Flavor.Forms
 
             collect1_graph.GraphPane.Legend.IsVisible = false;
             collect2_graph.GraphPane.Legend.IsVisible = false;
+            collect1_graph.ScrollMaxX = maxX[0];
+            collect1_graph.ScrollMinX = minX[0];
+            collect2_graph.ScrollMaxX = maxX[1];
+            collect2_graph.ScrollMinX = minX[1];
+
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
 
             ToolStripItemCollection items = this.MainMenuStrip.Items;
@@ -129,6 +137,7 @@ namespace Flavor.Forms
 
         protected override sealed void CreateGraph() {
             if (graph != null) {
+                specterSavingEnabled = false;
                 ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
                 ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             }
@@ -149,21 +158,30 @@ namespace Flavor.Forms
             setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
         }
         protected void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
-            minX[0] = minX1;
-            minX[1] = minX2;
-            maxX[0] = maxX1;
-            maxX[1] = maxX2;
+            if (minX1 < maxX1) {
+                minX[0] = minX1;
+                maxX[0] = maxX1;
+            } else {
+                minX[0] = Config.MIN_STEP;
+                maxX[0] = Config.MAX_STEP;
+            }
+            if (minX2 < maxX2) {
+                minX[1] = minX2;
+                maxX[1] = maxX2;
+            } else {
+                minX[1] = Config.MIN_STEP;
+                maxX[1] = Config.MAX_STEP;
+            }
         }
         protected void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
-            ushort[] minX = { 1056, 1056 }, maxX = { 0, 0 };
+            ushort[] maxX = { Config.MIN_STEP, Config.MIN_STEP }, minX = { Config.MAX_STEP, Config.MAX_STEP };
             foreach (Utility.PreciseEditorData ped in peds) {
                 if (minX[ped.Collector - 1] > ped.Step - ped.Width)
                     minX[ped.Collector - 1] = (ushort)(ped.Step - ped.Width);
                 if (maxX[ped.Collector - 1] < ped.Step + ped.Width)
                     maxX[ped.Collector - 1] = (ushort)(ped.Step + ped.Width);
             }
-            this.minX = minX;
-            this.maxX = maxX;
+            setXScaleLimits(minX[0], maxX[0], minX[1], maxX[1]);
         }
 
         protected override sealed void RefreshGraph() {
@@ -183,40 +201,41 @@ namespace Flavor.Forms
             
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
-                myPane.XAxis.Title.Text = X_AXIS_TITLE_STEP;
-                myPane.XAxis.Scale.Min = minX[zgcIndex];
-                myPane.XAxis.Scale.Max = maxX[zgcIndex];
+                    myPane.XAxis.Title.Text = X_AXIS_TITLE_STEP;
+                    myPane.XAxis.Scale.Min = minX[zgcIndex];
+                    myPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
-                myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
-                myPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
-                myPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
+                    myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
+                    myPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
+                    myPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
-                myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
-                //limits inverted due to point-to-mass law
-                myPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], (zgcIndex == 0));
-                myPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], (zgcIndex == 0));
+                    myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
+                    //limits inverted due to point-to-mass law
+                    bool isFirst = (zgcIndex == 0);
+                    myPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], isFirst);
+                    myPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], isFirst);
                     break;
             }
             
             myPane.CurveList.Clear();
-            
-            specterSavingEnabled = false;
-            
+
+            bool savingDisabled = !specterSavingEnabled;
             if (PreciseSpectrumDisplayed) {
                 for (int i = 1; i < dataPoints.Count; ++i) {
-                    if (dataPoints[i].Step.Count > 0)
-                        specterSavingEnabled = true;
+                    if (savingDisabled && dataPoints[i].Step.Count > 0)
+                        savingDisabled = false;
                     LineItem temp = myPane.AddCurve(dataPoints[i].PeakSum.ToString(), dataPoints[i].Points(graph.AxisDisplayMode), rowsColors[i % rowsColors.Length], SymbolType.None);
                     temp.Symbol.Fill = new Fill(Color.White);
                 }
             } else {
-                if (dataPoints[0].Step.Count > 0)
-                    specterSavingEnabled = true;
+                if (savingDisabled && dataPoints[0].Step.Count > 0)
+                    savingDisabled = false;
                 LineItem temp = myPane.AddCurve("My Curve", dataPoints[0].Points(graph.AxisDisplayMode), Color.Blue, SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
+            specterSavingEnabled = !savingDisabled;
             myPane.Legend.IsVisible = false;
             
             // Fill the axis background with a color gradient

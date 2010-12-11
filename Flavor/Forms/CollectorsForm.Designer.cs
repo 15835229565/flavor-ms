@@ -52,10 +52,8 @@ namespace Flavor.Forms {
             this.collect2_graph.Name = "collect2_graph";
             this.collect2_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect2_graph.ScrollGrace = 0;
-            this.collect2_graph.ScrollMaxX = 1056;
             this.collect2_graph.ScrollMaxY = 2000000;
             this.collect2_graph.ScrollMaxY2 = 0;
-            this.collect2_graph.ScrollMinX = 0;
             this.collect2_graph.ScrollMinY = 0;
             this.collect2_graph.ScrollMinY2 = 0;
             this.collect2_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
@@ -74,10 +72,8 @@ namespace Flavor.Forms {
             this.collect1_graph.Name = "collect1_graph";
             this.collect1_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect1_graph.ScrollGrace = 0;
-            this.collect1_graph.ScrollMaxX = 1056;
             this.collect1_graph.ScrollMaxY = 2000000;
             this.collect1_graph.ScrollMaxY2 = 0;
-            this.collect1_graph.ScrollMinX = 0;
             this.collect1_graph.ScrollMinY = 0;
             this.collect1_graph.ScrollMinY2 = 0;
             this.collect1_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
