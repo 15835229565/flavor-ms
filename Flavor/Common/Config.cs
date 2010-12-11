@@ -151,7 +151,7 @@ namespace Flavor.Common {
         }
         internal static void saveGlobalPreciseOptions(PreciseSpectrum peds) {
             preciseData = peds;
-            mainConfigWriter.savePreciseData(peds, false, false);
+            mainConfigWriter.savePreciseData(peds, false);
             mainConfigWriter.write();
         }
         internal static void saveGlobalCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
@@ -181,7 +181,7 @@ namespace Flavor.Common {
         }
         internal static void savePreciseSpectrumFile(string filename, Graph graph) {
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, graph);
-            writer.savePreciseData(graph.PreciseData, true, false);
+            writer.savePreciseData(graph.PreciseData, false);
             writer.write();
         }
         #region Spectra Distraction
@@ -345,7 +345,7 @@ namespace Flavor.Common {
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
             writer.setTimeStamp(dt);
             writer.setShift(shift);
-            writer.savePreciseData(Graph.Instance.PreciseData, true, false);
+            writer.savePreciseData(Graph.Instance.PreciseData, false);
             writer.write();
 
             return dt;
@@ -356,7 +356,7 @@ namespace Flavor.Common {
             IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(filename, MONITOR_SPECTRUM_HEADER);
             writer.setTimeStamp(dt);
             writer.setShift(shift);
-            writer.savePreciseData(Graph.Instance.PreciseData, false, true);
+            writer.savePreciseData(Graph.Instance.PreciseData, true);
             writer.write();
         }
         #endregion
@@ -365,9 +365,9 @@ namespace Flavor.Common {
         internal static List<Utility.PreciseEditorData> loadPreciseOptions(string pedConfName) {
             return TagHolder.getPreciseDataReader(pedConfName).loadPreciseData();
         }
-        internal static void savePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePoints, bool savePeakSum) {
+        internal static void savePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePeakSum) {
             IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(pedConfName, PRECISE_OPTIONS_HEADER);
-            writer.savePreciseData(peds, savePoints, savePeakSum);
+            writer.savePreciseData(peds, savePeakSum);
             writer.write();
         }
 
@@ -529,7 +529,7 @@ namespace Flavor.Common {
             void saveCommonOptions(CommonOptions opts);
         }
         private interface IPreciseDataWriter: IAnyWriter, ITimeStamp, IShift { 
-            void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePoints, bool savePeakSum);
+            void savePreciseData(List<Utility.PreciseEditorData> peds/*, bool savePoints*/, bool savePeakSum);
         }
         private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter {}
         private interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter {}
@@ -1310,10 +1310,7 @@ namespace Flavor.Common {
                     fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
                     fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
                 }
-                protected void SavePreciseOptions() {
-                    savePreciseData(PreciseData, false, false);
-                }
-                public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePoints, bool savePeakSum) {
+                public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum) {
                     clearOldValues();
                     foreach (Utility.PreciseEditorData ped in peds) {
                         XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
@@ -1332,22 +1329,25 @@ namespace Flavor.Common {
                         if (savePeakSum) {
                             regionNode.AppendChild(xmlData.CreateElement(PEAK_COUNT_SUM_CONFIG_TAG)).InnerText = ped.AssociatedPoints.PLSreference.PeakSum.ToString();
                         }
-                        if (savePoints) {
-                            XmlNode temp;
-                            foreach (ZedGraph.PointPair pp in ped.AssociatedPoints) {
-                                temp = xmlData.CreateElement(POINT_CONFIG_TAG);
-                                temp.AppendChild(xmlData.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
-                                temp.AppendChild(xmlData.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
-                                regionNode.AppendChild(temp);
-                            }
-                        }
+                        savePointRows(ped.AssociatedPoints, regionNode);
                     }
                 }
                 protected virtual void clearOldValues() {}
+                protected virtual void savePointRows(PointPairListPlus row, XmlNode node) {}
             }
             private class CurrentCommonOptionsWriter: CurrentWriter, ICommonOptionsWriter {}
             private class CurrentPreciseDataWriter: CurrentWriter, IPreciseDataWriter {}
-            private class CurrentSpectrumWriter: CurrentWriter, ISpectrumWriter {}
+            private class CurrentSpectrumWriter: CurrentWriter, ISpectrumWriter {
+                protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
+                    XmlNode temp;
+                    foreach (ZedGraph.PointPair pp in row) {
+                        temp = xmlData.CreateElement(POINT_CONFIG_TAG);
+                        temp.AppendChild(xmlData.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
+                        temp.AppendChild(xmlData.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
+                        node.AppendChild(temp);
+                    }
+                }
+            }
             private class CurrentMainConfigWriter: CurrentWriter, IMainConfigWriter {
                 #region IAnyWriter Members
                 public override void write() {
@@ -1403,6 +1403,9 @@ namespace Flavor.Common {
                     fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
                     fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
                 }
+                private void SavePreciseOptions() {
+                    savePreciseData(PreciseData, false);
+                }
                 protected override void clearOldValues() {
                     for (int i = 1; i <= 20; ++i) {
                         string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i));
@@ -1427,7 +1430,6 @@ namespace Flavor.Common {
                 XmlDocument doc = new XmlDocument();
                 string header = graph.DisplayingMode == Graph.Displaying.Diff ? DIFF_SPECTRUM_HEADER : MEASURED_SPECTRUM_HEADER;
                 XmlNode rootNode = createRootStub(doc, header);
-                createCommonOptsStub(doc, rootNode);
 
                 if (graph.isPreciseSpectrum)
                     createPEDStub(doc, rootNode);
@@ -1459,7 +1461,11 @@ namespace Flavor.Common {
                     }
                 }
                 ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, CurrentSpectrumWriter>(confName, doc);
-                writer.saveCommonOptions(graph.CommonOptions);
+                if (graph.CommonOptions != null) {
+                    // TODO: do not allow saving! data lack for properly save in new formats
+                    createCommonOptsStub(doc, rootNode);
+                    writer.saveCommonOptions(graph.CommonOptions);
+                }
                 return writer;
             }
             public static ICommonOptionsReader getCommonOptionsReader(string confName) {
