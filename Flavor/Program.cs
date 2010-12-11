@@ -11,6 +11,10 @@ namespace Flavor {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
+            //suppress russian language user interface
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
+
             mainForm MSControl = new mainForm();
             MSControl.WindowState = FormWindowState.Maximized;
             Application.Run(MSControl);

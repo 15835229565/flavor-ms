@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="label10.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label10.GenerateMember" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="label10.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -135,7 +135,7 @@
     <value>2</value>
   </data>
   <data name="label10.Text" xml:space="preserve">
-    <value>Ширина</value>
+    <value>Width</value>
   </data>
   <data name="&gt;&gt;label10.Name" xml:space="preserve">
     <value>label10</value>
@@ -149,9 +149,12 @@
   <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <metadata name="colNumLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="colNumLabel.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
+  <data name="colToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 17</value>
+  </data>
   <data name="colNumLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -165,13 +168,10 @@
     <value>1</value>
   </data>
   <data name="colNumLabel.Text" xml:space="preserve">
-    <value>Кол.</value>
+    <value>Col.</value>
   </data>
-  <metadata name="colToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="colNumLabel.ToolTip" xml:space="preserve">
-    <value>Коллектор</value>
+    <value>Collector</value>
   </data>
   <data name="&gt;&gt;colNumLabel.Name" xml:space="preserve">
     <value>colNumLabel</value>
@@ -212,9 +212,9 @@
   <data name="&gt;&gt;peakCenterLabel.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
+  </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>124, 26</value>
   </data>

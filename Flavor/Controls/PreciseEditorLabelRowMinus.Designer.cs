@@ -38,7 +38,6 @@ namespace Flavor.Controls {
             // label10
             // 
             resources.ApplyResources(label10, "label10");
-            label10.BackColor = System.Drawing.SystemColors.Control;
             label10.Name = "label10";
             // 
             // colNumLabel
@@ -50,14 +49,13 @@ namespace Flavor.Controls {
             // peakCenterLabel
             // 
             resources.ApplyResources(this.peakCenterLabel, "peakCenterLabel");
-            this.peakCenterLabel.BackColor = System.Drawing.SystemColors.Control;
             this.peakCenterLabel.Name = "peakCenterLabel";
             // 
             // PreciseEditorLabelRowMinus
             // 
+            this.Controls.Add(this.peakCenterLabel);
             this.Controls.Add(colNumLabel);
             this.Controls.Add(label10);
-            this.Controls.Add(this.peakCenterLabel);
             this.Name = "PreciseEditorLabelRowMinus";
             resources.ApplyResources(this, "$this");
             this.ResumeLayout(false);

@@ -118,73 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label1.GenerateMember" type="System.Boolean, mscorlib">
+  <data name="label10.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
+    <value>75, 13</value>
   </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>41, 26</value>
+  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 13</value>
   </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="label10.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Peak
-number</value>
+  <data name="label10.Text" xml:space="preserve">
+    <value>Ширина</value>
   </data>
-  <data name="label1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
+  <data name="&gt;&gt;label10.Name" xml:space="preserve">
+    <value>label10</value>
   </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+  <data name="&gt;&gt;label10.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="row.GenerateMember" type="System.Boolean, mscorlib">
+  <data name="colNumLabel.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="row.Location" type="System.Drawing.Point, System.Drawing">
-    <value>49, 0</value>
+  <data name="colToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 17</value>
   </data>
-  <data name="row.Size" type="System.Drawing.Size, System.Drawing">
-    <value>310, 26</value>
+  <data name="colNumLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="row.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+  <data name="colNumLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>50, 13</value>
   </data>
-  <data name="&gt;&gt;row.Name" xml:space="preserve">
-    <value>row</value>
+  <data name="colNumLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>29, 13</value>
   </data>
-  <data name="&gt;&gt;row.Type" xml:space="preserve">
-    <value>Flavor.Controls.PreciseEditorLabelRow, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="colNumLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="&gt;&gt;row.Parent" xml:space="preserve">
+  <data name="colNumLabel.Text" xml:space="preserve">
+    <value>Кол.</value>
+  </data>
+  <data name="colNumLabel.ToolTip" xml:space="preserve">
+    <value>Коллектор</value>
+  </data>
+  <data name="&gt;&gt;colNumLabel.Name" xml:space="preserve">
+    <value>colNumLabel</value>
+  </data>
+  <data name="&gt;&gt;colNumLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colNumLabel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;row.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;colNumLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="peakCenterLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="peakCenterLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="peakCenterLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 13</value>
+  </data>
+  <data name="peakCenterLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="peakCenterLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.Name" xml:space="preserve">
+    <value>peakCenterLabel</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;peakCenterLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>359, 26</value>
+    <value>124, 26</value>
+  </data>
+  <data name="&gt;&gt;colToolTip.Name" xml:space="preserve">
+    <value>colToolTip</value>
+  </data>
+  <data name="&gt;&gt;colToolTip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>PreciseEditorLabelRowPlus</value>
+    <value>PreciseEditorLabelRowMinus</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

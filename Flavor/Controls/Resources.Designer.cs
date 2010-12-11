@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Flavor.Properties {
+namespace Flavor.Controls {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Flavor.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Flavor.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Flavor.Controls.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,16 @@ namespace Flavor.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Step
+        ///(&lt;={0}).
+        /// </summary>
+        internal static string PreciseEditorLabelRowMinus_peakCenterLabel_Text_Format {
+            get {
+                return ResourceManager.GetString("PreciseEditorLabelRowMinus_peakCenterLabel_Text_Format", resourceCulture);
             }
         }
     }
