@@ -22,14 +22,14 @@ namespace Flavor.Common.Messaging {
         }
         internal void Clear() {
             lock (ToSend) {
-                ToSend.Clear();
-                statusToSend = false;
-                turboToSend = false;
                 lock (SendTimer) {
                     if (SendTimer.Enabled) {
                         StopSending();
                     }
                 }
+                statusToSend = false;
+                turboToSend = false;
+                ToSend.Clear();
             }
         }
         internal void AddToSend(UserRequest Command)//Enqueue
