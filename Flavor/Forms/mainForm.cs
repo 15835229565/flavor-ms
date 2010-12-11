@@ -564,32 +564,28 @@ namespace Flavor.Forms {
             RefreshButtons();
         }
         private void RefreshButtons() {
-            //bool precPointsExist = (Config.PreciseData.Count != 0);
-            bool precPointsExist = Commander.somePointsUsed();
-            switch (Commander.hBlock) {
-                case true:
-                    unblock_butt.Text = "Снять блокировку";
-                    unblock_butt.ForeColor = Color.Green;
-                    break;
-                case false:
-                    unblock_butt.Text = "Включить блокировку";
-                    unblock_butt.ForeColor = Color.Red;
-                    break;
+            bool precPointsExist = Commander.SomePointsUsed;
+            if (Commander.hBlock) {
+                unblock_butt.Text = "Снять блокировку";
+                unblock_butt.ForeColor = Color.Green;
+            } else {
+                unblock_butt.Text = "Включить блокировку";
+                unblock_butt.ForeColor = Color.Red;
             }
             switch (Commander.pState) {
                 case Commander.programStates.Start:
                     connectToolStripButton.Enabled = true;
-                    if (Commander.deviceIsConnected) {
+                    bool connected = Commander.DeviceIsConnected;
+                    if (connected) {
                         connectToolStripButton.Text = "Разъединить";
                         connectToolStripButton.ForeColor = Color.Red;
                     } else {
                         connectToolStripButton.Text = "Соединить";
                         connectToolStripButton.ForeColor = Color.Green;
                     }
-
-                    initSys_butt.Enabled = Commander.deviceIsConnected;//true;
-                    shutSys_butt.Enabled = Commander.deviceIsConnected;//false;
-                    unblock_butt.Enabled = Commander.deviceIsConnected && !Commander.hBlock;//разрешено для включения блокировки
+                    initSys_butt.Enabled = connected;//true;
+                    shutSys_butt.Enabled = connected;//false;
+                    unblock_butt.Enabled = connected && !Commander.hBlock;//разрешено для включения блокировки
                     overview_button.Enabled = false;
                     sensmeasure_button.Enabled = false;
                     monitorToolStripButton.Enabled = false;
@@ -727,7 +723,7 @@ namespace Flavor.Forms {
                     return;
                 }
             }
-            if (Commander.deviceIsConnected)
+            if (Commander.DeviceIsConnected)
                 Commander.Disconnect();
             Device.OnDeviceStateChanged -= new DeviceEventHandler(InvokeRefreshDeviceState);
             Device.OnDeviceStatusChanged -= new DeviceEventHandler(InvokeRefreshDeviceStatus);
@@ -751,7 +747,7 @@ namespace Flavor.Forms {
         }
 
         private void connectToolStripButton_Click(object sender, EventArgs e) {
-            if (Commander.deviceIsConnected) {
+            if (Commander.DeviceIsConnected) {
                 Commander.Disconnect();
                 Commander.OnAsyncReply -= new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
             } else {

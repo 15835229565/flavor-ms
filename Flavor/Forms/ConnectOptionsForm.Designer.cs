@@ -12,8 +12,8 @@
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Button ok_butt;
             System.Windows.Forms.Button cancel_butt;
-            this.serialPort_comboBox = new System.Windows.Forms.ComboBox();
-            this.baudrate_comboBox = new System.Windows.Forms.ComboBox();
+            this.serialPortComboBox = new System.Windows.Forms.ComboBox();
+            this.baudrateComboBox = new System.Windows.Forms.ComboBox();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             ok_butt = new System.Windows.Forms.Button();
@@ -48,21 +48,21 @@
             // 
             // serialPort_comboBox
             // 
-            this.serialPort_comboBox.FormattingEnabled = true;
-            resources.ApplyResources(this.serialPort_comboBox, "serialPort_comboBox");
-            this.serialPort_comboBox.Name = "serialPort_comboBox";
+            this.serialPortComboBox.FormattingEnabled = true;
+            resources.ApplyResources(this.serialPortComboBox, "serialPort_comboBox");
+            this.serialPortComboBox.Name = "serialPort_comboBox";
             // 
             // baudrate_comboBox
             // 
-            this.baudrate_comboBox.FormattingEnabled = true;
-            this.baudrate_comboBox.Items.AddRange(new object[] {
+            this.baudrateComboBox.FormattingEnabled = true;
+            this.baudrateComboBox.Items.AddRange(new object[] {
             resources.GetString("baudrate_comboBox.Items"),
             resources.GetString("baudrate_comboBox.Items1"),
             resources.GetString("baudrate_comboBox.Items2"),
             resources.GetString("baudrate_comboBox.Items3"),
             resources.GetString("baudrate_comboBox.Items4")});
-            resources.ApplyResources(this.baudrate_comboBox, "baudrate_comboBox");
-            this.baudrate_comboBox.Name = "baudrate_comboBox";
+            resources.ApplyResources(this.baudrateComboBox, "baudrate_comboBox");
+            this.baudrateComboBox.Name = "baudrate_comboBox";
             // 
             // ConnectOptionsForm
             // 
@@ -72,10 +72,10 @@
             this.CancelButton = cancel_butt;
             this.Controls.Add(cancel_butt);
             this.Controls.Add(ok_butt);
-            this.Controls.Add(this.baudrate_comboBox);
+            this.Controls.Add(this.baudrateComboBox);
             this.Controls.Add(label2);
             this.Controls.Add(label1);
-            this.Controls.Add(this.serialPort_comboBox);
+            this.Controls.Add(this.serialPortComboBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -88,7 +88,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox serialPort_comboBox;
-        private System.Windows.Forms.ComboBox baudrate_comboBox;
+        private System.Windows.Forms.ComboBox serialPortComboBox;
+        private System.Windows.Forms.ComboBox baudrateComboBox;
     }
 }

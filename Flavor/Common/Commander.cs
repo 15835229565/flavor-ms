@@ -92,11 +92,11 @@ namespace Flavor.Common {
             set { notRareMode = value; }
         }
 
-        internal static bool deviceIsConnected {
+        internal static bool DeviceIsConnected {
             get {
                 return isConnected;
             }
-            set {
+            private set {
                 if (isConnected != value) {
                     isConnected = value;
                     OnProgramStateChanged();
@@ -297,7 +297,7 @@ namespace Flavor.Common {
         }
         internal static void Sense() {
             if (pState == Commander.programStates.Ready) {
-                if (somePointsUsed()) {
+                if (SomePointsUsed) {
                     initMeasure();                          //?
                     measureMode = new PreciseMeasureMode(); //order
                 } else {
@@ -307,7 +307,7 @@ namespace Flavor.Common {
         }
         internal static void Monitor() {
             if (pState == Commander.programStates.Ready) {
-                if (somePointsUsed()) {
+                if (SomePointsUsed) {
                     initMeasure();                                                                   //?
                     measureMode = new MonitorMeasureMode(0, Config.AllowedShift, Config.TimeLimit);  //order
                     // TODO: feed measure mode with start shift value (really?)
@@ -349,11 +349,13 @@ namespace Flavor.Common {
             Commander.measureCancelRequested = false;
             sendSettings();
         }
-        internal static bool somePointsUsed() {
-            if (Config.PreciseData.Count > 0)
-                foreach (Utility.PreciseEditorData ped in Config.PreciseData)
-                    if (ped.Use) return true;
-            return false;
+        internal static bool SomePointsUsed {
+            get {
+                if (Config.PreciseData.Count > 0)
+                    foreach (Utility.PreciseEditorData ped in Config.PreciseData)
+                        if (ped.Use) return true;
+                return false;
+            }
         }
 
         internal static void Unblock() {
@@ -364,15 +366,16 @@ namespace Flavor.Common {
             toSend.AddToSend(new enableHighVoltage(Commander.hBlock));
         }
 
-        internal static void Connect() {
-            switch (ModBus.Open()) {
+        internal static ModBus.PortStates Connect() {
+            ModBus.PortStates res = ModBus.Open();
+            switch (res) {
                 case ModBus.PortStates.Opening:
-                    Commander.deviceIsConnected = true;
                     toSend = new MessageQueueWithAutomatedStatusChecks();
                     toSend.IsOperating = true;
+                    Commander.DeviceIsConnected = true;
                     break;
                 case ModBus.PortStates.Opened:
-                    Commander.deviceIsConnected = true;
+                    Commander.DeviceIsConnected = true;
                     break;
                 case ModBus.PortStates.ErrorOpening:
                     break;
@@ -380,17 +383,19 @@ namespace Flavor.Common {
                     // фигня
                     break;
             }
+            return res;
         }
-        internal static void Disconnect() {
+        internal static ModBus.PortStates Disconnect() {
             toSend.IsOperating = false;
             toSend.Clear();
-            switch (ModBus.Close()) {
+            ModBus.PortStates res = ModBus.Close();
+            switch (res) {
                 case ModBus.PortStates.Closing:
-                    Commander.deviceIsConnected = false;
+                    Commander.DeviceIsConnected = false;
                     onTheFly = true;// надо ли здесь???
                     break;
                 case ModBus.PortStates.Closed:
-                    Commander.deviceIsConnected = false;
+                    Commander.DeviceIsConnected = false;
                     break;
                 case ModBus.PortStates.ErrorClosing:
                     break;
@@ -398,6 +403,27 @@ namespace Flavor.Common {
                     // фигня
                     break;
             }
+            return res;
+        }
+
+        internal static void reconnect() {
+            if (Commander.DeviceIsConnected) {
+                switch (Disconnect()) {
+                    case ModBus.PortStates.Closing:
+                        ModBus.Open();
+                        break;
+                    case ModBus.PortStates.Closed:
+                        break;
+                    case ModBus.PortStates.ErrorClosing:
+                        break;
+                    default:
+                        // фигня
+                        break;
+                }
+            }
+        }
+        internal static string[] AvailablePorts {
+            get { return ModBus.AvailablePorts; }
         }
     }
 }
