@@ -122,9 +122,12 @@ namespace Flavor.Forms
             }
             refreshGraphicsOnMeasureStep();
         }
-
+        private void refreshGraphicsOnMeasureStep() {
+            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
+            panel.performStep();
+            panel.refreshGraphicsOnPreciseStep();
+        }
         #region IMeasured Members
-
         public void initMeasure(bool isPrecise) {
             list = new List<PointPairList>();
             sums = new List<long>();
@@ -156,20 +159,13 @@ namespace Flavor.Forms
         public void prepareControlsOnMeasureStart() {
             Panel.Enable();
         }
-        public void refreshGraphicsOnMeasureStep() {
-            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
-            panel.performStep();
-            panel.refreshGraphicsOnPreciseStep();
-        }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             // temporary?
             Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
             time = -1;
         }
-
         #endregion
-
         private void ZedGraphControlMonitor_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
             ZedGraphControlMonitor sender = control as ZedGraphControlMonitor;
             if (sender == null)

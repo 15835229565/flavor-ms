@@ -97,7 +97,8 @@ namespace Flavor.Forms
             
             preciseSpectrumDisplayed = hint;
             setTitles();
-            
+
+            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
             graph.OnDisplayModeChanged += new Graph.DisplayModeEventHandler(InvokeGraphModified);
         }
@@ -254,7 +255,7 @@ namespace Flavor.Forms
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        protected void InvokeRefreshGraph(bool recreate) {
+        private void InvokeRefreshGraph(bool recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -265,11 +266,11 @@ namespace Flavor.Forms
         private void refreshGraph(bool recreate) {
             if (recreate) {
                 CreateGraph();
-            } else {
-                RefreshGraph();
-                if (this is IMeasured)
-                    (this as IMeasured).refreshGraphicsOnMeasureStep();
+                return;
             }
+            RefreshGraph();
+            /*if (this is IMeasured)
+                (this as IMeasured).refreshGraphicsOnMeasureStep();*/
         }
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {

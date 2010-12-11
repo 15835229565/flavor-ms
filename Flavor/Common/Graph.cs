@@ -345,10 +345,6 @@ namespace Flavor.Common {
                 OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
-            /*preciseData = peds;
-            ResetPointLists();
-            foreach (Utility.PreciseEditorData ped in peds)
-                collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));*/
             updateGraphAfterPreciseLoad(peds);
             DisplayingMode = Displaying.Diff;
             OnNewGraphData(true);

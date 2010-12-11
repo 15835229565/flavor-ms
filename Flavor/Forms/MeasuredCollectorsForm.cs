@@ -53,16 +53,6 @@ namespace Flavor.Forms {
             specterSavingEnabled = false;
             Graph.ResetPointListsWithEvent();
         }
-        public void refreshGraphicsOnMeasureStep() {
-            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
-            panel.performStep();
-            if (PreciseSpectrumDisplayed)
-                panel.refreshGraphicsOnPreciseStep();
-            else {
-                yAxisChange();
-                panel.refreshGraphicsOnScanStep();
-            }
-        }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
@@ -75,6 +65,31 @@ namespace Flavor.Forms {
             saveSpecterFileDialog.FileName = "";
 			return base.saveData();        
 		}
+
+        private void InvokeRefreshGraph(bool recreate) {
+            if (this.InvokeRequired) {
+                // TODO: NullPointerException here..
+                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
+                return;
+            }
+            refreshGraph(recreate);
+        }
+        private void refreshGraph(bool recreate) {
+            if (recreate) {
+                return;
+            }
+            refreshGraphicsOnMeasureStep();
+        }
+        private void refreshGraphicsOnMeasureStep() {
+            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
+            panel.performStep();
+            if (PreciseSpectrumDisplayed)
+                panel.refreshGraphicsOnPreciseStep();
+            else {
+                yAxisChange();
+                panel.refreshGraphicsOnScanStep();
+            }
+        }
 
         void MeasuredCollectorsForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
             if (e.CloseReason == CloseReason.UserClosing)
