@@ -252,7 +252,7 @@ namespace Flavor.Forms {
             Commander.OnError += new Commander.ErrorHandler(Commander_OnError);
         }
 
-        void Commander_OnError(string msg) {
+        private void Commander_OnError(string msg) {
             MessageBox.Show(this, msg);
         }
         private void overview_button_Click(object sender, EventArgs e) {

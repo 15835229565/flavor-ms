@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using System.Globalization;
+using System.Text;
 
 namespace Flavor.Common {
     static class Config {
@@ -609,7 +610,9 @@ namespace Flavor.Common {
                 this.xmlData = doc;
             }
             #region Legacy Readers
-            private abstract class LegacyTagHolder: TagHolder {}
+            private abstract class LegacyTagHolder: TagHolder {
+            
+            }
             private abstract class LegacyReader: LegacyTagHolder {
                 public void loadCommonOptions(CommonOptions opts) {
                     string mainConfPrefix = "";
@@ -948,7 +951,9 @@ namespace Flavor.Common {
                 }
             }
             #endregion
-            private abstract class CurrentTagHolder: TagHolder {}
+            private abstract class CurrentTagHolder: TagHolder {
+                protected const char COUNTS_SEPARATOR = ' ';
+            }
             #region Current Readers
             private abstract class CurrentReader: CurrentTagHolder {
                 public void loadCommonOptions(CommonOptions opts) {
@@ -1004,10 +1009,12 @@ namespace Flavor.Common {
                                 }
                                 try {
                                     bool use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
-                                    Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
+                                    ushort peakStep = ushort.Parse(peak);
+                                    ushort peakWidth = ushort.Parse(width);
+                                    Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), peakStep,
                                                                         byte.Parse(col), ushort.Parse(iter),
                                                                         ushort.Parse(width), (float)0, comment);
-                                    temp.AssociatedPoints = readPeaks(regionNode);
+                                    temp.AssociatedPoints = readPeaks(regionNode, peakStep, peakWidth);
                                     peds.Add(temp);
                                 } catch (FormatException) {
                                     throw new ConfigLoadException("Неверный формат данных", errorMessage, filename);
@@ -1020,7 +1027,7 @@ namespace Flavor.Common {
                     peds.Sort(Utility.ComparePreciseEditorData);
                     return true;
                 }
-                protected virtual PointPairListPlus readPeaks(XmlNode regionNode) { return null;}
+                protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
                 protected virtual void loadDelays(XmlNode commonNode, CommonOptions opts) {}
             }
             private class CurrentCommonOptionsReader: CurrentReader, ICommonOptionsReader {}
@@ -1243,19 +1250,25 @@ namespace Flavor.Common {
                     }
                     return result;
                 }
-                protected sealed override PointPairListPlus readPeaks(XmlNode regionNode) {
-                    ushort X;
+                protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) {
+                    peakStep -= peakWidth;
+                    peakWidth += peakWidth;
+                    peakWidth += peakStep;
                     long Y;
                     PointPairListPlus tempPntLst = new PointPairListPlus();
                     try {
-                        foreach (XmlNode pntNode in regionNode.SelectNodes(POINT_CONFIG_TAG)) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            tempPntLst.Add(X, Y);
+                        foreach (string str in regionNode.SelectSingleNode(POINT_CONFIG_TAG).InnerText.Split(COUNTS_SEPARATOR)) {
+                            // locale?
+                            Y = long.Parse(str);
+                            tempPntLst.Add(peakStep, Y);
+                            ++peakStep;
                         }
                     } catch (FormatException) {
                         throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
                     }
+                    if (--peakStep != peakWidth)
+                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка чтения файла прецизионного спектра", filename);
+                    
                     return tempPntLst;
                 }
             }
@@ -1273,7 +1286,7 @@ namespace Flavor.Common {
                     xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                 }
                 public virtual void write() {
-                    xmlData.Save(@filename);
+                    xmlData.Save(filename);
                 }
                 public void saveCommonOptions(CommonOptions opts) {
                     XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
@@ -1339,13 +1352,14 @@ namespace Flavor.Common {
             private class CurrentPreciseDataWriter: CurrentWriter, IPreciseDataWriter {}
             private class CurrentSpectrumWriter: CurrentWriter, ISpectrumWriter {
                 protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
-                    XmlNode temp;
+                    StringBuilder sb = new StringBuilder();
                     foreach (ZedGraph.PointPair pp in row) {
-                        temp = xmlData.CreateElement(POINT_CONFIG_TAG);
-                        temp.AppendChild(xmlData.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
-                        temp.AppendChild(xmlData.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
-                        node.AppendChild(temp);
+                        sb.Append(pp.Y);
+                        sb.Append(COUNTS_SEPARATOR);
                     }
+                    XmlNode temp = xmlData.CreateElement(POINT_CONFIG_TAG); ; 
+                    temp.InnerText = sb.ToString(0, sb.Length - 1);
+                    node.AppendChild(temp);
                 }
             }
             private class CurrentMainConfigWriter: CurrentWriter, IMainConfigWriter {
