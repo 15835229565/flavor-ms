@@ -12,7 +12,7 @@ namespace Flavor.Forms {
         protected const int VERT_GRAPH_INDENT = 12;
         protected readonly Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
         Color.Black, Color.Magenta,};
-        protected const string Y_AXIS_TITLE = "Интенсивность";
+        protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
         private GraphPanel panel = null;
         protected GraphPanel Panel {

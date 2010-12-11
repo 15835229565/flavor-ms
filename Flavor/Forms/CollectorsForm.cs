@@ -10,15 +10,15 @@ using ZedGraph;
 namespace Flavor.Forms
 {
     internal partial class CollectorsForm : GraphForm {
-        private const string COL1_TITLE = "Первый коллектор";
-        private const string COL2_TITLE = "Второй коллектор";
-        private const string DIFF_TITLE = "Diff - ";
-        private const string PREC_TITLE = " (прециз.)";
-        private const string SCAN_TITLE = " (скан.)";
+        private readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
+        private readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
+        private readonly string DIFF_TITLE = Resources.CollectorsForm_DiffTitle;
+        private readonly string PREC_TITLE = Resources.CollectorsForm_PreciseTitle;
+        private readonly string SCAN_TITLE = Resources.CollectorsForm_ScanTitle;
 
-        private const string X_AXIS_TITLE_STEP = "Ступени";
-        private const string X_AXIS_TITLE_MASS = "Масса (а.е.м.)";
-        private const string X_AXIS_TITLE_VOLT = "Напряжение (В)";
+        private readonly string X_AXIS_TITLE_STEP = Resources.CollectorsForm_XAxisTitleStep;
+        private readonly string X_AXIS_TITLE_MASS = Resources.CollectorsForm_XAxisTitleMass;
+        private readonly string X_AXIS_TITLE_VOLT = Resources.CollectorsForm_XAxisTitleVoltage;
 
         private const string DIFF_ON_POINT_TAG = "custom_diff";
         public const string DIFF_ON_PEAK_TAG = "custom_diff_peak";
