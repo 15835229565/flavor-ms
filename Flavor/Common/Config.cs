@@ -28,9 +28,7 @@ namespace Flavor.Common {
         internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
         #endregion
         #region Spectra headers
-        //TODO: move to TagHolder!
-        private const string MONITOR_SPECTRUM_HEADER = "Monitor";
-        private const string PRECISE_OPTIONS_HEADER = "Precise options";
+        //private const string MONITOR_SPECTRUM_HEADER = "Monitor";
         #endregion
         private static string SerialPort = "COM1";
         private static ushort SerialBaudRate = 38400;
@@ -355,7 +353,8 @@ namespace Flavor.Common {
         internal static void autoSaveMonitorSpectrumFile(short shift) {
             DateTime dt = autoSavePreciseSpectrumFile(shift);// now both files are saved
             string filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
-            IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(filename, MONITOR_SPECTRUM_HEADER);
+            // TODO: temporary increase of saved data amount!
+            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
             writer.setTimeStamp(dt);
             writer.setShift(shift);
             writer.savePreciseData(Graph.Instance.PreciseData, true);
@@ -368,7 +367,7 @@ namespace Flavor.Common {
             return TagHolder.getPreciseDataReader(pedConfName).loadPreciseData();
         }
         internal static void savePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePeakSum) {
-            IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(pedConfName, PRECISE_OPTIONS_HEADER);
+            IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(pedConfName);
             writer.savePreciseData(peds, savePeakSum);
             writer.write();
         }
@@ -500,7 +499,7 @@ namespace Flavor.Common {
         private interface IShift {
             void setShift(short shift);
         }
-        private interface IAnyConfig { }
+        private interface IAnyConfig {}
         private interface IAnyReader: IAnyConfig {}
         private interface ICommonOptionsReader: IAnyReader {
             void loadCommonOptions(CommonOptions opts);
@@ -530,10 +529,10 @@ namespace Flavor.Common {
             void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2);
             void saveCommonOptions(CommonOptions opts);
         }
-        private interface IPreciseDataWriter: IAnyWriter, ITimeStamp, IShift { 
-            void savePreciseData(List<Utility.PreciseEditorData> peds/*, bool savePoints*/, bool savePeakSum);
+        private interface IPreciseDataWriter: IAnyWriter { 
+            void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum);
         }
-        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter {
+        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift {
             void saveScanOptions(Graph graph);
         }
         private interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter {}
@@ -599,7 +598,7 @@ namespace Flavor.Common {
             #endregion
             #region Spectra headers
             //private const string MONITOR_SPECTRUM_HEADER = "Monitor";
-            //private const string PRECISE_OPTIONS_HEADER = "Precise options";
+            private const string PRECISE_OPTIONS_HEADER = "Precise options";
             private const string COMMON_OPTIONS_HEADER = "Common options";
             private const string MEASURED_SPECTRUM_HEADER = "Measure";
             private const string DIFF_SPECTRUM_HEADER = "Diff";
@@ -611,850 +610,862 @@ namespace Flavor.Common {
                 this.xmlData = doc;
             }
             private abstract class LegacyTagHolder: TagHolder {
-                protected const string POINT_STEP_CONFIG_TAG = "s";
-                protected const string POINT_COUNT_CONFIG_TAG = "c";
-            }
-            #region Legacy Readers
-            private abstract class LegacyReader: LegacyTagHolder {
-                public void loadCommonOptions(CommonOptions opts) {
-                    string mainConfPrefix = "";
+                private const string POINT_STEP_CONFIG_TAG = "s";
+                private const string POINT_COUNT_CONFIG_TAG = "c";
+                #region Legacy Readers
+                public abstract class Reader: LegacyTagHolder {
+                    public void loadCommonOptions(CommonOptions opts) {
+                        string mainConfPrefix = "";
 
-                    if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG)) != null)
-                        mainConfPrefix = ROOT_CONFIG_TAG;
-                    else if (xmlData.SelectSingleNode(COMMON_CONFIG_TAG) == null) {
-                        throw new structureErrorOnLoadCommonData(filename);
-                    }
-                    XmlNode commonNode = xmlData.SelectSingleNode(combine(mainConfPrefix, COMMON_CONFIG_TAG));
-                    try {
-                        ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
-
-                        eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
-                        iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
-                        iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
-                        CP = ushort.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
-                        eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
-                        hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
-                        fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
-                        fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
-
-                        opts.eTime = eT;
-                        opts.iTime = iT;
-                        opts.iVoltage = iV;
-                        opts.CP = CP;
-                        opts.eCurrent = eC;
-                        opts.hCurrent = hC;
-                        opts.fV1 = fV1;
-                        opts.fV2 = fV2;
-                    } catch (NullReferenceException) {
-                        throw new structureErrorOnLoadCommonData(filename);
-                    }
-
-                    try {
-                        ushort befT, fT, bT;
-                        bool fAsbef;
-
-                        befT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText);
-                        fT = ushort.Parse(commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText);
-                        bT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText);
-                        fAsbef = bool.Parse(commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText);
-
-                        opts.befTime = befT;
-                        opts.ForwardTimeEqualsBeforeTime = fAsbef;
-                        opts.fTime = fT;
-                        opts.bTime = bT;
-                    } catch (NullReferenceException) {
-                        //Use hard-coded defaults
-                        return;
-                    }
-                }
-                public List<Utility.PreciseEditorData> loadPreciseData() {
-                    List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
-                    string mainConfPrefix = "";
-                    if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
-                        mainConfPrefix = ROOT_CONFIG_TAG;
-                    else if (xmlData.SelectSingleNode(SENSE_CONFIG_TAG) == null) {
-                        throw new structureErrorOnLoadPrecise(filename);
-                    }
-                    if (LoadPED(xmlData, "", peds, mainConfPrefix))
-                        return peds;
-                    return null;
-                }
-                protected bool LoadPED(XmlDocument pedConf, string errorMessage, List<Utility.PreciseEditorData> peds, string mainConfPrefix) {
-                    for (int i = 1; i <= 20; ++i) {
-                        Utility.PreciseEditorData temp = null;
-                        string peak, iter, width, col;
+                        if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG)) != null)
+                            mainConfPrefix = ROOT_CONFIG_TAG;
+                        else if (xmlData.SelectSingleNode(COMMON_CONFIG_TAG) == null) {
+                            throw new structureErrorOnLoadCommonData(filename);
+                        }
+                        XmlNode commonNode = xmlData.SelectSingleNode(combine(mainConfPrefix, COMMON_CONFIG_TAG));
                         try {
-                            XmlNode regionNode = pedConf.SelectSingleNode(combine(mainConfPrefix, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i)));
-                            peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
-                            col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
-                            iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
-                            width = regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText;
-                            bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
-                            if (allFilled) {
-                                string comment = "";
-                                try {
-                                    comment = regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText;
-                                } catch (NullReferenceException) { }
-                                bool use = true;
-                                try {
-                                    use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
-                                } catch (NullReferenceException) { } catch (FormatException) { }
-                                try {
-                                    temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
-                                                                 byte.Parse(col), ushort.Parse(iter),
-                                                                 ushort.Parse(width), (float)0, comment);
-                                } catch (FormatException) {
-                                    throw new ConfigLoadException("Неверный формат данных", errorMessage, filename);
-                                }
-                                temp.AssociatedPoints = readPeaks(regionNode);
-                            }
+                            ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
+
+                            eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
+                            iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
+                            iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
+                            CP = ushort.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+                            eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
+                            hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
+                            fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
+                            fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
+
+                            opts.eTime = eT;
+                            opts.iTime = iT;
+                            opts.iVoltage = iV;
+                            opts.CP = CP;
+                            opts.eCurrent = eC;
+                            opts.hCurrent = hC;
+                            opts.fV1 = fV1;
+                            opts.fV2 = fV2;
                         } catch (NullReferenceException) {
-                            throw new ConfigLoadException("Ошибка структуры файла", errorMessage, filename);
+                            throw new structureErrorOnLoadCommonData(filename);
                         }
-                        if (temp != null) peds.Add(temp);
-                    }
-                    peds.Sort(Utility.ComparePreciseEditorData);
-                    return true;
-                }
-                protected virtual PointPairListPlus readPeaks(XmlNode regionNode) {
-                    return null;
-                }
-            }
-            private class LegacyCommonOptionsReader: LegacyReader, ICommonOptionsReader {}
-            private class LegacyPreciseDataReader: LegacyReader, IPreciseDataReader {}
-            private class LegacyMainConfig: LegacyReader, IMainConfig {
-                #region IMainConfig implementation
-                public void read()
-                {
-                    string prefix;
-                    try {
-                        prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                        SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                        SerialBaudRate = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
-                        sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-                        sPoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
-                        ePoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        loadMassCoeffs();
-                    } catch (ConfigLoadException) {
-                        //cle.visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        loadCommonOptions(commonOpts);
-                    } catch (ConfigLoadException cle) {
-                        cle.visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        List<Utility.PreciseEditorData> pedl = loadPreciseData();
-                        if ((pedl != null) && (pedl.Count > 0)) {
-                            //BAD!!! cleaning previous points!!!
-                            preciseData.Clear();
-                            preciseData.AddRange(pedl);
-                        }
-                    } catch (ConfigLoadException cle) {
-                        cle.visualise();
-                        //use empty default ped
-                    }
-                    prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
-                    try {
-                        ushort step = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
-                        byte collector = byte.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
-                        ushort width = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
-                        reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (null checker peak)
-                    } catch (FormatException) {
-                        // TODO: very bad..
-                        //use hard-coded defaults (null checker peak)
-                    }
-                    try {
-                        iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (infinite iterations)
-                    }
-                    try {
-                        timeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (no time limit)
-                    }
-                    try {
-                        allowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (zero shift allowed)
-                    }
-                    // BAD: really uses previous values!
-                }
-                public XmlDocument XML {
-                    get {
-                        return xmlData;
-                    }
-                }
-                #endregion
-                private void loadMassCoeffs() {
-                    // parse from already loaded config
-                    XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
-                    if (interfaceNode == null)
-                        throw new ConfigLoadException("", "", filename);
-                    try {
-                        col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                        col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                    } catch (FormatException) {
-                        throw new ConfigLoadException("", "", filename);
-                    }
-                }
-            }
-            private class LegacySpectrumReader: LegacyReader, ISpectrumReader {
-                private bool hint;
-                #region ISpectrumReader Members
-                public bool Hint {
-                    get {
-                        return hint;
-                    }
-                    set {
-                        hint = value;
-                    }
-                }
-                public bool readSpectrum(out Graph graph) {
-                    bool result;
-                    ConfigLoadException resultException = null;
-                    try {
-                        result = hint ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
-                        if (result)
-                            return hint;
-                    } catch (ConfigLoadException cle) {
-                        resultException = cle;
-                    }
-                    try {
-                        result = (!hint) ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
-                        if (result)
-                            return (hint = !hint);
-                    } catch (ConfigLoadException cle) {
-                        resultException = (resultException == null) ? cle : resultException;
-                    }
-                    throw resultException;
-                }
-                public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
-                    XmlNode headerNode = null;
-                    string prefix = "";
 
-                    if (xmlData.SelectSingleNode(OVERVIEW_CONFIG_TAG) != null) {
-                        headerNode = xmlData.SelectSingleNode(combine(OVERVIEW_CONFIG_TAG, HEADER_CONFIG_TAG));
-                    } else if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG)) != null) {
-                        prefix = ROOT_CONFIG_TAG;
-                        headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
-                    } else {
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
-                    }
-
-                    Graph.Displaying spectrumType = Graph.Displaying.Measured;
-                    if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
-                        spectrumType = Graph.Displaying.Diff;
-
-                    ushort X = 0;
-                    long Y = 0;
-                    try {
-                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL1_CONFIG_TAG, POINT_CONFIG_TAG))) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            pl1.Add(X, Y);
-                        }
-                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL2_CONFIG_TAG, POINT_CONFIG_TAG))) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            pl2.Add(X, Y);
-                        }
-                    } catch (NullReferenceException) {
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
-                    }
-                    try {
-                        commonOpts = new CommonOptions();
-                        loadCommonOptions(commonOpts);
-                    } catch (structureErrorOnLoadCommonData) {
-                        commonOpts = null;
-                    }
-                    pl1.Sort(ZedGraph.SortType.XValues);
-                    pl2.Sort(ZedGraph.SortType.XValues);
-                    return spectrumType;
-                }
-                public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
-                    string prefix = "";
-                    if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
-                        prefix = ROOT_CONFIG_TAG;
-                    else if (xmlData.SelectSingleNode(SENSE_CONFIG_TAG) == null) {
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
-                    }
-
-                    CommonOptions co = new CommonOptions();
-                    try {
-                        loadCommonOptions(co);
-                    } catch (structureErrorOnLoadCommonData) {
-                        co = null;
-                    }
-                    peds.CommonOptions = co;
-
-                    return LoadPED(xmlData, "Ошибка чтения файла прецизионного спектра", peds, prefix);
-                }
-                #endregion
-                private bool OpenSpecterFile(out Graph graph) {
-                    PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
-                    CommonOptions commonOpts;
-                    Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
-
-                    graph = new Graph(commonOpts);
-                    switch (result) {
-                        case Graph.Displaying.Measured:
-                            graph.updateGraphAfterScanLoad(pl1, pl2);
-                            return true;
-                        case Graph.Displaying.Diff:
-                            graph.updateGraphAfterScanDiff(pl1, pl2);
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-                private bool OpenPreciseSpecterFile(out Graph graph) {
-                    PreciseSpectrum peds = new PreciseSpectrum();
-                    bool result = openPreciseSpectrumFile(peds);
-                    if (result) {
-                        graph = new Graph(peds.CommonOptions);
-                        graph.updateGraphAfterPreciseLoad(peds);
-                    } else {
-                        //TODO: other solution!
-                        graph = null;
-                    }
-                    return result;
-                }
-                protected sealed override PointPairListPlus readPeaks(XmlNode regionNode) {
-                    ushort X;
-                    long Y;
-                    PointPairListPlus tempPntLst = new PointPairListPlus();
-                    try {
-                        foreach (XmlNode pntNode in regionNode.SelectNodes(POINT_CONFIG_TAG)) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            tempPntLst.Add(X, Y);
-                        }
-                    } catch (FormatException) {
-                        throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
-                    }
-                    return tempPntLst;
-                }
-            }
-            #endregion
-            private abstract class CurrentTagHolder: TagHolder {
-                protected const char COUNTS_SEPARATOR = ' ';
-            }
-            #region Current Readers
-            private abstract class CurrentReader: CurrentTagHolder {
-                public void loadCommonOptions(CommonOptions opts) {
-                    XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
-                    try {
-                        ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
-
-                        eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
-                        iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
-                        iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
-                        CP = ushort.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
-                        eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
-                        hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
-                        fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
-                        fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
-
-                        opts.eTime = eT;
-                        opts.iTime = iT;
-                        opts.iVoltage = iV;
-                        opts.CP = CP;
-                        opts.eCurrent = eC;
-                        opts.hCurrent = hC;
-                        opts.fV1 = fV1;
-                        opts.fV2 = fV2;
-                    } catch (NullReferenceException) {
-                        throw new structureErrorOnLoadCommonData(filename);
-                    }
-                    loadDelays(commonNode, opts);
-                }
-                public List<Utility.PreciseEditorData> loadPreciseData() {
-                    List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
-                    if (LoadPED(xmlData, "", peds))
-                        return peds;
-                    return null;
-                }
-                protected bool LoadPED(XmlDocument pedConf, string errorMessage, List<Utility.PreciseEditorData> peds) {
-                    string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
-                    for (int i = 1; i <= 20; ++i) {
-                        string peak, iter, width, col;
                         try {
-                            XmlNode regionNode = pedConf.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
-                            peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
-                            col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
-                            iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
-                            width = regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText;
-                            bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
-                            if (allFilled) {
-                                string comment;
-                                try {
-                                    comment = regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText;
-                                } catch (NullReferenceException) {
-                                    comment = "";
-                                }
-                                try {
-                                    bool use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
-                                    ushort peakStep = ushort.Parse(peak);
-                                    ushort peakWidth = ushort.Parse(width);
-                                    Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), peakStep,
-                                                                        byte.Parse(col), ushort.Parse(iter),
-                                                                        ushort.Parse(width), (float)0, comment);
-                                    peakStep -= peakWidth;
-                                    peakWidth += peakWidth += peakStep;
-                                    temp.AssociatedPoints = readPeaks(regionNode, peakStep, peakWidth);
-                                    peds.Add(temp);
-                                } catch (FormatException) {
-                                    throw new ConfigLoadException("Неверный формат данных", errorMessage, filename);
-                                }
-                            }
+                            ushort befT, fT, bT;
+                            bool fAsbef;
+
+                            befT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText);
+                            fT = ushort.Parse(commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText);
+                            bT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText);
+                            fAsbef = bool.Parse(commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText);
+
+                            opts.befTime = befT;
+                            opts.ForwardTimeEqualsBeforeTime = fAsbef;
+                            opts.fTime = fT;
+                            opts.bTime = bT;
                         } catch (NullReferenceException) {
-                            throw new ConfigLoadException("Ошибка структуры файла", errorMessage, filename);
+                            //Use hard-coded defaults
+                            return;
                         }
                     }
-                    peds.Sort(Utility.ComparePreciseEditorData);
-                    return true;
-                }
-                protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
-                protected virtual void loadDelays(XmlNode commonNode, CommonOptions opts) {}
-            }
-            private class CurrentCommonOptionsReader: CurrentReader, ICommonOptionsReader {}
-            private class CurrentPreciseDataReader: CurrentReader, IPreciseDataReader {}
-            private class CurrentMainConfig: CurrentReader, IMainConfig {
-                #region IMainConfig implementation
-                public void read() {
-                    string prefix;
-                    try {
-                        prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                        SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                        SerialBaudRate = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
-                        sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-                        sPoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
-                        ePoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        loadMassCoeffs();
-                    } catch (ConfigLoadException) {
-                        //cle.visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        loadCommonOptions(commonOpts);
-                    } catch (ConfigLoadException cle) {
-                        cle.visualise();
-                        //use hard-coded defaults
-                    }
-                    try {
-                        List<Utility.PreciseEditorData> pedl = loadPreciseData();
-                        if ((pedl != null) && (pedl.Count > 0)) {
-                            //BAD!!! cleaning previous points!!!
-                            preciseData.Clear();
-                            preciseData.AddRange(pedl);
+                    public List<Utility.PreciseEditorData> loadPreciseData() {
+                        List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+                        string mainConfPrefix = "";
+                        if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
+                            mainConfPrefix = ROOT_CONFIG_TAG;
+                        else if (xmlData.SelectSingleNode(SENSE_CONFIG_TAG) == null) {
+                            throw new structureErrorOnLoadPrecise(filename);
                         }
-                    } catch (ConfigLoadException cle) {
-                        cle.visualise();
-                        //use empty default ped
+                        if (LoadPED("", peds, mainConfPrefix))
+                            return peds;
+                        return null;
                     }
-                    prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
-                    try {
-                        ushort step = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
-                        byte collector = byte.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
-                        ushort width = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
-                        reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (null checker peak)
-                    } catch (FormatException) {
-                        // TODO: very bad..
-                        //use hard-coded defaults (null checker peak)
+                    protected bool LoadPED(string errorMessage, List<Utility.PreciseEditorData> peds, string mainConfPrefix) {
+                        for (int i = 1; i <= 20; ++i) {
+                            Utility.PreciseEditorData temp = null;
+                            string peak, iter, width, col;
+                            try {
+                                XmlNode regionNode = xmlData.SelectSingleNode(combine(mainConfPrefix, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i)));
+                                peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
+                                col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
+                                iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
+                                width = regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText;
+                                bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
+                                if (allFilled) {
+                                    string comment = "";
+                                    try {
+                                        comment = regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText;
+                                    } catch (NullReferenceException) { }
+                                    bool use = true;
+                                    try {
+                                        use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
+                                    } catch (NullReferenceException) { } catch (FormatException) { }
+                                    try {
+                                        temp = new Utility.PreciseEditorData(use, (byte)(i - 1), ushort.Parse(peak),
+                                                                     byte.Parse(col), ushort.Parse(iter),
+                                                                     ushort.Parse(width), (float)0, comment);
+                                    } catch (FormatException) {
+                                        throw new ConfigLoadException("Неверный формат данных", errorMessage, filename);
+                                    }
+                                    temp.AssociatedPoints = readPeaks(regionNode);
+                                }
+                            } catch (NullReferenceException) {
+                                throw new ConfigLoadException("Ошибка структуры файла", errorMessage, filename);
+                            }
+                            if (temp != null) peds.Add(temp);
+                        }
+                        peds.Sort(Utility.ComparePreciseEditorData);
+                        return true;
                     }
-                    try {
-                        iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (infinite iterations)
+                    protected virtual PointPairListPlus readPeaks(XmlNode regionNode) {
+                        return null;
                     }
-                    try {
-                        timeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (no time limit)
-                    }
-                    try {
-                        allowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
-                    } catch (NullReferenceException) {
-                        //use hard-coded defaults (zero shift allowed)
-                    }
-                    // BAD: really uses previous values!
                 }
-                public XmlDocument XML {
-                    get {
-                        return xmlData;
+                public class CommonOptionsReader: Reader, ICommonOptionsReader { }
+                public class PreciseDataReader: Reader, IPreciseDataReader { }
+                public class MainConfig: Reader, IMainConfig {
+                    #region IMainConfig implementation
+                    public void read() {
+                        string prefix;
+                        try {
+                            prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
+                            SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
+                            SerialBaudRate = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                            sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                            sPoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
+                            ePoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            loadMassCoeffs();
+                        } catch (ConfigLoadException) {
+                            //cle.visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            loadCommonOptions(commonOpts);
+                        } catch (ConfigLoadException cle) {
+                            cle.visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            List<Utility.PreciseEditorData> pedl = loadPreciseData();
+                            if ((pedl != null) && (pedl.Count > 0)) {
+                                //BAD!!! cleaning previous points!!!
+                                preciseData.Clear();
+                                preciseData.AddRange(pedl);
+                            }
+                        } catch (ConfigLoadException cle) {
+                            cle.visualise();
+                            //use empty default ped
+                        }
+                        prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
+                        try {
+                            ushort step = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
+                            byte collector = byte.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
+                            ushort width = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
+                            reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (null checker peak)
+                        } catch (FormatException) {
+                            // TODO: very bad..
+                            //use hard-coded defaults (null checker peak)
+                        }
+                        try {
+                            iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (infinite iterations)
+                        }
+                        try {
+                            timeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (no time limit)
+                        }
+                        try {
+                            allowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (zero shift allowed)
+                        }
+                        // BAD: really uses previous values!
                     }
-                }
-                #endregion
-                private void loadMassCoeffs() {
-                    try {
+                    public XmlDocument XML {
+                        get {
+                            return xmlData;
+                        }
+                    }
+                    #endregion
+                    private void loadMassCoeffs() {
+                        // parse from already loaded config
                         XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
-                        col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                        col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                    } catch (NullReferenceException) {
-                        throw new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename);
-                    } catch (FormatException) {
-                        throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения конфигурационного файла", filename);
+                        if (interfaceNode == null)
+                            throw new ConfigLoadException("", "", filename);
+                        try {
+                            col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                        } catch (FormatException) {
+                            throw new ConfigLoadException("", "", filename);
+                        }
                     }
                 }
-                protected override void loadDelays(XmlNode commonNode, CommonOptions opts) {
-                    try {
-                        ushort befT, fT, bT;
-                        bool fAsbef;
-
-                        befT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText);
-                        fT = ushort.Parse(commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText);
-                        bT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText);
-                        fAsbef = bool.Parse(commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText);
-
-                        opts.befTime = befT;
-                        opts.ForwardTimeEqualsBeforeTime = fAsbef;
-                        opts.fTime = fT;
-                        opts.bTime = bT;
-                    } catch (NullReferenceException) {
-                        //Use hard-coded defaults
-                        return;
-                    }
-                }
-            }
-            private class CurrentSpectrumReader: CurrentReader, ISpectrumReader {
-                private bool hint;
-                #region ISpectrumReader Members
-                public bool Hint {
-                    get {
-                        return hint;
-                    }
-                    set {
-                        hint = value;
-                    }
-                }
-                public bool readSpectrum(out Graph graph) {
-                    bool result;
-                    ConfigLoadException resultException = null;
-                    try {
-                        result = hint ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
-                        if (result)
+                public class SpectrumReader: Reader, ISpectrumReader {
+                    private bool hint;
+                    #region ISpectrumReader Members
+                    public bool Hint {
+                        get {
                             return hint;
-                    } catch (ConfigLoadException cle) {
-                        resultException = cle;
+                        }
+                        set {
+                            hint = value;
+                        }
                     }
-                    try {
-                        result = (!hint) ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
-                        if (result)
-                            return (hint = !hint);
-                    } catch (ConfigLoadException cle) {
-                        resultException = (resultException == null) ? cle : resultException;
+                    public bool readSpectrum(out Graph graph) {
+                        bool result;
+                        ConfigLoadException resultException = null;
+                        try {
+                            result = hint ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
+                            if (result)
+                                return hint;
+                        } catch (ConfigLoadException cle) {
+                            resultException = cle;
+                        }
+                        try {
+                            result = (!hint) ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
+                            if (result)
+                                return (hint = !hint);
+                        } catch (ConfigLoadException cle) {
+                            resultException = (resultException == null) ? cle : resultException;
+                        }
+                        throw resultException;
                     }
-                    throw resultException;
-                }
-                public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
-                    XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
-                    string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                    public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
+                        XmlNode headerNode = null;
+                        string prefix = "";
 
-                    Graph.Displaying spectrumType = Graph.Displaying.Measured;
-                    if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
-                        spectrumType = Graph.Displaying.Diff;
+                        if (xmlData.SelectSingleNode(OVERVIEW_CONFIG_TAG) != null) {
+                            headerNode = xmlData.SelectSingleNode(combine(OVERVIEW_CONFIG_TAG, HEADER_CONFIG_TAG));
+                        } else if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG)) != null) {
+                            prefix = ROOT_CONFIG_TAG;
+                            headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                        } else {
+                            throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                        }
 
-                    try {
-                        ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
-                        ushort end = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
-                        pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
-                        pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
-                    } catch (NullReferenceException) {
-                        throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
-                    } catch (FormatException) {
-                        throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла спектра", filename);
-                    }
-                    //the whole logic of displaying spectra must be modified
-                    //!!!!!!!!!!!!!!!!!!!!!!!!
-                    try {
-                        commonOpts = new CommonOptions();
-                        loadCommonOptions(commonOpts);
-                    } catch (structureErrorOnLoadCommonData) {
-                        commonOpts = null;
-                    }
-                    //!!!!!!!!!!!!!!!!!!!!!!!!
-                    pl1.Sort(ZedGraph.SortType.XValues);
-                    pl2.Sort(ZedGraph.SortType.XValues);
-                    return spectrumType;
-                }
-                public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
-                    CommonOptions co = new CommonOptions();
-                    try {
-                        loadCommonOptions(co);
-                    } catch (structureErrorOnLoadCommonData) {
-                        co = null;
-                    }
-                    peds.CommonOptions = co;
+                        Graph.Displaying spectrumType = Graph.Displaying.Measured;
+                        if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
+                            spectrumType = Graph.Displaying.Diff;
 
-                    return LoadPED(xmlData, "Ошибка чтения файла прецизионного спектра", peds);
+                        ushort X = 0;
+                        long Y = 0;
+                        try {
+                            foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL1_CONFIG_TAG, POINT_CONFIG_TAG))) {
+                                X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                                Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
+                                pl1.Add(X, Y);
+                            }
+                            foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, OVERVIEW_CONFIG_TAG, COL2_CONFIG_TAG, POINT_CONFIG_TAG))) {
+                                X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                                Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
+                                pl2.Add(X, Y);
+                            }
+                        } catch (NullReferenceException) {
+                            throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                        }
+                        try {
+                            commonOpts = new CommonOptions();
+                            loadCommonOptions(commonOpts);
+                        } catch (structureErrorOnLoadCommonData) {
+                            commonOpts = null;
+                        }
+                        pl1.Sort(ZedGraph.SortType.XValues);
+                        pl2.Sort(ZedGraph.SortType.XValues);
+                        return spectrumType;
+                    }
+                    public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
+                        string prefix = "";
+                        if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG)) != null)
+                            prefix = ROOT_CONFIG_TAG;
+                        else if (xmlData.SelectSingleNode(SENSE_CONFIG_TAG) == null) {
+                            throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
+                        }
+
+                        CommonOptions co = new CommonOptions();
+                        try {
+                            loadCommonOptions(co);
+                        } catch (structureErrorOnLoadCommonData) {
+                            co = null;
+                        }
+                        peds.CommonOptions = co;
+
+                        return LoadPED("Ошибка чтения файла прецизионного спектра", peds, prefix);
+                    }
+                    #endregion
+                    private bool OpenSpecterFile(out Graph graph) {
+                        PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
+                        CommonOptions commonOpts;
+                        Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
+
+                        graph = new Graph(commonOpts);
+                        switch (result) {
+                            case Graph.Displaying.Measured:
+                                graph.updateGraphAfterScanLoad(pl1, pl2);
+                                return true;
+                            case Graph.Displaying.Diff:
+                                graph.updateGraphAfterScanDiff(pl1, pl2);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                    private bool OpenPreciseSpecterFile(out Graph graph) {
+                        PreciseSpectrum peds = new PreciseSpectrum();
+                        bool result = openPreciseSpectrumFile(peds);
+                        if (result) {
+                            graph = new Graph(peds.CommonOptions);
+                            graph.updateGraphAfterPreciseLoad(peds);
+                        } else {
+                            //TODO: other solution!
+                            graph = null;
+                        }
+                        return result;
+                    }
+                    protected sealed override PointPairListPlus readPeaks(XmlNode regionNode) {
+                        ushort X;
+                        long Y;
+                        PointPairListPlus tempPntLst = new PointPairListPlus();
+                        try {
+                            foreach (XmlNode pntNode in regionNode.SelectNodes(POINT_CONFIG_TAG)) {
+                                X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
+                                Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
+                                tempPntLst.Add(X, Y);
+                            }
+                        } catch (FormatException) {
+                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
+                        }
+                        return tempPntLst;
+                    }
                 }
                 #endregion
-                private bool OpenSpecterFile(out Graph graph) {
-                    PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
-                    CommonOptions commonOpts;
-                    Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
-
-                    graph = new Graph(commonOpts);
-                    switch (result) {
-                        case Graph.Displaying.Measured:
-                            graph.updateGraphAfterScanLoad(pl1, pl2);
-                            return true;
-                        case Graph.Displaying.Diff:
-                            graph.updateGraphAfterScanDiff(pl1, pl2);
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-                private bool OpenPreciseSpecterFile(out Graph graph) {
-                    PreciseSpectrum peds = new PreciseSpectrum();
-                    bool result = openPreciseSpectrumFile(peds);
-                    if (result) {
-                        graph = new Graph(peds.CommonOptions);
-                        graph.updateGraphAfterPreciseLoad(peds);
-                    } else {
-                        //TODO: other solution!
-                        graph = null;
-                    }
-                    return result;
-                }
-                protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
-                    PointPairListPlus tempPntLst = new PointPairListPlus();
-                    try {
-                        XmlNode temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
-                        if (temp == null)
-                            return null;
-                        string text = temp.InnerText;
-                        string[] parts = text.Split(COUNTS_SEPARATOR);
-                        foreach (string str in parts) {
-                            // locale?
-                            tempPntLst.Add(peakStart, long.Parse(str));
-                            ++peakStart;
-                        }
-                    } catch (FormatException) {
-                        throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
-                    }
-                    if (--peakStart != peakEnd)
-                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка чтения файла прецизионного спектра", filename);
-                    
-                    return tempPntLst;
-                }
             }
-            #endregion
-            #region Current Writers
-            private abstract class CurrentWriter: CurrentTagHolder {
-                public void setTimeStamp(DateTime dt) {
-                    XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
-                    attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-                    xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
-                }
-                public void setShift(short shift) {
-                    XmlAttribute attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
-                    attr.Value = shift.ToString();
-                    xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
-                }
-                public virtual void write() {
-                    xmlData.Save(filename);
-                }
-                public void saveCommonOptions(CommonOptions opts) {
-                    XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
-                    saveCommonOptions(commonNode, opts);
-                }
-                public void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
-                    CommonOptions opts = new CommonOptions();
-                    opts.eTimeReal = eT;
-                    opts.iTimeReal = iT;
-                    opts.iVoltageReal = iV;
-                    opts.CPReal = cp;
-                    opts.eCurrentReal = eC;
-                    opts.hCurrentReal = hC;
-                    opts.fV1Real = fv1;
-                    opts.fV2Real = fv2;
-                    saveCommonOptions(opts);
-                }
-                private void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
-                    commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = opts.eTime.ToString();
-                    commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
-                    commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
-                    commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.CP.ToString();
-                    commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
-                    commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
-                    commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = opts.fV1.ToString();
-                    commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = opts.fV2.ToString();
-                    /*commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();
-                    commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
-                    commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
-                    commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();*/
-                }
-                public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum) {
-                    clearOldValues();
-                    foreach (Utility.PreciseEditorData ped in peds) {
-                        XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
-                        regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
-                        regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
-                        regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText = ped.Width.ToString();
-                        regionNode.SelectSingleNode(PEAK_PRECISION_CONFIG_TAG).InnerText = ped.Precision.ToString();
-                        regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText = ped.Collector.ToString();
-                        regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText = ped.Comment;
-                        regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText = ped.Use.ToString();
+            private abstract class CurrentTagHolder: TagHolder {
+                private const char COUNTS_SEPARATOR = ' ';
+                #region Current Readers
+                public abstract class Reader: CurrentTagHolder {
+                    public void loadCommonOptions(CommonOptions opts) {
+                        XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
+                        try {
+                            ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
 
-                        if (ped.AssociatedPoints == null) {
-                            continue;
-                        }
+                            eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
+                            iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
+                            iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
+                            CP = ushort.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+                            eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
+                            hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
+                            fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
+                            fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
 
-                        if (savePeakSum) {
-                            regionNode.AppendChild(xmlData.CreateElement(PEAK_COUNT_SUM_CONFIG_TAG)).InnerText = ped.AssociatedPoints.PLSreference.PeakSum.ToString();
+                            opts.eTime = eT;
+                            opts.iTime = iT;
+                            opts.iVoltage = iV;
+                            opts.CP = CP;
+                            opts.eCurrent = eC;
+                            opts.hCurrent = hC;
+                            opts.fV1 = fV1;
+                            opts.fV2 = fV2;
+                        } catch (NullReferenceException) {
+                            throw new structureErrorOnLoadCommonData(filename);
                         }
-                        savePointRows(ped.AssociatedPoints, regionNode);
+                        loadDelays(commonNode, opts);
+                    }
+                    public List<Utility.PreciseEditorData> loadPreciseData() {
+                        List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+                        if (LoadPED("", peds))
+                            return peds;
+                        return null;
+                    }
+                    protected bool LoadPED(string errorMessage, List<Utility.PreciseEditorData> peds) {
+                        string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
+                        for (int i = 1; i <= 20; ++i) {
+                            string peak, iter, width, col;
+                            try {
+                                XmlNode regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
+                                peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
+                                col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
+                                iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
+                                width = regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText;
+                                bool allFilled = ((peak != "") && (iter != "") && (width != "") && (col != ""));
+                                if (allFilled) {
+                                    string comment;
+                                    try {
+                                        comment = regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText;
+                                    } catch (NullReferenceException) {
+                                        comment = "";
+                                    }
+                                    try {
+                                        bool use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
+                                        ushort peakStep = ushort.Parse(peak);
+                                        ushort peakWidth = ushort.Parse(width);
+                                        Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), peakStep,
+                                                                            byte.Parse(col), ushort.Parse(iter),
+                                                                            ushort.Parse(width), (float)0, comment);
+                                        peakStep -= peakWidth;
+                                        peakWidth += peakWidth += peakStep;
+                                        temp.AssociatedPoints = readPeaks(regionNode, peakStep, peakWidth);
+                                        peds.Add(temp);
+                                    } catch (FormatException) {
+                                        throw new ConfigLoadException("Неверный формат данных", errorMessage, filename);
+                                    }
+                                }
+                            } catch (NullReferenceException) {
+                                throw new ConfigLoadException("Ошибка структуры файла", errorMessage, filename);
+                            }
+                        }
+                        peds.Sort(Utility.ComparePreciseEditorData);
+                        return true;
+                    }
+                    protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
+                    protected virtual void loadDelays(XmlNode commonNode, CommonOptions opts) { }
+                }
+                public class CommonOptionsReader: Reader, ICommonOptionsReader { }
+                public class PreciseDataReader: Reader, IPreciseDataReader { }
+                public class MainConfig: Reader, IMainConfig {
+                    #region IMainConfig implementation
+                    public void read() {
+                        string prefix;
+                        try {
+                            prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
+                            SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
+                            SerialBaudRate = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                            sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                            sPoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
+                            ePoint = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            (new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename)).visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            loadMassCoeffs();
+                        } catch (ConfigLoadException) {
+                            //cle.visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            loadCommonOptions(commonOpts);
+                        } catch (ConfigLoadException cle) {
+                            cle.visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            List<Utility.PreciseEditorData> pedl = loadPreciseData();
+                            if ((pedl != null) && (pedl.Count > 0)) {
+                                //BAD!!! cleaning previous points!!!
+                                preciseData.Clear();
+                                preciseData.AddRange(pedl);
+                            }
+                        } catch (ConfigLoadException cle) {
+                            cle.visualise();
+                            //use empty default ped
+                        }
+                        prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
+                        try {
+                            ushort step = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
+                            byte collector = byte.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
+                            ushort width = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
+                            reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (null checker peak)
+                        } catch (FormatException) {
+                            // TODO: very bad..
+                            //use hard-coded defaults (null checker peak)
+                        }
+                        try {
+                            iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (infinite iterations)
+                        }
+                        try {
+                            timeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (no time limit)
+                        }
+                        try {
+                            allowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (zero shift allowed)
+                        }
+                        // BAD: really uses previous values!
+                    }
+                    public XmlDocument XML {
+                        get {
+                            return xmlData;
+                        }
+                    }
+                    #endregion
+                    private void loadMassCoeffs() {
+                        try {
+                            XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
+                            col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                        } catch (NullReferenceException) {
+                            throw new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename);
+                        } catch (FormatException) {
+                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения конфигурационного файла", filename);
+                        }
+                    }
+                    protected override void loadDelays(XmlNode commonNode, CommonOptions opts) {
+                        try {
+                            ushort befT, fT, bT;
+                            bool fAsbef;
+
+                            befT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText);
+                            fT = ushort.Parse(commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText);
+                            bT = ushort.Parse(commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText);
+                            fAsbef = bool.Parse(commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText);
+
+                            opts.befTime = befT;
+                            opts.ForwardTimeEqualsBeforeTime = fAsbef;
+                            opts.fTime = fT;
+                            opts.bTime = bT;
+                        } catch (NullReferenceException) {
+                            //Use hard-coded defaults
+                            return;
+                        }
                     }
                 }
-                protected virtual void clearOldValues() {}
-                protected virtual void savePointRows(PointPairListPlus row, XmlNode node) {}
-            }
-            private class CurrentCommonOptionsWriter: CurrentWriter, ICommonOptionsWriter {}
-            private class CurrentPreciseDataWriter: CurrentWriter, IPreciseDataWriter {}
-            private class CurrentSpectrumWriter: CurrentWriter, ISpectrumWriter {
-                protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
-                    if (row.Count == 0)
-                        return;
-                    StringBuilder sb = new StringBuilder();
-                    foreach (ZedGraph.PointPair pp in row) {
-                        sb.Append(pp.Y);
-                        sb.Append(COUNTS_SEPARATOR);
+                public class SpectrumReader: Reader, ISpectrumReader {
+                    private bool hint;
+                    #region ISpectrumReader Members
+                    public bool Hint {
+                        get {
+                            return hint;
+                        }
+                        set {
+                            hint = value;
+                        }
                     }
-                    XmlNode temp = xmlData.CreateElement(POINT_CONFIG_TAG); ; 
-                    temp.InnerText = sb.ToString(0, sb.Length - 1);
-                    node.AppendChild(temp);
-                }
-                public void saveScanOptions(Graph graph) {
-                    XmlNode scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
-                    XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
-                    PointPairListPlus ppl1 = graph.Displayed1Steps[0];
-                    PointPairListPlus ppl2 = graph.Displayed2Steps[0];
-                    // TODO: check for data mismatch?
-                    temp.InnerText = ppl1[0].X.ToString();
-                    scanNode.AppendChild(temp);
-                    temp = xmlData.CreateElement(END_SCAN_CONFIG_TAG);
-                    // TODO: check for data mismatch?
-                    temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
-                    scanNode.AppendChild(temp);
+                    public bool readSpectrum(out Graph graph) {
+                        bool result;
+                        ConfigLoadException resultException = null;
+                        try {
+                            result = hint ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
+                            if (result)
+                                return hint;
+                        } catch (ConfigLoadException cle) {
+                            resultException = cle;
+                        }
+                        try {
+                            result = (!hint) ? OpenSpecterFile(out graph) : OpenPreciseSpecterFile(out graph);
+                            if (result)
+                                return (hint = !hint);
+                        } catch (ConfigLoadException cle) {
+                            resultException = (resultException == null) ? cle : resultException;
+                        }
+                        throw resultException;
+                    }
+                    public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
+                        XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                        string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
 
-                    XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
-                    savePointRows(ppl1, colNode);
-                    colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
-                    savePointRows(ppl2, colNode);
-                }
-            }
-            private class CurrentMainConfigWriter: CurrentWriter, IMainConfigWriter {
-                #region IAnyWriter Members
-                public override void write() {
-                    saveConnectOptions();
-                    saveScanOptions();
-                    saveCommonOptions();
-                    saveDelaysOptions();
-                    saveMassCoeffs();
-                    saveCheckOptions();
-                    SavePreciseOptions();
-                    base.write();
+                        Graph.Displaying spectrumType = Graph.Displaying.Measured;
+                        if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
+                            spectrumType = Graph.Displaying.Diff;
+
+                        try {
+                            ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
+                            ushort end = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
+                            pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
+                            pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
+                        } catch (NullReferenceException) {
+                            throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                        } catch (FormatException) {
+                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла спектра", filename);
+                        }
+                        //the whole logic of displaying spectra must be modified
+                        //!!!!!!!!!!!!!!!!!!!!!!!!
+                        try {
+                            commonOpts = new CommonOptions();
+                            loadCommonOptions(commonOpts);
+                        } catch (structureErrorOnLoadCommonData) {
+                            commonOpts = null;
+                        }
+                        //!!!!!!!!!!!!!!!!!!!!!!!!
+                        pl1.Sort(ZedGraph.SortType.XValues);
+                        pl2.Sort(ZedGraph.SortType.XValues);
+                        return spectrumType;
+                    }
+                    public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
+                        CommonOptions co = new CommonOptions();
+                        try {
+                            loadCommonOptions(co);
+                        } catch (structureErrorOnLoadCommonData) {
+                            co = null;
+                        }
+                        peds.CommonOptions = co;
+
+                        return LoadPED("Ошибка чтения файла прецизионного спектра", peds);
+                    }
+                    #endregion
+                    private bool OpenSpecterFile(out Graph graph) {
+                        PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
+                        CommonOptions commonOpts;
+                        Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
+
+                        try {
+                            DateTime dt = loadTimeStamp();
+                            short shift = loadShift();
+                        } catch (Exception) {
+                            // do nothing
+                        }
+
+                        graph = new Graph(commonOpts);
+                        switch (result) {
+                            case Graph.Displaying.Measured:
+                                graph.updateGraphAfterScanLoad(pl1, pl2);
+                                return true;
+                            case Graph.Displaying.Diff:
+                                graph.updateGraphAfterScanDiff(pl1, pl2);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                    private DateTime loadTimeStamp() {
+                        return DateTime.Parse(getHeaderAttributeText(TIME_SPECTRUM_ATTRIBUTE), DateTimeFormatInfo.InvariantInfo);
+                    }
+                    private short loadShift() {
+                        return short.Parse(getHeaderAttributeText(SHIFT_SPECTRUM_ATTRIBUTE));
+                    }
+                    private bool OpenPreciseSpecterFile(out Graph graph) {
+                        PreciseSpectrum peds = new PreciseSpectrum();
+                        bool result = openPreciseSpectrumFile(peds);
+                        if (result) {
+                            graph = new Graph(peds.CommonOptions);
+                            graph.updateGraphAfterPreciseLoad(peds);
+                        } else {
+                            //TODO: other solution!
+                            graph = null;
+                        }
+                        return result;
+                    }
+                    protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
+                        PointPairListPlus tempPntLst = new PointPairListPlus();
+                        try {
+                            XmlNode temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
+                            if (temp == null)
+                                return null;
+                            string text = temp.InnerText;
+                            string[] parts = text.Split(COUNTS_SEPARATOR);
+                            foreach (string str in parts) {
+                                // locale?
+                                tempPntLst.Add(peakStart, long.Parse(str));
+                                ++peakStart;
+                            }
+                        } catch (FormatException) {
+                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
+                        }
+                        if (--peakStart != peakEnd)
+                            throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка чтения файла прецизионного спектра", filename);
+
+                        return tempPntLst;
+                    }
                 }
                 #endregion
-                private void saveConnectOptions() {
-                    string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                    fillInnerText(prefix, PORT_CONFIG_TAG, Port);
-                    fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
-                    fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
-                }
-                private void saveScanOptions() {
-                    string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-                    fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
-                    fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
-                }
-                private void saveCommonOptions() {
-                    saveCommonOptions(commonOpts);
-                }
-                private void saveDelaysOptions() {
-                    string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
-                    fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
-                    fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
-                    fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
-                    fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
-                }
-                private void saveMassCoeffs() {
-                    clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                    string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                    fillInnerText(prefix, C1_CONFIG_TAG, col1Coeff.ToString("R", CultureInfo.InvariantCulture));
-                    fillInnerText(prefix, C2_CONFIG_TAG, col2Coeff.ToString("R", CultureInfo.InvariantCulture));
-                }
-                private void saveCheckOptions() {
-                    //checkpeak & iterations
-                    string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
-                    if (xmlData.SelectSingleNode(prefix) == null) {
-                        XmlNode checkRegion = xmlData.CreateElement(CHECK_CONFIG_TAG);
-                        xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(checkRegion);
+                #region Current Writers
+                public abstract class Writer: CurrentTagHolder {
+                    public virtual void write() {
+                        xmlData.Save(filename);
                     }
-                    if (reperPeak != null) {
-                        fillInnerText(prefix, PEAK_NUMBER_CONFIG_TAG, reperPeak.Step);
-                        fillInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG, reperPeak.Collector);
-                        fillInnerText(prefix, PEAK_WIDTH_CONFIG_TAG, reperPeak.Width);
-                    } else {
-                        clearInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
+                    public void saveCommonOptions(CommonOptions opts) {
+                        XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
+                        saveCommonOptions(commonNode, opts);
                     }
-                    fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, iterations);
-                    fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
-                    fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
+                    public void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
+                        CommonOptions opts = new CommonOptions();
+                        opts.eTimeReal = eT;
+                        opts.iTimeReal = iT;
+                        opts.iVoltageReal = iV;
+                        opts.CPReal = cp;
+                        opts.eCurrentReal = eC;
+                        opts.hCurrentReal = hC;
+                        opts.fV1Real = fv1;
+                        opts.fV2Real = fv2;
+                        saveCommonOptions(opts);
+                    }
+                    private void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
+                        commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = opts.eTime.ToString();
+                        commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
+                        commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
+                        commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.CP.ToString();
+                        commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
+                        commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
+                        commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = opts.fV1.ToString();
+                        commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = opts.fV2.ToString();
+                        /*commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();
+                        commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
+                        commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
+                        commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();*/
+                    }
+                    public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum) {
+                        clearOldValues();
+                        foreach (Utility.PreciseEditorData ped in peds) {
+                            XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
+                            regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
+                            regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
+                            regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText = ped.Width.ToString();
+                            regionNode.SelectSingleNode(PEAK_PRECISION_CONFIG_TAG).InnerText = ped.Precision.ToString();
+                            regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText = ped.Collector.ToString();
+                            regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText = ped.Comment;
+                            regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText = ped.Use.ToString();
+
+                            if (ped.AssociatedPoints == null) {
+                                continue;
+                            }
+
+                            if (savePeakSum) {
+                                regionNode.AppendChild(xmlData.CreateElement(PEAK_COUNT_SUM_CONFIG_TAG)).InnerText = ped.AssociatedPoints.PLSreference.PeakSum.ToString();
+                            }
+                            savePointRows(ped.AssociatedPoints, regionNode);
+                        }
+                    }
+                    protected virtual void clearOldValues() { }
+                    protected virtual void savePointRows(PointPairListPlus row, XmlNode node) { }
                 }
-                private void SavePreciseOptions() {
-                    savePreciseData(PreciseData, false);
-                }
-                protected override void clearOldValues() {
-                    for (int i = 1; i <= 20; ++i) {
-                        string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i));
-                        clearInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_ITER_NUMBER_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_PRECISION_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_COMMENT_CONFIG_TAG);
-                        clearInnerText(prefix, PEAK_USE_CONFIG_TAG);
+                public class CommonOptionsWriter: Writer, ICommonOptionsWriter { }
+                public class PreciseDataWriter: Writer, IPreciseDataWriter { }
+                public class SpectrumWriter: Writer, ISpectrumWriter {
+                    protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
+                        if (row.Count == 0)
+                            return;
+                        StringBuilder sb = new StringBuilder();
+                        foreach (ZedGraph.PointPair pp in row) {
+                            sb.Append(pp.Y);
+                            sb.Append(COUNTS_SEPARATOR);
+                        }
+                        XmlNode temp = xmlData.CreateElement(POINT_CONFIG_TAG); ;
+                        temp.InnerText = sb.ToString(0, sb.Length - 1);
+                        node.AppendChild(temp);
+                    }
+                    public void saveScanOptions(Graph graph) {
+                        XmlNode scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
+                        XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
+                        PointPairListPlus ppl1 = graph.Displayed1Steps[0];
+                        PointPairListPlus ppl2 = graph.Displayed2Steps[0];
+                        // TODO: check for data mismatch?
+                        temp.InnerText = ppl1[0].X.ToString();
+                        scanNode.AppendChild(temp);
+                        temp = xmlData.CreateElement(END_SCAN_CONFIG_TAG);
+                        // TODO: check for data mismatch?
+                        temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
+                        scanNode.AppendChild(temp);
+
+                        XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
+                        savePointRows(ppl1, colNode);
+                        colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
+                        savePointRows(ppl2, colNode);
+                    }
+                    public void setTimeStamp(DateTime dt) {
+                        XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
+                        attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
+                        xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
+                    }
+                    public void setShift(short shift) {
+                        XmlAttribute attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
+                        attr.Value = shift.ToString();
+                        xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
                 }
+                public class MainConfigWriter: Writer, IMainConfigWriter {
+                    #region IAnyWriter Members
+                    public override void write() {
+                        saveConnectOptions();
+                        saveScanOptions();
+                        saveCommonOptions();
+                        saveDelaysOptions();
+                        saveMassCoeffs();
+                        saveCheckOptions();
+                        SavePreciseOptions();
+                        base.write();
+                    }
+                    #endregion
+                    private void saveConnectOptions() {
+                        string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
+                        fillInnerText(prefix, PORT_CONFIG_TAG, Port);
+                        fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
+                        fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
+                    }
+                    private void saveScanOptions() {
+                        string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                        fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
+                        fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
+                    }
+                    private void saveCommonOptions() {
+                        saveCommonOptions(commonOpts);
+                    }
+                    private void saveDelaysOptions() {
+                        string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
+                        fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
+                        fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
+                        fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
+                        fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
+                    }
+                    private void saveMassCoeffs() {
+                        clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
+                        string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
+                        fillInnerText(prefix, C1_CONFIG_TAG, col1Coeff.ToString("R", CultureInfo.InvariantCulture));
+                        fillInnerText(prefix, C2_CONFIG_TAG, col2Coeff.ToString("R", CultureInfo.InvariantCulture));
+                    }
+                    private void saveCheckOptions() {
+                        //checkpeak & iterations
+                        string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
+                        if (xmlData.SelectSingleNode(prefix) == null) {
+                            XmlNode checkRegion = xmlData.CreateElement(CHECK_CONFIG_TAG);
+                            xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(checkRegion);
+                        }
+                        if (reperPeak != null) {
+                            fillInnerText(prefix, PEAK_NUMBER_CONFIG_TAG, reperPeak.Step);
+                            fillInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG, reperPeak.Collector);
+                            fillInnerText(prefix, PEAK_WIDTH_CONFIG_TAG, reperPeak.Width);
+                        } else {
+                            clearInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
+                        }
+                        fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, iterations);
+                        fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
+                        fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
+                    }
+                    private void SavePreciseOptions() {
+                        savePreciseData(PreciseData, false);
+                    }
+                    protected override void clearOldValues() {
+                        for (int i = 1; i <= 20; ++i) {
+                            string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i));
+                            clearInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_ITER_NUMBER_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_PRECISION_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_COMMENT_CONFIG_TAG);
+                            clearInnerText(prefix, PEAK_USE_CONFIG_TAG);
+                        }
+                    }
+                }
+                #endregion
             }
-            #endregion
             #region Static Getters
             public static ISpectrumReader getSpectrumReader(string confName, bool hint) {
-                ISpectrumReader reader = findCorrespondingReaderVersion<ISpectrumReader, LegacySpectrumReader, CurrentSpectrumReader>(confName, "Ошибка чтения файла спектра");
+                ISpectrumReader reader = findCorrespondingReaderVersion<ISpectrumReader, LegacyTagHolder.SpectrumReader, CurrentTagHolder.SpectrumReader>(confName, "Ошибка чтения файла спектра");
                 reader.Hint = hint;
                 return reader;
             }
@@ -1463,7 +1474,7 @@ namespace Flavor.Common {
                 string header = graph.DisplayingMode == Graph.Displaying.Diff ? DIFF_SPECTRUM_HEADER : MEASURED_SPECTRUM_HEADER;
                 XmlNode rootNode = createRootStub(doc, header);
 
-                ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, CurrentSpectrumWriter>(confName, doc);
+                ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, CurrentTagHolder.SpectrumWriter>(confName, doc);
                 if (graph.isPreciseSpectrum)
                     createPEDStub(doc, rootNode);
                 else
@@ -1477,26 +1488,26 @@ namespace Flavor.Common {
                 return writer;
             }
             public static ICommonOptionsReader getCommonOptionsReader(string confName) {
-                return findCorrespondingReaderVersion<ICommonOptionsReader, LegacyCommonOptionsReader, CurrentCommonOptionsReader>(confName, "Ошибка чтения файла общих настроек");
+                return findCorrespondingReaderVersion<ICommonOptionsReader, LegacyTagHolder.CommonOptionsReader, CurrentTagHolder.CommonOptionsReader>(confName, "Ошибка чтения файла общих настроек");
             }
             public static IPreciseDataReader getPreciseDataReader(string confName) {
-                return findCorrespondingReaderVersion<IPreciseDataReader, LegacyPreciseDataReader, CurrentPreciseDataReader>(confName, "Ошибка чтения файла прецизионных точек");
+                return findCorrespondingReaderVersion<IPreciseDataReader, LegacyTagHolder.PreciseDataReader, CurrentTagHolder.PreciseDataReader>(confName, "Ошибка чтения файла прецизионных точек");
             }
             public static IMainConfig getMainConfig(string confName) {
-                return findCorrespondingReaderVersion<IMainConfig, LegacyMainConfig, CurrentMainConfig>(confName, "Ошибка чтения конфигурационного файла");
+                return findCorrespondingReaderVersion<IMainConfig, LegacyTagHolder.MainConfig, CurrentTagHolder.MainConfig>(confName, "Ошибка чтения конфигурационного файла");
             }
             public static ICommonOptionsWriter getCommonOptionsWriter(string confName) {
                 XmlDocument doc = new XmlDocument();
                 createCommonOptsStub(doc, createRootStub(doc, COMMON_OPTIONS_HEADER));
-                return getInitializedConfig<ICommonOptionsWriter, CurrentCommonOptionsWriter>(confName, doc);
+                return getInitializedConfig<ICommonOptionsWriter, CurrentTagHolder.CommonOptionsWriter>(confName, doc);
             }
-            public static IPreciseDataWriter getPreciseDataWriter(string confName, string header) {
+            public static IPreciseDataWriter getPreciseDataWriter(string confName) {
                 XmlDocument doc = new XmlDocument();
-                createPEDStub(doc, createRootStub(doc, header));
-                return getInitializedConfig<IPreciseDataWriter, CurrentPreciseDataWriter>(confName, doc);
+                createPEDStub(doc, createRootStub(doc, PRECISE_OPTIONS_HEADER));
+                return getInitializedConfig<IPreciseDataWriter, CurrentTagHolder.PreciseDataWriter>(confName, doc);
             }
             public static IMainConfigWriter getMainConfigWriter(string confName, XmlDocument doc) {
-                return getInitializedConfig<IMainConfigWriter, CurrentMainConfigWriter>(confName, doc);
+                return getInitializedConfig<IMainConfigWriter, CurrentTagHolder.MainConfigWriter>(confName, doc);
             }
             #endregion
             #region Private Service Methods
@@ -1550,6 +1561,13 @@ namespace Flavor.Common {
                     xmlData.SelectSingleNode(fullName).InnerText = value.ToString();
                 }
             }
+            private string getHeaderAttributeText(string tag) {
+                XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                XmlAttributeCollection attrs = headerNode.Attributes;
+                XmlNode attr = attrs.GetNamedItem(tag);
+                return attr.InnerText;
+            }
+            // static below!
             private static XmlNode createRootStub(XmlDocument conf, string header) {
                 conf.AppendChild(conf.CreateXmlDeclaration("1.0", "utf-8", ""));
                 XmlElement rootNode = conf.CreateElement(ROOT_CONFIG_TAG);
@@ -1567,7 +1585,6 @@ namespace Flavor.Common {
             }
             private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
                 XmlNode commonNode = conf.CreateElement(COMMON_CONFIG_TAG);
-                //commonNode.AppendChild(conf.CreateElement(HEADER_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(EXPOSITURE_TIME_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(TRANSITION_TIME_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(IONIZATION_VOLTAGE_CONFIG_TAG));

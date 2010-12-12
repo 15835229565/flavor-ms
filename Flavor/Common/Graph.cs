@@ -188,6 +188,10 @@ namespace Flavor.Common {
         internal List<Utility.PreciseEditorData> PreciseData {
             get { return preciseData; }
         }
+        
+        private DateTime dateTime = DateTime.MaxValue;
+        private short shift = byte.MaxValue;
+
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
@@ -227,6 +231,7 @@ namespace Flavor.Common {
                 return collectors[1];
             }
         }
+        
         internal bool isPreciseSpectrum {
             get {
                 if (this != instance && preciseData != null) {

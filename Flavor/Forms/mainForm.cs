@@ -779,11 +779,20 @@ namespace Flavor.Forms {
                     bool res = !Config.openSpectrumFile(fileName, hint, out graph);
                     LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName, res);
                     form.MdiParent = this;
+                    // buggy workaround to refresh MdiWindowListItem
+                    form.TextChanged += new EventHandler(form_TextChanged);
                     form.Show();
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
             }
+        }
+        void form_TextChanged(object sender, EventArgs e) {
+            //this.MainMenuStrip.MdiWindowListItem.Invalidate();
+            Form form = sender as Form;
+            // buggy workaround to refresh MdiWindowListItem
+            form.Hide();
+            form.Show();
         }
 
         private void closeAllToolStripMenuItem_Click(object sender, EventArgs e) {
