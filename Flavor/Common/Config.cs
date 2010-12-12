@@ -181,6 +181,7 @@ namespace Flavor.Common {
             TagHolder.getSpectrumWriter(filename, graph).write();
         }
         internal static void savePreciseSpectrumFile(string filename, Graph graph) {
+            // TODO: avoid losing time and shift information!
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, graph);
             writer.savePreciseData(graph.PreciseData, false);
             writer.write();
@@ -532,7 +533,9 @@ namespace Flavor.Common {
         private interface IPreciseDataWriter: IAnyWriter, ITimeStamp, IShift { 
             void savePreciseData(List<Utility.PreciseEditorData> peds/*, bool savePoints*/, bool savePeakSum);
         }
-        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter {}
+        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter {
+            void saveScanOptions(Graph graph);
+        }
         private interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter {}
         private abstract class TagHolder {
             #region Tags
@@ -563,8 +566,6 @@ namespace Flavor.Common {
             private const string DELAY_BACKWARD_MEASURE_CONFIG_TAG = "back";
 
             private const string POINT_CONFIG_TAG = "p";
-            private const string POINT_STEP_CONFIG_TAG = "s";
-            private const string POINT_COUNT_CONFIG_TAG = "c";
 
             private const string OVERVIEW_CONFIG_TAG = "overview";
             private const string START_SCAN_CONFIG_TAG = "start";
@@ -609,10 +610,11 @@ namespace Flavor.Common {
                 this.filename = filename;
                 this.xmlData = doc;
             }
-            #region Legacy Readers
             private abstract class LegacyTagHolder: TagHolder {
-            
+                protected const string POINT_STEP_CONFIG_TAG = "s";
+                protected const string POINT_COUNT_CONFIG_TAG = "c";
             }
+            #region Legacy Readers
             private abstract class LegacyReader: LegacyTagHolder {
                 public void loadCommonOptions(CommonOptions opts) {
                     string mainConfPrefix = "";
@@ -1014,6 +1016,8 @@ namespace Flavor.Common {
                                     Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), peakStep,
                                                                         byte.Parse(col), ushort.Parse(iter),
                                                                         ushort.Parse(width), (float)0, comment);
+                                    peakStep -= peakWidth;
+                                    peakWidth += peakWidth += peakStep;
                                     temp.AssociatedPoints = readPeaks(regionNode, peakStep, peakWidth);
                                     peds.Add(temp);
                                 } catch (FormatException) {
@@ -1180,21 +1184,15 @@ namespace Flavor.Common {
                     if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
                         spectrumType = Graph.Displaying.Diff;
 
-                    ushort X = 0;
-                    long Y = 0;
                     try {
-                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, COL1_CONFIG_TAG, POINT_CONFIG_TAG))) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            pl1.Add(X, Y);
-                        }
-                        foreach (XmlNode pntNode in xmlData.SelectNodes(combine(prefix, COL2_CONFIG_TAG, POINT_CONFIG_TAG))) {
-                            X = ushort.Parse(pntNode.SelectSingleNode(POINT_STEP_CONFIG_TAG).InnerText);
-                            Y = long.Parse(pntNode.SelectSingleNode(POINT_COUNT_CONFIG_TAG).InnerText);
-                            pl2.Add(X, Y);
-                        }
+                        ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
+                        ushort end = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
+                        pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
+                        pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
                     } catch (NullReferenceException) {
                         throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                    } catch (FormatException) {
+                        throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла спектра", filename);
                     }
                     //the whole logic of displaying spectra must be modified
                     //!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1250,23 +1248,23 @@ namespace Flavor.Common {
                     }
                     return result;
                 }
-                protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) {
-                    peakStep -= peakWidth;
-                    peakWidth += peakWidth;
-                    peakWidth += peakStep;
-                    long Y;
+                protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
                     PointPairListPlus tempPntLst = new PointPairListPlus();
                     try {
-                        foreach (string str in regionNode.SelectSingleNode(POINT_CONFIG_TAG).InnerText.Split(COUNTS_SEPARATOR)) {
+                        XmlNode temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
+                        if (temp == null)
+                            return null;
+                        string text = temp.InnerText;
+                        string[] parts = text.Split(COUNTS_SEPARATOR);
+                        foreach (string str in parts) {
                             // locale?
-                            Y = long.Parse(str);
-                            tempPntLst.Add(peakStep, Y);
-                            ++peakStep;
+                            tempPntLst.Add(peakStart, long.Parse(str));
+                            ++peakStart;
                         }
                     } catch (FormatException) {
                         throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
                     }
-                    if (--peakStep != peakWidth)
+                    if (--peakStart != peakEnd)
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка чтения файла прецизионного спектра", filename);
                     
                     return tempPntLst;
@@ -1318,11 +1316,6 @@ namespace Flavor.Common {
                     commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
                     commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();*/
                 }
-                protected void saveScanOptions() {
-                    string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-                    fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
-                    fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
-                }
                 public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum) {
                     clearOldValues();
                     foreach (Utility.PreciseEditorData ped in peds) {
@@ -1352,6 +1345,8 @@ namespace Flavor.Common {
             private class CurrentPreciseDataWriter: CurrentWriter, IPreciseDataWriter {}
             private class CurrentSpectrumWriter: CurrentWriter, ISpectrumWriter {
                 protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
+                    if (row.Count == 0)
+                        return;
                     StringBuilder sb = new StringBuilder();
                     foreach (ZedGraph.PointPair pp in row) {
                         sb.Append(pp.Y);
@@ -1360,6 +1355,24 @@ namespace Flavor.Common {
                     XmlNode temp = xmlData.CreateElement(POINT_CONFIG_TAG); ; 
                     temp.InnerText = sb.ToString(0, sb.Length - 1);
                     node.AppendChild(temp);
+                }
+                public void saveScanOptions(Graph graph) {
+                    XmlNode scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
+                    XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
+                    PointPairListPlus ppl1 = graph.Displayed1Steps[0];
+                    PointPairListPlus ppl2 = graph.Displayed2Steps[0];
+                    // TODO: check for data mismatch?
+                    temp.InnerText = ppl1[0].X.ToString();
+                    scanNode.AppendChild(temp);
+                    temp = xmlData.CreateElement(END_SCAN_CONFIG_TAG);
+                    // TODO: check for data mismatch?
+                    temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
+                    scanNode.AppendChild(temp);
+
+                    XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
+                    savePointRows(ppl1, colNode);
+                    colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
+                    savePointRows(ppl2, colNode);
                 }
             }
             private class CurrentMainConfigWriter: CurrentWriter, IMainConfigWriter {
@@ -1380,6 +1393,11 @@ namespace Flavor.Common {
                     fillInnerText(prefix, PORT_CONFIG_TAG, Port);
                     fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
                     fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
+                }
+                private void saveScanOptions() {
+                    string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
+                    fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
+                    fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
                 }
                 private void saveCommonOptions() {
                     saveCommonOptions(commonOpts);
@@ -1445,36 +1463,12 @@ namespace Flavor.Common {
                 string header = graph.DisplayingMode == Graph.Displaying.Diff ? DIFF_SPECTRUM_HEADER : MEASURED_SPECTRUM_HEADER;
                 XmlNode rootNode = createRootStub(doc, header);
 
+                ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, CurrentSpectrumWriter>(confName, doc);
                 if (graph.isPreciseSpectrum)
                     createPEDStub(doc, rootNode);
-                else {
-                    XmlNode scanNode = rootNode.AppendChild(doc.CreateElement(OVERVIEW_CONFIG_TAG));
-                    XmlElement temp;
-                    if (graph.DisplayingMode == Graph.Displaying.Measured) {
-                        temp = doc.CreateElement(START_SCAN_CONFIG_TAG);
-                        temp.InnerText = sPoint.ToString();
-                        scanNode.AppendChild(temp);
-                        temp = doc.CreateElement(END_SCAN_CONFIG_TAG);
-                        temp.InnerText = ePoint.ToString();
-                        scanNode.AppendChild(temp);
-                        // In case of loaded (not auto) start/end points and measure parameters are not connected to spectrum data..
-                    }
-                    scanNode.AppendChild(doc.CreateElement(COL1_CONFIG_TAG));
-                    scanNode.AppendChild(doc.CreateElement(COL2_CONFIG_TAG));
-                    foreach (ZedGraph.PointPair pp in graph.Displayed1Steps[0]) {
-                        temp = doc.CreateElement(POINT_CONFIG_TAG);
-                        temp.AppendChild(doc.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
-                        temp.AppendChild(doc.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
-                        scanNode.SelectSingleNode(COL1_CONFIG_TAG).AppendChild(temp);
-                    }
-                    foreach (ZedGraph.PointPair pp in graph.Displayed2Steps[0]) {
-                        temp = doc.CreateElement(POINT_CONFIG_TAG);
-                        temp.AppendChild(doc.CreateElement(POINT_STEP_CONFIG_TAG)).InnerText = pp.X.ToString();
-                        temp.AppendChild(doc.CreateElement(POINT_COUNT_CONFIG_TAG)).InnerText = ((long)(pp.Y)).ToString();
-                        scanNode.SelectSingleNode(COL2_CONFIG_TAG).AppendChild(temp);
-                    }
-                }
-                ISpectrumWriter writer = getInitializedConfig<ISpectrumWriter, CurrentSpectrumWriter>(confName, doc);
+                else
+                    writer.saveScanOptions(graph);
+
                 if (graph.CommonOptions != null) {
                     // TODO: do not allow saving! data lack for properly save in new formats
                     createCommonOptsStub(doc, rootNode);

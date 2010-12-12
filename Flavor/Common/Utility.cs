@@ -410,7 +410,7 @@ namespace Flavor.Common {
             }
             internal PreciseEditorData(PreciseEditorData other)
                 : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment) {
-                associatedPoints = new PointPairListPlus(other.associatedPoints, this, null);
+                associatedPoints = other.associatedPoints == null ? null : new PointPairListPlus(other.associatedPoints, this, null);
             }
             private bool usethis = true;
             private byte pointNumber;
