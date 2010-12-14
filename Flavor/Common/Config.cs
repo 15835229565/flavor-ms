@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Globalization;
 using System.Text;
+using System.IO;
 
 namespace Flavor.Common {
     static class Config {
@@ -351,14 +352,14 @@ namespace Flavor.Common {
             return dt;
         }
         internal static void autoSaveMonitorSpectrumFile(short shift) {
-            DateTime dt = autoSavePreciseSpectrumFile(shift);// now both files are saved
-            string filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
-            // TODO: temporary increase of saved data amount!
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
-            writer.setTimeStamp(dt);
+            DateTime dt = autoSavePreciseSpectrumFile(shift);
+            IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
             writer.setShift(shift);
-            writer.savePreciseData(Graph.Instance.PreciseData, true);
             writer.write();
+        }
+        internal static void finalizeMonitorFile() {
+            // TODO: simplify
+            MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).finalize();
         }
         #endregion
         #endregion
@@ -492,7 +493,7 @@ namespace Flavor.Common {
             log(errorLog, message);
         }
         #endregion
-        #region XML Configs
+        #region Common config interfaces
         private interface ITimeStamp {
             void setTimeStamp(DateTime dt);
         }
@@ -501,12 +502,175 @@ namespace Flavor.Common {
         }
         private interface IAnyConfig {}
         private interface IAnyReader: IAnyConfig {}
+        private interface IAnyWriter: IAnyConfig {
+            void write();
+        }
         private interface ICommonOptionsReader: IAnyReader {
             void loadCommonOptions(CommonOptions opts);
         }
         private interface IPreciseDataReader: IAnyReader {
             List<Utility.PreciseEditorData> loadPreciseData();
         }
+        private interface ICommonOptionsWriter: IAnyWriter {
+            void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2);
+            void saveCommonOptions(CommonOptions opts);
+        }
+        private interface IPreciseDataWriter: IAnyWriter {
+            void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum);
+        }
+        #endregion
+        #region Additive configs
+        private interface IMonitorWriter: IAnyWriter, IShift {
+            void finalize();
+        }
+        private abstract class MonitorSaveMaintainer {
+            private abstract class CurrentMonitorSaveMaintainer: MonitorSaveMaintainer {
+                private const string VERSION_NUMBER = "1.0";
+                
+                private const char HEADER_FOOTER_FIRST_SYMBOL = '#';
+                private const char HEADER_FOOTER_DELIMITER = ' ';
+                private const string HEADER_TITLE = "monitor";
+                private const string HEADER_VERSION = "version";
+                private const string HEADER_COMMON_OPTIONS = "common";
+                private const string HEADER_PRECISE_OPTIONS = "precise";
+                private const string HEADER_START_TIME = "start";
+                private const string FOOTER_TITLE = "end";
+                private const string FOOTER_REASON = "reason";
+                private const string FOOTER_REASON_FINISH = "finish";
+                private const string FOOTER_REASON_DATE_CHANGE = "next";
+                private const string FOOTER_LINK = "link";
+
+                private const char DATA_DELIMITER = '|';
+                
+                public class Writer: CurrentMonitorSaveMaintainer, IMonitorWriter {
+                    private readonly DateTime initialDT;
+                    private readonly string filename;
+                    private readonly CommonOptions opts;
+                    private readonly List<Utility.PreciseEditorData> precData;
+                    private readonly string header;
+                    private readonly StreamWriter sw;
+                    private static Writer instance = null;
+                    public static IMonitorWriter getInstance(DateTime dt, Graph graph) {
+                        if (instance == null) {
+                            instance = new Writer(dt, graph);
+                        } else if (instance.initialDT.Date < dt.Date) {
+                            Writer old = instance;
+                            instance = new Writer(instance, dt);
+                            instance.graph = graph;
+                            old.finalize(instance.filename);
+                        }
+                        instance.currentDT = dt;
+                        return instance;
+                    }
+                    private DateTime currentDT;
+                    private Graph graph;
+                    private short shift = 0;
+                    private Writer(DateTime dt, Graph graph) {
+                        initialDT = dt;
+                        // TODO: copy!
+                        this.graph = graph;
+                        opts = graph.CommonOptions;
+                        precData = new List<Utility.PreciseEditorData>(graph.PreciseData);
+                        header = generateHeader();
+                        initFile(dt, out filename, out sw);
+                    }
+                    private Writer(Writer other, DateTime dt) {
+                        this.initialDT = dt;
+                        this.opts = other.opts;
+                        this.precData = other.precData;
+                        header = other.header;
+                        initFile(dt, out filename, out sw);
+                    }
+                    private void initFile(DateTime dt, out string filename, out StreamWriter sw) {
+                        filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
+                        sw = new StreamWriter(filename, true);
+                        sw.WriteLine(header);
+                        sw.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
+                    }
+                    private string generateHeader() {
+                        StringBuilder sb = (new StringBuilder(header))
+                            .Append(HEADER_FOOTER_FIRST_SYMBOL)
+                            .Append(HEADER_TITLE)
+                            .Append(HEADER_FOOTER_DELIMITER)
+                            .Append(HEADER_VERSION)
+                            .Append(HEADER_FOOTER_DELIMITER)
+                            .Append(VERSION_NUMBER)
+                            .Append("\n")
+                            .Append(HEADER_FOOTER_FIRST_SYMBOL)
+                            .Append(HEADER_COMMON_OPTIONS)
+                            .Append(HEADER_FOOTER_DELIMITER)
+                            .Append(opts)
+                            .Append("\n")
+                            .Append(HEADER_FOOTER_FIRST_SYMBOL)
+                            .Append(HEADER_PRECISE_OPTIONS)
+                            .Append(HEADER_FOOTER_DELIMITER);
+                        foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
+                            sb.Append(ped);
+                        }
+                        return sb.ToString();
+                    }
+                    private void finalize(string nextFilename) {
+                        StringBuilder sb = (new StringBuilder())
+                            .Append(HEADER_FOOTER_FIRST_SYMBOL)
+                            .Append(FOOTER_TITLE);
+                        if (nextFilename == null) {
+                            sb
+                                .Append(HEADER_FOOTER_DELIMITER)
+                                .Append(FOOTER_REASON)
+                                .Append(HEADER_FOOTER_DELIMITER)
+                                .Append(FOOTER_REASON_FINISH);
+                        } else {
+                            sb
+                                .Append(HEADER_FOOTER_DELIMITER)
+                                .Append(FOOTER_REASON)
+                                .Append(HEADER_FOOTER_DELIMITER)
+                                .Append(FOOTER_REASON_DATE_CHANGE)
+                                .Append(HEADER_FOOTER_DELIMITER)
+                                .Append(FOOTER_LINK)
+                                .Append(HEADER_FOOTER_DELIMITER)
+                                .Append(nextFilename);
+                        }
+                        sw.WriteLine(sb);
+                        sw.Close();
+                    }
+                    #region IAnyWriter Members
+                    public void write() {
+                        StringBuilder sb = (new StringBuilder())
+                            .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:G}", currentDT)
+                            .Append(DATA_DELIMITER)
+                            .Append(shift);
+                        foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
+                            if (ped.Use) {
+                                sb
+                                    .Append(DATA_DELIMITER)
+                                    .Append(ped.AssociatedPoints.PLSreference.PeakSum);
+                            }
+                        }
+                        sw.WriteLine(sb);
+                        sw.Flush();
+                    }
+                    #endregion
+                    #region IShift Members
+                    public void setShift(short shift) {
+                        this.shift = shift;
+                    }
+                    #endregion
+                    #region IMonitorWriter Members
+                    public void finalize() {
+                        finalize(null);
+                    }
+                    #endregion
+                }
+                public static new IMonitorWriter getMonitorWriter(DateTime dt, Graph graph) {
+                    return Writer.getInstance(dt, graph);
+                }
+            }
+            public static IMonitorWriter getMonitorWriter(DateTime dt, Graph graph) {
+                return CurrentMonitorSaveMaintainer.getMonitorWriter(dt, graph);
+            }
+        }
+        #endregion
+        #region XML configs
         private interface ISpectrumReader: ICommonOptionsReader, IPreciseDataReader {
             bool readSpectrum(out Graph graph);
             bool Hint {
@@ -521,16 +685,6 @@ namespace Flavor.Common {
             XmlDocument XML {
                 get;
             }
-        }
-        private interface IAnyWriter: IAnyConfig {
-            void write();
-        }
-        private interface ICommonOptionsWriter: IAnyWriter {
-            void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2);
-            void saveCommonOptions(CommonOptions opts);
-        }
-        private interface IPreciseDataWriter: IAnyWriter { 
-            void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum);
         }
         private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift {
             void saveScanOptions(Graph graph);

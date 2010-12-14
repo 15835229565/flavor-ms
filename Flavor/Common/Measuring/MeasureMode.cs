@@ -35,7 +35,6 @@ namespace Flavor.Common.Measuring {
                 if (Commander.measureCancelRequested)
                 {
                     stop();
-                    //onCancel();
                     return true;
                 }
                 if (!onNextStep())
@@ -46,15 +45,16 @@ namespace Flavor.Common.Measuring {
                 }
             }
             else {
-                onExit();
+                onSuccessfulExit();
                 stop();
             }
             return true;
         }
         abstract protected void saveData();
-        abstract protected void onExit();
+        abstract protected void onSuccessfulExit();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
+        protected virtual void finalize() {}
         internal virtual bool start() {
             //first measure point with increased idle time
             customMeasure = new sendMeasure(befTime, eTime);
@@ -77,6 +77,7 @@ namespace Flavor.Common.Measuring {
             Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
         }
         protected void stop() {
+            finalize();
             operating = false;
             Commander.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
             Disable();

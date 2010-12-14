@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Text;
 
 namespace Flavor.Common {
     internal class CommonOptions {
@@ -200,6 +201,29 @@ namespace Flavor.Common {
         }
         internal double scanVoltageReal(ushort step) {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
+        }
+
+        public override string ToString() {
+            StringBuilder sb = (new StringBuilder())
+                //.Append(base.ToString())
+                .Append("{")
+                .Append(expTime)
+                .Append(" ")
+                .Append(idleTime)
+                .Append(" ")
+                .Append(ionizationVoltage)
+                .Append(" ")
+                .Append(CPVoltage)
+                .Append(" ")
+                .Append(heatCurrent)
+                .Append(" ")
+                .Append(emissionCurrent)
+                .Append(" ")
+                .Append(focusVoltage1)
+                .Append(" ")
+                .Append(focusVoltage2)
+                .Append("}");
+            return sb.ToString();
         }
     }
 
@@ -480,6 +504,29 @@ namespace Flavor.Common {
             public override int GetHashCode() {
                 //later it will be better!
                 return base.GetHashCode();
+            }
+            public override string ToString() {
+                StringBuilder sb = (new StringBuilder())
+                    //.Append(base.ToString())
+                    .Append("{")
+                    .Append(pointNumber)
+                    .Append(" ")
+                    .Append(usethis)
+                    .Append(" ")
+                    .Append(step)
+                    .Append(" ")
+                    .Append(collector)
+                    .Append(" ")
+                    .Append(iterations)
+                    .Append(" ")
+                    .Append(width)
+                    .Append(" ")
+                    .Append(precision)
+                    .Append(" ")
+                    //? multi-line comments, special symbols ?
+                    .Append(comment)
+                    .Append("}");
+                return sb.ToString();
             }
         }
         #endregion

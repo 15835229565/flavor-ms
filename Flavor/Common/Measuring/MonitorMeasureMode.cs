@@ -60,11 +60,13 @@ namespace Flavor.Common.Measuring {
             stopper = new MeasureStopper(Config.Iterations, timeLimit);
             peak = Config.CheckerPeak;
         }
-        protected override void onExit() {
+        protected override void onSuccessfulExit() {
             if (spectrumIsValid) {
-                base.onExit();
-                // TODO: save monitor mode-specific data
+                base.onSuccessfulExit();
             }
+        }
+        protected override void finalize() {
+            Config.finalizeMonitorFile();
         }
         protected override void saveResults() {
             Config.autoSaveMonitorSpectrumFile(shift);
@@ -75,12 +77,12 @@ namespace Flavor.Common.Measuring {
                 return true;
             }
             if (spectrumIsValid) {
+                base.onSuccessfulExit();
                 stopper.next();
             }
             if (stopper.ready()) {
                 return false;
             }
-            onExit();
             init(true);
             return true;
         }

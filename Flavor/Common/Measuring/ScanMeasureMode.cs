@@ -14,7 +14,7 @@ namespace Flavor.Common.Measuring {
             ePoint = Config.ePoint;
         }
         protected override void saveData() { }
-        protected override void onExit() {
+        protected override void onSuccessfulExit() {
             Config.autoSaveSpectrumFile();
         }
         protected override bool onNextStep() {
