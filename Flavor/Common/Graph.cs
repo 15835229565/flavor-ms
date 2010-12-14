@@ -189,8 +189,8 @@ namespace Flavor.Common {
             get { return preciseData; }
         }
         
-        private DateTime dateTime = DateTime.MaxValue;
-        private short shift = byte.MaxValue;
+        //private DateTime dateTime = DateTime.MaxValue;
+        //private short shift = byte.MaxValue;
 
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
@@ -254,9 +254,14 @@ namespace Flavor.Common {
             get { return curPeak; }
         }
 
-        internal static void ResetPointListsWithEvent() {
+        internal static void Reset() {
             instance.ResetPointLists();
+            instance.collectors.CommonOptions = Config.CommonOptions;
+            instance.preciseData = Config.PreciseData;
             instance.DisplayingMode = Displaying.Measured;
+        }
+        internal static void ResetPointListsWithEvent() {
+            Reset();
             instance.OnNewGraphData(true);
         }
 

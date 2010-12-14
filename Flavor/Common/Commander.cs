@@ -338,6 +338,7 @@ namespace Flavor.Common {
             */
         }
         private static void initMeasure() {
+            Graph.Reset();
             ConsoleWriter.WriteLine(pState);
             if (measureMode != null && measureMode.isOperating) {
                 //error. something in operation

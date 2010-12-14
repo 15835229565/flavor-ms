@@ -133,13 +133,13 @@
     <value> (скан.)</value>
   </data>
   <data name="CollectorsForm_XAxisTitleMass" xml:space="preserve">
-    <value>Напряжение (В)</value>
+    <value>Масса (а.е.м.)</value>
   </data>
   <data name="CollectorsForm_XAxisTitleStep" xml:space="preserve">
     <value>Ступени</value>
   </data>
   <data name="CollectorsForm_XAxisTitleVoltage" xml:space="preserve">
-    <value>Масса (а.е.м.)</value>
+    <value>Напряжение (В)</value>
   </data>
   <data name="GraphForm_YAxisTitle" xml:space="preserve">
     <value>Интенсивность</value>

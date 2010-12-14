@@ -133,13 +133,13 @@
     <value> (scan)</value>
   </data>
   <data name="CollectorsForm_XAxisTitleMass" xml:space="preserve">
-    <value>Voltage, V</value>
+    <value>Mass, a.m.u.</value>
   </data>
   <data name="CollectorsForm_XAxisTitleStep" xml:space="preserve">
     <value>Steps</value>
   </data>
   <data name="CollectorsForm_XAxisTitleVoltage" xml:space="preserve">
-    <value>Mass, a.m.u.</value>
+    <value>Voltage, V</value>
   </data>
   <data name="GraphForm_YAxisTitle" xml:space="preserve">
     <value>Intensity</value>
