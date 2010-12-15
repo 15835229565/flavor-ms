@@ -658,6 +658,7 @@ namespace Flavor.Common {
                     #region IMonitorWriter Members
                     public void finalize() {
                         finalize(null);
+                        instance = null;
                     }
                     #endregion
                 }
