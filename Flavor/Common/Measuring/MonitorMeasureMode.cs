@@ -77,12 +77,13 @@ namespace Flavor.Common.Measuring {
                 return true;
             }
             if (spectrumIsValid) {
-                base.onSuccessfulExit();
                 stopper.next();
             }
             if (stopper.ready()) {
                 return false;
             }
+            // operations between iterations
+            onSuccessfulExit();
             init(true);
             return true;
         }
