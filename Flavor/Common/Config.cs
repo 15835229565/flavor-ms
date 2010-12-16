@@ -526,7 +526,9 @@ namespace Flavor.Common {
         private abstract class MonitorSaveMaintainer {
             private abstract class CurrentMonitorSaveMaintainer: MonitorSaveMaintainer {
                 private const string VERSION_NUMBER = "1.0";
-                
+
+                private const string LINE_TERMINATOR = "\r\n";
+
                 private const char HEADER_FOOTER_FIRST_SYMBOL = '#';
                 private const char HEADER_FOOTER_DELIMITER = ' ';
                 private const string HEADER_TITLE = "monitor";
@@ -595,12 +597,12 @@ namespace Flavor.Common {
                             .Append(HEADER_VERSION)
                             .Append(HEADER_FOOTER_DELIMITER)
                             .Append(VERSION_NUMBER)
-                            .Append("\n")
+                            .Append(LINE_TERMINATOR)
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_COMMON_OPTIONS)
                             .Append(HEADER_FOOTER_DELIMITER)
                             .Append(opts)
-                            .Append("\n")
+                            .Append(LINE_TERMINATOR)
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_PRECISE_OPTIONS)
                             .Append(HEADER_FOOTER_DELIMITER);
@@ -636,7 +638,7 @@ namespace Flavor.Common {
                     #region IAnyWriter Members
                     public void write() {
                         StringBuilder sb = (new StringBuilder())
-                            .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:G}", currentDT)
+                            .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
                             .Append(shift);
                         foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
