@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Flavor.Common.Commands.UI;
 using Flavor.Common.Commands.Sync;
+using System.Collections;
 
 namespace Flavor.Common.Messaging {
     class MessageQueue {
@@ -14,6 +15,13 @@ namespace Flavor.Common.Messaging {
         private System.Timers.Timer SendTimer;
         private System.Timers.ElapsedEventHandler elapsed;
 
+        private object syncObj = null;
+        private object SyncRoot {
+            get {
+                return syncObj == null ? (syncObj = (ToSend as ICollection).SyncRoot) : syncObj; 
+            }
+        }
+
         internal MessageQueue()
             : base() {
             elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
@@ -21,7 +29,7 @@ namespace Flavor.Common.Messaging {
             SendTimer.Enabled = false;
         }
         internal void Clear() {
-            lock (ToSend) {
+            lock (SyncRoot) {
                 lock (SendTimer) {
                     if (SendTimer.Enabled) {
                         StopSending();
@@ -34,7 +42,7 @@ namespace Flavor.Common.Messaging {
         }
         internal void AddToSend(UserRequest Command)//Enqueue
         {
-            lock (ToSend) {
+            lock (SyncRoot) {
                 if (Command is requestStatus) {
                     if (statusToSend) {
                         return;
@@ -53,7 +61,7 @@ namespace Flavor.Common.Messaging {
         }
         internal UserRequest Dequeue() {
             UserRequest packet = null;
-            lock (ToSend) {
+            lock (SyncRoot) {
                 dequeueToSendInsideLock(ref packet);
                 StopSending();
             }
@@ -62,7 +70,7 @@ namespace Flavor.Common.Messaging {
         }
         internal UserRequest Peek(SyncReply command) {
             UserRequest packet = null;
-            lock (ToSend) {
+            lock (SyncRoot) {
                 if (ToSend.Count == 0) {
                     ConsoleWriter.WriteLine("Received {0}. While waiting for nothing.", command);
                     return null;
@@ -85,7 +93,7 @@ namespace Flavor.Common.Messaging {
         }
 
         protected void addStatusRequest() {
-            lock (ToSend) {
+            lock (SyncRoot) {
                 if (!statusToSend) {
                     ToSend.Enqueue(new requestStatus());
                     statusToSend = true;
@@ -94,7 +102,7 @@ namespace Flavor.Common.Messaging {
             }
         }
         protected void addTurboPumpStatusRequest() {
-            lock (ToSend) {
+            lock (SyncRoot) {
                 if (!turboToSend) {
                     ToSend.Enqueue(new getTurboPumpStatus());
                     turboToSend = true;
@@ -127,7 +135,7 @@ namespace Flavor.Common.Messaging {
         }
 
         private void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            lock (ToSend) {
+            lock (SyncRoot) {
                 lock (SendTimer) {
                     ++Try;
                     if (Try <= Config.Try) {
@@ -160,7 +168,7 @@ namespace Flavor.Common.Messaging {
             }
         }
         private void Send() {
-            lock (ToSend) {
+            lock (SyncRoot) {
                 while (ToSend.Count > 0) {
                     UserRequest packet = null;
                     peekToSendInsideLock(ref packet);
