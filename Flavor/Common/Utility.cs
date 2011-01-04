@@ -204,27 +204,28 @@ namespace Flavor.Common {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
 
+        private const string DELIMITER = " ";
+        private const string START = "{";
+        private const string END = "}";
         public override string ToString() {
-            StringBuilder sb = (new StringBuilder())
-                //.Append(base.ToString())
-                .Append("{")
+            return (new StringBuilder())
+                .Append(START)
                 .Append(expTime)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(idleTime)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(ionizationVoltage)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(CPVoltage)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(heatCurrent)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(emissionCurrent)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(focusVoltage1)
-                .Append(" ")
+                .Append(DELIMITER)
                 .Append(focusVoltage2)
-                .Append("}");
-            return sb.ToString();
+                .Append(END).ToString();
         }
     }
 
@@ -512,7 +513,7 @@ namespace Flavor.Common {
             private const string START_SUBST = "&start;";
             private const string END_SUBST = "&end;";
             public override string ToString() {
-                StringBuilder sb = (new StringBuilder())
+                return (new StringBuilder())
                     .Append(START)
                     .Append(pointNumber)
                     .Append(DELIMITER)
@@ -530,8 +531,7 @@ namespace Flavor.Common {
                     .Append(DELIMITER)
                     //? multi-line comments, empty comments ?
                     .Append(comment.Replace(START, START_SUBST).Replace(END, END_SUBST))
-                    .Append(END);
-                return sb.ToString();
+                    .Append(END).ToString();
             }
             internal static List<PreciseEditorData> fromString(string str) {
                 //better pattern = @"{(\d+)\s+(True|False)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s*?(.*?)}";
