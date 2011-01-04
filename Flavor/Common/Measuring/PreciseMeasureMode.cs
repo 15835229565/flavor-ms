@@ -22,7 +22,7 @@ namespace Flavor.Common.Measuring {
 
         protected short shift = 0;
 
-        internal PreciseMeasureMode(): this(Config.PreciseData.FindAll(Utility.PeakIsUsed)) { }
+        internal PreciseMeasureMode(): this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)) { }
         internal PreciseMeasureMode(List<Utility.PreciseEditorData> peaks)
             : base() {
             senseModePoints = peaks;
@@ -33,7 +33,7 @@ namespace Flavor.Common.Measuring {
             }
 
             noPoints = false;
-            senseModePoints.Sort(Utility.ComparePreciseEditorDataByPeakValue);
+            senseModePoints.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
             senseModePeakIterationMax = new ushort[senseModePoints.Count];
             smpiSumMax = 0;
             senseModeCounts = new long[senseModePoints.Count][];

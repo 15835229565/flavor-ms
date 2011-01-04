@@ -415,7 +415,7 @@ namespace Flavor.Common {
     #endregion
     public static class Utility {
         #region PreciseEditorData
-        public class PreciseEditorData {
+        public class PreciseEditorData: IComparable<PreciseEditorData> {
             internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
                 pointNumber = pn;
                 step = st;
@@ -528,61 +528,46 @@ namespace Flavor.Common {
                     .Append("}");
                 return sb.ToString();
             }
-        }
-        #endregion
-        #region Comparers and predicate for sorting and finding Utility.PreciseEditorData objects in List
-        internal static int ComparePreciseEditorData(PreciseEditorData ped1, PreciseEditorData ped2) {
-            if (ped1 == null) {
-                if (ped2 == null)
-                    return 0;
-                else
+            #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
+            internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
+                //Forward sort
+                return genericCompare(ped1, ped2,
+                    delegate(PreciseEditorData ped) {
+                        return ped == null;
+                    },
+                    delegate {
+                        return ped1.step - ped2.step;
+                    });
+            }
+            private delegate int FakeComparison();
+            private static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, FakeComparison comparison) {
+                // stub for any comparison
+                if (predicate(ped1)) {
+                    if (predicate(ped2))
+                        return 0;
                     return -1;
-            } else {
-                if (ped2 == null)
-                    return 1;
-                else {
-                    if (ped1.Collector != ped2.Collector)
-                        return (int)(ped1.Collector - ped2.Collector);
-                    if (ped1.Step != ped2.Step)
-                        return (int)(ped1.Step - ped2.Step);
-                    if (ped1.Width != ped2.Width)
-                        return (int)(ped2.Width - ped1.Width);
-                    if (ped1.Iterations != ped2.Iterations)
-                        return (int)(ped2.Iterations - ped1.Iterations);
-                    return 0;
                 }
-            }
-        }
-        internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
-            //Forward sort
-            if (ped1 == null) {
-                if (ped2 == null)
-                    return 0;
-                else
-                    return -1;
-            } else {
-                if (ped2 == null)
+                if (predicate(ped2))
                     return 1;
-                else
-                    return (int)(ped1.Step - ped2.Step);
+                return comparison();
             }
-        }
-        internal static int ComparePreciseEditorDataByUseFlagAndPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
-            //Forward sort
-            if ((ped1 == null) || !ped1.Use) {
-                if ((ped2 == null) || !ped2.Use)
-                    return 0;
-                else
-                    return -1;
-            } else {
-                if ((ped2 == null) || !ped2.Use)
+            internal static bool PeakIsUsed(PreciseEditorData ped) {
+                return ped != null && ped.usethis;
+            }
+            #endregion
+            #region IComparable<PreciseEditorData> Members
+            public int CompareTo(PreciseEditorData other) {
+                if (other == null)
                     return 1;
-                else
-                    return (int)(ped1.Step - ped2.Step);
+                if (collector != other.collector)
+                    return collector - other.collector;
+                if (step != other.step)
+                    return step - other.step;
+                if (width != other.width)
+                    return other.width - width;
+                return other.iterations - iterations;
             }
-        }
-        internal static bool PeakIsUsed(PreciseEditorData ped) {
-            return ped.Use;
+            #endregion
         }
         #endregion
         #region Textbox charset limitations

@@ -57,7 +57,7 @@ namespace Flavor.Common {
                     return null;
                 }
                 ushort maxIteration = 0;
-                foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PeakIsUsed)) {
+                foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)) {
                     maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
                 }
                 return new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak");
@@ -66,7 +66,7 @@ namespace Flavor.Common {
         internal static List<Utility.PreciseEditorData> PreciseDataWithChecker {
             get {
                 ushort maxIteration = 0;
-                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PeakIsUsed);
+                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)/*.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue)*/;
                 if (res.Count == 0) {
                     return null;
                 }
@@ -236,7 +236,7 @@ namespace Flavor.Common {
             PreciseSpectrum peds = new PreciseSpectrum();
             if (reader.openPreciseSpectrumFile(peds)) {
                 List<Utility.PreciseEditorData> temp = new List<Utility.PreciseEditorData>(graph.PreciseData);
-                temp.Sort(Utility.ComparePreciseEditorData);
+                temp.Sort();
                 try {
                     temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
                     graph.updateGraphAfterPreciseDiff(temp);
@@ -868,7 +868,7 @@ namespace Flavor.Common {
                             }
                             if (temp != null) peds.Add(temp);
                         }
-                        peds.Sort(Utility.ComparePreciseEditorData);
+                        peds.Sort();
                         return true;
                     }
                     protected virtual PointPairListPlus readPeaks(XmlNode regionNode) {
@@ -1182,7 +1182,7 @@ namespace Flavor.Common {
                                 throw new ConfigLoadException("Ошибка структуры файла", errorMessage, filename);
                             }
                         }
-                        peds.Sort(Utility.ComparePreciseEditorData);
+                        peds.Sort();
                         return true;
                     }
                     protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
