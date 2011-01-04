@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Flavor.Common {
     internal class CommonOptions {
@@ -505,28 +506,75 @@ namespace Flavor.Common {
                 //later it will be better!
                 return base.GetHashCode();
             }
+            private const string DELIMITER = " ";
+            private const string START = "{";
+            private const string END = "}";
+            private const string START_SUBST = "&start;";
+            private const string END_SUBST = "&end;";
             public override string ToString() {
                 StringBuilder sb = (new StringBuilder())
-                    //.Append(base.ToString())
-                    .Append("{")
+                    .Append(START)
                     .Append(pointNumber)
-                    .Append(" ")
+                    .Append(DELIMITER)
                     .Append(usethis)
-                    .Append(" ")
+                    .Append(DELIMITER)
                     .Append(step)
-                    .Append(" ")
+                    .Append(DELIMITER)
                     .Append(collector)
-                    .Append(" ")
+                    .Append(DELIMITER)
                     .Append(iterations)
-                    .Append(" ")
+                    .Append(DELIMITER)
                     .Append(width)
-                    .Append(" ")
+                    .Append(DELIMITER)
                     .Append(precision)
-                    .Append(" ")
-                    //? multi-line comments, special symbols ?
-                    .Append(comment)
-                    .Append("}");
+                    .Append(DELIMITER)
+                    //? multi-line comments, empty comments ?
+                    .Append(comment.Replace(START, START_SUBST).Replace(END, END_SUBST))
+                    .Append(END);
                 return sb.ToString();
+            }
+            internal static List<PreciseEditorData> fromString(string str) {
+                //better pattern = @"{(\d+)\s+(True|False)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s*?(.*?)}";
+                Match match = new Regex((new StringBuilder())
+                    .Append(START)
+                    .Append(@"(\d+)")
+                    .Append(DELIMITER)
+                    .Append(@"(True|False)")
+                    .Append(DELIMITER)
+                    .Append(@"(\d+)")
+                    .Append(DELIMITER)
+                    .Append(@"(\d+)")
+                    .Append(DELIMITER)
+                    .Append(@"(\d+)")
+                    .Append(DELIMITER)
+                    .Append(@"(\d+)")
+                    .Append(DELIMITER)
+                    .Append(@"(\S+)")
+                    .Append(DELIMITER)
+                    .Append(@"(.*?)")
+                    .Append(END)
+                    .ToString()).Match(str);
+                List<PreciseEditorData> res = new List<PreciseEditorData>();
+                GroupCollection groups;
+                while (match.Success) {
+                    groups = match.Groups;
+                    try {
+                        res.Add(new PreciseEditorData(
+                            bool.Parse(groups[2].Value),
+                            byte.Parse(groups[1].Value),
+                            ushort.Parse(groups[3].Value),
+                            byte.Parse(groups[4].Value),
+                            ushort.Parse(groups[5].Value),
+                            ushort.Parse(groups[6].Value),
+                            float.Parse(groups[7].Value),
+                            groups[8].Value.Replace(START_SUBST, START).Replace(END_SUBST, END)));
+                    } catch (FormatException) {
+                        //continue;
+                        return null;
+                    }
+                    match = match.NextMatch();
+                }
+                return res;
             }
             #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
             internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
