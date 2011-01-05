@@ -4,7 +4,6 @@ using System.Timers;
 using Flavor.Common.Commands.UI;
 using Flavor.Common.Commands.Async;
 using Flavor.Common.Commands.Sync;
-using Flavor.Common.Measuring;
 using Flavor.Common.Messaging;
 using Flavor.Common.Commands.Interfaces;
 
@@ -260,6 +259,7 @@ namespace Flavor.Common {
         }
 
         private static void CheckInterfaces(ServicePacket Command) {
+            // TODO: make common auto-action
             if (Command is IAutomatedReply) {
                 ((IAutomatedReply)Command).AutomatedReply();
             }
@@ -291,15 +291,15 @@ namespace Flavor.Common {
 
         internal static void Scan() {
             if (pState == Commander.programStates.Ready) {
-                initMeasure();                          //?
-                measureMode = new ScanMeasureMode();    //order
+                measureMode = new MeasureMode.Scan();
+                initMeasure();
             }
         }
         internal static void Sense() {
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
-                    initMeasure();                          //?
-                    measureMode = new PreciseMeasureMode(); //order
+                    measureMode = new MeasureMode.Precise();
+                    initMeasure();
                 } else {
                     ConsoleWriter.WriteLine("No points for precise mode measure.");
                 }
@@ -308,8 +308,8 @@ namespace Flavor.Common {
         internal static void Monitor() {
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
-                    initMeasure();                                                                   //?
-                    measureMode = new MonitorMeasureMode(0, Config.AllowedShift, Config.TimeLimit);  //order
+                    measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
+                    initMeasure();
                     // TODO: feed measure mode with start shift value (really?)
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");

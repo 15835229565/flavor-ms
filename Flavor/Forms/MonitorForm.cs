@@ -41,7 +41,8 @@ namespace Flavor.Forms
                 if (!ped.Use) {
                     continue;
                 }
-                long peakSum = ped.AssociatedPoints.PLSreference.PeakSum;
+                // TODO: exceptions here, problem with backward lines also here?
+                long peakSum = ped.AssociatedPoints == null ? 0 : ped.AssociatedPoints.PLSreference.PeakSum;
                 sum += peakSum;
                 list[j].Add(new PointPair(time, peakSum));
                 if (normalizedList != null) {

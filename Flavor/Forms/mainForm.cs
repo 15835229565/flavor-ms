@@ -4,7 +4,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Timers;
 using Flavor.Common;
-using Flavor.Common.Measuring;
 using Flavor.Controls;
 
 namespace Flavor.Forms {
