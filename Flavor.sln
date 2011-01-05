@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flavor", "Flavor\Flavor.csproj", "{535B18E6-1D63-4BA6-A3DD-BC986502133B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer", "Analyzer\Analyzer.csproj", "{10395477-68FC-49AA-9A0E-F32AFBE7BA8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{535B18E6-1D63-4BA6-A3DD-BC986502133B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{535B18E6-1D63-4BA6-A3DD-BC986502133B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{535B18E6-1D63-4BA6-A3DD-BC986502133B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10395477-68FC-49AA-9A0E-F32AFBE7BA8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10395477-68FC-49AA-9A0E-F32AFBE7BA8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10395477-68FC-49AA-9A0E-F32AFBE7BA8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10395477-68FC-49AA-9A0E-F32AFBE7BA8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
