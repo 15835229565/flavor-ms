@@ -530,7 +530,7 @@ namespace Flavor.Common {
                     .Append(precision)
                     .Append(DELIMITER)
                     //? multi-line comments, empty comments ?
-                    .Append(comment.Replace(START, START_SUBST).Replace(END, END_SUBST))
+                    .Append(comment.Replace("&", "&amp;").Replace(START, START_SUBST).Replace(END, END_SUBST))
                     .Append(END).ToString();
             }
             internal static List<PreciseEditorData> fromString(string str) {
@@ -567,7 +567,7 @@ namespace Flavor.Common {
                             ushort.Parse(groups[5].Value),
                             ushort.Parse(groups[6].Value),
                             float.Parse(groups[7].Value),
-                            groups[8].Value.Replace(START_SUBST, START).Replace(END_SUBST, END)));
+                            groups[8].Value.Replace(START_SUBST, START).Replace(END_SUBST, END).Replace("&amp;", "&")));
                     } catch (FormatException) {
                         //continue;
                         return null;
