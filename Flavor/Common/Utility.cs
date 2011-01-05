@@ -29,7 +29,7 @@ namespace Flavor.Common {
             return (double)current / 4096;
         }
         internal ushort hCurrentConvert(double current) {
-            return genericConvert(delegate { return (ushort)(current * 4096); });
+            return genericConvert(() => (ushort)(current * 4096));
         }
 
         internal ushort eCurrent {
@@ -46,7 +46,7 @@ namespace Flavor.Common {
             return 50 * (double)current / 4096;
         }
         internal ushort eCurrentConvert(double current) {
-            return genericConvert(delegate { return (ushort)((current / 50) * 4096); });
+            return genericConvert(() => (ushort)((current / 50) * 4096));
         }
 
         internal ushort iVoltage {
@@ -63,7 +63,7 @@ namespace Flavor.Common {
             return 150 * (double)voltage / 4096;
         }
         internal ushort iVoltageConvert(double voltage) {
-            return genericConvert(delegate { return (ushort)((voltage / 150) * 4096); });
+            return genericConvert(() => (ushort)((voltage / 150) * 4096));
         }
 
         internal ushort fV1 {
@@ -80,7 +80,7 @@ namespace Flavor.Common {
             return 150 * (double)voltage / 4096;
         }
         internal ushort fV1Convert(double voltage) {
-            return genericConvert(delegate { return (ushort)((voltage / 150) * 4096); });
+            return genericConvert(() => (ushort)((voltage / 150) * 4096));
         }
 
         internal ushort fV2 {
@@ -97,7 +97,7 @@ namespace Flavor.Common {
             return 150 * (double)voltage / 4096;
         }
         internal ushort fV2Convert(double voltage) {
-            return genericConvert(delegate{ return (ushort)((voltage / 150) * 4096); });
+            return genericConvert(() => (ushort)((voltage / 150) * 4096));
         }
         protected delegate ushort Convert();
         protected ushort genericConvert(Convert convert) {
@@ -196,7 +196,7 @@ namespace Flavor.Common {
             return (10 / (double)coeff) * 4096;
         }
         internal ushort CPConvert(double coeff) {
-            return genericConvert(delegate { return (ushort)((10 / coeff) * 4096); });
+            return genericConvert(() => (ushort)((10 / coeff) * 4096));
         }
 
         // scan voltage modification law
@@ -586,12 +586,8 @@ namespace Flavor.Common {
             internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
                 //Forward sort
                 return genericCompare(ped1, ped2,
-                    delegate(PreciseEditorData ped) {
-                        return ped == null;
-                    },
-                    delegate {
-                        return ped1.step - ped2.step;
-                    });
+                    ped => ped == null,
+                    () => ped1.step - ped2.step);
             }
             private delegate int FakeComparison();
             private static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, FakeComparison comparison) {
