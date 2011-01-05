@@ -6,7 +6,107 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Flavor.Common {
-    internal class CommonOptions {
+    internal abstract class CommonData {
+        private ushort heatCurrent;
+        private ushort emissionCurrent;
+
+        private ushort ionizationVoltage;
+
+        private ushort focusVoltage1;
+        private ushort focusVoltage2;
+
+        internal ushort hCurrent {
+            get { return heatCurrent; }
+            set { heatCurrent = value; }
+        }
+        internal double hCurrentReal {
+            get { return hCurrentConvert(heatCurrent); }
+            set {
+                heatCurrent = hCurrentConvert(value);
+            }
+        }
+        internal double hCurrentConvert(ushort current) {
+            return (double)current / 4096;
+        }
+        internal ushort hCurrentConvert(double current) {
+            return genericConvert(delegate { return (ushort)(current * 4096); });
+        }
+
+        internal ushort eCurrent {
+            get { return emissionCurrent; }
+            set { emissionCurrent = value; }
+        }
+        internal double eCurrentReal {
+            get { return eCurrentConvert(emissionCurrent); }
+            set {
+                emissionCurrent = eCurrentConvert(value);
+            }
+        }
+        internal double eCurrentConvert(ushort current) {
+            return 50 * (double)current / 4096;
+        }
+        internal ushort eCurrentConvert(double current) {
+            return genericConvert(delegate { return (ushort)((current / 50) * 4096); });
+        }
+
+        internal ushort iVoltage {
+            get { return ionizationVoltage; }
+            set { ionizationVoltage = value; }
+        }
+        internal double iVoltageReal {
+            get { return iVoltageConvert(ionizationVoltage); }
+            set {
+                ionizationVoltage = iVoltageConvert(value);
+            }
+        }
+        internal double iVoltageConvert(ushort voltage) {
+            return 150 * (double)voltage / 4096;
+        }
+        internal ushort iVoltageConvert(double voltage) {
+            return genericConvert(delegate { return (ushort)((voltage / 150) * 4096); });
+        }
+
+        internal ushort fV1 {
+            get { return focusVoltage1; }
+            set { focusVoltage1 = value; }
+        }
+        internal double fV1Real {
+            get { return fV1Convert(focusVoltage1); }
+            set {
+                focusVoltage1 = fV1Convert(value);
+            }
+        }
+        internal double fV1Convert(ushort voltage) {
+            return 150 * (double)voltage / 4096;
+        }
+        internal ushort fV1Convert(double voltage) {
+            return genericConvert(delegate { return (ushort)((voltage / 150) * 4096); });
+        }
+
+        internal ushort fV2 {
+            get { return focusVoltage2; }
+            set { focusVoltage2 = value; }
+        }
+        internal double fV2Real {
+            get { return fV2Convert(focusVoltage2); }
+            set {
+                focusVoltage2 = fV2Convert(value);
+            }
+        }
+        internal double fV2Convert(ushort voltage) {
+            return 150 * (double)voltage / 4096;
+        }
+        internal ushort fV2Convert(double voltage) {
+            return genericConvert(delegate{ return (ushort)((voltage / 150) * 4096); });
+        }
+        protected delegate ushort Convert();
+        protected ushort genericConvert(Convert convert) {
+            ushort x = convert();
+            if (x >= 4096) x = 4095;
+            return x;
+        }
+    }
+    internal class CommonOptions: CommonData {
         // defaults
         private ushort beforeTime = 100;
         private ushort forwardTime = 100;
@@ -51,13 +151,15 @@ namespace Flavor.Common {
         // defaults
         private ushort expTime = 200;
         private ushort idleTime = 10;
-        private ushort ionizationVoltage = 1911;
         private ushort CPVoltage = 3780;
-        private ushort heatCurrent = 0;
-        private ushort emissionCurrent = 79;
-        private ushort focusVoltage1 = 2730;
-        private ushort focusVoltage2 = 2730;
-
+        internal CommonOptions() {
+            // defaults
+            iVoltage = 1911;
+            hCurrent = 0;
+            eCurrent = 79;
+            fV1 = 2730;
+            fV2 = 2730;
+        }
         internal ushort eTime {
             get { return expTime; }
             set { expTime = value; }
@@ -80,25 +182,6 @@ namespace Flavor.Common {
             }
         }
 
-        internal ushort iVoltage {
-            get { return ionizationVoltage; }
-            set { ionizationVoltage = value; }
-        }
-        internal double iVoltageReal {
-            get { return iVoltageConvert(ionizationVoltage); }
-            set {
-                ionizationVoltage = iVoltageConvert(value);
-            }
-        }
-        internal double iVoltageConvert(ushort voltage) {
-            return (double)(150 * (double)voltage / 4096);
-        }
-        internal ushort iVoltageConvert(double voltage) {
-            ushort x = (ushort)((voltage / 150) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
-
         internal ushort CP {
             get { return CPVoltage; }
             set { CPVoltage = value; }
@@ -110,93 +193,16 @@ namespace Flavor.Common {
             }
         }
         internal double CPConvert(ushort coeff) {
-            return (double)((10 / (double)coeff) * 4096);
+            return (10 / (double)coeff) * 4096;
         }
         internal ushort CPConvert(double coeff) {
-            ushort x = (ushort)((10 / coeff) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
+            return genericConvert(delegate { return (ushort)((10 / coeff) * 4096); });
         }
 
-        internal ushort eCurrent {
-            get { return emissionCurrent; }
-            set { emissionCurrent = value; }
-        }
-        internal double eCurrentReal {
-            get { return eCurrentConvert(emissionCurrent); }
-            set {
-                emissionCurrent = eCurrentConvert(value);
-            }
-        }
-        internal double eCurrentConvert(ushort current) {
-            return (double)((50 * (double)current) / 4096);
-        }
-        internal ushort eCurrentConvert(double current) {
-            ushort x = (ushort)((current / 50) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
-
-        internal ushort hCurrent {
-            get { return heatCurrent; }
-            set { heatCurrent = value; }
-        }
-        internal double hCurrentReal {
-            get { return hCurrentConvert(heatCurrent); }
-            set {
-                heatCurrent = hCurrentConvert(value);
-            }
-        }
-        internal double hCurrentConvert(ushort current) {
-            return (double)((double)current / 4096);
-        }
-        internal ushort hCurrentConvert(double current) {
-            ushort x = (ushort)(current * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
-
-        internal ushort fV1 {
-            get { return focusVoltage1; }
-            set { focusVoltage1 = value; }
-        }
-        internal double fV1Real {
-            get { return fV1Convert(focusVoltage1); }
-            set {
-                focusVoltage1 = fV1Convert(value);
-            }
-        }
-        internal double fV1Convert(ushort voltage) {
-            return (double)(150 * (double)voltage / 4096);
-        }
-        internal ushort fV1Convert(double voltage) {
-            ushort x = (ushort)((voltage / 150) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
-
-        internal ushort fV2 {
-            get { return focusVoltage2; }
-            set { focusVoltage2 = value; }
-        }
-        internal double fV2Real {
-            get { return fV2Convert(focusVoltage2); }
-            set {
-                focusVoltage2 = fV2Convert(value);
-            }
-        }
-        internal double fV2Convert(ushort voltage) {
-            return (double)(150 * (double)voltage / 4096);
-        }
-        internal ushort fV2Convert(double voltage) {
-            ushort x = (ushort)((voltage / 150) * 4096);
-            if (x >= 4096) x = 4095;
-            return x;
-        }
-
+        // scan voltage modification law
         internal ushort scanVoltage(ushort step) {
             if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            return Convert.ToUInt16(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
+            return (ushort)(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
@@ -214,17 +220,17 @@ namespace Flavor.Common {
                 .Append(DELIMITER)
                 .Append(idleTime)
                 .Append(DELIMITER)
-                .Append(ionizationVoltage)
+                .Append(iVoltage)
                 .Append(DELIMITER)
                 .Append(CPVoltage)
                 .Append(DELIMITER)
-                .Append(heatCurrent)
+                .Append(hCurrent)
                 .Append(DELIMITER)
-                .Append(emissionCurrent)
+                .Append(eCurrent)
                 .Append(DELIMITER)
-                .Append(focusVoltage1)
+                .Append(fV1)
                 .Append(DELIMITER)
-                .Append(focusVoltage2)
+                .Append(fV2)
                 .Append(END).ToString();
         }
     }

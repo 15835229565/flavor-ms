@@ -76,7 +76,7 @@
     <Compile Include="Common\ConsoleWriter.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
-    <Compile Include="Common\Measuring\MeasureMode.cs" />
+    <Compile Include="Common\MeasureMode.cs" />
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\ModBus.cs" />

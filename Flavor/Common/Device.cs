@@ -168,96 +168,42 @@ namespace Flavor.Common {
             set { Detector2Value = value; }
         }
 
-        internal struct DeviceCommonData {
-            private static ushort heatCurrent;
-            private static ushort emissionCurrent;
+        private static DevCommonData deviceCommonData = new DevCommonData();
+        internal static DevCommonData DeviceCommonData {
+            get { return deviceCommonData; }
+        }
+        internal class DevCommonData: CommonData {
+            private ushort condVoltagePlus;
+            private ushort condVoltageMin;
 
-            private static ushort ionizatinVoltage;
+            private ushort detectorVoltage;
+            private ushort scanVoltage;
 
-            private static ushort focusVoltage1;
-            private static ushort focusVoltage2;
-
-            private static ushort scanVoltage;
-
-            private static ushort condVoltagePlus;
-            private static ushort condVoltageMin;
-
-            private static ushort CPValue;
-
-            private static ushort detectorVoltage;
-
-            internal static ushort hCurrent {
-                get { return heatCurrent; }
-                set { heatCurrent = value; }
-            }
-            internal static double hCurrentReal {
-                get { return (double)hCurrent / 4096; }
-            }
-
-            internal static ushort eCurrent {
-                get { return emissionCurrent; }
-                set { emissionCurrent = value; }
-            }
-            internal static double eCurrentReal {
-                get { return 50 * (double)eCurrent / 4096; }
-            }
-
-            internal static ushort iVoltage {
-                get { return ionizatinVoltage; }
-                set { ionizatinVoltage = value; }
-            }
-            internal static double iVoltageReal {
-                get { return 150 * (double)iVoltage / 4096; }
-            }
-
-            internal static ushort fV1 {
-                get { return focusVoltage1; }
-                set { focusVoltage1 = value; }
-            }
-            internal static double fV1Real {
-                get { return 150 * (double)fV1 / 4096; }
-            }
-            internal static ushort fV2 {
-                get { return focusVoltage2; }
-                set { focusVoltage2 = value; }
-            }
-            internal static double fV2Real {
-                get { return 150 * (double)fV2 / 4096; }
-            }
-
-            internal static ushort sVoltage {
-                get { return scanVoltage; }
-                set { scanVoltage = value; }
-            }
-            internal static double sVoltageReal {
-                get { return 5 * (double)sVoltage / (4096 * 0.0008); }
-            }
-            internal static ushort cVPlus {
-                get { return condVoltagePlus; }
+            internal ushort cVPlus {
                 set { condVoltagePlus = value; }
             }
-            internal static double cVPlusReal {
-                get { return 120 * 5 * (double)cVPlus / 4096; }
+            internal double cVPlusReal {
+                get { return 120 * 5 * (double)condVoltagePlus / 4096; }
             }
-            internal static ushort cVMin {
-                get { return condVoltageMin; }
+            internal ushort cVMin {
                 set { condVoltageMin = value; }
             }
-            internal static double cVMinReal {
-                get { return 100 * 5 * (double)cVMin / 4096; }
+            internal double cVMinReal {
+                get { return 100 * 5 * (double)condVoltageMin / 4096; }
             }
 
-            internal static ushort CP {
-                get { return CPValue; }
-                set { CPValue = value; }
-            }
-
-            internal static ushort dVoltage {
-                get { return detectorVoltage; }
+            internal ushort dVoltage {
                 set { detectorVoltage = value; }
             }
-            internal static double dVoltageReal {
-                get { return 5 * (double)dVoltage / (4096 * 0.001); }
+            internal double dVoltageReal {
+                get { return 5 * (double)detectorVoltage / (4096 * 0.001); }
+            }
+
+            internal ushort sVoltage {
+                set { scanVoltage = value; }
+            }
+            internal double sVoltageReal {
+                get { return 5 * (double)scanVoltage / (4096 * 0.0008); }
             }
         }
 
