@@ -29,7 +29,7 @@ namespace Flavor.Common {
             return (double)current / 4096;
         }
         internal ushort hCurrentConvert(double current) {
-            return genericConvert(() => (ushort)(current * 4096));
+            return genericConvert((ushort)(current * 4096));
         }
 
         internal ushort eCurrent {
@@ -46,7 +46,7 @@ namespace Flavor.Common {
             return 50 * (double)current / 4096;
         }
         internal ushort eCurrentConvert(double current) {
-            return genericConvert(() => (ushort)((current / 50) * 4096));
+            return genericConvert((ushort)((current / 50) * 4096));
         }
 
         internal ushort iVoltage {
@@ -63,7 +63,7 @@ namespace Flavor.Common {
             return 150 * (double)voltage / 4096;
         }
         internal ushort iVoltageConvert(double voltage) {
-            return genericConvert(() => (ushort)((voltage / 150) * 4096));
+            return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
         internal ushort fV1 {
@@ -80,7 +80,7 @@ namespace Flavor.Common {
             return 150 * (double)voltage / 4096;
         }
         internal ushort fV1Convert(double voltage) {
-            return genericConvert(() => (ushort)((voltage / 150) * 4096));
+            return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
         internal ushort fV2 {
@@ -97,13 +97,10 @@ namespace Flavor.Common {
             return 150 * (double)voltage / 4096;
         }
         internal ushort fV2Convert(double voltage) {
-            return genericConvert(() => (ushort)((voltage / 150) * 4096));
+            return genericConvert((ushort)((voltage / 150) * 4096));
         }
-        protected delegate ushort Convert();
-        protected ushort genericConvert(Convert convert) {
-            ushort x = convert();
-            if (x >= 4096) x = 4095;
-            return x;
+        protected ushort genericConvert(ushort x) {
+            return x < 4096 ? x : (ushort)4095;
         }
     }
     internal class CommonOptions: CommonData {
@@ -196,7 +193,7 @@ namespace Flavor.Common {
             return (10 / (double)coeff) * 4096;
         }
         internal ushort CPConvert(double coeff) {
-            return genericConvert(() => (ushort)((10 / coeff) * 4096));
+            return genericConvert((ushort)((10 / coeff) * 4096));
         }
 
         // scan voltage modification law
@@ -583,12 +580,10 @@ namespace Flavor.Common {
                 return res;
             }
             #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
-            internal static int ComparePreciseEditorDataByPeakValue(PreciseEditorData ped1, PreciseEditorData ped2) {
-                //Forward sort
-                return genericCompare(ped1, ped2,
-                    ped => ped == null,
-                    () => ped1.step - ped2.step);
-            }
+            internal static Predicate<PreciseEditorData> PeakIsUsed =
+                ped => ped != null && ped.usethis;
+            internal static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue = 
+                (ped1, ped2) => genericCompare(ped1, ped2, ped => ped == null, () => ped1.step - ped2.step);
             private delegate int FakeComparison();
             private static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, FakeComparison comparison) {
                 // stub for any comparison
@@ -600,9 +595,6 @@ namespace Flavor.Common {
                 if (predicate(ped2))
                     return 1;
                 return comparison();
-            }
-            internal static bool PeakIsUsed(PreciseEditorData ped) {
-                return ped != null && ped.usethis;
             }
             #endregion
             #region IComparable<PreciseEditorData> Members
