@@ -189,8 +189,14 @@ namespace Flavor.Common {
             get { return preciseData; }
         }
         
-        //private DateTime dateTime = DateTime.MaxValue;
-        //private short shift = byte.MaxValue;
+        private DateTime dateTime = DateTime.MaxValue;
+        internal DateTime DateTime {
+            get { return dateTime; }
+        }
+        private short shift = byte.MaxValue;
+        internal short Shift {
+            get { return shift; }
+        }
 
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
@@ -296,6 +302,11 @@ namespace Flavor.Common {
             }
             instance.OnNewGraphData(true);
         }
+
+        internal static void setDateTimeAndShift(DateTime dt, short shift) {
+            instance.dateTime = dt;
+            instance.shift = shift;
+        }
         #endregion
         
         #region peak to add (static)
@@ -336,6 +347,10 @@ namespace Flavor.Common {
             (collectors[0])[0].SetRows(pl1);
             (collectors[1])[0].SetRows(pl2);
         }
+        internal void updateGraphAfterScanLoad(PointPairListPlus pl1, PointPairListPlus pl2, DateTime dt) {
+            updateGraphAfterScanLoad(pl1, pl2);
+            this.dateTime = dt;
+        }
         internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
             ResetPointLists();
@@ -346,18 +361,31 @@ namespace Flavor.Common {
                 collectors[ped.Collector - 1].Add(new pListScaled((ped.Collector == 1), ped.AssociatedPoints));
             }
         }
+        internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds, DateTime dt, short shift) {
+            updateGraphAfterPreciseLoad(peds);
+            this.dateTime = dt;
+            this.shift = shift;
+        }
 
         internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
-            updateGraphAfterScanLoad(pl1, pl2);
+            updateGraphAfterScanDiff(pl1, pl2, true);
+        }
+        internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2, bool newData) {
+            updateGraphAfterScanLoad(pl1, pl2, DateTime.MaxValue);
             DisplayingMode = Displaying.Diff;
             //lock here?
-            if (OnNewGraphData != null)
+            if (newData && OnNewGraphData != null)
                 OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
-            updateGraphAfterPreciseLoad(peds);
+            updateGraphAfterPreciseDiff(peds, true);
+        }
+        internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds, bool newData) {
+            updateGraphAfterPreciseLoad(peds, DateTime.MaxValue, short.MaxValue);
             DisplayingMode = Displaying.Diff;
-            OnNewGraphData(true);
+            //lock here?
+            if (newData && OnNewGraphData != null)
+                OnNewGraphData(true);
         }
 
         internal void RecomputeMassRows(byte col) {

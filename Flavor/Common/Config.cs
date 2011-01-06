@@ -40,7 +40,7 @@ namespace Flavor.Common {
         private static ushort startPoint = MIN_STEP;
         private static ushort endPoint = MAX_STEP;
 
-        private static readonly CommonOptions commonOpts = new CommonOptions();
+        private static CommonOptions commonOpts;
         internal static CommonOptions CommonOptions {
             get { return commonOpts; }
         }
@@ -176,13 +176,21 @@ namespace Flavor.Common {
             return TagHolder.getSpectrumReader(filename, hint).readSpectrum(out graph);
         }
         internal static void saveSpectrumFile(string filename, Graph graph) {
-            // TODO: avoid losing time and shift information!
-            TagHolder.getSpectrumWriter(filename, graph).write();
+            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, graph);
+            DateTime dt = graph.DateTime;
+            if (dt != DateTime.MaxValue)
+                writer.setTimeStamp(dt);
+            writer.write();
         }
         internal static void savePreciseSpectrumFile(string filename, Graph graph) {
-            // TODO: avoid losing time and shift information!
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, graph);
             writer.savePreciseData(graph.PreciseData, false);
+            DateTime dt = graph.DateTime;
+            if (dt != DateTime.MaxValue)
+                writer.setTimeStamp(dt);
+            short shift = graph.Shift;
+            if (shift != short.MaxValue)
+                writer.setShift(shift);
             writer.write();
         }
         #region Spectra Distraction
@@ -333,6 +341,7 @@ namespace Flavor.Common {
         }
         internal static void autoSaveSpectrumFile() {
             DateTime dt = System.DateTime.Now;
+            Graph.setDateTimeAndShift(dt, short.MaxValue);
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
 
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
@@ -341,6 +350,7 @@ namespace Flavor.Common {
         }
         internal static DateTime autoSavePreciseSpectrumFile(short shift) {
             DateTime dt = System.DateTime.Now;
+            Graph.setDateTimeAndShift(dt, shift);
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
 
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
@@ -374,7 +384,7 @@ namespace Flavor.Common {
         }
 
         internal static void loadCommonOptions(string cdConfName) {
-            TagHolder.getCommonOptionsReader(cdConfName).loadCommonOptions(Config.commonOpts);
+            Config.commonOpts = TagHolder.getCommonOptionsReader(cdConfName).loadCommonOptions();
         }
         internal static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
             ICommonOptionsWriter writer = TagHolder.getCommonOptionsWriter(filename);
@@ -506,7 +516,7 @@ namespace Flavor.Common {
             void write();
         }
         private interface ICommonOptionsReader: IAnyReader {
-            void loadCommonOptions(CommonOptions opts);
+            CommonOptions loadCommonOptions();
         }
         private interface IPreciseDataReader: IAnyReader {
             List<Utility.PreciseEditorData> loadPreciseData();
@@ -771,7 +781,7 @@ namespace Flavor.Common {
                 private const string POINT_COUNT_CONFIG_TAG = "c";
                 #region Legacy Readers
                 public abstract class Reader: LegacyTagHolder {
-                    public void loadCommonOptions(CommonOptions opts) {
+                    public CommonOptions loadCommonOptions() {
                         string mainConfPrefix = "";
 
                         if (xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG)) != null)
@@ -780,6 +790,7 @@ namespace Flavor.Common {
                             throw new structureErrorOnLoadCommonData(filename);
                         }
                         XmlNode commonNode = xmlData.SelectSingleNode(combine(mainConfPrefix, COMMON_CONFIG_TAG));
+                        CommonOptions opts = new CommonOptions();
                         try {
                             ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
 
@@ -819,8 +830,9 @@ namespace Flavor.Common {
                             opts.bTime = bT;
                         } catch (NullReferenceException) {
                             //Use hard-coded defaults
-                            return;
+                            return null;
                         }
+                        return opts;
                     }
                     public List<Utility.PreciseEditorData> loadPreciseData() {
                         List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
@@ -905,7 +917,7 @@ namespace Flavor.Common {
                             //use hard-coded defaults
                         }
                         try {
-                            loadCommonOptions(commonOpts);
+                            commonOpts = loadCommonOptions();
                         } catch (ConfigLoadException cle) {
                             cle.visualise();
                             //use hard-coded defaults
@@ -1033,8 +1045,7 @@ namespace Flavor.Common {
                             throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
                         }
                         try {
-                            commonOpts = new CommonOptions();
-                            loadCommonOptions(commonOpts);
+                            commonOpts = loadCommonOptions();
                         } catch (structureErrorOnLoadCommonData) {
                             commonOpts = null;
                         }
@@ -1050,9 +1061,9 @@ namespace Flavor.Common {
                             throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла прецизионного спектра", filename);
                         }
 
-                        CommonOptions co = new CommonOptions();
+                        CommonOptions co;
                         try {
-                            loadCommonOptions(co);
+                            co = loadCommonOptions();
                         } catch (structureErrorOnLoadCommonData) {
                             co = null;
                         }
@@ -1112,11 +1123,10 @@ namespace Flavor.Common {
                 private const char COUNTS_SEPARATOR = ' ';
                 #region Current Readers
                 public abstract class Reader: CurrentTagHolder {
-                    public void loadCommonOptions(CommonOptions opts) {
+                    public CommonOptions loadCommonOptions() {
                         XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         try {
                             ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
-
                             eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
                             iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
                             iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
@@ -1125,28 +1135,33 @@ namespace Flavor.Common {
                             hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
                             fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
                             fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
-
-                            opts.eTime = eT;
-                            opts.iTime = iT;
-                            opts.iVoltage = iV;
-                            opts.CP = CP;
-                            opts.eCurrent = eC;
-                            opts.hCurrent = hC;
-                            opts.fV1 = fV1;
-                            opts.fV2 = fV2;
+                            {
+                                CommonOptions opts = new CommonOptions();
+                                opts.eTime = eT;
+                                opts.iTime = iT;
+                                opts.iVoltage = iV;
+                                opts.CP = CP;
+                                opts.eCurrent = eC;
+                                opts.hCurrent = hC;
+                                opts.fV1 = fV1;
+                                opts.fV2 = fV2;
+                                loadDelays(commonNode, opts);
+                                return opts;
+                            }
                         } catch (NullReferenceException) {
                             throw new structureErrorOnLoadCommonData(filename);
                         }
-                        loadDelays(commonNode, opts);
                     }
                     public List<Utility.PreciseEditorData> loadPreciseData() {
-                        List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
-                        if (LoadPED("", peds))
-                            return peds;
-                        return null;
+                        try {
+                            return LoadPED("");
+                        } catch (ConfigLoadException) {
+                            return null;
+                        }
                     }
-                    protected bool LoadPED(string errorMessage, List<Utility.PreciseEditorData> peds) {
+                    protected List<Utility.PreciseEditorData> LoadPED(string errorMessage) {
                         string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
+                        List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
                         for (int i = 1; i <= 20; ++i) {
                             string peak, iter, width, col;
                             try {
@@ -1183,7 +1198,7 @@ namespace Flavor.Common {
                             }
                         }
                         peds.Sort();
-                        return true;
+                        return peds;
                     }
                     protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
                     protected virtual void loadDelays(XmlNode commonNode, CommonOptions opts) { }
@@ -1218,7 +1233,7 @@ namespace Flavor.Common {
                             //use hard-coded defaults
                         }
                         try {
-                            loadCommonOptions(commonOpts);
+                            commonOpts = loadCommonOptions();
                         } catch (ConfigLoadException cle) {
                             cle.visualise();
                             //use hard-coded defaults
@@ -1328,17 +1343,12 @@ namespace Flavor.Common {
                         } catch (ConfigLoadException cle) {
                             resultException = (resultException == null) ? cle : resultException;
                         }
+
                         throw resultException;
                     }
                     public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
-                        XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
-                        string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
-
-                        Graph.Displaying spectrumType = Graph.Displaying.Measured;
-                        if (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER)
-                            spectrumType = Graph.Displaying.Diff;
-
                         try {
+                            string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                             ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
                             ushort end = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
                             pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
@@ -1348,29 +1358,20 @@ namespace Flavor.Common {
                         } catch (FormatException) {
                             throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла спектра", filename);
                         }
-                        //the whole logic of displaying spectra must be modified
-                        //!!!!!!!!!!!!!!!!!!!!!!!!
-                        try {
-                            commonOpts = new CommonOptions();
-                            loadCommonOptions(commonOpts);
-                        } catch (structureErrorOnLoadCommonData) {
-                            commonOpts = null;
-                        }
-                        //!!!!!!!!!!!!!!!!!!!!!!!!
+                        commonOpts = loadCommonOptions();
+
                         pl1.Sort(ZedGraph.SortType.XValues);
                         pl2.Sort(ZedGraph.SortType.XValues);
-                        return spectrumType;
+                        return spectrumType();
                     }
                     public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
-                        CommonOptions co = new CommonOptions();
+                        peds.CommonOptions = loadCommonOptions();
                         try {
-                            loadCommonOptions(co);
-                        } catch (structureErrorOnLoadCommonData) {
-                            co = null;
+                            peds.AddRange(LoadPED("Ошибка чтения файла прецизионного спектра"));
+                            return true;
+                        } catch (ConfigLoadException) {
+                            return false;
                         }
-                        peds.CommonOptions = co;
-
-                        return LoadPED("Ошибка чтения файла прецизионного спектра", peds);
                     }
                     #endregion
                     private bool OpenSpecterFile(out Graph graph) {
@@ -1378,42 +1379,55 @@ namespace Flavor.Common {
                         CommonOptions commonOpts;
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
-                        try {
-                            DateTime dt = loadTimeStamp();
-                            short shift = loadShift();
-                        } catch (Exception) {
-                            // do nothing
-                        }
-
                         graph = new Graph(commonOpts);
                         switch (result) {
                             case Graph.Displaying.Measured:
-                                graph.updateGraphAfterScanLoad(pl1, pl2);
+                                graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
                                 return true;
                             case Graph.Displaying.Diff:
-                                graph.updateGraphAfterScanDiff(pl1, pl2);
+                                graph.updateGraphAfterScanDiff(pl1, pl2, false);
                                 return true;
                             default:
                                 return false;
                         }
+                    }
+                    private bool OpenPreciseSpecterFile(out Graph graph) {
+                        Graph.Displaying res = spectrumType();
+                        PreciseSpectrum peds = new PreciseSpectrum();
+                        bool result = openPreciseSpectrumFile(peds);
+                        if (result) {
+                            graph = new Graph(peds.CommonOptions);
+                            switch (res) {
+                                case Graph.Displaying.Measured:
+                                    short shift = short.MaxValue;
+                                    try {
+                                        shift = loadShift();
+                                    } catch (Exception) {
+                                        // do nothing
+                                    }
+                                    graph.updateGraphAfterPreciseLoad(peds, loadTimeStamp(), shift);
+                                    return true;
+                                case Graph.Displaying.Diff:
+                                    graph.updateGraphAfterPreciseDiff(peds, false);
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        } else {
+                            //TODO: other solution!
+                            graph = null;
+                        }
+                        return result;
+                    }
+                    private Graph.Displaying spectrumType() {
+                        XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                        return (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER) ? Graph.Displaying.Diff : Graph.Displaying.Measured;
                     }
                     private DateTime loadTimeStamp() {
                         return DateTime.Parse(getHeaderAttributeText(TIME_SPECTRUM_ATTRIBUTE), DateTimeFormatInfo.InvariantInfo);
                     }
                     private short loadShift() {
                         return short.Parse(getHeaderAttributeText(SHIFT_SPECTRUM_ATTRIBUTE));
-                    }
-                    private bool OpenPreciseSpecterFile(out Graph graph) {
-                        PreciseSpectrum peds = new PreciseSpectrum();
-                        bool result = openPreciseSpectrumFile(peds);
-                        if (result) {
-                            graph = new Graph(peds.CommonOptions);
-                            graph.updateGraphAfterPreciseLoad(peds);
-                        } else {
-                            //TODO: other solution!
-                            graph = null;
-                        }
-                        return result;
                     }
                     protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
                         PointPairListPlus tempPntLst = new PointPairListPlus();
