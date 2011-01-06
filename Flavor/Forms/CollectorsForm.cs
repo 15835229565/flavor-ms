@@ -20,13 +20,6 @@ namespace Flavor.Forms
         private readonly string X_AXIS_TITLE_MASS = Resources.CollectorsForm_XAxisTitleMass;
         private readonly string X_AXIS_TITLE_VOLT = Resources.CollectorsForm_XAxisTitleVoltage;
 
-        private const string DIFF_ON_POINT_TAG = "custom_diff";
-        public const string DIFF_ON_PEAK_TAG = "custom_diff_peak";
-        private const string VIEW_MODE_TAG = "view_mode";
-        private const string STEP_VIEW_MODE_TAG = "axis_mode_step";
-        private const string MASS_VIEW_MODE_TAG = "axis_mode_voltage";
-        private const string VOLT_VIEW_MODE_TAG = "axis_mode_mass";
-
         private string col1Text;
         private string col2Text;
         private string modeText;
@@ -269,50 +262,16 @@ namespace Flavor.Forms
                 return;
             }
             RefreshGraph();
-            /*if (this is IMeasured)
-                (this as IMeasured).refreshGraphicsOnMeasureStep();*/
         }
 
-        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
-            ZedGraphControlPlus sender = control as ZedGraphControlPlus;
-            if (sender == null)
-                return;
+        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControlPlus sender, ContextMenuStrip menuStrip, ZedGraphControl.ContextMenuObjectState objState, bool isNearPoint) {
+            if (isNearPoint)
+                sender.setVisibility(specterDiffEnabled, specterDiffEnabled && graph.isPreciseSpectrum);
 
-            GraphPane pane = sender.MasterPane.FindChartRect(mousePt);
-            CurveItem nearestCurve;
-            int iNearest;
-            ToolStripMenuItem item;
             ToolStripItemCollection items = menuStrip.Items;
-            if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out iNearest)) {
-                sender.CurveRef = (nearestCurve.Points as PointPairListPlus).PLSreference;
-                sender.PointIndex = iNearest;
-                
-                item = new ToolStripMenuItem();
-                item.Text = "Добавить точку в редактор";
-                item.Click += new System.EventHandler(sender.AddPointToPreciseEditor);
-                items.Add(item);
-
-                item = new ToolStripMenuItem();
-                item.Text = "Коэффициент коллектора" + (sender.IsFirstCollector ? " 1" : " 2");
-                item.Click += new System.EventHandler(sender.SetScalingCoeff);
-                items.Add(item);
-                
-                if (specterDiffEnabled) {
-                    item = new ToolStripMenuItem();
-                    item.Name = DIFF_ON_POINT_TAG;
-                    item.Text = "Вычесть из текущего с перенормировкой на точку";
-                    item.Click += new System.EventHandler(sender.DiffWithCoeff);
-                    items.Add(item);
-                    
-                    if (graph.isPreciseSpectrum) {
-                        item = new ToolStripMenuItem();
-                        item.Name = DIFF_ON_PEAK_TAG;
-                        item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
-                        item.Click += new System.EventHandler(sender.DiffWithCoeff);
-                        items.Add(item);
-                    }
-                }
-            }
+            ToolStripItem item = new ToolStripSeparator();
+            items.Add(item);
+            
             ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
             ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
             ToolStripMenuItem massViewItem = new ToolStripMenuItem();
@@ -329,40 +288,28 @@ namespace Flavor.Forms
                     break;
             }
             
-            stepViewItem.Name = STEP_VIEW_MODE_TAG;
             stepViewItem.Text = "Ступени";
             stepViewItem.CheckOnClick = true;
-            stepViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+            stepViewItem.CheckedChanged += new System.EventHandler((s, e) => {
+                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
+            });
             
-            voltageViewItem.Name = VOLT_VIEW_MODE_TAG;
             voltageViewItem.Text = "Напряжение";
             voltageViewItem.CheckOnClick = true;
-            voltageViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+            voltageViewItem.CheckedChanged += new System.EventHandler((s, e) => {
+                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
+            });
             
-            massViewItem.Name = MASS_VIEW_MODE_TAG;
             massViewItem.Text = "Масса";
             massViewItem.CheckOnClick = true;
-            massViewItem.CheckedChanged += new System.EventHandler(ViewItemCheckStateChanged);
+            massViewItem.CheckedChanged += new System.EventHandler((s, e) => {
+                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
+            });
 
             item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
-            item.Name = VIEW_MODE_TAG;
             item.Text = "Выбрать шкалу";
 
             items.Add(item);
-        }
-        private void ViewItemCheckStateChanged(object sender, EventArgs e) {
-            // TODO: move logic to subclasses..
-            switch ((sender as ToolStripMenuItem).Name) {
-                case STEP_VIEW_MODE_TAG:
-                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
-                    break;
-                case VOLT_VIEW_MODE_TAG:
-                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
-                    break;
-                case MASS_VIEW_MODE_TAG:
-                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
-                    break;
-            }
         }
 
         private string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {

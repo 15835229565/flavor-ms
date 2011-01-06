@@ -12,44 +12,90 @@ namespace Flavor.Controls
     public partial class ZedGraphControlPlus : ZedGraphControl {
         public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
         public event DiffOnPointEventHandler OnDiffOnPoint;
-
-        private Graph.pListScaled pls;
-        public Graph.pListScaled CurveRef {
-            set { pls = value; }
-        }
-        private int pointIndex;
-        public int PointIndex {
-            set { pointIndex = value; }
-        }
+        
+        public new delegate void ContextMenuBuilderEventHandler(ZedGraphControlPlus sender, ContextMenuStrip menuStrip, ContextMenuObjectState objState, bool isNearPoint);
+        public new event ContextMenuBuilderEventHandler ContextMenuBuilder;
+        
         private bool isFirstCollector;
         public bool IsFirstCollector {
-            get { return isFirstCollector; }
             set { isFirstCollector = value; }
         }
 
-        public ZedGraphControlPlus() : base() {
+        private ToolStripMenuItem pointItem;
+        private ToolStripMenuItem peakItem;
+
+        public ZedGraphControlPlus()
+            : base() {
             InitializeComponent();
+            base.ContextMenuBuilder += new ZedGraphControl.ContextMenuBuilderEventHandler(ZedGraphControlPlus_ContextMenuBuilder);
         }
-        internal void AddPointToPreciseEditor(object sender, EventArgs e) {
-            // TODO: raise event here and move code below to mainform
-            // can be NullPointerExceptions here..
-            new AddPointForm((ushort)(pls.Step[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog();
-        }
-        internal void DiffWithCoeff(object sender, EventArgs e) {
-            // can be NullPointerExceptions here..
-            Utility.PreciseEditorData ped = pls.PEDreference;
-            if (((ToolStripMenuItem)sender).Name == CollectorsForm.DIFF_ON_PEAK_TAG) {
-                //!!!! modify!
-                OnDiffOnPoint(ushort.MaxValue, null, ped);
+
+        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
+            if (sender != this)
                 return;
+            GraphPane pane = MasterPane.FindChartRect(mousePt);
+            CurveItem nearestCurve;
+            bool isNearPoint = false;
+            int pointIndex;
+            ToolStripItemCollection items = menuStrip.Items;
+
+            if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex)) {
+                isNearPoint = true;
+
+                ToolStripItem item = new ToolStripSeparator();
+                items.Add(item);
+
+                {
+                    // can be NullPointerExceptions here..
+                    Graph.pListScaled pls = (nearestCurve.Points as PointPairListPlus).PLSreference;
+                    ushort step = (ushort)pls.Step[pointIndex].X;
+                    byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
+
+                    item = new ToolStripMenuItem();
+                    item.Text = "Добавить точку в редактор";
+                    item.Click += new System.EventHandler((s, e) => {
+                        // TODO: raise event here and move code below to mainform
+                        new AddPointForm(step, isFirst).ShowDialog();
+                    });
+                    items.Add(item);
+
+                    item = new ToolStripMenuItem();
+                    item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
+                    item.Click += new System.EventHandler((s, e) => {
+                        // TODO: raise event here and move code below to mainform
+                        new SetScalingCoeffForm(step, isFirst).ShowDialog();
+                    });
+                    items.Add(item);
+
+                    {
+                        // can be NullPointerExceptions here..
+                        Utility.PreciseEditorData ped = pls.PEDreference;
+
+                        pointItem = new ToolStripMenuItem();
+                        pointItem.Visible = false;
+                        pointItem.Text = "Вычесть из текущего с перенормировкой на точку";
+                        pointItem.Click += new System.EventHandler((s, e) => {
+                            OnDiffOnPoint(step, pls, ped);
+                        });
+                        items.Add(pointItem);
+
+                        peakItem = new ToolStripMenuItem();
+                        peakItem.Visible = false;
+                        peakItem.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                        peakItem.Click += new System.EventHandler((s, e) => {
+                            OnDiffOnPoint(ushort.MaxValue, null, ped);
+                        });
+                        items.Add(peakItem);
+                    }
+                }
             }
-            //must be: scan - (pnt, pls, null), precise - (pnt, pls, ped)
-            OnDiffOnPoint((ushort)pls.Step[pointIndex].X, pls, ped);
+            //raise new event
+            if (ContextMenuBuilder != null)
+                ContextMenuBuilder(this, menuStrip, objState, isNearPoint);
         }
-        internal void SetScalingCoeff(object sender, EventArgs e) {
-            // TODO: raise event here and move code below to mainform
-            // can be NullPointerExceptions here..
-            new SetScalingCoeffForm((ushort)(pls.Step[pointIndex].X), (byte)(isFirstCollector ? 1 : 2)).ShowDialog();
+        internal void setVisibility(bool pointItemVisible, bool peakItemVisible) {
+            pointItem.Visible = pointItemVisible;
+            peakItem.Visible = peakItemVisible;
         }
     }
 }
