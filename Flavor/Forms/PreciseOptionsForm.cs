@@ -62,95 +62,31 @@ namespace Flavor.Forms {
         private void EnableForm() {
             switch (Commander.pState) {
                 case Commander.programStates.Start:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = false;
-                    this.applyButton.Visible = false;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
-                    //this.cancel_butt.Enabled = true;
-                    break;
                 case Commander.programStates.WaitInit:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = false;
-                    this.applyButton.Visible = false;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
-                    break;
                 case Commander.programStates.Init:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = false;
-                    this.applyButton.Visible = false;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
+                case Commander.programStates.WaitShutdown:
+                case Commander.programStates.Shutdown:
+                    setControls(true, false);
                     break;
                 case Commander.programStates.WaitHighVoltage:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = true;
-                    this.applyButton.Visible = true;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
-                    break;
                 case Commander.programStates.Ready:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = true;
-                    this.applyButton.Visible = true;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
+                    setControls(true, true);
                     break;
                 case Commander.programStates.Measure:
-                    this.preciseEditorGroupBox.Enabled = false;
-                    this.params_groupBox.Enabled = false;
-                    this.savePreciseEditorToFileButton.Enabled = false;
-                    this.loadPreciseEditorFromFileButton.Enabled = false;
-                    this.clearButton.Enabled = false;
-                    this.applyButton.Enabled = false;
-                    this.applyButton.Visible = true;
-                    this.ok_butt.Enabled = false;
-                    this.rareModeCheckBox.Enabled = false;
-                    break;
-                case Commander.programStates.WaitShutdown:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = false;
-                    this.applyButton.Visible = false;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
-                    break;
-                case Commander.programStates.Shutdown:
-                    this.preciseEditorGroupBox.Enabled = true;
-                    this.params_groupBox.Enabled = true;
-                    this.savePreciseEditorToFileButton.Enabled = true;
-                    this.loadPreciseEditorFromFileButton.Enabled = true;
-                    this.clearButton.Enabled = true;
-                    this.applyButton.Enabled = false;
-                    this.applyButton.Visible = false;
-                    this.ok_butt.Enabled = true;
-                    this.rareModeCheckBox.Enabled = true;
+                    setControls(false, false);
                     break;
             }
+        }
+        private void setControls(bool enabled, bool canApply) {
+            this.preciseEditorGroupBox.Enabled = enabled;
+            this.params_groupBox.Enabled = enabled;
+            this.savePreciseEditorToFileButton.Enabled = enabled;
+            this.loadPreciseEditorFromFileButton.Enabled = enabled;
+            this.clearButton.Enabled = enabled;
+            this.applyButton.Enabled = enabled && canApply;
+            this.applyButton.Visible = canApply || !enabled;
+            this.ok_butt.Enabled = enabled;
+            this.rareModeCheckBox.Enabled = enabled;
         }
 
         private void loadPreciseEditorData(List<Utility.PreciseEditorData> ped) {

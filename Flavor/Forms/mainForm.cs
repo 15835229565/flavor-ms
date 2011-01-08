@@ -15,6 +15,13 @@ namespace Flavor.Forms {
                                                 "Проверьте герметизацию системы ввода перед отключением прибора (установку заглушки).\n" +
                                                 "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Отмена.";
 
+        private const string ON_TEXT = "Включен";
+        private const string ON_TEXT1 = "Включено";
+        private const string OFF_TEXT = "Выключен";
+        private const string OFF_TEXT1 = "Выключено";
+        private const string OPENED_TEXT = "Открыт";
+        private const string CLOSED_TEXT = "Закрыт";
+
         private MeasuredCollectorsForm collectorsForm = null;
         private MeasuredCollectorsForm CollectorsForm {
             get {
@@ -276,10 +283,10 @@ namespace Flavor.Forms {
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
-            string msg = "Turbopump: ";
-            msg += isFault ? "failure (" : "warning (";
-            msg += bits.ToString("X2");
-            msg += ")";
+            string msg = new StringBuilder("Turbopump: ")
+                .Append(isFault ? "failure (" : "warning (")
+                .AppendFormat("{0:X2}", bits)
+                .Append(")").ToString();
             InvokeRefreshUserMessage(msg);
             Config.logTurboPumpAlert(msg);
         }
@@ -335,7 +342,7 @@ namespace Flavor.Forms {
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
                 case (byte)Device.DeviceStates.ShutdownInit:
-                    systemStateValueTreeNode.Text = "Идициализация выключения";
+                    systemStateValueTreeNode.Text = "Инициализация выключения";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
                 case (byte)Device.DeviceStates.Shutdowning:
@@ -401,40 +408,40 @@ namespace Flavor.Forms {
             statusTreeView.BeginUpdate();
             if (Device.fPumpOn) {
                 forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
-                forPumpOnValueTreeNode.Text = "Включен";
+                forPumpOnValueTreeNode.Text = ON_TEXT;
             } else {
                 forPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
-                forPumpOnValueTreeNode.Text = "Выключен";
+                forPumpOnValueTreeNode.Text = OFF_TEXT;
             }
             if (Device.tPumpOn) {
                 turboPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
-                turboPumpOnValueTreeNode.Text = "Включен";
+                turboPumpOnValueTreeNode.Text = ON_TEXT;
             } else {
                 turboPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
-                turboPumpOnValueTreeNode.Text = "Выключен";
+                turboPumpOnValueTreeNode.Text = OFF_TEXT;
             }
             forVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.fVacuumReal);
             highVacuumValueTreeNode.Text = string.Format("{0:e3}", Device.hVacuumReal);
             if (Device.highVoltageOn) {
                 hardwareBlockValueTreeNode.State = TreeNodePlus.States.Ok;
-                hardwareBlockValueTreeNode.Text = "Включено";
+                hardwareBlockValueTreeNode.Text = ON_TEXT1;
             } else {
                 hardwareBlockValueTreeNode.State = TreeNodePlus.States.Warning;
-                hardwareBlockValueTreeNode.Text = "Выключено";
+                hardwareBlockValueTreeNode.Text = OFF_TEXT1;
             }
             if (Device.highVacuumValve) {
                 vGate1ValueTreeNode.State = TreeNodePlus.States.Ok;
-                vGate1ValueTreeNode.Text = "Открыт";
+                vGate1ValueTreeNode.Text = OPENED_TEXT;
             } else {
                 vGate1ValueTreeNode.State = TreeNodePlus.States.Warning;
-                vGate1ValueTreeNode.Text = "Закрыт";
+                vGate1ValueTreeNode.Text = CLOSED_TEXT;
             }
             if (Device.probeValve) {
                 vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
-                vGate2ValueTreeNode.Text = "Открыт";
+                vGate2ValueTreeNode.Text = OPENED_TEXT;
             } else {
                 vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
-                vGate2ValueTreeNode.Text = "Закрыт";
+                vGate2ValueTreeNode.Text = CLOSED_TEXT;
             }
             f1VoltageValueTreeNode.Text = Device.DeviceCommonData.fV1Real.ToString("f2");
             f2VoltageValueTreeNode.Text = Device.DeviceCommonData.fV2Real.ToString("f2");
