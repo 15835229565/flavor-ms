@@ -46,40 +46,44 @@ namespace Flavor.Forms {
             this.collect2_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect2_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.collect2_graph.IsEnableSelection = true;
-            this.collect2_graph.IsFirstCollector = false;
             this.collect2_graph.IsShowPointValues = true;
             resources.ApplyResources(this.collect2_graph, "collect2_graph");
             this.collect2_graph.Name = "collect2_graph";
             this.collect2_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect2_graph.ScrollGrace = 0;
+            this.collect2_graph.ScrollMaxX = 0;
             this.collect2_graph.ScrollMaxY = 2000000;
             this.collect2_graph.ScrollMaxY2 = 0;
+            this.collect2_graph.ScrollMinX = 0;
             this.collect2_graph.ScrollMinY = 0;
             this.collect2_graph.ScrollMinY2 = 0;
             this.collect2_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.collect2_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
+            this.collect2_graph.OnPoint += new Flavor.Controls.ZedGraphControlPlus.PointEventHandler(this.GraphForm_OnPoint);
             this.collect2_graph.OnDiffOnPoint += new Flavor.Controls.ZedGraphControlPlus.DiffOnPointEventHandler(this.GraphForm_OnDiffOnPoint);
-            this.collect2_graph.ContextMenuBuilder += new ZedGraphControlPlus.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
+            this.collect2_graph.ContextMenuBuilder += new Flavor.Controls.ZedGraphControlPlus.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
             // 
             // collect1_graph
             // 
             this.collect1_graph.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.collect1_graph.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.collect1_graph.IsEnableSelection = true;
-            this.collect1_graph.IsFirstCollector = true;
             this.collect1_graph.IsShowPointValues = true;
             resources.ApplyResources(this.collect1_graph, "collect1_graph");
             this.collect1_graph.Name = "collect1_graph";
             this.collect1_graph.PanModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None)));
             this.collect1_graph.ScrollGrace = 0;
+            this.collect1_graph.ScrollMaxX = 0;
             this.collect1_graph.ScrollMaxY = 2000000;
             this.collect1_graph.ScrollMaxY2 = 0;
+            this.collect1_graph.ScrollMinX = 0;
             this.collect1_graph.ScrollMinY = 0;
             this.collect1_graph.ScrollMinY2 = 0;
             this.collect1_graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.collect1_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
+            this.collect1_graph.OnPoint += new Flavor.Controls.ZedGraphControlPlus.PointEventHandler(this.GraphForm_OnPoint);
             this.collect1_graph.OnDiffOnPoint += new Flavor.Controls.ZedGraphControlPlus.DiffOnPointEventHandler(this.GraphForm_OnDiffOnPoint);
-            this.collect1_graph.ContextMenuBuilder += new ZedGraphControlPlus.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
+            this.collect1_graph.ContextMenuBuilder += new Flavor.Controls.ZedGraphControlPlus.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
             // 
             // distractFromCurrentToolStripMenuItem
             // 
@@ -97,6 +101,7 @@ namespace Flavor.Forms {
             this.Name = "CollectorsForm";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

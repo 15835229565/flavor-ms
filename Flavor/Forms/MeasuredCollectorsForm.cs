@@ -65,7 +65,7 @@ namespace Flavor.Forms {
 			return base.saveData();        
 		}
 
-        private void InvokeRefreshGraph(bool recreate) {
+        private void InvokeRefreshGraph(Graph.Recreate recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -73,10 +73,10 @@ namespace Flavor.Forms {
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(bool recreate) {
-            if (recreate) {
+        private void refreshGraph(Graph.Recreate recreate) {
+            // not trivial value..
+            if (recreate == Graph.Recreate.Both)
                 return;
-            }
             refreshGraphicsOnMeasureStep();
         }
         private void refreshGraphicsOnMeasureStep() {

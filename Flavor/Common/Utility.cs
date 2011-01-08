@@ -232,7 +232,50 @@ namespace Flavor.Common {
         }
     }
 
-    internal class Spectrum: List<List<Graph.pListScaled>> {
+    internal class Collector: List<Graph.pListScaled> {
+        private double coeff;
+        public double Coeff {
+            get { return coeff; }
+            set {
+                RecomputeMassRows(value);
+            }
+        }
+        private readonly bool isFirst;
+        public bool IsFirst {
+            get { return isFirst; }
+        } 
+
+        internal Collector(bool isFirst, double coeff) {
+            this.isFirst = isFirst;
+            this.coeff = coeff;
+            // data row for scan (has no PED reference)
+            Add(new Graph.pListScaled(this));
+        }
+        //TODO: hard-coded defaults?
+        internal Collector(bool isFirst)
+            : this(isFirst, isFirst ? 2770 * 28 : 896.5 * 18) { }
+        internal bool RecomputeMassRows(double coeff) {
+            if (this.coeff == coeff)
+                return false;
+            this.coeff = coeff;
+            foreach (Graph.pListScaled pl in this) {
+                pl.RecomputeMassRow();
+            }
+            return true;
+        }
+        internal double pointToMass(ushort pnt) {
+            return coeff / CommonOptions.scanVoltageReal(pnt);
+        }
+        public new void Clear() {
+            base.Clear();
+            // data row for scan (has no PED reference)
+            Add(new Graph.pListScaled(this));
+        }
+        public void Add(PointPairListPlus ppl) {
+            Add(new Graph.pListScaled(this, ppl));
+        }
+    }
+    internal class Spectrum: List<Collector> {
         private CommonOptions myCommonOptions = null;
         internal Spectrum(CommonOptions cd)
             : this() {
@@ -241,14 +284,19 @@ namespace Flavor.Common {
         }
         internal Spectrum()
             : base() {
-            List<Graph.pListScaled> temp1 = new List<Graph.pListScaled>();
-            List<Graph.pListScaled> temp2 = new List<Graph.pListScaled>();
-            this.Add(temp1);
-            this.Add(temp2);
+            this.Add(new Collector(true));
+            this.Add(new Collector(false));
         }
         internal CommonOptions CommonOptions {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
+        }
+        internal bool RecomputeMassRows(byte col, double coeff) {
+            return this[col - 1].RecomputeMassRows(coeff);
+        }
+        public new void Clear() {
+            this[0].Clear();
+            this[1].Clear();
         }
     }
 

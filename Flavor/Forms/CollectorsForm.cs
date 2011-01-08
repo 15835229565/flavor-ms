@@ -80,6 +80,8 @@ namespace Flavor.Forms
             collect1_graph.ScrollMinX = minX[0];
             collect2_graph.ScrollMaxX = maxX[1];
             collect2_graph.ScrollMinX = minX[1];
+            collect1_graph.IsFirstCollector = true;
+            collect2_graph.IsFirstCollector = false;
 
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
 
@@ -132,12 +134,17 @@ namespace Flavor.Forms
         }
 
         protected override sealed void CreateGraph() {
+            CreateGraph(Graph.Recreate.Both);
+        }
+        private void CreateGraph(Graph.Recreate recreate) {
             if (graph != null) {
                 specterSavingEnabled = false;
-                ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
-                ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
+                if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
+                    ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
+                if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
+                    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             }
-            RefreshGraph();
+            RefreshGraph(recreate);
         }
         protected override sealed void SetSize() {
             if (graphs == null)
@@ -181,15 +188,20 @@ namespace Flavor.Forms
         }
 
         protected override sealed void RefreshGraph() {
-            collect1_graph.Refresh();
-            collect2_graph.Refresh();
+            RefreshGraph(Graph.Recreate.Both);
+        }
+        protected void RefreshGraph(Graph.Recreate recreate) {
+            if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
+                collect1_graph.Refresh();
+            if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
+                collect2_graph.Refresh();
         }
         protected void yAxisChange() {
             collect1_graph.AxisChange();
             collect2_graph.AxisChange();
         }
 
-        protected void ZedGraphRebirth(int zgcIndex, List<Graph.pListScaled> dataPoints, string title) {
+        protected void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string title) {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
             
             myPane.Title.Text = title;
@@ -209,9 +221,9 @@ namespace Flavor.Forms
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
                     //limits inverted due to point-to-mass law
-                    bool isFirst = (zgcIndex == 0);
-                    myPane.XAxis.Scale.Min = Config.pointToMass(maxX[zgcIndex], isFirst);
-                    myPane.XAxis.Scale.Max = Config.pointToMass(minX[zgcIndex], isFirst);
+                    Collector col = zgcIndex == 0 ? graph.DisplayedRows1 : graph.DisplayedRows2;
+                    myPane.XAxis.Scale.Min = col.pointToMass(maxX[zgcIndex]);
+                    myPane.XAxis.Scale.Max = col.pointToMass(minX[zgcIndex]);
                     break;
             }
             
@@ -250,7 +262,7 @@ namespace Flavor.Forms
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        private void InvokeRefreshGraph(bool recreate) {
+        private void InvokeRefreshGraph(Graph.Recreate recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -258,9 +270,9 @@ namespace Flavor.Forms
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(bool recreate) {
-            if (recreate) {
-                CreateGraph();
+        private void refreshGraph(Graph.Recreate recreate) {
+            if (recreate != Graph.Recreate.None) {
+                CreateGraph(recreate);
                 return;
             }
             RefreshGraph();
@@ -382,6 +394,11 @@ namespace Flavor.Forms
                 }
             }
             return false;
+        }
+
+        private void GraphForm_OnPoint(ushort step, byte colNumber) {
+            if (new SetScalingCoeffForm(step, colNumber, graph).ShowDialog() == DialogResult.Yes)
+                Modified = true;
         }
     }
 }

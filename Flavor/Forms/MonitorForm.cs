@@ -98,7 +98,7 @@ namespace Flavor.Forms
         }
 
         // temporary?
-        private void InvokeRefreshGraph(bool recreate) {
+        private void InvokeRefreshGraph(Graph.Recreate recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -106,8 +106,8 @@ namespace Flavor.Forms
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(bool recreate) {
-            if (recreate) {
+        private void refreshGraph(Graph.Recreate recreate) {
+            if (recreate != Graph.Recreate.None) {
                 if (time == -1) {
                     /*if (normalizedList != null) {
                         int index = sums.Count - 1;

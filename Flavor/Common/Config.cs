@@ -428,26 +428,14 @@ namespace Flavor.Common {
         }
         #endregion
         #region Graph scaling to mass coeffs
-        private static double col1Coeff = 2770 * 28;
-        private static double col2Coeff = 896.5 * 18;
-        internal static void setScalingCoeff(byte col, ushort pnt, double mass) {
-            // TODO: not only Graph.Instance! move this code to CollectorsForm (graph-dependent)
-            double value = mass * CommonOptions.scanVoltageReal(pnt);
-            if (col == 1) {
-                if (value != col1Coeff) {
-                    col1Coeff = value;
-                    Graph.Instance.RecomputeMassRows(col);
-                }
-            } else {
-                if (value != col2Coeff) {
-                    col2Coeff = value;
-                    Graph.Instance.RecomputeMassRows(col);
-                }
+        //private static double col1Coeff = 2770 * 28;
+        //private static double col2Coeff = 896.5 * 18;
+        internal static bool setScalingCoeff(byte col, ushort pnt, double mass) {
+            if (Graph.Instance.setScalingCoeff(col, pnt, mass)) {
+                mainConfigWriter.write();
+                return true;
             }
-            mainConfigWriter.write();
-        }
-        internal static double pointToMass(ushort pnt, bool isFirstCollector) {
-            return (isFirstCollector ? col1Coeff : col2Coeff) / CommonOptions.scanVoltageReal(pnt);
+            return false;
         }
         #endregion
         #region Logging routines
@@ -680,6 +668,9 @@ namespace Flavor.Common {
         }
         #endregion
         #region XML configs
+        private interface IScalingCoeffsReader: IAnyReader {
+            void loadScalingCoeffs(Graph graph);
+        }
         private interface ISpectrumReader: ICommonOptionsReader, IPreciseDataReader {
             bool readSpectrum(out Graph graph);
             bool Hint {
@@ -689,16 +680,19 @@ namespace Flavor.Common {
             Graph.Displaying openSpectrumFile(PointPairListPlus pl12, PointPairListPlus pl22, out CommonOptions commonOpts);
             bool openPreciseSpectrumFile(PreciseSpectrum peds);
         }
-        private interface IMainConfig: ICommonOptionsReader, IPreciseDataReader {
+        private interface IMainConfig: ICommonOptionsReader, IPreciseDataReader, IScalingCoeffsReader {
             void read();
             XmlDocument XML {
                 get;
             }
         }
-        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift {
+        private interface IScalingCoeffsWriter: IAnyWriter {
+            void saveScalingCoeffs(double coeff1, double coeff2);
+        }
+        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift, IScalingCoeffsWriter {
             void saveScanOptions(Graph graph);
         }
-        private interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter {}
+        private interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter, IScalingCoeffsWriter { }
         private abstract class TagHolder {
             #region Tags
             private const string ROOT_CONFIG_TAG = "control";
@@ -963,18 +957,23 @@ namespace Flavor.Common {
                             return xmlData;
                         }
                     }
-                    #endregion
-                    private void loadMassCoeffs() {
+                    public void loadScalingCoeffs(Graph graph) {
                         // parse from already loaded config
                         XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                         if (interfaceNode == null)
                             throw new ConfigLoadException("", "", filename);
                         try {
-                            col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            graph.DisplayedRows1.Coeff = col1Coeff;
+                            graph.DisplayedRows2.Coeff = col2Coeff;
                         } catch (FormatException) {
                             throw new ConfigLoadException("", "", filename);
                         }
+                    }
+                    #endregion
+                    private void loadMassCoeffs() {
+                        loadScalingCoeffs(Graph.Instance);
                     }
                 }
                 public class SpectrumReader: Reader, ISpectrumReader {
@@ -1198,6 +1197,19 @@ namespace Flavor.Common {
                     }
                     protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
                     protected virtual void loadDelays(XmlNode commonNode, CommonOptions opts) { }
+                    public void loadScalingCoeffs(Graph graph) {
+                        try {
+                            XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
+                            double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            graph.DisplayedRows1.Coeff = col1Coeff;
+                            graph.DisplayedRows2.Coeff = col2Coeff;
+                        } catch (NullReferenceException) {
+                            throw new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename);
+                        } catch (FormatException) {
+                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения конфигурационного файла", filename);
+                        }
+                    }
                 }
                 public class CommonOptionsReader: Reader, ICommonOptionsReader { }
                 public class PreciseDataReader: Reader, IPreciseDataReader { }
@@ -1281,15 +1293,18 @@ namespace Flavor.Common {
                     }
                     #endregion
                     private void loadMassCoeffs() {
-                        try {
+                        loadScalingCoeffs(Graph.Instance);
+                        /*try {
                             XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
-                            col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            Graph.Instance.DisplayedRows1.Coeff = col1Coeff;
+                            Graph.Instance.DisplayedRows2.Coeff = col2Coeff;
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException("Ошибка структуры конфигурационного файла", "Ошибка чтения конфигурационного файла", filename);
                         } catch (FormatException) {
                             throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения конфигурационного файла", filename);
-                        }
+                        }*/
                     }
                     protected override void loadDelays(XmlNode commonNode, CommonOptions opts) {
                         try {
@@ -1376,6 +1391,11 @@ namespace Flavor.Common {
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
                         graph = new Graph(commonOpts);
+                        try {
+                            loadScalingCoeffs(graph);
+                        } catch (ConfigLoadException) {
+                            // do nothing
+                        }
                         switch (result) {
                             case Graph.Displaying.Measured:
                                 graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
@@ -1393,6 +1413,11 @@ namespace Flavor.Common {
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
                             graph = new Graph(peds.CommonOptions);
+                            try {
+                                loadScalingCoeffs(graph);
+                            } catch (ConfigLoadException) {
+                                // do nothing
+                            }
                             switch (res) {
                                 case Graph.Displaying.Measured:
                                     short shift = short.MaxValue;
@@ -1507,6 +1532,12 @@ namespace Flavor.Common {
                     }
                     protected virtual void clearOldValues() { }
                     protected virtual void savePointRows(PointPairListPlus row, XmlNode node) { }
+                    public void saveScalingCoeffs(double coeff1, double coeff2) {
+                        clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
+                        string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
+                        fillInnerText(prefix, C1_CONFIG_TAG, coeff1.ToString("R", CultureInfo.InvariantCulture));
+                        fillInnerText(prefix, C2_CONFIG_TAG, coeff2.ToString("R", CultureInfo.InvariantCulture));
+                    }
                 }
                 public class CommonOptionsWriter: Writer, ICommonOptionsWriter { }
                 public class PreciseDataWriter: Writer, IPreciseDataWriter { }
@@ -1587,10 +1618,7 @@ namespace Flavor.Common {
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
                     private void saveMassCoeffs() {
-                        clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                        string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                        fillInnerText(prefix, C1_CONFIG_TAG, col1Coeff.ToString("R", CultureInfo.InvariantCulture));
-                        fillInnerText(prefix, C2_CONFIG_TAG, col2Coeff.ToString("R", CultureInfo.InvariantCulture));
+                        saveScalingCoeffs(Graph.Instance.DisplayedRows1.Coeff, Graph.Instance.DisplayedRows2.Coeff);
                     }
                     private void saveCheckOptions() {
                         //checkpeak & iterations
@@ -1652,6 +1680,7 @@ namespace Flavor.Common {
                     createCommonOptsStub(doc, rootNode);
                     writer.saveCommonOptions(graph.CommonOptions);
                 }
+                writer.saveScalingCoeffs(graph.DisplayedRows1.Coeff, graph.DisplayedRows2.Coeff);
                 return writer;
             }
             public static ICommonOptionsReader getCommonOptionsReader(string confName) {

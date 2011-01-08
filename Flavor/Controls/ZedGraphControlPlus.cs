@@ -15,7 +15,10 @@ namespace Flavor.Controls
         
         public new delegate void ContextMenuBuilderEventHandler(ZedGraphControlPlus sender, ContextMenuStrip menuStrip, ContextMenuObjectState objState, bool isNearPoint);
         public new event ContextMenuBuilderEventHandler ContextMenuBuilder;
-        
+
+        public delegate void PointEventHandler(ushort step, byte colNumber);
+        public event PointEventHandler OnPoint;
+
         private bool isFirstCollector;
         public bool IsFirstCollector {
             set { isFirstCollector = value; }
@@ -63,7 +66,8 @@ namespace Flavor.Controls
                     item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
                     item.Click += new System.EventHandler((s, e) => {
                         // TODO: raise event here and move code below to CollectorsForm
-                        new SetScalingCoeffForm(step, isFirst).ShowDialog();
+                        OnPoint(step, isFirst);
+                        //new SetScalingCoeffForm(step, isFirst).ShowDialog();
                     });
                     items.Add(item);
 
