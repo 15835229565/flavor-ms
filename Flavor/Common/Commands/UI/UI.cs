@@ -93,7 +93,7 @@ namespace Flavor.Common.Commands.UI {
         private ushort SVoltage;
 
         internal sendSVoltage(ushort step) {
-            SVoltage = Config.CommonOptions.scanVoltage(step);
+            SVoltage = CommonOptions.scanVoltage(step);
         }
 
         internal override ModBus.CommandCode Id {

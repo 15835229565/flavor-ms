@@ -131,10 +131,10 @@ namespace Flavor.Common {
             mainConfigWriter.write();
         }
         internal static void saveGlobalDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
-            Config.commonOpts.befTimeReal = befTimeReal;
-            Config.commonOpts.fTimeReal = fTimeReal;
-            Config.commonOpts.bTimeReal = bTimeReal;
-            Config.commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
+            commonOpts.befTimeReal = befTimeReal;
+            commonOpts.fTimeReal = fTimeReal;
+            commonOpts.bTimeReal = bTimeReal;
+            commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
             mainConfigWriter.write();
         }
         internal static void saveGlobalConnectOptions(string port, ushort baudrate) {
@@ -155,15 +155,15 @@ namespace Flavor.Common {
             mainConfigWriter.write();
         }
         internal static void saveGlobalCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
-            Config.commonOpts.eTimeReal = eT;
-            Config.commonOpts.iTimeReal = iT;
-            Config.commonOpts.iVoltageReal = iV;
-            Config.commonOpts.CPReal = cp;
-            Config.commonOpts.eCurrentReal = eC;
-            Config.commonOpts.hCurrentReal = hC;
-            Config.commonOpts.fV1Real = fv1;
-            Config.commonOpts.fV2Real = fv2;
-            mainConfigWriter.saveCommonOptions(Config.CommonOptions);
+            commonOpts.eTimeReal = eT;
+            commonOpts.iTimeReal = iT;
+            commonOpts.iVoltageReal = iV;
+            commonOpts.CPReal = cp;
+            commonOpts.eCurrentReal = eC;
+            commonOpts.hCurrentReal = hC;
+            commonOpts.fV1Real = fv1;
+            commonOpts.fV2Real = fv2;
+            mainConfigWriter.saveCommonOptions(commonOpts);
             mainConfigWriter.write();
         }
         internal static void saveGlobalConfig() {
@@ -383,8 +383,8 @@ namespace Flavor.Common {
             writer.write();
         }
 
-        internal static void loadCommonOptions(string cdConfName) {
-            Config.commonOpts = TagHolder.getCommonOptionsReader(cdConfName).loadCommonOptions();
+        internal static CommonOptions loadCommonOptions(string cdConfName) {
+            return TagHolder.getCommonOptionsReader(cdConfName).loadCommonOptions();
         }
         internal static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
             ICommonOptionsWriter writer = TagHolder.getCommonOptionsWriter(filename);
@@ -431,7 +431,8 @@ namespace Flavor.Common {
         private static double col1Coeff = 2770 * 28;
         private static double col2Coeff = 896.5 * 18;
         internal static void setScalingCoeff(byte col, ushort pnt, double mass) {
-            double value = mass * Config.commonOpts.scanVoltageReal(pnt);
+            // TODO: not only Graph.Instance! move this code to CollectorsForm (graph-dependent)
+            double value = mass * CommonOptions.scanVoltageReal(pnt);
             if (col == 1) {
                 if (value != col1Coeff) {
                     col1Coeff = value;
@@ -446,12 +447,7 @@ namespace Flavor.Common {
             mainConfigWriter.write();
         }
         internal static double pointToMass(ushort pnt, bool isFirstCollector) {
-            double coeff;
-            if (isFirstCollector)
-                coeff = col1Coeff;
-            else
-                coeff = col2Coeff;
-            return coeff / Config.commonOpts.scanVoltageReal(pnt);
+            return (isFirstCollector ? col1Coeff : col2Coeff) / CommonOptions.scanVoltageReal(pnt);
         }
         #endregion
         #region Logging routines

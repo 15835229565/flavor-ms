@@ -14,65 +14,65 @@ namespace Flavor.Forms {
                 applyButton.Enabled = false;
                 applyButton.Visible = false;
             }
-            loadCommonData();
+            loadCommonData(Config.CommonOptions);
         }
 
-        protected void loadCommonData(string fn) {
-            Config.loadCommonOptions(fn);
-            loadCommonData();
+        private void loadCommonData(string fn) {
+            loadCommonData(Config.loadCommonOptions(fn));
         }
 
-        protected void loadCommonData() {
+        private void loadCommonData(CommonOptions co) {
+            // TODO: remove hard-coded numbers here
             decimal temp;
 
-            temp = (decimal)(Config.CommonOptions.eTimeReal);
+            temp = (decimal)(co.eTimeReal);
             if (temp < expTimeNumericUpDown.Minimum) temp = expTimeNumericUpDown.Minimum;
             if (temp > expTimeNumericUpDown.Maximum) temp = expTimeNumericUpDown.Maximum;
             expTimeNumericUpDown.Value = temp;
 
-            temp = (decimal)(Config.CommonOptions.iTimeReal);
+            temp = (decimal)(co.iTimeReal);
             if (temp < idleTimeNumericUpDown.Minimum) temp = idleTimeNumericUpDown.Minimum;
             if (temp > idleTimeNumericUpDown.Maximum) temp = idleTimeNumericUpDown.Maximum;
             idleTimeNumericUpDown.Value = temp;
 
-            iVoltageNumericUpDown.Minimum = (decimal)(Config.CommonOptions.iVoltageConvert(Config.CommonOptions.iVoltageConvert((double)20)));
-            iVoltageNumericUpDown.Maximum = (decimal)(Config.CommonOptions.iVoltageConvert(Config.CommonOptions.iVoltageConvert((double)150)));
-            temp = (decimal)(Config.CommonOptions.iVoltageReal);
+            iVoltageNumericUpDown.Minimum = (decimal)(CommonOptions.iVoltageConvert(CommonOptions.iVoltageConvert((double)20)));
+            iVoltageNumericUpDown.Maximum = (decimal)(CommonOptions.iVoltageConvert(CommonOptions.iVoltageConvert((double)150)));
+            temp = (decimal)(co.iVoltageReal);
             if (temp < iVoltageNumericUpDown.Minimum) temp = iVoltageNumericUpDown.Minimum;
             if (temp > iVoltageNumericUpDown.Maximum) temp = iVoltageNumericUpDown.Maximum;
             iVoltageNumericUpDown.Value = temp;
 
-            CPNumericUpDown.Minimum = (decimal)(Config.CommonOptions.CPConvert(Config.CommonOptions.CPConvert((double)10)));
-            CPNumericUpDown.Maximum = (decimal)(Config.CommonOptions.CPConvert(Config.CommonOptions.CPConvert((double)12)));
-            temp = (decimal)(Config.CommonOptions.CPReal);
+            CPNumericUpDown.Minimum = (decimal)(CommonOptions.CPConvert(CommonOptions.CPConvert((double)10)));
+            CPNumericUpDown.Maximum = (decimal)(CommonOptions.CPConvert(CommonOptions.CPConvert((double)12)));
+            temp = (decimal)(co.CPReal);
             if (temp < CPNumericUpDown.Minimum) temp = CPNumericUpDown.Minimum;
             if (temp > CPNumericUpDown.Maximum) temp = CPNumericUpDown.Maximum;
             CPNumericUpDown.Value = temp;
 
-            eCurrentNumericUpDown.Minimum = (decimal)(Config.CommonOptions.eCurrentConvert(Config.CommonOptions.eCurrentConvert((double)0)));
-            eCurrentNumericUpDown.Maximum = (decimal)(Config.CommonOptions.eCurrentConvert(Config.CommonOptions.eCurrentConvert((double)10)));
-            temp = (decimal)(Config.CommonOptions.eCurrentReal);
+            eCurrentNumericUpDown.Minimum = (decimal)(CommonOptions.eCurrentConvert(CommonOptions.eCurrentConvert((double)0)));
+            eCurrentNumericUpDown.Maximum = (decimal)(CommonOptions.eCurrentConvert(CommonOptions.eCurrentConvert((double)10)));
+            temp = (decimal)(co.eCurrentReal);
             if (temp < eCurrentNumericUpDown.Minimum) temp = eCurrentNumericUpDown.Minimum;
             if (temp > eCurrentNumericUpDown.Maximum) temp = eCurrentNumericUpDown.Maximum;
             eCurrentNumericUpDown.Value = temp;
 
-            hCurrentNumericUpDown.Minimum = (decimal)(Config.CommonOptions.hCurrentConvert(Config.CommonOptions.hCurrentConvert((double)0)));
-            hCurrentNumericUpDown.Maximum = (decimal)(Config.CommonOptions.hCurrentConvert(Config.CommonOptions.hCurrentConvert((double)1)));
-            temp = (decimal)(Config.CommonOptions.hCurrentReal);
+            hCurrentNumericUpDown.Minimum = (decimal)(CommonOptions.hCurrentConvert(CommonOptions.hCurrentConvert((double)0)));
+            hCurrentNumericUpDown.Maximum = (decimal)(CommonOptions.hCurrentConvert(CommonOptions.hCurrentConvert((double)1)));
+            temp = (decimal)(co.hCurrentReal);
             if (temp < hCurrentNumericUpDown.Minimum) temp = hCurrentNumericUpDown.Minimum;
             if (temp > hCurrentNumericUpDown.Maximum) temp = hCurrentNumericUpDown.Maximum;
             hCurrentNumericUpDown.Value = temp;
 
-            fV1NumericUpDown.Minimum = (decimal)(Config.CommonOptions.fV1Convert(Config.CommonOptions.fV1Convert((double)20)));
-            fV1NumericUpDown.Maximum = (decimal)(Config.CommonOptions.fV1Convert(Config.CommonOptions.fV1Convert((double)150)));
-            temp = (decimal)(Config.CommonOptions.fV1Real);
+            fV1NumericUpDown.Minimum = (decimal)(CommonOptions.fV1Convert(CommonOptions.fV1Convert((double)20)));
+            fV1NumericUpDown.Maximum = (decimal)(CommonOptions.fV1Convert(CommonOptions.fV1Convert((double)150)));
+            temp = (decimal)(co.fV1Real);
             if (temp < fV1NumericUpDown.Minimum) temp = fV1NumericUpDown.Minimum;
             if (temp > fV1NumericUpDown.Maximum) temp = fV1NumericUpDown.Maximum;
             fV1NumericUpDown.Value = temp;
 
-            fV2NumericUpDown.Minimum = (decimal)(Config.CommonOptions.fV2Convert(Config.CommonOptions.fV2Convert((double)20)));
-            fV2NumericUpDown.Maximum = (decimal)(Config.CommonOptions.fV2Convert(Config.CommonOptions.fV2Convert((double)150)));
-            temp = (decimal)(Config.CommonOptions.fV2Real);
+            fV2NumericUpDown.Minimum = (decimal)(CommonOptions.fV2Convert(CommonOptions.fV2Convert((double)20)));
+            fV2NumericUpDown.Maximum = (decimal)(CommonOptions.fV2Convert(CommonOptions.fV2Convert((double)150)));
+            temp = (decimal)(co.fV2Real);
             if (temp < fV2NumericUpDown.Minimum) temp = fV2NumericUpDown.Minimum;
             if (temp > fV2NumericUpDown.Maximum) temp = fV2NumericUpDown.Maximum;
             fV2NumericUpDown.Value = temp;
@@ -84,7 +84,7 @@ namespace Flavor.Forms {
         }
 
         protected virtual void ok_butt_Click(object sender, EventArgs e) {
-            Config.saveGlobalCommonOptions((ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
+            Config.saveGlobalCommonOptions((ushort)expTimeNumericUpDown.Value, (ushort)(idleTimeNumericUpDown.Value),
                                    (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
             Commander.notRareModeRequested = rareModeCheckBox.Checked;
             this.DialogResult = DialogResult.OK;

@@ -65,7 +65,7 @@ namespace Flavor.Common {
             internal void Add(ushort pnt, long count) {
                 peakSum += count;
                 points[(int)DisplayValue.Step].Add(pnt, count);
-                points[(int)DisplayValue.Voltage].Add(Config.CommonOptions.scanVoltageReal(pnt), count, pnt);
+                points[(int)DisplayValue.Voltage].Add(CommonOptions.scanVoltageReal(pnt), count, pnt);
                 points[(int)DisplayValue.Mass].Add(Config.pointToMass(pnt, collector), count, pnt);
             }
             private void SetRows(pListScaled pl) {
@@ -139,7 +139,7 @@ namespace Flavor.Common {
                 pp.Z = pp.X;
             }
             private void zToVoltage(PointPair pp) {
-                pp.X = Config.CommonOptions.scanVoltageReal((ushort)pp.Z);
+                pp.X = CommonOptions.scanVoltageReal((ushort)pp.Z);
             }
             private void zToMass(PointPair pp) {
                 pp.X = Config.pointToMass((ushort)pp.Z, collector);
@@ -353,7 +353,6 @@ namespace Flavor.Common {
         }
         internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
-            ResetPointLists();
             foreach (Utility.PreciseEditorData ped in peds) {
                 if (ped == null || ped.AssociatedPoints == null || ped.AssociatedPoints.Count == 0)
                     continue;
@@ -378,6 +377,7 @@ namespace Flavor.Common {
                 OnNewGraphData(true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
+            ResetPointLists();
             updateGraphAfterPreciseDiff(peds, true);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds, bool newData) {

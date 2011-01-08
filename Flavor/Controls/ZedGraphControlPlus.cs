@@ -62,7 +62,7 @@ namespace Flavor.Controls
                     item = new ToolStripMenuItem();
                     item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
                     item.Click += new System.EventHandler((s, e) => {
-                        // TODO: raise event here and move code below to mainform
+                        // TODO: raise event here and move code below to CollectorsForm
                         new SetScalingCoeffForm(step, isFirst).ShowDialog();
                     });
                     items.Add(item);

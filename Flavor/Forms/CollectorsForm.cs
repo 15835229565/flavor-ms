@@ -46,10 +46,12 @@ namespace Flavor.Forms
         protected bool PreciseSpectrumDisplayed {
             get { return preciseSpectrumDisplayed; }
             set {
+                //BAD: only if MeasureCollectorsForm!
                 if (preciseSpectrumDisplayed == value)
                     return;
                 preciseSpectrumDisplayed = value;
-                graph.ResetPointLists();
+                // actually Graph.Instance; invokes on initMeasure already
+                //graph.ResetPointLists();
                 setTitles();
             }
         }
@@ -201,8 +203,8 @@ namespace Flavor.Forms
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
-                    myPane.XAxis.Scale.Min = Config.CommonOptions.scanVoltageReal(minX[zgcIndex]);
-                    myPane.XAxis.Scale.Max = Config.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
+                    myPane.XAxis.Scale.Min = CommonOptions.scanVoltageReal(minX[zgcIndex]);
+                    myPane.XAxis.Scale.Max = CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;

@@ -25,10 +25,10 @@ namespace Flavor.Common {
                 heatCurrent = hCurrentConvert(value);
             }
         }
-        internal double hCurrentConvert(ushort current) {
+        internal static double hCurrentConvert(ushort current) {
             return (double)current / 4096;
         }
-        internal ushort hCurrentConvert(double current) {
+        internal static ushort hCurrentConvert(double current) {
             return genericConvert((ushort)(current * 4096));
         }
 
@@ -42,10 +42,10 @@ namespace Flavor.Common {
                 emissionCurrent = eCurrentConvert(value);
             }
         }
-        internal double eCurrentConvert(ushort current) {
+        internal static double eCurrentConvert(ushort current) {
             return 50 * (double)current / 4096;
         }
-        internal ushort eCurrentConvert(double current) {
+        internal static ushort eCurrentConvert(double current) {
             return genericConvert((ushort)((current / 50) * 4096));
         }
 
@@ -59,10 +59,10 @@ namespace Flavor.Common {
                 ionizationVoltage = iVoltageConvert(value);
             }
         }
-        internal double iVoltageConvert(ushort voltage) {
+        internal static double iVoltageConvert(ushort voltage) {
             return 150 * (double)voltage / 4096;
         }
-        internal ushort iVoltageConvert(double voltage) {
+        internal static ushort iVoltageConvert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
@@ -76,10 +76,10 @@ namespace Flavor.Common {
                 focusVoltage1 = fV1Convert(value);
             }
         }
-        internal double fV1Convert(ushort voltage) {
+        internal static double fV1Convert(ushort voltage) {
             return 150 * (double)voltage / 4096;
         }
-        internal ushort fV1Convert(double voltage) {
+        internal static ushort fV1Convert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
@@ -93,13 +93,13 @@ namespace Flavor.Common {
                 focusVoltage2 = fV2Convert(value);
             }
         }
-        internal double fV2Convert(ushort voltage) {
+        internal static double fV2Convert(ushort voltage) {
             return 150 * (double)voltage / 4096;
         }
-        internal ushort fV2Convert(double voltage) {
+        internal static ushort fV2Convert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
-        protected ushort genericConvert(ushort x) {
+        protected static ushort genericConvert(ushort x) {
             return x < 4096 ? x : (ushort)4095;
         }
     }
@@ -189,21 +189,21 @@ namespace Flavor.Common {
                 CPVoltage = CPConvert(value);
             }
         }
-        internal double CPConvert(ushort coeff) {
+        internal static double CPConvert(ushort coeff) {
             return (10 / (double)coeff) * 4096;
         }
-        internal ushort CPConvert(double coeff) {
+        internal static ushort CPConvert(double coeff) {
             return genericConvert((ushort)((10 / coeff) * 4096));
         }
 
         // scan voltage modification law
-        internal ushort scanVoltage(ushort step) {
+        internal static ushort scanVoltage(ushort step) {
             if (step > Config.MAX_STEP) step = Config.MAX_STEP;
             return (ushort)(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
-        internal double scanVoltageReal(ushort step) {
+        internal static double scanVoltageReal(ushort step) {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
 

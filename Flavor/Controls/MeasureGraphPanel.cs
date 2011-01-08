@@ -54,7 +54,7 @@ namespace Flavor.Controls {
                 scanProgressBar.PerformStep();
             }
             stepNumberLabel.Text = Graph.LastPoint.ToString();
-            scanRealTimeLabel.Text = Graph.CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
+            scanRealTimeLabel.Text = CommonOptions.scanVoltageReal(Graph.LastPoint).ToString("f1");
             detector1CountsLabel.Text = Device.Detector1.ToString();
             detector2CountsLabel.Text = Device.Detector2.ToString();
         }

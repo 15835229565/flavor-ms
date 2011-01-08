@@ -10,7 +10,7 @@ namespace Flavor.Forms {
         internal SetScalingCoeffForm()
             : base() {
             InitializeComponent();
-
+            // TODO: better solution
             this.massTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
         }
         internal SetScalingCoeffForm(ushort step, byte col)
@@ -32,7 +32,7 @@ namespace Flavor.Forms {
                 massTextBox.BackColor = Color.Red;
                 return;
             }
-            //Проверка, что масса не вблизи нуля
+            //check mass is not near 0
             if (mass < 1) {
                 massTextBox.BackColor = Color.Red;
                 return;

@@ -17,14 +17,13 @@ namespace Flavor.Forms {
             }
             return instance;
         }*/
-        
+
         internal MeasuredCollectorsForm()
             : base(Graph.Instance, false) {
             InitializeComponent();
         }
         protected sealed override GraphPanel initPanel() {
-            GraphPanel panel = new MeasureGraphPanel();
-            return panel;
+            return new MeasureGraphPanel();
 		}
 
         #region IMeasured Members
