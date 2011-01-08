@@ -276,8 +276,10 @@ namespace Flavor.Forms {
             MonitorForm.Hide();
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
+            // lock PreciseData for modification
             Commander.Monitor();
             MonitorForm.initMeasure(true);
+            // end lock
             prepareControlsOnMeasureStart(MonitorForm);
             CollectorsForm.Hide();
         }

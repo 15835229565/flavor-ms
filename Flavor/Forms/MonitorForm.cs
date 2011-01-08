@@ -33,14 +33,16 @@ namespace Flavor.Forms
         }
 
         protected override sealed void RefreshGraph() {
-            PreciseSpectrum pspec = Config.PreciseData;
+            //BAD: every time
+            List<Utility.PreciseEditorData> pspec = Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
+            if (pspec.Count != rowsCount)
+                // very bad!
+                throw new NullReferenceException();
+            
             int j = 0;
             long sum = 0;
             for (int i = 0; i < rowsCount; ++i) {
                 Utility.PreciseEditorData ped = pspec[i];
-                if (!ped.Use) {
-                    continue;
-                }
                 // TODO: exceptions here, problem with backward lines also here?
                 long peakSum = ped.AssociatedPoints == null ? 0 : ped.AssociatedPoints.PLSreference.PeakSum;
                 sum += peakSum;
@@ -132,15 +134,10 @@ namespace Flavor.Forms
         public void initMeasure(bool isPrecise) {
             list = new List<PointPairList>();
             sums = new List<long>();
-            PreciseSpectrum pspec = Config.PreciseData;
+            List<Utility.PreciseEditorData> pspec = Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
-            for (int i = 0; i < rowsCount; ++i) {
-                Utility.PreciseEditorData ped = pspec[i];
-                if (!ped.Use) {
-                    continue;
-                }
-                list.Add(new PointPairListPlus(ped, null));
-            }
+            for (int i = 0; i < rowsCount; ++i)
+                list.Add(new PointPairListPlus(pspec[i], null));
             time = 0;
             if (normalizedList == null) {
                 CreateGraph();

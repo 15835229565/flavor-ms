@@ -15,9 +15,6 @@ namespace Flavor.Common {
         }
 
         private ushort pointValue = 0;
-        /*internal ushort Point {
-            get { return pointValue; }
-        }*/
 
         private sendMeasure customMeasure = null;
         private ushort befTime;
@@ -150,6 +147,7 @@ namespace Flavor.Common {
                 }
 
                 noPoints = false;
+                // only peak value?
                 senseModePoints.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                 senseModePeakIterationMax = new ushort[senseModePoints.Count];
                 smpiSumMax = 0;
@@ -331,6 +329,7 @@ namespace Flavor.Common {
                     Config.finalizeMonitorFile();
                 }
                 protected override void saveResults() {
+                    // senseModeCounts here?
                     Config.autoSaveMonitorSpectrumFile(shift);
                 }
 

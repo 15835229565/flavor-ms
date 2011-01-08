@@ -57,7 +57,7 @@ namespace Flavor.Common {
                     return null;
                 }
                 ushort maxIteration = 0;
-                foreach (Utility.PreciseEditorData ped in Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)) {
+                foreach (Utility.PreciseEditorData ped in preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)) {
                     maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
                 }
                 return new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, maxIteration, reperPeak.Width, 0, "checker peak");
@@ -66,7 +66,7 @@ namespace Flavor.Common {
         internal static List<Utility.PreciseEditorData> PreciseDataWithChecker {
             get {
                 ushort maxIteration = 0;
-                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)/*.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue)*/;
+                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
                 if (res.Count == 0) {
                     return null;
                 }
@@ -150,6 +150,7 @@ namespace Flavor.Common {
             mainConfigWriter.write();
         }
         internal static void saveGlobalPreciseOptions(PreciseSpectrum peds) {
+            // be very careful: variable reference is changed!
             preciseData = peds;
             mainConfigWriter.savePreciseData(peds, false);
             mainConfigWriter.write();
@@ -1639,7 +1640,7 @@ namespace Flavor.Common {
                         fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
                     }
                     private void SavePreciseOptions() {
-                        savePreciseData(PreciseData, false);
+                        savePreciseData(preciseData, false);
                     }
                     protected override void clearOldValues() {
                         for (int i = 1; i <= 20; ++i) {
