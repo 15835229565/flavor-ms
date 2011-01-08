@@ -428,8 +428,6 @@ namespace Flavor.Common {
         }
         #endregion
         #region Graph scaling to mass coeffs
-        //private static double col1Coeff = 2770 * 28;
-        //private static double col2Coeff = 896.5 * 18;
         internal static bool setScalingCoeff(byte col, ushort pnt, double mass) {
             if (Graph.Instance.setScalingCoeff(col, pnt, mass)) {
                 mainConfigWriter.write();

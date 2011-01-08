@@ -106,16 +106,6 @@ namespace Flavor.Common {
             internal void RecomputeMassRow() {
                 points[(int)DisplayValue.Mass].ForEach(zToMass);
             }
-            /*internal void RecomputeMassRow(Action<PointPair> action) {
-                points[(int)DisplayValue.Mass].ForEach(action);
-            }*/
-
-            /*internal pListScaled(Utility.PreciseEditorData ped) {
-                collector = (ped.Collector == 1);
-                myPED = ped;
-                if (ped.AssociatedPoints != null)
-                    SetRows(ped.AssociatedPoints);
-            }*/
             internal pListScaled(Collector col) {
                 collector = col;
                 myPED = null;//!
