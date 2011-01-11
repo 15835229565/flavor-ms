@@ -278,11 +278,11 @@ namespace Flavor.Forms
             RefreshGraph();
         }
 
-        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControlPlus sender, ContextMenuStrip menuStrip, ZedGraphControl.ContextMenuObjectState objState, bool isNearPoint) {
-            if (isNearPoint)
-                sender.setVisibility(specterDiffEnabled, specterDiffEnabled && graph.isPreciseSpectrum);
+        private void ZedGraphControlPlus_ContextMenuBuilder(object sender, ZedGraphControlPlus.ContextMenuBuilderEventArgs args) {
+            if (args.IsNearPoint)
+                (sender as ZedGraphControlPlus).setVisibility(specterDiffEnabled, specterDiffEnabled && graph.isPreciseSpectrum);
 
-            ToolStripItemCollection items = menuStrip.Items;
+            ToolStripItemCollection items = args.MenuStrip.Items;
             ToolStripItem item = new ToolStripSeparator();
             items.Add(item);
             

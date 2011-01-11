@@ -61,7 +61,7 @@ namespace Flavor.Forms {
             this.collect2_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
             this.collect2_graph.OnPoint += new Flavor.Controls.ZedGraphControlPlus.PointEventHandler(this.GraphForm_OnPoint);
             this.collect2_graph.OnDiffOnPoint += new Flavor.Controls.ZedGraphControlPlus.DiffOnPointEventHandler(this.GraphForm_OnDiffOnPoint);
-            this.collect2_graph.ContextMenuBuilder += new Flavor.Controls.ZedGraphControlPlus.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
+            this.collect2_graph.ContextMenuBuilder += new System.EventHandler<ZedGraphControlPlus.ContextMenuBuilderEventArgs>(this.ZedGraphControlPlus_ContextMenuBuilder);
             // 
             // collect1_graph
             // 
@@ -83,7 +83,7 @@ namespace Flavor.Forms {
             this.collect1_graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlPlus_PointValueEvent);
             this.collect1_graph.OnPoint += new Flavor.Controls.ZedGraphControlPlus.PointEventHandler(this.GraphForm_OnPoint);
             this.collect1_graph.OnDiffOnPoint += new Flavor.Controls.ZedGraphControlPlus.DiffOnPointEventHandler(this.GraphForm_OnDiffOnPoint);
-            this.collect1_graph.ContextMenuBuilder += new Flavor.Controls.ZedGraphControlPlus.ContextMenuBuilderEventHandler(this.ZedGraphControlPlus_ContextMenuBuilder);
+            this.collect1_graph.ContextMenuBuilder += new System.EventHandler<ZedGraphControlPlus.ContextMenuBuilderEventArgs>(this.ZedGraphControlPlus_ContextMenuBuilder);
             // 
             // distractFromCurrentToolStripMenuItem
             // 

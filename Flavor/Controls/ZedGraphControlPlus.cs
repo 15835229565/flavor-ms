@@ -9,12 +9,31 @@ using Flavor.Forms;
 
 namespace Flavor.Controls
 {
-    public partial class ZedGraphControlPlus : ZedGraphControl {
+    public partial class ZedGraphControlPlus: ZedGraphControl {
+        public class ContextMenuBuilderEventArgs: EventArgs {
+            private ContextMenuStrip menuStrip;
+            public ContextMenuStrip MenuStrip {
+                get {
+                    return this.menuStrip;
+                }
+            }
+            private ContextMenuObjectState objState;
+            private bool isNearPoint;
+            public bool IsNearPoint {
+                get {
+                    return this.isNearPoint;
+                }
+            }
+            public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip, ContextMenuObjectState objState, bool isNearPoint) {
+                this.menuStrip = menuStrip;
+                this.objState = objState;
+                this.isNearPoint = isNearPoint;
+            }
+        }
         public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
         public event DiffOnPointEventHandler OnDiffOnPoint;
         
-        public new delegate void ContextMenuBuilderEventHandler(ZedGraphControlPlus sender, ContextMenuStrip menuStrip, ContextMenuObjectState objState, bool isNearPoint);
-        public new event ContextMenuBuilderEventHandler ContextMenuBuilder;
+        public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;
 
         public delegate void PointEventHandler(ushort step, byte colNumber);
         public event PointEventHandler OnPoint;
@@ -95,7 +114,7 @@ namespace Flavor.Controls
             }
             //raise new event
             if (ContextMenuBuilder != null)
-                ContextMenuBuilder(this, menuStrip, objState, isNearPoint);
+                ContextMenuBuilder(this, new ContextMenuBuilderEventArgs(menuStrip, objState, isNearPoint));
         }
         internal void setVisibility(bool pointItemVisible, bool peakItemVisible) {
             pointItem.Visible = pointItemVisible;
