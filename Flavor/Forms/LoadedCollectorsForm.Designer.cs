@@ -9,12 +9,7 @@ namespace Flavor.Forms {
         private void InitializeComponent() {
             this.closeSpecterFileToolStripMenuItem.Enabled = true;
 			//this.measurePanelToolStripMenuItem.Checked = true;
-            // 
-            // LoadedCollectorsForm
-            // 
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(LoadedCollectorsForm_FormClosing);
         }
-
         #endregion
     }
 }

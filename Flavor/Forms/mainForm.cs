@@ -203,9 +203,10 @@ namespace Flavor.Forms {
             statusTreeView.Nodes.AddRange(new TreeNode[] { rootNode });
         }
         #endregion
-        private void mainForm_Shown(object sender, EventArgs e) {
-            openConfigFileToolStripMenuItem_Click(sender, e);
+        protected sealed override void OnShown(EventArgs e) {
+            openConfigFileToolStripMenuItem_Click(this, e);
             Activate();
+            base.OnShown(e);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -724,13 +725,10 @@ namespace Flavor.Forms {
             parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
         }
 
-        private void mainForm_FormClosing(object sender, FormClosingEventArgs e) {
-            if (Commander.pState != Commander.programStates.Start) {
-                if (MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes) {
-                    e.Cancel = true;
-                    return;
-                }
-            }
+        protected sealed override void OnFormClosing(FormClosingEventArgs e) {
+            if (Commander.pState != Commander.programStates.Start &&
+                MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                return;
             if (Commander.DeviceIsConnected)
                 Commander.Disconnect();
             Device.OnDeviceStateChanged -= new DeviceEventHandler(InvokeRefreshDeviceState);
@@ -740,6 +738,8 @@ namespace Flavor.Forms {
             Device.OnTurboPumpAlert -= new TurboPumpAlertEventHandler(InvokeProcessTurboPumpAlert);
 
             Commander.OnProgramStateChanged -= new Commander.ProgramEventHandler(InvokeRefreshButtons);
+            
+            base.OnFormClosing(e);
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {

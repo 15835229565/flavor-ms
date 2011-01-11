@@ -90,9 +90,9 @@ namespace Flavor.Forms {
             }
         }
 
-        void MeasuredCollectorsForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
-            if (e.CloseReason == CloseReason.UserClosing)
-                e.Cancel = true;
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            if (e.CloseReason != CloseReason.UserClosing)
+                base.OnFormClosing(e);
         }
     }
 }

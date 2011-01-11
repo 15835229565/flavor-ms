@@ -420,8 +420,6 @@ namespace Flavor.Forms {
             this.IsMdiContainer = true;
             this.MainMenuStrip = menuStrip;
             this.Name = "mainForm";
-            this.Shown += new System.EventHandler(this.mainForm_Shown);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -431,7 +429,6 @@ namespace Flavor.Forms {
             this.parameterPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

@@ -17,7 +17,6 @@
             this.Name = "ZedGraphControlMonitor";
             this.ResumeLayout(false);
         }
-
         #endregion
     }
 }

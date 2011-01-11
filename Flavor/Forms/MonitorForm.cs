@@ -164,21 +164,17 @@ namespace Flavor.Forms
             time = -1;
         }
         #endregion
-        private void ZedGraphControlMonitor_ContextMenuBuilder(ZedGraphControl control, ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState) {
-            ZedGraphControlMonitor sender = control as ZedGraphControlMonitor;
-            if (sender == null)
-                return;
-            sender.CommonContextMenuBuilder(menuStrip, mousePt, objState);//better to subscribe to new created event in control..
-            
-            ToolStripItemCollection items = menuStrip.Items;
+        private void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
+            if (sender is ZedGraphControlMonitor) {
+                ToolStripItemCollection items = args.MenuStrip.Items;
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = NORM_ITEM_TEXT;
+                item.Checked = (normalizedList != null);
+                item.CheckOnClick = true;
+                item.CheckedChanged += new System.EventHandler(NormItemCheckStateChanged);
 
-            ToolStripMenuItem item = new ToolStripMenuItem();
-            item.Text = NORM_ITEM_TEXT;
-            item.Checked = (normalizedList != null);
-            item.CheckOnClick = true;
-            item.CheckedChanged += new System.EventHandler(NormItemCheckStateChanged);
-
-            items.Add(item);
+                items.Add(item);
+            }
         }
         private void NormItemCheckStateChanged(object sender, EventArgs e) {
             // TODO: modify graph title

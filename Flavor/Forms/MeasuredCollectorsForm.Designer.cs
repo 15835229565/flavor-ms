@@ -14,11 +14,9 @@ namespace Flavor.Forms {
             // 
             this.Text = "Коллекторы";
             this.ControlBox = false;
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(MeasuredCollectorsForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
         #endregion
     }
 }

@@ -50,7 +50,7 @@ namespace Flavor.Forms {
             return res;
 		}
 
-        void LoadedCollectorsForm_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e) {
+        protected override void OnFormClosing(FormClosingEventArgs e) {
             if (Modified) {
                 Activate();
                 DialogResult res = MessageBox.Show(this.MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel);
@@ -65,14 +65,12 @@ namespace Flavor.Forms {
                         break;
                 }
             }
+            base.OnFormClosing(e);
         }
-
         #region ILoaded Members
-
         public string FileName {
             get { return displayedFileName; }
         }
-
         #endregion
     }
 }

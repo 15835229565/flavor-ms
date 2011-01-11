@@ -33,36 +33,27 @@ namespace Flavor.Forms {
 				}
 				return panel;
             }
-            /*set {
-                this.Controls.Remove(panel);
-                panel = value;
-                this.Controls.Add(panel);
-			}*/
         }
 
-        /*public new FormWindowState WindowState {
-            get { return base.WindowState; }
-            set { base.WindowState = FormWindowState.Maximized; }
-        }*/
-        
         internal protected GraphForm() {
             InitializeComponent();
-            //Dock = DockStyle.Fill;
-            //FormBorderStyle = FormBorderStyle.None;
         }
-        /*protected override void OnCreateControl() {
-            ControlBox = false;
-            base.OnCreateControl();
-        }*/
-        private void GraphForm_Shown(object sender, EventArgs e) {
+        protected sealed override void OnShown(EventArgs e) {
             CreateGraph();
             SetSize();
+            base.OnShown(e);
         }
-        private void GraphForm_Resize(object sender, EventArgs e) {
+        protected sealed override void OnResize(EventArgs e) {
             SetSize();
+            base.OnResize(e);
         }
-        private void GraphForm_Validating(object sender, CancelEventArgs e) {
+        protected sealed override void OnValidating(CancelEventArgs e) {
             RefreshGraph();
+            base.OnValidating(e);
+        }
+        protected sealed override void OnActivated(EventArgs e) {
+            WindowState = FormWindowState.Maximized;
+            base.OnActivated(e);
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
             saveData();
@@ -86,9 +77,5 @@ namespace Flavor.Forms {
         protected virtual void CreateGraph() {}
         protected virtual void SetSize() {}
         protected virtual bool saveData() { return false; }
-
-        private void GraphForm_Activated(object sender, EventArgs e) {
-            WindowState = FormWindowState.Maximized;
-        }
     }
 }

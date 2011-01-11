@@ -17,12 +17,6 @@ namespace Flavor.Controls
                     return menuStrip;
                 }
             }
-            private bool isNearPoint;
-            public bool IsNearPoint {
-                get {
-                    return isNearPoint;
-                }
-            }
             private PointPairListPlus ppl;
             public PointPairListPlus Row {
                 get {
@@ -35,14 +29,16 @@ namespace Flavor.Controls
                     return index;
                 }
             }
-            public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip, bool isNearPoint, PointPairListPlus ppl, int index) {
+            public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip, PointPairListPlus ppl, int index) {
                 this.menuStrip = menuStrip;
-                this.isNearPoint = isNearPoint;
                 this.ppl = ppl;
                 this.index = index;
             }
         }
-        public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;
+        public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;// = delegate { }; // cannot be null, important for thread safety;
+        protected virtual void OnContextMenuBuilder(ContextMenuBuilderEventArgs e) {
+            ContextMenuBuilder.Raise(this, e);
+        }
 
         public ZedGraphControlPlus()
             : base() {
@@ -55,13 +51,11 @@ namespace Flavor.Controls
                 return;
             GraphPane pane = MasterPane.FindChartRect(mousePt);
             CurveItem nearestCurve;
-            bool isNearPoint = false;
             int pointIndex;
             if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex))
-                isNearPoint = true;
-            //raise new event
-            if (ContextMenuBuilder != null)
-                ContextMenuBuilder(this, new ContextMenuBuilderEventArgs(menuStrip, isNearPoint, nearestCurve.Points as PointPairListPlus, pointIndex));
+                OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, nearestCurve.Points as PointPairListPlus, pointIndex));
+            else
+                OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, null, -1));
         }
     }
 }

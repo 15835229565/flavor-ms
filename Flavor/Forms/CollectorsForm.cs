@@ -281,54 +281,53 @@ namespace Flavor.Forms
             ToolStripItem item = new ToolStripSeparator();
             items.Add(item);
 
-
             {
-                bool isFirstCollector = sender == collect1_graph;
-                // can be NullPointerExceptions here..
-                Graph.pListScaled pls = args.Row.PLSreference;
-                ushort step = (ushort)pls.Step[args.Index].X;
-                byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
-
-                item = new ToolStripMenuItem();
-                item.Text = "Добавить точку в редактор";
-                item.Click += new System.EventHandler((s, e) => {
-                    // TODO: raise event here and move code below to mainform
-                    new AddPointForm(step, isFirst).ShowDialog();
-                });
-                items.Add(item);
-
-                item = new ToolStripMenuItem();
-                item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
-                item.Click += new System.EventHandler((s, e) => {
-                    if (new SetScalingCoeffForm(step, isFirst, graph).ShowDialog() == DialogResult.Yes)
-                        Modified = true;
-                });
-                items.Add(item);
-
-                if (args.IsNearPoint) {
-                    // can be NullPointerExceptions here..
-                    Utility.PreciseEditorData ped = pls.PEDreference;
+                PointPairListPlus ppl = args.Row;
+                Graph.pListScaled pls;
+                int index = args.Index;
+                if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
+                    bool isFirstCollector = sender == collect1_graph;
+                    ushort step = (ushort)pls.Step[index].X;
+                    byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
 
                     item = new ToolStripMenuItem();
-                    item.Visible = false;
-                    item.Text = "Вычесть из текущего с перенормировкой на точку";
-                    item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, pls, ped); });
+                    item.Text = "Добавить точку в редактор";
+                    item.Click += new System.EventHandler((s, e) => {
+                        // TODO: raise event here and move code below to mainForm
+                        new AddPointForm(step, isFirst).ShowDialog();
+                    });
                     items.Add(item);
 
                     item = new ToolStripMenuItem();
-                    item.Visible = false;
-                    item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
-                    item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped); });
+                    item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
+                    item.Click += new System.EventHandler((s, e) => {
+                        if (new SetScalingCoeffForm(step, isFirst, graph).ShowDialog() == DialogResult.Yes)
+                            Modified = true;
+                    });
+                    items.Add(item);
+                    {
+                        Utility.PreciseEditorData ped;
+                        if ((ped = pls.PEDreference) != null) {
+                            item = new ToolStripMenuItem();
+                            item.Text = "Вычесть из текущего с перенормировкой на точку";
+                            item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, pls, ped); });
+                            items.Add(item);
+
+                            item = new ToolStripMenuItem();
+                            item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                            item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped); });
+                            items.Add(item);
+                        }
+                    }
+                    item = new ToolStripSeparator();
                     items.Add(item);
                 }
             }
-            item = new ToolStripSeparator();
-            items.Add(item);
 
             ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
             ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
             ToolStripMenuItem massViewItem = new ToolStripMenuItem();
-            
+
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
                     stepViewItem.Checked = true;
@@ -340,19 +339,19 @@ namespace Flavor.Forms
                     massViewItem.Checked = true;
                     break;
             }
-            
+
             stepViewItem.Text = "Ступени";
             stepViewItem.CheckOnClick = true;
             stepViewItem.CheckedChanged += new System.EventHandler((s, e) => {
                 graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
             });
-            
+
             voltageViewItem.Text = "Напряжение";
             voltageViewItem.CheckOnClick = true;
             voltageViewItem.CheckedChanged += new System.EventHandler((s, e) => {
                 graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
             });
-            
+
             massViewItem.Text = "Масса";
             massViewItem.CheckOnClick = true;
             massViewItem.CheckedChanged += new System.EventHandler((s, e) => {

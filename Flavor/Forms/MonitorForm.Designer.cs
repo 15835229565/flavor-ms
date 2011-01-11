@@ -31,7 +31,7 @@ namespace Flavor.Forms {
             this.graph.ScrollMinY2 = 0;
             this.graph.SelectModifierKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
             this.graph.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler(this.ZedGraphControlMonitor_PointValueEvent);
-            this.graph.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlMonitor_ContextMenuBuilder);
+            this.graph.ContextMenuBuilder += new System.EventHandler<ZedGraphControlMonitor.ContextMenuBuilderEventArgs>(this.ZedGraphControlMonitor_ContextMenuBuilder);
             // 
             // MonitorForm
             // 

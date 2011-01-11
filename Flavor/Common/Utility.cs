@@ -467,6 +467,14 @@ namespace Flavor.Common {
     }
     #endregion
     public static class Utility {
+        // extension method for EventHandler
+        public static void Raise<T>(this EventHandler<T> handler, object sender, T args)
+          where T: EventArgs {
+            if (handler != null) handler(sender, args);
+            //seem not to be necessary..
+            //EventHandler<T> evt = handler;
+            //if (evt != null) evt(sender, args);
+        }
         #region PreciseEditorData
         public class PreciseEditorData: IComparable<PreciseEditorData> {
             internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
