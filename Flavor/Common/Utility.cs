@@ -316,7 +316,7 @@ namespace Flavor.Common {
         }
     }
 
-    internal class PointPairListPlus: ZedGraph.PointPairList {
+    public class PointPairListPlus: ZedGraph.PointPairList {
         private Utility.PreciseEditorData myPED;
         private Graph.pListScaled myPLS;
 

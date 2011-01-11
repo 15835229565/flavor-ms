@@ -80,8 +80,6 @@ namespace Flavor.Forms
             collect1_graph.ScrollMinX = minX[0];
             collect2_graph.ScrollMaxX = maxX[1];
             collect2_graph.ScrollMinX = minX[1];
-            collect1_graph.IsFirstCollector = true;
-            collect2_graph.IsFirstCollector = false;
 
             graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
 
@@ -279,13 +277,54 @@ namespace Flavor.Forms
         }
 
         private void ZedGraphControlPlus_ContextMenuBuilder(object sender, ZedGraphControlPlus.ContextMenuBuilderEventArgs args) {
-            if (args.IsNearPoint)
-                (sender as ZedGraphControlPlus).setVisibility(specterDiffEnabled, specterDiffEnabled && graph.isPreciseSpectrum);
-
             ToolStripItemCollection items = args.MenuStrip.Items;
             ToolStripItem item = new ToolStripSeparator();
             items.Add(item);
-            
+
+
+            {
+                bool isFirstCollector = sender == collect1_graph;
+                // can be NullPointerExceptions here..
+                Graph.pListScaled pls = args.Row.PLSreference;
+                ushort step = (ushort)pls.Step[args.Index].X;
+                byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
+
+                item = new ToolStripMenuItem();
+                item.Text = "Добавить точку в редактор";
+                item.Click += new System.EventHandler((s, e) => {
+                    // TODO: raise event here and move code below to mainform
+                    new AddPointForm(step, isFirst).ShowDialog();
+                });
+                items.Add(item);
+
+                item = new ToolStripMenuItem();
+                item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
+                item.Click += new System.EventHandler((s, e) => {
+                    if (new SetScalingCoeffForm(step, isFirst, graph).ShowDialog() == DialogResult.Yes)
+                        Modified = true;
+                });
+                items.Add(item);
+
+                if (args.IsNearPoint) {
+                    // can be NullPointerExceptions here..
+                    Utility.PreciseEditorData ped = pls.PEDreference;
+
+                    item = new ToolStripMenuItem();
+                    item.Visible = false;
+                    item.Text = "Вычесть из текущего с перенормировкой на точку";
+                    item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, pls, ped); });
+                    items.Add(item);
+
+                    item = new ToolStripMenuItem();
+                    item.Visible = false;
+                    item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                    item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped); });
+                    items.Add(item);
+                }
+            }
+            item = new ToolStripSeparator();
+            items.Add(item);
+
             ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
             ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
             ToolStripMenuItem massViewItem = new ToolStripMenuItem();
@@ -394,11 +433,6 @@ namespace Flavor.Forms
                 }
             }
             return false;
-        }
-
-        private void GraphForm_OnPoint(ushort step, byte colNumber) {
-            if (new SetScalingCoeffForm(step, colNumber, graph).ShowDialog() == DialogResult.Yes)
-                Modified = true;
         }
     }
 }

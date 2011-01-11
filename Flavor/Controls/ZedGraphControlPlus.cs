@@ -14,37 +14,35 @@ namespace Flavor.Controls
             private ContextMenuStrip menuStrip;
             public ContextMenuStrip MenuStrip {
                 get {
-                    return this.menuStrip;
+                    return menuStrip;
                 }
             }
-            private ContextMenuObjectState objState;
             private bool isNearPoint;
             public bool IsNearPoint {
                 get {
-                    return this.isNearPoint;
+                    return isNearPoint;
                 }
             }
-            public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip, ContextMenuObjectState objState, bool isNearPoint) {
+            private PointPairListPlus ppl;
+            public PointPairListPlus Row {
+                get {
+                    return ppl;
+                }
+            }
+            private int index;
+            public int Index {
+                get {
+                    return index;
+                }
+            }
+            public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip, bool isNearPoint, PointPairListPlus ppl, int index) {
                 this.menuStrip = menuStrip;
-                this.objState = objState;
                 this.isNearPoint = isNearPoint;
+                this.ppl = ppl;
+                this.index = index;
             }
         }
-        public delegate void DiffOnPointEventHandler(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference);
-        public event DiffOnPointEventHandler OnDiffOnPoint;
-        
         public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;
-
-        public delegate void PointEventHandler(ushort step, byte colNumber);
-        public event PointEventHandler OnPoint;
-
-        private bool isFirstCollector;
-        public bool IsFirstCollector {
-            set { isFirstCollector = value; }
-        }
-
-        private ToolStripMenuItem pointItem;
-        private ToolStripMenuItem peakItem;
 
         public ZedGraphControlPlus()
             : base() {
@@ -59,66 +57,11 @@ namespace Flavor.Controls
             CurveItem nearestCurve;
             bool isNearPoint = false;
             int pointIndex;
-            ToolStripItemCollection items = menuStrip.Items;
-
-            if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex)) {
+            if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex))
                 isNearPoint = true;
-
-                ToolStripItem item = new ToolStripSeparator();
-                items.Add(item);
-
-                {
-                    // can be NullPointerExceptions here..
-                    Graph.pListScaled pls = (nearestCurve.Points as PointPairListPlus).PLSreference;
-                    ushort step = (ushort)pls.Step[pointIndex].X;
-                    byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
-
-                    item = new ToolStripMenuItem();
-                    item.Text = "Добавить точку в редактор";
-                    item.Click += new System.EventHandler((s, e) => {
-                        // TODO: raise event here and move code below to mainform
-                        new AddPointForm(step, isFirst).ShowDialog();
-                    });
-                    items.Add(item);
-
-                    item = new ToolStripMenuItem();
-                    item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
-                    item.Click += new System.EventHandler((s, e) => {
-                        // TODO: raise event here and move code below to CollectorsForm
-                        OnPoint(step, isFirst);
-                        //new SetScalingCoeffForm(step, isFirst).ShowDialog();
-                    });
-                    items.Add(item);
-
-                    {
-                        // can be NullPointerExceptions here..
-                        Utility.PreciseEditorData ped = pls.PEDreference;
-
-                        pointItem = new ToolStripMenuItem();
-                        pointItem.Visible = false;
-                        pointItem.Text = "Вычесть из текущего с перенормировкой на точку";
-                        pointItem.Click += new System.EventHandler((s, e) => {
-                            OnDiffOnPoint(step, pls, ped);
-                        });
-                        items.Add(pointItem);
-
-                        peakItem = new ToolStripMenuItem();
-                        peakItem.Visible = false;
-                        peakItem.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
-                        peakItem.Click += new System.EventHandler((s, e) => {
-                            OnDiffOnPoint(ushort.MaxValue, null, ped);
-                        });
-                        items.Add(peakItem);
-                    }
-                }
-            }
             //raise new event
             if (ContextMenuBuilder != null)
-                ContextMenuBuilder(this, new ContextMenuBuilderEventArgs(menuStrip, objState, isNearPoint));
-        }
-        internal void setVisibility(bool pointItemVisible, bool peakItemVisible) {
-            pointItem.Visible = pointItemVisible;
-            peakItem.Visible = peakItemVisible;
+                ContextMenuBuilder(this, new ContextMenuBuilderEventArgs(menuStrip, isNearPoint, nearestCurve.Points as PointPairListPlus, pointIndex));
         }
     }
 }
