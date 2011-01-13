@@ -666,8 +666,10 @@ namespace Flavor.Forms {
 
         protected sealed override void OnFormClosing(FormClosingEventArgs e) {
             if (Commander.pState != Commander.programStates.Start &&
-                MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes) {
+                e.Cancel = true;
                 return;
+            }
             if (Commander.DeviceIsConnected)
                 Commander.Disconnect();
             Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;

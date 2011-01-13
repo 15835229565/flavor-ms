@@ -56,12 +56,15 @@ namespace Flavor.Forms {
                 Activate();
                 switch (MessageBox.Show(this.MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel)) {
                     case DialogResult.Yes:
-                        if (!saveData())
+                        if (!saveData()) {
+                            e.Cancel = true;
                             return;
+                        }
                         break;
                     case DialogResult.No:
                         break;
                     case DialogResult.Cancel:
+                        e.Cancel = true;
                         return;
                 }
             }

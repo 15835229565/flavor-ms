@@ -92,7 +92,9 @@ namespace Flavor.Forms {
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            if (e.CloseReason != CloseReason.UserClosing)
+            if (e.CloseReason == CloseReason.UserClosing)
+                e.Cancel = true;
+            else
                 base.OnFormClosing(e);
         }
     }

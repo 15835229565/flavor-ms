@@ -77,8 +77,9 @@ namespace Flavor.Forms {
 
         protected void saveFileButton_Click(object sender, EventArgs e) {
             if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
-                Config.saveCommonOptions(saveCommonDataFileDialog.FileName, (ushort)(expTimeNumericUpDown.Value), (ushort)(idleTimeNumericUpDown.Value),
-                                         (double)(iVoltageNumericUpDown.Value), (double)(CPNumericUpDown.Value), (double)(eCurrentNumericUpDown.Value), (double)(hCurrentNumericUpDown.Value), (double)(fV1NumericUpDown.Value), (double)(fV2NumericUpDown.Value));
+                Config.saveCommonOptions(saveCommonDataFileDialog.FileName, (ushort)expTimeNumericUpDown.Value, (ushort)idleTimeNumericUpDown.Value,
+                                         (double)iVoltageNumericUpDown.Value, (double)CPNumericUpDown.Value, (double)eCurrentNumericUpDown.Value, (double)hCurrentNumericUpDown.Value,
+                                         (double)fV1NumericUpDown.Value, (double)fV2NumericUpDown.Value);
             }
         }
 
@@ -99,11 +100,10 @@ namespace Flavor.Forms {
             hCurrentNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
         }
         private void InvokeSetVisibility() {
-            DeviceEventHandler InvokeDelegate = () => {
+            this.Invoke(new DeviceEventHandler(() => {
                 // TODO: avoid bringing to front..
                 this.Visible = Commander.pState != Commander.programStates.Measure;
-            };
-            this.Invoke(InvokeDelegate);
+            }));
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
             Commander.OnProgramStateChanged -= InvokeSetVisibility;
