@@ -5,7 +5,7 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class MonitorOptionsForm: PreciseOptionsForm {
-        private MonitorOptionsForm() {
+        public MonitorOptionsForm() {
             InitializeComponent();
             iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             iterationsNumericUpDown.Value = (decimal)Config.Iterations;
@@ -23,12 +23,6 @@ namespace Flavor.Forms {
             }
         }
 
-        private static MonitorOptionsForm instance = null;
-        internal new static MonitorOptionsForm getInstance() {
-            if (instance == null) instance = new MonitorOptionsForm();
-            return instance;
-        }
-
         protected override bool checkTextBoxes() {
             return checkPeakPreciseEditorRowMinus.checkTextBoxes() & base.checkTextBoxes();
         }
@@ -40,11 +34,6 @@ namespace Flavor.Forms {
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
                                                                   Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
                                     null);
-        }
-
-        protected sealed override void OnFormClosed(FormClosedEventArgs e) {
-            instance = null;
-            base.OnFormClosed(e);
         }
 
         private void Graph_OnPointAdded(bool notNull) {

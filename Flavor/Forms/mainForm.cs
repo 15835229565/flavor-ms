@@ -50,7 +50,7 @@ namespace Flavor.Forms {
                 return child as GraphForm;
             }
         }
-		
+        private OptionsForm oForm = null;
         internal mainForm() {
             InitializeComponent();
             populateStatusTreeView();
@@ -217,20 +217,29 @@ namespace Flavor.Forms {
         }
 
         private void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
-            new ScanOptionsForm().ShowDialog();
+            showOptionsForm<ScanOptionsForm>();
         }
         private void senseToolStripMenuItem_Click(object sender, EventArgs e) {
-            Form pForm = PreciseOptionsForm.getInstance();
-            pForm.FormClosed += (s, a) => { RefreshButtons(); };
-            pForm.Show();
+            showOptionsForm<PreciseOptionsForm>();
         }
         private void monitorToolStripMenuItem_Click(object sender, EventArgs e) {
-            // Prec/Mon forms simultaneously howto?
-            Form mForm = MonitorOptionsForm.getInstance();
-            mForm.FormClosed += (s, a) => { RefreshButtons(); };
-            mForm.Show();
+            showOptionsForm<MonitorOptionsForm>();
         }
-
+        private void showOptionsForm<T>()
+            where T: OptionsForm, new() {
+            if (oForm == null) {
+                oForm = new T();
+                oForm.FormClosed += (s, a) => {
+                    oForm = null;
+                    RefreshButtons();
+                };
+                oForm.Show();
+            } else if (oForm as T == null)
+                return;
+            else
+                oForm.Activate();
+            // TODO: disable other menu items or close already opened?
+        }
         private void initSys_butt_Click(object sender, EventArgs e) {
             initSys_butt.Enabled = false;
             Commander.Init();

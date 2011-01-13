@@ -159,6 +159,7 @@ namespace Flavor.Forms {
             this.preciseEditorGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

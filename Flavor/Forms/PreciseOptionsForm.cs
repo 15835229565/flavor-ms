@@ -10,13 +10,7 @@ namespace Flavor.Forms {
         private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[20];
         private PreciseSpectrum data = new PreciseSpectrum();
 
-        private static PreciseOptionsForm instance = null;
-        internal static PreciseOptionsForm getInstance() {
-            if (instance == null) instance = new PreciseOptionsForm();
-            return instance;
-        }
-
-        internal PreciseOptionsForm()
+        public PreciseOptionsForm()
             : base() {
             InitializeComponent();
             bool enable = Graph.PointToAdd != null;
@@ -168,10 +162,6 @@ namespace Flavor.Forms {
         private void clearPreciseEditorData() {
             for (int i = 0; i < 20; ++i)
                 PErows[i].Clear();
-        }
-        protected override void OnFormClosed(FormClosedEventArgs e) {
-            instance = null;
-            base.OnFormClosed(e);
         }
     }
 }
