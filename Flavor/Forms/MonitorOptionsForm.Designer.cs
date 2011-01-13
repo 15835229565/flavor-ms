@@ -119,7 +119,6 @@ namespace Flavor.Forms {
             resources.ApplyResources(this, "$this");
             this.Controls.Add(groupBox2);
             this.Name = "MonitorOptionsForm";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MonitorOptionsForm_FormClosed);
             this.Controls.SetChildIndex(groupBox2, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);

@@ -42,11 +42,12 @@ namespace Flavor.Forms {
                                     null);
         }
 
-        private void MonitorOptionsForm_FormClosed(object sender, FormClosedEventArgs e) {
+        protected sealed override void OnFormClosed(FormClosedEventArgs e) {
             instance = null;
+            base.OnFormClosed(e);
         }
 
-        void Graph_OnPointAdded(bool notNull) {
+        private void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
             //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }

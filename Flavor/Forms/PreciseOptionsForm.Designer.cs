@@ -140,7 +140,6 @@ namespace Flavor.Forms {
             this.MinimizeBox = true;
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PreciseOptionsForm_FormClosed);
             this.Controls.SetChildIndex(this.preciseEditorGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
@@ -160,7 +159,6 @@ namespace Flavor.Forms {
             this.preciseEditorGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

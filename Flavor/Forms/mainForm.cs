@@ -59,14 +59,14 @@ namespace Flavor.Forms {
 
             Config.getInitialDirectory();
 
-            Device.OnDeviceStateChanged += new DeviceEventHandler(InvokeRefreshDeviceState);
-            Device.OnDeviceStatusChanged += new DeviceEventHandler(InvokeRefreshDeviceStatus);
-            Device.OnVacuumStateChanged += new DeviceEventHandler(InvokeRefreshVacuumState);
-            Device.OnTurboPumpStatusChanged += new DeviceEventHandler(InvokeRefreshTurboPumpStatus);
-            Device.OnTurboPumpAlert += new TurboPumpAlertEventHandler(InvokeProcessTurboPumpAlert);
+            Device.OnDeviceStateChanged += InvokeRefreshDeviceState;
+            Device.OnDeviceStatusChanged += InvokeRefreshDeviceStatus;
+            Device.OnVacuumStateChanged += InvokeRefreshVacuumState;
+            Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
+            Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
             Device.Init();
 
-            Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeRefreshButtons);
+            Commander.OnProgramStateChanged += InvokeRefreshButtons;
             Commander.setProgramStateWithoutUndo(Commander.programStates.Start);
         }
         #region Status TreeView population
@@ -217,17 +217,17 @@ namespace Flavor.Forms {
         }
 
         private void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
-            (new ScanOptionsForm()).ShowDialog();
+            new ScanOptionsForm().ShowDialog();
         }
         private void senseToolStripMenuItem_Click(object sender, EventArgs e) {
-            PreciseOptionsForm pForm = PreciseOptionsForm.getInstance();
-            pForm.UpLevel = this;
+            Form pForm = PreciseOptionsForm.getInstance();
+            pForm.FormClosed += (s, a) => { RefreshButtons(); };
             pForm.Show();
         }
         private void monitorToolStripMenuItem_Click(object sender, EventArgs e) {
             // Prec/Mon forms simultaneously howto?
-            MonitorOptionsForm mForm = MonitorOptionsForm.getInstance();
-            mForm.UpLevel = this;
+            Form mForm = MonitorOptionsForm.getInstance();
+            mForm.FormClosed += (s, a) => { RefreshButtons(); };
             mForm.Show();
         }
 
@@ -255,8 +255,8 @@ namespace Flavor.Forms {
 
             form.prepareControlsOnMeasureStart();
 
-            Commander.OnScanCancelled += new Commander.ProgramEventHandler(InvokeCancelScan);
-            Commander.OnError += new Commander.ErrorHandler(Commander_OnError);
+            Commander.OnScanCancelled += InvokeCancelScan;
+            Commander.OnError += Commander_OnError;
         }
 
         private void Commander_OnError(string msg) {
@@ -573,17 +573,16 @@ namespace Flavor.Forms {
             RefreshButtons();
         }
         private void RefreshButtons() {
-            bool precPointsExist = Commander.SomePointsUsed;
-            if (Commander.hBlock) {
-                unblock_butt.Text = "Снять блокировку";
-                unblock_butt.ForeColor = Color.Green;
-            } else {
+            bool block = !Commander.hBlock;
+            if (block) {
                 unblock_butt.Text = "Включить блокировку";
                 unblock_butt.ForeColor = Color.Red;
+            } else {
+                unblock_butt.Text = "Снять блокировку";
+                unblock_butt.ForeColor = Color.Green;
             }
             switch (Commander.pState) {
                 case Commander.programStates.Start:
-                    connectToolStripButton.Enabled = true;
                     bool connected = Commander.DeviceIsConnected;
                     if (connected) {
                         connectToolStripButton.Text = "Разъединить";
@@ -592,108 +591,39 @@ namespace Flavor.Forms {
                         connectToolStripButton.Text = "Соединить";
                         connectToolStripButton.ForeColor = Color.Green;
                     }
-                    initSys_butt.Enabled = connected;//true;
-                    shutSys_butt.Enabled = connected;//false;
-                    unblock_butt.Enabled = connected && !Commander.hBlock;//разрешено для включения блокировки
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = true;
-                    measureToolStripMenuItem.Enabled = true;
-                    break;
-                case Commander.programStates.WaitInit:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = false;
-                    unblock_butt.Enabled = false;
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = true;
+                    setButtons(true, connected, connected, connected && block, false, false, true);
                     break;
                 case Commander.programStates.Init:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = true;
-                    unblock_butt.Enabled = false;
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = true;
+                    setButtons(false, false, true, false, false, false, true);
                     break;
                 case Commander.programStates.WaitHighVoltage:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = true;
-                    unblock_butt.Enabled = true;
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = true;
+                    setButtons(false, false, true, true, false, false, true);
                     break;
                 case Commander.programStates.Ready:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = true;
-                    unblock_butt.Enabled = true;
-                    overview_button.Enabled = true & !Commander.hBlock;
-                    sensmeasure_button.Enabled = true & !Commander.hBlock & precPointsExist;
-                    monitorToolStripButton.Enabled = true & !Commander.hBlock & precPointsExist;//&& smth else?;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = true;
+                    setButtons(false, false, true, true, block, block && Commander.SomePointsUsed, true);
                     break;
                 case Commander.programStates.Measure:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = true;
-                    unblock_butt.Enabled = true;
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = false;
+                    setButtons(false, false, true, true, false, false, false);
                     break;
+                case Commander.programStates.WaitInit:
                 case Commander.programStates.WaitShutdown:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = false;
-                    unblock_butt.Enabled = false;
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = true;
-                    break;
                 case Commander.programStates.Shutdown:
-                    connectToolStripButton.Enabled = false;
-
-                    initSys_butt.Enabled = false;
-                    shutSys_butt.Enabled = false;
-                    unblock_butt.Enabled = false;
-                    overview_button.Enabled = false;
-                    sensmeasure_button.Enabled = false;
-                    monitorToolStripButton.Enabled = false;
-
-                    connectToolStripMenuItem.Enabled = false;
-                    measureToolStripMenuItem.Enabled = true;
+                    setButtons(false, false, false, false, false, false, true);
                     break;
             }
+        }
+        private void setButtons(bool connect, bool init, bool shutdown, bool block, bool scan, bool precise, bool measureOptions) {
+            connectToolStripButton.Enabled = connect;
+
+            initSys_butt.Enabled = init;
+            shutSys_butt.Enabled = shutdown;
+            unblock_butt.Enabled = block;
+            overview_button.Enabled = scan;
+            sensmeasure_button.Enabled = precise;
+            monitorToolStripButton.Enabled = precise;
+
+            connectToolStripMenuItem.Enabled = connect;
+            measureToolStripMenuItem.Enabled = measureOptions;
         }
 
         private void InvokeCancelScan() {
@@ -704,12 +634,12 @@ namespace Flavor.Forms {
             CancelScan();
         }
         private void CancelScan() {
-            Commander.OnScanCancelled -= new Commander.ProgramEventHandler(InvokeCancelScan);
-            Commander.OnError -= new Commander.ErrorHandler(Commander_OnError);
+            Commander.OnScanCancelled -= InvokeCancelScan;
+            Commander.OnError -= Commander_OnError;
             
             if (CollectorsForm.Visible)
                 CollectorsForm.deactivateOnMeasureStop();
-            if (MonitorForm.Visible)
+            else if (MonitorForm.Visible)
                 MonitorForm.deactivateOnMeasureStop();
         }
 
@@ -731,13 +661,13 @@ namespace Flavor.Forms {
                 return;
             if (Commander.DeviceIsConnected)
                 Commander.Disconnect();
-            Device.OnDeviceStateChanged -= new DeviceEventHandler(InvokeRefreshDeviceState);
-            Device.OnDeviceStatusChanged -= new DeviceEventHandler(InvokeRefreshDeviceStatus);
-            Device.OnVacuumStateChanged -= new DeviceEventHandler(InvokeRefreshVacuumState);
-            Device.OnTurboPumpStatusChanged -= new DeviceEventHandler(InvokeRefreshTurboPumpStatus);
-            Device.OnTurboPumpAlert -= new TurboPumpAlertEventHandler(InvokeProcessTurboPumpAlert);
+            Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
+            Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
+            Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
+            Device.OnTurboPumpStatusChanged -= InvokeRefreshTurboPumpStatus;
+            Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
 
-            Commander.OnProgramStateChanged -= new Commander.ProgramEventHandler(InvokeRefreshButtons);
+            Commander.OnProgramStateChanged -= InvokeRefreshButtons;
             
             base.OnFormClosing(e);
         }

@@ -7,11 +7,6 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class PreciseOptionsForm: OptionsForm {
-        private mainForm upLevel;
-        internal mainForm UpLevel {
-            set { upLevel = value; }
-        }
-
         private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[20];
         private PreciseSpectrum data = new PreciseSpectrum();
 
@@ -153,7 +148,7 @@ namespace Flavor.Forms {
             clearPreciseEditorData();
         }
 
-        void Graph_OnPointAdded(bool notNull) {
+        private void Graph_OnPointAdded(bool notNull) {
             insertPointButton.Enabled = notNull;
             //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
         }
@@ -174,9 +169,9 @@ namespace Flavor.Forms {
             for (int i = 0; i < 20; ++i)
                 PErows[i].Clear();
         }
-        private void PreciseOptionsForm_FormClosed(object sender, FormClosedEventArgs e) {
+        protected override void OnFormClosed(FormClosedEventArgs e) {
             instance = null;
-            upLevel.InvokeRefreshButtons();
+            base.OnFormClosed(e);
         }
     }
 }
