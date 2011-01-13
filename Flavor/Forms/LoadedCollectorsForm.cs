@@ -25,9 +25,10 @@ namespace Flavor.Forms {
             Panel.Enable();
 
             if (PreciseSpectrumDisplayed) {
-                setXScaleLimits(graph.PreciseData);
+                // search temporary here
+                setXScaleLimits(graph.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed));
             } else {
-                ushort minX = (ushort)(graph.Displayed1Steps[0][0].X);
+                ushort minX = (ushort)graph.Displayed1Steps[0][0].X;
                 ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
                 setXScaleLimits(minX, maxX, minX, maxX);
             }
@@ -53,16 +54,15 @@ namespace Flavor.Forms {
         protected override void OnFormClosing(FormClosingEventArgs e) {
             if (Modified) {
                 Activate();
-                DialogResult res = MessageBox.Show(this.MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel);
-                switch (res) {
+                switch (MessageBox.Show(this.MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel)) {
                     case DialogResult.Yes:
-                        e.Cancel = !saveData();
+                        if (!saveData())
+                            return;
                         break;
                     case DialogResult.No:
                         break;
                     case DialogResult.Cancel:
-                        e.Cancel = true;
-                        break;
+                        return;
                 }
             }
             base.OnFormClosing(e);

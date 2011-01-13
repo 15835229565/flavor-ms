@@ -177,10 +177,13 @@ namespace Flavor.Forms
         protected void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
             ushort[] maxX = { Config.MIN_STEP, Config.MIN_STEP }, minX = { Config.MAX_STEP, Config.MAX_STEP };
             foreach (Utility.PreciseEditorData ped in peds) {
-                if (minX[ped.Collector - 1] > ped.Step - ped.Width)
-                    minX[ped.Collector - 1] = (ushort)(ped.Step - ped.Width);
-                if (maxX[ped.Collector - 1] < ped.Step + ped.Width)
-                    maxX[ped.Collector - 1] = (ushort)(ped.Step + ped.Width);
+                int col = ped.Collector - 1;
+                ushort lowBound = (ushort)(ped.Step - ped.Width);
+                ushort upBound = (ushort)(ped.Step + ped.Width);
+                if (minX[col] > lowBound)
+                    minX[col] = lowBound;
+                if (maxX[col] < upBound)
+                    maxX[col] = upBound;
             }
             setXScaleLimits(minX[0], maxX[0], minX[1], maxX[1]);
         }

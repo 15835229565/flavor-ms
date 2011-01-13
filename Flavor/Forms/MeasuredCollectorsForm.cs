@@ -42,7 +42,8 @@ namespace Flavor.Forms {
         public void prepareControlsOnMeasureStart() {
             // not so good..
             if (PreciseSpectrumDisplayed)
-                setXScaleLimits(Config.PreciseData);
+                // search temporary here
+                setXScaleLimits(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed));
             else
                 setXScaleLimits();
 
