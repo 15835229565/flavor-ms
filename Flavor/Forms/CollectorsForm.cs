@@ -93,9 +93,9 @@ namespace Flavor.Forms
             preciseSpectrumDisplayed = hint;
             setTitles();
 
-            graph.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
-            graph.OnAxisModeChanged += new Graph.AxisModeEventHandler(InvokeAxisModeChange);
-            graph.OnDisplayModeChanged += new Graph.DisplayModeEventHandler(InvokeGraphModified);
+            graph.OnNewGraphData += InvokeRefreshGraph;
+            graph.OnAxisModeChanged += InvokeAxisModeChange;
+            graph.OnDisplayModeChanged += InvokeGraphModified;
         }
 
         private void setTitles() {
@@ -435,6 +435,13 @@ namespace Flavor.Forms
                 }
             }
             return false;
+        }
+        
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            graph.OnNewGraphData += InvokeRefreshGraph;
+            graph.OnAxisModeChanged += InvokeAxisModeChange;
+            graph.OnDisplayModeChanged += InvokeGraphModified;
+            base.OnFormClosing(e);
         }
     }
 }

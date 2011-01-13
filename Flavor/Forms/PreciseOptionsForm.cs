@@ -34,14 +34,14 @@ namespace Flavor.Forms {
             this.PerformLayout();
 
             if (!enable) {
-                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+                Graph.OnPointAdded += Graph_OnPointAdded;
             }
-            Commander.OnProgramStateChanged += new Commander.ProgramEventHandler(InvokeEnableForm);
+            Commander.OnProgramStateChanged += InvokeEnableForm;
         }
 
         private void InvokeEnableForm() {
             if (this.InvokeRequired) {
-                DeviceEventHandler InvokeDelegate = new DeviceEventHandler(EnableForm);
+                DeviceEventHandler InvokeDelegate = EnableForm;
                 this.Invoke(InvokeDelegate);
             } else {
                 EnableForm();
@@ -144,7 +144,7 @@ namespace Flavor.Forms {
 
         private void Graph_OnPointAdded(bool notNull) {
             insertPointButton.Enabled = notNull;
-            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            //Graph.OnPointAdded -= new Graph_OnPointAdded;
         }
 
         private void insertPointButton_Click(object sender, EventArgs e) {
@@ -162,6 +162,12 @@ namespace Flavor.Forms {
         private void clearPreciseEditorData() {
             for (int i = 0; i < 20; ++i)
                 PErows[i].Clear();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            Graph.OnPointAdded -= Graph_OnPointAdded;
+            Commander.OnProgramStateChanged -= InvokeEnableForm;
+            base.OnFormClosing(e);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Flavor.Forms {
                 applyButton.Visible = false;
             }
             loadCommonData(Config.CommonOptions);
+            Commander.OnProgramStateChanged += InvokeSetVisibility;
         }
 
         private void loadCommonData(string fn) {
@@ -96,6 +97,17 @@ namespace Flavor.Forms {
             fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             hCurrentNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+        }
+        private void InvokeSetVisibility() {
+            DeviceEventHandler InvokeDelegate = () => {
+                // TODO: avoid bringing to front..
+                this.Visible = Commander.pState != Commander.programStates.Measure;
+            };
+            this.Invoke(InvokeDelegate);
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            Commander.OnProgramStateChanged -= InvokeSetVisibility;
+            base.OnFormClosing(e);
         }
     }
 }

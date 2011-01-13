@@ -48,6 +48,11 @@ namespace Flavor.Forms {
                 MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
             }
         }
+
+        protected sealed override void OnFormClosing(FormClosingEventArgs e) {
+            Graph.OnPointAdded -= Graph_OnPointAdded;
+            base.OnFormClosing(e);
+        }
     }
 }
 
