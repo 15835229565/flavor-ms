@@ -1,7 +1,6 @@
 ﻿namespace Flavor.Forms {
     partial class OptionsForm {
         #region Windows Form Designer generated code
-
         /// <summary>
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
@@ -150,23 +149,8 @@
             0,
             65536});
             resources.ApplyResources(this.fV2NumericUpDown, "fV2NumericUpDown");
-            this.fV2NumericUpDown.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.fV2NumericUpDown.Minimum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
             this.fV2NumericUpDown.Name = "fV2NumericUpDown";
             this.fV2NumericUpDown.ReadOnly = true;
-            this.fV2NumericUpDown.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
             // 
             // fV1NumericUpDown
             // 
@@ -177,23 +161,8 @@
             0,
             65536});
             resources.ApplyResources(this.fV1NumericUpDown, "fV1NumericUpDown");
-            this.fV1NumericUpDown.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.fV1NumericUpDown.Minimum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
             this.fV1NumericUpDown.Name = "fV1NumericUpDown";
             this.fV1NumericUpDown.ReadOnly = true;
-            this.fV1NumericUpDown.Value = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
             // 
             // hCurrentNumericUpDown
             // 
@@ -204,18 +173,8 @@
             0,
             131072});
             resources.ApplyResources(this.hCurrentNumericUpDown, "hCurrentNumericUpDown");
-            this.hCurrentNumericUpDown.Maximum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.hCurrentNumericUpDown.Name = "hCurrentNumericUpDown";
             this.hCurrentNumericUpDown.ReadOnly = true;
-            this.hCurrentNumericUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             // 
             // eCurrentNumericUpDown
             // 
@@ -226,17 +185,7 @@
             0,
             65536});
             resources.ApplyResources(this.eCurrentNumericUpDown, "eCurrentNumericUpDown");
-            this.eCurrentNumericUpDown.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
             this.eCurrentNumericUpDown.Name = "eCurrentNumericUpDown";
-            this.eCurrentNumericUpDown.Value = new decimal(new int[] {
-            5,
-            0,
-            0,
-            65536});
             // 
             // CPNumericUpDown
             // 
@@ -247,23 +196,8 @@
             0,
             196608});
             resources.ApplyResources(this.CPNumericUpDown, "CPNumericUpDown");
-            this.CPNumericUpDown.Maximum = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
-            this.CPNumericUpDown.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
             this.CPNumericUpDown.Name = "CPNumericUpDown";
             this.CPNumericUpDown.ReadOnly = true;
-            this.CPNumericUpDown.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
             // 
             // iVoltageNumericUpDown
             // 
@@ -274,22 +208,7 @@
             0,
             65536});
             resources.ApplyResources(this.iVoltageNumericUpDown, "iVoltageNumericUpDown");
-            this.iVoltageNumericUpDown.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.iVoltageNumericUpDown.Minimum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
             this.iVoltageNumericUpDown.Name = "iVoltageNumericUpDown";
-            this.iVoltageNumericUpDown.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
             // 
             // idleTimeNumericUpDown
             // 
@@ -299,22 +218,7 @@
             0,
             0});
             resources.ApplyResources(this.idleTimeNumericUpDown, "idleTimeNumericUpDown");
-            this.idleTimeNumericUpDown.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.idleTimeNumericUpDown.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
             this.idleTimeNumericUpDown.Name = "idleTimeNumericUpDown";
-            this.idleTimeNumericUpDown.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
             // 
             // expTimeNumericUpDown
             // 
@@ -324,22 +228,7 @@
             0,
             0});
             resources.ApplyResources(this.expTimeNumericUpDown, "expTimeNumericUpDown");
-            this.expTimeNumericUpDown.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.expTimeNumericUpDown.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
             this.expTimeNumericUpDown.Name = "expTimeNumericUpDown";
-            this.expTimeNumericUpDown.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
             // 
             // ok_butt
             // 
@@ -407,9 +296,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
-
         #endregion
 
         protected System.Windows.Forms.NumericUpDown fV1NumericUpDown;

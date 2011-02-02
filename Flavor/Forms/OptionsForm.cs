@@ -18,14 +18,10 @@ namespace Flavor.Forms {
             Commander.OnProgramStateChanged += InvokeSetVisibility;
         }
 
-        private void loadCommonData(string fn) {
-            loadCommonData(Config.loadCommonOptions(fn));
-        }
-
         private void loadCommonData(CommonOptions co) {
             // TODO: remove hard-coded numbers here and from designer for time updowns
             setupNumericUpDown(expTimeNumericUpDown, co.eTimeReal);
-            setupNumericUpDown(expTimeNumericUpDown, co.iTimeReal);
+            setupNumericUpDown(idleTimeNumericUpDown, co.iTimeReal);
 
             setupNumericUpDown(iVoltageNumericUpDown, 20, 150, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);
             setupNumericUpDown(CPNumericUpDown, 10, 12, co.CPReal, CommonOptions.CPConvert, CommonOptions.CPConvert);
@@ -86,7 +82,7 @@ namespace Flavor.Forms {
         protected void loadFileButton_Click(object sender, EventArgs e) {
             if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    loadCommonData(openCommonDataFileDialog.FileName);
+                    loadCommonData(Config.loadCommonOptions(openCommonDataFileDialog.FileName));
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
