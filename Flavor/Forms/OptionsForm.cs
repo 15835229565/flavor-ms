@@ -19,9 +19,9 @@ namespace Flavor.Forms {
         }
 
         private void loadCommonData(CommonOptions co) {
-            // TODO: remove hard-coded numbers here and from designer for time updowns
-            setupNumericUpDown(expTimeNumericUpDown, co.eTimeReal);
-            setupNumericUpDown(idleTimeNumericUpDown, co.iTimeReal);
+            // TODO: remove hard-coded numbers here (use constants in Config)
+            setupNumericUpDown(expTimeNumericUpDown, 10, 10000, co.eTimeReal);
+            setupNumericUpDown(idleTimeNumericUpDown, 10, 100, co.iTimeReal);
 
             setupNumericUpDown(iVoltageNumericUpDown, 20, 150, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);
             setupNumericUpDown(CPNumericUpDown, 10, 12, co.CPReal, CommonOptions.CPConvert, CommonOptions.CPConvert);
@@ -30,7 +30,9 @@ namespace Flavor.Forms {
             setupNumericUpDown(fV1NumericUpDown, 20, 150, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
             setupNumericUpDown(fV2NumericUpDown, 20, 150, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
         }
-        private void setupNumericUpDown(NumericUpDown updown, double value) {
+        private void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
+            updown.Minimum = min;
+            updown.Maximum = max;
             decimal temp = (decimal)value;
             if (temp < updown.Minimum)
                 temp = updown.Minimum;
@@ -41,9 +43,7 @@ namespace Flavor.Forms {
         private delegate ushort ConvertTo(double value);
         private delegate double ConvertFro(ushort value);
         private void setupNumericUpDown(NumericUpDown updown, double min, double max, double value, ConvertTo conv1, ConvertFro conv2) {
-            updown.Minimum = (decimal)conv2(conv1(min));
-            updown.Maximum = (decimal)conv2(conv1(max));
-            setupNumericUpDown(updown, value);
+            setupNumericUpDown(updown, (decimal)conv2(conv1(min)), (decimal)conv2(conv1(max)), value);
         }
 
         protected void cancel_butt_Click(object sender, EventArgs e) {
