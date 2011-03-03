@@ -7,20 +7,6 @@ namespace Flavor.Forms {
     internal partial class MonitorOptionsForm: PreciseOptionsForm {
         public MonitorOptionsForm() {
             InitializeComponent();
-            iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            iterationsNumericUpDown.Value = (decimal)Config.Iterations;
-            timeLimitNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            timeLimitNumericUpDown.Value = (decimal)Config.TimeLimit;
-            allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
-            Utility.PreciseEditorData peak = Config.CheckerPeak;
-            if (peak != null) {
-                checkPeakPreciseEditorRowMinus.setValues(peak);
-            }
-            bool enable = Graph.PointToAdd != null;
-            this.checkPeakInsertButton.Enabled = enable;
-            if (!enable) {
-                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
-            }
         }
 
         protected override bool checkTextBoxes() {
@@ -49,6 +35,25 @@ namespace Flavor.Forms {
             }
         }
 
+        protected sealed override void OnLoad(EventArgs e) {
+            iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            iterationsNumericUpDown.Value = (decimal)Config.Iterations;
+            timeLimitNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            timeLimitNumericUpDown.Value = (decimal)Config.TimeLimit;
+            allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
+            Utility.PreciseEditorData peak = Config.CheckerPeak;
+            if (peak != null) {
+                checkPeakPreciseEditorRowMinus.setValues(peak);
+                useCheckPeakCheckBox.Checked = peak.Use;
+            } else
+                useCheckPeakCheckBox.Checked = false;
+            bool enable = Graph.PointToAdd != null;
+            checkPeakInsertButton.Enabled = enable;
+            if (!enable) {
+                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            }
+            base.OnLoad(e);
+        }
         protected sealed override void OnFormClosing(FormClosingEventArgs e) {
             Graph.OnPointAdded -= Graph_OnPointAdded;
             base.OnFormClosing(e);

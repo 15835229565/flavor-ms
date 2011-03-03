@@ -282,14 +282,44 @@
   <metadata name="groupBox2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="useCheckPeakCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="useCheckPeakCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>411, 40</value>
+  </data>
+  <data name="useCheckPeakCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>190, 17</value>
+  </data>
+  <data name="useCheckPeakCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="useCheckPeakCheckBox.Text" xml:space="preserve">
+    <value>Использовать контрольный пик</value>
+  </data>
+  <data name="useCheckPeakCheckBox.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;useCheckPeakCheckBox.Name" xml:space="preserve">
+    <value>useCheckPeakCheckBox</value>
+  </data>
+  <data name="&gt;&gt;useCheckPeakCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;useCheckPeakCheckBox.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;useCheckPeakCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="allowedShiftNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>624, 14</value>
   </data>
   <data name="allowedShiftNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>60, 20</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="allowedShiftNumericUpDown.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
@@ -307,7 +337,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;allowedShiftNumericUpDown.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -337,7 +367,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <metadata name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -361,7 +391,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;controlPeakLabelRow.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="timeLimitNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 40</value>
@@ -385,7 +415,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;timeLimitNumericUpDown.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -415,7 +445,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="checkPeakInsertButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>324, 11</value>
@@ -439,7 +469,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;checkPeakInsertButton.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="checkPeakPreciseEditorRowMinus.Location" type="System.Drawing.Point, System.Drawing">
     <value>194, 42</value>
@@ -460,7 +490,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;checkPeakPreciseEditorRowMinus.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -490,7 +520,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="iterationsNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 14</value>
@@ -514,7 +544,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;iterationsNumericUpDown.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 403</value>

@@ -13,29 +13,6 @@ namespace Flavor.Forms {
         public PreciseOptionsForm()
             : base() {
             InitializeComponent();
-            bool enable = Graph.PointToAdd != null;
-
-            this.SuspendLayout();
-            this.preciseEditorGroupBox.SuspendLayout();
-            this.insertPointButton.Enabled = enable;
-
-            for (int i = 0; i < 20; ++i) {
-                this.PErows[i] = new PreciseEditorRowPlus();
-                this.PErows[i].Location = new Point(21, 42 + 15 * i);
-                this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
-                this.PErows[i].setClearToolTip(this.formToolTip);
-                this.preciseEditorGroupBox.Controls.Add(PErows[i]);
-            }
-
-            loadPreciseEditorData(Config.PreciseData);
-            this.preciseEditorGroupBox.ResumeLayout(false);
-            this.preciseEditorGroupBox.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
-            if (!enable) {
-                Graph.OnPointAdded += Graph_OnPointAdded;
-            }
             Commander.OnProgramStateChanged += InvokeEnableForm;
         }
 
@@ -164,6 +141,32 @@ namespace Flavor.Forms {
                 PErows[i].Clear();
         }
 
+        protected override void OnLoad(EventArgs e) {
+            bool enable = Graph.PointToAdd != null;
+
+            this.SuspendLayout();
+            this.preciseEditorGroupBox.SuspendLayout();
+            this.insertPointButton.Enabled = enable;
+
+            for (int i = 0; i < 20; ++i) {
+                this.PErows[i] = new PreciseEditorRowPlus();
+                this.PErows[i].Location = new Point(21, 42 + 15 * i);
+                this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
+                this.PErows[i].setClearToolTip(this.formToolTip);
+                this.preciseEditorGroupBox.Controls.Add(PErows[i]);
+            }
+
+            loadPreciseEditorData(Config.PreciseData);
+            this.preciseEditorGroupBox.ResumeLayout(false);
+            this.preciseEditorGroupBox.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+            if (!enable) {
+                Graph.OnPointAdded += Graph_OnPointAdded;
+            }
+            base.OnLoad(e);
+        }
         protected override void OnFormClosing(FormClosingEventArgs e) {
             Graph.OnPointAdded -= Graph_OnPointAdded;
             Commander.OnProgramStateChanged -= InvokeEnableForm;

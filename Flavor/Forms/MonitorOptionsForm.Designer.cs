@@ -14,6 +14,7 @@ namespace Flavor.Forms {
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
+            this.useCheckPeakCheckBox = new System.Windows.Forms.CheckBox();
             this.allowedShiftNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
@@ -49,6 +50,7 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(this.useCheckPeakCheckBox);
             groupBox2.Controls.Add(this.allowedShiftNumericUpDown);
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(controlPeakLabelRow);
@@ -61,6 +63,12 @@ namespace Flavor.Forms {
             resources.ApplyResources(groupBox2, "groupBox2");
             groupBox2.Name = "groupBox2";
             groupBox2.TabStop = false;
+            // 
+            // useCheckPeakCheckBox
+            // 
+            resources.ApplyResources(this.useCheckPeakCheckBox, "useCheckPeakCheckBox");
+            this.useCheckPeakCheckBox.Name = "useCheckPeakCheckBox";
+            this.useCheckPeakCheckBox.UseVisualStyleBackColor = true;
             // 
             // allowedShiftNumericUpDown
             // 
@@ -152,5 +160,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.Button checkPeakInsertButton;
         private System.Windows.Forms.NumericUpDown timeLimitNumericUpDown;
         private System.Windows.Forms.NumericUpDown allowedShiftNumericUpDown;
+        private System.Windows.Forms.CheckBox useCheckPeakCheckBox;
     }
 }

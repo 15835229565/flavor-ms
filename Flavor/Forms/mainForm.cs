@@ -203,10 +203,13 @@ namespace Flavor.Forms {
             statusTreeView.Nodes.AddRange(new TreeNode[] { rootNode });
         }
         #endregion
-        protected sealed override void OnShown(EventArgs e) {
+        protected sealed override void OnLoad(EventArgs e) {
             openConfigFileToolStripMenuItem_Click(this, e);
-            Activate();
+            base.OnLoad(e);
+        }
+        protected sealed override void OnShown(EventArgs e) {
             base.OnShown(e);
+            Activate();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {

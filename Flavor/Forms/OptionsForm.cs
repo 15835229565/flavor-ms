@@ -6,15 +6,6 @@ namespace Flavor.Forms {
     internal partial class OptionsForm: Form {
         protected OptionsForm() {
             InitializeComponent();
-            rareModeCheckBox.Checked = Commander.notRareModeRequested;
-            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure)) {
-                applyButton.Enabled = true;
-                applyButton.Visible = true;
-            } else {
-                applyButton.Enabled = false;
-                applyButton.Visible = false;
-            }
-            loadCommonData(Config.CommonOptions);
             Commander.OnProgramStateChanged += InvokeSetVisibility;
         }
 
@@ -100,6 +91,20 @@ namespace Flavor.Forms {
                 // TODO: avoid bringing to front..
                 this.Visible = Commander.pState != Commander.programStates.Measure;
             }));
+        }
+        protected override void OnLoad(EventArgs e) {
+            rareModeCheckBox.Checked = Commander.notRareModeRequested;
+            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure)) {
+                applyButton.Enabled = true;
+                applyButton.Visible = true;
+            } else {
+                applyButton.Enabled = false;
+                applyButton.Visible = false;
+            }
+            CommonOptions co = Config.CommonOptions;
+            if (co != null)
+                loadCommonData(Config.CommonOptions);
+            base.OnLoad(e);
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
             Commander.OnProgramStateChanged -= InvokeSetVisibility;
