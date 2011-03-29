@@ -133,12 +133,16 @@ namespace Flavor.Common {
             private bool noPoints = true;
             private int stepPoints = 0;
 
-            private short shift = 0;
+            private readonly short shift;
 
+            private delegate bool PeakValidator(Utility.PreciseEditorData peak);
+            private readonly PeakValidator isSpectrumValid;
             internal Precise()
-                : this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed)) { }
-            private Precise(List<Utility.PreciseEditorData> peaks)
+                : this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed), 0, (peak) => { return true; }) { }
+            private Precise(List<Utility.PreciseEditorData> peaks, short shift, PeakValidator isValid)
                 : base() {
+                this.shift = shift;
+                this.isSpectrumValid = isValid;
                 senseModePoints = peaks;
                 //Sort in increased order
                 if (senseModePoints.Count == 0) {
@@ -170,9 +174,6 @@ namespace Flavor.Common {
             protected override void onSuccessfulExit() {
                 // order is important here: points are saved from graph..
                 Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
-                saveResults();
-            }
-            protected virtual void saveResults() {
                 Config.autoSavePreciseSpectrumFile(shift);
             }
 
@@ -231,9 +232,6 @@ namespace Flavor.Common {
                 }
                 return true;
             }
-            protected virtual bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
-                return true;
-            }
 
             internal override bool start() {
                 if (noPoints) {
@@ -265,10 +263,10 @@ namespace Flavor.Common {
             internal override int stepsCount() {
                 return stepPoints;
             }
-            internal class Monitor: Precise {
+            internal class Monitor: MeasureMode {
                 private class MeasureStopper {
                     private int counter;
-                    private Timer timer;
+                    private readonly Timer timer;
                     private bool timerElapsed = false;
                     internal MeasureStopper(int counterLimit, int timeLimit) {
                         counter = counterLimit == 0 ? -1 : counterLimit;
@@ -281,7 +279,7 @@ namespace Flavor.Common {
                         }
                     }
 
-                    void timer_Elapsed(object sender, ElapsedEventArgs e) {
+                    private void timer_Elapsed(object sender, ElapsedEventArgs e) {
                         timerElapsed = true;
                         timer.Elapsed -= new ElapsedEventHandler(timer_Elapsed);
                     }
@@ -308,168 +306,30 @@ namespace Flavor.Common {
                     }
                 }
 
-                private MeasureStopper stopper;
-                private Utility.PreciseEditorData peak;
+                private readonly MeasureStopper stopper;
+                private readonly Utility.PreciseEditorData peak;
                 private bool spectrumIsValid = true;
-                private ushort allowedShift;
-
-                internal Monitor(short initialShift, ushort allowedShift, int timeLimit)
-                    : base(Config.PreciseDataWithChecker) {
-                    shift = initialShift;
-                    this.allowedShift = allowedShift;
-                    stopper = new MeasureStopper(Config.Iterations, timeLimit);
-                    peak = Config.CheckerPeak;
-                }
-                protected override void onSuccessfulExit() {
-                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
-					if (true && spectrumIsValid) {
-                        base.onSuccessfulExit();
-                    }
-                }
-                protected override void finalize() {
-                    Config.finalizeMonitorFile();
-                }
-                protected override void saveResults() {
-                    // senseModeCounts here?
-                    Config.autoSaveMonitorSpectrumFile(shift);
-                }
-
-                protected override bool toContinue() {
-                    if (base.toContinue()) {
-                        return true;
-                    }
-                    //TODO: option-dependent behaviour: transition to next cycle on shift situation. See similar comment in onSuccessfulExit()
-                    if (true && spectrumIsValid) {
-                        stopper.next();
-                    }
-                    if (stopper.ready()) {
-                        return false;
-                    }
-                    // operations between iterations
-                    onSuccessfulExit();
-                    init(true);
-                    return true;
-                }
-                protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
-                    if (!curPeak.Equals(peak)) {
-                        // do not store value here!
-                        return true;
-                    }
-                    long[] counts = peakCounts(isCheckPeak);
-                    ushort width = peak.Width;
-                    if (counts.Length != 2 * width + 1) {
-                        // data mismatch
-                        return spectrumIsValid = false;
-                    }
-                    long max = -1;
-                    int index = -1;
-                    for (int i = 0; i < counts.Length; ++i) {
-                        long temp = counts[i];
-                        if (temp > max) {
-                            max = temp;
-                            index = i;
-                        }
-                    }
-
-                    short delta = (short)(index - width);
-                    if (delta > allowedShift || delta < -allowedShift) {
-                        shift += delta;
-                        return spectrumIsValid = false;
-                    }
-                    return spectrumIsValid = true;
-                }
-                private bool isCheckPeak(Utility.PreciseEditorData ped) {
-                    // only in this situation (checkpeak marked with false use)
-                    if (ped.Use) {
-                        return false;
-                    }
-                    return true;
-                }
-                internal override bool start() {
-                    if (!base.start()) {
-                        return false;
-                    }
-                    stopper.startTimer();
-                    return true;
-                }
-                internal override int stepsCount() {
-                    int stopperTurns = stopper.estimatedTurns();
-                    if (stopperTurns <= 0) {
-                        return 0;
-                    }
-                    return base.stepsCount() * stopperTurns;
-                }
-            }
-            internal class Monitor1: MeasureMode {
-                private class MeasureStopper {
-                    private int counter;
-                    private Timer timer;
-                    private bool timerElapsed = false;
-                    internal MeasureStopper(int counterLimit, int timeLimit) {
-                        counter = counterLimit == 0 ? -1 : counterLimit;
-                        if (timeLimit > 0) {
-                            timer = new Timer();
-                            // time in minutes
-                            timer.Interval = timeLimit * 60000;
-                            timer.AutoReset = false;
-                            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-                        }
-                    }
-
-                    void timer_Elapsed(object sender, ElapsedEventArgs e) {
-                        timerElapsed = true;
-                        timer.Elapsed -= new ElapsedEventHandler(timer_Elapsed);
-                    }
-                    internal void next() {
-                        if (counter == -1) {
-                            // produce infinite loop
-                            return;
-                        }
-                        --counter;
-                    }
-                    internal bool ready() {
-                        return timerElapsed || counter == 0;
-                    }
-                    internal int estimatedTurns() {
-                        // estimated operation duration
-                        return counter;
-                    }
-
-                    internal void startTimer() {
-                        if (timer == null) {
-                            return;
-                        }
-                        timer.Start();
-                    }
-                }
-
-                private MeasureStopper stopper;
-                private Utility.PreciseEditorData peak;
-                private bool spectrumIsValid = true;
-                private ushort allowedShift;
+                private readonly ushort allowedShift;
 
                 private Precise preciseCycle;
                 private short shift = 0;
 
-                internal Monitor1(short initialShift, ushort allowedShift, int timeLimit) {
-                    preciseCycle = new Precise(Config.PreciseDataWithChecker);
+                internal Monitor(short initialShift, ushort allowedShift, int timeLimit) {
+                    preciseCycle = new Precise(Config.PreciseDataWithChecker, initialShift, this.isSpectrumValid2);
                     shift = initialShift;
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);
                     peak = Config.CheckerPeak;
                 }
                 protected override void onSuccessfulExit() {
-                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
-                    if (true && spectrumIsValid) {
-                        preciseCycle.onSuccessfulExit();
-                    }
+                    // do nothing special?
                 }
                 protected override void finalize() {
                     Config.finalizeMonitorFile();
                 }
                 protected override void saveData() {
                     // senseModeCounts here?
-                    Config.autoSaveMonitorSpectrumFile(shift);
+                    preciseCycle.saveData();
                 }
 
                 protected override bool onNextStep() {
@@ -486,15 +346,21 @@ namespace Flavor.Common {
                         return true;
                     }
                     //TODO: option-dependent behaviour: transition to next cycle on shift situation. See similar comment in onSuccessfulExit()
-                    if (true && spectrumIsValid) {
+                    if (true || spectrumIsValid) {
                         stopper.next();
                     }
                     if (stopper.ready()) {
                         return false;
                     }
                     // operations between iterations
-                    onSuccessfulExit();
-                    preciseCycle.init(true);
+                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
+                    if (true || spectrumIsValid) {
+                        preciseCycle.onSuccessfulExit();
+                        Config.autoSaveMonitorSpectrumFile(shift);
+                    }
+                    //TODO: more quick reinit
+                    //preciseCycle.init(true);
+                    preciseCycle = new Precise(Config.PreciseDataWithChecker, shift, this.isSpectrumValid2);
                     return true;
                 }
                 private bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
@@ -522,6 +388,37 @@ namespace Flavor.Common {
                     if (delta > allowedShift || delta < -allowedShift) {
                         shift += delta;
                         return spectrumIsValid = false;
+                    }
+                    return spectrumIsValid = true;
+                }
+                // specially do not stop cycle
+                private bool isSpectrumValid2(Utility.PreciseEditorData curPeak) {
+                    if (!curPeak.Equals(peak)) {
+                        // do not store value here!
+                        return true;
+                    }
+                    long[] counts = preciseCycle.peakCounts(isCheckPeak);
+                    ushort width = peak.Width;
+                    if (counts.Length != 2 * width + 1) {
+                        // data mismatch
+                        return spectrumIsValid = false;
+                    }
+                    long max = -1;
+                    int index = -1;
+                    for (int i = 0; i < counts.Length; ++i) {
+                        long temp = counts[i];
+                        if (temp > max) {
+                            max = temp;
+                            index = i;
+                        }
+                    }
+
+                    short delta = (short)(index - width);
+                    if (delta > allowedShift || delta < -allowedShift) {
+                        shift += delta;
+                        spectrumIsValid = false;
+                        //!!!
+                        return true;
                     }
                     return spectrumIsValid = true;
                 }
