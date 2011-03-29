@@ -210,7 +210,7 @@ namespace Flavor.Common {
                         return false;
                     }
                     for (int i = 0; i < senseModePoints.Count; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
-                {
+                    {
                         ++senseModePeak;
                         if (senseModePeak >= senseModePoints.Count) senseModePeak = 0;
                         if (senseModePeakIteration[senseModePeak] > 0) break;
@@ -321,8 +321,8 @@ namespace Flavor.Common {
                     peak = Config.CheckerPeak;
                 }
                 protected override void onSuccessfulExit() {
-                    throw new NotImplementedException("Modify behaviour according to data drop policy");
-					if (spectrumIsValid) {
+                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
+					if (true && spectrumIsValid) {
                         base.onSuccessfulExit();
                     }
                 }
@@ -338,8 +338,8 @@ namespace Flavor.Common {
                     if (base.toContinue()) {
                         return true;
                     }
-                    throw new NotImplementedException("Modify behaviour according to data drop policy");
-                    if (spectrumIsValid) {
+                    //TODO: option-dependent behaviour: transition to next cycle on shift situation. See similar comment in onSuccessfulExit()
+                    if (true && spectrumIsValid) {
                         stopper.next();
                     }
                     if (stopper.ready()) {
