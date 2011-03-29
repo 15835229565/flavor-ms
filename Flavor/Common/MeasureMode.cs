@@ -321,7 +321,8 @@ namespace Flavor.Common {
                     peak = Config.CheckerPeak;
                 }
                 protected override void onSuccessfulExit() {
-                    if (spectrumIsValid) {
+                    throw new NotImplementedException("Modify behaviour according to data drop policy");
+					if (spectrumIsValid) {
                         base.onSuccessfulExit();
                     }
                 }
@@ -337,6 +338,7 @@ namespace Flavor.Common {
                     if (base.toContinue()) {
                         return true;
                     }
+                    throw new NotImplementedException("Modify behaviour according to data drop policy");
                     if (spectrumIsValid) {
                         stopper.next();
                     }
