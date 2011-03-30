@@ -107,8 +107,7 @@ namespace Flavor.Common {
                 }
                 //lock here
                 pointValue = sPoint;
-                onNextStep();
-                return true;
+                return onNextStep();
             }
             internal override void updateGraph() {
                 ushort pnt = pointValue;
@@ -241,8 +240,7 @@ namespace Flavor.Common {
                 if (!init(false)) {
                     return false;
                 }
-                onNextStep();
-                return true;
+                return onNextStep();
             }
             private bool init(bool initCounts) {
                 smpiSum = smpiSumMax;
@@ -430,7 +428,7 @@ namespace Flavor.Common {
                     return true;
                 }
                 internal override bool start() {
-                    if (!base.start()) {
+                    if (!preciseCycle.start()) {
                         return false;
                     }
                     stopper.startTimer();
