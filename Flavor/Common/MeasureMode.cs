@@ -17,12 +17,12 @@ namespace Flavor.Common {
         private ushort pointValue = 0;
 
         private sendMeasure customMeasure = null;
-        private ushort befTime;
-        private ushort eTime;
+        private readonly ushort befTime;
+        private readonly ushort eTime;
 
-        private MeasureMode() {
-            befTime = Config.CommonOptions.befTime;
-            eTime = Config.CommonOptions.eTime;
+        private MeasureMode(ushort befTime, ushort eTime) {
+            this.befTime = befTime;
+            this.eTime = eTime;
         }
         internal bool onUpdateCounts() {
             customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
@@ -82,10 +82,10 @@ namespace Flavor.Common {
         }
 
         internal class Scan: MeasureMode {
-            private ushort sPoint;
-            private ushort ePoint;
+            private readonly ushort sPoint;
+            private readonly ushort ePoint;
             internal Scan()
-                : base() {
+                : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
             }
@@ -132,16 +132,13 @@ namespace Flavor.Common {
             private bool noPoints = true;
             private int stepPoints = 0;
 
-            private readonly short shift;
+            private short shift = 0;
 
-            private delegate bool PeakValidator(Utility.PreciseEditorData peak);
-            private readonly PeakValidator isSpectrumValid;
             internal Precise()
-                : this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed), 0, (peak) => { return true; }) { }
-            private Precise(List<Utility.PreciseEditorData> peaks, short shift, PeakValidator isValid)
-                : base() {
+                : this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed), 0) { }
+            private Precise(List<Utility.PreciseEditorData> peaks, short shift)
+                : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 this.shift = shift;
-                this.isSpectrumValid = isValid;
                 senseModePoints = peaks;
                 //Sort in increased order
                 if (senseModePoints.Count == 0) {
@@ -173,6 +170,9 @@ namespace Flavor.Common {
             protected override void onSuccessfulExit() {
                 // order is important here: points are saved from graph..
                 Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
+                saveResults();
+            }
+            protected virtual void saveResults() {
                 Config.autoSavePreciseSpectrumFile(shift);
             }
 
@@ -231,6 +231,9 @@ namespace Flavor.Common {
                 }
                 return true;
             }
+            protected virtual bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+                return true;
+            }
 
             internal override bool start() {
                 if (noPoints) {
@@ -261,7 +264,7 @@ namespace Flavor.Common {
             internal override int stepsCount() {
                 return stepPoints;
             }
-            internal class Monitor: MeasureMode {
+            internal class Monitor: Precise {
                 private class MeasureStopper {
                     private int counter;
                     private readonly Timer timer;
@@ -309,38 +312,28 @@ namespace Flavor.Common {
                 private bool spectrumIsValid = true;
                 private readonly ushort allowedShift;
 
-                private Precise preciseCycle;
-                private short shift = 0;
-
-                internal Monitor(short initialShift, ushort allowedShift, int timeLimit) {
-                    preciseCycle = new Precise(Config.PreciseDataWithChecker, initialShift, this.isSpectrumValid2);
-                    shift = initialShift;
+                internal Monitor(short initialShift, ushort allowedShift, int timeLimit)
+                    : base(Config.PreciseDataWithChecker, initialShift) {
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);
                     peak = Config.CheckerPeak;
                 }
                 protected override void onSuccessfulExit() {
-                    // do nothing special?
+                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
+					if (true || spectrumIsValid) {
+                        base.onSuccessfulExit();
+                    }
                 }
                 protected override void finalize() {
                     Config.finalizeMonitorFile();
                 }
-                protected override void saveData() {
+                protected override void saveResults() {
                     // senseModeCounts here?
-                    preciseCycle.saveData();
+                    Config.autoSaveMonitorSpectrumFile(shift);
                 }
 
-                protected override bool onNextStep() {
-                    int realValue = pointValue + shift;
-                    if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP) {
-                        return false;
-                    }
-                    Commander.AddToSend(new sendSVoltage((ushort)realValue));
-                    ++pointValue;
-                    return true;
-                }
                 protected override bool toContinue() {
-                    if (preciseCycle.toContinue()) {
+                    if (base.toContinue()) {
                         return true;
                     }
                     //TODO: option-dependent behaviour: transition to next cycle on shift situation. See similar comment in onSuccessfulExit()
@@ -351,22 +344,20 @@ namespace Flavor.Common {
                         return false;
                     }
                     // operations between iterations
-                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
-                    if (true || spectrumIsValid) {
-                        preciseCycle.onSuccessfulExit();
-                        Config.autoSaveMonitorSpectrumFile(shift);
-                    }
-                    //TODO: more quick reinit
-                    //preciseCycle.init(true);
-                    preciseCycle = new Precise(Config.PreciseDataWithChecker, shift, this.isSpectrumValid2);
+                    onSuccessfulExit();
+                    init(true);
                     return true;
                 }
-                private bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+                protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+                    // TODO: use options-specific delegate
+                    return isSpectrumValid2(curPeak);
+                }
+                private bool isSpectrumValid1(Utility.PreciseEditorData curPeak) {
                     if (!curPeak.Equals(peak)) {
                         // do not store value here!
                         return true;
                     }
-                    long[] counts = preciseCycle.peakCounts(isCheckPeak);
+                    long[] counts = peakCounts(isCheckPeak);
                     ushort width = peak.Width;
                     if (counts.Length != 2 * width + 1) {
                         // data mismatch
@@ -395,7 +386,7 @@ namespace Flavor.Common {
                         // do not store value here!
                         return true;
                     }
-                    long[] counts = preciseCycle.peakCounts(isCheckPeak);
+                    long[] counts = peakCounts(isCheckPeak);
                     ushort width = peak.Width;
                     if (counts.Length != 2 * width + 1) {
                         // data mismatch
@@ -428,22 +419,18 @@ namespace Flavor.Common {
                     return true;
                 }
                 internal override bool start() {
-                    if (!preciseCycle.start()) {
+                    if (!base.start()) {
                         return false;
                     }
                     stopper.startTimer();
                     return true;
-                }
-                internal override void updateGraph() {
-                    ushort pnt = pointValue;
-                    Graph.updateGraphDuringPreciseMeasure(--pnt, preciseCycle.SenseModePeak);
                 }
                 internal override int stepsCount() {
                     int stopperTurns = stopper.estimatedTurns();
                     if (stopperTurns <= 0) {
                         return 0;
                     }
-                    return preciseCycle.stepsCount() * stopperTurns;
+                    return base.stepsCount() * stopperTurns;
                 }
             }
         }
