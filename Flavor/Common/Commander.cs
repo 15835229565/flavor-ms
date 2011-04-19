@@ -291,6 +291,7 @@ namespace Flavor.Common {
 
         internal static void Scan() {
             if (pState == Commander.programStates.Ready) {
+                Graph.Reset();
                 measureMode = new MeasureMode.Scan();
                 initMeasure();
             }
@@ -298,6 +299,7 @@ namespace Flavor.Common {
         internal static void Sense() {
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
+                    Graph.Reset();
                     measureMode = new MeasureMode.Precise();
                     initMeasure();
                 } else {
@@ -308,6 +310,7 @@ namespace Flavor.Common {
         internal static void Monitor() {
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
+                    Graph.ResetForMonitor();
                     measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
                     initMeasure();
                     // TODO: feed measure mode with start shift value (really?)
@@ -338,7 +341,6 @@ namespace Flavor.Common {
             */
         }
         private static void initMeasure() {
-            Graph.Reset();
             ConsoleWriter.WriteLine(pState);
             if (measureMode != null && measureMode.isOperating) {
                 //error. something in operation

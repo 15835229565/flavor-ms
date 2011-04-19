@@ -254,6 +254,12 @@ namespace Flavor.Common {
             instance.preciseData = Config.PreciseData;
             instance.DisplayingMode = Displaying.Measured;
         }
+        internal static void ResetForMonitor() {
+            instance.ResetPointLists();
+            instance.collectors.CommonOptions = Config.CommonOptions;
+            instance.preciseData = Config.PreciseDataWithChecker;
+            instance.DisplayingMode = Displaying.Measured;
+        }
         internal static void ResetPointListsWithEvent() {
             Reset();
             instance.OnNewGraphData(Recreate.Both);

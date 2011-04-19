@@ -34,7 +34,7 @@ namespace Flavor.Forms
 
         protected override sealed void RefreshGraph() {
             //BAD: every time
-            List<Utility.PreciseEditorData> pspec = Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
+            List<Utility.PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
             if (pspec.Count != rowsCount)
                 // very bad!
                 throw new NullReferenceException();

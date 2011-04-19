@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<control version="1.0">
+<control version="1.2">
   <connect>
     <port>COM1</port>
     <baudrate>38400</baudrate>
@@ -260,4 +260,13 @@
     <coeff1>79081.787109375</coeff1>
     <coeff2>16545.41015625</coeff2>
   </interface>
+  <check>
+    <peak />
+    <col />
+    <width />
+    <iterations>0</iterations>
+    <limit>0</limit>
+    <allowed>0</allowed>
+    <region>0</region>
+  </check>
 </control>

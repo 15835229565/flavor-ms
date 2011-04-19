@@ -497,6 +497,10 @@ namespace Flavor.Common {
                 : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment) {
                 associatedPoints = other.associatedPoints == null ? null : new PointPairListPlus(other.associatedPoints, this, null);
             }
+            // use for generate checker peak
+            internal PreciseEditorData(PreciseEditorData other, ushort iterations)
+                : this(other.usethis, other.pointNumber, other.step, other.collector, iterations, other.width, other.precision, other.comment) {
+            }
             private bool usethis = true;
             private byte pointNumber;
             private ushort step;

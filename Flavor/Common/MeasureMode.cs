@@ -161,11 +161,8 @@ namespace Flavor.Common {
                 }
             }
             protected override void saveData() {
-                if (senseModePoints[senseModePeak].Collector == 1) {
-                    senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector1;
-                } else {
-                    senseModeCounts[senseModePeak][(pointValue - 1) - senseModePoints[senseModePeak].Step + senseModePoints[senseModePeak].Width] += Device.Detector2;
-                }
+                Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
+                senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += peak.Collector == 1 ? Device.Detector1 : Device.Detector2;
             }
             protected override void onSuccessfulExit() {
                 // order is important here: points are saved from graph..
@@ -176,16 +173,6 @@ namespace Flavor.Common {
                 Config.autoSavePreciseSpectrumFile(shift);
             }
 
-            private long[] peakCounts(Predicate<Utility.PreciseEditorData> isCheckPeak) {
-                int index = senseModePoints.FindIndex(isCheckPeak);
-                if (index == -1) {
-                    return null;
-                }
-                long[] temp = senseModeCounts[index];
-                // auto-reinitialize
-                senseModeCounts[index] = new long[senseModeCounts[index].Length];
-                return temp;
-            }
             protected override bool onNextStep() {
                 int realValue = pointValue + shift;
                 if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP) {
@@ -308,15 +295,21 @@ namespace Flavor.Common {
                 }
 
                 private readonly MeasureStopper stopper;
+                
                 private readonly Utility.PreciseEditorData peak;
+                private readonly int checkerIndex;
+                
                 private bool spectrumIsValid = true;
                 private readonly ushort allowedShift;
+                private long[] prevIteration = null;
 
                 internal Monitor(short initialShift, ushort allowedShift, int timeLimit)
-                    : base(Config.PreciseDataWithChecker, initialShift) {
+                    : base(Graph.Instance.PreciseData, initialShift) {
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);
                     peak = Config.CheckerPeak;
+                    checkerIndex = senseModePoints.FindIndex(peak.Equals);
+                    prevIteration = new long[senseModeCounts[checkerIndex].Length];
                 }
                 protected override void onSuccessfulExit() {
                     //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
@@ -346,77 +339,44 @@ namespace Flavor.Common {
                     // operations between iterations
                     onSuccessfulExit();
                     init(true);
+                    prevIteration = new long[senseModeCounts[checkerIndex].Length];
                     return true;
                 }
                 protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
                     // TODO: use options-specific delegate
-                    return isSpectrumValid2(curPeak);
+                    // specially do not stop cycle
+                    return isSpectrumValid2(curPeak, true);
                 }
-                private bool isSpectrumValid1(Utility.PreciseEditorData curPeak) {
+                private bool isSpectrumValid2(Utility.PreciseEditorData curPeak, bool ignoreInvalidity) {
                     if (!curPeak.Equals(peak)) {
                         // do not store value here!
                         return true;
                     }
-                    long[] counts = peakCounts(isCheckPeak);
+                    long[] counts = senseModeCounts[checkerIndex];
                     ushort width = peak.Width;
                     if (counts.Length != 2 * width + 1) {
-                        // data mismatch
+                        // data mismatch. strange.
                         return spectrumIsValid = false;
                     }
                     long max = -1;
                     int index = -1;
                     for (int i = 0; i < counts.Length; ++i) {
-                        long temp = counts[i];
+                        // TODO: better solution. now not optimal. reverse work.
+                        long temp = counts[i] - prevIteration[i];
                         if (temp > max) {
                             max = temp;
                             index = i;
                         }
-                    }
-
-                    short delta = (short)(index - width);
-                    if (delta > allowedShift || delta < -allowedShift) {
-                        shift += delta;
-                        return spectrumIsValid = false;
-                    }
-                    return spectrumIsValid = true;
-                }
-                // specially do not stop cycle
-                private bool isSpectrumValid2(Utility.PreciseEditorData curPeak) {
-                    if (!curPeak.Equals(peak)) {
-                        // do not store value here!
-                        return true;
-                    }
-                    long[] counts = peakCounts(isCheckPeak);
-                    ushort width = peak.Width;
-                    if (counts.Length != 2 * width + 1) {
-                        // data mismatch
-                        return spectrumIsValid = false;
-                    }
-                    long max = -1;
-                    int index = -1;
-                    for (int i = 0; i < counts.Length; ++i) {
-                        long temp = counts[i];
-                        if (temp > max) {
-                            max = temp;
-                            index = i;
-                        }
+                        prevIteration[i] = counts[i];
                     }
 
                     short delta = (short)(index - width);
                     if (delta > allowedShift || delta < -allowedShift) {
                         shift += delta;
                         spectrumIsValid = false;
-                        //!!!
-                        return true;
+                        return ignoreInvalidity;
                     }
                     return spectrumIsValid = true;
-                }
-                private bool isCheckPeak(Utility.PreciseEditorData ped) {
-                    // only in this situation (checkpeak marked with false use)
-                    if (ped.Use) {
-                        return false;
-                    }
-                    return true;
                 }
                 internal override bool start() {
                     if (!base.start()) {

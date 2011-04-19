@@ -14,6 +14,7 @@ namespace Flavor.Forms {
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
+            this.checkPeakNumberNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.useCheckPeakCheckBox = new System.Windows.Forms.CheckBox();
             this.allowedShiftNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -35,6 +36,7 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.params_groupBox.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
@@ -50,6 +52,7 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(this.checkPeakNumberNumericUpDown);
             groupBox2.Controls.Add(this.useCheckPeakCheckBox);
             groupBox2.Controls.Add(this.allowedShiftNumericUpDown);
             groupBox2.Controls.Add(label2);
@@ -63,6 +66,11 @@ namespace Flavor.Forms {
             resources.ApplyResources(groupBox2, "groupBox2");
             groupBox2.Name = "groupBox2";
             groupBox2.TabStop = false;
+            // 
+            // checkPeakNumberNumericUpDown
+            // 
+            resources.ApplyResources(this.checkPeakNumberNumericUpDown, "checkPeakNumberNumericUpDown");
+            this.checkPeakNumberNumericUpDown.Name = "checkPeakNumberNumericUpDown";
             // 
             // useCheckPeakCheckBox
             // 
@@ -145,6 +153,7 @@ namespace Flavor.Forms {
             this.params_groupBox.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).EndInit();
@@ -161,5 +170,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.NumericUpDown timeLimitNumericUpDown;
         private System.Windows.Forms.NumericUpDown allowedShiftNumericUpDown;
         private System.Windows.Forms.CheckBox useCheckPeakCheckBox;
+        private System.Windows.Forms.NumericUpDown checkPeakNumberNumericUpDown;
     }
 }

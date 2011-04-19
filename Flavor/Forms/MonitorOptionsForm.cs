@@ -19,12 +19,12 @@ namespace Flavor.Forms {
                                     new Utility.PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
                                                                   Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
-                                    null);
+                                    null, (int)checkPeakNumberNumericUpDown.Value);
         }
 
         private void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
-            //Graph.OnPointAdded -= new Graph.PointAddedDelegate(Graph_OnPointAdded);
+            //Graph.OnPointAdded -= Graph_OnPointAdded;
         }
 
         private void checkPeakInsertButton_Click(object sender, EventArgs e) {
@@ -41,12 +41,13 @@ namespace Flavor.Forms {
             timeLimitNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             timeLimitNumericUpDown.Value = (decimal)Config.TimeLimit;
             allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
-            Utility.PreciseEditorData peak = Config.CheckerPeak;
-            if (peak != null) {
+            checkPeakNumberNumericUpDown.Maximum = (decimal)Config.PEAK_NUMBER;
+            checkPeakNumberNumericUpDown.Value = (decimal)Config.CheckerPeakIndex;
+            Utility.PreciseEditorData peak = Config.CustomCheckerPeak;
+            if (peak != null)
                 checkPeakPreciseEditorRowMinus.setValues(peak);
-                useCheckPeakCheckBox.Checked = peak.Use;
-            } else
-                useCheckPeakCheckBox.Checked = false;
+            // TODO: more accurate options...
+            useCheckPeakCheckBox.Checked = peak != null && Config.PEAK_NUMBER != 0;
             bool enable = Graph.PointToAdd != null;
             checkPeakInsertButton.Enabled = enable;
             if (!enable) {
