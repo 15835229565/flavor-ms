@@ -28,9 +28,6 @@ namespace Flavor.Common {
         internal static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
         internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
         #endregion
-        #region Spectra headers
-        //private const string MONITOR_SPECTRUM_HEADER = "Monitor";
-        #endregion
         private static string SerialPort = "COM1";
         private static ushort SerialBaudRate = 38400;
         private static byte sendTry = 1;
@@ -39,6 +36,8 @@ namespace Flavor.Common {
         internal const ushort MAX_STEP = 1056;
         private static ushort startPoint = MIN_STEP;
         private static ushort endPoint = MAX_STEP;
+
+        internal const int PEAK_NUMBER = 20;
 
         private static CommonOptions commonOpts;
         internal static CommonOptions CommonOptions {
@@ -835,7 +834,7 @@ namespace Flavor.Common {
                         return null;
                     }
                     protected bool LoadPED(string errorMessage, List<Utility.PreciseEditorData> peds, string mainConfPrefix) {
-                        for (int i = 1; i <= 20; ++i) {
+                        for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             Utility.PreciseEditorData temp = null;
                             string peak, iter, width, col;
                             try {
@@ -1156,7 +1155,7 @@ namespace Flavor.Common {
                     protected List<Utility.PreciseEditorData> LoadPED(string errorMessage) {
                         string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
                         List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
-                        for (int i = 1; i <= 20; ++i) {
+                        for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string peak, iter, width, col;
                             try {
                                 XmlNode regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
@@ -1517,7 +1516,7 @@ namespace Flavor.Common {
                     protected List<Utility.PreciseEditorData> LoadPED(string errorMessage) {
                         string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
                         List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
-                        for (int i = 1; i <= 20; ++i) {
+                        for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string peak, iter, width, col;
                             try {
                                 XmlNode regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
@@ -1987,7 +1986,7 @@ namespace Flavor.Common {
                         savePreciseData(preciseData, false);
                     }
                     protected override void clearOldValues() {
-                        for (int i = 1; i <= 20; ++i) {
+                        for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, i));
                             clearInnerText(prefix, PEAK_NUMBER_CONFIG_TAG);
                             clearInnerText(prefix, PEAK_ITER_NUMBER_CONFIG_TAG);
@@ -2146,7 +2145,7 @@ namespace Flavor.Common {
             private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint) {
                 XmlNode senseNode = pedConf.CreateElement(SENSE_CONFIG_TAG);
 
-                for (int i = 1; i <= 20; ++i) {
+                for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                     XmlNode tempRegion = pedConf.CreateElement(string.Format(PEAK_TAGS_FORMAT, i));
                     tempRegion.AppendChild(pedConf.CreateElement(PEAK_NUMBER_CONFIG_TAG));
                     tempRegion.AppendChild(pedConf.CreateElement(PEAK_COL_NUMBER_CONFIG_TAG));

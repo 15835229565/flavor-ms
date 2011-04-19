@@ -7,7 +7,7 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     internal partial class PreciseOptionsForm: OptionsForm {
-        private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[20];
+        private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
         private PreciseSpectrum data = new PreciseSpectrum();
 
         public PreciseOptionsForm()
@@ -74,7 +74,7 @@ namespace Flavor.Forms {
         protected virtual bool checkTextBoxes() {
             bool exitFlag = true;
             data = new PreciseSpectrum();
-            for (int i = 0; i < 20; ++i) {
+            for (int i = 0; i < Config.PEAK_NUMBER; ++i) {
                 if (exitFlag &= PErows[i].checkTextBoxes())
                     if (PErows[i].AllFilled)
                         data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
@@ -137,7 +137,7 @@ namespace Flavor.Forms {
         }
 
         private void clearPreciseEditorData() {
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < Config.PEAK_NUMBER; ++i)
                 PErows[i].Clear();
         }
 
@@ -148,14 +148,14 @@ namespace Flavor.Forms {
             this.preciseEditorGroupBox.SuspendLayout();
             this.insertPointButton.Enabled = enable;
 
-            for (int i = 0; i < 20; ++i) {
+            for (int i = 0; i < Config.PEAK_NUMBER; ++i) {
                 this.PErows[i] = new PreciseEditorRowPlus();
                 this.PErows[i].Location = new Point(21, 42 + 15 * i);
                 this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
                 this.PErows[i].setClearToolTip(this.formToolTip);
                 this.preciseEditorGroupBox.Controls.Add(PErows[i]);
             }
-
+            // TODO: set form dimensions accordingly to number of peak lines..
             loadPreciseEditorData(Config.PreciseData);
             this.preciseEditorGroupBox.ResumeLayout(false);
             this.preciseEditorGroupBox.PerformLayout();

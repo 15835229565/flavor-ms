@@ -33,6 +33,7 @@ namespace Flavor.Common.Messaging {
             }
         }
         private void toggleRareMode() {
+            // TODO: move this hard-coded defaults to Config
             double deviceCheckInterval = isRareMode ? 10000 : 500;
             double turboCheckInterval = isRareMode ? 20000 : 2000;
 
