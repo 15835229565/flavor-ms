@@ -308,8 +308,11 @@ namespace Flavor.Common {
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);
                     peak = Config.CheckerPeak;
-                    checkerIndex = senseModePoints.FindIndex(peak.Equals);
-                    prevIteration = new long[senseModeCounts[checkerIndex].Length];
+                    if (peak != null) {
+                        checkerIndex = senseModePoints.FindIndex(peak.Equals);
+                        if (checkerIndex != -1)
+                            prevIteration = new long[senseModeCounts[checkerIndex].Length];
+                    }
                 }
                 protected override void onSuccessfulExit() {
                     //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
@@ -339,7 +342,7 @@ namespace Flavor.Common {
                     // operations between iterations
                     onSuccessfulExit();
                     init(true);
-                    prevIteration = new long[senseModeCounts[checkerIndex].Length];
+                    prevIteration = prevIteration == null ? null : new long[senseModeCounts[checkerIndex].Length];
                     return true;
                 }
                 protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
@@ -348,7 +351,8 @@ namespace Flavor.Common {
                     return isSpectrumValid2(curPeak, true);
                 }
                 private bool isSpectrumValid2(Utility.PreciseEditorData curPeak, bool ignoreInvalidity) {
-                    if (!curPeak.Equals(peak)) {
+                    if (!curPeak.Equals(peak) || prevIteration == null) {
+                        // if peak is null also exit here
                         // do not store value here!
                         return true;
                     }
