@@ -560,9 +560,8 @@ namespace Flavor.Common {
             public override bool Equals(object other) {
                 if (other is PreciseEditorData) {
                     PreciseEditorData o = other as PreciseEditorData;
-                    bool result = (this.collector == o.collector) && (this.step == o.step) &&
-                                  (this.iterations == o.iterations) && (this.width == o.width);
-                    return result;
+                    return (this.pointNumber == o.pointNumber) && (this.collector == o.collector) && (this.step == o.step) &&
+                           (this.iterations == o.iterations) && (this.width == o.width) && (this.comment == o.comment);
                 }
                 return false;
             }
@@ -658,7 +657,8 @@ namespace Flavor.Common {
             }
             #endregion
             #region IComparable<PreciseEditorData> Members
-            public int CompareTo(PreciseEditorData other) {
+            // compare by data
+			public int CompareTo(PreciseEditorData other) {
                 if (other == null)
                     return 1;
                 if (collector != other.collector)

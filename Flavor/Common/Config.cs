@@ -66,7 +66,7 @@ namespace Flavor.Common {
             get {
                 if (reperPeakIndex == -1)
                     return CustomCheckerPeak;
-                int index = preciseData.FindIndex((peak) => { return peak.pNumber == reperPeakIndex; });
+                int index = preciseData.FindIndex(peak => peak.pNumber == reperPeakIndex);
                 if (index == -1)
                     return null;
                 return new Utility.PreciseEditorData(preciseData[index], countMaxIteration());
@@ -92,7 +92,7 @@ namespace Flavor.Common {
                 if (reperPeakIndex != -1) {
                     // TODO: move this costly operation to combined Predicate several lines before
                     // how to mark it?
-                    int index = res.FindIndex((peak) => { return peak.pNumber == reperPeakIndex; });
+                    int index = res.FindIndex(peak => peak.pNumber == reperPeakIndex);
                     if (index == -1) {
                         // no peak
                         res.Add(CheckerPeak);
@@ -295,18 +295,18 @@ namespace Flavor.Common {
             }
             return res;
         }
-        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData from, Utility.PreciseEditorData what, double coeff) {
-            if (!from.Equals(what))
+        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData target, Utility.PreciseEditorData what, double coeff) {
+            if (target.CompareTo(what) != 0)
                 throw new System.ArgumentException();
-            if ((from.AssociatedPoints == null || from.AssociatedPoints.Count == 0) ^ (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
+            if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) ^ (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
                 throw new System.ArgumentException();
-            if (from.AssociatedPoints != null && what.AssociatedPoints != null && from.AssociatedPoints.Count != what.AssociatedPoints.Count)
+            if (target.AssociatedPoints != null && what.AssociatedPoints != null && target.AssociatedPoints.Count != what.AssociatedPoints.Count)
                 throw new System.ArgumentException();
-            if ((from.AssociatedPoints == null || from.AssociatedPoints.Count == 0) && (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
-                return new Utility.PreciseEditorData(from);
-            if (from.AssociatedPoints.Count != 2 * from.Width + 1)
+            if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) && (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
+                return new Utility.PreciseEditorData(target);
+            if (target.AssociatedPoints.Count != 2 * target.Width + 1)
                 throw new System.ArgumentException();
-            Utility.PreciseEditorData res = new Utility.PreciseEditorData(from);
+            Utility.PreciseEditorData res = new Utility.PreciseEditorData(target);
             for (int i = 0; i < res.AssociatedPoints.Count; ++i) {
                 if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
                     throw new System.ArgumentException();

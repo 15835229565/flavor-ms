@@ -48,7 +48,8 @@ namespace Flavor.Forms {
             base.OnResize(e);
         }
         protected sealed override void OnValidating(CancelEventArgs e) {
-            RefreshGraph();
+            // here is null reference exception on exit under linux
+			RefreshGraph();
             base.OnValidating(e);
         }
         protected sealed override void OnActivated(EventArgs e) {
