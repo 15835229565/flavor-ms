@@ -641,8 +641,12 @@ namespace Flavor.Common {
             #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
             internal static Predicate<PreciseEditorData> PeakIsUsed =
                 ped => ped != null && ped.usethis;
-            internal static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue = 
-                (ped1, ped2) => genericCompare(ped1, ped2, ped => ped == null, () => ped1.step - ped2.step);
+            internal static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue =
+                (ped1, ped2) => genericCompare(ped1, ped2, ped => ped == null, () => {
+                    if (ped1.step != ped2.step)
+                        return ped1.step - ped2.step;
+                    return ped2.pointNumber - ped1.pointNumber;
+                });
             private delegate int FakeComparison();
             private static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, FakeComparison comparison) {
                 // stub for any comparison
@@ -667,7 +671,9 @@ namespace Flavor.Common {
                     return step - other.step;
                 if (width != other.width)
                     return other.width - width;
-                return other.iterations - iterations;
+                if (iterations != other.iterations)
+                    return other.iterations - iterations;
+                return other.pointNumber - pointNumber;
             }
             #endregion
         }
