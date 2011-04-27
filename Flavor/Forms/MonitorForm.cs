@@ -4,7 +4,9 @@ using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
 using System.Collections.Generic;
-using Flavor.Common;
+using Graph = Flavor.Common.Graph;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PointPairListPlus = Flavor.Common.PointPairListPlus;
 
 namespace Flavor.Forms
 {
@@ -34,7 +36,7 @@ namespace Flavor.Forms
 
         protected override sealed void RefreshGraph() {
             //BAD: every time
-            List<Utility.PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
+            List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             if (pspec.Count != rowsCount)
                 // very bad!
                 throw new NullReferenceException();
@@ -42,7 +44,7 @@ namespace Flavor.Forms
             int j = 0;
             long sum = 0;
             for (int i = 0; i < rowsCount; ++i) {
-                Utility.PreciseEditorData ped = pspec[i];
+                PreciseEditorData ped = pspec[i];
                 // TODO: exceptions here, problem with backward lines also here?
                 long peakSum = ped.AssociatedPoints == null ? 0 : ped.AssociatedPoints.PLSreference.PeakSum;
                 sum += peakSum;
@@ -135,7 +137,7 @@ namespace Flavor.Forms
             list = new List<PointPairList>();
             sums = new List<long>();
             //!!
-            List<Utility.PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
+            List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i)
                 list.Add(new PointPairListPlus(pspec[i], null));

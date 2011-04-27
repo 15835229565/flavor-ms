@@ -4,8 +4,14 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Flavor.Common;
 using ZedGraph;
+using Graph = Flavor.Common.Graph;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using Collector = Flavor.Common.Collector;
+using CommonOptions = Flavor.Common.CommonOptions;
+using PointPairListPlus = Flavor.Common.PointPairListPlus;
+// be careful with Config data. use constants only!
+using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms
 {
@@ -174,9 +180,9 @@ namespace Flavor.Forms
                 maxX[1] = Config.MAX_STEP;
             }
         }
-        protected void setXScaleLimits(List<Utility.PreciseEditorData> peds) {
+        protected void setXScaleLimits(List<PreciseEditorData> peds) {
             ushort[] maxX = { Config.MIN_STEP, Config.MIN_STEP }, minX = { Config.MAX_STEP, Config.MAX_STEP };
-            foreach (Utility.PreciseEditorData ped in peds) {
+            foreach (PreciseEditorData ped in peds) {
                 int col = ped.Collector - 1;
                 ushort lowBound = (ushort)(ped.Step - ped.Width);
                 ushort upBound = (ushort)(ped.Step + ped.Width);
@@ -309,7 +315,7 @@ namespace Flavor.Forms
                     });
                     items.Add(item);
                     {
-                        Utility.PreciseEditorData ped;
+                        PreciseEditorData ped;
                         if ((ped = pls.PEDreference) != null) {
                             item = new ToolStripMenuItem();
                             item.Text = "Вычесть из текущего с перенормировкой на точку";
@@ -397,7 +403,7 @@ namespace Flavor.Forms
             }
             return tooltipData;
         }
-        private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference) {
+        private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, PreciseEditorData pedReference) {
             if (PreciseSpectrumDisplayed) {
                 openSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
             } else {
