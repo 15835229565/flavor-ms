@@ -134,7 +134,8 @@ namespace Flavor.Forms
         public void initMeasure(bool isPrecise) {
             list = new List<PointPairList>();
             sums = new List<long>();
-            List<Utility.PreciseEditorData> pspec = Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
+            //!!
+            List<Utility.PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i)
                 list.Add(new PointPairListPlus(pspec[i], null));
