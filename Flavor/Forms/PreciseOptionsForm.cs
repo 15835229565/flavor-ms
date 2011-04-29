@@ -2,8 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Flavor.Common;
 using Flavor.Controls;
+using Config = Flavor.Common.Config;
+// really here?
+using Commander = Flavor.Common.Commander;
+using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
+
+using PreciseSpectrum = Flavor.Common.PreciseSpectrum;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+// remove this reference from here..
+using Graph = Flavor.Common.Graph;
 
 namespace Flavor.Forms {
     internal partial class PreciseOptionsForm: OptionsForm {
@@ -55,10 +63,10 @@ namespace Flavor.Forms {
             this.rareModeCheckBox.Enabled = enabled;
         }
 
-        private void loadPreciseEditorData(List<Utility.PreciseEditorData> ped) {
+        private void loadPreciseEditorData(List<PreciseEditorData> ped) {
             if (ped != null) {
                 clearPreciseEditorData();
-                foreach (Utility.PreciseEditorData p in ped) {
+                foreach (PreciseEditorData p in ped) {
                     PErows[p.pNumber].setValues(p);
                 }
             }
@@ -77,7 +85,7 @@ namespace Flavor.Forms {
             for (int i = 0; i < Config.PEAK_NUMBER; ++i) {
                 if (exitFlag &= PErows[i].checkTextBoxes())
                     if (PErows[i].AllFilled)
-                        data.Add(new Utility.PreciseEditorData(PErows[i].UseChecked, (byte)i,
+                        data.Add(new PreciseEditorData(PErows[i].UseChecked, (byte)i,
                                                                Convert.ToUInt16(PErows[i].StepText),
                                                                Convert.ToByte(PErows[i].ColText),
                                                                Convert.ToUInt16(PErows[i].LapsText),

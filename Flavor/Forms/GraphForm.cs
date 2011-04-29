@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Flavor.Common;
 
 namespace Flavor.Forms {
     internal partial class GraphForm: Form {

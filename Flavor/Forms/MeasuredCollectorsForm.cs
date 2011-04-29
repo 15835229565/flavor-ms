@@ -5,8 +5,11 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Flavor.Common;
 using Flavor.Controls;
+using Graph = Flavor.Common.Graph;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+// be careful with Config data. use constants only!
+using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
     internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
@@ -43,7 +46,7 @@ namespace Flavor.Forms {
             // not so good..
             if (PreciseSpectrumDisplayed)
                 // search temporary here
-                setXScaleLimits(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed));
+                setXScaleLimits(Config.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
             else
                 setXScaleLimits();
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using Flavor.Common;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+// ?
+using Graph = Flavor.Common.Graph;
 
 namespace Flavor.Forms {
     internal partial class AddPointForm: Form {
@@ -16,7 +18,7 @@ namespace Flavor.Forms {
 
         protected void okButton_Click(object sender, EventArgs e) {
             if (oneRow.checkTextBoxes() && oneRow.AllFilled) {
-                Graph.PointToAdd = new Utility.PreciseEditorData((byte)0, Convert.ToUInt16(oneRow.StepText),
+                Graph.PointToAdd = new PreciseEditorData((byte)0, Convert.ToUInt16(oneRow.StepText),
                                        Convert.ToByte(oneRow.ColText), Convert.ToUInt16(oneRow.LapsText),
                                        Convert.ToUInt16(oneRow.WidthText), (float)0, oneRow.CommentText);
                 this.DialogResult = DialogResult.OK;

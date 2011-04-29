@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using Flavor.Common;
+using Config = Flavor.Common.Config;
+using CommonOptions = Flavor.Common.CommonOptions;
+// really here?
+using Commander = Flavor.Common.Commander;
+using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
     internal partial class OptionsForm: Form {

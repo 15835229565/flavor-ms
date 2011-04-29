@@ -1,5 +1,5 @@
 ﻿using System;
-using Flavor.Common;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 
 namespace Flavor.Forms {
     internal partial class PlacePointForm: AddPointForm {
@@ -13,7 +13,7 @@ namespace Flavor.Forms {
             for (int i = 1; i <= 20; ++i)
                 this.pNumComboBox.Items.Add(i.ToString());
         }
-        internal PlacePointForm(Utility.PreciseEditorData ped)
+        internal PlacePointForm(PreciseEditorData ped)
             : this() {
             oneRow.setValues(ped);
         }

@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Flavor.Common;
 using Flavor.Controls;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using Graph = Flavor.Common.Graph;
 
 namespace Flavor.Forms {
     internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {
@@ -26,7 +27,7 @@ namespace Flavor.Forms {
 
             if (PreciseSpectrumDisplayed) {
                 // search temporary here
-                setXScaleLimits(graph.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed));
+                setXScaleLimits(graph.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
             } else {
                 ushort minX = (ushort)graph.Displayed1Steps[0][0].X;
                 ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);

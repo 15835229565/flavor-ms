@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using Flavor.Common;
 using Flavor.Controls;
+using Config = Flavor.Common.Config;
+
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+// remove this reference from here..
+using Graph = Flavor.Common.Graph;
 
 namespace Flavor.Forms {
     internal partial class MonitorOptionsForm: PreciseOptionsForm {
@@ -16,7 +20,7 @@ namespace Flavor.Forms {
             base.saveData();
             Config.saveGlobalCheckOptions((int)iterationsNumericUpDown.Value, (int)timeLimitNumericUpDown.Value, (ushort)allowedShiftNumericUpDown.Value,
                                     checkPeakPreciseEditorRowMinus.AllFilled?
-                                    new Utility.PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
+                                    new PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
                                                                   Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
                                     null, (int)checkPeakNumberNumericUpDown.Value);
@@ -43,7 +47,7 @@ namespace Flavor.Forms {
             allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
             checkPeakNumberNumericUpDown.Maximum = (decimal)Config.PEAK_NUMBER;
             checkPeakNumberNumericUpDown.Value = (decimal)Config.CheckerPeakIndex;
-            Utility.PreciseEditorData peak = Config.CustomCheckerPeak;
+            PreciseEditorData peak = Config.CustomCheckerPeak;
             if (peak != null)
                 checkPeakPreciseEditorRowMinus.setValues(peak);
             // TODO: more accurate options...

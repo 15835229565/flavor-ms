@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using Flavor.Common;
+using Config = Flavor.Common.Config;
+//?
+using Commander = Flavor.Common.Commander;
 
 namespace Flavor.Forms {
     internal partial class ConnectOptionsForm: Form {

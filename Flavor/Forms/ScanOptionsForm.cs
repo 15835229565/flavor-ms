@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Flavor.Common;
+using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
     internal partial class ScanOptionsForm: OptionsForm {

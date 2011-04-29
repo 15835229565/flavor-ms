@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Flavor.Common;
+using Graph = Flavor.Common.Graph;
+using Config = Flavor.Common.Config;
+// remove this reference
+using Utility = Flavor.Common.Utility;
 
 namespace Flavor.Forms {
     partial class SetScalingCoeffForm: Form {
@@ -12,7 +15,7 @@ namespace Flavor.Forms {
         internal SetScalingCoeffForm()
             : base() {
             InitializeComponent();
-            // TODO: better solution
+            // TODO: better solution, make new CustomTextBoxClass or extension method
             this.massTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
         }
         internal SetScalingCoeffForm(ushort step, byte col, Graph graph)
@@ -22,6 +25,7 @@ namespace Flavor.Forms {
             this.graph = graph;
             this.stepTextBox.Text = step.ToString();
             this.Text += " " + col.ToString();
+            // move this reference up
             if (graph != Graph.Instance)
                 this.Text += " (только для текущего спектра)";
         }

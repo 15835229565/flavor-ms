@@ -3,11 +3,23 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Timers;
-using Flavor.Common;
 using Flavor.Controls;
+// move to components..
+using TreeNodeLeaf = Flavor.Common.TreeNodeLeaf;
+using TreeNodePlus = Flavor.Common.TreeNodePlus;
+using TreeNodePair = Flavor.Common.TreeNodePair;
+// data model
+using Graph = Flavor.Common.Graph;
+// divide into 2 parts
+using Config = Flavor.Common.Config;
+// controller
+using Commander = Flavor.Common.Commander;
+using Device = Flavor.Common.Device;
+using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
     internal partial class mainForm: Form {
+        // TODO: move to resource file
         private const string EXIT_CAPTION = "Предупреждение об отключении";
         private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
         private const string SHUTDOWN_CAPTION = "Предупреждение об отключении";
