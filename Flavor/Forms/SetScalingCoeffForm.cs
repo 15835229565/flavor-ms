@@ -12,36 +12,17 @@ namespace Flavor.Forms {
         private ushort myStep = 0;
         private Graph graph;
 		private float mass;
-
+        public float Mass {
+            get { return mass; }
+            set { mass = value; }
+        }
         internal SetScalingCoeffForm()
             : base() {
             InitializeComponent();
             // TODO: better solution, make new CustomTextBoxClass or extension method
-            Binding testBinding = new Binding("Text", this, "mass");
-			testBinding.FormatString = "F";
-			testBinding.Format += positiveNumericTextbox_TextChanged;
-			this.massTextBox.DataBindings.Add(testBinding);
-			//this.massTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
+            this.massTextBox.KeyPress += new KeyPressEventHandler(Utility.positiveNumericTextbox_TextChanged);
         }
-        private void positiveNumericTextbox_TextChanged(object sender, ConvertEventArgs e) {
-            if (e.DesiredType != typeof(float))
-				return;
-    		if (e.Value.GetType() != typeof(string))
-				return;
-			
-			string val = (string)e.Value;
-			if (val == "")
-				return;
-			val = val.TrimStart('-');
-		    try
-		    {
-		        e.Value = float.Parse(val);
-    		}
-    		catch(Exception ex)
-    		{
-	        	MessageBox.Show(ex.Message);
-    		}
-        }
+
         internal SetScalingCoeffForm(ushort step, byte col, Graph graph)
             : this() {
             myCol = col;

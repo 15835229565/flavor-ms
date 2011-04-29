@@ -679,54 +679,25 @@ namespace Flavor.Common {
         }
         #endregion
         #region Textbox charset limitations
-        internal static void oneDigitTextbox_TextChanged(object sender, EventArgs e) {
-            char[] numbers = { '1', '2' };
-            char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
-            string outputString = "";
-            foreach (char ch in tempCharArray) {
-                foreach (char compareChar in numbers) {
-                    if (ch == compareChar) {
-                        outputString += ch;
-                        ((TextBox)sender).Text = outputString;
-                        return;
-                    }
-                }
-            }
-            ((TextBox)sender).Text = outputString;
+        internal static void oneDigitTextbox_TextChanged(object sender, KeyPressEventArgs e) {
+            genericProcessKeyPress(sender, e, ch => (ch == '1' || ch == '2'));
         }
-        internal static void integralTextbox_TextChanged(object sender, EventArgs e) {
-            char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-            char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
-            string outputString = "";
-            foreach (char ch in tempCharArray) {
-                foreach (char compareChar in numbers) {
-                    if (ch == compareChar) {
-                        outputString += ch;
-                        break;
-                    }
-                }
-            }
-            ((TextBox)sender).Text = outputString;
+        internal static void integralTextbox_TextChanged(object sender, KeyPressEventArgs e) {
+            genericProcessKeyPress(sender, e, ch => Char.IsNumber(ch));
         }
-        internal static void positiveNumericTextbox_TextChanged(object sender, EventArgs e) {
-            char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-            bool waitFirstDot = true;
-            char[] tempCharArray = ((TextBox)sender).Text.ToCharArray();
-            string outputString = "";
-            foreach (char ch in tempCharArray) {
-                if (waitFirstDot && (ch == '.')) {
-                    waitFirstDot = false;
-                    outputString += ch;
-                    continue;
-                }
-                foreach (char compareChar in numbers) {
-                    if (ch == compareChar) {
-                        outputString += ch;
-                        break;
-                    }
-                }
-            }
-            ((TextBox)sender).Text = outputString;
+        internal static void positiveNumericTextbox_TextChanged(object sender, KeyPressEventArgs e) {
+            //!!! decimal separator here !!!
+            genericProcessKeyPress(sender, e, ch => (Char.IsNumber(ch) || (ch == '.' && !(sender as TextBox).Text.Contains("."))));
+        }
+        private static void genericProcessKeyPress(object sender, KeyPressEventArgs e, Predicate<char> isAllowed){
+            if (!(sender is TextBox))
+                return;
+            char ch = e.KeyChar;
+            if (Char.IsControl(ch))
+                return;
+            if (isAllowed(ch))
+                return;
+            e.Handled = true;
         }
         #endregion
     }

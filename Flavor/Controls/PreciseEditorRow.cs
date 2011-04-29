@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using Flavor.Common;
+using Utility = Flavor.Common.Utility;
+using Config = Flavor.Common.Config;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorRow: PreciseEditorRowMinus {
@@ -16,8 +18,8 @@ namespace Flavor.Controls {
         public PreciseEditorRow()
             : base() {
             InitializeComponent();
-            this.lapsTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-            this.precTextBox.TextChanged += new System.EventHandler(Utility.positiveNumericTextbox_TextChanged);
+            this.lapsTextBox.KeyPress += Utility.integralTextbox_TextChanged;
+            this.precTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
         }
         internal override bool checkTextBoxes() {
             bool exitFlag = true;
@@ -53,7 +55,7 @@ namespace Flavor.Controls {
             }
             return exitFlag;
         }
-        internal override void setValues(Utility.PreciseEditorData p) {
+        internal override void setValues(PreciseEditorData p) {
             base.setValues(p);
             lapsTextBox.Text = p.Iterations.ToString();
             precTextBox.Text = p.Precision.ToString();

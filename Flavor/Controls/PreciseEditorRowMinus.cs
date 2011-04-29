@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Flavor.Common;
+using Utility = Flavor.Common.Utility;
+using Config = Flavor.Common.Config;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorRowMinus: UserControl {
@@ -24,9 +26,9 @@ namespace Flavor.Controls {
             : base() {
             InitializeComponent();
 
-            this.stepTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
-            this.colTextBox.TextChanged += new System.EventHandler(Utility.oneDigitTextbox_TextChanged);
-            this.widthTextBox.TextChanged += new System.EventHandler(Utility.integralTextbox_TextChanged);
+            this.stepTextBox.KeyPress += Utility.integralTextbox_TextChanged;
+            this.colTextBox.KeyPress += Utility.oneDigitTextbox_TextChanged;
+            this.widthTextBox.KeyPress += Utility.integralTextbox_TextChanged;
         }
         internal virtual bool checkTextBoxes() {
             bool exitFlag = true;
@@ -54,7 +56,7 @@ namespace Flavor.Controls {
             }
             return exitFlag;
         }
-        internal virtual void setValues(Utility.PreciseEditorData p) {
+        internal virtual void setValues(PreciseEditorData p) {
             stepTextBox.Text = p.Step.ToString();
             colTextBox.Text = p.Collector.ToString();
             widthTextBox.Text = p.Width.ToString();

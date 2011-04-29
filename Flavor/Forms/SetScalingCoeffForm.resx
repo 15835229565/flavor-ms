@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="stepLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="stepLabel.GenerateMember" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="stepLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -149,9 +149,9 @@
   <data name="&gt;&gt;stepLabel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <metadata name="massLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="massLabel.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="massLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -179,9 +179,9 @@
   <data name="&gt;&gt;massLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="okButton.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="okButton.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 64</value>
   </data>
@@ -206,9 +206,9 @@
   <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <metadata name="cancelButton.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="cancelButton.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>93, 64</value>
   </data>
@@ -275,9 +275,9 @@
   <data name="&gt;&gt;massTextBox.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
+  </data>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>

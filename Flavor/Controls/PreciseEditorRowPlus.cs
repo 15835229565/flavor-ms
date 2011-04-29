@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Flavor.Common;
 using System.ComponentModel;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorRowPlus: PreciseEditorRow {
@@ -48,7 +48,7 @@ namespace Flavor.Controls {
         internal override bool checkTextBoxes() {
             return base.checkTextBoxes();
         }
-        internal override void setValues(Utility.PreciseEditorData ped) {
+        internal override void setValues(PreciseEditorData ped) {
             base.setValues(ped);
             usePeakCheckBox.Checked = ped.Use;
         }
