@@ -13,6 +13,7 @@ namespace Flavor.Forms
     internal partial class MonitorForm: GraphForm, IMeasured {
         private const string FORM_TITLE = "Режим мониторинга";
         private const string X_AXIS_TITLE = "Время";
+        private const string Y_AXIS_RELATIVE = " (отн.)";
         private const string NORM_ITEM_TEXT = "Нормировать";
         private const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
@@ -80,7 +81,7 @@ namespace Flavor.Forms
             GraphPane myPane = graph.GraphPane;
             
             myPane.Title.Text = title;
-            myPane.YAxis.Title.Text = Y_AXIS_TITLE;
+            myPane.YAxis.Title.Text = normalizedList == null ? Y_AXIS_TITLE : Y_AXIS_TITLE + Y_AXIS_RELATIVE;
             myPane.XAxis.Title.Text = X_AXIS_TITLE;
             myPane.CurveList.Clear();
 
