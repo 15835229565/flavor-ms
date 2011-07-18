@@ -64,7 +64,7 @@ namespace Flavor.Common {
             pState = state;
             pStatePrev = pState;
         }
-        internal static void setProgramState(Commander.programStates state) {
+        private static void setProgramState(Commander.programStates state) {
             pStatePrev = pState;
             pState = state;
         }

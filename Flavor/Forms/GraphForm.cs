@@ -16,24 +16,34 @@ namespace Flavor.Forms {
         private GraphPanel panel = null;
         protected GraphPanel Panel {
             get {
-                if (panel == null) {
-                    panel = initPanel();
-                    // 
-                    // panel
-                    // 
-                    panel.BackColor = System.Drawing.SystemColors.Control;
-                    panel.Dock = System.Windows.Forms.DockStyle.Right;
-                    panel.Location = new System.Drawing.Point(493, 24);
-                    panel.Size = new System.Drawing.Size(280, 667);
-                    panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
-                    panel.EnabledChanged += new EventHandler(toggleMeasurePanel);
-                
-                    this.Controls.Add(panel);
-				}
+                if (panel == null)
+                    initPanel();
 				return panel;
             }
         }
 
+        protected void initPanel() {
+            if (panel != null) {
+                panel.EnabledChanged -= toggleMeasurePanel;
+                this.Controls.Remove(panel);
+            }
+            panel = newPanel();
+            // 
+            // panel
+            // 
+            panel.BackColor = System.Drawing.SystemColors.Control;
+            panel.Dock = System.Windows.Forms.DockStyle.Right;
+            panel.Location = new System.Drawing.Point(493, 24);
+            panel.Size = new System.Drawing.Size(280, 667);
+            panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
+            panel.EnabledChanged += toggleMeasurePanel;
+
+            this.Controls.Add(panel);
+        }
+        protected virtual GraphPanel newPanel() {
+            return null;
+        }
+        
         internal protected GraphForm() {
             InitializeComponent();
         }
@@ -70,8 +80,6 @@ namespace Flavor.Forms {
             measurePanelToolStripMenuItem.Visible = Panel.Enabled;
             measurePanelToolStripMenuItem_CheckedChanged(sender, e);
         }
-
-        protected virtual GraphPanel initPanel() { return null; }
 
         protected virtual void RefreshGraph() {}
         protected virtual void CreateGraph() {}

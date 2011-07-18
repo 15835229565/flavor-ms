@@ -13,9 +13,8 @@ using PointPairListPlus = Flavor.Common.PointPairListPlus;
 // be careful with Config data. use constants only!
 using Config = Flavor.Common.Config;
 
-namespace Flavor.Forms
-{
-    internal partial class CollectorsForm : GraphForm {
+namespace Flavor.Forms {
+    internal partial class CollectorsForm: GraphForm {
         private readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
         private readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
         private readonly string DIFF_TITLE = Resources.CollectorsForm_DiffTitle;
@@ -94,7 +93,7 @@ namespace Flavor.Forms
         }
         protected CollectorsForm(Graph graph, bool hint): this() {
             this.graph = graph;
-            Panel.Graph = graph;
+            //Panel.Graph = graph;
             
             preciseSpectrumDisplayed = hint;
             setTitles();
@@ -111,9 +110,13 @@ namespace Flavor.Forms
             col2Text = prefix + COL2_TITLE + modeText;
         }
 
-        protected override GraphPanel initPanel() {
-            GraphPanel panel = new GraphPanel();
+        protected sealed override GraphPanel newPanel() {
+            GraphPanel panel = getPanel();
+            panel.Graph = graph;
             return panel;
+        }
+        protected virtual GraphPanel getPanel() {
+            return new GraphPanel();
         }
 
         private void InvokeAxisModeChange() {

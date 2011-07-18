@@ -25,8 +25,13 @@ namespace Flavor.Forms {
             : base(Graph.Instance, false) {
             InitializeComponent();
         }
-        protected sealed override GraphPanel initPanel() {
-            return new MeasureGraphPanel();
+        protected sealed override GraphPanel getPanel() {
+            if (PreciseSpectrumDisplayed) {
+                return new PreciseMeasureGraphPanel();
+                //(Panel as MeasureGraphPanel).sensmeasure_button_Click();
+            }
+            //(Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
+            return new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
 		}
 
         #region IMeasured Members
@@ -35,10 +40,11 @@ namespace Flavor.Forms {
             // TODO: different types of panel
             Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             PreciseSpectrumDisplayed = isPrecise;
-            if (isPrecise) {
+            initPanel();
+            /*if (isPrecise) {
                 //(Panel as MeasureGraphPanel).sensmeasure_button_Click();
             } else
-                (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);
+                (Panel as MeasureGraphPanel).overview_button_Click(Config.sPoint, Config.ePoint);*/
             Show();
             Activate();
         }
@@ -86,12 +92,14 @@ namespace Flavor.Forms {
         private void refreshGraphicsOnMeasureStep() {
             MeasureGraphPanel panel = Panel as MeasureGraphPanel;
             panel.performStep();
-            if (PreciseSpectrumDisplayed)
+            if (!PreciseSpectrumDisplayed)
+                yAxisChange();
+            /*if (PreciseSpectrumDisplayed)
                 panel.refreshGraphicsOnPreciseStep();
             else {
                 yAxisChange();
                 panel.refreshGraphicsOnScanStep();
-            }
+            }*/
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e) {

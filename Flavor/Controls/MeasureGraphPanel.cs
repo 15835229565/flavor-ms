@@ -44,7 +44,7 @@ namespace Flavor.Controls {
 
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
         }
-        internal void performStep() {
+        internal virtual void performStep() {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
                 if (scanProgressBar.Value == scanProgressBar.Maximum) {
                     // if already full line - reinit
@@ -59,16 +59,16 @@ namespace Flavor.Controls {
             detector2CountsLabel.Text = Device.Detector2.ToString();
         }
 
-        internal void overview_button_Click(ushort start, ushort end) {
+        /*internal void overview_button_Click(ushort start, ushort end) {
             setScanBounds(start, end);
-        }
+        }*/
         /*internal void sensmeasure_button_Click() {
             peakNumberLabel.Visible = true;
         }
         internal void monitorToolStripButton_Click() {
             peakNumberLabel.Visible = true;
         }*/
-        internal void refreshGraphicsOnScanStep() {
+        /*internal void refreshGraphicsOnScanStep() {
             detector1CountsLabel.Visible = true;
             label15.Visible = true;
             detector2CountsLabel.Visible = true;
@@ -78,8 +78,8 @@ namespace Flavor.Controls {
             stepNumberLabel.Visible = true;
             label35.Visible = true;
             label36.Visible = true;
-        }
-        internal void refreshGraphicsOnPreciseStep() {
+        }*/
+        /*internal void refreshGraphicsOnPreciseStep() {
             label37.Visible = true;
             peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;
@@ -106,7 +106,7 @@ namespace Flavor.Controls {
                 detector2CountsLabel.Visible = true;
                 label16.Visible = true;
             }
-        }
+        }*/
         protected sealed override void disableControls() {
             // what about other controls?
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.Default;

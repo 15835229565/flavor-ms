@@ -34,10 +34,6 @@ namespace Flavor.Forms {
                 setXScaleLimits(minX, maxX, minX, maxX);
             }
         }
-        /*protected override MeasurePanel initPanel() {
-            MeasurePanel panel = new MeasurePanel();
-			return panel;
-		}*/
         protected sealed override void updateOnModification() {
             this.Text = DisplayedFileName + (Modified ? "*" : "");
             base.updateOnModification();

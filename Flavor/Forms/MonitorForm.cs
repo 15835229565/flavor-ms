@@ -25,10 +25,11 @@ namespace Flavor.Forms
 
         public MonitorForm() {
             InitializeComponent();
-            Panel.Graph = Graph.Instance;
         }
-        protected override GraphPanel initPanel() {
-            return new MeasureGraphPanel();
+        protected override GraphPanel newPanel() {
+            PreciseMeasureGraphPanel panel = new PreciseMeasureGraphPanel();
+            panel.Graph = Graph.Instance;
+            return panel;
         }
 
         protected override sealed void CreateGraph() {
@@ -131,7 +132,7 @@ namespace Flavor.Forms
         private void refreshGraphicsOnMeasureStep() {
             MeasureGraphPanel panel = Panel as MeasureGraphPanel;
             panel.performStep();
-            panel.refreshGraphicsOnPreciseStep();
+            //panel.refreshGraphicsOnPreciseStep();
         }
         #region IMeasured Members
         public void initMeasure(bool isPrecise) {

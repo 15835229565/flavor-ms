@@ -147,22 +147,21 @@ namespace Flavor.Controls {
 
         #endregion
 
-        private System.Windows.Forms.Label scanRealTimeLabel;
-        private System.Windows.Forms.Label stepNumberLabel;
-        private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.Label peakNumberLabel;
-        private System.Windows.Forms.Label label39;
-        private System.Windows.Forms.Label peakCenterLabel;
-        private System.Windows.Forms.Label label41;
-        private System.Windows.Forms.Label peakWidthLabel;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.Label label36;
-
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label detector1CountsLabel;
-        private System.Windows.Forms.Label detector2CountsLabel;
         private System.Windows.Forms.ProgressBar scanProgressBar;
         private System.Windows.Forms.Button cancelScanButton;
+        protected System.Windows.Forms.Label detector1CountsLabel;
+        protected System.Windows.Forms.Label detector2CountsLabel;
+        protected System.Windows.Forms.Label label15;
+        protected System.Windows.Forms.Label label16;
+        protected System.Windows.Forms.Label scanRealTimeLabel;
+        protected System.Windows.Forms.Label stepNumberLabel;
+        protected System.Windows.Forms.Label label37;
+        protected System.Windows.Forms.Label label35;
+        protected System.Windows.Forms.Label label36;
+        protected System.Windows.Forms.Label peakNumberLabel;
+        protected System.Windows.Forms.Label peakWidthLabel;
+        protected System.Windows.Forms.Label label39;
+        protected System.Windows.Forms.Label label41;
+        protected System.Windows.Forms.Label peakCenterLabel;
     }
 }

@@ -91,6 +91,12 @@
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Utility.cs" />
+    <Compile Include="Controls\PreciseMeasureGraphPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PreciseMeasureGraphPanel.Designer.cs">
+      <DependentUpon>PreciseMeasureGraphPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GraphPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -107,6 +113,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScanMeasureGraphPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ScanMeasureGraphPanel.Designer.cs">
+      <DependentUpon>ScanMeasureGraphPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ZedGraphControlMonitor.cs">
       <SubType>UserControl</SubType>
@@ -187,6 +199,12 @@
     </Compile>
     <Compile Include="Forms\MeasuredCollectorsForm.Designer.cs">
       <DependentUpon>MeasuredCollectorsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MonitorBackgroundForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MonitorBackgroundForm.Designer.cs">
+      <DependentUpon>MonitorBackgroundForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MonitorForm.cs">
       <SubType>Form</SubType>
@@ -327,6 +345,9 @@
     <EmbeddedResource Include="Forms\ConnectOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MonitorBackgroundForm.resx">
+      <DependentUpon>MonitorBackgroundForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MonitorForm.resx">
       <SubType>Designer</SubType>
