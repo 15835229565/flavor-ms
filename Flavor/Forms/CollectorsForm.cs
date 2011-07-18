@@ -93,7 +93,6 @@ namespace Flavor.Forms {
         }
         protected CollectorsForm(Graph graph, bool hint): this() {
             this.graph = graph;
-            //Panel.Graph = graph;
             
             preciseSpectrumDisplayed = hint;
             setTitles();
