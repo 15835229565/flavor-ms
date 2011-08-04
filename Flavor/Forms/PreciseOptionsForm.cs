@@ -46,6 +46,8 @@ namespace Flavor.Forms {
                 case Commander.programStates.Ready:
                     setControls(true, true);
                     break;
+                case Commander.programStates.BackgroundMeasureReady:
+                case Commander.programStates.WaitBackgroundMeasure:
                 case Commander.programStates.Measure:
                     setControls(false, false);
                     break;

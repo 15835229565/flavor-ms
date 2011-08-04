@@ -615,28 +615,37 @@ namespace Flavor.Forms {
                         connectToolStripButton.Text = "Соединить";
                         connectToolStripButton.ForeColor = Color.Green;
                     }
-                    setButtons(true, connected, connected, connected && block, false, false, true);
+                    setButtons(true, connected, connected, connected && block, false, false, false, true);
                     break;
                 case Commander.programStates.Init:
-                    setButtons(false, false, true, false, false, false, true);
+                    setButtons(false, false, true, false, false, false, false, true);
                     break;
                 case Commander.programStates.WaitHighVoltage:
-                    setButtons(false, false, true, true, false, false, true);
+                    setButtons(false, false, true, true, false, false, false, true);
                     break;
                 case Commander.programStates.Ready:
-                    setButtons(false, false, true, true, block, block && Commander.SomePointsUsed, true);
+                    bool canDoPrecise = block && Commander.SomePointsUsed;
+                    setButtons(false, false, true, true, block, canDoPrecise, canDoPrecise, true);
+                    break;
+                case Commander.programStates.WaitBackgroundMeasure:
+                    setButtons(false, false, true, true, false, false, false, false);
+                    monitorToolStripButton.Text = "Измерение фона";
+                    break;
+                case Commander.programStates.BackgroundMeasureReady:
+                    setButtons(false, false, true, true, false, false, true, false);
+                    monitorToolStripButton.Text = "Начать мониторинг";
                     break;
                 case Commander.programStates.Measure:
-                    setButtons(false, false, true, true, false, false, false);
+                    setButtons(false, false, true, true, false, false, false, false);
                     break;
                 case Commander.programStates.WaitInit:
                 case Commander.programStates.WaitShutdown:
                 case Commander.programStates.Shutdown:
-                    setButtons(false, false, false, false, false, false, true);
+                    setButtons(false, false, false, false, false, false, false, true);
                     break;
             }
         }
-        private void setButtons(bool connect, bool init, bool shutdown, bool block, bool scan, bool precise, bool measureOptions) {
+        private void setButtons(bool connect, bool init, bool shutdown, bool block, bool scan, bool precise, bool monitor, bool measureOptions) {
             connectToolStripButton.Enabled = connect;
 
             initSys_butt.Enabled = init;
@@ -644,7 +653,7 @@ namespace Flavor.Forms {
             unblock_butt.Enabled = block;
             overview_button.Enabled = scan;
             sensmeasure_button.Enabled = precise;
-            monitorToolStripButton.Enabled = precise;
+            monitorToolStripButton.Enabled = monitor;
 
             connectToolStripMenuItem.Enabled = connect;
             measureToolStripMenuItem.Enabled = measureOptions;

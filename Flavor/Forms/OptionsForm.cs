@@ -93,12 +93,18 @@ namespace Flavor.Forms {
         private void InvokeSetVisibility() {
             this.Invoke(new DeviceEventHandler(() => {
                 // TODO: avoid bringing to front..
-                this.Visible = Commander.pState != Commander.programStates.Measure;
+                this.Visible = Commander.pState != Commander.programStates.Measure ||
+                    Commander.pState != Commander.programStates.BackgroundMeasureReady ||
+                    Commander.pState != Commander.programStates.WaitBackgroundMeasure;
             }));
         }
         protected override void OnLoad(EventArgs e) {
             rareModeCheckBox.Checked = Commander.notRareModeRequested;
-            if ((Commander.pState == Commander.programStates.Ready) || (Commander.pState == Commander.programStates.WaitHighVoltage) || (Commander.pState == Commander.programStates.Measure)) {
+            if (Commander.pState == Commander.programStates.Ready ||
+                Commander.pState == Commander.programStates.WaitHighVoltage ||
+                Commander.pState == Commander.programStates.Measure ||
+                Commander.pState == Commander.programStates.BackgroundMeasureReady ||
+                Commander.pState == Commander.programStates.WaitBackgroundMeasure) {
                 applyButton.Enabled = true;
                 applyButton.Visible = true;
             } else {

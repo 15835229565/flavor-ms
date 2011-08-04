@@ -15,6 +15,8 @@ namespace Flavor.Common {
             Init,
             WaitHighVoltage,
             Ready,
+            WaitBackgroundMeasure,
+            BackgroundMeasureReady,
             Measure,
             WaitInit,
             WaitShutdown
@@ -242,7 +244,8 @@ namespace Flavor.Common {
                     return;
                 }
                 if (Command is confirmF2Voltage) {
-                    if (Commander.pState == programStates.Measure) {
+                    if (Commander.pState == programStates.Measure ||
+                        Commander.pState == programStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareMode;
                         if (!measureMode.start()) {
                             // error (no points)
@@ -293,7 +296,7 @@ namespace Flavor.Common {
             if (pState == Commander.programStates.Ready) {
                 Graph.Reset();
                 measureMode = new MeasureMode.Scan();
-                initMeasure();
+                initMeasure(Commander.programStates.Measure);
             }
         }
         internal static void Sense() {
@@ -301,7 +304,7 @@ namespace Flavor.Common {
                 if (SomePointsUsed) {
                     Graph.Reset();
                     measureMode = new MeasureMode.Precise();
-                    initMeasure();
+                    initMeasure(Commander.programStates.Measure);
                 } else {
                     ConsoleWriter.WriteLine("No points for precise mode measure.");
                 }
@@ -312,7 +315,7 @@ namespace Flavor.Common {
                 if (SomePointsUsed) {
                     Graph.ResetForMonitor();
                     measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
-                    initMeasure();
+                    initMeasure(Commander.programStates.WaitBackgroundMeasure);
                     // TODO: feed measure mode with start shift value (really?)
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
@@ -340,13 +343,13 @@ namespace Flavor.Common {
             Commander.AddToSend(new sendF2Voltage());
             */
         }
-        private static void initMeasure() {
+        private static void initMeasure(Commander.programStates state) {
             ConsoleWriter.WriteLine(pState);
             if (measureMode != null && measureMode.isOperating) {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }
-            setProgramState(Commander.programStates.Measure);
+            setProgramState(state);
 
             toSend.IsRareMode = !Commander.notRareModeRequested;
             Commander.measureCancelRequested = false;
@@ -362,10 +365,10 @@ namespace Flavor.Common {
         }
 
         internal static void Unblock() {
-            if (Commander.pState == programStates.Measure)//strange..
-            {
+            if (Commander.pState == programStates.Measure ||
+                Commander.pState == programStates.WaitBackgroundMeasure ||
+                Commander.pState == programStates.BackgroundMeasureReady)//strange..
                 Commander.measureCancelRequested = true;
-            }
             toSend.AddToSend(new enableHighVoltage(Commander.hBlock));
         }
 
