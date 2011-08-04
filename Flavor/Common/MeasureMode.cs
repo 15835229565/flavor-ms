@@ -449,6 +449,10 @@ namespace Flavor.Common {
                 private readonly ushort allowedShift;
                 private long[] prevIteration = null;
 
+                //background measurings. problem is that senseModeCounts are invisible here.
+                //TODO: consider refactoring
+                private readonly FixedSizeQueue<List<Utility.PreciseEditorData>> background;
+
                 internal MonitorNew(short initialShift, ushort allowedShift, int timeLimit)
                     : base(Graph.Instance.PreciseData, initialShift) {
                     this.allowedShift = allowedShift;
@@ -458,6 +462,12 @@ namespace Flavor.Common {
                         checkerIndex = senseModePoints.FindIndex(peak.Equals);
                         if (checkerIndex != -1)
                             prevIteration = new long[senseModeCounts[checkerIndex].Length];
+                    }
+
+                    // TODO: configurable? 
+                    if (true) {
+                        // TODO: configurable capacity
+                        background = new FixedSizeQueue<List<Utility.PreciseEditorData>>(5);
                     }
                 }
                 protected override void onSuccessfulExit() {
