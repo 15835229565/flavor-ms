@@ -6,6 +6,70 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Flavor.Common {
+    public class FixedSizeQueue<T> {
+        private readonly Queue<T> queue;
+        private readonly int maxCapacity;
+        //
+        // Summary:
+        //     Initializes a new instance of the FixedSizeQueue<T> class
+        //     that is empty and has the specified maximum capacity.
+        //
+        // Parameters:
+        //   capacity:
+        //     The maximum number of elements that the FixedSizeQueue<T>
+        //     can contain.
+        //
+        // Exceptions:
+        //   System.ArgumentOutOfRangeException:
+        //     capacity is less than one.
+        public FixedSizeQueue(int capacity) {
+            if (capacity < 1)
+                throw new System.ArgumentOutOfRangeException("capacity", capacity, "capacity is less than one");
+            maxCapacity = capacity;
+            queue = new Queue<T>(capacity);
+        }
+
+        // Summary:
+        //     Gets the number of elements contained in the FixedSizeQueue<T>.
+        //
+        // Returns:
+        //     The number of elements contained in the FixedSizeQueue<T>.
+        public int Count { get { return queue.Count; } }
+
+        // Summary:
+        //     Removes all objects from the FixedSizeQueue<T>.
+        public void Clear() {
+            queue.Clear();
+        }
+        //
+        // Summary:
+        //     Adds an object to the end of the FixedSizeQueue<T>.
+        //
+        // Parameters:
+        //   item:
+        //     The object to add to the FixedSizeQueue<T>. The value can
+        //     be null for reference types.
+        // Returns:
+        //     Item that is dequeued from the filled FixedSizeQueue<T> or default value of T.
+        public T Enqueue(T item) {
+            T oldItem = default(T);
+            if (queue.Count == maxCapacity) {
+                oldItem = queue.Dequeue();
+            }
+            queue.Enqueue(item);
+            return oldItem;
+        }
+        //
+        // Summary:
+        //     Copies the FixedSizeQueue<T> elements to a new array.
+        //
+        // Returns:
+        //     A new array containing elements copied from the System.Collections.Generic.Queue<T>.
+        public T[] ToArray() {
+            return queue.ToArray();
+        }
+    }
+    
     internal abstract class CommonData {
         private ushort heatCurrent;
         private ushort emissionCurrent;
