@@ -310,6 +310,11 @@ namespace Flavor.Common {
                 }
             }
         }
+
+        //background measurings. problem is that senseModeCounts are invisible here.
+        //TODO: consider refactoring
+        private static FixedSizeQueue<List<Utility.PreciseEditorData>> background;
+
         internal static void Monitor() {
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
@@ -317,9 +322,23 @@ namespace Flavor.Common {
                     measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
                     initMeasure(Commander.programStates.WaitBackgroundMeasure);
                     // TODO: feed measure mode with start shift value (really?)
+
+                    // TODO: configurable? 
+                    if (true) {
+                        // TODO: configurable capacity
+                        background = new FixedSizeQueue<List<Utility.PreciseEditorData>>(5);
+                    }
+                    // TODO: retrieve library data here. form matrix.
+                    // TODO: start automatic feeding of fixed queue
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
                 }
+                return;
+            }
+            if (pState == Commander.programStates.BackgroundMeasureReady) {
+                // TODO: count average background value
+                background.ToArray();
+                // TODO: start automatic solving and saving of monitor data.
             }
         }
         internal static void Disable() {
