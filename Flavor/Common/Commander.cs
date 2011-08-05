@@ -311,8 +311,6 @@ namespace Flavor.Common {
             }
         }
 
-        //background measurings. problem is that senseModeCounts are invisible here.
-        //TODO: consider refactoring
         private static FixedSizeQueue<List<Utility.PreciseEditorData>> background;
 
         internal static void Monitor() {
@@ -323,13 +321,22 @@ namespace Flavor.Common {
                     initMeasure(Commander.programStates.WaitBackgroundMeasure);
                     // TODO: feed measure mode with start shift value (really?)
 
-                    // TODO: configurable? 
+                    // TODO: configurable?
+                    // Config.DoBackgroundPremeasure
                     if (true) {
                         // TODO: configurable capacity
+                        // Config.BackgroundCycles
                         background = new FixedSizeQueue<List<Utility.PreciseEditorData>>(5);
+                        // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
                     // TODO: retrieve library data here. form matrix.
+                    // implement Config.LoadLibrary
+                    
                     // TODO: start automatic feeding of fixed queue
+                    // use subscription to Graph.Instance.OnNewGraphData?
+                    // Graph.Instance.PreciseData -> copy to queue?
+                    // check background.Enqueue() result for default(T)
+                    // trigger program state -> BackgroundMeasureReady
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
                 }
@@ -339,6 +346,7 @@ namespace Flavor.Common {
                 // TODO: count average background value
                 background.ToArray();
                 // TODO: start automatic solving and saving of monitor data.
+                // trigger program state -> Measure
             }
         }
         internal static void Disable() {

@@ -18,6 +18,7 @@ namespace Flavor.Forms
         private const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
         private double time = -1;
+        // TODO: use List<FixedSizeQueue<PointPair>> instead?
         private List<PointPairList> list;
         private int rowsCount;
         private List<long> sums;
