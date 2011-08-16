@@ -4,11 +4,13 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Flavor.Common {
     public class FixedSizeQueue<T> {
         private readonly Queue<T> queue;
         private readonly int maxCapacity;
+        private bool isFull = false;
         //
         // Summary:
         //     Initializes a new instance of the FixedSizeQueue<T> class
@@ -51,22 +53,35 @@ namespace Flavor.Common {
         //     be null for reference types.
         // Returns:
         //     Item that is dequeued from the filled FixedSizeQueue<T> or default value of T.
-        public T Enqueue(T item) {
-            T oldItem = default(T);
+        public void Enqueue(T item) {
             if (queue.Count == maxCapacity) {
-                oldItem = queue.Dequeue();
+                queue.Dequeue();
             }
             queue.Enqueue(item);
-            return oldItem;
+        }
+        //
+        // Summary:
+        //     Returns whether the instance of FixedSizeQueue<T> contains maximum number of elements.
+        //
+        // Returns:
+        //     A boolean value indicating whether the instance of FixedSizeQueue<T> contains maximum number of elements.
+        public bool IsFull() {
+            return isFull;
         }
         //
         // Summary:
         //     Copies the FixedSizeQueue<T> elements to a new array.
         //
         // Returns:
-        //     A new array containing elements copied from the System.Collections.Generic.Queue<T>.
+        //     A new array containing elements copied from the FixedSizeQueue<T>.
         public T[] ToArray() {
             return queue.ToArray();
+        }
+        public T Aggregate(Func<T, T, T> func) {
+            return queue.Aggregate(func);
+        }
+        public double Average(Func<T, double> func) {
+            return queue.Average(func);
         }
     }
     
@@ -373,6 +388,10 @@ namespace Flavor.Common {
         }
         internal PreciseSpectrum()
             : base() {
+        }
+        internal PreciseSpectrum(IEnumerable<Utility.PreciseEditorData> other)
+            : base(other) {
+            // TODO: check that copies here!
         }
         internal CommonOptions CommonOptions {
             get { return myCommonOptions; }

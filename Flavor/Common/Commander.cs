@@ -311,9 +311,17 @@ namespace Flavor.Common {
             }
         }
 
-        private static FixedSizeQueue<List<Utility.PreciseEditorData>> background;
+        // TODO: use simple arrays
+        private static FixedSizeQueue<List<long>> background;
 
         internal static void Monitor() {
+            // TODO: configurable capacity
+            // Config.BackgroundCycles
+            int backgroundCycles = 5;
+            // TODO: configurable?
+            // Config.DoBackgroundPremeasure
+            bool doBackgroundPremeasure = true;
+            
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.ResetForMonitor();
@@ -321,34 +329,53 @@ namespace Flavor.Common {
                     initMeasure(Commander.programStates.WaitBackgroundMeasure);
                     // TODO: feed measure mode with start shift value (really?)
 
-                    // TODO: configurable?
-                    // Config.DoBackgroundPremeasure
-                    if (true) {
-                        // TODO: configurable capacity
-                        // Config.BackgroundCycles
-                        background = new FixedSizeQueue<List<Utility.PreciseEditorData>>(5);
+                    if (doBackgroundPremeasure) {
+                        background = new FixedSizeQueue<List<long>>(backgroundCycles);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
                     // TODO: retrieve library data here. form matrix.
                     // implement Config.LoadLibrary
                     
-                    // TODO: start automatic feeding of fixed queue
-                    // use subscription to Graph.Instance.OnNewGraphData?
-                    // Graph.Instance.PreciseData -> copy to queue?
-                    // check background.Enqueue() result for default(T)
-                    // trigger program state -> BackgroundMeasureReady
+                    Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
                 }
-                return;
-            }
-            if (pState == Commander.programStates.BackgroundMeasureReady) {
-                // TODO: count average background value
-                background.ToArray();
+            } else if (pState == Commander.programStates.BackgroundMeasureReady) {
+                Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
+
+                List<long> result = background.Aggregate(Summarize);
+                result.ForEach(x => { x /= backgroundCycles; });
+                // TODO: use this average background data later
+
                 // TODO: start automatic solving and saving of monitor data.
-                // trigger program state -> Measure
+                setProgramStateWithoutUndo(programStates.Measure);
+            } else {
+                // wrong state, strange!
             }
         }
+        private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
+            List<long> currentMeasure = new List<long>();
+            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData) {
+                if (ped.Use) {
+                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                }
+            }
+            background.Enqueue(currentMeasure);
+            if (pState == programStates.WaitBackgroundMeasure && background.IsFull()) {
+                setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
+            }
+        }
+        private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
+            // TODO: move from Commander to Utility
+            if (workingValue.Count != nextElem.Count)
+                // data length mismatch
+                return null;
+            for (int i = 0; i < workingValue.Count; ++i) {
+                workingValue[i] += nextElem[i];
+            }
+            return workingValue;
+        }
+
         internal static void Disable() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
