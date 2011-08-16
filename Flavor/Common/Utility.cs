@@ -10,7 +10,6 @@ namespace Flavor.Common {
     public class FixedSizeQueue<T> {
         private readonly Queue<T> queue;
         private readonly int maxCapacity;
-        private bool isFull = false;
         //
         // Summary:
         //     Initializes a new instance of the FixedSizeQueue<T> class
@@ -51,8 +50,6 @@ namespace Flavor.Common {
         //   item:
         //     The object to add to the FixedSizeQueue<T>. The value can
         //     be null for reference types.
-        // Returns:
-        //     Item that is dequeued from the filled FixedSizeQueue<T> or default value of T.
         public void Enqueue(T item) {
             if (queue.Count == maxCapacity) {
                 queue.Dequeue();
@@ -65,23 +62,11 @@ namespace Flavor.Common {
         //
         // Returns:
         //     A boolean value indicating whether the instance of FixedSizeQueue<T> contains maximum number of elements.
-        public bool IsFull() {
-            return isFull;
-        }
-        //
-        // Summary:
-        //     Copies the FixedSizeQueue<T> elements to a new array.
-        //
-        // Returns:
-        //     A new array containing elements copied from the FixedSizeQueue<T>.
-        public T[] ToArray() {
-            return queue.ToArray();
+        public bool IsFull {
+            get { return queue.Count == maxCapacity; }
         }
         public T Aggregate(Func<T, T, T> func) {
             return queue.Aggregate(func);
-        }
-        public double Average(Func<T, double> func) {
-            return queue.Average(func);
         }
     }
     

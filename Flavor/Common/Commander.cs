@@ -354,6 +354,8 @@ namespace Flavor.Common {
             }
         }
         private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
+            if (recreate == Graph.Recreate.None)
+                return;
             List<long> currentMeasure = new List<long>();
             foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData) {
                 if (ped.Use) {
@@ -361,7 +363,7 @@ namespace Flavor.Common {
                 }
             }
             background.Enqueue(currentMeasure);
-            if (pState == programStates.WaitBackgroundMeasure && background.IsFull()) {
+            if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
                 setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
             }
         }

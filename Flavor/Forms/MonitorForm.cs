@@ -156,7 +156,7 @@ namespace Flavor.Forms
             }
 
             // temporary?
-            Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
+            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             Show();
             Activate();
         }
@@ -166,7 +166,7 @@ namespace Flavor.Forms
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             // temporary?
-            Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
+            Graph.Instance.OnNewGraphData -= InvokeRefreshGraph;
             time = -1;
         }
         #endregion
