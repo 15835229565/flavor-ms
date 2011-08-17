@@ -27,6 +27,7 @@ namespace Flavor.Forms {
 
             if (PreciseSpectrumDisplayed) {
                 // search temporary here
+                // TODO: use extension method getUsed()
                 setXScaleLimits(graph.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
             } else {
                 ushort minX = (ushort)graph.Displayed1Steps[0][0].X;

@@ -135,7 +135,7 @@ namespace Flavor.Common {
             private short shift = 0;
 
             internal Precise()
-                : this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed), 0) { }
+                : this(Config.PreciseData.getUsed(), 0) { }
             private Precise(List<Utility.PreciseEditorData> peaks, short shift)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 this.shift = shift;

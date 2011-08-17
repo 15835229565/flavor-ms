@@ -543,6 +543,12 @@ namespace Flavor.Common {
             //EventHandler<T> evt = handler;
             //if (evt != null) evt(sender, args);
         }
+        public static List<PreciseEditorData> getUsed(this List<PreciseEditorData> peds) {
+            return peds.FindAll(PreciseEditorData.PeakIsUsed);
+        }
+        internal static List<PreciseEditorData> getUsed(this PreciseSpectrum peds) {
+            return peds.FindAll(PreciseEditorData.PeakIsUsed);
+        }
         #region PreciseEditorData
         public class PreciseEditorData: IComparable<PreciseEditorData> {
             internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {

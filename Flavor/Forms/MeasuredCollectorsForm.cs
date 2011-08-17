@@ -45,6 +45,7 @@ namespace Flavor.Forms {
             // not so good..
             if (PreciseSpectrumDisplayed)
                 // search temporary here
+                // TODO: use extension method getUsed()
                 setXScaleLimits(Config.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
             else
                 setXScaleLimits();

@@ -73,7 +73,7 @@ namespace Flavor.Common {
             }
         }
         private static ushort countMaxIteration() {
-            return countMaxIteration(preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed));
+            return countMaxIteration(preciseData.getUsed());
         }
         private static ushort countMaxIteration(List<Utility.PreciseEditorData> pedl) {
             ushort maxIteration = 0;
@@ -85,7 +85,7 @@ namespace Flavor.Common {
 
         internal static List<Utility.PreciseEditorData> PreciseDataWithChecker {
             get {
-                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
+                List<Utility.PreciseEditorData> res = preciseData.getUsed();
                 if (res.Count == 0) {
                     return null;
                 }
@@ -198,6 +198,14 @@ namespace Flavor.Common {
         }
         internal static void saveGlobalConfig() {
             mainConfigWriter.write();
+        }
+        internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
+            // TODO: retrieve library data here. form matrix.
+            // implement Config.LoadLibrary
+            
+            foreach (Utility.PreciseEditorData ped in peds) {
+            }
+            return null;
         }
         #endregion
         #region Spectra I/O

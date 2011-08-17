@@ -6,6 +6,7 @@ using Flavor.Common.Commands.Async;
 using Flavor.Common.Commands.Sync;
 using Flavor.Common.Messaging;
 using Flavor.Common.Commands.Interfaces;
+using Flavor.Common.Library;
 
 namespace Flavor.Common {
     internal static class Commander {
@@ -333,9 +334,9 @@ namespace Flavor.Common {
                         background = new FixedSizeQueue<List<long>>(backgroundCycles);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
-                    // TODO: retrieve library data here. form matrix.
-                    // implement Config.LoadLibrary
-                    
+                    // now Matrix(null)
+                    Matrix matrix = new Matrix(Config.LoadLibrary(Graph.Instance.PreciseData.getUsed()));
+
                     Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
@@ -369,6 +370,7 @@ namespace Flavor.Common {
         }
         private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility
+            // and remove dependance from Linq here
             if (workingValue.Count != nextElem.Count)
                 // data length mismatch
                 return null;

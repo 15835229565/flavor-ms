@@ -140,6 +140,7 @@ namespace Flavor.Forms
             list = new List<PointPairList>();
             sums = new List<long>();
             //!!
+            // TODO: use extension method getUsed()
             List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i)
