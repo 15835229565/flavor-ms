@@ -63,6 +63,7 @@ namespace Flavor.Common {
             get { return programStatePrev; }
             private set { programStatePrev = value; }
         }
+        // TODO: remove two remaining references to this method and make it private
         internal static void setProgramStateWithoutUndo(Commander.programStates state) {
             pState = state;
             pStatePrev = pState;
@@ -314,7 +315,8 @@ namespace Flavor.Common {
 
         // TODO: use simple arrays
         private static FixedSizeQueue<List<long>> background;
-
+        private static Matrix matrix;
+        private static List<long> backgroundResult;
         internal static void Monitor() {
             // TODO: configurable capacity
             // Config.BackgroundCycles
@@ -334,8 +336,8 @@ namespace Flavor.Common {
                         background = new FixedSizeQueue<List<long>>(backgroundCycles);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
-                    // now Matrix(null)
-                    Matrix matrix = new Matrix(Config.LoadLibrary(Graph.Instance.PreciseData.getUsed()));
+                    //! now Matrix(null)
+                    matrix = new Matrix(Config.LoadLibrary(Graph.Instance.PreciseData.getUsed()));
 
                     Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                 } else {
@@ -344,12 +346,12 @@ namespace Flavor.Common {
             } else if (pState == Commander.programStates.BackgroundMeasureReady) {
                 Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
 
-                List<long> result = background.Aggregate(Summarize);
-                result.ForEach(x => { x /= backgroundCycles; });
+                backgroundResult = background.Aggregate(Summarize);
+                backgroundResult.ForEach(x => { x /= backgroundCycles; });
                 // TODO: use this average background data later
 
-                // TODO: start automatic solving and saving of monitor data.
                 setProgramStateWithoutUndo(programStates.Measure);
+                Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
             } else {
                 // wrong state, strange!
             }
@@ -358,19 +360,33 @@ namespace Flavor.Common {
             if (recreate == Graph.Recreate.None)
                 return;
             List<long> currentMeasure = new List<long>();
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData) {
-                if (ped.Use) {
-                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-                }
-            }
+            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
+                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             background.Enqueue(currentMeasure);
             if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
                 setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
             }
         }
+        private static void NewMonitorMeasureReady(Graph.Recreate recreate) {
+            if (recreate == Graph.Recreate.None)
+                return;
+            List<long> currentMeasure = new List<long>();
+            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
+                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+            // TODO: implement
+            if (currentMeasure.Count != backgroundResult.Count) { 
+                // length mismatch
+                // TODO: throw smth
+            }
+            // distract background
+            for (int i = 0; i < backgroundResult.Count; ++i) {
+                currentMeasure[i] -= backgroundResult[i];
+            }
+            // solve matrix equation
+            matrix.Solve(currentMeasure.ConvertAll<double>(x => { return (double)x; }));
+        }
         private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility
-            // and remove dependance from Linq here
             if (workingValue.Count != nextElem.Count)
                 // data length mismatch
                 return null;
@@ -380,7 +396,15 @@ namespace Flavor.Common {
             return workingValue;
         }
 
-        internal static void Disable() {
+        internal static void DisableMeasure() {
+            if (measureMode is MeasureMode.Precise.Monitor) {
+                Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
+                matrix = null;
+            }
+            Disable();
+            Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
+        }
+        private static void Disable() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
             // TODO: lock here

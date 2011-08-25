@@ -71,8 +71,7 @@ namespace Flavor.Common {
             }
         }
         private void Disable() {
-            Commander.Disable();
-            Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
+            Commander.DisableMeasure();
         }
         private void stop() {
             finalize();
