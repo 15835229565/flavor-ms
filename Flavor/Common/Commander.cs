@@ -336,7 +336,8 @@ namespace Flavor.Common {
                         background = new FixedSizeQueue<List<long>>(backgroundCycles);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
-                    //! now Matrix(null)
+                    // TODO: move matrix formation to manual operator actions
+                    //! now Matrix is empty
                     matrix = new Matrix(Config.LoadLibrary(Graph.Instance.PreciseData.getUsed()));
 
                     Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;

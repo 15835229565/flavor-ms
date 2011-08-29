@@ -202,10 +202,18 @@ namespace Flavor.Common {
         internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
             // TODO: retrieve library data here. form matrix.
             // implement Config.LoadLibrary
-            
+            // TODO: form PreciseData and matrix simultaneously directly from library
+            // use current coeffs for that
+            int rank = peds.Count;
+            double[,] matrix = new double[rank, rank];
+            // TODO: make temporary solution, maybe buggy
             foreach (Utility.PreciseEditorData ped in peds) {
+                // sort by peak value?
+                // find central peak in library
+                // find all side peaks that intersect with other central peaks
+                // form row in matrix
             }
-            return null;
+            return matrix;
         }
         #endregion
         #region Spectra I/O
