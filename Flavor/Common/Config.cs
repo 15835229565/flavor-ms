@@ -405,6 +405,10 @@ namespace Flavor.Common {
             writer.setShift(shift);
             writer.write();
         }
+        internal static void AutoSaveSolvedSpectra(double[] solution) {
+            // TODO: simplify
+            MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).setSolvedResult(solution);
+        }
         internal static void finalizeMonitorFile() {
             // TODO: simplify
             MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).finalize();
@@ -551,6 +555,7 @@ namespace Flavor.Common {
         #endregion
         #region Additive configs
         private interface IMonitorWriter: IAnyWriter, IShift {
+            void setSolvedResult(double[] solution);
             void finalize();
         }
         private abstract class MonitorSaveMaintainer {
@@ -581,7 +586,9 @@ namespace Flavor.Common {
                     private readonly List<Utility.PreciseEditorData> precData;
                     private readonly string header;
                     private readonly StreamWriter sw;
+                    private readonly StreamWriter swResolved;
                     private static Writer instance = null;
+                    private double[] solution = null;
                     public static IMonitorWriter getInstance(DateTime dt, Graph graph) {
                         if (instance == null) {
                             instance = new Writer(dt, graph);
@@ -604,20 +611,24 @@ namespace Flavor.Common {
                         opts = graph.CommonOptions;
                         precData = new List<Utility.PreciseEditorData>(graph.PreciseData);
                         header = generateHeader();
-                        initFile(dt, out filename, out sw);
+                        initFile(dt, out filename, out sw, out swResolved);
                     }
                     private Writer(Writer other, DateTime dt) {
                         this.initialDT = dt;
                         this.opts = other.opts;
                         this.precData = other.precData;
                         header = other.header;
-                        initFile(dt, out filename, out sw);
+                        initFile(dt, out filename, out sw, out swResolved);
                     }
-                    private void initFile(DateTime dt, out string filename, out StreamWriter sw) {
+                    private void initFile(DateTime dt, out string filename, out StreamWriter sw, out StreamWriter swResolved) {
                         filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
                         sw = new StreamWriter(filename, true);
                         sw.WriteLine(header);
                         sw.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
+
+                        swResolved = new StreamWriter(filename + "r", true);
+                        swResolved.WriteLine(header);
+                        swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
                     }
                     private string generateHeader() {
                         StringBuilder sb = (new StringBuilder(header))
@@ -664,6 +675,9 @@ namespace Flavor.Common {
                         }
                         sw.WriteLine(sb);
                         sw.Close();
+
+                        swResolved.WriteLine(sb + nextFilename == null ? "" : "r");
+                        swResolved.Close();
                     }
                     #region IAnyWriter Members
                     public void write() {
@@ -671,6 +685,9 @@ namespace Flavor.Common {
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
                             .Append(shift);
+                        
+                        swResolved.Write(sb);
+                        
                         foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
                             if (ped.Use) {
                                 sb
@@ -680,6 +697,10 @@ namespace Flavor.Common {
                         }
                         sw.WriteLine(sb);
                         sw.Flush();
+
+                        swResolved.Write(DATA_DELIMITER);
+                        swResolved.WriteLine(solution);
+                        swResolved.Flush();
                     }
                     #endregion
                     #region IShift Members
@@ -688,6 +709,10 @@ namespace Flavor.Common {
                     }
                     #endregion
                     #region IMonitorWriter Members
+                    public void setSolvedResult(double[] solution) {
+                        // in fact this method is called before write(). check this!
+                        this.solution = solution;
+                    }
                     public void finalize() {
                         finalize(null);
                         instance = null;

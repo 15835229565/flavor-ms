@@ -373,7 +373,6 @@ namespace Flavor.Common {
             List<long> currentMeasure = new List<long>();
             foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-            // TODO: implement
             if (currentMeasure.Count != backgroundResult.Count) { 
                 // length mismatch
                 // TODO: throw smth
@@ -382,8 +381,10 @@ namespace Flavor.Common {
             for (int i = 0; i < backgroundResult.Count; ++i) {
                 currentMeasure[i] -= backgroundResult[i];
             }
+            // TODO: implement
             // solve matrix equation
-            matrix.Solve(currentMeasure.ConvertAll<double>(x => { return (double)x; }));
+            double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => { return (double)x; }));
+            Config.AutoSaveSolvedSpectra(result);
         }
         private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility

@@ -48,6 +48,7 @@ namespace Flavor.Common {
             }
             return true;
         }
+        // TODO: move to Commander!
         abstract protected void saveData();
         abstract protected void onSuccessfulExit();
         abstract protected bool onNextStep();
