@@ -210,8 +210,14 @@ namespace Flavor.Common {
             foreach (Utility.PreciseEditorData ped in peds) {
                 // sort by peak value?
                 // find central peak in library
+                // TODO: implement search of desired peak in library.
+                List<Utility.PreciseEditorData> substanceSpectrum = null;
                 // find all side peaks that intersect with other central peaks
                 // form row in matrix
+                foreach (Utility.PreciseEditorData ped2 in peds.FindAll(substanceSpectrum.Contains)) {
+                    // TODO: proper element here
+                    matrix[0, 0] = 0;
+                }
             }
             return matrix;
         }
