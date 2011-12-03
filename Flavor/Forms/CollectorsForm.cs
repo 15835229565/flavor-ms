@@ -317,13 +317,14 @@ namespace Flavor.Forms {
                     });
                     items.Add(item);
                     {
-                        PreciseEditorData ped;
-                        if ((ped = pls.PEDreference) != null) {
-                            item = new ToolStripMenuItem();
-                            item.Text = "Вычесть из текущего с перенормировкой на точку";
-                            item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, pls, ped); });
-                            items.Add(item);
+                        PreciseEditorData ped = pls.PEDreference;
 
+                        item = new ToolStripMenuItem();
+                        item.Text = "Вычесть из текущего с перенормировкой на точку";
+                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, pls, ped); });
+                        items.Add(item);
+
+                        if (ped != null) {
                             item = new ToolStripMenuItem();
                             item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
                             item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped); });
