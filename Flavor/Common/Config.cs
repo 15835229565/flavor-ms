@@ -14,9 +14,11 @@ namespace Flavor.Common {
 
         private const string CONFIG_NAME = "config.xml";
         private const string CRASH_LOG_NAME = "MScrash.log";
+        private const string LIBRARY_NAME = "library.xml";
 
         private static string mainConfigName;
         private static string logName;
+        private static string libraryName;
 
         #region Extensions
         internal const string SPECTRUM_EXT = "sdf";
@@ -146,6 +148,7 @@ namespace Flavor.Common {
         internal static void getInitialDirectory() {
             mainConfigName = System.IO.Path.Combine(INITIAL_DIR, CONFIG_NAME);
             logName = System.IO.Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
+            libraryName = System.IO.Path.Combine(INITIAL_DIR, LIBRARY_NAME);
         }
         #region Global Config I/O
         internal static void loadGlobalConfig() {
@@ -200,14 +203,20 @@ namespace Flavor.Common {
             mainConfigWriter.write();
         }
         internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
+            ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
+            lib.readOnce(peds.ConvertAll<string>(x => 
+                // TODO: associate id!
+                x.Step.ToString()));
+            
             // TODO: retrieve library data here. form matrix.
             // implement Config.LoadLibrary
+            
             // TODO: form PreciseData and matrix simultaneously directly from library
             // use current coeffs for that
             int rank = peds.Count;
             double[,] matrix = new double[rank, rank];
             // TODO: make temporary solution, maybe buggy
-            foreach (Utility.PreciseEditorData ped in peds) {
+            foreach (XmlNode node in lib.PeakNodes) {
                 // sort by peak value?
                 // find central peak in library
                 // TODO: implement search of desired peak in library.
@@ -761,6 +770,12 @@ namespace Flavor.Common {
                 get;
             }
         }
+        private interface ILibraryReader: IAnyReader {
+            void readOnce(List<string> ids);
+            XmlNodeList PeakNodes {
+                get;
+            }
+        }
         private interface IScalingCoeffsWriter: IAnyWriter {
             void saveScalingCoeffs(double coeff1, double coeff2);
         }
@@ -836,6 +851,7 @@ namespace Flavor.Common {
             #region Error Messages
             private const string CONFIG_FILE_STRUCTURE_ERROR = "Ошибка структуры конфигурационного файла";
             private const string CONFIG_FILE_READ_ERROR = "Ошибка чтения конфигурационного файла";
+            private const string LIBRARY_FILE_READ_ERROR = "Ошибка чтения файла библиотеки спектров";
             #endregion
             private string filename;
             private XmlDocument xmlData;
@@ -2102,6 +2118,24 @@ namespace Flavor.Common {
                         }
                     }
                 }
+                public class LibraryReader: ILibraryReader {
+                    private const string PEAK_TAG = "p";
+                    private readonly XmlTextReader reader;
+                    public LibraryReader(string filename) {
+                        reader = new XmlTextReader(filename);
+                    }
+                    #region ILibraryReader Members
+                    public void readOnce(List<string> ids) {
+                        if (reader.ReadState != ReadState.Initial)
+                            reader.ResetState();
+                        // TODO: continue coding here
+                        reader.ReadToNextSibling(PEAK_TAG);
+                    }
+                    public XmlNodeList PeakNodes {
+                        get { throw new NotImplementedException(); }
+                    }
+                    #endregion
+                }
                 public class SpectrumReader: ComplexReader, ISpectrumReader {
                     private bool hint;
                     #region ISpectrumReader Members
@@ -2493,6 +2527,14 @@ namespace Flavor.Common {
             }
             public static IMainConfigWriter getMainConfigWriter(string confName, XmlDocument doc) {
                 return getInitializedConfig<IMainConfigWriter, CurrentTagHolder.MainConfigWriter>(confName, doc);
+            }
+            internal static ILibraryReader getLibraryReader(string confName) {
+                return new CurrentTagHolder.LibraryReader(confName);
+                /*return findCorrespondingReaderVersion<ILibraryReader,
+                    CurrentTagHolder.LibraryReader,
+                    CurrentTagHolder.LibraryReader,
+                    CurrentTagHolder.LibraryReader,
+                    CurrentTagHolder.LibraryReader>(confName, LIBRARY_FILE_READ_ERROR);*/
             }
             #endregion
             #region Private Service Methods
