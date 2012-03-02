@@ -1,9 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <library version="1.2">
-  <spectrum id="ETHANE" mass="30">
-    <peak mass="29" value="500" />
+  <spectrum id="BUTANE" mass="58" value="117">
+    <peak mass="43" value="999" />
+    <peak mass="29" value="442" />
+    <peak mass="27" value="428" />
+    <peak mass="28" value="338" />
+    <peak mass="41" value="317" />
+    <peak mass="39" value="173" />
+    <peak mass="42" value="126" />
+    <peak mass="58" value="117" />
+    <peak mass="15" value="108" />
+    <peak mass="26" value="89" />
   </spectrum>
-  <spectrum id="BUTHANE" mass="54">
-    <peak mass="53" value="200" />
+  <spectrum id="ETHANE" mass="30" value="232">
+    <peak mass="28" value="999" />
+    <peak mass="27" value="362" />
+    <peak mass="26" value="258" />
+    <peak mass="30" value="232" />
+    <peak mass="29" value="212" />
+    <peak mass="15" value="65" />
+    <peak mass="25" value="51" />
+    <peak mass="14" value="48" />
+    <peak mass="13" value="19" />
+    <peak mass="2" value="12" />
+  </spectrum>
+  <spectrum id="METHANE" mass="18">
+  </spectrum>
+  <spectrum id="PROPANE" mass="44" value="267">
+    <peak mass="29" value="999" />
+    <peak mass="28" value="590" />
+    <peak mass="27" value="470" />
+    <peak mass="44" value="267" />
+    <peak mass="43" value="232" />
+    <peak mass="39" value="213" />
+    <peak mass="41" value="144" />
+    <peak mass="26" value="120" />
+    <peak mass="15" value="110" />
+    <peak mass="42" value="61" />
   </spectrum>
 </library>
