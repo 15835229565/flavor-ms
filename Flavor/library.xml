@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<library version="1.2">
+  <spectrum id="ETHANE" mass="30">
+    <peak mass="29" value="500" />
+  </spectrum>
+  <spectrum id="BUTHANE" mass="54">
+    <peak mass="53" value="200" />
+  </spectrum>
+</library>
