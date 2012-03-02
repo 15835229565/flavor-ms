@@ -216,7 +216,7 @@ namespace Flavor.Common {
             int rank = peds.Count;
             double[,] matrix = new double[rank, rank];
             // TODO: make temporary solution, maybe buggy
-            foreach (XmlNode node in lib.PeakNodes) {
+            foreach (XmlReader reader in lib.PeakNodes) {
                 // sort by peak value?
                 // find central peak in library
                 // TODO: implement search of desired peak in library.
@@ -772,7 +772,7 @@ namespace Flavor.Common {
         }
         private interface ILibraryReader: IAnyReader {
             void readOnce(List<string> ids);
-            XmlNodeList PeakNodes {
+            System.Collections.Hashtable PeakNodes {
                 get;
             }
         }
@@ -2119,8 +2119,14 @@ namespace Flavor.Common {
                     }
                 }
                 public class LibraryReader: ILibraryReader {
-                    private const string PEAK_TAG = "p";
+                    private const string LIBRARY_TAG = "library";
+                    private const string SPECTRUM_TAG = "spectrum";
+                    private const string ID_ATTRIBUTE = "id";
+                    private const string MASS_ATTRIBUTE = "mass";
+                    private const string PEAK_TAG = "peak";
+                    private const string VALUE_ATTRIBUTE = "value";
                     private readonly XmlTextReader reader;
+                    private System.Collections.Hashtable table;
                     public LibraryReader(string filename) {
                         reader = new XmlTextReader(filename);
                     }
@@ -2129,10 +2135,29 @@ namespace Flavor.Common {
                         if (reader.ReadState != ReadState.Initial)
                             reader.ResetState();
                         // TODO: continue coding here
-                        reader.ReadToNextSibling(PEAK_TAG);
+                        reader.ReadToFollowing(LIBRARY_TAG);
+                        //int count = reader.AttributeCount;
+                        reader.GetAttribute(VERSION_ATTRIBUTE);
+                        System.Collections.Hashtable table = new System.Collections.Hashtable(ids.Count);
+                        while (!(reader.EOF || ids.Count == 0)) {
+                            reader.ReadToNextSibling(SPECTRUM_TAG);
+                            string id = reader.GetAttribute(ID_ATTRIBUTE);
+                            if (ids.Contains(id)) {
+                                ids.Remove(id);
+                                table.Add(id, reader.ReadSubtree());
+                            }
+                        }
+                        if (ids.Count != 0)
+                            ;//error
+                        else {
+                            this.table = table;
+                        }
                     }
-                    public XmlNodeList PeakNodes {
-                        get { throw new NotImplementedException(); }
+                    public System.Collections.Hashtable PeakNodes {
+                        get { 
+                            // TODO: do all parsing inside here
+                            return table; // BAD!
+                        }
                     }
                     #endregion
                 }
