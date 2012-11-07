@@ -2181,14 +2181,16 @@ namespace Flavor.Common {
                             string[] parts = text.Split(COUNTS_SEPARATOR);
                             foreach (string str in parts) {
                                 // locale?
-                                tempPntLst.Add(peakStart, long.Parse(str));
+                                //! double for non-integral counts (after subtraction with renormalization on point/peak)
+                                tempPntLst.Add(peakStart, double.Parse(str));
                                 ++peakStart;
                             }
                         } catch (FormatException) {
-                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
+                            // TODO: store exception messages
+                            throw new ConfigLoadException("Неверный формат данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
                         }
                         if (--peakStart != peakEnd)
-                            throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException("Несовпадение рядов данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
 
                         return tempPntLst;
                     }
