@@ -48,7 +48,6 @@ namespace Flavor.Common {
             }
             return true;
         }
-        // TODO: move to Commander!
         abstract protected void saveData();
         abstract protected void onSuccessfulExit();
         abstract protected bool onNextStep();
@@ -72,7 +71,8 @@ namespace Flavor.Common {
             }
         }
         private void Disable() {
-            Commander.DisableMeasure();
+            Commander.Disable();
+            Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
         }
         private void stop() {
             finalize();
@@ -135,7 +135,7 @@ namespace Flavor.Common {
             private short shift = 0;
 
             internal Precise()
-                : this(Config.PreciseData.getUsed(), 0) { }
+                : this(Config.PreciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed), 0) { }
             private Precise(List<Utility.PreciseEditorData> peaks, short shift)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 this.shift = shift;

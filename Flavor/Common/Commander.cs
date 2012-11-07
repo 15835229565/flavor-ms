@@ -6,7 +6,6 @@ using Flavor.Common.Commands.Async;
 using Flavor.Common.Commands.Sync;
 using Flavor.Common.Messaging;
 using Flavor.Common.Commands.Interfaces;
-using Flavor.Common.Library;
 
 namespace Flavor.Common {
     internal static class Commander {
@@ -63,7 +62,6 @@ namespace Flavor.Common {
             get { return programStatePrev; }
             private set { programStatePrev = value; }
         }
-        // TODO: remove two remaining references to this method and make it private
         internal static void setProgramStateWithoutUndo(Commander.programStates state) {
             pState = state;
             pStatePrev = pState;
@@ -313,18 +311,9 @@ namespace Flavor.Common {
             }
         }
 
-        // TODO: use simple arrays
-        private static FixedSizeQueue<List<long>> background;
-        private static Matrix matrix;
-        private static List<long> backgroundResult;
+        private static FixedSizeQueue<List<Utility.PreciseEditorData>> background;
+
         internal static void Monitor() {
-            // TODO: configurable capacity
-            // Config.BackgroundCycles
-            int backgroundCycles = 5;
-            // TODO: configurable?
-            // Config.DoBackgroundPremeasure
-            bool doBackgroundPremeasure = true;
-            
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.ResetForMonitor();
@@ -332,81 +321,35 @@ namespace Flavor.Common {
                     initMeasure(Commander.programStates.WaitBackgroundMeasure);
                     // TODO: feed measure mode with start shift value (really?)
 
-                    if (doBackgroundPremeasure) {
-                        background = new FixedSizeQueue<List<long>>(backgroundCycles);
+                    // TODO: configurable?
+                    // Config.DoBackgroundPremeasure
+                    if (true) {
+                        // TODO: configurable capacity
+                        // Config.BackgroundCycles
+                        background = new FixedSizeQueue<List<Utility.PreciseEditorData>>(5);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
-                    // TODO: move matrix formation to manual operator actions
-                    //! now Matrix is empty
-                    matrix = new Matrix(Config.LoadLibrary(Graph.Instance.PreciseData.getUsed()));
-
-                    Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
+                    // TODO: retrieve library data here. form matrix.
+                    // implement Config.LoadLibrary
+                    
+                    // TODO: start automatic feeding of fixed queue
+                    // use subscription to Graph.Instance.OnNewGraphData?
+                    // Graph.Instance.PreciseData -> copy to queue?
+                    // check background.Enqueue() result for default(T)
+                    // trigger program state -> BackgroundMeasureReady
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
                 }
-            } else if (pState == Commander.programStates.BackgroundMeasureReady) {
-                Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
-
-                backgroundResult = background.Aggregate(Summarize);
-                backgroundResult.ForEach(x => { x /= backgroundCycles; });
-                // TODO: use this average background data later
-
-                setProgramStateWithoutUndo(programStates.Measure);
-                Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
-            } else {
-                // wrong state, strange!
-            }
-        }
-        private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
-            if (recreate == Graph.Recreate.None)
                 return;
-            List<long> currentMeasure = new List<long>();
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-            background.Enqueue(currentMeasure);
-            if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
-                setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
+            }
+            if (pState == Commander.programStates.BackgroundMeasureReady) {
+                // TODO: count average background value
+                background.ToArray();
+                // TODO: start automatic solving and saving of monitor data.
+                // trigger program state -> Measure
             }
         }
-        private static void NewMonitorMeasureReady(Graph.Recreate recreate) {
-            if (recreate == Graph.Recreate.None)
-                return;
-            List<long> currentMeasure = new List<long>();
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-            if (currentMeasure.Count != backgroundResult.Count) { 
-                // length mismatch
-                // TODO: throw smth
-            }
-            // distract background
-            for (int i = 0; i < backgroundResult.Count; ++i) {
-                currentMeasure[i] -= backgroundResult[i];
-            }
-            // TODO: implement
-            // solve matrix equation
-            double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => { return (double)x; }));
-            Config.AutoSaveSolvedSpectra(result);
-        }
-        private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
-            // TODO: move from Commander to Utility
-            if (workingValue.Count != nextElem.Count)
-                // data length mismatch
-                return null;
-            for (int i = 0; i < workingValue.Count; ++i) {
-                workingValue[i] += nextElem[i];
-            }
-            return workingValue;
-        }
-
-        internal static void DisableMeasure() {
-            if (measureMode is MeasureMode.Precise.Monitor) {
-                Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
-                matrix = null;
-            }
-            Disable();
-            Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
-        }
-        private static void Disable() {
+        internal static void Disable() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
             // TODO: lock here

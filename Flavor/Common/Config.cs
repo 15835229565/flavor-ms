@@ -14,11 +14,9 @@ namespace Flavor.Common {
 
         private const string CONFIG_NAME = "config.xml";
         private const string CRASH_LOG_NAME = "MScrash.log";
-        private const string LIBRARY_NAME = "library.xml";
 
         private static string mainConfigName;
         private static string logName;
-        private static string libraryName;
 
         #region Extensions
         internal const string SPECTRUM_EXT = "sdf";
@@ -75,7 +73,7 @@ namespace Flavor.Common {
             }
         }
         private static ushort countMaxIteration() {
-            return countMaxIteration(preciseData.getUsed());
+            return countMaxIteration(preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed));
         }
         private static ushort countMaxIteration(List<Utility.PreciseEditorData> pedl) {
             ushort maxIteration = 0;
@@ -87,7 +85,7 @@ namespace Flavor.Common {
 
         internal static List<Utility.PreciseEditorData> PreciseDataWithChecker {
             get {
-                List<Utility.PreciseEditorData> res = preciseData.getUsed();
+                List<Utility.PreciseEditorData> res = preciseData.FindAll(Utility.PreciseEditorData.PeakIsUsed);
                 if (res.Count == 0) {
                     return null;
                 }
@@ -148,7 +146,6 @@ namespace Flavor.Common {
         internal static void getInitialDirectory() {
             mainConfigName = System.IO.Path.Combine(INITIAL_DIR, CONFIG_NAME);
             logName = System.IO.Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
-            libraryName = System.IO.Path.Combine(INITIAL_DIR, LIBRARY_NAME);
         }
         #region Global Config I/O
         internal static void loadGlobalConfig() {
@@ -201,34 +198,6 @@ namespace Flavor.Common {
         }
         internal static void saveGlobalConfig() {
             mainConfigWriter.write();
-        }
-        internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
-            ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
-            lib.readOnce(peds.ConvertAll<string>(x => 
-                // TODO: associate id!
-                x.Step.ToString()));
-            
-            // TODO: retrieve library data here. form matrix.
-            // implement Config.LoadLibrary
-            
-            // TODO: form PreciseData and matrix simultaneously directly from library
-            // use current coeffs for that
-            int rank = peds.Count;
-            double[,] matrix = new double[rank, rank];
-            // TODO: make temporary solution, maybe buggy
-            foreach (XmlReader reader in lib.PeakNodes) {
-                // sort by peak value?
-                // find central peak in library
-                // TODO: implement search of desired peak in library.
-                List<Utility.PreciseEditorData> substanceSpectrum = null;
-                // find all side peaks that intersect with other central peaks
-                // form row in matrix
-                foreach (Utility.PreciseEditorData ped2 in peds.FindAll(substanceSpectrum.Contains)) {
-                    // TODO: proper element here
-                    matrix[0, 0] = 0;
-                }
-            }
-            return matrix;
         }
         #endregion
         #region Spectra I/O
@@ -428,10 +397,6 @@ namespace Flavor.Common {
             writer.setShift(shift);
             writer.write();
         }
-        internal static void AutoSaveSolvedSpectra(double[] solution) {
-            // TODO: simplify
-            MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).setSolvedResult(solution);
-        }
         internal static void finalizeMonitorFile() {
             // TODO: simplify
             MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).finalize();
@@ -578,7 +543,6 @@ namespace Flavor.Common {
         #endregion
         #region Additive configs
         private interface IMonitorWriter: IAnyWriter, IShift {
-            void setSolvedResult(double[] solution);
             void finalize();
         }
         private abstract class MonitorSaveMaintainer {
@@ -609,9 +573,7 @@ namespace Flavor.Common {
                     private readonly List<Utility.PreciseEditorData> precData;
                     private readonly string header;
                     private readonly StreamWriter sw;
-                    private readonly StreamWriter swResolved;
                     private static Writer instance = null;
-                    private double[] solution = null;
                     public static IMonitorWriter getInstance(DateTime dt, Graph graph) {
                         if (instance == null) {
                             instance = new Writer(dt, graph);
@@ -634,24 +596,20 @@ namespace Flavor.Common {
                         opts = graph.CommonOptions;
                         precData = new List<Utility.PreciseEditorData>(graph.PreciseData);
                         header = generateHeader();
-                        initFile(dt, out filename, out sw, out swResolved);
+                        initFile(dt, out filename, out sw);
                     }
                     private Writer(Writer other, DateTime dt) {
                         this.initialDT = dt;
                         this.opts = other.opts;
                         this.precData = other.precData;
                         header = other.header;
-                        initFile(dt, out filename, out sw, out swResolved);
+                        initFile(dt, out filename, out sw);
                     }
-                    private void initFile(DateTime dt, out string filename, out StreamWriter sw, out StreamWriter swResolved) {
+                    private void initFile(DateTime dt, out string filename, out StreamWriter sw) {
                         filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
                         sw = new StreamWriter(filename, true);
                         sw.WriteLine(header);
                         sw.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
-
-                        swResolved = new StreamWriter(filename + "r", true);
-                        swResolved.WriteLine(header);
-                        swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
                     }
                     private string generateHeader() {
                         StringBuilder sb = (new StringBuilder(header))
@@ -698,9 +656,6 @@ namespace Flavor.Common {
                         }
                         sw.WriteLine(sb);
                         sw.Close();
-
-                        swResolved.WriteLine(sb + nextFilename == null ? "" : "r");
-                        swResolved.Close();
                     }
                     #region IAnyWriter Members
                     public void write() {
@@ -708,9 +663,6 @@ namespace Flavor.Common {
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
                             .Append(shift);
-                        
-                        swResolved.Write(sb);
-                        
                         foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
                             if (ped.Use) {
                                 sb
@@ -720,10 +672,6 @@ namespace Flavor.Common {
                         }
                         sw.WriteLine(sb);
                         sw.Flush();
-
-                        swResolved.Write(DATA_DELIMITER);
-                        swResolved.WriteLine(solution);
-                        swResolved.Flush();
                     }
                     #endregion
                     #region IShift Members
@@ -732,10 +680,6 @@ namespace Flavor.Common {
                     }
                     #endregion
                     #region IMonitorWriter Members
-                    public void setSolvedResult(double[] solution) {
-                        // in fact this method is called before write(). check this!
-                        this.solution = solution;
-                    }
                     public void finalize() {
                         finalize(null);
                         instance = null;
@@ -767,12 +711,6 @@ namespace Flavor.Common {
         private interface IMainConfig: ICommonOptionsReader, IPreciseDataReader, IScalingCoeffsReader {
             void read();
             XmlDocument XML {
-                get;
-            }
-        }
-        private interface ILibraryReader: IAnyReader {
-            void readOnce(List<string> ids);
-            System.Collections.Hashtable PeakNodes {
                 get;
             }
         }
@@ -851,7 +789,6 @@ namespace Flavor.Common {
             #region Error Messages
             private const string CONFIG_FILE_STRUCTURE_ERROR = "Ошибка структуры конфигурационного файла";
             private const string CONFIG_FILE_READ_ERROR = "Ошибка чтения конфигурационного файла";
-            private const string LIBRARY_FILE_READ_ERROR = "Ошибка чтения файла библиотеки спектров";
             #endregion
             private string filename;
             private XmlDocument xmlData;
@@ -2118,49 +2055,6 @@ namespace Flavor.Common {
                         }
                     }
                 }
-                public class LibraryReader: ILibraryReader {
-                    private const string LIBRARY_TAG = "library";
-                    private const string SPECTRUM_TAG = "spectrum";
-                    private const string ID_ATTRIBUTE = "id";
-                    private const string MASS_ATTRIBUTE = "mass";
-                    private const string PEAK_TAG = "peak";
-                    private const string VALUE_ATTRIBUTE = "value";
-                    private readonly XmlTextReader reader;
-                    private System.Collections.Hashtable table;
-                    public LibraryReader(string filename) {
-                        reader = new XmlTextReader(filename);
-                    }
-                    #region ILibraryReader Members
-                    public void readOnce(List<string> ids) {
-                        if (reader.ReadState != ReadState.Initial)
-                            reader.ResetState();
-                        // TODO: continue coding here
-                        reader.ReadToFollowing(LIBRARY_TAG);
-                        //int count = reader.AttributeCount;
-                        reader.GetAttribute(VERSION_ATTRIBUTE);
-                        System.Collections.Hashtable table = new System.Collections.Hashtable(ids.Count);
-                        while (!(reader.EOF || ids.Count == 0)) {
-                            reader.ReadToNextSibling(SPECTRUM_TAG);
-                            string id = reader.GetAttribute(ID_ATTRIBUTE);
-                            if (ids.Contains(id)) {
-                                ids.Remove(id);
-                                table.Add(id, reader.ReadSubtree());
-                            }
-                        }
-                        if (ids.Count != 0)
-                            ;//error
-                        else {
-                            this.table = table;
-                        }
-                    }
-                    public System.Collections.Hashtable PeakNodes {
-                        get { 
-                            // TODO: do all parsing inside here
-                            return table; // BAD!
-                        }
-                    }
-                    #endregion
-                }
                 public class SpectrumReader: ComplexReader, ISpectrumReader {
                     private bool hint;
                     #region ISpectrumReader Members
@@ -2287,16 +2181,14 @@ namespace Flavor.Common {
                             string[] parts = text.Split(COUNTS_SEPARATOR);
                             foreach (string str in parts) {
                                 // locale?
-                                //! double for non-integral counts (after subtraction with renormalization on point/peak)
-                                tempPntLst.Add(peakStart, double.Parse(str));
+                                tempPntLst.Add(peakStart, long.Parse(str));
                                 ++peakStart;
                             }
                         } catch (FormatException) {
-                            // TODO: store exception messages
-                            throw new ConfigLoadException("Неверный формат данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла прецизионного спектра", filename);
                         }
                         if (--peakStart != peakEnd)
-                            throw new ConfigLoadException("Несовпадение рядов данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка чтения файла прецизионного спектра", filename);
 
                         return tempPntLst;
                     }
@@ -2552,14 +2444,6 @@ namespace Flavor.Common {
             }
             public static IMainConfigWriter getMainConfigWriter(string confName, XmlDocument doc) {
                 return getInitializedConfig<IMainConfigWriter, CurrentTagHolder.MainConfigWriter>(confName, doc);
-            }
-            internal static ILibraryReader getLibraryReader(string confName) {
-                return new CurrentTagHolder.LibraryReader(confName);
-                /*return findCorrespondingReaderVersion<ILibraryReader,
-                    CurrentTagHolder.LibraryReader,
-                    CurrentTagHolder.LibraryReader,
-                    CurrentTagHolder.LibraryReader,
-                    CurrentTagHolder.LibraryReader>(confName, LIBRARY_FILE_READ_ERROR);*/
             }
             #endregion
             #region Private Service Methods

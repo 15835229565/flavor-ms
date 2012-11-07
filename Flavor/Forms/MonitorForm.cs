@@ -140,7 +140,6 @@ namespace Flavor.Forms
             list = new List<PointPairList>();
             sums = new List<long>();
             //!!
-            // TODO: use extension method getUsed()
             List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i)
@@ -157,7 +156,7 @@ namespace Flavor.Forms
             }
 
             // temporary?
-            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
+            Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
             Show();
             Activate();
         }
@@ -167,7 +166,7 @@ namespace Flavor.Forms
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             // temporary?
-            Graph.Instance.OnNewGraphData -= InvokeRefreshGraph;
+            Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
             time = -1;
         }
         #endregion

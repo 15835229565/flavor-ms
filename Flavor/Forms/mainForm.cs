@@ -626,7 +626,6 @@ namespace Flavor.Forms {
                 case Commander.programStates.Ready:
                     bool canDoPrecise = block && Commander.SomePointsUsed;
                     setButtons(false, false, true, true, block, canDoPrecise, canDoPrecise, true);
-                    monitorToolStripButton.Text = "Режим мониторинга";
                     break;
                 case Commander.programStates.WaitBackgroundMeasure:
                     setButtons(false, false, true, true, false, false, false, false);

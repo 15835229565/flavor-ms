@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace Flavor.Common {
     public class FixedSizeQueue<T> {
@@ -50,23 +49,24 @@ namespace Flavor.Common {
         //   item:
         //     The object to add to the FixedSizeQueue<T>. The value can
         //     be null for reference types.
-        public void Enqueue(T item) {
+        // Returns:
+        //     Item that is dequeued from the filled FixedSizeQueue<T> or default value of T.
+        public T Enqueue(T item) {
+            T oldItem = default(T);
             if (queue.Count == maxCapacity) {
-                queue.Dequeue();
+                oldItem = queue.Dequeue();
             }
             queue.Enqueue(item);
+            return oldItem;
         }
         //
         // Summary:
-        //     Returns whether the instance of FixedSizeQueue<T> contains maximum number of elements.
+        //     Copies the FixedSizeQueue<T> elements to a new array.
         //
         // Returns:
-        //     A boolean value indicating whether the instance of FixedSizeQueue<T> contains maximum number of elements.
-        public bool IsFull {
-            get { return queue.Count == maxCapacity; }
-        }
-        public T Aggregate(Func<T, T, T> func) {
-            return queue.Aggregate(func);
+        //     A new array containing elements copied from the System.Collections.Generic.Queue<T>.
+        public T[] ToArray() {
+            return queue.ToArray();
         }
     }
     
@@ -374,10 +374,6 @@ namespace Flavor.Common {
         internal PreciseSpectrum()
             : base() {
         }
-        internal PreciseSpectrum(IEnumerable<Utility.PreciseEditorData> other)
-            : base(other) {
-            // TODO: check that copies here!
-        }
         internal CommonOptions CommonOptions {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
@@ -542,12 +538,6 @@ namespace Flavor.Common {
             //seem not to be necessary..
             //EventHandler<T> evt = handler;
             //if (evt != null) evt(sender, args);
-        }
-        public static List<PreciseEditorData> getUsed(this List<PreciseEditorData> peds) {
-            return peds.FindAll(PreciseEditorData.PeakIsUsed);
-        }
-        internal static List<PreciseEditorData> getUsed(this PreciseSpectrum peds) {
-            return peds.FindAll(PreciseEditorData.PeakIsUsed);
         }
         #region PreciseEditorData
         public class PreciseEditorData: IComparable<PreciseEditorData> {

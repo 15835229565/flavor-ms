@@ -86,7 +86,6 @@
     <Compile Include="Common\ConsoleWriter.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
-    <Compile Include="Common\Library\Matrix.cs" />
     <Compile Include="Common\MeasureMode.cs" />
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
@@ -349,7 +348,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MonitorBackgroundForm.resx">
       <DependentUpon>MonitorBackgroundForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MonitorForm.resx">
       <SubType>Designer</SubType>
@@ -433,7 +431,6 @@
     <Content Include="config.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="library.xml" />
     <Content Include="ThirdParty.Licenses.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
