@@ -39,6 +39,7 @@ namespace Flavor.Forms
 
         protected override sealed void RefreshGraph() {
             //BAD: every time
+            // TODO: use getUsed()
             List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             if (pspec.Count != rowsCount)
                 // very bad!
@@ -124,6 +125,7 @@ namespace Flavor.Forms
                     }*/
                     CreateGraph();
                 } else {
+                    // In new Monitor mode doubles points!
                     RefreshGraph();
                     time += 1;
                 }

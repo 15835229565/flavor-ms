@@ -326,7 +326,9 @@ namespace Flavor.Common {
             bool doBackgroundPremeasure = true;
             
             if (pState == Commander.programStates.Ready) {
-                if (SomePointsUsed) {
+                // ! temporary solution
+                List<Utility.PreciseEditorData> peds = Graph.Instance.PreciseData.getUsed().getWithId();
+                if (peds.Count > 0/*SomePointsUsed*/) {
                     Graph.ResetForMonitor();
                     measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
                     initMeasure(Commander.programStates.WaitBackgroundMeasure);
@@ -337,19 +339,22 @@ namespace Flavor.Common {
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                     }
                     // TODO: move matrix formation to manual operator actions
-                    //! now Matrix is empty
-                    matrix = new Matrix(Config.LoadLibrary(Graph.Instance.PreciseData.getUsed()));
+                    // TODO: parallelize matrix formation, flag on completion
+                    // TODO: duplicates
+                    matrix = new Matrix(Config.LoadLibrary(peds));
+                    matrix.Init();
 
                     Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                 } else {
-                    ConsoleWriter.WriteLine("No points for monitor(precise) mode measure.");
+                    ConsoleWriter.WriteLine("No points for monitor mode measure.");
                 }
             } else if (pState == Commander.programStates.BackgroundMeasureReady) {
                 Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
 
                 backgroundResult = background.Aggregate(Summarize);
-                backgroundResult.ForEach(x => { x /= backgroundCycles; });
-                // TODO: use this average background data later
+                for (int i = 0; i < backgroundResult.Count; ++i) {
+                    backgroundResult[i] /= backgroundCycles;
+                }
 
                 setProgramStateWithoutUndo(programStates.Measure);
                 Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
@@ -361,8 +366,10 @@ namespace Flavor.Common {
             if (recreate == Graph.Recreate.None)
                 return;
             List<long> currentMeasure = new List<long>();
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
+            // ! temporary solution
+            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+            }
             background.Enqueue(currentMeasure);
             if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
                 setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
@@ -372,8 +379,10 @@ namespace Flavor.Common {
             if (recreate == Graph.Recreate.None)
                 return;
             List<long> currentMeasure = new List<long>();
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed())
+            // ! temporary solution
+            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+            }
             if (currentMeasure.Count != backgroundResult.Count) { 
                 // length mismatch
                 // TODO: throw smth
@@ -382,10 +391,16 @@ namespace Flavor.Common {
             for (int i = 0; i < backgroundResult.Count; ++i) {
                 currentMeasure[i] -= backgroundResult[i];
             }
-            // TODO: implement
             // solve matrix equation
-            double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => { return (double)x; }));
+            double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => (double)x));
             Config.AutoSaveSolvedSpectra(result);
+            // TODO: put here all automatic logic from measure modes
+        }
+        private static List<Utility.PreciseEditorData> getWithId(this List<Utility.PreciseEditorData> peds) {
+            // ! temporary solution
+            return peds.FindAll(
+                        x => x.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY)
+                    );
         }
         private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility

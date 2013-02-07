@@ -305,6 +305,7 @@ namespace Flavor.Common {
 
                 internal Monitor(short initialShift, ushort allowedShift, int timeLimit)
                     : base(Graph.Instance.PreciseData, initialShift) {
+                    // TODO: getWithId()
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);
                     peak = Config.CheckerPeak;

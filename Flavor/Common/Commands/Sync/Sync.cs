@@ -224,6 +224,7 @@ namespace Flavor.Common.Commands.Sync {
                 // fake packet. BAD solution
                 return;
             }
+            // Not the best place for automatic refresh!
             Commander.CurrentMeasureMode.updateGraph();
         }
 

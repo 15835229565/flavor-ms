@@ -202,30 +202,25 @@ namespace Flavor.Common {
         internal static void saveGlobalConfig() {
             mainConfigWriter.write();
         }
+        public const string ID_PREFIX_TEMPORARY = "id_";
         internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
+            int rank = peds.Count;
             ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
-            lib.readOnce(peds.ConvertAll<string>(x => 
-                // TODO: associate id!
-                x.Step.ToString()));
-            
-            // TODO: retrieve library data here. form matrix.
-            // implement Config.LoadLibrary
+            List<string> ids = peds.ConvertAll<string>(
+                    x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
+                );
+            lib.readOnce(ids);
             
             // TODO: form PreciseData and matrix simultaneously directly from library
             // use current coeffs for that
-            int rank = peds.Count;
             double[,] matrix = new double[rank, rank];
-            // TODO: make temporary solution, maybe buggy
-            foreach (XmlReader reader in lib.PeakNodes) {
-                // sort by peak value?
-                // find central peak in library
-                // TODO: implement search of desired peak in library.
-                List<Utility.PreciseEditorData> substanceSpectrum = null;
-                // find all side peaks that intersect with other central peaks
-                // form row in matrix
-                foreach (Utility.PreciseEditorData ped2 in peds.FindAll(substanceSpectrum.Contains)) {
-                    // TODO: proper element here
-                    matrix[0, 0] = 0;
+
+            for (int i = 0; i < rank; ++i) {
+                // Main mass! not always the biggest
+                // TODO: modify for not main mass!
+                int currentMass = lib.Mass(i);
+                for (int j = 0; j < rank; ++j) {
+                    matrix[i, j] = lib.Masses(ids[j]).ContainsKey(currentMass) ? (int)lib.Masses(ids[j])[currentMass] : 0;
                 }
             }
             return matrix;
@@ -426,6 +421,7 @@ namespace Flavor.Common {
             DateTime dt = autoSavePreciseSpectrumFile(shift);
             IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
             writer.setShift(shift);
+            // TODO: separate resolved file write-out
             writer.write();
         }
         internal static void AutoSaveSolvedSpectra(double[] solution) {
@@ -699,7 +695,7 @@ namespace Flavor.Common {
                         sw.WriteLine(sb);
                         sw.Close();
 
-                        swResolved.WriteLine(sb + nextFilename == null ? "" : "r");
+                        swResolved.WriteLine(sb + (nextFilename == null ? "" : "r"));
                         swResolved.Close();
                     }
                     #region IAnyWriter Members
@@ -722,6 +718,8 @@ namespace Flavor.Common {
                         sw.Flush();
 
                         swResolved.Write(DATA_DELIMITER);
+                        // TODO: formatting of array output
+                        // Do not write background measure nulls!
                         swResolved.WriteLine(solution);
                         swResolved.Flush();
                     }
@@ -772,9 +770,8 @@ namespace Flavor.Common {
         }
         private interface ILibraryReader: IAnyReader {
             void readOnce(List<string> ids);
-            System.Collections.Hashtable PeakNodes {
-                get;
-            }
+            System.Collections.Hashtable Masses(string id);
+            int Mass(int index);
         }
         private interface IScalingCoeffsWriter: IAnyWriter {
             void saveScalingCoeffs(double coeff1, double coeff2);
@@ -2127,6 +2124,7 @@ namespace Flavor.Common {
                     private const string VALUE_ATTRIBUTE = "value";
                     private readonly XmlTextReader reader;
                     private System.Collections.Hashtable table;
+                    private List<int> masses;
                     public LibraryReader(string filename) {
                         reader = new XmlTextReader(filename);
                     }
@@ -2139,25 +2137,46 @@ namespace Flavor.Common {
                         //int count = reader.AttributeCount;
                         reader.GetAttribute(VERSION_ATTRIBUTE);
                         System.Collections.Hashtable table = new System.Collections.Hashtable(ids.Count);
-                        while (!(reader.EOF || ids.Count == 0)) {
-                            reader.ReadToNextSibling(SPECTRUM_TAG);
-                            string id = reader.GetAttribute(ID_ATTRIBUTE);
-                            if (ids.Contains(id)) {
-                                ids.Remove(id);
-                                table.Add(id, reader.ReadSubtree());
+                        masses = new List<int>(ids.Count);
+                        if (reader.ReadToDescendant(SPECTRUM_TAG)) {
+                            do {
+                                string id = reader.GetAttribute(ID_ATTRIBUTE);
+                                if (ids.Contains(id)) {
+                                    //ids.Remove(id);
+                                    masses.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)));
+                                    System.Collections.Hashtable result = new System.Collections.Hashtable();
+                                    if (reader.ReadToDescendant(PEAK_TAG)) {
+                                        do {
+                                            result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                        } while (reader.ReadToNextSibling(PEAK_TAG));
+                                    }
+                                    table.Add(id, result);
+                                }
+                            } while (reader.ReadToNextSibling(SPECTRUM_TAG));
+                        }
+                        //if (ids.Count != 0)
+                            //;//error
+                        //else {
+                            this.table = table;
+                        //}
+                    }
+                    public System.Collections.Hashtable Masses(string id) {
+                        if (!table.ContainsKey(id)) {
+                            // no id!
+                            return null;
+                        }
+                        System.Collections.Hashtable result = new System.Collections.Hashtable();
+                        
+                        foreach (int mass in masses){
+                            if ((table[id] as System.Collections.Hashtable).ContainsKey(mass)) {
+                                result.Add(mass, (table[id] as System.Collections.Hashtable)[mass]);
                             }
                         }
-                        if (ids.Count != 0)
-                            ;//error
-                        else {
-                            this.table = table;
-                        }
+                        
+                        return result;
                     }
-                    public System.Collections.Hashtable PeakNodes {
-                        get { 
-                            // TODO: do all parsing inside here
-                            return table; // BAD!
-                        }
+                    public int Mass(int index) {
+                        return masses[index];
                     }
                     #endregion
                 }
