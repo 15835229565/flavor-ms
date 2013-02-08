@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Flavor.Common.Commands.UI;
+using UserRequest = Flavor.Common.Commands.UserRequest;
+using SyncReply = Flavor.Common.Commands.SyncReply;
 using Flavor.Forms;
 using System.Timers;
 
@@ -16,7 +17,7 @@ namespace Flavor.Common {
 
         private ushort pointValue = 0;
 
-        private sendMeasure customMeasure = null;
+        private UserRequest.sendMeasure customMeasure = null;
         private readonly ushort befTime;
         private readonly ushort eTime;
 
@@ -56,7 +57,7 @@ namespace Flavor.Common {
         protected virtual void finalize() {}
         internal virtual bool start() {
             //first measure point with increased idle time
-            customMeasure = new sendMeasure(befTime, eTime);
+            customMeasure = new UserRequest.sendMeasure(befTime, eTime);
             operating = true;
             return true;
         }
@@ -65,7 +66,7 @@ namespace Flavor.Common {
         internal void autoNextMeasure() {
             if (operating) {
                 if (customMeasure == null) {
-                    Commander.AddToSend(new sendMeasure());
+                    Commander.AddToSend(new UserRequest.sendMeasure());
                 } else {
                     Commander.AddToSend(customMeasure);
                 }
@@ -77,7 +78,7 @@ namespace Flavor.Common {
         private void stop() {
             finalize();
             operating = false;
-            Commander.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
+            Commander.AddToSend(new UserRequest.sendSVoltage(0));//Set ScanVoltage to low limit
             Disable();
         }
 
@@ -94,7 +95,7 @@ namespace Flavor.Common {
                 Config.autoSaveSpectrumFile();
             }
             protected override bool onNextStep() {
-                Commander.AddToSend(new sendSVoltage(pointValue++));
+                Commander.AddToSend(new UserRequest.sendSVoltage(pointValue++));
                 return true;
             }
             protected override bool toContinue() {
@@ -178,7 +179,7 @@ namespace Flavor.Common {
                 if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP) {
                     return false;
                 }
-                Commander.AddToSend(new sendSVoltage((ushort)realValue));
+                Commander.AddToSend(new UserRequest.sendSVoltage((ushort)realValue));
                 ++pointValue;
                 return true;
             }
@@ -205,13 +206,13 @@ namespace Flavor.Common {
                     ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
                     if (pointValue > nextPoint) {
                         //!!!case of backward voltage change
-                        customMeasure = new sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
+                        customMeasure = new UserRequest.sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
                     } else {
                         //!!!case of forward voltage change
                         if (Config.CommonOptions.ForwardTimeEqualsBeforeTime) {
-                            customMeasure = new sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
+                            customMeasure = new UserRequest.sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
                         } else {
-                            customMeasure = new sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
+                            customMeasure = new UserRequest.sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
                         }
                     }
                     pointValue = nextPoint;

@@ -705,7 +705,14 @@ namespace Flavor.Common {
                             .Append(DATA_DELIMITER)
                             .Append(shift);
                         
-                        swResolved.Write(sb);
+                        if (solution != null) {
+                            swResolved.Write(sb);
+                            foreach (double d in solution) {
+                                swResolved.Write(DATA_DELIMITER);
+                                swResolved.Write(d);
+                            }
+                            swResolved.WriteLine();
+                        }
                         
                         foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
                             if (ped.Use) {
@@ -716,11 +723,6 @@ namespace Flavor.Common {
                         }
                         sw.WriteLine(sb);
                         sw.Flush();
-
-                        swResolved.Write(DATA_DELIMITER);
-                        // TODO: formatting of array output
-                        // Do not write background measure nulls!
-                        swResolved.WriteLine(solution);
                         swResolved.Flush();
                     }
                     #endregion

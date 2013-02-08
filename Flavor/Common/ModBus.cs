@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Timers;
-using Flavor.Common.Commands.Interfaces;
-using Flavor.Common.Commands.Sync;
-using Flavor.Common.Commands.Async;
+using Flavor.Common.Commands;
 
 namespace Flavor.Common {
     internal static class ModBus {
@@ -225,12 +223,12 @@ namespace Flavor.Common {
                     switch ((CommandCode)raw_command[0]) {
                         case CommandCode.GetState:
                             if (raw_command.Length == 3) {
-                                return new updateState(raw_command[1]);
+                                return new SyncReply.updateState(raw_command[1]);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.GetStatus:
                             if (raw_command.Length == 29) {
-                                return new updateStatus(raw_command[1],
+                                return new SyncReply.updateStatus(raw_command[1],
                                                         raw_command[2],
                                                         (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
                                                         (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
@@ -247,76 +245,76 @@ namespace Flavor.Common {
                                     //raw_command[26], 
                                                         (ushort)((ushort)raw_command[26] + ((ushort)raw_command[27] << 8)));
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.Shutdown:
                             if (raw_command.Length == 2) {
-                                return new confirmShutdown();
+                                return new SyncReply.confirmShutdown();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.Init:
                             if (raw_command.Length == 2) {
-                                return new confirmInit();
+                                return new SyncReply.confirmInit();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetHeatCurrent:
                             if (raw_command.Length == 2) {
-                                return new confirmHCurrent();
+                                return new SyncReply.confirmHCurrent();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetEmissionCurrent:
                             if (raw_command.Length == 2) {
-                                return new confirmECurrent();
+                                return new SyncReply.confirmECurrent();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetIonizationVoltage:
                             if (raw_command.Length == 2) {
-                                return new confirmIVoltage();
+                                return new SyncReply.confirmIVoltage();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetFocusVoltage1:
                             if (raw_command.Length == 2) {
-                                return new confirmF1Voltage();
+                                return new SyncReply.confirmF1Voltage();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetFocusVoltage2:
                             if (raw_command.Length == 2) {
-                                return new confirmF2Voltage();
+                                return new SyncReply.confirmF2Voltage();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetScanVoltage:
                             if (raw_command.Length == 2) {
-                                return new confirmSVoltage();
+                                return new SyncReply.confirmSVoltage();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetCapacitorVoltage:
                             if (raw_command.Length == 2) {
-                                return new confirmCP();
+                                return new SyncReply.confirmCP();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.Measure:
                             if (raw_command.Length == 2) {
-                                return new confirmMeasure();
+                                return new SyncReply.confirmMeasure();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.GetCounts:
                             if (raw_command.Length == 8) {
-                                return new updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
+                                return new SyncReply.updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
                                                         (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16));
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.heatCurrentEnable:
                             if (raw_command.Length == 2) {
-                                return new confirmHECurrent();
+                                return new SyncReply.confirmHECurrent();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.EnableHighVoltage:
                             if (raw_command.Length == 2) {
-                                return new confirmHighVoltage();
+                                return new SyncReply.confirmHighVoltage();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.GetTurboPumpStatus:
                             if (raw_command.Length == 17) {
-                                return new updateTurboPumpStatus((ushort)((ushort)raw_command[1] + ((ushort)raw_command[2] << 8)),
+                                return new SyncReply.updateTurboPumpStatus((ushort)((ushort)raw_command[1] + ((ushort)raw_command[2] << 8)),
                                                         (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
                                                         (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
                                                         (ushort)((ushort)raw_command[7] + ((ushort)raw_command[8] << 8)),
@@ -326,130 +324,130 @@ namespace Flavor.Common {
                                                         raw_command[14],
                                                         raw_command[15]);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SetForvacuumLevel:
                             if (raw_command.Length == 2) {
-                                return new confirmForvacuumLevel();
+                                return new SyncReply.confirmForvacuumLevel();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidCommand:
                             byte[] tempArray = new byte[raw_command.Length - 1];
                             raw_command.CopyTo(tempArray, 1);
-                            return new logInvalidCommand(tempArray);
+                            return new SyncErrorReply.logInvalidCommand(tempArray);
                         case CommandCode.InvalidChecksum:
                             if (raw_command.Length == 2) {
-                                return new logInvalidChecksum();
+                                return new SyncErrorReply.logInvalidChecksum();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidPacket:
                             if (raw_command.Length == 2) {
-                                return new logInvalidPacket();
+                                return new SyncErrorReply.logInvalidPacket();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidLength:
                             if (raw_command.Length == 2) {
-                                return new logInvalidLength();
+                                return new SyncErrorReply.logInvalidLength();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidData:
                             if (raw_command.Length == 2) {
-                                return new logInvalidData();
+                                return new SyncErrorReply.logInvalidData();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidState:
                             if (raw_command.Length == 2) {
-                                return new logInvalidState();
+                                return new SyncErrorReply.logInvalidState();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InternalError:
                             if (raw_command.Length == 3) {
-                                return new logInternalError(raw_command);
+                                return new AsyncErrorReply.logInternalError(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidSystemState:
                             if (raw_command.Length == 2) {
-                                return new logInvalidSystemState(raw_command);
+                                return new AsyncErrorReply.logInvalidSystemState(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.VacuumCrash:
                             if (raw_command.Length == 3) {
-                                return new logVacuumCrash(raw_command);
+                                return new AsyncErrorReply.logVacuumCrash(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.TurboPumpFailure:
                             if (raw_command.Length == 17) {
-                                return new logTurboPumpFailure(raw_command);
+                                return new AsyncErrorReply.logTurboPumpFailure(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.PowerFail:
                             if (raw_command.Length == 2) {
-                                return new logPowerFail(raw_command);
+                                return new AsyncErrorReply.logPowerFail(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.InvalidVacuumState:
                             if (raw_command.Length == 2) {
-                                return new logInvalidVacuumState(raw_command);
+                                return new AsyncErrorReply.logInvalidVacuumState(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.AdcPlaceIonSrc:
                             //!!!
                             if (raw_command.Length >= 2) {
-                                return new logAdcPlaceIonSrc(raw_command);
+                                return new AsyncErrorReply.logAdcPlaceIonSrc(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.AdcPlaceScanv:
                             //!!!
                             if (raw_command.Length >= 2) {
-                                return new logAdcPlaceScanv(raw_command);
+                                return new AsyncErrorReply.logAdcPlaceScanv(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.AdcPlaceControlm:
                             //!!!
                             if (raw_command.Length >= 2) {
-                                return new logAdcPlaceControlm(raw_command);
+                                return new AsyncErrorReply.logAdcPlaceControlm(raw_command);
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.Measured:
                             if (raw_command.Length == 2) {
-                                return new requestCounts();
+                                return new AsyncReply.requestCounts();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.VacuumReady:
                             if (raw_command.Length == 2) {
-                                return new confirmVacuumReady();
+                                return new AsyncReply.confirmVacuumReady();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SystemShutdowned:
                             if (raw_command.Length == 2) {
-                                return new confirmShutdowned();
+                                return new AsyncReply.confirmShutdowned();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.SystemReseted:
                             if (raw_command.Length == 2) {
-                                return new SystemReseted();
+                                return new AsyncReply.SystemReseted();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.HighVoltageOff:
                             if (raw_command.Length == 2) {
-                                return new confirmHighVoltageOff();
+                                return new AsyncReply.confirmHighVoltageOff();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         case CommandCode.HighVoltageOn:
                             if (raw_command.Length == 2) {
-                                return new confirmHighVoltageOn();
+                                return new AsyncReply.confirmHighVoltageOn();
                             }
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                         default:
                             ConsoleWriter.WriteLine("Неверная команда");
-                            return new ServicePacket();
+                            return ServicePacket.ZERO;
                     }
                 } else {
                     ConsoleWriter.WriteLine("Неверная контрольная сумма");
-                    return new ServicePacket();
+                    return ServicePacket.ZERO;
                 }
             } else {
                 ConsoleWriter.WriteLine("Короткий пакет");
-                return new ServicePacket();
+                return ServicePacket.ZERO;
             }
         }
 

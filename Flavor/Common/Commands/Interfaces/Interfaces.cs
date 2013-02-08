@@ -1,9 +1,11 @@
-﻿namespace Flavor.Common.Commands.Interfaces {
-    internal class ServicePacket { }
-
-    internal class SyncServicePacket: ServicePacket {
-        internal virtual ModBus.CommandCode Id {
-            get { return ModBus.CommandCode.None; }
+﻿namespace Flavor.Common.Commands {
+    internal abstract class ServicePacket {
+        internal static readonly ServicePacket ZERO = new ZeroPacket();
+        private class ZeroPacket: ServicePacket { }
+        internal abstract class Sync: ServicePacket {
+            internal virtual ModBus.CommandCode Id {
+                get { return ModBus.CommandCode.None; }
+            }
         }
     }
 

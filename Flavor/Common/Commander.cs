@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
-using Flavor.Common.Commands.UI;
-using Flavor.Common.Commands.Async;
-using Flavor.Common.Commands.Sync;
+using Flavor.Common.Commands;
 using Flavor.Common.Messaging;
-using Flavor.Common.Commands.Interfaces;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
@@ -128,7 +125,7 @@ namespace Flavor.Common {
             }
             if (Command is AsyncReply) {
                 CheckInterfaces(Command);
-                if (Command is confirmShutdowned) {
+                if (Command is AsyncReply.confirmShutdowned) {
                     ConsoleWriter.WriteLine("System is shutdowned");
                     setProgramStateWithoutUndo(Commander.programStates.Start);
                     Commander.hBlock = true;
@@ -136,7 +133,7 @@ namespace Flavor.Common {
                     Device.Init();
                     return;
                 }
-                if (Command is SystemReseted) {
+                if (Command is AsyncReply.SystemReseted) {
                     ConsoleWriter.WriteLine("System reseted");
                     Commander.OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start) {
@@ -147,7 +144,7 @@ namespace Flavor.Common {
                     }
                     return;
                 }
-                if (Command is confirmVacuumReady) {
+                if (Command is AsyncReply.confirmVacuumReady) {
                     if (Commander.hBlock) {
                         setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);
                     } else {
@@ -155,18 +152,18 @@ namespace Flavor.Common {
                     }
                     return;
                 }
-                if (Command is confirmHighVoltageOff) {
+                if (Command is AsyncReply.confirmHighVoltageOff) {
                     Commander.hBlock = true;
                     setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);//???
                     return;
                 }
-                if (Command is confirmHighVoltageOn) {
+                if (Command is AsyncReply.confirmHighVoltageOn) {
                     Commander.hBlock = false;
                     if (Commander.pState == Commander.programStates.WaitHighVoltage) {
                         setProgramStateWithoutUndo(Commander.programStates.Ready);
                     }
-                    toSend.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
-                    toSend.AddToSend(new sendIVoltage());// и остальные напряжения затем
+                    toSend.AddToSend(new UserRequest.sendSVoltage(0));//Set ScanVoltage to low limit
+                    toSend.AddToSend(new UserRequest.sendIVoltage());// и остальные напряжения затем
                     return;
                 }
                 return;
@@ -181,19 +178,19 @@ namespace Flavor.Common {
                     return;
                 }
                 CheckInterfaces(Command);
-                if (Command is confirmInit) {
+                if (Command is SyncReply.confirmInit) {
                     ConsoleWriter.WriteLine("Init request confirmed");
                     setProgramStateWithoutUndo(Commander.programStates.Init);
                     ConsoleWriter.WriteLine(Commander.pState);
                     return;
                 }
-                if (Command is confirmShutdown) {
+                if (Command is SyncReply.confirmShutdown) {
                     ConsoleWriter.WriteLine("Shutdown request confirmed");
                     setProgramStateWithoutUndo(Commander.programStates.Shutdown);
                     ConsoleWriter.WriteLine(Commander.pState);
                     return;
                 }
-                if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is updateStatus)) {
+                if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is SyncReply.updateStatus)) {
                     switch (Device.sysState) {
                         case (byte)Device.DeviceStates.Init:
                         case (byte)Device.DeviceStates.VacuumInit:
@@ -208,7 +205,7 @@ namespace Flavor.Common {
                             break;
 
                         case (byte)Device.DeviceStates.Measured:
-                            toSend.AddToSend(new getCounts());
+                            toSend.AddToSend(new UserRequest.getCounts());
                             // waiting for fake counts reply
                             break;
                         case (byte)Device.DeviceStates.Measuring:
@@ -229,7 +226,7 @@ namespace Flavor.Common {
                     onTheFly = false;
                     return;
                 }
-                if (Command is updateCounts) {
+                if (Command is SyncReply.updateCounts) {
                     if (measureMode == null) {
                         // fake reply caught here (in order to put device into proper state)
                         Commander.hBlock = false;
@@ -245,7 +242,7 @@ namespace Flavor.Common {
                     }
                     return;
                 }
-                if (Command is confirmF2Voltage) {
+                if (Command is SyncReply.confirmF2Voltage) {
                     if (Commander.pState == programStates.Measure ||
                         Commander.pState == programStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareMode;
@@ -283,13 +280,13 @@ namespace Flavor.Common {
             ConsoleWriter.WriteLine(pState);
 
             setProgramState(Commander.programStates.WaitInit);
-            toSend.AddToSend(new sendInit());
+            toSend.AddToSend(new UserRequest.sendInit());
 
             ConsoleWriter.WriteLine(pState);
         }
         internal static void Shutdown() {
             Disable();
-            toSend.AddToSend(new sendShutdown());
+            toSend.AddToSend(new UserRequest.sendShutdown());
             setProgramState(Commander.programStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
         }
@@ -431,7 +428,7 @@ namespace Flavor.Common {
             measureMode = null;//?
         }
         internal static void sendSettings() {
-            toSend.AddToSend(new sendIVoltage());
+            toSend.AddToSend(new UserRequest.sendIVoltage());
             /*
             Commander.AddToSend(new sendCP());
             Commander.AddToSend(new enableECurrent());
@@ -468,7 +465,7 @@ namespace Flavor.Common {
                 Commander.pState == programStates.WaitBackgroundMeasure ||
                 Commander.pState == programStates.BackgroundMeasureReady)//strange..
                 Commander.measureCancelRequested = true;
-            toSend.AddToSend(new enableHighVoltage(Commander.hBlock));
+            toSend.AddToSend(new UserRequest.enableHighVoltage(Commander.hBlock));
         }
 
         internal static ModBus.PortStates Connect() {

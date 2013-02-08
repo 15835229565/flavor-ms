@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Flavor.Common.Commands.UI;
-using Flavor.Common.Commands.Sync;
+using UserRequest = Flavor.Common.Commands.UserRequest;
+using SyncReply = Flavor.Common.Commands.SyncReply;
 using System.Collections;
 
 namespace Flavor.Common.Messaging {
@@ -43,12 +43,12 @@ namespace Flavor.Common.Messaging {
         internal void AddToSend(UserRequest Command)//Enqueue
         {
             lock (SyncRoot) {
-                if (Command is requestStatus) {
+                if (Command is UserRequest.requestStatus) {
                     if (statusToSend) {
                         return;
                     }
                     statusToSend = true;
-                } else if (Command is getTurboPumpStatus) {
+                } else if (Command is UserRequest.getTurboPumpStatus) {
                     if (turboToSend) {
                         return;
                     }
@@ -95,7 +95,7 @@ namespace Flavor.Common.Messaging {
         protected void addStatusRequest() {
             lock (SyncRoot) {
                 if (!statusToSend) {
-                    ToSend.Enqueue(new requestStatus());
+                    ToSend.Enqueue(new UserRequest.requestStatus());
                     statusToSend = true;
                     trySend();
                 }
@@ -104,7 +104,7 @@ namespace Flavor.Common.Messaging {
         protected void addTurboPumpStatusRequest() {
             lock (SyncRoot) {
                 if (!turboToSend) {
-                    ToSend.Enqueue(new getTurboPumpStatus());
+                    ToSend.Enqueue(new UserRequest.getTurboPumpStatus());
                     turboToSend = true;
                 }
                 trySend();
@@ -189,9 +189,9 @@ namespace Flavor.Common.Messaging {
         private bool dequeueToSendInsideLock(ref UserRequest packet) {
             try {
                 packet = ToSend.Dequeue();
-                if (packet is requestStatus) {
+                if (packet is UserRequest.requestStatus) {
                     statusToSend = false;
-                } else if (packet is getTurboPumpStatus) {
+                } else if (packet is UserRequest.getTurboPumpStatus) {
                     turboToSend = false;
                 }
                 return true;
