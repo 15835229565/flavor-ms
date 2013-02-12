@@ -305,7 +305,7 @@ namespace Flavor.Common {
                 private long[] prevIteration = null;
 
                 internal Monitor(short initialShift, ushort allowedShift, int timeLimit)
-                    : base(Graph.Instance.PreciseData, initialShift) {
+                    : base(Graph.Instance.PreciseData.getUsed(), initialShift) {
                     // TODO: getWithId()
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);

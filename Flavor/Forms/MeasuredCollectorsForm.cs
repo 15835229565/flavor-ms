@@ -35,7 +35,7 @@ namespace Flavor.Forms {
 
         public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
-            Graph.Instance.OnNewGraphData += new Graph.GraphEventHandler(InvokeRefreshGraph);
+            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             PreciseSpectrumDisplayed = isPrecise;
             initPanel();
             Show();
@@ -59,7 +59,7 @@ namespace Flavor.Forms {
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
-            Graph.Instance.OnNewGraphData -= new Graph.GraphEventHandler(InvokeRefreshGraph);
+            Graph.Instance.OnNewGraphData -= InvokeRefreshGraph;
         }
 
         #endregion

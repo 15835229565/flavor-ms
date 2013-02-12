@@ -302,11 +302,12 @@ namespace Flavor.Forms {
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             // lock PreciseData for modification
-            Commander.Monitor();
-            MonitorForm.initMeasure(true);
-            // end lock
-            prepareControlsOnMeasureStart(MonitorForm);
-            CollectorsForm.Hide();
+            if (Commander.Monitor()) {
+                MonitorForm.initMeasure(true);
+                // end lock
+                prepareControlsOnMeasureStart(MonitorForm);
+                CollectorsForm.Hide();
+            }
         }
 
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {

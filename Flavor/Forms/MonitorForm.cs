@@ -180,7 +180,7 @@ namespace Flavor.Forms
                 item.Text = NORM_ITEM_TEXT;
                 item.Checked = (normalizedList != null);
                 item.CheckOnClick = true;
-                item.CheckedChanged += new System.EventHandler(NormItemCheckStateChanged);
+                item.CheckedChanged += NormItemCheckStateChanged;
 
                 items.Add(item);
             }

@@ -314,15 +314,15 @@ namespace Flavor.Common {
         private static FixedSizeQueue<List<long>> background;
         private static Matrix matrix;
         private static List<long> backgroundResult;
-        internal static void Monitor() {
+        internal static bool Monitor() {
             // TODO: configurable capacity
             // Config.BackgroundCycles
-            int backgroundCycles = 5;
+            int backgroundCycles = 1;
             // TODO: configurable?
             // Config.DoBackgroundPremeasure
             bool doBackgroundPremeasure = true;
             
-            if (pState == Commander.programStates.Ready) {
+            if (pState == programStates.Ready) {
                 // ! temporary solution
                 List<Utility.PreciseEditorData> peds = Graph.Instance.PreciseData.getUsed();
                 if (SomePointsUsed) {
@@ -339,18 +339,20 @@ namespace Flavor.Common {
                     Graph.ResetForMonitor();
                     
                     if (doBackgroundPremeasure) {
-                        initMeasure(Commander.programStates.WaitBackgroundMeasure);
+                        initMeasure(programStates.WaitBackgroundMeasure);
                         background = new FixedSizeQueue<List<long>>(backgroundCycles);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                         Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                     } else {
-                        setProgramStateWithoutUndo(programStates.Measure);
+                        initMeasure(programStates.Measure);
                         Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
                     }
+                    return true;
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor mode measure.");
+                    return false;
                 }
-            } else if (pState == Commander.programStates.BackgroundMeasureReady) {
+            } else if (pState == programStates.BackgroundMeasureReady) {
                 Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
 
                 backgroundResult = background.Aggregate(Summarize);
@@ -360,8 +362,10 @@ namespace Flavor.Common {
 
                 setProgramStateWithoutUndo(programStates.Measure);
                 Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
+                return false;
             } else {
                 // wrong state, strange!
+                return false;
             }
         }
         private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
