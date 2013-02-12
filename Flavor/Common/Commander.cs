@@ -367,6 +367,7 @@ namespace Flavor.Common {
             foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             }
+            //maybe null if background premeasure is false!
             background.Enqueue(currentMeasure);
             if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
                 setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
@@ -385,9 +386,9 @@ namespace Flavor.Common {
                 // TODO: throw smth
             }
             // distract background
-            for (int i = 0; i < backgroundResult.Count; ++i) {
+            /*for (int i = 0; i < backgroundResult.Count; ++i) {
                 currentMeasure[i] -= backgroundResult[i];
-            }
+            }*/
             // solve matrix equation
             double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => (double)x));
             Config.AutoSaveSolvedSpectra(result);
