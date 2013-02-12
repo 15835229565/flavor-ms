@@ -324,24 +324,29 @@ namespace Flavor.Common {
             
             if (pState == Commander.programStates.Ready) {
                 // ! temporary solution
-                List<Utility.PreciseEditorData> peds = Graph.Instance.PreciseData.getUsed().getWithId();
-                if (peds.Count > 0/*SomePointsUsed*/) {
-                    Graph.ResetForMonitor();
-                    measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
-                    initMeasure(Commander.programStates.WaitBackgroundMeasure);
-                    // TODO: feed measure mode with start shift value (really?)
-
-                    if (doBackgroundPremeasure) {
-                        background = new FixedSizeQueue<List<long>>(backgroundCycles);
-                        // or maybe fake realization: one item, always recounting (accumulate values)..
-                    }
+                List<Utility.PreciseEditorData> peds = Graph.Instance.PreciseData.getUsed();
+                if (SomePointsUsed) {
                     // TODO: move matrix formation to manual operator actions
                     // TODO: parallelize matrix formation, flag on completion
                     // TODO: duplicates
-                    matrix = new Matrix(Config.LoadLibrary(peds));
+                    matrix = new Matrix(Config.LoadLibrary(peds.getWithId()));
+                    // What do with empty matrix?
                     matrix.Init();
 
-                    Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
+                    // TODO: feed measure mode with start shift value (really?)
+                    measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
+                    
+                    Graph.ResetForMonitor();
+                    
+                    if (doBackgroundPremeasure) {
+                        initMeasure(Commander.programStates.WaitBackgroundMeasure);
+                        background = new FixedSizeQueue<List<long>>(backgroundCycles);
+                        // or maybe fake realization: one item, always recounting (accumulate values)..
+                        Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
+                    } else {
+                        setProgramStateWithoutUndo(programStates.Measure);
+                        Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
+                    }
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor mode measure.");
                 }
@@ -386,9 +391,9 @@ namespace Flavor.Common {
                 // TODO: throw smth
             }
             // distract background
-            /*for (int i = 0; i < backgroundResult.Count; ++i) {
+            for (int i = 0; i < backgroundResult.Count; ++i) {
                 currentMeasure[i] -= backgroundResult[i];
-            }*/
+            }
             // solve matrix equation
             double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => (double)x));
             Config.AutoSaveSolvedSpectra(result);
@@ -413,7 +418,11 @@ namespace Flavor.Common {
 
         internal static void DisableMeasure() {
             if (measureMode is MeasureMode.Precise.Monitor) {
-                Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
+                if (pState == programStates.Measure) {
+                    Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
+                } else if (pState == programStates.WaitBackgroundMeasure || pState == programStates.BackgroundMeasureReady) {
+                    Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
+                }
                 matrix = null;
             }
             Disable();
