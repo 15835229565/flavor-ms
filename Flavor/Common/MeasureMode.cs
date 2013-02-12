@@ -85,14 +85,20 @@ namespace Flavor.Common {
         internal class Scan: MeasureMode {
             private readonly ushort sPoint;
             private readonly ushort ePoint;
-            internal Scan()
+            //test
+            internal delegate void Action();
+            private readonly Action onexit;
+            //test
+            internal Scan(Action onexit)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
+                this.onexit = onexit;
             }
             protected override void saveData() { }
             protected override void onSuccessfulExit() {
-                Config.autoSaveSpectrumFile();
+                //Config.autoSaveSpectrumFile();
+                this.onexit();
             }
             protected override bool onNextStep() {
                 Commander.AddToSend(new UserRequest.sendSVoltage(pointValue++));

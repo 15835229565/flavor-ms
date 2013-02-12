@@ -429,6 +429,7 @@ namespace Flavor.Forms {
             this.parameterPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

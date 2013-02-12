@@ -294,7 +294,7 @@ namespace Flavor.Common {
         internal static void Scan() {
             if (pState == Commander.programStates.Ready) {
                 Graph.Reset();
-                measureMode = new MeasureMode.Scan();
+                measureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
                 initMeasure(Commander.programStates.Measure);
             }
         }

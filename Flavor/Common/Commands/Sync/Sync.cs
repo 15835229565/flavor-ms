@@ -188,9 +188,10 @@
             private int Detector1;
             private int Detector2;
 
-            internal updateCounts(int value1, int value2) {
+            internal updateCounts(int value1, int value2, Action graphupdate) {
                 Detector1 = value1;
                 Detector2 = value2;
+                updateGraph = graphupdate;
             }
 
             #region IUpdateDevice Members
@@ -204,13 +205,16 @@
 
             #region IUpdateGraph Members
 
+            public delegate void Action();
+            private readonly Action updateGraph;
             public void UpdateGraph() {
-                if (Commander.CurrentMeasureMode == null) {
+                updateGraph();
+                /*if (Commander.CurrentMeasureMode == null) {
                     // fake packet. BAD solution
                     return;
                 }
                 // Not the best place for automatic refresh!
-                Commander.CurrentMeasureMode.updateGraph();
+                Commander.CurrentMeasureMode.updateGraph();*/
             }
 
             #endregion
