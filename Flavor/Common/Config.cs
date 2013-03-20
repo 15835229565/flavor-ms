@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Globalization;
 using System.Text;
+//using System.Text.RegularExpressions;
 using System.IO;
 
 namespace Flavor.Common {
@@ -203,21 +204,40 @@ namespace Flavor.Common {
             mainConfigWriter.write();
         }
         public const string ID_PREFIX_TEMPORARY = "id_";
+        public const char COMMENT_DELIMITER_TEMPORARY = '_';
         internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
             int rank = peds.Count;
             ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
-            List<string> ids = peds.ConvertAll<string>(
-                    x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
-                );
-            lib.readOnce(ids);
+            //List<string> ids = peds.ConvertAll<string>(
+            //        x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
+            //    );
+            List<string> ids = new List<string>(peds.Count);
+            List<string> masses = new List<string>(peds.Count);
+            foreach (Utility.PreciseEditorData ped in peds) {
+                if (!ped.Comment.StartsWith(ID_PREFIX_TEMPORARY)) {
+                    //error. wrong string format.
+                }
+                string s = ped.Comment.Substring(ID_PREFIX_TEMPORARY.Length);
+                int index = s.IndexOf(COMMENT_DELIMITER_TEMPORARY);
+                if (index == -1) {
+                    ids.Add(s);
+                    masses.Add("");
+                } else {
+                    ids.Add(s.Substring(0, index));
+                    s = s.Substring(index + 1);
+                    index = s.IndexOf(COMMENT_DELIMITER_TEMPORARY);
+                    // TODO: check for numeric nature before adding
+                    masses.Add(index == -1 ? "" : s.Substring(0, index));
+                }
+            }
+            lib.readOnce(ids, masses);
             
             // TODO: form PreciseData and matrix simultaneously directly from library
             // use current coeffs for that
             double[,] matrix = new double[rank, rank];
 
             for (int i = 0; i < rank; ++i) {
-                // Main mass! not always the biggest
-                // TODO: modify for not main mass!
+                // TODO: test after modification for any mass in peak spectrum!
                 int currentMass = lib.Mass(i);
                 for (int j = 0; j < rank; ++j) {
                     matrix[i, j] = lib.Masses(ids[j]).ContainsKey(currentMass) ? (int)lib.Masses(ids[j])[currentMass] : 0;
@@ -771,7 +791,7 @@ namespace Flavor.Common {
             }
         }
         private interface ILibraryReader: IAnyReader {
-            void readOnce(List<string> ids);
+            void readOnce(List<string> ids, List<string> loadedMasses);
             System.Collections.Hashtable Masses(string id);
             int Mass(int index);
         }
@@ -2131,7 +2151,7 @@ namespace Flavor.Common {
                         reader = new XmlTextReader(filename);
                     }
                     #region ILibraryReader Members
-                    public void readOnce(List<string> ids) {
+                    public void readOnce(List<string> ids, List<string> loadedMasses) {
                         if (reader.ReadState != ReadState.Initial)
                             reader.ResetState();
                         // TODO: continue coding here
@@ -2143,9 +2163,16 @@ namespace Flavor.Common {
                         if (reader.ReadToDescendant(SPECTRUM_TAG)) {
                             do {
                                 string id = reader.GetAttribute(ID_ATTRIBUTE);
-                                if (ids.Contains(id)) {
+                                // only 1 peak of a substance! otherwise will be dependent columns in the matrix
+                                int index = ids.IndexOf(id);
+                                if (index != -1) {
                                     //ids.Remove(id);
-                                    masses.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)));
+                                    if (loadedMasses[index] == "") {
+                                        masses.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)));
+                                    } else {
+                                        // may strangely be not a number..
+                                        masses.Add(Int32.Parse(loadedMasses[index]));
+                                    }
                                     System.Collections.Hashtable result = new System.Collections.Hashtable();
                                     if (reader.ReadToDescendant(PEAK_TAG)) {
                                         do {

@@ -9,6 +9,8 @@ namespace Flavor {
         /// </summary>
         [STAThread]
         static void Main() {
+            // TODO: change application type in Flavor properties to hide console
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             

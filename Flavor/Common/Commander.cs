@@ -357,6 +357,7 @@ namespace Flavor.Common {
 
                 backgroundResult = background.Aggregate(Summarize);
                 for (int i = 0; i < backgroundResult.Count; ++i) {
+                    // TODO: check integral operation behaviour here
                     backgroundResult[i] /= backgroundCycles;
                 }
 
