@@ -211,6 +211,8 @@ namespace Flavor.Common {
             //List<string> ids = peds.ConvertAll<string>(
             //        x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
             //    );
+            
+            // TODO: use regular expressions here to prevent possible caveats
             List<string> ids = new List<string>(peds.Count);
             List<string> masses = new List<string>(peds.Count);
             foreach (Utility.PreciseEditorData ped in peds) {

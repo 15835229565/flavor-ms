@@ -24,7 +24,14 @@
     <peak mass="13" value="19" />
     <peak mass="2" value="12" />
   </spectrum>
-  <spectrum id="METHANE" mass="18">
+  <!--approximate spectrum of methane-->
+  <spectrum id="METHANE" mass="16" value="999">
+    <peak mass="16" value="999" />
+    <peak mass="15" value="887" />
+    <peak mass="14" value="204" />
+    <peak mass="13" value="107" />
+    <peak mass="12" value="38" />
+    <peak mass="17" value="16" />
   </spectrum>
   <spectrum id="PROPANE" mass="44" value="267">
     <peak mass="29" value="999" />

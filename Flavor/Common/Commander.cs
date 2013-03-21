@@ -401,6 +401,9 @@ namespace Flavor.Common {
             }
             // solve matrix equation
             double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => (double)x));
+            // TODO: now it is normalized to 999 on maximum of peak spectrum component
+            // but we want actual value
+            // weight of mass measured also can differ from 999
             Config.AutoSaveSolvedSpectra(result);
             // TODO: put here all automatic logic from measure modes
         }
