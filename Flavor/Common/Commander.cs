@@ -375,6 +375,7 @@ namespace Flavor.Common {
             List<long> currentMeasure = new List<long>();
             // ! temporary solution
             foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
+                //!!!!! null PLSreference! race condition?
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             }
             //maybe null if background premeasure is false!

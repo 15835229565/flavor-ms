@@ -138,6 +138,7 @@ namespace Flavor.Forms
             //panel.refreshGraphicsOnPreciseStep();
         }
         #region IMeasured Members
+        //parameter here is obsolete
         public void initMeasure(bool isPrecise) {
             list = new List<PointPairList>();
             sums = new List<long>();
@@ -145,8 +146,10 @@ namespace Flavor.Forms
             // TODO: use extension method getUsed()
             List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
-            for (int i = 0; i < rowsCount; ++i)
+            for (int i = 0; i < rowsCount; ++i) {
+                //!!!!!! try to prevent nulls in PLS
                 list.Add(new PointPairListPlus(pspec[i], null));
+            }
             time = 0;
             if (normalizedList == null) {
                 CreateGraph();
