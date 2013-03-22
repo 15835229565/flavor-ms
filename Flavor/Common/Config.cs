@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Globalization;
 using System.Text;
-//using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.IO;
 
 namespace Flavor.Common {
@@ -212,11 +212,24 @@ namespace Flavor.Common {
             //        x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
             //    );
             
-            // TODO: use regular expressions here to prevent possible caveats
+            Regex expression = new Regex(@"^id_(\w+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
+            Match match;
             List<string> ids = new List<string>(peds.Count);
             List<string> masses = new List<string>(peds.Count);
             foreach (Utility.PreciseEditorData ped in peds) {
-                if (!ped.Comment.StartsWith(ID_PREFIX_TEMPORARY)) {
+                match = expression.Match(ped.Comment);
+                if (match.Success) {
+                    GroupCollection groups = match.Groups;
+                    try {
+                        ids.Add(groups[1].Value);
+                        masses.Add(groups[3].Success ? groups[3].Value : "");
+                    } catch (FormatException) {
+                        //error. wrong string format.
+                    }
+                } else {
+                    //error. no id.
+                }
+                /*if (!ped.Comment.StartsWith(ID_PREFIX_TEMPORARY)) {
                     //error. wrong string format.
                 }
                 string s = ped.Comment.Substring(ID_PREFIX_TEMPORARY.Length);
@@ -230,7 +243,7 @@ namespace Flavor.Common {
                     index = s.IndexOf(COMMENT_DELIMITER_TEMPORARY);
                     // TODO: check for numeric nature before adding
                     masses.Add(index == -1 ? "" : s.Substring(0, index));
-                }
+                }*/
             }
             lib.readOnce(ids, masses);
             
