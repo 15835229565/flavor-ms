@@ -242,7 +242,7 @@ namespace Flavor.Common {
                 // TODO: test after modification for any mass in peak spectrum!
                 int currentMass = lib.Mass(i);
                 for (int j = 0; j < rank; ++j) {
-                    matrix[i, j] = lib.Masses(ids[j]).ContainsKey(currentMass) ? (int)lib.Masses(ids[j])[currentMass] : 0;
+                    matrix[i, j] = lib.Masses(ids[j]).ContainsKey(currentMass) ? (double)lib.Masses(ids[j])[currentMass] : 0;
                 }
             }
             return matrix;
@@ -2146,6 +2146,7 @@ namespace Flavor.Common {
                     private const string MASS_ATTRIBUTE = "mass";
                     private const string PEAK_TAG = "peak";
                     private const string VALUE_ATTRIBUTE = "value";
+                    private const string CALIBRATION_ATTRIBUTE = "calibration";
                     private readonly XmlTextReader reader;
                     private System.Collections.Hashtable table;
                     private List<int> masses;
@@ -2169,6 +2170,16 @@ namespace Flavor.Common {
                                 int index = ids.IndexOf(id);
                                 if (index != -1) {
                                     //ids.Remove(id);
+                                    
+                                    // TODO: use proper calibration data later in library
+                                    string calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
+                                    double calibrationCoeff;
+                                    try {
+                                        calibrationCoeff = calibrationCoeffString == null ? 1 : Double.Parse(calibrationCoeffString);
+                                    } catch (FormatException fe) {
+                                        calibrationCoeff = 1;
+                                    };
+
                                     if (loadedMasses[index] == "") {
                                         masses.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)));
                                     } else {
@@ -2178,7 +2189,7 @@ namespace Flavor.Common {
                                     System.Collections.Hashtable result = new System.Collections.Hashtable();
                                     if (reader.ReadToDescendant(PEAK_TAG)) {
                                         do {
-                                            result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                            result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff * Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
                                         } while (reader.ReadToNextSibling(PEAK_TAG));
                                     }
                                     table.Add(id, result);
