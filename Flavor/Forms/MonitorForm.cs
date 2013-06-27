@@ -43,7 +43,7 @@ namespace Flavor.Forms
             List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             if (pspec.Count != rowsCount)
                 // very bad!
-                throw new NullReferenceException();
+                throw new NullReferenceException("Count mismatch");
             
             int j = 0;
             long sum = 0;
@@ -148,7 +148,9 @@ namespace Flavor.Forms
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i) {
                 //!!!!!! try to prevent nulls in PLS
-                list.Add(new PointPairListPlus(pspec[i], null));
+                PointPairListPlus temp = new PointPairListPlus();
+                pspec[i].AssociatedPoints = temp;
+                list.Add(temp);
             }
             time = 0;
             if (normalizedList == null) {

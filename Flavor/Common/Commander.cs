@@ -317,7 +317,7 @@ namespace Flavor.Common {
         internal static bool Monitor() {
             // TODO: configurable capacity
             // Config.BackgroundCycles
-            int backgroundCycles = 1;
+            int backgroundCycles = 5;
             // TODO: configurable?
             // Config.DoBackgroundPremeasure
             bool doBackgroundPremeasure = true;
@@ -329,14 +329,18 @@ namespace Flavor.Common {
                     // TODO: move matrix formation to manual operator actions
                     // TODO: parallelize matrix formation, flag on completion
                     // TODO: duplicates
-                    matrix = new Matrix(Config.LoadLibrary(peds.getWithId()));
-                    // What do with empty matrix?
-                    matrix.Init();
+                    if (peds.getWithId().Count > 0) {
+                        matrix = new Matrix(Config.LoadLibrary(peds.getWithId()));
+                        // What do with empty matrix?
+                        matrix.Init();
+                    } else
+                        matrix = null;
+
+                    //Order is important here!!!!
+                    Graph.ResetForMonitor();
 
                     // TODO: feed measure mode with start shift value (really?)
                     measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
-                    
-                    Graph.ResetForMonitor();
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(programStates.WaitBackgroundMeasure);
@@ -370,18 +374,18 @@ namespace Flavor.Common {
             }
         }
         private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
-            if (recreate == Graph.Recreate.None)
-                return;
-            List<long> currentMeasure = new List<long>();
-            // ! temporary solution
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
-                //!!!!! null PLSreference! race condition?
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-            }
-            //maybe null if background premeasure is false!
-            background.Enqueue(currentMeasure);
-            if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
-                setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
+            if (recreate == Graph.Recreate.Both) {
+                List<long> currentMeasure = new List<long>();
+                // ! temporary solution
+                foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
+                    //!!!!! null PLSreference! race condition?
+                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                }
+                //maybe null if background premeasure is false!
+                background.Enqueue(currentMeasure);
+                if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
+                    setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
+                }
             }
         }
         private static void NewMonitorMeasureReady(Graph.Recreate recreate) {
@@ -400,13 +404,15 @@ namespace Flavor.Common {
             for (int i = 0; i < backgroundResult.Count; ++i) {
                 currentMeasure[i] -= backgroundResult[i];
             }
-            // solve matrix equation
-            double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => (double)x));
-            // TODO: now it is normalized to 999 on maximum of peak spectrum component
-            // but we want actual value
-            // weight of mass measured also can differ from 999
-            Config.AutoSaveSolvedSpectra(result);
-            // TODO: put here all automatic logic from measure modes
+            if (matrix != null) {
+                // solve matrix equation
+                double[] result = matrix.Solve(currentMeasure.ConvertAll<double>(x => (double)x));
+                // TODO: now it is normalized to 999 on maximum of peak spectrum component
+                // but we want actual value
+                // weight of mass measured also can differ from 999
+                Config.AutoSaveSolvedSpectra(result);
+                // TODO: put here all automatic logic from measure modes
+            }
         }
         private static List<Utility.PreciseEditorData> getWithId(this List<Utility.PreciseEditorData> peds) {
             // ! temporary solution
