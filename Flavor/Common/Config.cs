@@ -212,7 +212,7 @@ namespace Flavor.Common {
             //        x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
             //    );
             
-            Regex expression = new Regex(@"^id_(\w+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
+            Regex expression = new Regex(@"^id_([\w-[_]]+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
             Match match;
             List<string> ids = new List<string>(peds.Count);
             List<string> masses = new List<string>(peds.Count);
