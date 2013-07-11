@@ -310,6 +310,7 @@ namespace Flavor.Forms {
             }
         }
 
+        //TODO: make 2 subscribers. one for logging, another for displaying.
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
             string msg = new StringBuilder("Turbopump: ")
                 .Append(isFault ? "failure (" : "warning (")
@@ -639,6 +640,7 @@ namespace Flavor.Forms {
                     break;
                 case Commander.programStates.Measure:
                     setButtons(false, false, true, true, false, false, false, false);
+                    monitorToolStripButton.Text = "Режим мониторинга";
                     break;
                 case Commander.programStates.WaitInit:
                 case Commander.programStates.WaitShutdown:

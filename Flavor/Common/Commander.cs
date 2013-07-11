@@ -326,6 +326,9 @@ namespace Flavor.Common {
                 // ! temporary solution
                 List<Utility.PreciseEditorData> peds = Graph.Instance.PreciseData.getUsed();
                 if (SomePointsUsed) {
+                    //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
+                    Graph.ResetForMonitor();
+
                     // TODO: move matrix formation to manual operator actions
                     // TODO: parallelize matrix formation, flag on completion
                     // TODO: duplicates
@@ -335,9 +338,6 @@ namespace Flavor.Common {
                         matrix.Init();
                     } else
                         matrix = null;
-
-                    //Order is important here!!!!
-                    Graph.ResetForMonitor();
 
                     // TODO: feed measure mode with start shift value (really?)
                     measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
