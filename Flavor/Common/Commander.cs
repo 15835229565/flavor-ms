@@ -323,8 +323,6 @@ namespace Flavor.Common {
             bool doBackgroundPremeasure = true;
             
             if (pState == programStates.Ready) {
-                // ! temporary solution
-                List<Utility.PreciseEditorData> peds = Graph.Instance.PreciseData.getUsed();
                 if (SomePointsUsed) {
                     //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
                     Graph.ResetForMonitor();
@@ -332,8 +330,9 @@ namespace Flavor.Common {
                     // TODO: move matrix formation to manual operator actions
                     // TODO: parallelize matrix formation, flag on completion
                     // TODO: duplicates
-                    if (peds.getWithId().Count > 0) {
-                        matrix = new Matrix(Config.LoadLibrary(peds.getWithId()));
+                    var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+                    if (peaksForMatrix.Count > 0) {
+                        matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
                         // What do with empty matrix?
                         matrix.Init();
                     } else
