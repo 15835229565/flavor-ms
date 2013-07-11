@@ -282,18 +282,99 @@
   <metadata name="groupBox2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <metadata name="backgroundMeasureCycleCountLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="backgroundMeasureCycleCountLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="backgroundMeasureCycleCountLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="checkPeakNumberNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="backgroundMeasureCycleCountLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>438, 42</value>
+  </data>
+  <data name="backgroundMeasureCycleCountLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 13</value>
+  </data>
+  <data name="backgroundMeasureCycleCountLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="backgroundMeasureCycleCountLabel.Text" xml:space="preserve">
+    <value>Количество циклов измерения фона</value>
+  </data>
+  <data name="&gt;&gt;backgroundMeasureCycleCountLabel.Name" xml:space="preserve">
+    <value>backgroundMeasureCycleCountLabel</value>
+  </data>
+  <data name="&gt;&gt;backgroundMeasureCycleCountLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;backgroundMeasureCycleCountLabel.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;backgroundMeasureCycleCountLabel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="backroundMeasureCycleCountNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>624, 40</value>
+  </data>
+  <data name="backroundMeasureCycleCountNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="backroundMeasureCycleCountNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="backroundMeasureCycleCountNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;backroundMeasureCycleCountNumericUpDown.Name" xml:space="preserve">
+    <value>backroundMeasureCycleCountNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;backroundMeasureCycleCountNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;backroundMeasureCycleCountNumericUpDown.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;backroundMeasureCycleCountNumericUpDown.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="checkPeakInsertButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>244, 11</value>
+  </data>
+  <data name="checkPeakInsertButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>74, 18</value>
+  </data>
+  <data name="checkPeakInsertButton.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="checkPeakInsertButton.Text" xml:space="preserve">
+    <value>Вставка контрольного пика</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.Name" xml:space="preserve">
+    <value>checkPeakInsertButton</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="checkPeakNumberNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>378, 40</value>
   </data>
   <data name="checkPeakNumberNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>60, 20</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="checkPeakNumberNumericUpDown.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="checkPeakNumberNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
     <value>Right</value>
   </data>
@@ -307,7 +388,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;checkPeakNumberNumericUpDown.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>3</value>
   </data>
   <data name="useCheckPeakCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -316,16 +397,17 @@
     <value>False</value>
   </data>
   <data name="useCheckPeakCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>411, 40</value>
+    <value>324, 11</value>
   </data>
   <data name="useCheckPeakCheckBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 17</value>
+    <value>114, 30</value>
   </data>
   <data name="useCheckPeakCheckBox.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
   <data name="useCheckPeakCheckBox.Text" xml:space="preserve">
-    <value>Использовать контрольный пик</value>
+    <value>Использовать
+контрольный пик</value>
   </data>
   <data name="&gt;&gt;useCheckPeakCheckBox.Name" xml:space="preserve">
     <value>useCheckPeakCheckBox</value>
@@ -337,7 +419,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;useCheckPeakCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>4</value>
   </data>
   <data name="allowedShiftNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>624, 14</value>
@@ -361,7 +443,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;allowedShiftNumericUpDown.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>5</value>
   </data>
   <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -370,7 +452,7 @@
     <value>True</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>408, 16</value>
+    <value>438, 16</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 13</value>
@@ -391,7 +473,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>6</value>
   </data>
   <metadata name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -415,7 +497,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;controlPeakLabelRow.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>7</value>
   </data>
   <data name="timeLimitNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 40</value>
@@ -439,7 +521,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;timeLimitNumericUpDown.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>8</value>
   </data>
   <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -469,31 +551,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="checkPeakInsertButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>324, 11</value>
-  </data>
-  <data name="checkPeakInsertButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>78, 49</value>
-  </data>
-  <data name="checkPeakInsertButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="checkPeakInsertButton.Text" xml:space="preserve">
-    <value>Вставка контрольного пика</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.Name" xml:space="preserve">
-    <value>checkPeakInsertButton</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <data name="checkPeakPreciseEditorRowMinus.Location" type="System.Drawing.Point, System.Drawing">
     <value>194, 42</value>
@@ -514,7 +572,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;checkPeakPreciseEditorRowMinus.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>10</value>
   </data>
   <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -544,7 +602,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>11</value>
   </data>
   <data name="iterationsNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 14</value>
@@ -568,7 +626,7 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;iterationsNumericUpDown.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>12</value>
   </data>
   <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 403</value>

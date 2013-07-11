@@ -9,19 +9,22 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.GroupBox groupBox2;
+            System.Windows.Forms.Label backgroundMeasureCycleCountLabel;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
             System.Windows.Forms.Label label2;
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
+            this.backroundMeasureCycleCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakNumberNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.useCheckPeakCheckBox = new System.Windows.Forms.CheckBox();
             this.allowedShiftNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             groupBox2 = new System.Windows.Forms.GroupBox();
+            backgroundMeasureCycleCountLabel = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
@@ -36,6 +39,7 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.params_groupBox.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).BeginInit();
@@ -52,6 +56,9 @@ namespace Flavor.Forms {
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(backgroundMeasureCycleCountLabel);
+            groupBox2.Controls.Add(this.backroundMeasureCycleCountNumericUpDown);
+            groupBox2.Controls.Add(this.checkPeakInsertButton);
             groupBox2.Controls.Add(this.checkPeakNumberNumericUpDown);
             groupBox2.Controls.Add(this.useCheckPeakCheckBox);
             groupBox2.Controls.Add(this.allowedShiftNumericUpDown);
@@ -59,13 +66,34 @@ namespace Flavor.Forms {
             groupBox2.Controls.Add(controlPeakLabelRow);
             groupBox2.Controls.Add(this.timeLimitNumericUpDown);
             groupBox2.Controls.Add(label8);
-            groupBox2.Controls.Add(this.checkPeakInsertButton);
             groupBox2.Controls.Add(this.checkPeakPreciseEditorRowMinus);
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(this.iterationsNumericUpDown);
             resources.ApplyResources(groupBox2, "groupBox2");
             groupBox2.Name = "groupBox2";
             groupBox2.TabStop = false;
+            // 
+            // backgroundMeasureCycleCountLabel
+            // 
+            resources.ApplyResources(backgroundMeasureCycleCountLabel, "backgroundMeasureCycleCountLabel");
+            backgroundMeasureCycleCountLabel.Name = "backgroundMeasureCycleCountLabel";
+            // 
+            // backroundMeasureCycleCountNumericUpDown
+            // 
+            resources.ApplyResources(this.backroundMeasureCycleCountNumericUpDown, "backroundMeasureCycleCountNumericUpDown");
+            this.backroundMeasureCycleCountNumericUpDown.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.backroundMeasureCycleCountNumericUpDown.Name = "backroundMeasureCycleCountNumericUpDown";
+            // 
+            // checkPeakInsertButton
+            // 
+            resources.ApplyResources(this.checkPeakInsertButton, "checkPeakInsertButton");
+            this.checkPeakInsertButton.Name = "checkPeakInsertButton";
+            this.checkPeakInsertButton.UseVisualStyleBackColor = true;
+            this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
             // 
             // checkPeakNumberNumericUpDown
             // 
@@ -108,13 +136,6 @@ namespace Flavor.Forms {
             resources.ApplyResources(label8, "label8");
             label8.Name = "label8";
             // 
-            // checkPeakInsertButton
-            // 
-            resources.ApplyResources(this.checkPeakInsertButton, "checkPeakInsertButton");
-            this.checkPeakInsertButton.Name = "checkPeakInsertButton";
-            this.checkPeakInsertButton.UseVisualStyleBackColor = true;
-            this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
-            // 
             // checkPeakPreciseEditorRowMinus
             // 
             resources.ApplyResources(this.checkPeakPreciseEditorRowMinus, "checkPeakPreciseEditorRowMinus");
@@ -153,6 +174,7 @@ namespace Flavor.Forms {
             this.params_groupBox.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).EndInit();
@@ -171,5 +193,7 @@ namespace Flavor.Forms {
         private System.Windows.Forms.NumericUpDown allowedShiftNumericUpDown;
         private System.Windows.Forms.CheckBox useCheckPeakCheckBox;
         private System.Windows.Forms.NumericUpDown checkPeakNumberNumericUpDown;
+        private System.Windows.Forms.NumericUpDown backroundMeasureCycleCountNumericUpDown;
+        private System.ComponentModel.IContainer components;
     }
 }
