@@ -295,7 +295,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="backgroundMeasureCycleCountLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>438, 42</value>
+    <value>425, 44</value>
   </data>
   <data name="backgroundMeasureCycleCountLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>193, 13</value>
@@ -319,7 +319,7 @@
     <value>0</value>
   </data>
   <data name="backroundMeasureCycleCountNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>624, 40</value>
+    <value>624, 42</value>
   </data>
   <data name="backroundMeasureCycleCountNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>60, 20</value>
@@ -343,15 +343,21 @@
     <value>1</value>
   </data>
   <data name="checkPeakInsertButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>244, 11</value>
+    <value>301, 16</value>
   </data>
   <data name="checkPeakInsertButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>74, 18</value>
+    <value>17, 18</value>
   </data>
   <data name="checkPeakInsertButton.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="checkPeakInsertButton.Text" xml:space="preserve">
+  <metadata name="checkPeakInsertButtonToolTip.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="checkPeakInsertButtonToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>399, 17</value>
+  </metadata>
+  <data name="checkPeakInsertButton.ToolTip" xml:space="preserve">
     <value>Вставка контрольного пика</value>
   </data>
   <data name="&gt;&gt;checkPeakInsertButton.Name" xml:space="preserve">
@@ -367,7 +373,7 @@
     <value>2</value>
   </data>
   <data name="checkPeakNumberNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>378, 40</value>
+    <value>324, 42</value>
   </data>
   <data name="checkPeakNumberNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>60, 20</value>
@@ -479,7 +485,7 @@
     <value>False</value>
   </metadata>
   <data name="controlPeakLabelRow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>194, 14</value>
+    <value>194, 16</value>
   </data>
   <data name="controlPeakLabelRow.Size" type="System.Drawing.Size, System.Drawing">
     <value>124, 26</value>
@@ -500,7 +506,7 @@
     <value>7</value>
   </data>
   <data name="timeLimitNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>128, 40</value>
+    <value>128, 42</value>
   </data>
   <data name="timeLimitNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
     <value>60, 20</value>
@@ -530,7 +536,7 @@
     <value>True</value>
   </data>
   <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 42</value>
+    <value>6, 44</value>
   </data>
   <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
     <value>106, 13</value>
@@ -554,7 +560,7 @@
     <value>9</value>
   </data>
   <data name="checkPeakPreciseEditorRowMinus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>194, 42</value>
+    <value>194, 49</value>
   </data>
   <data name="checkPeakPreciseEditorRowMinus.Size" type="System.Drawing.Size, System.Drawing">
     <value>124, 13</value>
@@ -675,6 +681,12 @@
   </data>
   <data name="&gt;&gt;saveCommonDataFileDialog.Type" xml:space="preserve">
     <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButtonToolTip.Name" xml:space="preserve">
+    <value>checkPeakInsertButtonToolTip</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButtonToolTip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MonitorOptionsForm</value>

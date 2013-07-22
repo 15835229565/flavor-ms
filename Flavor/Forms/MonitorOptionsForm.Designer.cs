@@ -8,6 +8,7 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.GroupBox groupBox2;
             System.Windows.Forms.Label backgroundMeasureCycleCountLabel;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
@@ -15,6 +16,7 @@ namespace Flavor.Forms {
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
+            System.Windows.Forms.ToolTip checkPeakInsertButtonToolTip;
             this.backroundMeasureCycleCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
             this.checkPeakNumberNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -29,6 +31,7 @@ namespace Flavor.Forms {
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
+            checkPeakInsertButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
@@ -92,6 +95,7 @@ namespace Flavor.Forms {
             // 
             resources.ApplyResources(this.checkPeakInsertButton, "checkPeakInsertButton");
             this.checkPeakInsertButton.Name = "checkPeakInsertButton";
+            checkPeakInsertButtonToolTip.SetToolTip(this.checkPeakInsertButton, resources.GetString("checkPeakInsertButton.ToolTip"));
             this.checkPeakInsertButton.UseVisualStyleBackColor = true;
             this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
             // 
