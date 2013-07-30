@@ -314,13 +314,13 @@ namespace Flavor.Common {
         private static FixedSizeQueue<List<long>> background;
         private static Matrix matrix;
         private static List<long> backgroundResult;
+        // TODO: configurable?
+        // Config.DoBackgroundPremeasure
+        private static readonly bool doBackgroundPremeasure = false;
         internal static bool Monitor() {
             // TODO: configurable capacity
             // Config.BackgroundCycles
             int backgroundCycles = 5;
-            // TODO: configurable?
-            // Config.DoBackgroundPremeasure
-            bool doBackgroundPremeasure = true;
             
             if (pState == programStates.Ready) {
                 if (SomePointsUsed) {
@@ -395,13 +395,15 @@ namespace Flavor.Common {
             foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             }
-            if (currentMeasure.Count != backgroundResult.Count) { 
-                // length mismatch
-                // TODO: throw smth
-            }
-            // distract background
-            for (int i = 0; i < backgroundResult.Count; ++i) {
-                currentMeasure[i] -= backgroundResult[i];
+            if (doBackgroundPremeasure) {
+                if (currentMeasure.Count != backgroundResult.Count) {
+                    // length mismatch
+                    // TODO: throw smth
+                }
+                // distract background
+                for (int i = 0; i < backgroundResult.Count; ++i) {
+                    currentMeasure[i] -= backgroundResult[i];
+                }
             }
             if (matrix != null) {
                 // solve matrix equation
