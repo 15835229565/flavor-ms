@@ -25,7 +25,6 @@
   </spectrum>
   <spectrum id="ARGON" mass="40" value="999">
     <peak mass="40" value="999" />
-    <!--wtf?-->
     <peak mass="20" value="146" />
     <peak mass="36" value="3" />
   </spectrum>
