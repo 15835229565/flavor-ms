@@ -1,5 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <library version="1.2">
+  <!--air components-->
+  <spectrum id="CO2" mass="44" value="999">
+    <peak mass="44" value="999" />
+    <peak mass="28" value="67" />
+    <peak mass="16" value="56" />
+    <peak mass="22" value="14" />
+  </spectrum>
+  <spectrum id="WATER" mass="18" value="999">
+    <peak mass="18" value="999" />
+    <peak mass="17" value="212" />
+    <peak mass="16" value="9" />
+    <peak mass="19" value="5" />
+    <peak mass="20" value="3" />
+  </spectrum>
+  <spectrum id="NITROGEN" mass="28" value="999">
+    <peak mass="28" value="999" />
+    <peak mass="14" value="138" />
+    <peak mass="29" value="7" />
+  </spectrum>
+  <spectrum id="OXYGEN" mass="32" value="999">
+    <peak mass="32" value="999" />
+    <peak mass="16" value="218" />
+  </spectrum>
+  <spectrum id="ARGON" mass="40" value="999">
+    <peak mass="40" value="999" />
+    <!--wtf?-->
+    <peak mass="20" value="146" />
+    <peak mass="36" value="3" />
+  </spectrum>
+  <!--air components-->
   <spectrum id="BUTANE" mass="58" value="117">
     <peak mass="43" value="999" />
     <peak mass="29" value="442" />
