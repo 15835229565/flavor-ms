@@ -456,12 +456,26 @@ namespace Flavor.Common {
             DateTime dt = autoSavePreciseSpectrumFile(shift);
             IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
             writer.setShift(shift);
+            if (savedSolution != null) {
+                AutoSaveSolvedSpectra(writer);
+            }
             // TODO: separate resolved file write-out
             writer.write();
         }
+        private static double[] savedSolution = null;
+        private static void AutoSaveSolvedSpectra(IMonitorWriter writer) {
+            if (savedSolution == null) {
+                // error
+            }
+            writer.setSolvedResult(savedSolution);
+            savedSolution = null;
+        }
         internal static void AutoSaveSolvedSpectra(double[] solution) {
             // TODO: simplify
-            MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).setSolvedResult(solution);
+            if (MonitorSaveMaintainer.InstanceExists)
+                MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).setSolvedResult(solution);
+            else
+                savedSolution = solution;
         }
         internal static void finalizeMonitorFile() {
             // TODO: simplify
@@ -655,6 +669,12 @@ namespace Flavor.Common {
                         instance.currentDT = dt;
                         return instance;
                     }
+                    public static bool InstanceExists {
+                        get {
+                            // temporary solution
+                            return instance != null;
+                        }
+                    }
                     private DateTime currentDT;
                     private Graph graph;
                     private short shift = 0;
@@ -780,9 +800,17 @@ namespace Flavor.Common {
                 public static new IMonitorWriter getMonitorWriter(DateTime dt, Graph graph) {
                     return Writer.getInstance(dt, graph);
                 }
+                public static bool InstanceExists {
+                    // temporary solution
+                    get { return Writer.InstanceExists; }
+                }
             }
             public static IMonitorWriter getMonitorWriter(DateTime dt, Graph graph) {
                 return CurrentMonitorSaveMaintainer.getMonitorWriter(dt, graph);
+            }
+            public static bool InstanceExists {
+                // temporary solution
+                get { return CurrentMonitorSaveMaintainer.InstanceExists; }
             }
         }
         #endregion
