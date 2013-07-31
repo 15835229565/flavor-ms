@@ -171,6 +171,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.Button insertPointButton;
         private System.Windows.Forms.Button savePreciseEditorToFileButton;
         private System.Windows.Forms.GroupBox preciseEditorGroupBox;
-        private System.Windows.Forms.ToolTip formToolTip;
+        protected System.Windows.Forms.ToolTip formToolTip;
     }
 }

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="formToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>399, 17</value>
+  </metadata>
   <data name="&gt;&gt;fV1NumericUpDown.Name" xml:space="preserve">
     <value>fV1NumericUpDown</value>
   </data>
@@ -279,9 +282,6 @@
   <data name="&gt;&gt;rareModeCheckBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="groupBox2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <metadata name="backgroundMeasureCycleCountLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
@@ -313,10 +313,148 @@
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;backgroundMeasureCycleCountLabel.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;backgroundMeasureCycleCountLabel.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>438, 16</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 13</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Разрешенная отстройка (ступени)</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>monitorOptionsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <metadata name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="controlPeakLabelRow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>194, 16</value>
+  </data>
+  <data name="controlPeakLabelRow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 26</value>
+  </data>
+  <data name="controlPeakLabelRow.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;controlPeakLabelRow.Name" xml:space="preserve">
+    <value>controlPeakLabelRow</value>
+  </data>
+  <data name="&gt;&gt;controlPeakLabelRow.Type" xml:space="preserve">
+    <value>Flavor.Controls.PreciseEditorLabelRowMinus, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;controlPeakLabelRow.Parent" xml:space="preserve">
+    <value>monitorOptionsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;controlPeakLabelRow.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label8.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 44</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 13</value>
+  </data>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+    <value>Общее время (мин)</value>
+  </data>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+    <value>label8</value>
+  </data>
+  <data name="&gt;&gt;label8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
+    <value>monitorOptionsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 16</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 13</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Количество итераций</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>monitorOptionsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="checkPeakInsertButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>301, 16</value>
+  </data>
+  <data name="checkPeakInsertButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>17, 18</value>
+  </data>
+  <data name="checkPeakInsertButton.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="checkPeakInsertButton.ToolTip" xml:space="preserve">
+    <value>Вставка контрольного пика</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.Name" xml:space="preserve">
+    <value>checkPeakInsertButton</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.Parent" xml:space="preserve">
+    <value>monitorOptionsGroupBox</value>
+  </data>
+  <data name="&gt;&gt;checkPeakInsertButton.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="backroundMeasureCycleCountNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>624, 42</value>
@@ -337,40 +475,10 @@
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;backroundMeasureCycleCountNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;backroundMeasureCycleCountNumericUpDown.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="checkPeakInsertButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>301, 16</value>
-  </data>
-  <data name="checkPeakInsertButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>17, 18</value>
-  </data>
-  <data name="checkPeakInsertButton.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <metadata name="checkPeakInsertButtonToolTip.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="checkPeakInsertButtonToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>399, 17</value>
-  </metadata>
-  <data name="checkPeakInsertButton.ToolTip" xml:space="preserve">
-    <value>Вставка контрольного пика</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.Name" xml:space="preserve">
-    <value>checkPeakInsertButton</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButton.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="checkPeakNumberNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>324, 42</value>
@@ -391,7 +499,7 @@
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkPeakNumberNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;checkPeakNumberNumericUpDown.ZOrder" xml:space="preserve">
     <value>3</value>
@@ -422,7 +530,7 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;useCheckPeakCheckBox.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;useCheckPeakCheckBox.ZOrder" xml:space="preserve">
     <value>4</value>
@@ -446,64 +554,10 @@
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;allowedShiftNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;allowedShiftNumericUpDown.ZOrder" xml:space="preserve">
     <value>5</value>
-  </data>
-  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>438, 16</value>
-  </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 13</value>
-  </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="label2.Text" xml:space="preserve">
-    <value>Разрешенная отстройка (ступени)</value>
-  </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
-  </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <metadata name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="controlPeakLabelRow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>194, 16</value>
-  </data>
-  <data name="controlPeakLabelRow.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 26</value>
-  </data>
-  <data name="controlPeakLabelRow.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;controlPeakLabelRow.Name" xml:space="preserve">
-    <value>controlPeakLabelRow</value>
-  </data>
-  <data name="&gt;&gt;controlPeakLabelRow.Type" xml:space="preserve">
-    <value>Flavor.Controls.PreciseEditorLabelRowMinus, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;controlPeakLabelRow.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;controlPeakLabelRow.ZOrder" xml:space="preserve">
-    <value>7</value>
   </data>
   <data name="timeLimitNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 42</value>
@@ -524,40 +578,10 @@
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;timeLimitNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;timeLimitNumericUpDown.ZOrder" xml:space="preserve">
     <value>8</value>
-  </data>
-  <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="label8.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 44</value>
-  </data>
-  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 13</value>
-  </data>
-  <data name="label8.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="label8.Text" xml:space="preserve">
-    <value>Общее время (мин)</value>
-  </data>
-  <data name="&gt;&gt;label8.Name" xml:space="preserve">
-    <value>label8</value>
-  </data>
-  <data name="&gt;&gt;label8.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
-    <value>9</value>
   </data>
   <data name="checkPeakPreciseEditorRowMinus.Location" type="System.Drawing.Point, System.Drawing">
     <value>194, 49</value>
@@ -575,40 +599,10 @@
     <value>Flavor.Controls.PreciseEditorRowMinus, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;checkPeakPreciseEditorRowMinus.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;checkPeakPreciseEditorRowMinus.ZOrder" xml:space="preserve">
     <value>10</value>
-  </data>
-  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 16</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>116, 13</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Количество итераций</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>groupBox2</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>11</value>
   </data>
   <data name="iterationsNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>128, 14</value>
@@ -629,33 +623,33 @@
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;iterationsNumericUpDown.Parent" xml:space="preserve">
-    <value>groupBox2</value>
+    <value>monitorOptionsGroupBox</value>
   </data>
   <data name="&gt;&gt;iterationsNumericUpDown.ZOrder" xml:space="preserve">
     <value>12</value>
   </data>
-  <data name="groupBox2.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="monitorOptionsGroupBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 403</value>
   </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="monitorOptionsGroupBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>690, 70</value>
   </data>
-  <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
+  <data name="monitorOptionsGroupBox.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
-  <data name="groupBox2.Text" xml:space="preserve">
+  <data name="monitorOptionsGroupBox.Text" xml:space="preserve">
     <value>Параметры режима мониторинга</value>
   </data>
-  <data name="&gt;&gt;groupBox2.Name" xml:space="preserve">
-    <value>groupBox2</value>
+  <data name="&gt;&gt;monitorOptionsGroupBox.Name" xml:space="preserve">
+    <value>monitorOptionsGroupBox</value>
   </data>
-  <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
+  <data name="&gt;&gt;monitorOptionsGroupBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
+  <data name="&gt;&gt;monitorOptionsGroupBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;monitorOptionsGroupBox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -670,6 +664,12 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Настройки  режима мониторинга</value>
   </data>
+  <data name="&gt;&gt;formToolTip.Name" xml:space="preserve">
+    <value>formToolTip</value>
+  </data>
+  <data name="&gt;&gt;formToolTip.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;openCommonDataFileDialog.Name" xml:space="preserve">
     <value>openCommonDataFileDialog</value>
   </data>
@@ -681,12 +681,6 @@
   </data>
   <data name="&gt;&gt;saveCommonDataFileDialog.Type" xml:space="preserve">
     <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButtonToolTip.Name" xml:space="preserve">
-    <value>checkPeakInsertButtonToolTip</value>
-  </data>
-  <data name="&gt;&gt;checkPeakInsertButtonToolTip.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MonitorOptionsForm</value>

@@ -63,6 +63,10 @@ namespace Flavor.Forms {
             Graph.OnPointAdded -= Graph_OnPointAdded;
             base.OnFormClosing(e);
         }
+        protected override void setControls(bool enabled, bool canApply) {
+            base.setControls(enabled, canApply);
+            monitorOptionsGroupBox.Enabled = enabled;
+        }
     }
 }
 

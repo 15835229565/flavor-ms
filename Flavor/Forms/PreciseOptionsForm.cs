@@ -53,7 +53,7 @@ namespace Flavor.Forms {
                     break;
             }
         }
-        private void setControls(bool enabled, bool canApply) {
+        protected virtual void setControls(bool enabled, bool canApply) {
             this.preciseEditorGroupBox.Enabled = enabled;
             this.params_groupBox.Enabled = enabled;
             this.savePreciseEditorToFileButton.Enabled = enabled;

@@ -8,30 +8,26 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.GroupBox groupBox2;
             System.Windows.Forms.Label backgroundMeasureCycleCountLabel;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
             System.Windows.Forms.Label label2;
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
             System.Windows.Forms.Label label1;
-            System.Windows.Forms.ToolTip checkPeakInsertButtonToolTip;
-            this.backroundMeasureCycleCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakInsertButton = new System.Windows.Forms.Button();
+            this.monitorOptionsGroupBox = new System.Windows.Forms.GroupBox();
+            this.backroundMeasureCycleCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakNumberNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.useCheckPeakCheckBox = new System.Windows.Forms.CheckBox();
             this.allowedShiftNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            groupBox2 = new System.Windows.Forms.GroupBox();
             backgroundMeasureCycleCountLabel = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
-            checkPeakInsertButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
@@ -41,7 +37,7 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.params_groupBox.SuspendLayout();
-            groupBox2.SuspendLayout();
+            this.monitorOptionsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).BeginInit();
@@ -57,29 +53,57 @@ namespace Flavor.Forms {
             this.params_groupBox.Controls.SetChildIndex(this.fV1NumericUpDown, 0);
             this.params_groupBox.Controls.SetChildIndex(this.fV2NumericUpDown, 0);
             // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(backgroundMeasureCycleCountLabel);
-            groupBox2.Controls.Add(this.backroundMeasureCycleCountNumericUpDown);
-            groupBox2.Controls.Add(this.checkPeakInsertButton);
-            groupBox2.Controls.Add(this.checkPeakNumberNumericUpDown);
-            groupBox2.Controls.Add(this.useCheckPeakCheckBox);
-            groupBox2.Controls.Add(this.allowedShiftNumericUpDown);
-            groupBox2.Controls.Add(label2);
-            groupBox2.Controls.Add(controlPeakLabelRow);
-            groupBox2.Controls.Add(this.timeLimitNumericUpDown);
-            groupBox2.Controls.Add(label8);
-            groupBox2.Controls.Add(this.checkPeakPreciseEditorRowMinus);
-            groupBox2.Controls.Add(label1);
-            groupBox2.Controls.Add(this.iterationsNumericUpDown);
-            resources.ApplyResources(groupBox2, "groupBox2");
-            groupBox2.Name = "groupBox2";
-            groupBox2.TabStop = false;
-            // 
             // backgroundMeasureCycleCountLabel
             // 
             resources.ApplyResources(backgroundMeasureCycleCountLabel, "backgroundMeasureCycleCountLabel");
             backgroundMeasureCycleCountLabel.Name = "backgroundMeasureCycleCountLabel";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(label2, "label2");
+            label2.Name = "label2";
+            // 
+            // controlPeakLabelRow
+            // 
+            resources.ApplyResources(controlPeakLabelRow, "controlPeakLabelRow");
+            controlPeakLabelRow.Name = "controlPeakLabelRow";
+            // 
+            // label8
+            // 
+            resources.ApplyResources(label8, "label8");
+            label8.Name = "label8";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
+            // 
+            // checkPeakInsertButton
+            // 
+            resources.ApplyResources(this.checkPeakInsertButton, "checkPeakInsertButton");
+            this.checkPeakInsertButton.Name = "checkPeakInsertButton";
+            this.formToolTip.SetToolTip(this.checkPeakInsertButton, resources.GetString("checkPeakInsertButton.ToolTip"));
+            this.checkPeakInsertButton.UseVisualStyleBackColor = true;
+            this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
+            // 
+            // monitorOptionsGroupBox
+            // 
+            this.monitorOptionsGroupBox.Controls.Add(backgroundMeasureCycleCountLabel);
+            this.monitorOptionsGroupBox.Controls.Add(this.backroundMeasureCycleCountNumericUpDown);
+            this.monitorOptionsGroupBox.Controls.Add(this.checkPeakInsertButton);
+            this.monitorOptionsGroupBox.Controls.Add(this.checkPeakNumberNumericUpDown);
+            this.monitorOptionsGroupBox.Controls.Add(this.useCheckPeakCheckBox);
+            this.monitorOptionsGroupBox.Controls.Add(this.allowedShiftNumericUpDown);
+            this.monitorOptionsGroupBox.Controls.Add(label2);
+            this.monitorOptionsGroupBox.Controls.Add(controlPeakLabelRow);
+            this.monitorOptionsGroupBox.Controls.Add(this.timeLimitNumericUpDown);
+            this.monitorOptionsGroupBox.Controls.Add(label8);
+            this.monitorOptionsGroupBox.Controls.Add(this.checkPeakPreciseEditorRowMinus);
+            this.monitorOptionsGroupBox.Controls.Add(label1);
+            this.monitorOptionsGroupBox.Controls.Add(this.iterationsNumericUpDown);
+            resources.ApplyResources(this.monitorOptionsGroupBox, "monitorOptionsGroupBox");
+            this.monitorOptionsGroupBox.Name = "monitorOptionsGroupBox";
+            this.monitorOptionsGroupBox.TabStop = false;
             // 
             // backroundMeasureCycleCountNumericUpDown
             // 
@@ -90,14 +114,6 @@ namespace Flavor.Forms {
             0,
             0});
             this.backroundMeasureCycleCountNumericUpDown.Name = "backroundMeasureCycleCountNumericUpDown";
-            // 
-            // checkPeakInsertButton
-            // 
-            resources.ApplyResources(this.checkPeakInsertButton, "checkPeakInsertButton");
-            this.checkPeakInsertButton.Name = "checkPeakInsertButton";
-            checkPeakInsertButtonToolTip.SetToolTip(this.checkPeakInsertButton, resources.GetString("checkPeakInsertButton.ToolTip"));
-            this.checkPeakInsertButton.UseVisualStyleBackColor = true;
-            this.checkPeakInsertButton.Click += new System.EventHandler(this.checkPeakInsertButton_Click);
             // 
             // checkPeakNumberNumericUpDown
             // 
@@ -120,35 +136,15 @@ namespace Flavor.Forms {
             0});
             this.allowedShiftNumericUpDown.Name = "allowedShiftNumericUpDown";
             // 
-            // label2
-            // 
-            resources.ApplyResources(label2, "label2");
-            label2.Name = "label2";
-            // 
-            // controlPeakLabelRow
-            // 
-            resources.ApplyResources(controlPeakLabelRow, "controlPeakLabelRow");
-            controlPeakLabelRow.Name = "controlPeakLabelRow";
-            // 
             // timeLimitNumericUpDown
             // 
             resources.ApplyResources(this.timeLimitNumericUpDown, "timeLimitNumericUpDown");
             this.timeLimitNumericUpDown.Name = "timeLimitNumericUpDown";
             // 
-            // label8
-            // 
-            resources.ApplyResources(label8, "label8");
-            label8.Name = "label8";
-            // 
             // checkPeakPreciseEditorRowMinus
             // 
             resources.ApplyResources(this.checkPeakPreciseEditorRowMinus, "checkPeakPreciseEditorRowMinus");
             this.checkPeakPreciseEditorRowMinus.Name = "checkPeakPreciseEditorRowMinus";
-            // 
-            // label1
-            // 
-            resources.ApplyResources(label1, "label1");
-            label1.Name = "label1";
             // 
             // iterationsNumericUpDown
             // 
@@ -158,9 +154,9 @@ namespace Flavor.Forms {
             // MonitorOptionsForm
             // 
             resources.ApplyResources(this, "$this");
-            this.Controls.Add(groupBox2);
+            this.Controls.Add(this.monitorOptionsGroupBox);
             this.Name = "MonitorOptionsForm";
-            this.Controls.SetChildIndex(groupBox2, 0);
+            this.Controls.SetChildIndex(this.monitorOptionsGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
             this.Controls.SetChildIndex(this.cancel_butt, 0);
@@ -176,8 +172,8 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            this.monitorOptionsGroupBox.ResumeLayout(false);
+            this.monitorOptionsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.allowedShiftNumericUpDown)).EndInit();
@@ -199,5 +195,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.NumericUpDown checkPeakNumberNumericUpDown;
         private System.Windows.Forms.NumericUpDown backroundMeasureCycleCountNumericUpDown;
         private System.ComponentModel.IContainer components;
+        private System.Windows.Forms.GroupBox monitorOptionsGroupBox;
     }
 }
