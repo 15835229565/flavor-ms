@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
 using dnAnalytics;
 using dnAnalytics.LinearAlgebra;
 using dnAnalytics.LinearAlgebra.Decomposition;
@@ -17,10 +15,6 @@ namespace Flavor.Common.Library {
             : base(array) {
             decomposition = new LU(this);
         }
-        public Matrix(int order)
-            : base(order) {
-            decomposition = new LU(this);
-        }
         public void Init() {
             decomposition.Solve(new DenseVector(this.Columns, 0));
         }
@@ -29,9 +23,7 @@ namespace Flavor.Common.Library {
                 // length mismatch
                 // TODO: throw smth
             }
-            // TODO: implement
-            Vector output = decomposition.Solve(new DenseVector(input));
-            return output.ToArray();
+            return decomposition.Solve(new DenseVector(input)).ToArray();
         }
     }
 }

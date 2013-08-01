@@ -194,7 +194,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.CheckBox useCheckPeakCheckBox;
         private System.Windows.Forms.NumericUpDown checkPeakNumberNumericUpDown;
         private System.Windows.Forms.NumericUpDown backroundMeasureCycleCountNumericUpDown;
-        private System.ComponentModel.IContainer components;
         private System.Windows.Forms.GroupBox monitorOptionsGroupBox;
     }
 }

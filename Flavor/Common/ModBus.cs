@@ -242,7 +242,6 @@ namespace Flavor.Common {
                                                         (ushort)((ushort)raw_command[21] + ((ushort)raw_command[22] << 8)),
                                                         (ushort)((ushort)raw_command[23] + ((ushort)raw_command[24] << 8)),
                                                         raw_command[25],
-                                    //raw_command[26], 
                                                         (ushort)((ushort)raw_command[26] + ((ushort)raw_command[27] << 8)));
                             }
                             return ServicePacket.ZERO;

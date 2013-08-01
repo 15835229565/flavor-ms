@@ -39,7 +39,6 @@
             private ushort cVMin;
             private ushort dVoltage;
             private byte relaysStates;
-            //private byte relaysStates2;
             private ushort turboSpeed;
 
             internal updateStatus(byte value1, byte value2, ushort value3, ushort value4, ushort value5, ushort value6, ushort value7, ushort value8, ushort value9, ushort value10, ushort value11, ushort value12, ushort value13, byte value14, /*byte value15,*/ ushort value16) {
@@ -57,7 +56,6 @@
                 cVMin = value12;
                 dVoltage = value13;
                 relaysStates = value14;
-                //relaysStates2 = value15;
                 turboSpeed = value16;
             }
 

@@ -131,7 +131,6 @@ namespace Flavor.Forms {
 
         private void Graph_OnPointAdded(bool notNull) {
             insertPointButton.Enabled = notNull;
-            //Graph.OnPointAdded -= new Graph_OnPointAdded;
         }
 
         private void insertPointButton_Click(object sender, EventArgs e) {

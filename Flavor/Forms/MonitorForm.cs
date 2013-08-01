@@ -117,15 +117,8 @@ namespace Flavor.Forms
         private void refreshGraph(Graph.Recreate recreate) {
             if (recreate != Graph.Recreate.None) {
                 if (time == -1) {
-                    /*if (normalizedList != null) {
-                        int index = sums.Count - 1;
-                        foreach (PointPairList ppl in normalizedList) {
-                            ppl[index].Y /= sums[index];
-                        }
-                    }*/
                     CreateGraph();
                 } else {
-                    // In new Monitor mode doubles points!
                     RefreshGraph();
                     time += 1;
                 }
@@ -135,7 +128,6 @@ namespace Flavor.Forms
         private void refreshGraphicsOnMeasureStep() {
             MeasureGraphPanel panel = Panel as MeasureGraphPanel;
             panel.performStep();
-            //panel.refreshGraphicsOnPreciseStep();
         }
         #region IMeasured Members
         //parameter here is obsolete

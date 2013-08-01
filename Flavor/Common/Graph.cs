@@ -280,7 +280,6 @@ namespace Flavor.Common {
             instance.OnNewGraphData(Recreate.None);
         }
         internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
-            //instance.ResetPointLists();
             for (int i = 0; i < peds.Count; ++i) {
                 Utility.PreciseEditorData ped = peds[i];
                 if (ped.Use) {

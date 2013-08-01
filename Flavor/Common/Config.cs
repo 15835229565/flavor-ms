@@ -233,16 +233,6 @@ namespace Flavor.Common {
             // use current coeffs for that
             double[,] matrix = new double[rank, rank];
 
-            /*for (int i = 0; i < rank; ++i) {
-                // TODO: test after modification for any mass in peak spectrum!
-                int currentMass = lib.Mass(i);
-                for (int j = 0; j < rank; ++j) {
-                    var massesForIdTable = lib.Masses(ids[j]);
-                    // !!! rows and columns
-                    matrix[j, i] = massesForIdTable.ContainsKey(currentMass) ? (double)massesForIdTable[currentMass] : 0;
-                }
-            }*/
-
             // Important! In sort order according to ids
             for (int i = 0; i < rank; ++i) {
                 var massesForIdTable = lib.Masses(ids[i]);
@@ -2206,8 +2196,6 @@ namespace Flavor.Common {
                                 // only 1 peak of a substance! otherwise will be dependent columns in the matrix
                                 int index = ids.IndexOf(id);
                                 if (index != -1) {
-                                    //ids.Remove(id);
-                                    
                                     // TODO: use proper calibration data later in library
                                     string calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
                                     double calibrationCoeff;

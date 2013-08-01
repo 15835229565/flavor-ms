@@ -28,7 +28,6 @@ namespace Flavor.Forms {
 
         private void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
-            //Graph.OnPointAdded -= Graph_OnPointAdded;
         }
 
         private void checkPeakInsertButton_Click(object sender, EventArgs e) {
