@@ -46,23 +46,23 @@
             cancel_butt.UseVisualStyleBackColor = true;
             cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
-            // serialPort_comboBox
+            // serialPortComboBox
             // 
             this.serialPortComboBox.FormattingEnabled = true;
-            resources.ApplyResources(this.serialPortComboBox, "serialPort_comboBox");
-            this.serialPortComboBox.Name = "serialPort_comboBox";
+            resources.ApplyResources(this.serialPortComboBox, "serialPortComboBox");
+            this.serialPortComboBox.Name = "serialPortComboBox";
             // 
-            // baudrate_comboBox
+            // baudrateComboBox
             // 
             this.baudrateComboBox.FormattingEnabled = true;
             this.baudrateComboBox.Items.AddRange(new object[] {
-            resources.GetString("baudrate_comboBox.Items"),
-            resources.GetString("baudrate_comboBox.Items1"),
-            resources.GetString("baudrate_comboBox.Items2"),
-            resources.GetString("baudrate_comboBox.Items3"),
-            resources.GetString("baudrate_comboBox.Items4")});
-            resources.ApplyResources(this.baudrateComboBox, "baudrate_comboBox");
-            this.baudrateComboBox.Name = "baudrate_comboBox";
+            resources.GetString("baudrateComboBox.Items"),
+            resources.GetString("baudrateComboBox.Items1"),
+            resources.GetString("baudrateComboBox.Items2"),
+            resources.GetString("baudrateComboBox.Items3"),
+            resources.GetString("baudrateComboBox.Items4")});
+            resources.ApplyResources(this.baudrateComboBox, "baudrateComboBox");
+            this.baudrateComboBox.Name = "baudrateComboBox";
             // 
             // ConnectOptionsForm
             // 

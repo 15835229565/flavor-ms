@@ -239,61 +239,61 @@
   <data name="&gt;&gt;cancel_butt.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="serialPort_comboBox.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="serialPortComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>15, 50</value>
   </data>
-  <data name="serialPort_comboBox.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="serialPortComboBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 21</value>
   </data>
-  <data name="serialPort_comboBox.TabIndex" type="System.Int32, mscorlib">
+  <data name="serialPortComboBox.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;serialPort_comboBox.Name" xml:space="preserve">
-    <value>serialPort_comboBox</value>
+  <data name="&gt;&gt;serialPortComboBox.Name" xml:space="preserve">
+    <value>serialPortComboBox</value>
   </data>
-  <data name="&gt;&gt;serialPort_comboBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;serialPortComboBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;serialPort_comboBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;serialPortComboBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;serialPort_comboBox.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;serialPortComboBox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="baudrate_comboBox.Items" xml:space="preserve">
+  <data name="baudrateComboBox.Items" xml:space="preserve">
     <value>115200</value>
   </data>
-  <data name="baudrate_comboBox.Items1" xml:space="preserve">
+  <data name="baudrateComboBox.Items1" xml:space="preserve">
     <value>57600</value>
   </data>
-  <data name="baudrate_comboBox.Items2" xml:space="preserve">
+  <data name="baudrateComboBox.Items2" xml:space="preserve">
     <value>38400</value>
   </data>
-  <data name="baudrate_comboBox.Items3" xml:space="preserve">
+  <data name="baudrateComboBox.Items3" xml:space="preserve">
     <value>19200</value>
   </data>
-  <data name="baudrate_comboBox.Items4" xml:space="preserve">
+  <data name="baudrateComboBox.Items4" xml:space="preserve">
     <value>9600</value>
   </data>
-  <data name="baudrate_comboBox.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="baudrateComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>192, 50</value>
   </data>
-  <data name="baudrate_comboBox.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="baudrateComboBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 21</value>
   </data>
-  <data name="baudrate_comboBox.TabIndex" type="System.Int32, mscorlib">
+  <data name="baudrateComboBox.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="&gt;&gt;baudrate_comboBox.Name" xml:space="preserve">
-    <value>baudrate_comboBox</value>
+  <data name="&gt;&gt;baudrateComboBox.Name" xml:space="preserve">
+    <value>baudrateComboBox</value>
   </data>
-  <data name="&gt;&gt;baudrate_comboBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;baudrateComboBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;baudrate_comboBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;baudrateComboBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;baudrate_comboBox.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;baudrateComboBox.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
