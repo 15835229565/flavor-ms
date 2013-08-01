@@ -249,7 +249,7 @@ namespace Flavor.Common {
                 for (int j = 0; j < rank; ++j) {
                     int currentMass = lib.Mass(j);
                     // !!! rows and columns
-                    matrix[i, j] = massesForIdTable.ContainsKey(currentMass) ? (double)massesForIdTable[currentMass] : 0;
+                    matrix[j, i] = massesForIdTable.ContainsKey(currentMass) ? (double)massesForIdTable[currentMass] : 0;
                 }
             }
             return matrix;

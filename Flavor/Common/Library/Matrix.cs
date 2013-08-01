@@ -12,14 +12,14 @@ namespace Flavor.Common.Library {
     ///      Proxy to dnAnalytics matrix equation library.
     /// </summary>
     class Matrix: DenseMatrix {
-        private readonly Householder decomposition;
+        private readonly LU decomposition;
         public Matrix(double[,] array)
             : base(array) {
-            decomposition = new Householder(this);
+            decomposition = new LU(this);
         }
         public Matrix(int order)
             : base(order) {
-            decomposition = new Householder(this);
+            decomposition = new LU(this);
         }
         public void Init() {
             decomposition.Solve(new DenseVector(this.Columns, 0));
