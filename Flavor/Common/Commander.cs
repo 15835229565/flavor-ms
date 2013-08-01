@@ -332,6 +332,8 @@ namespace Flavor.Common {
                     // TODO: duplicates
                     var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
                     if (peaksForMatrix.Count > 0) {
+                        // To comply with other processing order (and saved information)
+                        peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                         matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
                         // What do with empty matrix?
                         matrix.Init();

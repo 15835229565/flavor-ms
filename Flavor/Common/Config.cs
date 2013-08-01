@@ -208,9 +208,6 @@ namespace Flavor.Common {
         internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
             int rank = peds.Count;
             ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
-            //List<string> ids = peds.ConvertAll<string>(
-            //        x => x.Comment.Substring(ID_PREFIX_TEMPORARY.Length)
-            //    );
             
             Regex expression = new Regex(@"^id_([\w-[_]]+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
             Match match;
@@ -229,21 +226,6 @@ namespace Flavor.Common {
                 } else {
                     //error. no id.
                 }
-                /*if (!ped.Comment.StartsWith(ID_PREFIX_TEMPORARY)) {
-                    //error. wrong string format.
-                }
-                string s = ped.Comment.Substring(ID_PREFIX_TEMPORARY.Length);
-                int index = s.IndexOf(COMMENT_DELIMITER_TEMPORARY);
-                if (index == -1) {
-                    ids.Add(s);
-                    masses.Add("");
-                } else {
-                    ids.Add(s.Substring(0, index));
-                    s = s.Substring(index + 1);
-                    index = s.IndexOf(COMMENT_DELIMITER_TEMPORARY);
-                    // TODO: check for numeric nature before adding
-                    masses.Add(index == -1 ? "" : s.Substring(0, index));
-                }*/
             }
             lib.readOnce(ids, masses);
             
@@ -251,11 +233,23 @@ namespace Flavor.Common {
             // use current coeffs for that
             double[,] matrix = new double[rank, rank];
 
-            for (int i = 0; i < rank; ++i) {
+            /*for (int i = 0; i < rank; ++i) {
                 // TODO: test after modification for any mass in peak spectrum!
                 int currentMass = lib.Mass(i);
                 for (int j = 0; j < rank; ++j) {
-                    matrix[i, j] = lib.Masses(ids[j]).ContainsKey(currentMass) ? (double)lib.Masses(ids[j])[currentMass] : 0;
+                    var massesForIdTable = lib.Masses(ids[j]);
+                    // !!! rows and columns
+                    matrix[j, i] = massesForIdTable.ContainsKey(currentMass) ? (double)massesForIdTable[currentMass] : 0;
+                }
+            }*/
+
+            // Important! In sort order according to ids
+            for (int i = 0; i < rank; ++i) {
+                var massesForIdTable = lib.Masses(ids[i]);
+                for (int j = 0; j < rank; ++j) {
+                    int currentMass = lib.Mass(j);
+                    // !!! rows and columns
+                    matrix[i, j] = massesForIdTable.ContainsKey(currentMass) ? (double)massesForIdTable[currentMass] : 0;
                 }
             }
             return matrix;
@@ -663,7 +657,7 @@ namespace Flavor.Common {
                         } else if (instance.initialDT.Date < dt.Date) {
                             Writer old = instance;
                             instance = new Writer(instance, dt);
-                            instance.graph = graph;
+                            //instance.graph = graph;
                             old.finalize(instance.filename);
                         }
                         instance.currentDT = dt;
@@ -676,14 +670,16 @@ namespace Flavor.Common {
                         }
                     }
                     private DateTime currentDT;
-                    private Graph graph;
+                    //private Graph graph;
                     private short shift = 0;
                     private Writer(DateTime dt, Graph graph) {
                         initialDT = dt;
                         // TODO: copy!
-                        this.graph = graph;
+                        //this.graph = graph;
                         opts = graph.CommonOptions;
                         precData = new List<Utility.PreciseEditorData>(graph.PreciseData);
+                        //!!!
+                        precData.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                         header = generateHeader();
                         initFile(dt, out filename, out sw, out swResolved);
                     }
@@ -721,7 +717,7 @@ namespace Flavor.Common {
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_PRECISE_OPTIONS)
                             .Append(HEADER_FOOTER_DELIMITER);
-                        foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
+                        foreach (Utility.PreciseEditorData ped in precData) {
                             sb.Append(ped);
                         }
                         return sb.ToString();
@@ -769,7 +765,7 @@ namespace Flavor.Common {
                             swResolved.WriteLine();
                         }
                         
-                        foreach (Utility.PreciseEditorData ped in graph.PreciseData) {
+                        foreach (Utility.PreciseEditorData ped in precData) {
                             if (ped.Use) {
                                 sb
                                     .Append(DATA_DELIMITER)
@@ -2237,11 +2233,7 @@ namespace Flavor.Common {
                                 }
                             } while (reader.ReadToNextSibling(SPECTRUM_TAG));
                         }
-                        //if (ids.Count != 0)
-                            //;//error
-                        //else {
-                            this.table = table;
-                        //}
+                        this.table = table;
                     }
                     public System.Collections.Hashtable Masses(string id) {
                         if (!table.ContainsKey(id)) {
