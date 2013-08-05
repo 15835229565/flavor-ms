@@ -316,7 +316,7 @@ namespace Flavor.Common {
         private static List<long> backgroundResult;
         // TODO: configurable?
         // Config.DoBackgroundPremeasure
-        private static readonly bool doBackgroundPremeasure = false;
+        private static readonly bool doBackgroundPremeasure = true;
         internal static bool Monitor() {
             // TODO: configurable capacity
             // Config.BackgroundCycles

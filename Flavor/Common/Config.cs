@@ -2196,15 +2196,6 @@ namespace Flavor.Common {
                                 // only 1 peak of a substance! otherwise will be dependent columns in the matrix
                                 int index = ids.IndexOf(id);
                                 if (index != -1) {
-                                    // TODO: use proper calibration data later in library
-                                    string calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
-                                    double calibrationCoeff;
-                                    try {
-                                        calibrationCoeff = calibrationCoeffString == null ? 1 : Double.Parse(calibrationCoeffString);
-                                    } catch (FormatException fe) {
-                                        calibrationCoeff = 1;
-                                    };
-
                                     if (loadedMasses[index] == "") {
                                         masses.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)));
                                     } else {
@@ -2213,8 +2204,21 @@ namespace Flavor.Common {
                                     }
                                     System.Collections.Hashtable result = new System.Collections.Hashtable();
                                     if (reader.ReadToDescendant(PEAK_TAG)) {
+                                        // TODO: use proper calibration data later in library
+                                        string calibrationCoeffString;
+
                                         do {
-                                            result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff * Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                            calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
+                                            if (calibrationCoeffString == null) {
+                                                //error!!! all peaks must have calibration for solving matrix
+                                                result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                            } else try {
+                                                    double calibrationCoeff = Double.Parse(calibrationCoeffString);
+                                                    result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
+                                                } catch (FormatException fe) {
+                                                    //error!!! all peaks must have calibration for solving matrix
+                                                    result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                                };
                                         } while (reader.ReadToNextSibling(PEAK_TAG));
                                     }
                                     table.Add(id, result);
