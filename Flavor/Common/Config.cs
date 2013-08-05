@@ -239,7 +239,11 @@ namespace Flavor.Common {
                 for (int j = 0; j < rank; ++j) {
                     int currentMass = lib.Mass(j);
                     // !!! rows and columns
-                    matrix[j, i] = massesForIdTable.ContainsKey(currentMass) ? (double)massesForIdTable[currentMass] : 0;
+                    if (massesForIdTable.ContainsKey(currentMass)) {
+                        var temp = massesForIdTable[currentMass];
+                        matrix[j, i] = (double)temp;
+                    } else
+                        matrix[j, i] = 0;
                 }
             }
             return matrix;
@@ -2211,13 +2215,13 @@ namespace Flavor.Common {
                                             calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
                                             if (calibrationCoeffString == null) {
                                                 //error!!! all peaks must have calibration for solving matrix
-                                                result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                                result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
                                             } else try {
                                                     double calibrationCoeff = Double.Parse(calibrationCoeffString);
                                                     result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
                                                 } catch (FormatException fe) {
                                                     //error!!! all peaks must have calibration for solving matrix
-                                                    result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Int32.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                                    result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
                                                 };
                                         } while (reader.ReadToNextSibling(PEAK_TAG));
                                     }
