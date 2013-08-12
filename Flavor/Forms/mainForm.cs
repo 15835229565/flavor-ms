@@ -342,55 +342,55 @@ namespace Flavor.Forms {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             switch (Device.sysState) {
-                case (byte)Device.DeviceStates.Start:
+                case Device.DeviceStates.Start:
                     systemStateValueTreeNode.Text = "Запуск";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.Init:
+                case Device.DeviceStates.Init:
                     systemStateValueTreeNode.Text = "Инициализация";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.VacuumInit:
+                case Device.DeviceStates.VacuumInit:
                     systemStateValueTreeNode.Text = "Инициализация вакуума";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.WaitHighVoltage:
+                case Device.DeviceStates.WaitHighVoltage:
                     systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
-                case (byte)Device.DeviceStates.Ready:
+                case Device.DeviceStates.Ready:
                     systemStateValueTreeNode.Text = "Готова к измерению";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
-                case (byte)Device.DeviceStates.Measuring:
+                case Device.DeviceStates.Measuring:
                     systemStateValueTreeNode.Text = "Производятся измерения";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
-                case (byte)Device.DeviceStates.Measured:
+                case Device.DeviceStates.Measured:
                     systemStateValueTreeNode.Text = "Измерения закончены";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
-                case (byte)Device.DeviceStates.ShutdownInit:
+                case Device.DeviceStates.ShutdownInit:
                     systemStateValueTreeNode.Text = "Инициализация выключения";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.Shutdowning:
+                case Device.DeviceStates.Shutdowning:
                     systemStateValueTreeNode.Text = "Идет выключение";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.Shutdowned:
+                case Device.DeviceStates.Shutdowned:
                     systemStateValueTreeNode.Text = "Выключено";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.DeviceStates.TurboPumpFailure:
+                case Device.DeviceStates.TurboPumpFailure:
                     systemStateValueTreeNode.Text = "Отказ турбонасоса";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.DeviceStates.VacuumCrash:
+                case Device.DeviceStates.VacuumCrash:
                     systemStateValueTreeNode.Text = "Потеря вакуума";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.DeviceStates.ConstantsWrite:
+                case Device.DeviceStates.ConstantsWrite:
                     systemStateValueTreeNode.Text = "Запись констант";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
@@ -498,87 +498,87 @@ namespace Flavor.Forms {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             switch (Device.vacState) {
-                case (byte)Device.VacuumStates.Idle:
+                case Device.VacuumStates.Idle:
                     vacuumStateValueTreeNode.Text = "Бездействие";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.Init:
+                case Device.VacuumStates.Init:
                     vacuumStateValueTreeNode.Text = "Инициализация";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.StartingForvacuumPump:
+                case Device.VacuumStates.StartingForvacuumPump:
                     vacuumStateValueTreeNode.Text = "Включение форнасоса";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.PumpingForvacuum:
+                case Device.VacuumStates.PumpingForvacuum:
                     vacuumStateValueTreeNode.Text = "Откачка форвакуума";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.DelayPumpingHighVacuumByForvac:
+                case Device.VacuumStates.DelayPumpingHighVacuumByForvac:
                     vacuumStateValueTreeNode.Text = "Задержка высокого вакуума из-за фор";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.PumpingHighVacuumByForvac:
+                case Device.VacuumStates.PumpingHighVacuumByForvac:
                     vacuumStateValueTreeNode.Text = "Откачка высокого вакуума форнасосом";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.PumpingHighVacuumByTurbo:
+                case Device.VacuumStates.PumpingHighVacuumByTurbo:
                     vacuumStateValueTreeNode.Text = "Откачка турбо";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.Ready:
+                case Device.VacuumStates.Ready:
                     vacuumStateValueTreeNode.Text = "Готово";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Ok;
                     break;
-                case (byte)Device.VacuumStates.ShutdownInit:
+                case Device.VacuumStates.ShutdownInit:
                     vacuumStateValueTreeNode.Text = "Инициализация отключения";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.ShutdownDelay:
+                case Device.VacuumStates.ShutdownDelay:
                     vacuumStateValueTreeNode.Text = "Задержка отключения";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.ShutdownPumpProbe:
+                case Device.VacuumStates.ShutdownPumpProbe:
                     vacuumStateValueTreeNode.Text = "Отключение датчика насоса";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.Shutdowned:
+                case Device.VacuumStates.Shutdowned:
                     vacuumStateValueTreeNode.Text = "Отключено";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.ShutdownStartingTurboPump:
+                case Device.VacuumStates.ShutdownStartingTurboPump:
                     vacuumStateValueTreeNode.Text = "Откачка при выключении";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Warning;
                     break;
-                case (byte)Device.VacuumStates.BadHighVacuum:
+                case Device.VacuumStates.BadHighVacuum:
                     vacuumStateValueTreeNode.Text = "Плохой высокий вакуум";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.BadForvacuum:
+                case Device.VacuumStates.BadForvacuum:
                     vacuumStateValueTreeNode.Text = "Плохой форвакуум";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.ForvacuumFailure:
+                case Device.VacuumStates.ForvacuumFailure:
                     vacuumStateValueTreeNode.Text = "Отказ форвакуума";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.LargeLeak:
+                case Device.VacuumStates.LargeLeak:
                     vacuumStateValueTreeNode.Text = "Большая течь";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.SmallLeak:
+                case Device.VacuumStates.SmallLeak:
                     vacuumStateValueTreeNode.Text = "Малая течь";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.ThermoCoupleFailure:
+                case Device.VacuumStates.ThermoCoupleFailure:
                     vacuumStateValueTreeNode.Text = "Отказ термопары";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.TurboPumpFailure:
+                case Device.VacuumStates.TurboPumpFailure:
                     vacuumStateValueTreeNode.Text = "Отказ турбонасоса";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;
-                case (byte)Device.VacuumStates.VacuumShutdownProbeLeak:
+                case Device.VacuumStates.VacuumShutdownProbeLeak:
                     vacuumStateValueTreeNode.Text = "Отключение датчика вакуума";
                     vacuumStateValueTreeNode.State = TreeNodePlus.States.Error;
                     break;

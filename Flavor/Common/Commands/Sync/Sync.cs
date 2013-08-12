@@ -9,7 +9,7 @@
 
             #region IUpdateDevice Members
             public void UpdateDevice() {
-                Device.sysState = sysState;
+                Device.sysState = (Device.DeviceStates)sysState;
             }
             #endregion
 
@@ -62,8 +62,8 @@
             #region IUpdateDevice Members
 
             public void UpdateDevice() {
-                Device.sysState = sysState;
-                Device.vacState = vacState;
+                Device.sysState = (Device.DeviceStates)sysState;
+                Device.vacState = (Device.VacuumStates)vacState;
                 Device.fVacuum = fVacuum;
                 Device.hVacuum = hVacuum;
                 Device.DeviceCommonData.hCurrent = hCurrent;
@@ -76,7 +76,7 @@
                 Device.DeviceCommonData.cVMin = cVMin;
                 Device.DeviceCommonData.dVoltage = dVoltage;
                 Device.TurboPump.Speed = turboSpeed;
-                Device.relaysState(relaysStates/*, relaysStates2*/);
+                Device.relaysState(relaysStates);
             }
 
             #endregion

@@ -192,32 +192,32 @@ namespace Flavor.Common {
                 }
                 if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is SyncReply.updateStatus)) {
                     switch (Device.sysState) {
-                        case (byte)Device.DeviceStates.Init:
-                        case (byte)Device.DeviceStates.VacuumInit:
+                        case Device.DeviceStates.Init:
+                        case Device.DeviceStates.VacuumInit:
                             Commander.hBlock = true;
                             setProgramStateWithoutUndo(Commander.programStates.Init);
                             break;
                         
-                        case (byte)Device.DeviceStates.ShutdownInit:
-                        case (byte)Device.DeviceStates.Shutdowning:
+                        case Device.DeviceStates.ShutdownInit:
+                        case Device.DeviceStates.Shutdowning:
                             Commander.hBlock = true;
                             setProgramStateWithoutUndo(Commander.programStates.Shutdown);
                             break;
 
-                        case (byte)Device.DeviceStates.Measured:
+                        case Device.DeviceStates.Measured:
                             toSend.AddToSend(new UserRequest.getCounts());
                             // waiting for fake counts reply
                             break;
-                        case (byte)Device.DeviceStates.Measuring:
+                        case Device.DeviceStates.Measuring:
                             // async message here with auto send-back
                             // and waiting for fake counts reply
                             break;
                         
-                        case (byte)Device.DeviceStates.Ready:
+                        case Device.DeviceStates.Ready:
                             Commander.hBlock = false;
                             setProgramStateWithoutUndo(Commander.programStates.Ready);
                             break;
-                        case (byte)Device.DeviceStates.WaitHighVoltage:
+                        case Device.DeviceStates.WaitHighVoltage:
                             Commander.hBlock = true;
                             setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);
                             break;

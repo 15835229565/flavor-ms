@@ -54,8 +54,8 @@ namespace Flavor.Common {
             VacuumShutdownProbeLeak = 0x28
         }
 
-        private static byte systemState;
-        private static byte vacuumState;
+        private static DeviceStates systemState;
+        private static VacuumStates vacuumState;
 
         private static bool forPumpOn;
         private static bool pValve;
@@ -67,7 +67,6 @@ namespace Flavor.Common {
         private static bool hvOn;
 
         private static bool heatCurrentEnable;
-        //private static bool emissionCurrentEnable;
 
         private static ushort forVacuumValue;
         private static ushort hVacuumValue;
@@ -75,23 +74,23 @@ namespace Flavor.Common {
         private static int Detector1Value;
         private static int Detector2Value;
 
-        internal static byte sysState {
+        internal static DeviceStates sysState {
             get { return systemState; }
             set {
                 if (systemState != value) {
                     systemState = value;
                     OnDeviceStateChanged();
-                    if (systemState == (byte)DeviceStates.TurboPumpFailure) {
+                    if (systemState == DeviceStates.TurboPumpFailure) {
                         // log!
                     }
-                    if (systemState == (byte)DeviceStates.VacuumCrash) {
+                    if (systemState == DeviceStates.VacuumCrash) {
                         // log!
                     }
                 };
             }
         }
 
-        internal static byte vacState {
+        internal static VacuumStates vacState {
             get { return vacuumState; }
             set {
                 if (vacuumState != value) {
@@ -298,8 +297,8 @@ namespace Flavor.Common {
         }
 
         internal static void Init() {
-            Device.sysState = 255;
-            Device.vacState = 255;
+            Device.sysState = DeviceStates.Start;
+            Device.vacState = VacuumStates.Idle;
             Device.fVacuum = 0;
             Device.hVacuum = 0;
             Device.DeviceCommonData.hCurrent = 0;
