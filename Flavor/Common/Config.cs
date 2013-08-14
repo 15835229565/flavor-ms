@@ -2215,7 +2215,7 @@ namespace Flavor.Common {
                                             calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
                                             if (calibrationCoeffString == null) {
                                                 //error!!! all peaks must have calibration for solving matrix
-                                                result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
+                                                //result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
                                             } else try {
                                                     double calibrationCoeff = Double.Parse(calibrationCoeffString);
                                                     result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
