@@ -72,10 +72,10 @@
   </spectrum>
   <!--approximate spectrum of methane-->
   <spectrum id="METHANE" mass="16" value="999">
-    <peak mass="16" value="999" />
+    <peak mass="16" value="999" calibration="950" />
     <!--p=537;d=3;t=1000;i=4-->
-    <peak mass="15" value="887" calibration="1100" />
-    <peak mass="14" value="204" calibration="1" />
+    <peak mass="15" value="887" calibration="890" />
+    <peak mass="14" value="204" calibration="100" />
     <peak mass="13" value="107" />
     <peak mass="12" value="38" />
     <peak mass="17" value="16" />
