@@ -2219,7 +2219,7 @@ namespace Flavor.Common {
                                             } else try {
                                                     double calibrationCoeff = Double.Parse(calibrationCoeffString);
                                                     result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
-                                                } catch (FormatException fe) {
+                                                } catch (FormatException) {
                                                     //error!!! all peaks must have calibration for solving matrix
                                                     result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
                                                 };

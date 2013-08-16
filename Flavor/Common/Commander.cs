@@ -327,6 +327,7 @@ namespace Flavor.Common {
                     //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
                     Graph.ResetForMonitor();
 
+                    #warning matrix is formed too early
                     // TODO: move matrix formation to manual operator actions
                     // TODO: parallelize matrix formation, flag on completion
                     // TODO: duplicates
@@ -378,9 +379,14 @@ namespace Flavor.Common {
             if (recreate == Graph.Recreate.Both) {
                 List<long> currentMeasure = new List<long>();
                 // ! temporary solution
-                foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
-                    //!!!!! null PLSreference! race condition?
-                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+                if (peaksForMatrix.Count > 0) {
+                    // To comply with other processing order (and saved information)
+                    peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                    foreach (Utility.PreciseEditorData ped in peaksForMatrix) {
+                        //!!!!! null PLSreference! race condition?
+                        currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                    }
                 }
                 //maybe null if background premeasure is false!
                 background.Enqueue(currentMeasure);
@@ -394,8 +400,13 @@ namespace Flavor.Common {
                 return;
             List<long> currentMeasure = new List<long>();
             // ! temporary solution
-            foreach (Utility.PreciseEditorData ped in Graph.Instance.PreciseData.getUsed().getWithId()) {
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+            var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+            if (peaksForMatrix.Count > 0) {
+                // To comply with other processing order (and saved information)
+                peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                foreach (Utility.PreciseEditorData ped in peaksForMatrix) {
+                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                }
             }
             if (doBackgroundPremeasure) {
                 if (currentMeasure.Count != backgroundResult.Count) {
@@ -419,6 +430,7 @@ namespace Flavor.Common {
         }
         private static List<Utility.PreciseEditorData> getWithId(this List<Utility.PreciseEditorData> peds) {
             // ! temporary solution
+            #warning make this operation one time a cycle
             return peds.FindAll(
                         x => x.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY)
                     );

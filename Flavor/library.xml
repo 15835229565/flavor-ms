@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <library version="1.2">
-  <!--air components-->
   <spectrum id="CO2" mass="44" value="999">
-    <!--p=785;d=3;t=300-->
-    <peak mass="44" value="999" calibration="75000" ct="1000" />
+    <peak mass="44" calibration="75000" ct="1000" i="4" />
     <peak mass="28" />
-    <peak mass="16" value="56" calibration="450" ct="1000" />
+    <peak mass="16" calibration="450" ct="1000" i="4" />
     <peak mass="22" />
-    <peak mass="30" value="0" calibration="25" />
+    <peak mass="30" calibration="25" i="4" />
   </spectrum>
   <spectrum id="WATER" mass="18" value="999">
     <peak mass="18" />
@@ -18,93 +16,82 @@
   </spectrum>
   <spectrum id="NITROGEN" mass="28" value="999">
     <peak mass="28" />
-    <!--p=572;d=3;t=1000;i=4-->
-    <peak mass="14" value="138" calibration="2400" ct="1000" />
+    <peak mass="14" calibration="2400" ct="1000" i="4" />
     <peak mass="29" />
   </spectrum>
   <spectrum id="OXYGEN" mass="32" value="999">
-    <!--p=952;d=3;t=300-->
-    <peak mass="32" />
-    <peak mass="16" value="218" calibration="80" ct="1000" />
+    <peak mass="32" calibration="11500" ct="1000" i="4" />
+    <peak mass="16" calibration="80" ct="1000" i="4" />
   </spectrum>
   <spectrum id="ARGON" mass="40" value="999">
     <peak mass="40" />
     <peak mass="20" />
     <peak mass="36" />
   </spectrum>
-  <!--air components-->
   <spectrum id="BUTANE" mass="58" value="117">
     <peak mass="43" />
     <peak mass="29" />
     <peak mass="27" />
     <peak mass="28" />
     <peak mass="41" />
-    <peak mass="39" value="173" calibration="72000" ct="1000" />
-    <peak mass="42" value="126" calibration="72500" ct="1000" />
-    <!--p=640;d=3;t=300-->
-    <peak mass="58" value="117" calibration="47500" ct="1000" />
-    <peak mass="15" value="108" calibration="780" ct="1000" />
+    <peak mass="39" calibration="72000" ct="1000" i="4" />
+    <peak mass="42" calibration="72500" ct="1000" i="4" />
+    <peak mass="58" calibration="47500" ct="1000" i="4" />
+    <peak mass="15" calibration="780" ct="1000" i="4" />
     <peak mass="26" />
-    <peak mass="44" value="0" calibration="19000" ct="1000" />
-    <peak mass="30" value="0" calibration="5150" ct="1000" />
+    <peak mass="44" calibration="19000" ct="1000" i="4" />
+    <peak mass="30" calibration="5150" ct="1000" i="4" />
   </spectrum>
   <spectrum id="ISOBUTANE" mass="58" value="117">
-    <!--p=809;d=3;t=300-->
-    <peak mass="42" value="126" calibration="197000" ct="1000" />
+    <peak mass="42" calibration="197000" ct="1000" i="4" />
     <peak mass="28" />
-    <peak mass="39" value="173" calibration="98000" ct="1000" />
-    <peak mass="58" value="117" calibration="12800" ct="1000" />
-    <peak mass="15" value="108" calibration="1000" ct="1000" />
-    <peak mass="44" value="0" calibration="22500" ct="1000" />
-    <peak mass="30" value="0" calibration="1200" ct="1000" />
+    <peak mass="39" calibration="98000" ct="1000" i="4" />
+    <peak mass="58" calibration="12800" ct="1000" i="4" />
+    <peak mass="15" calibration="1000" ct="1000" i="4" />
+    <peak mass="44" calibration="22500" ct="1000" i="4" />
+    <peak mass="30" calibration="1200" ct="1000" i="4" />
   </spectrum>
   <spectrum id="ETHANE" mass="30" value="232">
     <peak mass="28" />
     <peak mass="27" />
     <peak mass="26" />
-    <!--p=984;d=3;t=1000;i=4-->
-    <peak mass="30" value="232" calibration="20000" ct="1000" />
+    <peak mass="30" calibration="20000" ct="1000" i="4" />
     <peak mass="29" />
-    <peak mass="15" value="65" calibration="180" ct="1000" />
+    <peak mass="15" calibration="180" ct="1000" i="4" />
     <peak mass="25" />
-    <peak mass="14" value="48" calibration="120" ct="1000" />
+    <peak mass="14" calibration="120" ct="1000" i="4" />
     <peak mass="13" />
     <peak mass="2" />
   </spectrum>
-  <!--approximate spectrum of methane-->
   <spectrum id="METHANE" mass="16" value="999">
-    <peak mass="16" value="999" calibration="950" ct="1000" />
-    <!--p=537;d=3;t=1000;i=4-->
-    <peak mass="15" value="887" calibration="890" ct="1000" />
-    <peak mass="14" value="204" calibration="100" ct="1000" />
+    <peak mass="16" calibration="950" ct="1000" i="4" />
+    <peak mass="15" calibration="890" ct="1000" i="4" />
+    <peak mass="14" calibration="100" ct="1000" i="4" />
     <peak mass="13" />
     <peak mass="12" />
     <peak mass="17" />
   </spectrum>
-  <!--approximate spectrum of pentane-->
   <spectrum id="PENTANE" mass="72" value="999">
-    <!--p=525;d=3;t=300-->
-    <peak mass="72" value="999" calibration="54300" ct="1000" />
-    <peak mass="42" value="126" calibration="908000" ct="1000" />
+    <peak mass="72" calibration="54300" ct="1000" i="4" />
+    <peak mass="42" calibration="908000" ct="1000" i="4" />
     <peak mass="28" />
-    <peak mass="39" value="173" calibration="278000" ct="1000" />
-    <peak mass="58" value="117" calibration="24000" ct="1000" />
-    <peak mass="15" value="108" calibration="1800" ct="1000" />
-    <peak mass="44" value="0" calibration="63200" ct="1000" />
-    <peak mass="30" value="0" calibration="16400" ct="1000" />
+    <peak mass="39" calibration="278000" ct="1000" i="4" />
+    <peak mass="58" calibration="24000" ct="1000" i="4" />
+    <peak mass="15" calibration="1800" ct="1000" i="4" />
+    <peak mass="44" calibration="63200" ct="1000" i="4" />
+    <peak mass="30" calibration="16400" ct="1000" i="4" />
   </spectrum>
   <spectrum id="PROPANE" mass="44" value="267">
     <peak mass="29" />
     <peak mass="28" />
     <peak mass="27" />
-    <peak mass="44" value="267" calibration="88000" ct="1000" />
+    <peak mass="44" calibration="88000" ct="1000" i="4" />
     <peak mass="43" />
-    <!--p=847;d=3;t=1000;i=4-->
-    <peak mass="39" value="213" calibration="64400" ct="1000" />
+    <peak mass="39" calibration="64400" ct="1000" i="4" />
     <peak mass="41" />
     <peak mass="26" />
-    <peak mass="15" value="110" calibration="640" ct="1000" />
-    <peak mass="42" value="61" calibration="19500" ct="1000" />
-    <peak mass="30" value="0" calibration="7100" ct="1000" />
+    <peak mass="15" calibration="640" ct="1000" i="4" />
+    <peak mass="42" calibration="19500" ct="1000" i="4" />
+    <peak mass="30" calibration="7100" ct="1000" i="4" />
   </spectrum>
 </library>
