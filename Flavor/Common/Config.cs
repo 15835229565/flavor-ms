@@ -474,7 +474,8 @@ namespace Flavor.Common {
         }
         internal static void finalizeMonitorFile() {
             // TODO: simplify
-            MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).finalize();
+            if (MonitorSaveMaintainer.InstanceExists) 
+                MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).finalize();
         }
         #endregion
         #endregion
@@ -797,7 +798,7 @@ namespace Flavor.Common {
                 public static new IMonitorWriter getMonitorWriter(DateTime dt, Graph graph) {
                     return Writer.getInstance(dt, graph);
                 }
-                public static bool InstanceExists {
+                public new static bool InstanceExists {
                     // temporary solution
                     get { return Writer.InstanceExists; }
                 }

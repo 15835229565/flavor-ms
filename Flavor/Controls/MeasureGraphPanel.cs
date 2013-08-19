@@ -9,6 +9,7 @@ namespace Flavor.Controls {
         }
         private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
+            //Bad! Raise event!
             Commander.measureCancelRequested = true;
         }
 

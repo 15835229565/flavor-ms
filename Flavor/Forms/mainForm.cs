@@ -77,6 +77,8 @@ namespace Flavor.Forms {
             Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
             Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
             Device.Init();
+            RefreshDeviceState();
+            RefreshVacuumState();
 
             Commander.OnProgramStateChanged += InvokeRefreshButtons;
             Commander.setProgramStateWithoutUndo(Commander.programStates.Start);
