@@ -298,16 +298,19 @@ namespace Flavor.Common {
                 initMeasure(Commander.programStates.Measure);
             }
         }
-        internal static void Sense() {
+        internal static bool Sense() {
             if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.Reset();
                     measureMode = new MeasureMode.Precise();
                     initMeasure(Commander.programStates.Measure);
+                    return true;
                 } else {
                     ConsoleWriter.WriteLine("No points for precise mode measure.");
+                    return false;
                 }
             }
+            return false;
         }
 
         // TODO: use simple arrays

@@ -22,6 +22,9 @@ namespace Flavor.Forms {
         // TODO: move to resource file
         private const string EXIT_CAPTION = "Предупреждение об отключении";
         private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
+        private const string MODE_START_FAILURE_CAPTION = "Ошибка при старте режима измерения";
+        private const string PRECISE_MODE_START_FAILURE_MESSAGE = "Точный режим: нет измеряемых пиков.";
+        private const string MONITOR_MODE_START_FAILURE_MESSAGE = "Режим мониторинга: нет измеряемых пиков или ошибка формирования матрицы из библиотеки спектров.";
         private const string SHUTDOWN_CAPTION = "Предупреждение об отключении";
         private const string SHUTDOWN_MESSAGE = "Внимание!\n" +
                                                 "Проверьте герметизацию системы ввода перед отключением прибора (установку заглушки).\n" +
@@ -296,11 +299,14 @@ namespace Flavor.Forms {
             MonitorForm.Hide();
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
-            Commander.Sense();
-            // order is important here!
-            CollectorsForm.initMeasure(true);
-            prepareControlsOnMeasureStart(CollectorsForm);
-            MonitorForm.Hide();
+            if (Commander.Sense()) {
+                // order is important here!
+                CollectorsForm.initMeasure(true);
+                prepareControlsOnMeasureStart(CollectorsForm);
+                MonitorForm.Hide();
+            } else {
+                MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             // lock PreciseData for modification
@@ -309,6 +315,8 @@ namespace Flavor.Forms {
                 // end lock
                 prepareControlsOnMeasureStart(MonitorForm);
                 CollectorsForm.Hide();
+            } else {
+                MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
