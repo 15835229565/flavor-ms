@@ -337,7 +337,12 @@ namespace Flavor.Common {
                         peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                         matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
                         // What do with empty matrix?
-                        matrix.Init();
+                        if (matrix != null)
+                            matrix.Init();
+                        else {
+                            ConsoleWriter.WriteLine("Error in peak data format or duplicate substance.");
+                            return false;
+                        }
                     } else
                         matrix = null;
 

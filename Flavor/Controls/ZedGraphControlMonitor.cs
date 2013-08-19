@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 using ZedGraph;
 using Flavor.Common;
-using Flavor.Forms;
 
 namespace Flavor.Controls
 {
@@ -30,7 +28,7 @@ namespace Flavor.Controls
         public ZedGraphControlMonitor()
             : base() {
             InitializeComponent();
-            base.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler(this.ZedGraphControlMonitor_ContextMenuBuilder);
+            base.ContextMenuBuilder += ZedGraphControlMonitor_ContextMenuBuilder;
         }
 
         private void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {

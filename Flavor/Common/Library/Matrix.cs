@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using dnAnalytics;
 using dnAnalytics.LinearAlgebra;
 using dnAnalytics.LinearAlgebra.Decomposition;
-using dnAnalytics.LinearAlgebra.Solvers.Direct;
 
 namespace Flavor.Common.Library {
     /// <summary>

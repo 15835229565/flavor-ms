@@ -9,8 +9,11 @@ namespace Flavor.Forms {
     internal partial class GraphForm: Form {
         protected const int HORIZ_GRAPH_INDENT = 12;
         protected const int VERT_GRAPH_INDENT = 12;
-        protected readonly Color[] rowsColors = { Color.Blue, Color.Red, Color.Green, Color.Orange, Color.DarkViolet, Color.DeepPink,
-        Color.Black, Color.Magenta,};
+        protected readonly Color[] rowsColors = 
+            { Color.Blue, Color.Red, Color.Green, Color.DarkOrange, Color.DarkViolet,
+            Color.DeepPink, Color.Black, Color.Magenta, Color.Teal, Color.Tomato,
+            Color.Indigo, Color.Fuchsia, Color.DarkKhaki, Color.Goldenrod, Color.Navy,
+            Color.Lime, Color.SaddleBrown, Color.Maroon, Color.DeepSkyBlue, Color.DimGray,};
         protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
         private GraphPanel panel = null;

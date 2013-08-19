@@ -394,14 +394,25 @@ namespace Flavor.Forms {
                 long peakSum = -1;
                 int curveIndex1 = graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
                 int curveIndex2 = graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
+                string comment = null;
                 if (-1 != curveIndex1) {
-                    peakSum = graph.DisplayedRows1[curveIndex1].PeakSum;
+                    var row = graph.DisplayedRows1[curveIndex1];
+                    peakSum = row.PeakSum;
+                    try {
+                        comment = row.PEDreference.Comment;
+                    } catch { }
                 } else if (-1 != curveIndex2) {
-                    peakSum = graph.DisplayedRows2[curveIndex2].PeakSum;
+                    var row = graph.DisplayedRows2[curveIndex2];
+                    peakSum = row.PeakSum;
+                    try {
+                        comment = row.PEDreference.Comment;
+                    } catch { }
                 }
-                if (peakSum != -1)
+                if (peakSum != -1) {
                     tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);
-                else
+                    if (comment != null)
+                        tooltipData += string.Format("\n{0}", comment);
+                } else
                     tooltipData += "\nНе удалось идентифицировать пик";
             }
             return tooltipData;

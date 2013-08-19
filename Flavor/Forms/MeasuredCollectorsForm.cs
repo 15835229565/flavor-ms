@@ -13,14 +13,6 @@ using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
     internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
-        /*private static MeasuredCollectorsForm instance = null;
-        internal MeasuredCollectorsForm getInstance(bool isPrecise) {
-            if (instance == null) {
-                instance = new MeasuredCollectorsForm(isPrecise);
-            }
-            return instance;
-        }*/
-
         internal MeasuredCollectorsForm()
             : base(Graph.Instance, false) {
             InitializeComponent();

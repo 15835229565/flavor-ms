@@ -218,13 +218,20 @@ namespace Flavor.Common {
                 if (match.Success) {
                     GroupCollection groups = match.Groups;
                     try {
-                        ids.Add(groups[1].Value);
+                        var id = groups[1].Value;
+                        if (ids.Contains(id)) {
+                            // duplicate substance
+                            return null;
+                        }
+                        ids.Add(id);
                         masses.Add(groups[3].Success ? groups[3].Value : "");
                     } catch (FormatException) {
                         //error. wrong string format.
+                        return null;
                     }
                 } else {
                     //error. no id.
+                    return null;
                 }
             }
             lib.readOnce(ids, masses);
@@ -2177,7 +2184,7 @@ namespace Flavor.Common {
                     private const string MASS_ATTRIBUTE = "mass";
                     private const string PEAK_TAG = "peak";
                     private const string VALUE_ATTRIBUTE = "value";
-                    private const string CALIBRATION_ATTRIBUTE = "calibration";
+                    private const string CALIBRATION_TIME_ATTRIBUTE = "ct";
                     private readonly XmlTextReader reader;
                     private System.Collections.Hashtable table;
                     private List<int> masses;
@@ -2188,9 +2195,7 @@ namespace Flavor.Common {
                     public void readOnce(List<string> ids, List<string> loadedMasses) {
                         if (reader.ReadState != ReadState.Initial)
                             reader.ResetState();
-                        // TODO: continue coding here
                         reader.ReadToFollowing(LIBRARY_TAG);
-                        //int count = reader.AttributeCount;
                         reader.GetAttribute(VERSION_ATTRIBUTE);
                         System.Collections.Hashtable table = new System.Collections.Hashtable(ids.Count);
                         masses = new List<int>(ids.Count);
@@ -2201,7 +2206,7 @@ namespace Flavor.Common {
                                 int index = ids.IndexOf(id);
                                 if (index != -1) {
                                     if (loadedMasses[index] == "") {
-                                        masses.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)));
+                                        //error! mass should be stated explicitly!
                                     } else {
                                         // may strangely be not a number..
                                         masses.Add(Int32.Parse(loadedMasses[index]));
@@ -2210,19 +2215,19 @@ namespace Flavor.Common {
                                     if (reader.ReadToDescendant(PEAK_TAG)) {
                                         // TODO: use proper calibration data later in library
                                         string calibrationCoeffString;
-
+                                        string ctString;
                                         do {
-                                            calibrationCoeffString = reader.GetAttribute(CALIBRATION_ATTRIBUTE);
-                                            if (calibrationCoeffString == null) {
+                                            calibrationCoeffString = reader.GetAttribute(VALUE_ATTRIBUTE);
+                                            ctString = reader.GetAttribute(CALIBRATION_TIME_ATTRIBUTE);
+                                            if (calibrationCoeffString == null || ctString == null) {
                                                 //error!!! all peaks must have calibration for solving matrix
-                                                //result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
                                             } else try {
-                                                    double calibrationCoeff = Double.Parse(calibrationCoeffString);
-                                                    result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
-                                                } catch (FormatException) {
-                                                    //error!!! all peaks must have calibration for solving matrix
-                                                    result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), Double.Parse(reader.GetAttribute(VALUE_ATTRIBUTE)));
-                                                };
+                                                //actual calibration for current exposition time                                                    
+                                                double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
+                                                result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
+                                            } catch (FormatException) {
+                                                //error!!! all peaks must have calibration for solving matrix
+                                            };
                                         } while (reader.ReadToNextSibling(PEAK_TAG));
                                     }
                                     table.Add(id, result);
