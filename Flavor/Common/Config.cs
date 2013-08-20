@@ -250,7 +250,8 @@ namespace Flavor.Common {
             for (int i = 0; i < rank; ++i) {
                 var massesForIdTable = lib.Masses(ids[i]);
                 for (int j = 0; j < rank; ++j) {
-                    int currentMass = lib.Mass(j);
+                    // Important! In sort order according to masses
+                    string currentMass = masses[j];
                     // !!! rows and columns
                     if (massesForIdTable.ContainsKey(currentMass)) {
                         var temp = massesForIdTable[currentMass];
@@ -840,7 +841,6 @@ namespace Flavor.Common {
         private interface ILibraryReader: IAnyReader {
             void readOnce(List<string> ids, List<string> loadedMasses);
             System.Collections.Hashtable Masses(string id);
-            int Mass(int index);
         }
         private interface IScalingCoeffsWriter: IAnyWriter {
             void saveScalingCoeffs(double coeff1, double coeff2);
@@ -2201,7 +2201,6 @@ namespace Flavor.Common {
                     private const string CALIBRATION_TIME_ATTRIBUTE = "ct";
                     private readonly XmlTextReader reader;
                     private System.Collections.Hashtable table;
-                    private List<int> masses;
                     public LibraryReader(string filename) {
                         reader = new XmlTextReader(filename);
                     }
@@ -2212,7 +2211,6 @@ namespace Flavor.Common {
                         reader.ReadToFollowing(LIBRARY_TAG);
                         reader.GetAttribute(VERSION_ATTRIBUTE);
                         System.Collections.Hashtable table = new System.Collections.Hashtable(ids.Count);
-                        masses = new List<int>(ids.Count);
                         if (reader.ReadToDescendant(SPECTRUM_TAG)) {
                             do {
                                 string id = reader.GetAttribute(ID_ATTRIBUTE);
@@ -2221,27 +2219,29 @@ namespace Flavor.Common {
                                 if (index != -1) {
                                     if (loadedMasses[index] == "") {
                                         //error! mass should be stated explicitly!
-                                    } else {
-                                        // may strangely be not a number..
-                                        masses.Add(Int32.Parse(loadedMasses[index]));
                                     }
                                     System.Collections.Hashtable result = new System.Collections.Hashtable();
                                     if (reader.ReadToDescendant(PEAK_TAG)) {
                                         // TODO: use proper calibration data later in library
                                         string calibrationCoeffString;
                                         string ctString;
+                                        string currentMass;
                                         do {
-                                            calibrationCoeffString = reader.GetAttribute(VALUE_ATTRIBUTE);
-                                            ctString = reader.GetAttribute(CALIBRATION_TIME_ATTRIBUTE);
-                                            if (calibrationCoeffString == null || ctString == null) {
-                                                //error!!! all peaks must have calibration for solving matrix
-                                            } else try {
-                                                //actual calibration for current exposition time                                                    
-                                                double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
-                                                result.Add(Int32.Parse(reader.GetAttribute(MASS_ATTRIBUTE)), calibrationCoeff);
-                                            } catch (FormatException) {
-                                                //error!!! all peaks must have calibration for solving matrix
-                                            };
+                                            currentMass = reader.GetAttribute(MASS_ATTRIBUTE);
+                                            // only desired masses
+                                            if (loadedMasses.Contains(currentMass)) {
+                                                calibrationCoeffString = reader.GetAttribute(VALUE_ATTRIBUTE);
+                                                ctString = reader.GetAttribute(CALIBRATION_TIME_ATTRIBUTE);
+                                                if (calibrationCoeffString == null || ctString == null) {
+                                                    //error!!! all peaks must have calibration for solving matrix
+                                                } else try {
+                                                        //actual calibration for current exposition time                                                    
+                                                        double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
+                                                        result.Add(Int32.Parse(currentMass), calibrationCoeff);
+                                                    } catch (FormatException) {
+                                                        //error!!! all peaks must have calibration for solving matrix
+                                                    };
+                                            }
                                         } while (reader.ReadToNextSibling(PEAK_TAG));
                                     }
                                     table.Add(id, result);
@@ -2251,22 +2251,7 @@ namespace Flavor.Common {
                         this.table = table;
                     }
                     public System.Collections.Hashtable Masses(string id) {
-                        if (!table.ContainsKey(id)) {
-                            // no id!
-                            return null;
-                        }
-                        System.Collections.Hashtable result = new System.Collections.Hashtable();
-                        
-                        foreach (int mass in masses){
-                            if ((table[id] as System.Collections.Hashtable).ContainsKey(mass)) {
-                                result.Add(mass, (table[id] as System.Collections.Hashtable)[mass]);
-                            }
-                        }
-                        
-                        return result;
-                    }
-                    public int Mass(int index) {
-                        return masses[index];
+                        return table[id] as System.Collections.Hashtable;
                     }
                     #endregion
                 }
