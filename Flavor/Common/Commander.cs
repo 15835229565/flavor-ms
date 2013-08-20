@@ -318,7 +318,7 @@ namespace Flavor.Common {
         private static Matrix matrix;
         private static List<long> backgroundResult;
         private static bool doBackgroundPremeasure;
-        internal static bool Monitor() {
+        internal static bool? Monitor() {
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
             if (pState == programStates.Ready) {
@@ -340,13 +340,13 @@ namespace Flavor.Common {
                             matrix.Init();
                         else {
                             ConsoleWriter.WriteLine("Error in peak data format or duplicate substance.");
-                            return false;
+                            return null;
                         }
                     } else
                         matrix = null;
 
                     // TODO: feed measure mode with start shift value (really?)
-                    measureMode = new MeasureMode.Precise.Monitor(0, Config.AllowedShift, Config.TimeLimit);
+                    measureMode = new MeasureMode.Precise.Monitor(null, Config.AllowedShift, Config.TimeLimit);
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(programStates.WaitBackgroundMeasure);
@@ -360,7 +360,7 @@ namespace Flavor.Common {
                     return true;
                 } else {
                     ConsoleWriter.WriteLine("No points for monitor mode measure.");
-                    return false;
+                    return null;
                 }
             } else if (pState == programStates.BackgroundMeasureReady) {
                 Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
@@ -376,7 +376,7 @@ namespace Flavor.Common {
                 return false;
             } else {
                 // wrong state, strange!
-                return false;
+                return null;
             }
         }
         private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {

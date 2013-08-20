@@ -20,11 +20,12 @@ namespace Flavor.Common {
             Loaded,
             Diff
         }
+        [Flags]
         internal enum Recreate {
             None,
             Col1,
             Col2,
-            Both,
+            Both = Col1 | Col2,
         }
         public class pListScaled {
             internal enum DisplayValue {
@@ -182,8 +183,8 @@ namespace Flavor.Common {
         internal DateTime DateTime {
             get { return dateTime; }
         }
-        private short shift = byte.MaxValue;
-        internal short Shift {
+        private short? shift = null;
+        internal short? Shift {
             get { return shift; }
         }
 
@@ -279,7 +280,7 @@ namespace Flavor.Common {
             curPeak = curped;
             instance.OnNewGraphData(Recreate.None);
         }
-        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, short shift) {
+        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, /*Obsolete*/short? shift) {
             for (int i = 0; i < peds.Count; ++i) {
                 Utility.PreciseEditorData ped = peds[i];
                 if (ped.Use) {
@@ -299,7 +300,7 @@ namespace Flavor.Common {
             instance.OnNewGraphData(Recreate.Both);
         }
 
-        internal static void setDateTimeAndShift(DateTime dt, short shift) {
+        internal static void setDateTimeAndShift(DateTime dt, short? shift) {
             instance.dateTime = dt;
             instance.shift = shift;
         }

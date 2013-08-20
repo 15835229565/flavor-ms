@@ -19,13 +19,14 @@ namespace Flavor.Forms
 
         private double time = -1;
         public class PointPairListPlusWithMaxCapacity: PointPairListPlus {
-            private const int MAX_CAPACITY = 1000;
+            private const int MAX_CAPACITY = 5;
             public PointPairListPlusWithMaxCapacity() : base() { }
             public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
             public new void Add(PointPair pp) {
                 base.Add(pp);
-                if (base.Count > MAX_CAPACITY)
+                if (base.Count > MAX_CAPACITY) {
                     base.RemoveAt(0);
+                }
             }
         }
         private List<PointPairListPlusWithMaxCapacity> list;
@@ -74,6 +75,7 @@ namespace Flavor.Forms
                     ppl[index].Y /= sums[index];
                 }
             }
+            graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
             graph.AxisChange();
             graph.Refresh();
         }

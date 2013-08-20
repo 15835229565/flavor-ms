@@ -310,11 +310,14 @@ namespace Flavor.Forms {
         }
         private void monitorToolStripButton_Click(object sender, EventArgs e) {
             // lock PreciseData for modification
-            if (Commander.Monitor()) {
-                MonitorForm.initMeasure(true);
-                // end lock
-                prepareControlsOnMeasureStart(MonitorForm);
-                CollectorsForm.Hide();
+            bool? result = Commander.Monitor();
+            if (result.HasValue) {
+                if (result == true) {
+                    MonitorForm.initMeasure(true);
+                    // end lock
+                    prepareControlsOnMeasureStart(MonitorForm);
+                    CollectorsForm.Hide();
+                }
             } else {
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

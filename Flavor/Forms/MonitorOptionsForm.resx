@@ -507,9 +507,6 @@
   <data name="useCheckPeakCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="useCheckPeakCheckBox.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="useCheckPeakCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>324, 11</value>
   </data>

@@ -281,9 +281,7 @@ namespace Flavor.Common {
             DateTime dt = graph.DateTime;
             if (dt != DateTime.MaxValue)
                 writer.setTimeStamp(dt);
-            short shift = graph.Shift;
-            if (shift != short.MaxValue)
-                writer.setShift(shift);
+            writer.setShift(graph.Shift);
             writer.write();
         }
         #region Spectra Distraction
@@ -441,7 +439,7 @@ namespace Flavor.Common {
             writer.setTimeStamp(dt);
             writer.write();
         }
-        internal static DateTime autoSavePreciseSpectrumFile(short shift) {
+        internal static DateTime autoSavePreciseSpectrumFile(short? shift) {
             DateTime dt = System.DateTime.Now;
             Graph.setDateTimeAndShift(dt, shift);
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
@@ -454,7 +452,7 @@ namespace Flavor.Common {
 
             return dt;
         }
-        internal static void autoSaveMonitorSpectrumFile(short shift) {
+        internal static void autoSaveMonitorSpectrumFile(short? shift) {
             DateTime dt = autoSavePreciseSpectrumFile(shift);
             IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
             writer.setShift(shift);
@@ -603,7 +601,7 @@ namespace Flavor.Common {
             void setTimeStamp(DateTime dt);
         }
         private interface IShift {
-            void setShift(short shift);
+            void setShift(short? shift);
         }
         private interface IAnyConfig {}
         private interface IAnyReader: IAnyConfig {}
@@ -649,7 +647,10 @@ namespace Flavor.Common {
                 private const string FOOTER_LINK = "link";
 
                 private const char DATA_DELIMITER = '|';
-                
+                private const string NO_SHIFT_PLACEHOLDER = "-";
+
+                private const string RESOLVED_APPENDIX = "r";
+
                 public class Writer: CurrentMonitorSaveMaintainer, IMonitorWriter {
                     private readonly DateTime initialDT;
                     private readonly string filename;
@@ -672,7 +673,7 @@ namespace Flavor.Common {
                         instance.currentDT = dt;
                         return instance;
                     }
-                    public static bool InstanceExists {
+                    public static new bool InstanceExists {
                         get {
                             // temporary solution
                             return instance != null;
@@ -680,7 +681,7 @@ namespace Flavor.Common {
                     }
                     private DateTime currentDT;
                     //private Graph graph;
-                    private short shift = 0;
+                    private short? shift = null;
                     private Writer(DateTime dt, Graph graph) {
                         initialDT = dt;
                         // TODO: copy!
@@ -705,7 +706,7 @@ namespace Flavor.Common {
                         sw.WriteLine(header);
                         sw.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
 
-                        swResolved = new StreamWriter(filename + "r", true);
+                        swResolved = new StreamWriter(filename + RESOLVED_APPENDIX, true);
                         swResolved.WriteLine(header);
                         swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
                     }
@@ -755,7 +756,7 @@ namespace Flavor.Common {
                         sw.WriteLine(sb);
                         sw.Close();
 
-                        swResolved.WriteLine(sb + (nextFilename == null ? "" : "r"));
+                        swResolved.WriteLine(sb + (nextFilename == null ? "" : RESOLVED_APPENDIX));
                         swResolved.Close();
                     }
                     #region IAnyWriter Members
@@ -763,7 +764,7 @@ namespace Flavor.Common {
                         StringBuilder sb = (new StringBuilder())
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
-                            .Append(shift);
+                            .Append(shift == null ? NO_SHIFT_PLACEHOLDER : shift.ToString());
                         
                         if (solution != null) {
                             swResolved.Write(sb);
@@ -787,7 +788,7 @@ namespace Flavor.Common {
                     }
                     #endregion
                     #region IShift Members
-                    public void setShift(short shift) {
+                    public void setShift(short? shift) {
                         this.shift = shift;
                     }
                     #endregion
@@ -2235,12 +2236,14 @@ namespace Flavor.Common {
                                                 if (calibrationCoeffString == null || ctString == null) {
                                                     //error!!! all peaks must have calibration for solving matrix
                                                 } else try {
-                                                        //actual calibration for current exposition time                                                    
-                                                        double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
-                                                        result.Add(Int32.Parse(currentMass), calibrationCoeff);
-                                                    } catch (FormatException) {
-                                                        //error!!! all peaks must have calibration for solving matrix
-                                                    };
+                                                    //actual calibration for current exposition time                                                    
+                                                    double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
+                                                    //check for integral value
+                                                    Int32.Parse(currentMass);
+                                                    result.Add(currentMass, calibrationCoeff);
+                                                } catch (FormatException) {
+                                                    //error!!! all peaks must have calibration for solving matrix
+                                                };
                                             }
                                         } while (reader.ReadToNextSibling(PEAK_TAG));
                                     }
@@ -2502,9 +2505,9 @@ namespace Flavor.Common {
                         attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
                         xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
-                    public void setShift(short shift) {
+                    public void setShift(short? shift) {
                         XmlAttribute attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
-                        attr.Value = shift.ToString();
+                        attr.Value = shift == null ? "0" : shift.ToString();
                         xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
                 }

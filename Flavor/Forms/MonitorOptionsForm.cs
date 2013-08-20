@@ -57,7 +57,7 @@ namespace Flavor.Forms {
             bool enable = Graph.PointToAdd != null;
             checkPeakInsertButton.Enabled = enable;
             if (!enable) {
-                Graph.OnPointAdded += new Graph.PointAddedDelegate(Graph_OnPointAdded);
+                Graph.OnPointAdded += Graph_OnPointAdded;
             }
             base.OnLoad(e);
         }

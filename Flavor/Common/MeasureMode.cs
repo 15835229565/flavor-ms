@@ -139,11 +139,11 @@ namespace Flavor.Common {
             private bool noPoints = true;
             private int stepPoints = 0;
 
-            private short shift = 0;
+            private short? shift = null;
 
             internal Precise()
                 : this(Config.PreciseData.getUsed(), 0) { }
-            private Precise(List<Utility.PreciseEditorData> peaks, short shift)
+            private Precise(List<Utility.PreciseEditorData> peaks, short? shift)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 this.shift = shift;
                 senseModePoints = peaks;
@@ -181,7 +181,7 @@ namespace Flavor.Common {
             }
 
             protected override bool onNextStep() {
-                int realValue = pointValue + shift;
+                int realValue = pointValue + (shift ?? 0);
                 if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP) {
                     return false;
                 }
@@ -310,16 +310,18 @@ namespace Flavor.Common {
                 private readonly ushort allowedShift;
                 private long[] prevIteration = null;
 
-                internal Monitor(short initialShift, ushort allowedShift, int timeLimit)
+                internal Monitor(short? initialShift, ushort allowedShift, int timeLimit)
                     : base(Graph.Instance.PreciseData.getUsed(), initialShift) {
                     // TODO: getWithId()
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);
-                    peak = Config.CheckerPeak;
-                    if (peak != null) {
-                        checkerIndex = senseModePoints.FindIndex(peak.Equals);
-                        if (checkerIndex != -1)
-                            prevIteration = new long[senseModeCounts[checkerIndex].Length];
+                    if (initialShift.HasValue) {
+                        peak = Config.CheckerPeak;
+                        if (peak != null) {
+                            checkerIndex = senseModePoints.FindIndex(peak.Equals);
+                            if (checkerIndex != -1)
+                                prevIteration = new long[senseModeCounts[checkerIndex].Length];
+                        }
                     }
                 }
                 protected override void onSuccessfulExit() {
@@ -359,7 +361,7 @@ namespace Flavor.Common {
                     return isSpectrumValid2(curPeak, true);
                 }
                 private bool isSpectrumValid2(Utility.PreciseEditorData curPeak, bool ignoreInvalidity) {
-                    if (!curPeak.Equals(peak) || prevIteration == null) {
+                    if (!shift.HasValue || !curPeak.Equals(peak) || prevIteration == null) {
                         // if peak is null also exit here
                         // do not store value here!
                         return true;
@@ -384,9 +386,10 @@ namespace Flavor.Common {
 
                     short delta = (short)(index - width);
                     if (delta > allowedShift || delta < -allowedShift) {
+                        // here shift must not be null!
                         shift += delta;
                         spectrumIsValid = false;
-                        return ignoreInvalidity;
+                        return ignoreInvalidity && spectrumIsValid;
                     }
                     return spectrumIsValid = true;
                 }
