@@ -109,7 +109,7 @@ namespace Flavor.Forms {
             // 
             resources.ApplyResources(this.backroundMeasureCycleCountNumericUpDown, "backroundMeasureCycleCountNumericUpDown");
             this.backroundMeasureCycleCountNumericUpDown.Maximum = new decimal(new int[] {
-            5,
+            255,
             0,
             0,
             0});

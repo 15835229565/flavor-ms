@@ -317,14 +317,10 @@ namespace Flavor.Common {
         private static FixedSizeQueue<List<long>> background;
         private static Matrix matrix;
         private static List<long> backgroundResult;
-        // TODO: configurable?
-        // Config.DoBackgroundPremeasure
-        private static readonly bool doBackgroundPremeasure = true;
+        private static bool doBackgroundPremeasure;
         internal static bool Monitor() {
-            // TODO: configurable capacity
-            // Config.BackgroundCycles
-            int backgroundCycles = 5;
-            
+            byte backgroundCycles = Config.BackgroundCycles;
+            doBackgroundPremeasure = Config.BackgroundCycles != 0;
             if (pState == programStates.Ready) {
                 if (SomePointsUsed) {
                     //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.

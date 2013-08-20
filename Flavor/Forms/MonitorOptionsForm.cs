@@ -23,7 +23,8 @@ namespace Flavor.Forms {
                                     new PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
                                                                   Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
-                                    null, (int)checkPeakNumberNumericUpDown.Value);
+                                    null, (int)checkPeakNumberNumericUpDown.Value, 
+                                    (byte)backroundMeasureCycleCountNumericUpDown.Value);
         }
 
         private void Graph_OnPointAdded(bool notNull) {
@@ -46,6 +47,8 @@ namespace Flavor.Forms {
             allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
             checkPeakNumberNumericUpDown.Maximum = (decimal)Config.PEAK_NUMBER;
             checkPeakNumberNumericUpDown.Value = (decimal)Config.CheckerPeakIndex;
+            backroundMeasureCycleCountNumericUpDown.Value = (decimal)Config.BackgroundCycles;
+
             PreciseEditorData peak = Config.CustomCheckerPeak;
             if (peak != null)
                 checkPeakPreciseEditorRowMinus.setValues(peak);

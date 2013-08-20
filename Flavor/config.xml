@@ -220,5 +220,6 @@
     <limit>219</limit>
     <allowed>0</allowed>
     <region>0</region>
+    <cycles>5</cycles>
   </check>
 </control>

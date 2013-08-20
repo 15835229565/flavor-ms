@@ -21,7 +21,7 @@ namespace Flavor.Common {
         private static string logName;
         private static string libraryName;
 
-        #region Extensions
+        #region File extensions
         internal const string SPECTRUM_EXT = "sdf";
         internal const string PRECISE_SPECTRUM_EXT = "psf";
         internal const string MONITOR_SPECTRUM_EXT = "mon";
@@ -145,6 +145,11 @@ namespace Flavor.Common {
             get { return endPoint; }
             set { endPoint = value; }
         }
+        // Automatic property
+        internal static byte BackgroundCycles {
+            get;
+            set;
+        }
 
         internal static void getInitialDirectory() {
             mainConfigName = System.IO.Path.Combine(INITIAL_DIR, CONFIG_NAME);
@@ -174,12 +179,13 @@ namespace Flavor.Common {
             Config.BaudRate = baudrate;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak, int index) {
+        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak, int index, byte backgroundCount) {
             iterations = iter;
             timeLimit = timeLim;
             allowedShift = shift;
             reperPeak = peak;
             CheckerPeakIndex = index;
+            BackgroundCycles = backgroundCount;
             mainConfigWriter.write();
         }
         internal static void saveGlobalPreciseOptions(PreciseSpectrum peds) {
@@ -894,6 +900,8 @@ namespace Flavor.Common {
             private const string CHECK_ITER_NUMBER_CONFIG_TAG = "iterations";
             private const string CHECK_TIME_LIMIT_CONFIG_TAG = "limit";
             private const string CHECK_MAX_SHIFT_CONFIG_TAG = "allowed";
+
+            private const string BACKGROUND_CYCLES_NUMBER_TAG = "cycles";
 
             private const string INTERFACE_CONFIG_TAG = "interface";
             private const string C1_CONFIG_TAG = "coeff1";
@@ -2150,6 +2158,11 @@ namespace Flavor.Common {
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (-1)
                         }
+                        try {
+                            BackgroundCycles = byte.Parse(xmlData.SelectSingleNode(combine(prefix, BACKGROUND_CYCLES_NUMBER_TAG)).InnerText);
+                        } catch (NullReferenceException) {
+                            //use hard-coded defaults (false)
+                        }
                         // BAD: really uses previous values! (not default)
                     }
                     public XmlDocument XML {
@@ -2567,6 +2580,8 @@ namespace Flavor.Common {
                         fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
                         fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
                         fillInnerText(prefix, CHECK_PEAK_NUMBER_TAG, CheckerPeakIndex);
+
+                        fillInnerText(prefix, BACKGROUND_CYCLES_NUMBER_TAG, BackgroundCycles);
                     }
                     private void SavePreciseOptions() {
                         savePreciseData(preciseData, false);
