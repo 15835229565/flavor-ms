@@ -346,7 +346,8 @@ namespace Flavor.Common {
                         matrix = null;
 
                     // TODO: feed measure mode with start shift value (really?)
-                    measureMode = new MeasureMode.Precise.Monitor(null, Config.AllowedShift, Config.TimeLimit);
+                    short? startShiftValue = 0;
+                    measureMode = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(programStates.WaitBackgroundMeasure);

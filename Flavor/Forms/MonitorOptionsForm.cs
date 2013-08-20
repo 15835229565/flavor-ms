@@ -20,7 +20,7 @@ namespace Flavor.Forms {
             base.saveData();
             Config.saveGlobalCheckOptions((int)iterationsNumericUpDown.Value, (int)timeLimitNumericUpDown.Value, (ushort)allowedShiftNumericUpDown.Value,
                                     checkPeakPreciseEditorRowMinus.AllFilled?
-                                    new PreciseEditorData(false, 255, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
+                                    new PreciseEditorData(false, byte.MaxValue, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
                                                                   Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
                                     null, (int)checkPeakNumberNumericUpDown.Value, 

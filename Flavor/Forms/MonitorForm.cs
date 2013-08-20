@@ -12,14 +12,14 @@ namespace Flavor.Forms
 {
     internal partial class MonitorForm: GraphForm, IMeasured {
         private const string FORM_TITLE = "Режим мониторинга";
-        private const string X_AXIS_TITLE = "Время";
+        private const string X_AXIS_TITLE = "Итерации";
         private const string Y_AXIS_RELATIVE = " (отн.)";
         private const string NORM_ITEM_TEXT = "Нормировать";
         private const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
         private double time = -1;
         public class PointPairListPlusWithMaxCapacity: PointPairListPlus {
-            private const int MAX_CAPACITY = 5;
+            private const int MAX_CAPACITY = 1000;
             public PointPairListPlusWithMaxCapacity() : base() { }
             public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
             public new void Add(PointPair pp) {
