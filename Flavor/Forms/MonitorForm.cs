@@ -18,11 +18,20 @@ namespace Flavor.Forms
         private const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
         private double time = -1;
-        // TODO: use List<FixedSizeQueue<PointPair>> instead?
-        private List<PointPairList> list;
+        public class PointPairListPlusWithMaxCapacity: PointPairListPlus {
+            private const int MAX_CAPACITY = 1000;
+            public PointPairListPlusWithMaxCapacity() : base() { }
+            public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
+            public new void Add(PointPair pp) {
+                base.Add(pp);
+                if (base.Count > MAX_CAPACITY)
+                    base.RemoveAt(0);
+            }
+        }
+        private List<PointPairListPlusWithMaxCapacity> list;
         private int rowsCount;
         private List<long> sums;
-        private List<PointPairList> normalizedList = null;
+        private List<PointPairListPlusWithMaxCapacity> normalizedList = null;
 
         public MonitorForm() {
             InitializeComponent();
@@ -80,7 +89,7 @@ namespace Flavor.Forms
             graph.Size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (2 * VERT_GRAPH_INDENT)));
         }
 
-        protected void ZedGraphRebirth(List<PointPairList> dataPoints, string title) {
+        protected void ZedGraphRebirth(List<PointPairListPlusWithMaxCapacity> dataPoints, string title) {
             GraphPane myPane = graph.GraphPane;
             
             myPane.Title.Text = title;
@@ -132,7 +141,7 @@ namespace Flavor.Forms
         #region IMeasured Members
         //parameter here is obsolete
         public void initMeasure(bool isPrecise) {
-            list = new List<PointPairList>();
+            list = new List<PointPairListPlusWithMaxCapacity>();
             sums = new List<long>();
             //!!
             // TODO: use extension method getUsed()
@@ -140,7 +149,7 @@ namespace Flavor.Forms
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i) {
                 //!!!!!! try to prevent nulls in PLS
-                PointPairListPlus temp = new PointPairListPlus();
+                var temp = new PointPairListPlusWithMaxCapacity();
                 pspec[i].AssociatedPoints = temp;
                 list.Add(temp);
             }
@@ -148,9 +157,9 @@ namespace Flavor.Forms
             if (normalizedList == null) {
                 CreateGraph();
             } else {
-                normalizedList = new List<PointPairList>();
+                normalizedList = new List<PointPairListPlusWithMaxCapacity>();
                 foreach (PointPairListPlus ppl in list) {
-                    normalizedList.Add(new PointPairListPlus(ppl, ppl.PEDreference, null));
+                    normalizedList.Add(new PointPairListPlusWithMaxCapacity(ppl, ppl.PEDreference, null));
                 }
                 ZedGraphRebirth(normalizedList, FORM_TITLE);
             }
@@ -190,9 +199,9 @@ namespace Flavor.Forms
                 graph.Refresh();
                 return;
             }
-            normalizedList = new List<PointPairList>();
+            normalizedList = new List<PointPairListPlusWithMaxCapacity>();
             foreach (PointPairListPlus ppl in list) {
-                PointPairList temp = new PointPairListPlus(ppl, ppl.PEDreference, null);//???references
+                var temp = new PointPairListPlusWithMaxCapacity(ppl, ppl.PEDreference, null);//???references
                 for (int i = 0; i < sums.Count; ++i) {
                     temp[i].Y /= sums[i];
                 }
