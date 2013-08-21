@@ -10,7 +10,7 @@ namespace Analyzer {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            (new TestClass()).doWork();
+            (new TestClass2()).doWork();
             Application.Run(new MainForm());
         }
     }
