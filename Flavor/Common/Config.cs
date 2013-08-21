@@ -453,7 +453,8 @@ namespace Flavor.Common {
             return dt;
         }
         internal static void autoSaveMonitorSpectrumFile(short? shift) {
-            DateTime dt = autoSavePreciseSpectrumFile(shift);
+            DateTime dt = System.DateTime.Now;
+            //DateTime dt = autoSavePreciseSpectrumFile(shift);
             IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
             writer.setShift(shift);
             if (savedSolution != null) {
