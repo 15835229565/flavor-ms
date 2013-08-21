@@ -60,7 +60,9 @@ namespace Flavor.Forms
             for (int i = 0; i < rowsCount; ++i) {
                 PreciseEditorData ped = pspec[i];
                 // TODO: exceptions here, problem with backward lines also here?
-                long peakSum = ped.AssociatedPoints == null ? 0 : ped.AssociatedPoints.PLSreference.PeakSum;
+                long peakSum = ped.AssociatedPoints == null ? 0 :
+                    (ped.AssociatedPoints.PLSreference == null ? 0 :
+                    ped.AssociatedPoints.PLSreference.PeakSum);
                 sum += peakSum;
                 list[j].Add(new PointPair(time, peakSum));
                 if (normalizedList != null) {
