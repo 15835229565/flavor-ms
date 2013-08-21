@@ -20,7 +20,7 @@
     <peak mass="29" />
   </spectrum>
   <spectrum id="OXYGEN">
-    <peak mass="32" value="11500" ct="1000" i="4" />
+    <peak mass="32" value="8500" ct="1000" i="4" />
     <peak mass="16" value="80" ct="1000" i="4" />
   </spectrum>
   <spectrum id="ARGON">
