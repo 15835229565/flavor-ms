@@ -16,7 +16,7 @@
   </spectrum>
   <spectrum id="NITROGEN">
     <peak mass="28" />
-    <peak mass="14" value="2400" ct="1000" i="4" />
+    <peak mass="14" value="20" ct="1000" i="4" />
     <peak mass="29" />
   </spectrum>
   <spectrum id="OXYGEN">
