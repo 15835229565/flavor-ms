@@ -6,208 +6,285 @@
     <try>4</try>
   </connect>
   <overview>
-    <start>300</start>
+    <start>400</start>
     <end>1056</end>
   </overview>
   <sense>
     <region1>
-      <peak>579</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>2</col>
-      <comment>14(азот)</comment>
-      <use>False</use>
-    </region1>
-    <region2>
-      <peak>639</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>id_BUTANE_58_бутан</comment>
-      <use>False</use>
-    </region2>
-    <region3>
-      <peak>850</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>id_PROPANE_39_пропан</comment>
-      <use>False</use>
-    </region3>
-    <region4>
-      <peak>1027</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>28</comment>
-      <use>False</use>
-    </region4>
-    <region5>
-      <peak>989</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>30</comment>
-      <use>False</use>
-    </region5>
-    <region6>
-      <peak>958</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>32 (Кислород)</comment>
-      <use>False</use>
-    </region6>
-    <region7>
-      <peak>811</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>42 (Изобутан)</comment>
-      <use>False</use>
-    </region7>
-    <region8>
-      <peak>645</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>58</comment>
-      <use>False</use>
-    </region8>
-    <region9>
-      <peak>528</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>72 (Пентан)</comment>
-      <use>False</use>
-    </region9>
-    <region10>
-      <peak>914</peak>
+      <peak>537</peak>
       <iteration>1</iteration>
       <width>4</width>
       <error>0</error>
-      <col>1</col>
-      <comment>(контроль 34)</comment>
-      <use>False</use>
-    </region10>
-    <region11>
-      <peak>570</peak>
-      <iteration>1</iteration>
-      <width>6</width>
-      <error>0</error>
       <col>2</col>
-      <comment>(контроль14)</comment>
-      <use>False</use>
-    </region11>
-    <region12>
+      <comment>метан-15-сервисный</comment>
+      <use>True</use>
+    </region1>
+    <region2>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region2>
+    <region3>
+      <peak>847</peak>
+      <iteration>1</iteration>
+      <width>3</width>
+      <error>0</error>
+      <col>1</col>
+      <comment>id_PROPANE_39</comment>
+      <use>True</use>
+    </region3>
+    <region4>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region4>
+    <region5>
       <peak>985</peak>
       <iteration>1</iteration>
       <width>3</width>
       <error>0</error>
       <col>1</col>
-      <comment>(контроль 30)</comment>
-      <use>False</use>
+      <comment>id_ETHANE_30</comment>
+      <use>True</use>
+    </region5>
+    <region6>
+      <peak>952</peak>
+      <iteration>1</iteration>
+      <width>3</width>
+      <error>0</error>
+      <col>1</col>
+      <comment>id_OXYGEN_32</comment>
+      <use>True</use>
+    </region6>
+    <region7>
+      <peak>808</peak>
+      <iteration>1</iteration>
+      <width>3</width>
+      <error>0</error>
+      <col>1</col>
+      <comment>id_ISOBUTANE_42</comment>
+      <use>True</use>
+    </region7>
+    <region8>
+      <peak>639</peak>
+      <iteration>1</iteration>
+      <width>3</width>
+      <error>0</error>
+      <col>1</col>
+      <comment>id_BUTANE_58</comment>
+      <use>True</use>
+    </region8>
+    <region9>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region9>
+    <region10>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region10>
+    <region11>
+      <peak>574</peak>
+      <iteration>1</iteration>
+      <width>3</width>
+      <error>0</error>
+      <col>2</col>
+      <comment>id_NITROGEN_14</comment>
+      <use>True</use>
+    </region11>
+    <region12>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
     </region12>
     <region13>
-      <peak>760</peak>
-      <iteration>1</iteration>
-      <width>1</width>
-      <error>0</error>
-      <col>1</col>
-      <comment> (контроль 45)</comment>
-      <use>False</use>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
     </region13>
     <region14>
-      <peak>789</peak>
+      <peak>784</peak>
       <iteration>1</iteration>
       <width>3</width>
       <error>0</error>
       <col>1</col>
-      <comment>44 (carbon dioxide)</comment>
-      <use>False</use>
+      <comment>id_CO2_44</comment>
+      <use>True</use>
     </region14>
     <region15>
-      <peak>1027</peak>
-      <iteration>1</iteration>
-      <width>4</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>28 (nitrogen)</comment>
-      <use>False</use>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
     </region15>
     <region16>
-      <peak>778</peak>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region16>
+    <region17>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region17>
+    <region18>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
+    </region18>
+    <region19>
+      <peak>538</peak>
       <iteration>1</iteration>
       <width>3</width>
       <error>0</error>
-      <col>1</col>
-      <comment> контроль44</comment>
-      <use>False</use>
-    </region16>
-    <region17>
-      <peak>819</peak>
-      <iteration>1</iteration>
-      <width>1</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>контроль аргона</comment>
-      <use>False</use>
-    </region17>
-    <region18>
-      <peak>514</peak>
-      <iteration>1</iteration>
-      <width>1</width>
-      <error>0</error>
       <col>2</col>
-      <comment>контроль метана</comment>
-      <use>False</use>
-    </region18>
-    <region19>
-      <peak>526</peak>
-      <iteration>1</iteration>
-      <width>1</width>
-      <error>0</error>
-      <col>2</col>
-      <comment>id_METHANE_15_метан</comment>
+      <comment>id_METHANE_15</comment>
       <use>True</use>
     </region19>
     <region20>
-      <peak>828</peak>
-      <iteration>1</iteration>
-      <width>3</width>
-      <error>0</error>
-      <col>1</col>
-      <comment>40(аргон)</comment>
-      <use>False</use>
+      <peak>
+      </peak>
+      <iteration>
+      </iteration>
+      <width>
+      </width>
+      <error>
+      </error>
+      <col>
+      </col>
+      <comment>
+      </comment>
+      <use>
+      </use>
     </region20>
   </sense>
   <common>
     <focus1>2729</focus1>
     <focus2>2812</focus2>
-    <exptime>20</exptime>
+    <exptime>200</exptime>
     <meastime>10</meastime>
     <ivoltage>2184</ivoltage>
-    <cp>3754</cp>
-    <ecurrent>83</ecurrent>
+    <cp>3751</cp>
+    <ecurrent>327</ecurrent>
     <hcurrent>0</hcurrent>
-    <before>100</before>
+    <before>400</before>
     <equal>False</equal>
-    <forward>100</forward>
-    <back>400</back>
+    <forward>200</forward>
+    <back>1000</back>
   </common>
   <interface>
-    <coeff1>77683.59375</coeff1>
-    <coeff2>16598.14453125</coeff2>
+    <coeff1>78729.4921875</coeff1>
+    <coeff2>16848.6328125</coeff2>
   </interface>
   <check>
     <peak>
@@ -220,6 +297,6 @@
     <limit>219</limit>
     <allowed>0</allowed>
     <region>0</region>
-    <cycles>5</cycles>
+    <cycles>0</cycles>
   </check>
 </control>
