@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mass-Spec Lab")]
 [assembly: AssemblyProduct("Flavor")]
-[assembly: AssemblyCopyright("Copyright © Dmitrii Lebedev 2009")]
+[assembly: AssemblyCopyright("Copyright © Dmitrii Lebedev 2009-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
