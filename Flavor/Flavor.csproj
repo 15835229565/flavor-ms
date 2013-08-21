@@ -23,7 +23,6 @@
     <TargetZone>LocalIntranet</TargetZone>
     <SignManifests>false</SignManifests>
     <PublishWizardCompleted>true</PublishWizardCompleted>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <PublishUrl>D:\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -424,7 +423,6 @@
     <None Include="config.xsx">
       <DependentUpon>config.xsd</DependentUpon>
     </None>
-    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
