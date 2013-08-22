@@ -230,7 +230,16 @@ namespace Flavor.Common {
                             return null;
                         }
                         ids.Add(id);
-                        masses.Add(groups[3].Success ? groups[3].Value : "");
+                        if (!groups[3].Success){
+                            //no mass
+                            return null;
+                        }
+                        var mass = groups[3].Value;
+                        if (masses.Contains(mass)) {
+                            // duplicate mass
+                            return null;
+                        }
+                        masses.Add(mass);
                     } catch (FormatException) {
                         //error. wrong string format.
                         return null;
