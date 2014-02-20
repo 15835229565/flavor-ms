@@ -6,9 +6,31 @@ using Flavor.Common.Commands;
 using Flavor.Common;
 
 namespace Flavor.Xmega32A4U_testBoard {
-    internal static class NewProtocol {
+    internal class NewProtocol {
+        public class CommandReceivedEventArgs: EventArgs {
+            private readonly CommandCode code;
+            private readonly ServicePacket command;
+            public CommandCode Code {
+                get { return code; }
+            }
+            public ServicePacket Command {
+                get { return command; }
+            }
+            public CommandReceivedEventArgs(CommandCode code, ServicePacket command) {
+                this.code = code;
+                this.command = command;
+            }
+        }
+        public delegate void CommandReceivedDelegate(object sender, CommandReceivedEventArgs e);
+        public event CommandReceivedDelegate CommandReceived;
+        protected void OnCommandReceived(CommandCode code, ServicePacket command) {
+            if (CommandReceived != null)
+                CommandReceived(this, new CommandReceivedEventArgs(code, command));
+        }
+        //HI+
+        //TODO: structure code-length
         internal enum CommandCode: byte {
-            None = 0x00,
+            None = 0x00,// & min length
             //sync
             GetState = 0x01,
             GetStatus = 0x02,
@@ -23,7 +45,7 @@ namespace Flavor.Xmega32A4U_testBoard {
             SetCapacitorVoltage = 0x0B,
             Measure = 0x0C,
             GetCounts = 0x0D,
-            //heatCurrentEnable = 0x0E,// отсюда нужно согласовывать
+            //heatCurrentEnable = 0x0E,
             //emissionCurrentEnable = 0x0F,
             heatCurrentEnable = 0x11,
             EnableHighVoltage = 0x14,
@@ -54,13 +76,13 @@ namespace Flavor.Xmega32A4U_testBoard {
             HighVoltageOff = 0xE5,
             HighVoltageOn = 0xE6
         }
-
+        //HI
         private enum PacketingState {
             Idle,
             WaitUpper,
             WaitLower
         }
-
+        //LOW
         internal enum PortStates {
             Closed,
             Opened,
@@ -69,22 +91,22 @@ namespace Flavor.Xmega32A4U_testBoard {
             ErrorClosing,
             ErrorOpening
         }
-
-        private static PacketingState PackState = PacketingState.Idle;
-
-        private static List<byte> PacketBuffer = new List<byte>();
-
-        private static byte UpperNibble;
-
-        private static SerialPort _serialPort = null;
-
-        private static List<byte[]> PacketReceived = new List<byte[]>();
-
+        //HI
+        private PacketingState PackState = PacketingState.Idle;
+        //HI+
+        private List<byte> PacketBuffer = new List<byte>();
+        //HI
+        private byte UpperNibble;
+        //LOW
+        private SerialPort _serialPort = null;
+        //HI+
+        private List<byte[]> PacketReceived = new List<byte[]>();
+        //LOW
         internal static string[] AvailablePorts {
             get { return SerialPort.GetPortNames(); }
         }
-        
-        internal static PortStates Open() {
+        //LOW
+        internal PortStates Open() {
             if (_serialPort != null) {
                 if (_serialPort.IsOpen){
                     return PortStates.Opened;
@@ -110,8 +132,8 @@ namespace Flavor.Xmega32A4U_testBoard {
             Receiving();
             return PortStates.Opening;
         }
-
-        internal static PortStates Close() {
+        //LOW
+        internal PortStates Close() {
             if (_serialPort == null) {
                 System.Windows.Forms.MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
                 return PortStates.ErrorClosing;
@@ -131,8 +153,8 @@ namespace Flavor.Xmega32A4U_testBoard {
             }
             return PortStates.Closing;
         }
-
-        internal static void Send(byte[] message) {
+        //LOW
+        internal void Send(byte[] message) {
             try {
                 _serialPort.Write(message, 0, message.Length);
             } catch {
@@ -147,16 +169,16 @@ namespace Flavor.Xmega32A4U_testBoard {
                 Flavor.Common.ConsoleWriter.WriteLine();
             }
         }
-
-        private static void Receiving() {
+        //HI
+        private void Receiving() {
             _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
         }
-
-        private static void StopReceiving() {
+        //HI
+        private void StopReceiving() {
             _serialPort.DataReceived -= new SerialDataReceivedEventHandler(_serialPort_DataReceived);
         }
-
-        private static void _serialPort_DataReceived(object sender, EventArgs e) {
+        //HI
+        private void _serialPort_DataReceived(object sender, EventArgs e) {
             SerialPort port = sender as SerialPort;
             while (port.IsOpen && port.BytesToRead > 0) {
                 byte ch;
@@ -177,8 +199,8 @@ namespace Flavor.Xmega32A4U_testBoard {
             }
             PacketReceived.Clear();
         }
-
-        private static void DispatchByte(byte data) {
+        //HI
+        private void DispatchByte(byte data) {
             switch (PackState) {
                 case PacketingState.Idle: {
                         if (data == (byte)':') {
@@ -212,7 +234,24 @@ namespace Flavor.Xmega32A4U_testBoard {
                     }
             }
         }
-
+        private static void _Parse(byte[] raw_command) {
+            int minLength = 2;
+            if (raw_command.Length < minLength)
+                return; // TODO: raise logging event, too short
+            if (!checkCS(raw_command))
+                return; // TODO: raise logging event, wrong CS
+            CommandCode commandcode = (CommandCode)raw_command[0];
+            if (false) // check for command
+                return; // TODO: raise logging event, wrong command
+            if (false) // check for length using code-length table
+                return; // TODO: raise logging event, wrong command
+            ServicePacket packet;
+            switch (commandcode) {
+                default:
+                    return; // TODO: raise logging event
+            }
+        }
+        //HI+
         internal static ServicePacket Parse(byte[] raw_command) {
             ///<summary> CS проверка <summary>
             if (raw_command.Length >= 2) {
@@ -221,14 +260,14 @@ namespace Flavor.Xmega32A4U_testBoard {
                     ///<summary> Отделяем функциональный код команды,
                     ///отталкиваясь от него принимаем решение о создании команды
                     ///<summary>
+                    // TODO: raise events here with commands as event args
                     switch ((CommandCode)raw_command[0]) {
                         case CommandCode.GetState:
-                            if (raw_command.Length == 3) {
+                            if (raw_command.Length == 3)
                                 return new SyncReply.updateState(raw_command[1]);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.GetStatus:
-                            if (raw_command.Length == 29) {
+                            if (raw_command.Length == 29)
                                 return new SyncReply.updateStatus(raw_command[1],
                                                         raw_command[2],
                                                         (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
@@ -244,60 +283,49 @@ namespace Flavor.Xmega32A4U_testBoard {
                                                         (ushort)((ushort)raw_command[23] + ((ushort)raw_command[24] << 8)),
                                                         raw_command[25],
                                                         (ushort)((ushort)raw_command[26] + ((ushort)raw_command[27] << 8)));
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.Shutdown:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmShutdown();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.Init:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmInit();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetHeatCurrent:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmHCurrent();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetEmissionCurrent:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmECurrent();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetIonizationVoltage:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmIVoltage();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetFocusVoltage1:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmF1Voltage();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetFocusVoltage2:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmF2Voltage();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetScanVoltage:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmSVoltage();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetCapacitorVoltage:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmCP();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.Measure:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmMeasure();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.GetCounts:
-                            if (raw_command.Length == 8) {
+                            if (raw_command.Length == 8)
                                 return new SyncReply.updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
                                                         (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16),
                                                         delegate {
@@ -306,22 +334,19 @@ namespace Flavor.Xmega32A4U_testBoard {
                                                                 return;
                                                             }
                                                             // Not the best place for automatic refresh!
-                                                            // move further to Commander rise an event!
+                                                            // move further to Commander, rise an event!
                                                             Commander.CurrentMeasureMode.updateGraph();});
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.heatCurrentEnable:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmHECurrent();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.EnableHighVoltage:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmHighVoltage();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.GetTurboPumpStatus:
-                            if (raw_command.Length == 17) {
+                            if (raw_command.Length == 17)
                                 return new SyncReply.updateTurboPumpStatus((ushort)((ushort)raw_command[1] + ((ushort)raw_command[2] << 8)),
                                                         (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
                                                         (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
@@ -331,134 +356,112 @@ namespace Flavor.Xmega32A4U_testBoard {
                                                         raw_command[13],
                                                         raw_command[14],
                                                         raw_command[15]);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SetForvacuumLevel:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncReply.confirmForvacuumLevel();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidCommand:
                             byte[] tempArray = new byte[raw_command.Length - 1];
                             raw_command.CopyTo(tempArray, 1);
                             return new SyncErrorReply.logInvalidCommand(tempArray);
                         case CommandCode.InvalidChecksum:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncErrorReply.logInvalidChecksum();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidPacket:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncErrorReply.logInvalidPacket();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidLength:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncErrorReply.logInvalidLength();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidData:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncErrorReply.logInvalidData();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidState:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new SyncErrorReply.logInvalidState();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InternalError:
-                            if (raw_command.Length == 3) {
+                            if (raw_command.Length == 3)
                                 return new AsyncErrorReply.logInternalError(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidSystemState:
                             if (raw_command.Length == 2) {
                                 return new AsyncErrorReply.logInvalidSystemState(raw_command);
                             }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.VacuumCrash:
-                            if (raw_command.Length == 3) {
+                            if (raw_command.Length == 3)
                                 return new AsyncErrorReply.logVacuumCrash(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.TurboPumpFailure:
-                            if (raw_command.Length == 17) {
+                            if (raw_command.Length == 17)
                                 return new AsyncErrorReply.logTurboPumpFailure(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.PowerFail:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncErrorReply.logPowerFail(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.InvalidVacuumState:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncErrorReply.logInvalidVacuumState(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.AdcPlaceIonSrc:
                             //!!!
-                            if (raw_command.Length >= 2) {
+                            if (raw_command.Length >= 2)
                                 return new AsyncErrorReply.logAdcPlaceIonSrc(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.AdcPlaceScanv:
                             //!!!
-                            if (raw_command.Length >= 2) {
+                            if (raw_command.Length >= 2)
                                 return new AsyncErrorReply.logAdcPlaceScanv(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.AdcPlaceControlm:
                             //!!!
-                            if (raw_command.Length >= 2) {
+                            if (raw_command.Length >= 2)
                                 return new AsyncErrorReply.logAdcPlaceControlm(raw_command);
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.Measured:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncReply.requestCounts();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.VacuumReady:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncReply.confirmVacuumReady();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SystemShutdowned:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncReply.confirmShutdowned();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.SystemReseted:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncReply.SystemReseted();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.HighVoltageOff:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncReply.confirmHighVoltageOff();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         case CommandCode.HighVoltageOn:
-                            if (raw_command.Length == 2) {
+                            if (raw_command.Length == 2)
                                 return new AsyncReply.confirmHighVoltageOn();
-                            }
-                            return ServicePacket.ZERO;
+                            break;
                         default:
                             ConsoleWriter.WriteLine("Неверная команда");
-                            return ServicePacket.ZERO;
+                            break;
                     }
                 } else {
                     ConsoleWriter.WriteLine("Неверная контрольная сумма");
-                    return ServicePacket.ZERO;
                 }
             } else {
                 ConsoleWriter.WriteLine("Короткий пакет");
-                return ServicePacket.ZERO;
             }
+            return ServicePacket.ZERO;
         }
-
+        //HI
         private static byte ComputeChecksum(byte[] data) {
             byte checkSum = 0;
             for (int i = 0; i < data.Length; i++) {
@@ -466,11 +469,11 @@ namespace Flavor.Xmega32A4U_testBoard {
             }
             return checkSum;
         }
-
+        //HI
         private static bool checkCS(byte[] data) {
             return true ^ Convert.ToBoolean(ComputeChecksum(data));
         }
-
+        //HI
         internal static byte[] buildPack(byte[] data) {
             List<byte> pack = new List<byte>();
             pack.Add((byte)':');
@@ -478,6 +481,7 @@ namespace Flavor.Xmega32A4U_testBoard {
             pack.Add((byte)'\r');
             return pack.ToArray();
         }
+        //HI
         internal static void buildPackBody(List<byte> pack, byte[] data) {
             for (int i = 0; i < data.Length; i++) {
                 pack.Add(GetNibble(data[i] >> 4));
@@ -487,22 +491,26 @@ namespace Flavor.Xmega32A4U_testBoard {
             pack.Add(GetNibble(cs >> 4));
             pack.Add(GetNibble(cs));
         }
-
+        //HI
         internal static byte[] collectData(byte functCode) {
             return new byte[] { functCode };
         }
+        //HI
         internal static byte[] collectData(byte functCode, byte value) {
             return new byte[] { functCode, value };
         }
+        //HI
         internal static byte[] collectData(byte functCode, ushort value) {
             byte[] data = ushort2ByteArray(value);
             return new byte[] { functCode, data[0], data[1] };
         }
+        //HI
         internal static byte[] collectData(byte functCode, ushort value1, ushort value2) {
             byte[] data1 = ushort2ByteArray(value1);
             byte[] data2 = ushort2ByteArray(value2);
             return new byte[] { functCode, data1[0], data1[1], data2[0], data2[1] };
         }
+        //HI
         internal static byte[] collectData(byte functCode, int value1, int value2) {
             List<byte> Data = new List<byte>();
             Data.Add(functCode);
@@ -510,19 +518,19 @@ namespace Flavor.Xmega32A4U_testBoard {
             Data.AddRange(int2ByteArray(value2));
             return Data.ToArray();
         }
-
+        //HI
         internal static byte[] ushort2ByteArray(ushort value) {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;
             return new byte[] { (byte)(value), (byte)(value >> 8) };
         }
-
+        //HI
         internal static byte[] int2ByteArray(int value) {
             if (value < 0) value = 0;
             if (value > 16777215) value = 16777215;
             return new byte[] { (byte)(value), (byte)(value >> 8), (byte)(value >> 16) };
         }
-
+        //HI
         private static byte GetNibble(int data) {
             data &= 0x0F;
             if (data < 10) {
@@ -531,7 +539,7 @@ namespace Flavor.Xmega32A4U_testBoard {
                 return (byte)(data + (int)'a' - 10);
             }
         }
-
+        //HI
         private static byte GetInt(int data) {
             if (data >= (byte)'0' && data <= (int)'9') {
                 return (byte)(data - (int)'0');

@@ -6,8 +6,6 @@ using Flavor.Common.Commands;
 
 namespace Flavor.Common {
     internal static class ModBus {
-        internal class ModBusException: Exception { }
-
         internal enum CommandCode: byte {
             None = 0x00,
             //sync

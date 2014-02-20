@@ -1611,7 +1611,5 @@ namespace Flavor.Xmega32A4U_testBoard
             return (MC.Service.transmit((byte)Command.Chip.reset)[1] == (byte)Command.Chip.reset);
         }
         #endregion
-        //--------------------------------------ЗАМЕТКИ-------------------------------------------
     }
-    //---------------------------------------THE END------------------------------------------
 }
