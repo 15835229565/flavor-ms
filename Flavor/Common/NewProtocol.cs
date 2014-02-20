@@ -7,6 +7,7 @@ using Flavor.Common;
 
 namespace Flavor.Xmega32A4U_testBoard {
     internal class NewProtocol {
+        #region HI+
         public class CommandReceivedEventArgs: EventArgs {
             private readonly CommandCode code;
             private readonly ServicePacket command;
@@ -27,7 +28,6 @@ namespace Flavor.Xmega32A4U_testBoard {
             if (CommandReceived != null)
                 CommandReceived(this, new CommandReceivedEventArgs(code, command));
         }
-        //HI+
         //TODO: structure code-length
         internal enum CommandCode: byte {
             None = 0x00,// & min length
@@ -76,164 +76,7 @@ namespace Flavor.Xmega32A4U_testBoard {
             HighVoltageOff = 0xE5,
             HighVoltageOn = 0xE6
         }
-        //HI
-        private enum PacketingState {
-            Idle,
-            WaitUpper,
-            WaitLower
-        }
-        //LOW
-        internal enum PortStates {
-            Closed,
-            Opened,
-            Closing,
-            Opening,
-            ErrorClosing,
-            ErrorOpening
-        }
-        //HI
-        private PacketingState PackState = PacketingState.Idle;
-        //HI+
-        private List<byte> PacketBuffer = new List<byte>();
-        //HI
-        private byte UpperNibble;
-        //LOW
-        private SerialPort _serialPort = null;
-        //HI+
         private List<byte[]> PacketReceived = new List<byte[]>();
-        //LOW
-        internal static string[] AvailablePorts {
-            get { return SerialPort.GetPortNames(); }
-        }
-        //LOW
-        internal PortStates Open() {
-            if (_serialPort != null) {
-                if (_serialPort.IsOpen){
-                    return PortStates.Opened;
-                    //В лог: Уже открыт
-                }
-                _serialPort.Dispose();
-            }
-            _serialPort = new SerialPort();
-            _serialPort.PortName = Flavor.Common.Config.Port;
-            _serialPort.BaudRate = Flavor.Common.Config.BaudRate;
-            _serialPort.DataBits = 8;
-            _serialPort.Parity = System.IO.Ports.Parity.None;
-            _serialPort.StopBits = System.IO.Ports.StopBits.One;
-            _serialPort.ReadTimeout = 1000;
-            _serialPort.WriteTimeout = 1000;
-
-            try {
-                _serialPort.Open();
-            } catch (Exception Error) {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
-                return PortStates.ErrorOpening;
-            }
-            Receiving();
-            return PortStates.Opening;
-        }
-        //LOW
-        internal PortStates Close() {
-            if (_serialPort == null) {
-                System.Windows.Forms.MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
-                return PortStates.ErrorClosing;
-            }
-            if (!_serialPort.IsOpen) {
-                return PortStates.Closed;
-                //В лог Уже закрыт
-            }
-            try {
-                StopReceiving();
-                _serialPort.Close();
-                _serialPort.Dispose();
-                _serialPort = null;
-            } catch (Exception Error) {
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
-                return PortStates.ErrorClosing;
-            }
-            return PortStates.Closing;
-        }
-        //LOW
-        internal void Send(byte[] message) {
-            try {
-                _serialPort.Write(message, 0, message.Length);
-            } catch {
-                // BAD! consider revising
-                Flavor.Common.ConsoleWriter.WriteLine("Error writing this command to serial port:");
-                //throw new ModBusException();
-            } finally {
-                Flavor.Common.ConsoleWriter.Write("[out]");
-                foreach (byte b in message) {
-                    Flavor.Common.ConsoleWriter.Write((char)b);
-                }
-                Flavor.Common.ConsoleWriter.WriteLine();
-            }
-        }
-        //HI
-        private void Receiving() {
-            _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
-        }
-        //HI
-        private void StopReceiving() {
-            _serialPort.DataReceived -= new SerialDataReceivedEventHandler(_serialPort_DataReceived);
-        }
-        //HI
-        private void _serialPort_DataReceived(object sender, EventArgs e) {
-            SerialPort port = sender as SerialPort;
-            while (port.IsOpen && port.BytesToRead > 0) {
-                byte ch;
-                try {
-                    ch = (byte)port.ReadByte();
-                } catch {
-                    Flavor.Common.ConsoleWriter.WriteLine("Error(reading byte)");
-                    continue;
-                    // не получилось;
-                }
-                Flavor.Common.ConsoleWriter.Write((char)ch);
-                DispatchByte(ch);
-            }
-            foreach (byte[] raw_command in PacketReceived) {
-                //if (Commander.pState != Commander.programStates.Start)
-                // very bad! rise an even here!
-                Flavor.Common.Commander.Realize(Parse(raw_command));
-            }
-            PacketReceived.Clear();
-        }
-        //HI
-        private void DispatchByte(byte data) {
-            switch (PackState) {
-                case PacketingState.Idle: {
-                        if (data == (byte)':') {
-                            PacketBuffer.Clear();
-                            PackState = PacketingState.WaitUpper;
-                        } else {
-                            // rise a logging event here
-                            Flavor.Common.ConsoleWriter.WriteLine("Error({0})", data);
-                            //Symbol outside packet
-                        }
-                        break;
-                    }
-                case PacketingState.WaitUpper: {
-                        if (data == 0x0d) {
-                            PacketReceived.Add(PacketBuffer.ToArray());
-                            PacketBuffer.Clear();
-                            Flavor.Common.ConsoleWriter.WriteLine();
-                            PackState = PacketingState.Idle;
-                        } else {
-                            UpperNibble = GetInt(data);
-                            PackState = PacketingState.WaitLower;
-                        }
-                        break;
-                    }
-                case PacketingState.WaitLower: {
-                        byte LowerNibble = GetInt(data);
-                        LowerNibble |= (byte)(UpperNibble << 4);
-                        PacketBuffer.Add(LowerNibble);
-                        PackState = PacketingState.WaitUpper;
-                        break;
-                    }
-            }
-        }
         private static void _Parse(byte[] raw_command) {
             int minLength = 2;
             if (raw_command.Length < minLength)
@@ -251,7 +94,6 @@ namespace Flavor.Xmega32A4U_testBoard {
                     return; // TODO: raise logging event
             }
         }
-        //HI+
         internal static ServicePacket Parse(byte[] raw_command) {
             ///<summary> CS проверка <summary>
             if (raw_command.Length >= 2) {
@@ -335,7 +177,8 @@ namespace Flavor.Xmega32A4U_testBoard {
                                                             }
                                                             // Not the best place for automatic refresh!
                                                             // move further to Commander, rise an event!
-                                                            Commander.CurrentMeasureMode.updateGraph();});
+                                                            Commander.CurrentMeasureMode.updateGraph();
+                                                        });
                             break;
                         case CommandCode.heatCurrentEnable:
                             if (raw_command.Length == 2)
@@ -461,7 +304,77 @@ namespace Flavor.Xmega32A4U_testBoard {
             }
             return ServicePacket.ZERO;
         }
-        //HI
+        private List<byte> PacketBuffer = new List<byte>();
+        #endregion
+        #region HI
+        private enum PacketingState {
+            Idle,
+            WaitUpper,
+            WaitLower
+        }
+        private PacketingState PackState = PacketingState.Idle;
+        private byte UpperNibble;
+        private void Receiving() {
+            _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
+        }
+        private void StopReceiving() {
+            _serialPort.DataReceived -= new SerialDataReceivedEventHandler(_serialPort_DataReceived);
+        }
+        private void _serialPort_DataReceived(object sender, EventArgs e) {
+            SerialPort port = sender as SerialPort;
+            while (port.IsOpen && port.BytesToRead > 0) {
+                byte ch;
+                try {
+                    ch = (byte)port.ReadByte();
+                } catch {
+                    Flavor.Common.ConsoleWriter.WriteLine("Error(reading byte)");
+                    continue;
+                    // не получилось;
+                }
+                Flavor.Common.ConsoleWriter.Write((char)ch);
+                DispatchByte(ch);
+            }
+            foreach (byte[] raw_command in PacketReceived) {
+                //if (Commander.pState != Commander.programStates.Start)
+                // very bad! rise an event here!
+                Flavor.Common.Commander.Realize(Parse(raw_command));
+            }
+            PacketReceived.Clear();
+        }
+        private void DispatchByte(byte data) {
+            switch (PackState) {
+                case PacketingState.Idle: {
+                        if (data == (byte)':') {
+                            PacketBuffer.Clear();
+                            PackState = PacketingState.WaitUpper;
+                        } else {
+                            // rise a logging event here
+                            Flavor.Common.ConsoleWriter.WriteLine("Error({0})", data);
+                            //Symbol outside packet
+                        }
+                        break;
+                    }
+                case PacketingState.WaitUpper: {
+                        if (data == 0x0d) {
+                            PacketReceived.Add(PacketBuffer.ToArray());
+                            PacketBuffer.Clear();
+                            Flavor.Common.ConsoleWriter.WriteLine();
+                            PackState = PacketingState.Idle;
+                        } else {
+                            UpperNibble = GetInt(data);
+                            PackState = PacketingState.WaitLower;
+                        }
+                        break;
+                    }
+                case PacketingState.WaitLower: {
+                        byte LowerNibble = GetInt(data);
+                        LowerNibble |= (byte)(UpperNibble << 4);
+                        PacketBuffer.Add(LowerNibble);
+                        PackState = PacketingState.WaitUpper;
+                        break;
+                    }
+            }
+        }
         private static byte ComputeChecksum(byte[] data) {
             byte checkSum = 0;
             for (int i = 0; i < data.Length; i++) {
@@ -469,11 +382,9 @@ namespace Flavor.Xmega32A4U_testBoard {
             }
             return checkSum;
         }
-        //HI
         private static bool checkCS(byte[] data) {
             return true ^ Convert.ToBoolean(ComputeChecksum(data));
         }
-        //HI
         internal static byte[] buildPack(byte[] data) {
             List<byte> pack = new List<byte>();
             pack.Add((byte)':');
@@ -481,7 +392,6 @@ namespace Flavor.Xmega32A4U_testBoard {
             pack.Add((byte)'\r');
             return pack.ToArray();
         }
-        //HI
         internal static void buildPackBody(List<byte> pack, byte[] data) {
             for (int i = 0; i < data.Length; i++) {
                 pack.Add(GetNibble(data[i] >> 4));
@@ -491,26 +401,21 @@ namespace Flavor.Xmega32A4U_testBoard {
             pack.Add(GetNibble(cs >> 4));
             pack.Add(GetNibble(cs));
         }
-        //HI
         internal static byte[] collectData(byte functCode) {
             return new byte[] { functCode };
         }
-        //HI
         internal static byte[] collectData(byte functCode, byte value) {
             return new byte[] { functCode, value };
         }
-        //HI
         internal static byte[] collectData(byte functCode, ushort value) {
             byte[] data = ushort2ByteArray(value);
             return new byte[] { functCode, data[0], data[1] };
         }
-        //HI
         internal static byte[] collectData(byte functCode, ushort value1, ushort value2) {
             byte[] data1 = ushort2ByteArray(value1);
             byte[] data2 = ushort2ByteArray(value2);
             return new byte[] { functCode, data1[0], data1[1], data2[0], data2[1] };
         }
-        //HI
         internal static byte[] collectData(byte functCode, int value1, int value2) {
             List<byte> Data = new List<byte>();
             Data.Add(functCode);
@@ -518,19 +423,16 @@ namespace Flavor.Xmega32A4U_testBoard {
             Data.AddRange(int2ByteArray(value2));
             return Data.ToArray();
         }
-        //HI
         internal static byte[] ushort2ByteArray(ushort value) {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;
             return new byte[] { (byte)(value), (byte)(value >> 8) };
         }
-        //HI
         internal static byte[] int2ByteArray(int value) {
             if (value < 0) value = 0;
             if (value > 16777215) value = 16777215;
             return new byte[] { (byte)(value), (byte)(value >> 8), (byte)(value >> 16) };
         }
-        //HI
         private static byte GetNibble(int data) {
             data &= 0x0F;
             if (data < 10) {
@@ -539,7 +441,6 @@ namespace Flavor.Xmega32A4U_testBoard {
                 return (byte)(data + (int)'a' - 10);
             }
         }
-        //HI
         private static byte GetInt(int data) {
             if (data >= (byte)'0' && data <= (int)'9') {
                 return (byte)(data - (int)'0');
@@ -552,5 +453,80 @@ namespace Flavor.Xmega32A4U_testBoard {
             }
             return 0;
         }
+        #endregion
+        #region LOW
+        internal enum PortStates {
+            Closed,
+            Opened,
+            Closing,
+            Opening,
+            ErrorClosing,
+            ErrorOpening
+        }
+        private SerialPort _serialPort = null;
+        internal static string[] AvailablePorts {
+            get { return SerialPort.GetPortNames(); }
+        }
+        internal PortStates Open() {
+            if (_serialPort != null) {
+                if (_serialPort.IsOpen){
+                    return PortStates.Opened;
+                    //В лог: Уже открыт
+                }
+                _serialPort.Dispose();
+            }
+            _serialPort = new SerialPort();
+            _serialPort.PortName = Flavor.Common.Config.Port;
+            _serialPort.BaudRate = Flavor.Common.Config.BaudRate;
+            _serialPort.DataBits = 8;
+            _serialPort.Parity = System.IO.Ports.Parity.None;
+            _serialPort.StopBits = System.IO.Ports.StopBits.One;
+            _serialPort.ReadTimeout = 1000;
+            _serialPort.WriteTimeout = 1000;
+
+            try {
+                _serialPort.Open();
+            } catch (Exception Error) {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                return PortStates.ErrorOpening;
+            }
+            Receiving();
+            return PortStates.Opening;
+        }
+        internal PortStates Close() {
+            if (_serialPort == null) {
+                System.Windows.Forms.MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
+                return PortStates.ErrorClosing;
+            }
+            if (!_serialPort.IsOpen) {
+                return PortStates.Closed;
+                //В лог Уже закрыт
+            }
+            try {
+                StopReceiving();
+                _serialPort.Close();
+                _serialPort.Dispose();
+                _serialPort = null;
+            } catch (Exception Error) {
+                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                return PortStates.ErrorClosing;
+            }
+            return PortStates.Closing;
+        }
+        internal void Send(byte[] message) {
+            try {
+                _serialPort.Write(message, 0, message.Length);
+            } catch {
+                // BAD! consider revising
+                Flavor.Common.ConsoleWriter.WriteLine("Error writing this command to serial port:");
+            } finally {
+                Flavor.Common.ConsoleWriter.Write("[out]");
+                foreach (byte b in message) {
+                    Flavor.Common.ConsoleWriter.Write((char)b);
+                }
+                Flavor.Common.ConsoleWriter.WriteLine();
+            }
+        }
+        #endregion
     }
 }
