@@ -335,7 +335,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshUserMessage(string msg) {
             if (this.InvokeRequired) {
-                this.Invoke(new Commander.AsyncReplyHandler(RefreshUserMessage), msg);
+                this.BeginInvoke(new Commander.AsyncReplyHandler(RefreshUserMessage), msg);
                 return;
             }
             RefreshUserMessage(msg);
@@ -346,7 +346,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshDeviceState() {
             if (this.InvokeRequired) {
-                this.Invoke(new DeviceEventHandler(RefreshDeviceState));
+                this.BeginInvoke(new DeviceEventHandler(RefreshDeviceState));
                 return;
             }
             RefreshDeviceState();
@@ -418,7 +418,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshTurboPumpStatus() {
             if (this.InvokeRequired) {
-                this.Invoke(new DeviceEventHandler(RefreshTurboPumpStatus));
+                this.BeginInvoke(new DeviceEventHandler(RefreshTurboPumpStatus));
                 return;
             }
             RefreshTurboPumpStatus();
@@ -440,7 +440,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshDeviceStatus() {
             if (this.InvokeRequired) {
-                this.Invoke(new DeviceEventHandler(RefreshDeviceStatus));
+                this.BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
                 return;
             }
             RefreshDeviceStatus();
@@ -502,7 +502,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshVacuumState() {
             if (this.InvokeRequired) {
-                this.Invoke(new DeviceEventHandler(RefreshVacuumState));
+                this.BeginInvoke(new DeviceEventHandler(RefreshVacuumState));
                 return;
             }
             RefreshVacuumState();
@@ -606,7 +606,7 @@ namespace Flavor.Forms {
 
         internal void InvokeRefreshButtons() {
             if (this.InvokeRequired) {
-                this.Invoke(new Commander.ProgramEventHandler(RefreshButtons));
+                this.BeginInvoke(new Commander.ProgramEventHandler(RefreshButtons));
                 return;
             }
             RefreshButtons();
@@ -678,7 +678,7 @@ namespace Flavor.Forms {
 
         private void InvokeCancelScan() {
             if (this.InvokeRequired) {
-                this.Invoke(new Commander.ProgramEventHandler(CancelScan));
+                this.BeginInvoke(new Commander.ProgramEventHandler(CancelScan));
                 return;
             }
             CancelScan();
@@ -739,9 +739,9 @@ namespace Flavor.Forms {
         private void connectToolStripButton_Click(object sender, EventArgs e) {
             if (Commander.DeviceIsConnected) {
                 Commander.Disconnect();
-                Commander.OnAsyncReply -= new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
+                Commander.OnAsyncReply -= InvokeRefreshUserMessage;
             } else {
-                Commander.OnAsyncReply += new Commander.AsyncReplyHandler(InvokeRefreshUserMessage);
+                Commander.OnAsyncReply += InvokeRefreshUserMessage;
                 Commander.Connect();
             }
         }
@@ -770,7 +770,7 @@ namespace Flavor.Forms {
                     LoadedCollectorsForm form = new LoadedCollectorsForm(graph, fileName, res);
                     form.MdiParent = this;
                     // buggy workaround to refresh MdiWindowListItem
-                    form.TextChanged += new EventHandler(form_TextChanged);
+                    form.TextChanged += form_TextChanged;
                     form.Show();
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
