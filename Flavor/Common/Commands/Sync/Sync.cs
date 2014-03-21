@@ -190,6 +190,15 @@
                 Detector1 = value1;
                 Detector2 = value2;
                 updateGraph = graphupdate;
+                /*updateGraph = delegate {
+                    if (Commander.CurrentMeasureMode == null) {
+                        // fake packet. BAD solution
+                        return;
+                    }
+                    // Not the best place for automatic refresh!
+                    // move further to Commander, rise an event!
+                    Commander.CurrentMeasureMode.updateGraph();
+                };*/
             }
 
             #region IUpdateDevice Members
@@ -205,6 +214,7 @@
 
             public delegate void Action();
             private readonly Action updateGraph;
+            //DEPRECATED!
             public void UpdateGraph() {
                 updateGraph();
                 /*if (Commander.CurrentMeasureMode == null) {

@@ -109,7 +109,10 @@ namespace Flavor.Common {
         internal static void AddToSend(UserRequest command) {
             toSend.AddToSend(command);
         }
-
+        //TODO: subscribe for Protocol.CommandReceived event
+        private static void Realize(object sender, Flavor.Xmega32A4U_testBoard.NewProtocol.CommandReceivedEventArgs e) {
+            // TODO: move here code from method below
+        } 
         internal static void Realize(ServicePacket Command) {
             if (Command is AsyncErrorReply) {
                 CheckInterfaces(Command);
@@ -272,7 +275,12 @@ namespace Flavor.Common {
                 ((IUpdateDevice)Command).UpdateDevice();
             }
             if (Command is IUpdateGraph) {
-                ((IUpdateGraph)Command).UpdateGraph();
+                //((IUpdateGraph)Command).UpdateGraph();
+                if (Commander.CurrentMeasureMode == null) {
+                    //error
+                    return;
+                }
+                Commander.CurrentMeasureMode.updateGraph();
             }
         }
 
@@ -466,7 +474,8 @@ namespace Flavor.Common {
         private static void Disable() {
             Commander.measureCancelRequested = false;
             toSend.IsRareMode = false;
-            // TODO: lock here
+            // TODO: lock here (request from ui may cause synchro errors)
+            // or use async action paradigm
             if (OnScanCancelled != null) {
                 OnScanCancelled();
             }
