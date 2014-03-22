@@ -3,8 +3,11 @@
 namespace Flavor.Common.Commands {
     internal abstract class UserRequest: ServicePacket.Sync, ISend {
         #region ISend Members
-        public virtual void Send() {
-            ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)Id)));
+        public void Send() {
+            ModBus.Send(Data());
+        }
+        protected virtual byte[] Data() {
+            return ModBus.collectData((byte)Id);
         }
         #endregion
 
@@ -37,8 +40,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetHeatCurrent; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetHeatCurrent, Config.CommonOptions.hCurrent)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetHeatCurrent, Config.CommonOptions.hCurrent);
             }
             #endregion
         }
@@ -48,8 +51,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetEmissionCurrent; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetEmissionCurrent, Config.CommonOptions.eCurrent)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetEmissionCurrent, Config.CommonOptions.eCurrent);
             }
             #endregion
         }
@@ -59,8 +62,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetIonizationVoltage; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetIonizationVoltage, Config.CommonOptions.iVoltage)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetIonizationVoltage, Config.CommonOptions.iVoltage);
             }
             #endregion
         }
@@ -70,8 +73,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetFocusVoltage1; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage1, Config.CommonOptions.fV1)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage1, Config.CommonOptions.fV1);
             }
             #endregion
         }
@@ -81,8 +84,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetFocusVoltage2; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage2, Config.CommonOptions.fV2)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetFocusVoltage2, Config.CommonOptions.fV2);
             }
             #endregion
         }
@@ -98,8 +101,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetScanVoltage; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetScanVoltage, SVoltage)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetScanVoltage, SVoltage);
             }
             #endregion
         }
@@ -109,8 +112,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.SetCapacitorVoltage; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.SetCapacitorVoltage, Config.CommonOptions.CP)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.SetCapacitorVoltage, Config.CommonOptions.CP);
             }
             #endregion
         }
@@ -132,10 +135,10 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.Measure; }
             }
             #region ISend Members
-            public override void Send() {
+            protected override byte[] Data() {
+                //!!!
                 ConsoleWriter.WriteLine("Measure intervals: {0} + {1}", itime * 5, etime * 5);
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, itime, etime)));
-                //ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.Measure, Config.iTime, Config.eTime)));
+                return ModBus.collectData((byte)ModBus.CommandCode.Measure, itime, etime);
             }
             #endregion
         }
@@ -151,8 +154,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.heatCurrentEnable; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.heatCurrentEnable, 0)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.heatCurrentEnable, 0);
             }
             #endregion
         }
@@ -162,8 +165,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.heatCurrentEnable; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.heatCurrentEnable, 1)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.heatCurrentEnable, 1);
             }
             #endregion
         }
@@ -179,8 +182,8 @@ namespace Flavor.Common.Commands {
                 get { return ModBus.CommandCode.EnableHighVoltage; }
             }
             #region ISend Members
-            public override void Send() {
-                ModBus.Send(ModBus.buildPack(ModBus.collectData((byte)ModBus.CommandCode.EnableHighVoltage, HVenable)));
+            protected override byte[] Data() {
+                return ModBus.collectData((byte)ModBus.CommandCode.EnableHighVoltage, HVenable);
             }
             #endregion
         }

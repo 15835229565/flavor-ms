@@ -110,7 +110,7 @@ namespace Flavor.Common {
             toSend.AddToSend(command);
         }
         //TODO: subscribe for Protocol.CommandReceived event
-        private static void Realize(object sender, Flavor.Xmega32A4U_testBoard.NewProtocol.CommandReceivedEventArgs e) {
+        private static void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
             // TODO: move here code from method below
         } 
         internal static void Realize(ServicePacket Command) {

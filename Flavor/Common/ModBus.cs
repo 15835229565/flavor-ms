@@ -132,6 +132,7 @@ namespace Flavor.Common {
         }
 
         internal static void Send(byte[] message) {
+            message = buildPack(message);
             try {
                 _serialPort.Write(message, 0, message.Length);
             } catch {
@@ -468,13 +469,14 @@ namespace Flavor.Common {
             return true ^ Convert.ToBoolean(ComputeChecksum(data));
         }
 
-        internal static byte[] buildPack(byte[] data) {
+        private static byte[] buildPack(byte[] data) {
             List<byte> pack = new List<byte>();
             pack.Add((byte)':');
             buildPackBody(pack, data);
             pack.Add((byte)'\r');
             return pack.ToArray();
         }
+        // used in Config..
         internal static void buildPackBody(List<byte> pack, byte[] data) {
             for (int i = 0; i < data.Length; i++) {
                 pack.Add(GetNibble(data[i] >> 4));
@@ -508,13 +510,13 @@ namespace Flavor.Common {
             return Data.ToArray();
         }
 
-        internal static byte[] ushort2ByteArray(ushort value) {
+        private static byte[] ushort2ByteArray(ushort value) {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;
             return new byte[] { (byte)(value), (byte)(value >> 8) };
         }
 
-        internal static byte[] int2ByteArray(int value) {
+        private static byte[] int2ByteArray(int value) {
             if (value < 0) value = 0;
             if (value > 16777215) value = 16777215;
             return new byte[] { (byte)(value), (byte)(value >> 8), (byte)(value >> 16) };
