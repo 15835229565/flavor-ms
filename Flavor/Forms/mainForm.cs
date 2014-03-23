@@ -333,7 +333,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshUserMessage(string msg) {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new Commander.AsyncReplyHandler(RefreshUserMessage), msg);
+                this.BeginInvoke(new Commander.MessageHandler(RefreshUserMessage), msg);
                 return;
             }
             RefreshUserMessage(msg);

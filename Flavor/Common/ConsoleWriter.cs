@@ -4,6 +4,15 @@ using System.Text;
 
 namespace Flavor.Common {
     internal static class ConsoleWriter {
+        internal static void Subscribe() {
+            Commander2.Log += new Commander2.MessageHandler(Commander2_Log);
+        }
+        internal static void Desubscribe() {
+            Commander2.Log -= new Commander2.MessageHandler(Commander2_Log);
+        }
+        private static void Commander2_Log(string msg) {
+            WriteLine(msg);
+        }
         internal static void Write(char c) {
             Console.Write(c);
         }

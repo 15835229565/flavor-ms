@@ -21,12 +21,13 @@ namespace Flavor.Common {
         }
 
         internal delegate void ProgramEventHandler();
-        internal delegate void AsyncReplyHandler(string msg);
-        internal delegate void ErrorHandler(string msg);
+        internal delegate void MessageHandler(string msg);
 
         internal static event ProgramEventHandler OnProgramStateChanged;
         internal static event ProgramEventHandler OnScanCancelled;
-        internal static event ErrorHandler OnError;
+        internal static event MessageHandler OnError;
+        internal static event MessageHandler OnAsyncReply;
+
         private static Commander.programStates programState = programStates.Start;
         private static Commander.programStates programStatePrev;
         private static bool handleBlock = true;
@@ -39,8 +40,6 @@ namespace Flavor.Common {
         internal static MeasureMode CurrentMeasureMode {
             get { return measureMode; }
         }
-
-        internal static event AsyncReplyHandler OnAsyncReply;
 
         //private
         internal static Commander.programStates pState {
@@ -111,15 +110,11 @@ namespace Flavor.Common {
         internal static void AddToSend(UserRequest command) {
             toSend.AddToSend(command);
         }
-        //TODO: subscribe for Protocol.CommandReceived event
-        private static void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
-            // TODO: move here code from method below
-        } 
         internal static void Realize(ServicePacket Command) {
             if (Command is AsyncErrorReply) {
                 CheckInterfaces(Command);
                 ConsoleWriter.WriteLine("Device says: {0}", ((AsyncErrorReply)Command).errorMessage);
-                Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
+                OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
                 if (Commander.pState != Commander.programStates.Start) {
                     toSend.IsRareMode = false;
                     setProgramStateWithoutUndo(Commander.programStates.Start);
@@ -140,7 +135,7 @@ namespace Flavor.Common {
                 }
                 if (Command is AsyncReply.SystemReseted) {
                     ConsoleWriter.WriteLine("System reseted");
-                    Commander.OnAsyncReply("Система переинициализировалась");
+                    OnAsyncReply("Система переинициализировалась");
                     if (Commander.pState != Commander.programStates.Start) {
                         toSend.IsRareMode = false;
                         setProgramStateWithoutUndo(Commander.programStates.Start);
