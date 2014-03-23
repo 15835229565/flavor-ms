@@ -1,4 +1,4 @@
-namespace Flavor.Common.Commands {
+namespace Flavor.Common.Messaging.Commands {
     internal abstract class SyncErrorReply: ServicePacket.Sync {
         internal class logInvalidCommand: SyncErrorReply {
             //private byte[] command;

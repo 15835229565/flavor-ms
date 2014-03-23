@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using UserRequest = Flavor.Common.Commands.UserRequest;
-using SyncReply = Flavor.Common.Commands.SyncReply;
-using Flavor.Forms;
+using UserRequest = Flavor.Common.Messaging.Commands.UserRequest;
 using System.Timers;
 
 namespace Flavor.Common {

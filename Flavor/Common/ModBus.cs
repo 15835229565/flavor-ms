@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Ports;
-using System.Timers;
-using Flavor.Common.Commands;
+using Flavor.Common.Messaging.Commands;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Messaging {
     internal static class ModBus {
         internal enum CommandCode: byte {
             None = 0x00,
@@ -470,14 +469,15 @@ namespace Flavor.Common {
         }
 
         private static byte[] buildPack(byte[] data) {
-            List<byte> pack = new List<byte>();
+            var pack = new List<byte>(2 * data.Length + 4);
             pack.Add((byte)':');
-            buildPackBody(pack, data);
+            pack.AddRange(buildPackBody(data));
             pack.Add((byte)'\r');
             return pack.ToArray();
         }
-        // used in Config..
-        internal static void buildPackBody(List<byte> pack, byte[] data) {
+        // used in Async.Error..
+        internal static IEnumerable<byte> buildPackBody(byte[] data) {
+            var pack = new List<byte>(2 * data.Length + 2);
             for (int i = 0; i < data.Length; i++) {
                 pack.Add(GetNibble(data[i] >> 4));
                 pack.Add(GetNibble(data[i]));
@@ -485,6 +485,7 @@ namespace Flavor.Common {
             byte cs = ComputeChecksum(data);
             pack.Add(GetNibble(cs >> 4));
             pack.Add(GetNibble(cs));
+            return pack;
         }
 
         internal static byte[] collectData(byte functCode) {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Flavor.Common.Commands {
+﻿namespace Flavor.Common.Messaging.Commands {
     internal abstract class UserRequest: ServicePacket.Sync, ISend {
         #region ISend Members
         public void Send() {

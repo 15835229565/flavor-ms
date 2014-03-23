@@ -1,9 +1,14 @@
-﻿namespace Flavor.Common.Commands {
+﻿namespace Flavor.Common.Messaging.Commands {
     internal abstract class AsyncErrorReply: ServicePacket {
         private byte[] cmdln;
         internal AsyncErrorReply(byte[] commandline) {
             cmdln = commandline;
-            Config.logCrash(cmdln);
+            // not good!
+            string cmd = "";
+            foreach (byte b in ModBus.buildPackBody(commandline)) {
+                cmd += (char)b;
+            }
+            Config.logCrash(cmd);
         }
         internal virtual string errorMessage {
             get { return "Async error reply"; }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using UserRequest = Flavor.Common.Commands.UserRequest;
-using SyncReply = Flavor.Common.Commands.SyncReply;
+using UserRequest = Flavor.Common.Messaging.Commands.UserRequest;
+using SyncReply = Flavor.Common.Messaging.Commands.SyncReply;
 using System.Collections;
 
 namespace Flavor.Common.Messaging {

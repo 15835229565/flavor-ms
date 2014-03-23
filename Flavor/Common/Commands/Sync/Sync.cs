@@ -1,4 +1,4 @@
-﻿namespace Flavor.Common.Commands {
+﻿namespace Flavor.Common.Messaging.Commands {
     abstract class SyncReply: ServicePacket.Sync {
         public class updateState: SyncReply, IUpdateDevice, IAutomatedReply {
             private byte sysState;

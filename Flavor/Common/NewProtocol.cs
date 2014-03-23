@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Flavor.Common.Commands;
+using Flavor.Common.Messaging.Commands;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Messaging {
     internal class ModBusNew: IDisposable {
         public class CommandReceivedEventArgs: EventArgs {
             private readonly CommandCode code;
@@ -467,20 +467,22 @@ namespace Flavor.Common {
             }
             // TODO: move checksum up
             private static byte[] buildPack(byte[] data, byte checksum) {
-                List<byte> pack = new List<byte>();
+                var pack = new List<byte>(2 * data.Length + 4);
                 pack.Add((byte)':');
-                buildPackBody(pack, data, checksum);
+                pack.AddRange(buildPackBody(data, checksum));
                 pack.Add((byte)'\r');
                 return pack.ToArray();
             }
-            // used in Config..
-            private static void buildPackBody(List<byte> pack, byte[] data, byte checksum) {
+            // used in Async.Error..
+            private static IEnumerable<byte> buildPackBody(byte[] data, byte checksum) {
+                var pack = new List<byte>(2 * data.Length + 2);
                 for (int i = 0; i < data.Length; i++) {
                     pack.Add(GetNibble(data[i] >> 4));
                     pack.Add(GetNibble(data[i]));
                 }
                 pack.Add(GetNibble(checksum >> 4));
                 pack.Add(GetNibble(checksum));
+                return pack;
             }
             private static byte GetNibble(int data) {
                 data &= 0x0F;

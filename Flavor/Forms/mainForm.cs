@@ -2,8 +2,6 @@ using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Timers;
-using Flavor.Controls;
 // move to components..
 using TreeNodeLeaf = Flavor.Common.TreeNodeLeaf;
 using TreeNodePlus = Flavor.Common.TreeNodePlus;
@@ -344,6 +342,7 @@ namespace Flavor.Forms {
             measure_StatusLabel.Text = msg;
         }
 
+        // TODO: Device state as method parameter (avoid thread run)
         private void InvokeRefreshDeviceState() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshDeviceState));
@@ -351,6 +350,7 @@ namespace Flavor.Forms {
             }
             RefreshDeviceState();
         }
+        // Device.DeviceState state
         private void RefreshDeviceState() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
@@ -416,6 +416,7 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
+        // TODO: turbo pump state as method parameter (avoid thread run)
         private void InvokeRefreshTurboPumpStatus() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshTurboPumpStatus));
@@ -438,6 +439,7 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
+        // TODO: Device status as method parameter (avoid thread run)
         private void InvokeRefreshDeviceStatus() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
@@ -500,6 +502,7 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
+        // TODO: vacuum state as method parameter (avoid thread run)
         private void InvokeRefreshVacuumState() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshVacuumState));
@@ -507,6 +510,7 @@ namespace Flavor.Forms {
             }
             RefreshVacuumState();
         }
+        // Device.VacuumStates state
         private void RefreshVacuumState() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
@@ -604,6 +608,7 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
+        // TODO: program state as method parameter (avoid thread run)
         internal void InvokeRefreshButtons() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new Commander.ProgramEventHandler(RefreshButtons));
@@ -611,6 +616,8 @@ namespace Flavor.Forms {
             }
             RefreshButtons();
         }
+        // bool block, Commander.programStates state, bool connected, bool canDoPrecise
+        // use setButtons signature..
         private void RefreshButtons() {
             bool block = !Commander.hBlock;
             if (block) {

@@ -1,4 +1,4 @@
-﻿namespace Flavor.Common.Commands {
+﻿namespace Flavor.Common.Messaging.Commands {
     internal abstract class ServicePacket {
         internal static readonly ServicePacket ZERO = new ZeroPacket();
         private class ZeroPacket: ServicePacket { }

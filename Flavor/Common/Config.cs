@@ -587,17 +587,11 @@ namespace Flavor.Common {
                 errorLog.Close();
             }
         }
-        internal static void logCrash(byte[] commandline) {
-            string cmd = "";
-            List<byte> pack = new List<byte>();
-            ModBus.buildPackBody(pack, commandline);
-            foreach (byte b in pack) {
-                cmd += (char)b;
-            }
+        internal static void logCrash(string command) {
             System.IO.StreamWriter errorLog;
             if ((errorLog = openLog()) == null)
                 return;
-            log(errorLog, cmd);
+            log(errorLog, command);
         }
         internal static void logTurboPumpAlert(string message) {
             System.IO.StreamWriter errorLog;

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
-using Flavor.Common.Commands;
 using Flavor.Common.Messaging;
+using Flavor.Common.Messaging.Commands;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {

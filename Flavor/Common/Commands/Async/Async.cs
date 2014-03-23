@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flavor.Common.Commands
+﻿namespace Flavor.Common.Messaging.Commands
 {
     internal abstract class AsyncReply: ServicePacket
     {
