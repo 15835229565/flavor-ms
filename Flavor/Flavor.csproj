@@ -92,6 +92,7 @@
     <Compile Include="Common\Commander.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\ConsoleWriter.cs" />
+    <Compile Include="Common\Commander2.cs" />
     <Compile Include="Common\MC.cs" />
     <Compile Include="Common\NewProtocol.cs" />
     <Compile Include="Common\Device.cs" />
