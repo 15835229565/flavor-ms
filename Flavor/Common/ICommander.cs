@@ -11,10 +11,10 @@ namespace Flavor.Common {
         delegate void ProgramEventHandler();
         delegate void MessageHandler(string msg);
         
-        event ProgramEventHandler OnProgramStateChanged;
-        event ProgramEventHandler OnScanCancelled;
-        event MessageHandler Error;
-        event MessageHandler AsyncReply;
+        event ProgramEventHandler ProgramStateChanged;
+        event ProgramEventHandler MeasureCancelled;
+        event MessageHandler ErrorOccured;
+        event MessageHandler AsyncReplyReceived;
         event MessageHandler Log;
 
         abstract internal MeasureMode CurrentMeasureMode { get; }

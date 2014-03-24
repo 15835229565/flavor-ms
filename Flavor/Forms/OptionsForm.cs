@@ -10,7 +10,7 @@ namespace Flavor.Forms {
     internal partial class OptionsForm: Form {
         protected OptionsForm() {
             InitializeComponent();
-            Commander.OnProgramStateChanged += InvokeSetVisibility;
+            Commander.ProgramStateChanged += InvokeSetVisibility;
         }
 
         private void loadCommonData(CommonOptions co) {
@@ -117,7 +117,7 @@ namespace Flavor.Forms {
             base.OnLoad(e);
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            Commander.OnProgramStateChanged -= InvokeSetVisibility;
+            Commander.ProgramStateChanged -= InvokeSetVisibility;
             base.OnFormClosing(e);
         }
     }

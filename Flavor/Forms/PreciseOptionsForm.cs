@@ -21,7 +21,7 @@ namespace Flavor.Forms {
         public PreciseOptionsForm()
             : base() {
             InitializeComponent();
-            Commander.OnProgramStateChanged += InvokeEnableForm;
+            Commander.ProgramStateChanged += InvokeEnableForm;
         }
 
         private void InvokeEnableForm() {
@@ -178,7 +178,7 @@ namespace Flavor.Forms {
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
             Graph.OnPointAdded -= Graph_OnPointAdded;
-            Commander.OnProgramStateChanged -= InvokeEnableForm;
+            Commander.ProgramStateChanged -= InvokeEnableForm;
             base.OnFormClosing(e);
         }
     }

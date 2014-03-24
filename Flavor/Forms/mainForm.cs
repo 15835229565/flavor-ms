@@ -81,7 +81,7 @@ namespace Flavor.Forms {
             RefreshDeviceState();
             RefreshVacuumState();
 
-            Commander.OnProgramStateChanged += InvokeRefreshButtons;
+            Commander.ProgramStateChanged += InvokeRefreshButtons;
             Commander.setProgramStateWithoutUndo(Commander.programStates.Start);
         }
         #region Status TreeView population
@@ -282,8 +282,8 @@ namespace Flavor.Forms {
 
             form.prepareControlsOnMeasureStart();
 
-            Commander.OnScanCancelled += InvokeCancelScan;
-            Commander.OnError += Commander_OnError;
+            Commander.MeasureCancelled += InvokeCancelScan;
+            Commander.ErrorOccured += Commander_OnError;
         }
 
         private void Commander_OnError(string msg) {
@@ -691,8 +691,8 @@ namespace Flavor.Forms {
             CancelScan();
         }
         private void CancelScan() {
-            Commander.OnScanCancelled -= InvokeCancelScan;
-            Commander.OnError -= Commander_OnError;
+            Commander.MeasureCancelled -= InvokeCancelScan;
+            Commander.ErrorOccured -= Commander_OnError;
             
             if (CollectorsForm.Visible)
                 CollectorsForm.deactivateOnMeasureStop();
@@ -726,7 +726,7 @@ namespace Flavor.Forms {
             Device.OnTurboPumpStatusChanged -= InvokeRefreshTurboPumpStatus;
             Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
 
-            Commander.OnProgramStateChanged -= InvokeRefreshButtons;
+            Commander.ProgramStateChanged -= InvokeRefreshButtons;
             
             base.OnFormClosing(e);
         }
@@ -746,9 +746,9 @@ namespace Flavor.Forms {
         private void connectToolStripButton_Click(object sender, EventArgs e) {
             if (Commander.DeviceIsConnected) {
                 Commander.Disconnect();
-                Commander.OnAsyncReply -= InvokeRefreshUserMessage;
+                Commander.AsyncReplyReceived -= InvokeRefreshUserMessage;
             } else {
-                Commander.OnAsyncReply += InvokeRefreshUserMessage;
+                Commander.AsyncReplyReceived += InvokeRefreshUserMessage;
                 Commander.Connect();
             }
         }
