@@ -6,123 +6,74 @@ using Flavor.Common.Messaging.Commands;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
-    internal static class Commander2 {
-        internal enum programStates: byte {
-            Start,
-            Shutdown,
-            Init,
-            WaitHighVoltage,
-            Ready,
-            WaitBackgroundMeasure,
-            BackgroundMeasureReady,
-            Measure,
-            WaitInit,
-            WaitShutdown
-        }
+    internal class Commander2: ICommander {
+        private bool onTheFly = true;
 
-        internal delegate void ProgramEventHandler();
-        internal delegate void MessageHandler(string msg);
+        internal MeasureMode MeasureMode { get; private set; }
 
-        internal static event ProgramEventHandler ProgramStateChanged;
-        internal static event ProgramEventHandler MeasureCancelled;
-        private static void OnMeasureCancelled() {
-            // TODO: lock here?
-            if (MeasureCancelled != null)
-                MeasureCancelled();
-        }
-        internal static event MessageHandler ErrorOccured;
-        private static void OnErrorOccured(string msg) {
-            // TODO: lock here?
-            if (ErrorOccured != null)
-                ErrorOccured(msg);
-            OnLog(msg);
-        }
-        internal static event MessageHandler AsyncReplyReceived;
-        private static void OnAsyncReplyReceived(string msg) {
-            // TODO: lock here?
-            if (AsyncReplyReceived != null)
-                AsyncReplyReceived(msg);
-            OnLog(msg);
-        }
-        internal static event MessageHandler Log;
-        private static void OnLog(string msg) {
-            // TODO: lock here?
-            if (Log != null)
-                Log(msg);
-        }
-        
-        private static bool onTheFly = true;
-
-        internal static MeasureMode MeasureMode { get; private set; }
-
-        private static programStates programState = programStates.Start;
-        internal static programStates pState {
+        private ProgramStates programState = ProgramStates.Start;
+        public override ProgramStates pState {
             get {
                 return programState;
             }
-            private set {
+            protected set {
                 if (programState != value) {
                     programState = value;
-                    if (value == programStates.Start)
+                    if (value == ProgramStates.Start)
                         Disable();
-                    ProgramStateChanged();
+                    OnProgramStateChanged();
                     //OnProgramStateChanged(value);
                 };
             }
         }
 
-        internal static programStates pStatePrev { get; private set; }
         // TODO: remove two remaining references to this method and make it private
-        internal static void setProgramStateWithoutUndo(programStates state) {
+        internal void setProgramStateWithoutUndo(ProgramStates state) {
             pState = state;
             pStatePrev = pState;
         }
-        private static void setProgramState(programStates state) {
+        private void setProgramState(ProgramStates state) {
             pStatePrev = pState;
             pState = state;
         }
 
-        private static bool handleBlock = true;
-        internal static bool hBlock {
+        private bool handleBlock = true;
+        internal override bool hBlock {
             get {
                 return handleBlock;
             }
             set {
                 if (handleBlock != value) {
                     handleBlock = value;
-                    ProgramStateChanged();
+                    OnProgramStateChanged();
                 };
             }
         }
 
-        internal static bool measureCancelRequested { get; set; }
-
-        internal static bool notRareModeRequested { get; set; }
-
-        private static bool isConnected = false;
-        internal static bool DeviceIsConnected {
+        private bool isConnected = false;
+        public override bool DeviceIsConnected {
             get {
                 return isConnected;
             }
-            private set {
+            protected set {
                 if (isConnected != value) {
                     isConnected = value;
                     if (value)
                         protocol.CommandReceived += Realize;
                     else
                         protocol.CommandReceived -= Realize;
-                    ProgramStateChanged();
+                    OnProgramStateChanged();
                 }
             }
         }
 
-        private static MessageQueueWithAutomatedStatusChecks toSend;
+        private MessageQueueWithAutomatedStatusChecks toSend;
 
-        internal static void AddToSend(UserRequest command) {
+        public override void AddToSend(UserRequest command) {
             toSend.AddToSend(command);
         }
 
-        private static void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
+        private void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
             ServicePacket command = e.Command;
             //var code = e.Code;
 
@@ -130,9 +81,9 @@ namespace Flavor.Common {
                 CheckInterfaces(command);
                 // 2 events..
                 OnAsyncReplyReceived(string.Format("Device says: {0}", ((AsyncErrorReply)command).errorMessage));
-                if (pState != programStates.Start) {
+                if (pState != ProgramStates.Start) {
                     toSend.IsRareMode = false;
-                    setProgramStateWithoutUndo(programStates.Start);
+                    setProgramStateWithoutUndo(ProgramStates.Start);
                     //Commander.hBlock = true;//!!!
                     measureCancelRequested = false;
                 }
@@ -142,7 +93,7 @@ namespace Flavor.Common {
                 CheckInterfaces(command);
                 if (command is AsyncReply.confirmShutdowned) {
                     OnLog("System is shutdowned");
-                    setProgramStateWithoutUndo(programStates.Start);
+                    setProgramStateWithoutUndo(ProgramStates.Start);
                     hBlock = true;
                     OnLog(pState.ToString());
                     Device.Init();
@@ -150,9 +101,9 @@ namespace Flavor.Common {
                 }
                 if (command is AsyncReply.SystemReseted) {
                     OnAsyncReplyReceived("Система переинициализировалась");
-                    if (pState != programStates.Start) {
+                    if (pState != ProgramStates.Start) {
                         toSend.IsRareMode = false;
-                        setProgramStateWithoutUndo(programStates.Start);
+                        setProgramStateWithoutUndo(ProgramStates.Start);
                         //Commander.hBlock = true;//!!!
                         measureCancelRequested = false;
                     }
@@ -160,21 +111,21 @@ namespace Flavor.Common {
                 }
                 if (command is AsyncReply.confirmVacuumReady) {
                     if (hBlock) {
-                        setProgramStateWithoutUndo(programStates.WaitHighVoltage);
+                        setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
                     } else {
-                        setProgramStateWithoutUndo(programStates.Ready);
+                        setProgramStateWithoutUndo(ProgramStates.Ready);
                     }
                     return;
                 }
                 if (command is AsyncReply.confirmHighVoltageOff) {
                     hBlock = true;
-                    setProgramStateWithoutUndo(programStates.WaitHighVoltage);//???
+                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);//???
                     return;
                 }
                 if (command is AsyncReply.confirmHighVoltageOn) {
                     hBlock = false;
-                    if (pState == programStates.WaitHighVoltage) {
-                        setProgramStateWithoutUndo(programStates.Ready);
+                    if (pState == ProgramStates.WaitHighVoltage) {
+                        setProgramStateWithoutUndo(ProgramStates.Ready);
                     }
                     toSend.AddToSend(new UserRequest.sendSVoltage(0));//Set ScanVoltage to low limit
                     toSend.AddToSend(new UserRequest.sendIVoltage());// и остальные напряжения затем
@@ -194,28 +145,28 @@ namespace Flavor.Common {
                 CheckInterfaces(command);
                 if (command is SyncReply.confirmInit) {
                     OnLog("Init request confirmed");
-                    setProgramStateWithoutUndo(programStates.Init);
+                    setProgramStateWithoutUndo(ProgramStates.Init);
                     OnLog(pState.ToString());
                     return;
                 }
                 if (command is SyncReply.confirmShutdown) {
                     OnLog("Shutdown request confirmed");
-                    setProgramStateWithoutUndo(programStates.Shutdown);
+                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
                     OnLog(pState.ToString());
                     return;
                 }
-                if (onTheFly && (pState == programStates.Start) && (command is SyncReply.updateStatus)) {
+                if (onTheFly && (pState == ProgramStates.Start) && (command is SyncReply.updateStatus)) {
                     switch (Device.sysState) {
                         case Device.DeviceStates.Init:
                         case Device.DeviceStates.VacuumInit:
                             hBlock = true;
-                            setProgramStateWithoutUndo(programStates.Init);
+                            setProgramStateWithoutUndo(ProgramStates.Init);
                             break;
 
                         case Device.DeviceStates.ShutdownInit:
                         case Device.DeviceStates.Shutdowning:
                             hBlock = true;
-                            setProgramStateWithoutUndo(programStates.Shutdown);
+                            setProgramStateWithoutUndo(ProgramStates.Shutdown);
                             break;
 
                         case Device.DeviceStates.Measured:
@@ -229,11 +180,11 @@ namespace Flavor.Common {
 
                         case Device.DeviceStates.Ready:
                             hBlock = false;
-                            setProgramStateWithoutUndo(programStates.Ready);
+                            setProgramStateWithoutUndo(ProgramStates.Ready);
                             break;
                         case Device.DeviceStates.WaitHighVoltage:
                             hBlock = true;
-                            setProgramStateWithoutUndo(programStates.WaitHighVoltage);
+                            setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
                             break;
                     }
                     OnLog(pState.ToString());
@@ -244,7 +195,7 @@ namespace Flavor.Common {
                     if (MeasureMode == null) {
                         // fake reply caught here (in order to put device into proper state)
                         hBlock = false;
-                        setProgramStateWithoutUndo(programStates.Ready);
+                        setProgramStateWithoutUndo(ProgramStates.Ready);
                         return;
                     }
                     if (!MeasureMode.onUpdateCounts()) {
@@ -253,8 +204,8 @@ namespace Flavor.Common {
                     return;
                 }
                 if (command is SyncReply.confirmF2Voltage) {
-                    if (pState == programStates.Measure ||
-                        pState == programStates.WaitBackgroundMeasure) {
+                    if (pState == ProgramStates.Measure ||
+                        pState == ProgramStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareModeRequested;
                         if (!MeasureMode.start()) {
                             OnErrorOccured("Нет точек для измерения.");
@@ -266,7 +217,7 @@ namespace Flavor.Common {
             }
         } 
 
-        private static void CheckInterfaces(ServicePacket Command) {
+        private void CheckInterfaces(ServicePacket Command) {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
                 ((IAutomatedReply)Command).AutomatedReply();
@@ -287,34 +238,34 @@ namespace Flavor.Common {
             }
         }
 
-        internal static void Init() {
+        public override void Init() {
             OnLog(pState.ToString());
 
-            setProgramState(programStates.WaitInit);
+            setProgramState(ProgramStates.WaitInit);
             toSend.AddToSend(new UserRequest.sendInit());
 
             OnLog(pState.ToString());
         }
-        internal static void Shutdown() {
+        public override void Shutdown() {
             Disable();
             toSend.AddToSend(new UserRequest.sendShutdown());
-            setProgramState(programStates.WaitShutdown);
+            setProgramState(ProgramStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
         }
 
-        internal static void Scan() {
-            if (pState == programStates.Ready) {
+        public override void Scan() {
+            if (pState == ProgramStates.Ready) {
                 Graph.Reset();
                 MeasureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
-                initMeasure(programStates.Measure);
+                initMeasure(ProgramStates.Measure);
             }
         }
-        internal static bool Sense() {
-            if (pState == programStates.Ready) {
+        public override bool Sense() {
+            if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.Reset();
                     MeasureMode = new MeasureMode.Precise();
-                    initMeasure(programStates.Measure);
+                    initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
                     OnLog("No points for precise mode measure.");
@@ -325,14 +276,14 @@ namespace Flavor.Common {
         }
 
         // TODO: use simple arrays
-        private static FixedSizeQueue<List<long>> background;
-        private static Matrix matrix;
-        private static List<long> backgroundResult;
-        private static bool doBackgroundPremeasure;
-        internal static bool? Monitor() {
+        private FixedSizeQueue<List<long>> background;
+        private Matrix matrix;
+        private List<long> backgroundResult;
+        private bool doBackgroundPremeasure;
+        public override bool? Monitor() {
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
-            if (pState == programStates.Ready) {
+            if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
                     //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
                     Graph.ResetForMonitor();
@@ -361,12 +312,12 @@ namespace Flavor.Common {
                     MeasureMode = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
                     
                     if (doBackgroundPremeasure) {
-                        initMeasure(programStates.WaitBackgroundMeasure);
+                        initMeasure(ProgramStates.WaitBackgroundMeasure);
                         background = new FixedSizeQueue<List<long>>(backgroundCycles);
                         // or maybe fake realization: one item, always recounting (accumulate values)..
                         Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                     } else {
-                        initMeasure(programStates.Measure);
+                        initMeasure(ProgramStates.Measure);
                         Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
                     }
                     return true;
@@ -374,7 +325,7 @@ namespace Flavor.Common {
                     OnLog("No points for monitor mode measure.");
                     return null;
                 }
-            } else if (pState == programStates.BackgroundMeasureReady) {
+            } else if (pState == ProgramStates.BackgroundMeasureReady) {
                 Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
 
                 backgroundResult = background.Aggregate(Summarize);
@@ -383,7 +334,7 @@ namespace Flavor.Common {
                     backgroundResult[i] /= backgroundCycles;
                 }
 
-                setProgramStateWithoutUndo(programStates.Measure);
+                setProgramStateWithoutUndo(ProgramStates.Measure);
                 Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
                 return false;
             } else {
@@ -391,7 +342,7 @@ namespace Flavor.Common {
                 return null;
             }
         }
-        private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
+        private void NewBackgroundMeasureReady(Graph.Recreate recreate) {
             if (recreate == Graph.Recreate.Both) {
                 List<long> currentMeasure = new List<long>();
                 // ! temporary solution
@@ -406,12 +357,12 @@ namespace Flavor.Common {
                 }
                 //maybe null if background premeasure is false!
                 background.Enqueue(currentMeasure);
-                if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
-                    setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
+                if (pState == ProgramStates.WaitBackgroundMeasure && background.IsFull) {
+                    setProgramStateWithoutUndo(ProgramStates.BackgroundMeasureReady);
                 }
             }
         }
-        private static void NewMonitorMeasureReady(Graph.Recreate recreate) {
+        private void NewMonitorMeasureReady(Graph.Recreate recreate) {
             if (recreate == Graph.Recreate.None)
                 return;
             List<long> currentMeasure = new List<long>();
@@ -444,13 +395,6 @@ namespace Flavor.Common {
                 // TODO: put here all automatic logic from measure modes
             }
         }
-        private static List<Utility.PreciseEditorData> getWithId(this List<Utility.PreciseEditorData> peds) {
-            // ! temporary solution
-            #warning make this operation one time a cycle
-            return peds.FindAll(
-                        x => x.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY)
-                    );
-        }
         private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility
             if (workingValue.Count != nextElem.Count)
@@ -462,19 +406,19 @@ namespace Flavor.Common {
             return workingValue;
         }
 
-        internal static void DisableMeasure() {
+        public override void DisableMeasure() {
             if (MeasureMode is MeasureMode.Precise.Monitor) {
-                if (pState == programStates.Measure) {
+                if (pState == ProgramStates.Measure) {
                     Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
-                } else if (pState == programStates.WaitBackgroundMeasure || pState == programStates.BackgroundMeasureReady) {
+                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
                     Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
                 }
                 matrix = null;
             }
             Disable();
-            Commander2.setProgramStateWithoutUndo(programStates.Ready);//really without undo?
+            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
         }
-        private static void Disable() {
+        private void Disable() {
             measureCancelRequested = false;
             toSend.IsRareMode = false;
             // TODO: lock here (request from ui may cause synchro errors)
@@ -482,7 +426,7 @@ namespace Flavor.Common {
             OnMeasureCancelled();
             MeasureMode = null;//?
         }
-        internal static void sendSettings() {
+        public override void SendSettings() {
             toSend.AddToSend(new UserRequest.sendIVoltage());
             /*
             Commander.AddToSend(new sendCP());
@@ -494,7 +438,7 @@ namespace Flavor.Common {
             Commander.AddToSend(new sendF2Voltage());
             */
         }
-        private static void initMeasure(programStates state) {
+        private void initMeasure(ProgramStates state) {
             OnLog(pState.ToString());
             if (MeasureMode != null && MeasureMode.isOperating) {
                 //error. something in operation
@@ -504,9 +448,9 @@ namespace Flavor.Common {
 
             toSend.IsRareMode = !notRareModeRequested;
             measureCancelRequested = false;
-            sendSettings();
+            SendSettings();
         }
-        internal static bool SomePointsUsed {
+        public override bool SomePointsUsed {
             get {
                 if (Config.PreciseData.Count > 0)
                     foreach (Utility.PreciseEditorData ped in Config.PreciseData)
@@ -515,17 +459,20 @@ namespace Flavor.Common {
             }
         }
 
-        internal static void Unblock() {
-            if (pState == programStates.Measure ||
-                pState == programStates.WaitBackgroundMeasure ||
-                pState == programStates.BackgroundMeasureReady)//strange..
+        public override void Unblock() {
+            if (pState == ProgramStates.Measure ||
+                pState == ProgramStates.WaitBackgroundMeasure ||
+                pState == ProgramStates.BackgroundMeasureReady)//strange..
                 measureCancelRequested = true;
             toSend.AddToSend(new UserRequest.enableHighVoltage(hBlock));
         }
 
-        private static PortLevel port = new PortLevel();
-        private static ModBusNew protocol = new ModBusNew(port);
-        internal static PortLevel.PortStates Connect() {
+        private PortLevel port = new PortLevel();
+        private ModBusNew protocol;
+        public Commander2() {
+            protocol = new ModBusNew(port);
+        }
+        public override PortLevel.PortStates Connect() {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
@@ -544,7 +491,7 @@ namespace Flavor.Common {
             }
             return res;
         }
-        internal static PortLevel.PortStates Disconnect() {
+        public override PortLevel.PortStates Disconnect() {
             toSend.IsOperating = false;
             toSend.Clear();
             PortLevel.PortStates res = port.Close();
@@ -565,7 +512,7 @@ namespace Flavor.Common {
             return res;
         }
 
-        internal static void Reconnect() {
+        public override void Reconnect() {
             if (DeviceIsConnected) {
                 switch (Disconnect()) {
                     case PortLevel.PortStates.Closing:
@@ -581,7 +528,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static string[] AvailablePorts {
+        public override string[] AvailablePorts {
             get { return PortLevel.AvailablePorts; }
         }
     }

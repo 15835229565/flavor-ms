@@ -12,6 +12,9 @@ using Graph = Flavor.Common.Graph;
 using Config = Flavor.Common.Config;
 // controller
 using Commander = Flavor.Common.Commander;
+using ProgramStates = Flavor.Common.ProgramStates;
+using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
+using MessageHandler = Flavor.Common.MessageHandler;
 using Device = Flavor.Common.Device;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
@@ -82,7 +85,7 @@ namespace Flavor.Forms {
             RefreshVacuumState();
 
             Commander.ProgramStateChanged += InvokeRefreshButtons;
-            Commander.setProgramStateWithoutUndo(Commander.programStates.Start);
+            Commander.setProgramStateWithoutUndo(ProgramStates.Start);
         }
         #region Status TreeView population
         private TreeNodePlus rootNode;
@@ -263,7 +266,7 @@ namespace Flavor.Forms {
             Commander.Init();
         }
         private void shutSys_butt_Click(object sender, EventArgs e) {
-            if (Commander.pState != Commander.programStates.Start)
+            if (Commander.pState != ProgramStates.Start)
             {
                 if (MessageBox.Show(this, SHUTDOWN_MESSAGE, SHUTDOWN_CAPTION, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.OK)
                     return;
@@ -333,7 +336,7 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshUserMessage(string msg) {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new Commander.MessageHandler(RefreshUserMessage), msg);
+                this.BeginInvoke(new MessageHandler(RefreshUserMessage), msg);
                 return;
             }
             RefreshUserMessage(msg);
@@ -611,7 +614,7 @@ namespace Flavor.Forms {
         // TODO: program state as method parameter (avoid thread run)
         internal void InvokeRefreshButtons() {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new Commander.ProgramEventHandler(RefreshButtons));
+                this.BeginInvoke(new ProgramEventHandler(RefreshButtons));
                 return;
             }
             RefreshButtons();
@@ -628,7 +631,7 @@ namespace Flavor.Forms {
                 unblock_butt.ForeColor = Color.Green;
             }
             switch (Commander.pState) {
-                case Commander.programStates.Start:
+                case ProgramStates.Start:
                     bool connected = Commander.DeviceIsConnected;
                     if (connected) {
                         connectToolStripButton.Text = "Разъединить";
@@ -639,32 +642,32 @@ namespace Flavor.Forms {
                     }
                     setButtons(true, connected, connected, connected && block, false, false, false, true);
                     break;
-                case Commander.programStates.Init:
+                case ProgramStates.Init:
                     setButtons(false, false, true, false, false, false, false, true);
                     break;
-                case Commander.programStates.WaitHighVoltage:
+                case ProgramStates.WaitHighVoltage:
                     setButtons(false, false, true, true, false, false, false, true);
                     break;
-                case Commander.programStates.Ready:
+                case ProgramStates.Ready:
                     bool canDoPrecise = block && Commander.SomePointsUsed;
                     setButtons(false, false, true, true, block, canDoPrecise, canDoPrecise, true);
                     monitorToolStripButton.Text = "Режим мониторинга";
                     break;
-                case Commander.programStates.WaitBackgroundMeasure:
+                case ProgramStates.WaitBackgroundMeasure:
                     setButtons(false, false, true, true, false, false, false, false);
                     monitorToolStripButton.Text = "Измерение фона";
                     break;
-                case Commander.programStates.BackgroundMeasureReady:
+                case ProgramStates.BackgroundMeasureReady:
                     setButtons(false, false, true, true, false, false, true, false);
                     monitorToolStripButton.Text = "Начать мониторинг";
                     break;
-                case Commander.programStates.Measure:
+                case ProgramStates.Measure:
                     setButtons(false, false, true, true, false, false, false, false);
                     monitorToolStripButton.Text = "Режим мониторинга";
                     break;
-                case Commander.programStates.WaitInit:
-                case Commander.programStates.WaitShutdown:
-                case Commander.programStates.Shutdown:
+                case ProgramStates.WaitInit:
+                case ProgramStates.WaitShutdown:
+                case ProgramStates.Shutdown:
                     setButtons(false, false, false, false, false, false, false, true);
                     break;
             }
@@ -685,7 +688,7 @@ namespace Flavor.Forms {
 
         private void InvokeCancelScan() {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new Commander.ProgramEventHandler(CancelScan));
+                this.BeginInvoke(new ProgramEventHandler(CancelScan));
                 return;
             }
             CancelScan();
@@ -713,7 +716,7 @@ namespace Flavor.Forms {
         }
 
         protected sealed override void OnFormClosing(FormClosingEventArgs e) {
-            if (Commander.pState != Commander.programStates.Start &&
+            if (Commander.pState != ProgramStates.Start &&
                 MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes) {
                 e.Cancel = true;
                 return;

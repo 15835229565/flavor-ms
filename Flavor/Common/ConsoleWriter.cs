@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Flavor.Common {
     internal static class ConsoleWriter {
-        internal static void Subscribe() {
-            Commander2.Log += new Commander2.MessageHandler(Commander2_Log);
+        internal static void Subscribe(ILog o) {
+            o.Log += new MessageHandler(Commander2_Log);
         }
-        internal static void Desubscribe() {
-            Commander2.Log -= new Commander2.MessageHandler(Commander2_Log);
+        internal static void Desubscribe(ILog o) {
+            o.Log -= new MessageHandler(Commander2_Log);
         }
         private static void Commander2_Log(string msg) {
             WriteLine(msg);

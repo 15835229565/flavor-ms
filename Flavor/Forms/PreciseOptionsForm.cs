@@ -6,6 +6,7 @@ using Flavor.Controls;
 using Config = Flavor.Common.Config;
 // really here?
 using Commander = Flavor.Common.Commander;
+using ProgramStates = Flavor.Common.ProgramStates;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 using PreciseSpectrum = Flavor.Common.PreciseSpectrum;
@@ -35,20 +36,20 @@ namespace Flavor.Forms {
 
         private void EnableForm() {
             switch (Commander.pState) {
-                case Commander.programStates.Start:
-                case Commander.programStates.WaitInit:
-                case Commander.programStates.Init:
-                case Commander.programStates.WaitShutdown:
-                case Commander.programStates.Shutdown:
+                case ProgramStates.Start:
+                case ProgramStates.WaitInit:
+                case ProgramStates.Init:
+                case ProgramStates.WaitShutdown:
+                case ProgramStates.Shutdown:
                     setControls(true, false);
                     break;
-                case Commander.programStates.WaitHighVoltage:
-                case Commander.programStates.Ready:
+                case ProgramStates.WaitHighVoltage:
+                case ProgramStates.Ready:
                     setControls(true, true);
                     break;
-                case Commander.programStates.BackgroundMeasureReady:
-                case Commander.programStates.WaitBackgroundMeasure:
-                case Commander.programStates.Measure:
+                case ProgramStates.BackgroundMeasureReady:
+                case ProgramStates.WaitBackgroundMeasure:
+                case ProgramStates.Measure:
                     setControls(false, false);
                     break;
             }

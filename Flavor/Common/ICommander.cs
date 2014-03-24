@@ -1,53 +1,136 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Flavor.Common.Messaging.Commands;
+﻿using Flavor.Common.Messaging.Commands;
 
 namespace Flavor.Common {
-    abstract class ICommander {
-        internal enum programStates: byte { }
+    public enum ProgramStates: byte {
+        Start,
+        Shutdown,
+        Init,
+        WaitHighVoltage,
+        Ready,
+        WaitBackgroundMeasure,
+        BackgroundMeasureReady,
+        Measure,
+        WaitInit,
+        WaitShutdown,
+    }
 
-        delegate void ProgramEventHandler();
-        delegate void MessageHandler(string msg);
-        
-        event ProgramEventHandler ProgramStateChanged;
-        event ProgramEventHandler MeasureCancelled;
-        event MessageHandler ErrorOccured;
-        event MessageHandler AsyncReplyReceived;
+    public delegate void ProgramEventHandler();
+    //public delegate void ProgramEventHandler(ProgramStates state);
+    public delegate void MessageHandler(string msg);
+
+    interface ILog {
         event MessageHandler Log;
+    }
+    interface IErrorOccured: ILog {
+        event MessageHandler ErrorOccured;
+    }
+    interface IAsyncReplyReceived: ILog {
+        event MessageHandler AsyncReplyReceived;
+    }
+    interface IGlobalActions {
+        event ProgramEventHandler ProgramStateChanged;
+        void Init();
+        void Shutdown();
 
-        abstract internal MeasureMode CurrentMeasureMode { get; }
-        internal programStates pState { get; private set; }
-        internal programStates pStatePrev { get; private set; }
-        abstract internal bool hBlock { get; set; }
-        abstract internal bool measureCancelRequested { get; set; }
-        abstract internal bool notRareModeRequested { get; set; }
-        internal bool DeviceIsConnected { get; private set; }
-        abstract internal bool SomePointsUsed { get; }
-
-        //Messaging only
-        abstract internal void AddToSend(UserRequest command);
-        abstract internal void DisableMeasure();
+        void Unblock();
 
         //OptionsForm only
-        abstract internal void sendSettings();
-        
-        //mainForm only
-        abstract internal void Init();
-        abstract internal void Shutdown();
-
-        abstract internal void Unblock();
-
-        abstract internal void Scan();
-        abstract internal bool Sense();
-        abstract internal bool? Monitor();
-
-        abstract internal PortLevel.PortStates Connect();
-        abstract internal PortLevel.PortStates Disconnect();
+        void SendSettings();
+    }
+    interface IConnectionActions {
+        event ProgramEventHandler ProgramStateChanged;
+        PortLevel.PortStates Connect();
+        PortLevel.PortStates Disconnect();
 
         //ConnectOptionsForm only
-        abstract internal string[] AvailablePorts { get; }
-        abstract internal void Reconnect();
+        void Reconnect();
+        string[] AvailablePorts { get; }
+    }
+    interface IMeasureActions {
+        event ProgramEventHandler ProgramStateChanged;
+        event ProgramEventHandler MeasureCancelled;
+        void Scan();
+        bool Sense();
+        bool? Monitor();
+    }
+    interface IMessagingActions {
+        void AddToSend(UserRequest command);
+        void DisableMeasure();
+    }
+
+    abstract class ICommander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IConnectionActions, IMeasureActions, IMessagingActions {
+        #region ILog Members
+        public event MessageHandler Log;
+        protected virtual void OnLog(string msg) {
+            // TODO: lock here?
+            if (Log != null)
+                Log(msg);
+        }
+        #endregion
+        
+        #region IErrorOccured Members
+        public event MessageHandler ErrorOccured;
+        protected virtual void OnErrorOccured(string msg) {
+            // TODO: lock here?
+            if (ErrorOccured != null)
+                ErrorOccured(msg);
+            OnLog(msg);
+        }
+        #endregion
+
+        #region IAsyncReplyReceived Members
+        public event MessageHandler AsyncReplyReceived;
+        protected virtual void OnAsyncReplyReceived(string msg) {
+            // TODO: lock here?
+            if (AsyncReplyReceived != null)
+                AsyncReplyReceived(msg);
+            OnLog(msg);
+        }
+        #endregion
+
+        abstract public ProgramStates pState { get; protected set; }
+        public ProgramStates pStatePrev { get; protected set; }
+        abstract internal bool hBlock { get; set; }
+        #region IGlobalActions Members
+        public event ProgramEventHandler ProgramStateChanged;
+        protected virtual void OnProgramStateChanged() {
+            // TODO: lock here?
+            if (ProgramStateChanged != null)
+                ProgramStateChanged();
+        }
+        abstract public void Init();
+        abstract public void Shutdown();
+        abstract public void Unblock();
+        abstract public void SendSettings();
+        #endregion
+
+        abstract public bool DeviceIsConnected { get; protected set; }
+        #region IConnectionActions Members
+        abstract public PortLevel.PortStates Connect();
+        abstract public PortLevel.PortStates Disconnect();
+        abstract public void Reconnect();
+        abstract public string[] AvailablePorts { get; }
+        #endregion
+
+        public MeasureMode CurrentMeasureMode { get; protected set; }
+        internal bool measureCancelRequested { get; set; }
+        abstract public bool SomePointsUsed { get; }
+        #region IMeasureActions Members
+        public event ProgramEventHandler MeasureCancelled;
+        protected virtual void OnMeasureCancelled() {
+            // TODO: lock here?
+            if (MeasureCancelled != null)
+                MeasureCancelled();
+        }
+        abstract public void Scan();
+        abstract public bool Sense();
+        abstract public bool? Monitor();
+        #endregion
+
+        internal bool notRareModeRequested { get; set; }
+        #region IMessagingActions Members
+        abstract public void AddToSend(UserRequest command);
+        abstract public void DisableMeasure();
+        #endregion
     }
 }

@@ -4,6 +4,7 @@ using Config = Flavor.Common.Config;
 using CommonOptions = Flavor.Common.CommonOptions;
 // really here?
 using Commander = Flavor.Common.Commander;
+using ProgramStates = Flavor.Common.ProgramStates;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
@@ -93,18 +94,18 @@ namespace Flavor.Forms {
         private void InvokeSetVisibility() {
             this.Invoke(new DeviceEventHandler(() => {
                 // TODO: avoid bringing to front..
-                this.Visible = Commander.pState != Commander.programStates.Measure ||
-                    Commander.pState != Commander.programStates.BackgroundMeasureReady ||
-                    Commander.pState != Commander.programStates.WaitBackgroundMeasure;
+                this.Visible = Commander.pState != ProgramStates.Measure ||
+                    Commander.pState != ProgramStates.BackgroundMeasureReady ||
+                    Commander.pState != ProgramStates.WaitBackgroundMeasure;
             }));
         }
         protected override void OnLoad(EventArgs e) {
             rareModeCheckBox.Checked = Commander.notRareModeRequested;
-            if (Commander.pState == Commander.programStates.Ready ||
-                Commander.pState == Commander.programStates.WaitHighVoltage ||
-                Commander.pState == Commander.programStates.Measure ||
-                Commander.pState == Commander.programStates.BackgroundMeasureReady ||
-                Commander.pState == Commander.programStates.WaitBackgroundMeasure) {
+            if (Commander.pState == ProgramStates.Ready ||
+                Commander.pState == ProgramStates.WaitHighVoltage ||
+                Commander.pState == ProgramStates.Measure ||
+                Commander.pState == ProgramStates.BackgroundMeasureReady ||
+                Commander.pState == ProgramStates.WaitBackgroundMeasure) {
                 applyButton.Enabled = true;
                 applyButton.Visible = true;
             } else {

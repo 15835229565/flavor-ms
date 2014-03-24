@@ -549,6 +549,13 @@ namespace Flavor.Common {
         internal static List<PreciseEditorData> getUsed(this PreciseSpectrum peds) {
             return peds.FindAll(PreciseEditorData.PeakIsUsed);
         }
+        public static List<PreciseEditorData> getWithId(this List<PreciseEditorData> peds) {
+            // ! temporary solution
+            #warning make this operation one time a cycle
+            return peds.FindAll(
+                        x => x.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY)
+                    );
+        }
         #region PreciseEditorData
         public class PreciseEditorData: IComparable<PreciseEditorData> {
             internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
