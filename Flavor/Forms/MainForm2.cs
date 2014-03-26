@@ -19,7 +19,7 @@ using Device = Flavor.Common.Device;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
-    internal partial class MainForm2: Form {
+    internal partial class MainForm2: Form/*, IMeasured*/ {
         // TODO: move to resource file
         private const string EXIT_CAPTION = "Предупреждение об отключении";
         private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
@@ -289,7 +289,7 @@ namespace Flavor.Forms {
         }
         private void overview_button_Click(object sender, EventArgs e) {
             commander.Scan();
-            ChildFormInit(CollectorsForm, false);
+            ChildFormInit(CollectorsForm, true);
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             if (commander.Sense()) {
@@ -310,14 +310,13 @@ namespace Flavor.Forms {
             }
         }
         private void ChildFormInit(IMeasured form, bool isPrecise) {
-            // order is important here!
-            form.initMeasure(isPrecise);
-            
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
 
-            form.prepareControlsOnMeasureStart();
+            form.MeasureCancelRequested += ChildForm_MeasureCancelRequested;
+            // order is important here!
+            form.initMeasure(isPrecise);
 
             commander.MeasureCancelled += InvokeCancelScan;
             commander.ErrorOccured += Commander_OnError;
@@ -326,6 +325,11 @@ namespace Flavor.Forms {
                 MonitorForm.Hide();
             else
                 CollectorsForm.Hide();
+        }
+        private void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
+            (sender as IMeasured).MeasureCancelRequested -= ChildForm_MeasureCancelRequested;
+            // TODO: event
+            commander.measureCancelRequested = true;
         }
         //TODO: make 2 subscribers. one for logging, another for displaying.
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {

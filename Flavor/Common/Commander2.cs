@@ -9,8 +9,6 @@ namespace Flavor.Common {
     internal class Commander2: ICommander, IMessagingActions {
         private bool onTheFly = true;
 
-        internal MeasureMode MeasureMode { get; private set; }
-
         private ProgramStates programState = ProgramStates.Start;
         public override ProgramStates pState {
             get {
@@ -191,13 +189,13 @@ namespace Flavor.Common {
                     return;
                 }
                 if (command is SyncReply.updateCounts) {
-                    if (MeasureMode == null) {
+                    if (CurrentMeasureMode == null) {
                         // fake reply caught here (in order to put device into proper state)
                         hBlock = false;
                         setProgramStateWithoutUndo(ProgramStates.Ready);
                         return;
                     }
-                    if (!MeasureMode.onUpdateCounts()) {
+                    if (!CurrentMeasureMode.onUpdateCounts()) {
                         OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
                     }
                     return;
@@ -206,7 +204,7 @@ namespace Flavor.Common {
                     if (pState == ProgramStates.Measure ||
                         pState == ProgramStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareModeRequested;
-                        if (!MeasureMode.start()) {
+                        if (!CurrentMeasureMode.start()) {
                             OnErrorOccured("Нет точек для измерения.");
                         }
                     }
@@ -229,11 +227,11 @@ namespace Flavor.Common {
             }
             if (Command is IUpdateGraph) {
                 //((IUpdateGraph)Command).UpdateGraph();
-                if (MeasureMode == null) {
+                if (CurrentMeasureMode == null) {
                     //error
                     return;
                 }
-                MeasureMode.updateGraph();
+                CurrentMeasureMode.updateGraph();
             }
         }
 
@@ -255,7 +253,7 @@ namespace Flavor.Common {
         public override void Scan() {
             if (pState == ProgramStates.Ready) {
                 Graph.Reset();
-                MeasureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
+                CurrentMeasureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -263,7 +261,7 @@ namespace Flavor.Common {
             if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.Reset();
-                    MeasureMode = new MeasureMode.Precise();
+                    CurrentMeasureMode = new MeasureMode.Precise();
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
@@ -308,7 +306,7 @@ namespace Flavor.Common {
 
                     // TODO: feed measure mode with start shift value (really?)
                     short? startShiftValue = 0;
-                    MeasureMode = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
+                    CurrentMeasureMode = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(ProgramStates.WaitBackgroundMeasure);
@@ -406,7 +404,7 @@ namespace Flavor.Common {
         }
 
         void IMessagingActions.DisableMeasure() {
-            if (MeasureMode is MeasureMode.Precise.Monitor) {
+            if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
                 if (pState == ProgramStates.Measure) {
                     Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
                 } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
@@ -423,7 +421,7 @@ namespace Flavor.Common {
             // TODO: lock here (request from ui may cause synchro errors)
             // or use async action paradigm
             OnMeasureCancelled();
-            MeasureMode = null;//?
+            CurrentMeasureMode = null;//?
         }
         public override void SendSettings() {
             toSend.AddToSend(new UserRequest.sendIVoltage());
@@ -439,7 +437,7 @@ namespace Flavor.Common {
         }
         private void initMeasure(ProgramStates state) {
             OnLog(pState.ToString());
-            if (MeasureMode != null && MeasureMode.isOperating) {
+            if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }

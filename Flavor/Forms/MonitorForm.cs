@@ -11,6 +11,11 @@ using PointPairListPlus = Flavor.Common.PointPairListPlus;
 namespace Flavor.Forms
 {
     internal partial class MonitorForm: GraphForm, IMeasured {
+        public event EventHandler MeasureCancelRequested;
+        protected virtual void OnMeasureCancelRequested() {
+            if (MeasureCancelRequested != null)
+                MeasureCancelRequested(this, EventArgs.Empty);
+        }
         private const string FORM_TITLE = "Режим мониторинга";
         private const string X_AXIS_TITLE = "Итерации";
         private const string Y_AXIS_RELATIVE = " (отн.)";
@@ -168,13 +173,12 @@ namespace Flavor.Forms
                 ZedGraphRebirth(normalizedList, FORM_TITLE);
             }
 
+            (Panel as MeasureGraphPanel).MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
             // temporary?
             Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
+            Panel.Enable();
             Show();
             Activate();
-        }
-        public void prepareControlsOnMeasureStart() {
-            Panel.Enable();
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
@@ -183,6 +187,11 @@ namespace Flavor.Forms
             time = -1;
         }
         #endregion
+        private void MonitorForm_MeasureCancelRequested(object sender, EventArgs e) {
+            // do something local
+            (Panel as MeasureGraphPanel).MeasureCancelRequested -= MonitorForm_MeasureCancelRequested;
+            OnMeasureCancelRequested();
+        }
         private void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
             if (sender is ZedGraphControlMonitor) {
                 ToolStripItemCollection items = args.MenuStrip.Items;

@@ -3,14 +3,18 @@ using System.Windows.Forms;
 using Flavor.Common;
 
 namespace Flavor.Controls {
-    public partial class MeasureGraphPanel: GraphPanel {
+    public partial class MeasureGraphPanel: GraphPanel/*, IMeasured*/ {
+        public event EventHandler MeasureCancelRequested;
+        protected virtual void OnMeasureCancelRequested() {
+            if (MeasureCancelRequested != null)
+                MeasureCancelRequested(this, EventArgs.Empty);
+        }
         public MeasureGraphPanel() {
             InitializeComponent();
         }
         private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
-            //Bad! Raise event!
-            Commander.measureCancelRequested = true;
+            OnMeasureCancelRequested();
         }
 
         protected sealed override void prepareControls() {
@@ -35,6 +39,7 @@ namespace Flavor.Controls {
             cancelScanButton.Visible = true;
 
             scanProgressBar.Value = 0;
+            // TODO: set as property
             scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
             if (scanProgressBar.Maximum == 0) {
                 scanProgressBar.Style = ProgressBarStyle.Marquee;

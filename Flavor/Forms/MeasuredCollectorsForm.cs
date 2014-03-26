@@ -13,6 +13,11 @@ using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
     internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
+        public event EventHandler MeasureCancelRequested;
+        protected virtual void OnMeasureCancelRequested() {
+            if (MeasureCancelRequested != null)
+                MeasureCancelRequested(this, EventArgs.Empty);
+        }
         internal MeasuredCollectorsForm()
             : base(Graph.Instance, false) {
             InitializeComponent();
@@ -30,10 +35,12 @@ namespace Flavor.Forms {
             Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             PreciseSpectrumDisplayed = isPrecise;
             initPanel();
+            (Panel as MeasureGraphPanel).MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
+            prepareControlsOnMeasureStart();
             Show();
             Activate();
         }
-        public void prepareControlsOnMeasureStart() {
+        private void prepareControlsOnMeasureStart() {
             // not so good..
             if (PreciseSpectrumDisplayed)
                 // search temporary here
@@ -60,6 +67,12 @@ namespace Flavor.Forms {
             saveSpecterFileDialog.FileName = "";
 			return base.saveData();        
 		}
+
+        private void MeasuredCollectorsForm_MeasureCancelRequested(object sender, EventArgs e) {
+            // do something local
+            (Panel as MeasureGraphPanel).MeasureCancelRequested -= MeasuredCollectorsForm_MeasureCancelRequested;
+            OnMeasureCancelRequested();
+        }
 
         private void InvokeRefreshGraph(Graph.Recreate recreate) {
             if (this.InvokeRequired) {

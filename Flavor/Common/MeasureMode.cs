@@ -266,13 +266,13 @@ namespace Flavor.Common {
                             // time in minutes
                             timer.Interval = timeLimit * 60000;
                             timer.AutoReset = false;
-                            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+                            timer.Elapsed += timer_Elapsed;
                         }
                     }
 
                     private void timer_Elapsed(object sender, ElapsedEventArgs e) {
                         timerElapsed = true;
-                        timer.Elapsed -= new ElapsedEventHandler(timer_Elapsed);
+                        timer.Elapsed -= timer_Elapsed;
                     }
                     internal void next() {
                         if (counter == -1) {

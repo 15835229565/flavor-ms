@@ -85,7 +85,6 @@ namespace Flavor.Forms {
             RefreshVacuumState();
 
             Commander.ProgramStateChanged += InvokeRefreshButtons;
-            Commander.setProgramStateWithoutUndo(ProgramStates.Start);
         }
         #region Status TreeView population
         private TreeNodePlus rootNode;
@@ -278,33 +277,17 @@ namespace Flavor.Forms {
             unblock_butt.Enabled = false;
             Commander.Unblock();
         }
-        private void prepareControlsOnMeasureStart(IMeasured form) {
-            overview_button.Enabled = false;
-            sensmeasure_button.Enabled = false;
-            monitorToolStripButton.Enabled = false;
-
-            form.prepareControlsOnMeasureStart();
-
-            Commander.MeasureCancelled += InvokeCancelScan;
-            Commander.ErrorOccured += Commander_OnError;
-        }
 
         private void Commander_OnError(string msg) {
             MessageBox.Show(this, msg);
         }
         private void overview_button_Click(object sender, EventArgs e) {
             Commander.Scan();
-            // order is important here!
-            CollectorsForm.initMeasure(false);
-            prepareControlsOnMeasureStart(CollectorsForm);
-            MonitorForm.Hide();
+            ChildFormInit(CollectorsForm, true);
         }
         private void sensmeasure_button_Click(object sender, EventArgs e) {
             if (Commander.Sense()) {
-                // order is important here!
-                CollectorsForm.initMeasure(true);
-                prepareControlsOnMeasureStart(CollectorsForm);
-                MonitorForm.Hide();
+                ChildFormInit(CollectorsForm, true);
             } else {
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -314,14 +297,32 @@ namespace Flavor.Forms {
             bool? result = Commander.Monitor();
             if (result.HasValue) {
                 if (result == true) {
-                    MonitorForm.initMeasure(true);
-                    // end lock
-                    prepareControlsOnMeasureStart(MonitorForm);
-                    CollectorsForm.Hide();
+                    ChildFormInit(MonitorForm, true);
                 }
             } else {
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        private void ChildFormInit(IMeasured form, bool isPrecise) {
+            overview_button.Enabled = false;
+            sensmeasure_button.Enabled = false;
+            monitorToolStripButton.Enabled = false;
+
+            form.MeasureCancelRequested += ChildForm_MeasureCancelRequested;
+            // order is important here!
+            form.initMeasure(isPrecise);
+
+            Commander.MeasureCancelled += InvokeCancelScan;
+            Commander.ErrorOccured += Commander_OnError;
+
+            if (form == CollectorsForm)
+                MonitorForm.Hide();
+            else
+                CollectorsForm.Hide();
+        }
+        private void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
+            (sender as IMeasured).MeasureCancelRequested -= ChildForm_MeasureCancelRequested;
+            Commander.measureCancelRequested = true;
         }
 
         //TODO: make 2 subscribers. one for logging, another for displaying.
