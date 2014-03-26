@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Flavor.Forms;
+using Flavor.Common;
 
 namespace Flavor {
     internal static class Program {
@@ -19,7 +20,12 @@ namespace Flavor {
 
             mainForm MSControl = new mainForm();
             MSControl.WindowState = FormWindowState.Maximized;
+            var commander = new Commander2();
+            //MainForm2 MSControl2 = new MainForm2(commander);
+            //commander.setProgramStateWithoutUndo(ProgramStates.Start);
+            //MSControl2.WindowState = FormWindowState.Maximized;
             Application.Run(MSControl);
+            //Application.Run(MSControl2);
         }
     }
 }

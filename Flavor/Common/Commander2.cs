@@ -6,7 +6,7 @@ using Flavor.Common.Messaging.Commands;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
-    internal class Commander2: ICommander {
+    internal class Commander2: ICommander, IMessagingActions {
         private bool onTheFly = true;
 
         internal MeasureMode MeasureMode { get; private set; }
@@ -68,8 +68,7 @@ namespace Flavor.Common {
         }
 
         private MessageQueueWithAutomatedStatusChecks toSend;
-
-        public override void AddToSend(UserRequest command) {
+        void IMessagingActions.AddToSend(UserRequest command) {
             toSend.AddToSend(command);
         }
 
@@ -406,7 +405,7 @@ namespace Flavor.Common {
             return workingValue;
         }
 
-        public override void DisableMeasure() {
+        void IMessagingActions.DisableMeasure() {
             if (MeasureMode is MeasureMode.Precise.Monitor) {
                 if (pState == ProgramStates.Measure) {
                     Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;

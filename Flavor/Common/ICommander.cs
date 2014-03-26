@@ -58,7 +58,7 @@ namespace Flavor.Common {
         void DisableMeasure();
     }
 
-    abstract class ICommander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IConnectionActions, IMeasureActions, IMessagingActions {
+    abstract class ICommander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IConnectionActions, IMeasureActions {
         #region ILog Members
         public event MessageHandler Log;
         protected virtual void OnLog(string msg) {
@@ -91,6 +91,7 @@ namespace Flavor.Common {
         abstract public ProgramStates pState { get; protected set; }
         public ProgramStates pStatePrev { get; protected set; }
         abstract internal bool hBlock { get; set; }
+        public bool notRareModeRequested { get; set; }
         #region IGlobalActions Members
         public event ProgramEventHandler ProgramStateChanged;
         protected virtual void OnProgramStateChanged() {
@@ -125,12 +126,6 @@ namespace Flavor.Common {
         abstract public void Scan();
         abstract public bool Sense();
         abstract public bool? Monitor();
-        #endregion
-
-        internal bool notRareModeRequested { get; set; }
-        #region IMessagingActions Members
-        abstract public void AddToSend(UserRequest command);
-        abstract public void DisableMeasure();
         #endregion
     }
 }

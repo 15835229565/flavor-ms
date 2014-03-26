@@ -25,7 +25,7 @@ namespace Flavor.Forms {
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CollectorsForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CollectorsForm2));
             this.saveSpecterFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.collect2_graph = new Flavor.Controls.ZedGraphControlPlus();
