@@ -458,9 +458,9 @@ namespace Flavor.Forms {
         }
         
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            graph.OnNewGraphData += InvokeRefreshGraph;
-            graph.OnAxisModeChanged += InvokeAxisModeChange;
-            graph.OnDisplayModeChanged += InvokeGraphModified;
+            graph.OnNewGraphData -= InvokeRefreshGraph;
+            graph.OnAxisModeChanged -= InvokeAxisModeChange;
+            graph.OnDisplayModeChanged -= InvokeGraphModified;
             base.OnFormClosing(e);
         }
     }
