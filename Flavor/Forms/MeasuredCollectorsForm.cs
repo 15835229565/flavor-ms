@@ -32,11 +32,11 @@ namespace Flavor.Forms {
 
         public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
-            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             PreciseSpectrumDisplayed = isPrecise;
             initPanel();
             (Panel as MeasureGraphPanel).MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
             prepareControlsOnMeasureStart();
+            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             Show();
             Activate();
         }
@@ -76,7 +76,6 @@ namespace Flavor.Forms {
 
         private void InvokeRefreshGraph(Graph.Recreate recreate) {
             if (this.InvokeRequired) {
-                // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
                 return;
             }

@@ -156,9 +156,11 @@ namespace Flavor.Forms {
             if (graphs == null)
                 return;
             Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
+            collect1_graph.Dock = DockStyle.None;
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
-            
+
+            collect2_graph.Dock = DockStyle.None;
             collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
             collect2_graph.Size = size;
         }
