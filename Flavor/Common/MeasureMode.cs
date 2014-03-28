@@ -27,13 +27,6 @@ namespace Flavor.Common {
                 ExpositionTime = expositionTime;
             }
         }
-        public event EventHandler<SingleMeasureEventArgs> SingleMeasureRequested;
-        protected virtual void OnSingleMeasureRequested(SingleMeasureEventArgs args) {
-            // TODO: lock here?
-            if (SingleMeasureRequested == null)
-                throw new NoListenersException();
-            SingleMeasureRequested(this, args);
-        }
 
         public event EventHandler SuccessfulExit;
         protected virtual void OnSuccessfulExit() {
@@ -44,8 +37,8 @@ namespace Flavor.Common {
         public event EventHandler Disable;
         protected virtual void OnDisable() {
             // TODO: lock here?
-            if (SuccessfulExit != null)
-                SuccessfulExit(this, EventArgs.Empty);
+            if (Disable != null)
+                Disable(this, EventArgs.Empty);
         }
 
         private readonly object locker = new object();
@@ -58,18 +51,13 @@ namespace Flavor.Common {
         private ushort pointValue = 0;
 
         private SingleMeasureEventArgs customMeasureEventArgs = null;
-        //private UserRequest.sendMeasure customMeasure = null;
 
         private readonly SingleMeasureEventArgs firstMeasureEventArgs;
-        //private readonly ushort befTime;
-        //private readonly ushort eTime;
         private readonly SingleMeasureEventArgs generalMeasureEventArgs;
 
         private MeasureMode(ushort befTime, ushort eTime) {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
-            //this.befTime = befTime;
-            //this.eTime = eTime;
         }
         internal bool onUpdateCounts() {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
@@ -77,6 +65,7 @@ namespace Flavor.Common {
             saveData();
             if (toContinue())
             {
+                // TODO:!
                 if (Commander.measureCancelRequested)
                 {
                     stop();
@@ -103,32 +92,20 @@ namespace Flavor.Common {
         internal virtual bool Start() {
             //first measure point with increased idle time
             customMeasureEventArgs = firstMeasureEventArgs;
-            //customMeasure = new UserRequest.sendMeasure(befTime, eTime);
             operating = true;
             return true;
         }
+        // external usage only
         abstract internal void updateGraph();
-        abstract internal int stepsCount();
-        internal void autoNextMeasure() {
-            if (operating) {
-                OnSingleMeasureRequested(customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs);
-                /*if (customMeasureEventArgs == null) {
-                    OnSingleMeasureRequested(generalMeasureEventArgs);
-                    //Commander.AddToSend(new UserRequest.sendMeasure());
-                } else {
-                    OnSingleMeasureRequested(customMeasureEventArgs);
-                    //Commander.AddToSend(customMeasure);
-                }*/
-            }
+        // external usage only
+        abstract internal int StepsCount { get; }
+        internal SingleMeasureEventArgs autoNextMeasure() {
+            return customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs;
         }
-        /*private void Disable() {
-            Commander.DisableMeasure();
-        }*/
         private void stop() {
             finalize();
             operating = false;
             OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
-            //Commander.AddToSend(new UserRequest.sendSVoltage(0));
             OnDisable();
         }
 
@@ -144,7 +121,6 @@ namespace Flavor.Common {
             protected override void saveData() { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(pointValue);
-                //Commander.AddToSend(new UserRequest.sendSVoltage(pointValue));
                 ++pointValue;
                 return true;
             }
@@ -164,8 +140,8 @@ namespace Flavor.Common {
                 ushort pnt = pointValue;
                 Graph.updateGraphDuringScanMeasure(Device.Detector1, Device.Detector2, --pnt);
             }
-            internal override int stepsCount() {
-                return ePoint - sPoint + 1;
+            internal override int StepsCount {
+                get { return ePoint - sPoint + 1; }
             }
         }
         internal class Precise: MeasureMode {
@@ -236,7 +212,6 @@ namespace Flavor.Common {
                     return false;
                 }
                 OnVoltageStepChangeRequested((ushort)realValue);
-                //Commander.AddToSend(new UserRequest.sendSVoltage((ushort)realValue));
                 ++pointValue;
                 return true;
             }
@@ -296,8 +271,8 @@ namespace Flavor.Common {
                 ushort pnt = pointValue;
                 Graph.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
             }
-            internal override int stepsCount() {
-                return stepPoints;
+            internal override int StepsCount {
+                get { return stepPoints; }
             }
             internal class Monitor: Precise {
                 private class MeasureStopper {
@@ -441,12 +416,14 @@ namespace Flavor.Common {
                     stopper.startTimer();
                     return true;
                 }
-                internal override int stepsCount() {
-                    int stopperTurns = stopper.estimatedTurns();
-                    if (stopperTurns <= 0) {
-                        return 0;
+                internal override int StepsCount {
+                    get {
+                        int stopperTurns = stopper.estimatedTurns();
+                        if (stopperTurns <= 0) {
+                            return 0;
+                        }
+                        return base.StepsCount * stopperTurns;
                     }
-                    return base.stepsCount() * stopperTurns;
                 }
             }
         }

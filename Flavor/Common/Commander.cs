@@ -167,6 +167,7 @@ namespace Flavor.Common {
                     ConsoleWriter.WriteLine(pState);
                     return;
                 }
+                // On The Fly part!!!
                 if (onTheFly && (pState == ProgramStates.Start) && (Command is SyncReply.updateStatus)) {
                     switch (Device.sysState) {
                         case Device.DeviceStates.Init:
@@ -219,6 +220,12 @@ namespace Flavor.Common {
                     }
                     return;
                 }
+                if (Command is SyncReply.confirmSVoltage) {
+                    if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
+                        var args = CurrentMeasureMode.autoNextMeasure();
+                        toSend.AddToSend(new UserRequest.sendMeasure(args.IdleTime, args.ExpositionTime));
+                    }
+                }
                 if (Command is SyncReply.confirmF2Voltage) {
                     if (pState == ProgramStates.Measure ||
                         pState == ProgramStates.WaitBackgroundMeasure) {
@@ -240,16 +247,19 @@ namespace Flavor.Common {
         private static void CheckInterfaces(ServicePacket Command) {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
-                ((IAutomatedReply)Command).AutomatedReply();
+                toSend.AddToSend(((IAutomatedReply)Command).AutomatedReply());
+                //((IAutomatedReply)Command).AutomatedReply();
             }
-            if (Command is ISend) {
-                ((ISend)Command).Send();
-            }
+            // OBSOLETE (ISend only in UI)
+            /*if (Command is ISend) {
+                //???
+                //ModBus.Send(((ISend)Command).Data);
+                toSend.AddToSend((ISend)Command);
+            }*/
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
             }
             if (Command is IUpdateGraph) {
-                //((IUpdateGraph)Command).UpdateGraph();
                 if (CurrentMeasureMode == null) {
                     //error
                     return;
@@ -454,7 +464,6 @@ namespace Flavor.Common {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }
-            measureMode.SingleMeasureRequested += measureMode_SingleMeasureRequested;
             measureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
             measureMode.Disable += measureMode_Disable;
 
@@ -474,7 +483,6 @@ namespace Flavor.Common {
                 }
                 matrix = null;
             }
-            measureMode.SingleMeasureRequested -= measureMode_SingleMeasureRequested;
             measureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
             measureMode.Disable -= measureMode_Disable;
 
@@ -483,9 +491,6 @@ namespace Flavor.Common {
         }
         private static void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
             toSend.AddToSend(new UserRequest.sendSVoltage(e.Step));
-        }
-        private static void measureMode_SingleMeasureRequested(object sender, MeasureMode.SingleMeasureEventArgs e) {
-            toSend.AddToSend(new UserRequest.sendMeasure(e.IdleTime, e.ExpositionTime));
         }
         
         internal static bool SomePointsUsed {

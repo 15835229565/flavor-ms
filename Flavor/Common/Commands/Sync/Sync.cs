@@ -18,8 +18,8 @@
             }
 
             #region IAutomatedReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.requestStatus());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.requestStatus();
             }
             #endregion
         }
@@ -97,16 +97,16 @@
 
             #region IReply Members
 
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.requestStatus());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.requestStatus();
             }
 
             #endregion
         }
         public class confirmHCurrent: SyncReply, IAutomatedReply {
             #region IReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.sendF1Voltage());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.sendF1Voltage();
             }
             #endregion
 
@@ -116,8 +116,8 @@
         }
         public class confirmECurrent: SyncReply, IAutomatedReply {
             #region IReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.sendHCurrent());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.sendHCurrent();
             }
             #endregion
 
@@ -131,16 +131,15 @@
             }
 
             #region IReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.sendCapacitorVoltage());
-                ;
+            public UserRequest AutomatedReply() {
+                return new UserRequest.sendCapacitorVoltage();
             }
             #endregion
         }
         public class confirmF1Voltage: SyncReply, IAutomatedReply {
             #region IReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.sendF2Voltage());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.sendF2Voltage();
             }
             #endregion
 
@@ -153,18 +152,10 @@
                 get { return ModBus.CommandCode.SetFocusVoltage2; }
             }
         }
-        public class confirmSVoltage: SyncReply, IAutomatedReply {
+        public class confirmSVoltage: SyncReply {
             internal override ModBus.CommandCode Id {
                 get { return ModBus.CommandCode.SetScanVoltage; }
             }
-
-            #region IAutomatedReply Members
-            public void AutomatedReply() {
-                if (Commander.CurrentMeasureMode != null && Commander.CurrentMeasureMode.isOperating) {
-                    Commander.CurrentMeasureMode.autoNextMeasure();
-                }
-            }
-            #endregion
         }
         public class confirmCP: SyncReply, IAutomatedReply {
             internal override ModBus.CommandCode Id {
@@ -172,8 +163,8 @@
             }
 
             #region IReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.enableHCurrent());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.enableHCurrent();
             }
             #endregion
         }
@@ -186,19 +177,9 @@
             private int Detector1;
             private int Detector2;
 
-            internal updateCounts(int value1, int value2, Action graphupdate) {
+            internal updateCounts(int value1, int value2) {
                 Detector1 = value1;
                 Detector2 = value2;
-                updateGraph = graphupdate;
-                /*updateGraph = delegate {
-                    if (Commander.CurrentMeasureMode == null) {
-                        // fake packet. BAD solution
-                        return;
-                    }
-                    // Not the best place for automatic refresh!
-                    // move further to Commander, rise an event!
-                    Commander.CurrentMeasureMode.updateGraph();
-                };*/
             }
 
             #region IUpdateDevice Members
@@ -210,31 +191,14 @@
 
             #endregion
 
-            #region IUpdateGraph Members
-
-            public delegate void Action();
-            private readonly Action updateGraph;
-            //DEPRECATED!
-            public void UpdateGraph() {
-                updateGraph();
-                /*if (Commander.CurrentMeasureMode == null) {
-                    // fake packet. BAD solution
-                    return;
-                }
-                // Not the best place for automatic refresh!
-                Commander.CurrentMeasureMode.updateGraph();*/
-            }
-
-            #endregion
-
             internal override ModBus.CommandCode Id {
                 get { return ModBus.CommandCode.GetCounts; }
             }
         }
         public class confirmHECurrent: SyncReply, IAutomatedReply {
             #region IReply Members
-            public void AutomatedReply() {
-                Commander.AddToSend(new UserRequest.sendECurrent());
+            public UserRequest AutomatedReply() {
+                return new UserRequest.sendECurrent();
             }
             #endregion
 

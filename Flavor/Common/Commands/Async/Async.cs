@@ -4,9 +4,9 @@
     {
         internal class requestCounts: AsyncReply, IAutomatedReply {
             #region IReply Members
-            public void AutomatedReply() {
+            public UserRequest AutomatedReply() {
                 //хорошо бы сюда на автомате очистку Commander.CustomMeasure...
-                Commander.AddToSend(new UserRequest.getCounts());
+                return new UserRequest.getCounts();
             }
             #endregion
         }

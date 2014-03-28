@@ -10,11 +10,11 @@
     }
 
     internal interface ISend {
-        void Send();
+        byte[] Data { get; }
     }
 
     interface IAutomatedReply {
-        void AutomatedReply();
+        UserRequest AutomatedReply();
     }
 
     interface IUpdateDevice {
@@ -22,6 +22,5 @@
     }
 
     interface IUpdateGraph {
-        void UpdateGraph();
     }
 }

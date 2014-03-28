@@ -40,7 +40,7 @@ namespace Flavor.Controls {
 
             scanProgressBar.Value = 0;
             // TODO: set as property
-            scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
+            scanProgressBar.Maximum = Commander.CurrentMeasureMode.StepsCount;
             if (scanProgressBar.Maximum == 0) {
                 scanProgressBar.Style = ProgressBarStyle.Marquee;
             } else {
@@ -55,7 +55,7 @@ namespace Flavor.Controls {
                 if (scanProgressBar.Value == scanProgressBar.Maximum) {
                     // if already full line - reinit
                     scanProgressBar.Value = 0;
-                    scanProgressBar.Maximum = Commander.CurrentMeasureMode.stepsCount();
+                    scanProgressBar.Maximum = Commander.CurrentMeasureMode.StepsCount;
                 }
                 scanProgressBar.PerformStep();
             }

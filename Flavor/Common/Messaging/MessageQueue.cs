@@ -175,7 +175,8 @@ namespace Flavor.Common.Messaging {
                         if (0 == Try) {
                             StartSending();
                         }
-                        packet.Send();
+                        // TODO: change to Protocol
+                        ModBus.Send(packet.Data);
                         break;
                     }
                     if (dequeueToSendInsideLock(ref packet))

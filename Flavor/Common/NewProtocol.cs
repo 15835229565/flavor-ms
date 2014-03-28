@@ -189,9 +189,7 @@ namespace Flavor.Common.Messaging {
                 case CommandCode.GetCounts:
                     if (raw_command.Length == 8)
                         packet = new SyncReply.updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
-                                                (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16),
-                            // DEPRECATED!
-                                                () => { });
+                                                (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16));
                     break;
                 case CommandCode.heatCurrentEnable:
                     if (raw_command.Length == 2)

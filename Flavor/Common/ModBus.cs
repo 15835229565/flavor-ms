@@ -296,15 +296,7 @@ namespace Flavor.Common.Messaging {
                         case CommandCode.GetCounts:
                             if (raw_command.Length == 8) {
                                 return new SyncReply.updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
-                                                        (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16),
-                                                        delegate {
-                                                            if (Commander.CurrentMeasureMode == null) {
-                                                                // fake packet. BAD solution
-                                                                return;
-                                                            }
-                                                            // Not the best place for automatic refresh!
-                                                            // move further to Commander
-                                                            Commander.CurrentMeasureMode.updateGraph();});
+                                                        (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16));
                             }
                             return ServicePacket.ZERO;
                         case CommandCode.heatCurrentEnable:
