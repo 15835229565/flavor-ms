@@ -120,10 +120,10 @@
             private ushort itime;
             private ushort etime;
 
-            internal sendMeasure() {
+            /*internal sendMeasure() {
                 itime = Config.CommonOptions.iTime;
                 etime = Config.CommonOptions.eTime;
-            }
+            }*/
             internal sendMeasure(ushort iT, ushort eT) {
                 itime = iT;
                 etime = eT;

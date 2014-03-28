@@ -53,10 +53,6 @@ namespace Flavor.Common {
         bool Sense();
         bool? Monitor();
     }
-    interface IMessagingActions {
-        void AddToSend(UserRequest command);
-        void DisableMeasure();
-    }
 
     abstract class ICommander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IConnectionActions, IMeasureActions {
         #region ILog Members

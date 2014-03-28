@@ -1,10 +1,54 @@
+using System;
 using System.Collections.Generic;
-using UserRequest = Flavor.Common.Messaging.Commands.UserRequest;
 using System.Timers;
 
 namespace Flavor.Common {
+    // TODO: remove dependencies from Commander, Device, Config
     abstract internal class MeasureMode {
-        private object locker = new object();
+        public class NoListenersException: Exception { }
+        public class VoltageStepEventArgs: EventArgs {
+            public ushort Step { get; private set; }
+            public VoltageStepEventArgs(ushort step) {
+                Step = step;
+            }
+        }
+        public event EventHandler<VoltageStepEventArgs> VoltageStepChangeRequested;
+        protected virtual void OnVoltageStepChangeRequested(ushort step) {
+            // TODO: lock here?
+            if (VoltageStepChangeRequested == null)
+                throw new NoListenersException();
+            VoltageStepChangeRequested(this, new VoltageStepEventArgs(step));
+        }
+        public class SingleMeasureEventArgs: EventArgs {
+            public ushort IdleTime { get; private set; }
+            public ushort ExpositionTime { get; private set; }
+            public SingleMeasureEventArgs(ushort idleTime, ushort expositionTime) {
+                IdleTime = idleTime;
+                ExpositionTime = expositionTime;
+            }
+        }
+        public event EventHandler<SingleMeasureEventArgs> SingleMeasureRequested;
+        protected virtual void OnSingleMeasureRequested(SingleMeasureEventArgs args) {
+            // TODO: lock here?
+            if (SingleMeasureRequested == null)
+                throw new NoListenersException();
+            SingleMeasureRequested(this, args);
+        }
+
+        public event EventHandler SuccessfulExit;
+        protected virtual void OnSuccessfulExit() {
+            // TODO: lock here?
+            if (SuccessfulExit != null)
+                SuccessfulExit(this, EventArgs.Empty);
+        }
+        public event EventHandler Disable;
+        protected virtual void OnDisable() {
+            // TODO: lock here?
+            if (SuccessfulExit != null)
+                SuccessfulExit(this, EventArgs.Empty);
+        }
+
+        private readonly object locker = new object();
 
         private bool operating = false;
         internal bool isOperating {
@@ -13,16 +57,22 @@ namespace Flavor.Common {
 
         private ushort pointValue = 0;
 
-        private UserRequest.sendMeasure customMeasure = null;
-        private readonly ushort befTime;
-        private readonly ushort eTime;
+        private SingleMeasureEventArgs customMeasureEventArgs = null;
+        //private UserRequest.sendMeasure customMeasure = null;
+
+        private readonly SingleMeasureEventArgs firstMeasureEventArgs;
+        //private readonly ushort befTime;
+        //private readonly ushort eTime;
+        private readonly SingleMeasureEventArgs generalMeasureEventArgs;
 
         private MeasureMode(ushort befTime, ushort eTime) {
-            this.befTime = befTime;
-            this.eTime = eTime;
+            this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
+            this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
+            //this.befTime = befTime;
+            //this.eTime = eTime;
         }
         internal bool onUpdateCounts() {
-            customMeasure = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
+            customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
             saveData();
             if (toContinue())
@@ -35,25 +85,25 @@ namespace Flavor.Common {
                 if (!onNextStep())
                 {
                     // TODO: cannot perform step!
-                    Disable();
+                    OnDisable();
                     return false;
                 }
             }
             else {
-                onSuccessfulExit();
+                OnSuccessfulExit();
                 stop();
             }
             return true;
         }
         // TODO: move to Commander!
         abstract protected void saveData();
-        abstract protected void onSuccessfulExit();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
         protected virtual void finalize() {}
-        internal virtual bool start() {
+        internal virtual bool Start() {
             //first measure point with increased idle time
-            customMeasure = new UserRequest.sendMeasure(befTime, eTime);
+            customMeasureEventArgs = firstMeasureEventArgs;
+            //customMeasure = new UserRequest.sendMeasure(befTime, eTime);
             operating = true;
             return true;
         }
@@ -61,51 +111,49 @@ namespace Flavor.Common {
         abstract internal int stepsCount();
         internal void autoNextMeasure() {
             if (operating) {
-                if (customMeasure == null) {
-                    Commander.AddToSend(new UserRequest.sendMeasure());
+                OnSingleMeasureRequested(customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs);
+                /*if (customMeasureEventArgs == null) {
+                    OnSingleMeasureRequested(generalMeasureEventArgs);
+                    //Commander.AddToSend(new UserRequest.sendMeasure());
                 } else {
-                    Commander.AddToSend(customMeasure);
-                }
+                    OnSingleMeasureRequested(customMeasureEventArgs);
+                    //Commander.AddToSend(customMeasure);
+                }*/
             }
         }
-        private void Disable() {
+        /*private void Disable() {
             Commander.DisableMeasure();
-        }
+        }*/
         private void stop() {
             finalize();
             operating = false;
-            Commander.AddToSend(new UserRequest.sendSVoltage(0));//Set ScanVoltage to low limit
-            Disable();
+            OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
+            //Commander.AddToSend(new UserRequest.sendSVoltage(0));
+            OnDisable();
         }
 
         internal class Scan: MeasureMode {
             private readonly ushort sPoint;
             private readonly ushort ePoint;
-            //test
-            internal delegate void Action();
-            private readonly Action onexit;
-            //test
-            internal Scan(Action onexit)
+
+            internal Scan()
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
-                this.onexit = onexit;
             }
             protected override void saveData() { }
-            protected override void onSuccessfulExit() {
-                //Config.autoSaveSpectrumFile();
-                this.onexit();
-            }
             protected override bool onNextStep() {
-                Commander.AddToSend(new UserRequest.sendSVoltage(pointValue++));
+                OnVoltageStepChangeRequested(pointValue);
+                //Commander.AddToSend(new UserRequest.sendSVoltage(pointValue));
+                ++pointValue;
                 return true;
             }
             protected override bool toContinue() {
                 return pointValue <= ePoint;
             }
 
-            internal override bool start() {
-                if (!base.start()) {
+            internal override bool Start() {
+                if (!base.Start()) {
                     return false;
                 }
                 //lock here
@@ -137,10 +185,16 @@ namespace Flavor.Common {
 
             private short? shift = null;
 
+            private readonly SingleMeasureEventArgs forwardMeasureEventArgs;
+            private readonly SingleMeasureEventArgs backwardMeasureEventArgs;
+
             internal Precise()
                 : this(Config.PreciseData.getUsed(), 0) { }
             private Precise(List<Utility.PreciseEditorData> peaks, short? shift)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
+                forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
+                backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
+
                 this.shift = shift;
                 senseModePoints = peaks;
                 //Sort in increased order
@@ -167,7 +221,7 @@ namespace Flavor.Common {
                 Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
                 senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += peak.Collector == 1 ? Device.Detector1 : Device.Detector2;
             }
-            protected override void onSuccessfulExit() {
+            protected override void OnSuccessfulExit() {
                 // order is important here: points are saved from graph..
                 Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
                 saveResults();
@@ -181,7 +235,8 @@ namespace Flavor.Common {
                 if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP) {
                     return false;
                 }
-                Commander.AddToSend(new UserRequest.sendSVoltage((ushort)realValue));
+                OnVoltageStepChangeRequested((ushort)realValue);
+                //Commander.AddToSend(new UserRequest.sendSVoltage((ushort)realValue));
                 ++pointValue;
                 return true;
             }
@@ -206,17 +261,7 @@ namespace Flavor.Common {
                         if (senseModePeakIteration[senseModePeak] > 0) break;
                     }
                     ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                    if (pointValue > nextPoint) {
-                        //!!!case of backward voltage change
-                        customMeasure = new UserRequest.sendMeasure(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
-                    } else {
-                        //!!!case of forward voltage change
-                        if (Config.CommonOptions.ForwardTimeEqualsBeforeTime) {
-                            customMeasure = new UserRequest.sendMeasure(Config.CommonOptions.befTime, Config.CommonOptions.eTime);
-                        } else {
-                            customMeasure = new UserRequest.sendMeasure(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
-                        }
-                    }
+                    customMeasureEventArgs = (pointValue > nextPoint) ? backwardMeasureEventArgs : forwardMeasureEventArgs;
                     pointValue = nextPoint;
                 }
                 return true;
@@ -225,9 +270,9 @@ namespace Flavor.Common {
                 return true;
             }
 
-            internal override bool start() {
+            internal override bool Start() {
                 if (noPoints) {
-                    Disable();
+                    OnDisable();
                     return false;
                 }
                 if (!init(false)) {
@@ -245,7 +290,7 @@ namespace Flavor.Common {
                         senseModeCounts[i] = new long[senseModeCounts[i].Length];
                     }
                 }
-                return base.start();
+                return base.Start();
             }
             internal override void updateGraph() {
                 ushort pnt = pointValue;
@@ -320,10 +365,10 @@ namespace Flavor.Common {
                         }
                     }
                 }
-                protected override void onSuccessfulExit() {
+                protected override void OnSuccessfulExit() {
                     //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
 					if (true || spectrumIsValid) {
-                        base.onSuccessfulExit();
+                        base.OnSuccessfulExit();
                     }
                 }
                 protected override void finalize() {
@@ -346,7 +391,7 @@ namespace Flavor.Common {
                         return false;
                     }
                     // operations between iterations
-                    onSuccessfulExit();
+                    OnSuccessfulExit();
                     init(true);
                     prevIteration = prevIteration == null ? null : new long[senseModeCounts[checkerIndex].Length];
                     return true;
@@ -389,8 +434,8 @@ namespace Flavor.Common {
                     }
                     return spectrumIsValid = true;
                 }
-                internal override bool start() {
-                    if (!base.start()) {
+                internal override bool Start() {
+                    if (!base.Start()) {
                         return false;
                     }
                     stopper.startTimer();

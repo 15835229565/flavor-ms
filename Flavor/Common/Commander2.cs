@@ -6,7 +6,7 @@ using Flavor.Common.Messaging.Commands;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
-    internal class Commander2: ICommander, IMessagingActions {
+    internal class Commander2: ICommander {
         private bool onTheFly = true;
 
         private ProgramStates programState = ProgramStates.Start;
@@ -66,9 +66,6 @@ namespace Flavor.Common {
         }
 
         private MessageQueueWithAutomatedStatusChecks toSend;
-        void IMessagingActions.AddToSend(UserRequest command) {
-            toSend.AddToSend(command);
-        }
 
         private void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
             ServicePacket command = e.Command;
@@ -204,7 +201,7 @@ namespace Flavor.Common {
                     if (pState == ProgramStates.Measure ||
                         pState == ProgramStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareModeRequested;
-                        if (!CurrentMeasureMode.start()) {
+                        if (!CurrentMeasureMode.Start()) {
                             OnErrorOccured("Нет точек для измерения.");
                         }
                     }
@@ -253,7 +250,8 @@ namespace Flavor.Common {
         public override void Scan() {
             if (pState == ProgramStates.Ready) {
                 Graph.Reset();
-                CurrentMeasureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
+                CurrentMeasureMode = new MeasureMode.Scan();
+                CurrentMeasureMode.SuccessfulExit += (s, e) => { Config.autoSaveSpectrumFile(); };
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -403,18 +401,6 @@ namespace Flavor.Common {
             return workingValue;
         }
 
-        void IMessagingActions.DisableMeasure() {
-            if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
-                if (pState == ProgramStates.Measure) {
-                    Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
-                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
-                    Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
-                }
-                matrix = null;
-            }
-            Disable();
-            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
-        }
         private void Disable() {
             measureCancelRequested = false;
             toSend.IsRareMode = false;
@@ -441,11 +427,38 @@ namespace Flavor.Common {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }
+            CurrentMeasureMode.SingleMeasureRequested += measureMode_SingleMeasureRequested;
+            CurrentMeasureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
+            CurrentMeasureMode.Disable += CurrentMeasureMode_Disable;
+            
             setProgramState(state);
 
             toSend.IsRareMode = !notRareModeRequested;
             measureCancelRequested = false;
             SendSettings();
+        }
+
+        private void CurrentMeasureMode_Disable(object sender, EventArgs e) {
+            if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
+                if (pState == ProgramStates.Measure) {
+                    Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
+                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
+                    Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
+                }
+                matrix = null;
+            }
+            CurrentMeasureMode.SingleMeasureRequested -= measureMode_SingleMeasureRequested;
+            CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
+            CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
+            
+            Disable();
+            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
+        }
+        private void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
+            toSend.AddToSend(new UserRequest.sendSVoltage(e.Step));
+        }
+        private void measureMode_SingleMeasureRequested(object sender, MeasureMode.SingleMeasureEventArgs e) {
+            toSend.AddToSend(new UserRequest.sendMeasure(e.IdleTime, e.ExpositionTime));
         }
         public override bool SomePointsUsed {
             get {

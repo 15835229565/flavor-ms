@@ -223,7 +223,7 @@ namespace Flavor.Common {
                     if (pState == ProgramStates.Measure ||
                         pState == ProgramStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareModeRequested;
-                        if (!measureMode.start()) {
+                        if (!measureMode.Start()) {
                             // error (no points)
                             // TODO: lock here
                             if (ErrorOccured != null) {
@@ -276,7 +276,8 @@ namespace Flavor.Common {
         internal static void Scan() {
             if (pState == ProgramStates.Ready) {
                 Graph.Reset();
-                measureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
+                measureMode = new MeasureMode.Scan();
+                measureMode.SuccessfulExit += (s, e) => { Config.autoSaveSpectrumFile(); };
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -285,6 +286,7 @@ namespace Flavor.Common {
                 if (SomePointsUsed) {
                     Graph.Reset();
                     measureMode = new MeasureMode.Precise();
+                    //measureMode.SuccesfulExit += (s, e) => { ; };
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
@@ -426,24 +428,12 @@ namespace Flavor.Common {
             return workingValue;
         }
 
-        internal static void DisableMeasure() {
-            if (measureMode is MeasureMode.Precise.Monitor) {
-                if (pState == ProgramStates.Measure) {
-                    Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
-                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
-                    Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
-                }
-                matrix = null;
-            }
-            Disable();
-            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
-        }
         private static void Disable() {
             measureCancelRequested = false;
             toSend.IsRareMode = false;
             // TODO: lock here (request from ui may cause synchro errors)
             // or use async action paradigm
-            OnMeasureCancelled();
+            OnMeasureCancelled();// also on normal exit and fault on start!
             measureMode = null;//?
         }
         internal static void sendSettings() {
@@ -464,12 +454,40 @@ namespace Flavor.Common {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");
             }
+            measureMode.SingleMeasureRequested += measureMode_SingleMeasureRequested;
+            measureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
+            measureMode.Disable += measureMode_Disable;
+
             setProgramState(state);
 
             toSend.IsRareMode = !notRareModeRequested;
             measureCancelRequested = false;
             sendSettings();
         }
+
+        private static void measureMode_Disable(object sender, EventArgs e) {
+            if (measureMode is MeasureMode.Precise.Monitor) {
+                if (pState == ProgramStates.Measure) {
+                    Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
+                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
+                    Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
+                }
+                matrix = null;
+            }
+            measureMode.SingleMeasureRequested -= measureMode_SingleMeasureRequested;
+            measureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
+            measureMode.Disable -= measureMode_Disable;
+
+            Disable();
+            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
+        }
+        private static void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
+            toSend.AddToSend(new UserRequest.sendSVoltage(e.Step));
+        }
+        private static void measureMode_SingleMeasureRequested(object sender, MeasureMode.SingleMeasureEventArgs e) {
+            toSend.AddToSend(new UserRequest.sendMeasure(e.IdleTime, e.ExpositionTime));
+        }
+        
         internal static bool SomePointsUsed {
             get {
                 if (Config.PreciseData.Count > 0)
