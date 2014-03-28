@@ -200,8 +200,7 @@ namespace Flavor.Common {
                 }
                 if (command is SyncReply.confirmSVoltage) {
                     if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                        var args = CurrentMeasureMode.autoNextMeasure();
-                        toSend.AddToSend(new UserRequest.sendMeasure(args.IdleTime, args.ExpositionTime));
+                        CurrentMeasureMode.NextMeasure((t1, t2) => { toSend.AddToSend(new UserRequest.sendMeasure(t1, t2)); });
                     }
                 }
                 if (command is SyncReply.confirmF2Voltage) {
@@ -235,7 +234,7 @@ namespace Flavor.Common {
                     //error
                     return;
                 }
-                CurrentMeasureMode.updateGraph();
+                CurrentMeasureMode.UpdateGraph();
             }
         }
 
@@ -259,6 +258,7 @@ namespace Flavor.Common {
                 Graph.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
                 CurrentMeasureMode.SuccessfulExit += (s, e) => { Config.autoSaveSpectrumFile(); };
+                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => { Graph.updateGraphDuringScanMeasure(Device.Detector1, Device.Detector2, p); };
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -266,7 +266,16 @@ namespace Flavor.Common {
             if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.Reset();
-                    CurrentMeasureMode = new MeasureMode.Precise();
+                    {
+                        var temp = new MeasureMode.Precise();
+                        temp.SaveResults += (s, e) => { Config.autoSavePreciseSpectrumFile(e.Shift); };
+                        CurrentMeasureMode = temp;
+                    }
+                    CurrentMeasureMode.SuccessfulExit += (s, e) => {
+                        var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
+                        Graph.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
+                    };
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => { Graph.updateGraphDuringPreciseMeasure(p, peak); };
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
@@ -311,7 +320,11 @@ namespace Flavor.Common {
 
                     // TODO: feed measure mode with start shift value (really?)
                     short? startShiftValue = 0;
-                    CurrentMeasureMode = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
+                    var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
+                    temp.SaveResults += (s, e) => { Config.autoSaveMonitorSpectrumFile(e.Shift); };
+                    CurrentMeasureMode = temp;
+                    CurrentMeasureMode.Finalize += (s, e) => { Config.finalizeMonitorFile(); };
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => { Graph.updateGraphDuringPreciseMeasure(p, peak); };
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(ProgramStates.WaitBackgroundMeasure);

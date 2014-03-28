@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Timers;
 
 namespace Flavor.Common {
-    // TODO: remove dependencies from Commander, Device, Config
+    // TODO: remove dependencies from Commander, Config
     abstract internal class MeasureMode {
         public class NoListenersException: Exception { }
         public class VoltageStepEventArgs: EventArgs {
@@ -29,16 +29,22 @@ namespace Flavor.Common {
         }
 
         public event EventHandler SuccessfulExit;
-        protected virtual void OnSuccessfulExit() {
+        protected virtual void OnSuccessfulExit(EventArgs args) {
             // TODO: lock here?
             if (SuccessfulExit != null)
-                SuccessfulExit(this, EventArgs.Empty);
+                SuccessfulExit(this, args);
         }
         public event EventHandler Disable;
         protected virtual void OnDisable() {
             // TODO: lock here?
             if (Disable != null)
                 Disable(this, EventArgs.Empty);
+        }
+        public event EventHandler Finalize;
+        protected virtual void OnFinalize() {
+            // TODO: lock here?
+            if (Finalize != null)
+                Finalize(this, EventArgs.Empty);
         }
 
         private readonly object locker = new object();
@@ -79,16 +85,22 @@ namespace Flavor.Common {
                 }
             }
             else {
-                OnSuccessfulExit();
+                OnSuccessfulExit(EventArgs.Empty);
                 stop();
             }
             return true;
         }
+        private void stop() {
+            OnFinalize();
+            operating = false;
+            OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
+            OnDisable();
+        }
         // TODO: move to Commander!
+        // internal usage only
         abstract protected void saveData();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
-        protected virtual void finalize() {}
         internal virtual bool Start() {
             //first measure point with increased idle time
             customMeasureEventArgs = firstMeasureEventArgs;
@@ -96,17 +108,13 @@ namespace Flavor.Common {
             return true;
         }
         // external usage only
-        abstract internal void updateGraph();
+        public Action<ushort, Utility.PreciseEditorData> GraphUpdateDelegate { get; set; }
+        abstract internal void UpdateGraph();
         // external usage only
         abstract internal int StepsCount { get; }
-        internal SingleMeasureEventArgs autoNextMeasure() {
-            return customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs;
-        }
-        private void stop() {
-            finalize();
-            operating = false;
-            OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
-            OnDisable();
+        internal void NextMeasure(Action<ushort, ushort> send) {
+            var args = customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs;
+            send(args.IdleTime, args.ExpositionTime);
         }
 
         internal class Scan: MeasureMode {
@@ -136,15 +144,28 @@ namespace Flavor.Common {
                 pointValue = sPoint;
                 return onNextStep();
             }
-            internal override void updateGraph() {
+            internal override void UpdateGraph() {
                 ushort pnt = pointValue;
-                Graph.updateGraphDuringScanMeasure(Device.Detector1, Device.Detector2, --pnt);
+                GraphUpdateDelegate(--pnt, null);
             }
             internal override int StepsCount {
                 get { return ePoint - sPoint + 1; }
             }
         }
         internal class Precise: MeasureMode {
+            public class SaveResultsEventArgs: EventArgs {
+                public short? Shift { get; private set; }
+                public SaveResultsEventArgs(short? shift) {
+                    Shift = shift;
+                }
+            }
+            public event EventHandler<SaveResultsEventArgs> SaveResults;
+            protected virtual void OnSaveResults(short? shift) {
+                // TODO: lock here?
+                if (SaveResults != null)
+                    SaveResults(this, new SaveResultsEventArgs(shift));
+                // senseModeCounts here?
+            }
             private List<Utility.PreciseEditorData> senseModePoints;
             private long[][] senseModeCounts;
             private byte senseModePeak = 0;
@@ -197,13 +218,20 @@ namespace Flavor.Common {
                 Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
                 senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += peak.Collector == 1 ? Device.Detector1 : Device.Detector2;
             }
-            protected override void OnSuccessfulExit() {
-                // order is important here: points are saved from graph..
-                Graph.updateGraphAfterPreciseMeasure(senseModeCounts, senseModePoints, shift);
-                saveResults();
+            public class SuccessfulExitEventArgs: EventArgs {
+                public long[][] Counts { get; private set; }
+                public List<Utility.PreciseEditorData> Points { get; private set; }
+                public short? Shift { get; private set; }
+                public SuccessfulExitEventArgs(long[][] counts, List<Utility.PreciseEditorData> points, short? shift) {
+                    Counts = counts;
+                    Points = points;
+                    Shift = shift;
+                }
             }
-            protected virtual void saveResults() {
-                Config.autoSavePreciseSpectrumFile(shift);
+            protected override void OnSuccessfulExit(EventArgs args) {
+                // order is important here: points are saved from graph..
+                base.OnSuccessfulExit(new SuccessfulExitEventArgs(senseModeCounts, senseModePoints, shift));
+                OnSaveResults(shift);
             }
 
             protected override bool onNextStep() {
@@ -267,9 +295,9 @@ namespace Flavor.Common {
                 }
                 return base.Start();
             }
-            internal override void updateGraph() {
+            internal override void UpdateGraph() {
                 ushort pnt = pointValue;
-                Graph.updateGraphDuringPreciseMeasure(--pnt, SenseModePeak);
+                GraphUpdateDelegate(--pnt, SenseModePeak);
             }
             internal override int StepsCount {
                 get { return stepPoints; }
@@ -340,18 +368,11 @@ namespace Flavor.Common {
                         }
                     }
                 }
-                protected override void OnSuccessfulExit() {
+                protected override void OnSuccessfulExit(EventArgs args) {
                     //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
 					if (true || spectrumIsValid) {
-                        base.OnSuccessfulExit();
+                        base.OnSuccessfulExit(args);
                     }
-                }
-                protected override void finalize() {
-                    Config.finalizeMonitorFile();
-                }
-                protected override void saveResults() {
-                    // senseModeCounts here?
-                    Config.autoSaveMonitorSpectrumFile(shift);
                 }
 
                 protected override bool toContinue() {
@@ -366,7 +387,7 @@ namespace Flavor.Common {
                         return false;
                     }
                     // operations between iterations
-                    OnSuccessfulExit();
+                    OnSuccessfulExit(EventArgs.Empty);
                     init(true);
                     prevIteration = prevIteration == null ? null : new long[senseModeCounts[checkerIndex].Length];
                     return true;
