@@ -294,7 +294,7 @@ namespace Flavor.Common {
             writer.write();
         }
         #region Spectra Distraction
-        internal static void distractSpectra(string what, ushort step, Graph.pListScaled plsReference, Utility.PreciseEditorData pedReference, Graph graph) {
+        internal static void distractSpectra(string what, ushort step, bool? isFirstCollector, Utility.PreciseEditorData pedReference, Graph graph) {
             bool hint = !graph.isPreciseSpectrum;
             ISpectrumReader reader = TagHolder.getSpectrumReader(what, hint);
             if (reader.Hint != hint) {
@@ -313,9 +313,9 @@ namespace Flavor.Common {
 
                     // coeff counting
                     double coeff = 1.0;
-                    if (plsReference != null) {
-                        PointPairListPlus PL = plsReference.IsFirstCollector ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
-                        PointPairListPlus pl = plsReference.IsFirstCollector ? pl12 : pl22;
+                    if (isFirstCollector.HasValue) {
+                        PointPairListPlus PL = isFirstCollector.Value ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
+                        PointPairListPlus pl = isFirstCollector.Value ? pl12 : pl22;
                         if (step != 0) {
                             for (int i = 0; i < PL.Count; ++i) {
                                 if (step == PL[i].X) {

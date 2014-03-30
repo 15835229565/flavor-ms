@@ -20,13 +20,14 @@ namespace Flavor.Common {
             Loaded,
             Diff
         }
-        [Flags]
+        [Flags][Obsolete]
         internal enum Recreate {
             None,
             Col1,
             Col2,
             Both = Col1 | Col2,
         }
+        // TODO: move to view, not data (Utility)
         public class pListScaled {
             internal enum DisplayValue {
                 Step = 0,
@@ -59,9 +60,6 @@ namespace Flavor.Common {
                 get { return (points[(int)DisplayValue.Step].Count == 0); }
             }
             private readonly Collector collector;
-            internal bool IsFirstCollector {
-                get { return collector.IsFirst; }
-            }
 
             internal void Add(ushort pnt, long count) {
                 peakSum += count;
@@ -188,40 +186,46 @@ namespace Flavor.Common {
             get { return shift; }
         }
 
+        //TODO: move to view, not data
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
-            pListScaled.DisplayValue am = pListScaled.DisplayValue.Step;
-            if (useAxisMode) am = axisMode;
+            pListScaled.DisplayValue am = useAxisMode ? axisMode : pListScaled.DisplayValue.Step;
             foreach (pListScaled pLS in collectors[col - 1]) {
                 temp.Add(pLS.Points(am));
             }
             return temp;
         }
+        [Obsolete]
         internal List<PointPairListPlus> Displayed1 {
             get {
                 return getPointPairs(1, true);
             }
         }
+        [Obsolete]
         internal List<PointPairListPlus> Displayed2 {
             get {
                 return getPointPairs(2, true);
             }
         }
+        [Obsolete]
         internal List<PointPairListPlus> Displayed1Steps {
             get {
                 return getPointPairs(1, false);
             }
         }
+        [Obsolete]
         internal List<PointPairListPlus> Displayed2Steps {
             get {
                 return getPointPairs(2, false);
             }
         }
+        [Obsolete]
         internal Collector DisplayedRows1 {
             get {
                 return collectors[0];
             }
         }
+        [Obsolete]
         internal Collector DisplayedRows2 {
             get {
                 return collectors[1];
@@ -233,6 +237,7 @@ namespace Flavor.Common {
                 if (this != instance && preciseData != null) {
                     return true;
                 }
+                // TODO:!
                 if ((collectors[0].Count > 1) || (collectors[1].Count > 1)) {
                     return true;
                 }
@@ -322,8 +327,14 @@ namespace Flavor.Common {
         internal delegate void PointAddedDelegate(bool notNull);
         internal static event PointAddedDelegate OnPointAdded;
         #endregion
-        internal Graph(CommonOptions commonOpts) {
-            collectors = new Spectrum(commonOpts);
+        
+        [Obsolete]
+        internal Graph(CommonOptions commonOpts)
+            : this(commonOpts, 2770 * 28, 896.5 * 18) {
+            // TODO: move scaling defaults up to Config
+        }
+        internal Graph(CommonOptions commonOpts, params double[] coeffs) {
+            collectors = new Spectrum(commonOpts, coeffs);
         }
 
         internal void ResetPointLists() {

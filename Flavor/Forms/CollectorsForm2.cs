@@ -307,9 +307,11 @@ namespace Flavor.Forms {
                 Graph.pListScaled pls;
                 int index = args.Index;
                 if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
+                    // TODO: collector number here
                     bool isFirstCollector = sender == collect1_graph;
-                    ushort step = (ushort)pls.Step[index].X;
                     byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
+
+                    ushort step = (ushort)pls.Step[index].X;
 
                     item = new ToolStripMenuItem();
                     item.Text = "Добавить точку в редактор";
@@ -331,7 +333,7 @@ namespace Flavor.Forms {
 
                         item = new ToolStripMenuItem();
                         item.Text = "Вычесть из текущего с перенормировкой на точку";
-                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, pls, ped); });
+                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, isFirstCollector, ped); });
                         items.Add(item);
 
                         if (ped != null) {
@@ -427,7 +429,7 @@ namespace Flavor.Forms {
             }
             return tooltipData;
         }
-        private void GraphForm_OnDiffOnPoint(ushort step, Graph.pListScaled plsReference, PreciseEditorData pedReference) {
+        private void GraphForm_OnDiffOnPoint(ushort step, bool? isFirstCollector, PreciseEditorData pedReference) {
             if (PreciseSpectrumDisplayed) {
                 openSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
             } else {
@@ -435,7 +437,7 @@ namespace Flavor.Forms {
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    Config.distractSpectra(openSpecterFileDialog.FileName, step, plsReference, pedReference, graph);
+                    Config.distractSpectra(openSpecterFileDialog.FileName, step, isFirstCollector, pedReference, graph);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }

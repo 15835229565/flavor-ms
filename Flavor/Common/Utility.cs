@@ -301,31 +301,18 @@ namespace Flavor.Common {
         public double Coeff {
             get { return coeff; }
             set {
-                RecomputeMassRows(value);
+                if (coeff == value)
+                    return;
+                coeff = value;
+                foreach (var pl in this)
+                    pl.RecomputeMassRow();
             }
         }
-        private readonly bool isFirst;
-        public bool IsFirst {
-            get { return isFirst; }
-        } 
 
-        internal Collector(bool isFirst, double coeff) {
-            this.isFirst = isFirst;
+        internal Collector(double coeff) {
             this.coeff = coeff;
             // data row for scan (has no PED reference)
             Add(new Graph.pListScaled(this));
-        }
-        //TODO: hard-coded defaults?
-        internal Collector(bool isFirst)
-            : this(isFirst, isFirst ? 2770 * 28 : 896.5 * 18) { }
-        internal bool RecomputeMassRows(double coeff) {
-            if (this.coeff == coeff)
-                return false;
-            this.coeff = coeff;
-            foreach (Graph.pListScaled pl in this) {
-                pl.RecomputeMassRow();
-            }
-            return true;
         }
         internal double pointToMass(ushort pnt) {
             return coeff / CommonOptions.scanVoltageReal(pnt);
@@ -340,27 +327,26 @@ namespace Flavor.Common {
         }
     }
     internal class Spectrum: List<Collector> {
-        private CommonOptions myCommonOptions = null;
-        internal Spectrum(CommonOptions cd)
-            : this() {
+        internal CommonOptions CommonOptions { get; set; }
+        internal Spectrum(CommonOptions cd, params double[] coeffs)
+            : base(coeffs.Length) {
             // better to clone here?
-            myCommonOptions = cd;
-        }
-        internal Spectrum()
-            : base() {
-            this.Add(new Collector(true));
-            this.Add(new Collector(false));
-        }
-        internal CommonOptions CommonOptions {
-            get { return myCommonOptions; }
-            set { myCommonOptions = value; }
+            CommonOptions = cd;
+            if (coeffs.Length == 0)
+                throw new ArgumentOutOfRangeException("coeffs");
+            foreach (double coeff in coeffs)
+                Add(new Collector(coeff));
         }
         internal bool RecomputeMassRows(byte col, double coeff) {
-            return this[col - 1].RecomputeMassRows(coeff);
+            var collector = this[col - 1];
+            if (coeff == collector.Coeff)
+                return false;
+            collector.Coeff = coeff;
+            return true;
         }
         public new void Clear() {
-            this[0].Clear();
-            this[1].Clear();
+            foreach (var collector in this)
+                collector.Clear();
         }
     }
 
