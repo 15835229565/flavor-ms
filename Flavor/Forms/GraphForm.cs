@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -16,26 +15,40 @@ namespace Flavor.Forms {
             Color.Lime, Color.SaddleBrown, Color.Maroon, Color.DeepSkyBlue, Color.DimGray,};
         protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
-        private GraphPanel panel = null;
+        private GraphPanel panel;
         protected GraphPanel Panel {
             get {
-                if (panel == null)
-                    initPanel();
+                //if (panel == null)
+                //    initPanel();
 				return panel;
+            }
+            set {
+                if (panel == value)
+                    return;
+                if (panel != null) {
+                    panel.EnabledChanged -= toggleMeasurePanel;
+                    Controls.Remove(panel);
+                }
+                
+                panel = value;
+                Controls.Add(panel);
+                //panel.BackColor = System.Drawing.SystemColors.Control;
+                //panel.Dock = System.Windows.Forms.DockStyle.Right;
+                panel.Location = new System.Drawing.Point(493, 24);
+                panel.Size = new System.Drawing.Size(280, 667);
+                panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
+                panel.EnabledChanged += toggleMeasurePanel;
             }
         }
 
-        protected void initPanel() {
+        /*protected void initPanel() {
             if (panel != null) {
                 panel.EnabledChanged -= toggleMeasurePanel;
                 this.Controls.Remove(panel);
             }
             panel = newPanel();
-            // 
-            // panel
-            // 
-            panel.BackColor = System.Drawing.SystemColors.Control;
-            panel.Dock = System.Windows.Forms.DockStyle.Right;
+            //panel.BackColor = System.Drawing.SystemColors.Control;
+            //panel.Dock = System.Windows.Forms.DockStyle.Right;
             panel.Location = new System.Drawing.Point(493, 24);
             panel.Size = new System.Drawing.Size(280, 667);
             panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
@@ -45,9 +58,10 @@ namespace Flavor.Forms {
         }
         protected virtual GraphPanel newPanel() {
             return null;
-        }
+        }*/
         
-        internal protected GraphForm() {
+        internal protected GraphForm()
+            : base() {
             InitializeComponent();
         }
         protected sealed override void OnShown(EventArgs e) {

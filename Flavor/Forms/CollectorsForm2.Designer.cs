@@ -28,7 +28,7 @@ namespace Flavor.Forms {
             this.saveSpecterFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.distractFromCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabControl = new System.Windows.Forms.TabControl();
             this.SuspendLayout();
             // 
             // saveSpecterFileDialog
@@ -49,14 +49,14 @@ namespace Flavor.Forms {
             // 
             // tabControl1
             // 
-            resources.ApplyResources(this.tabControl1, "tabControl1");
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
+            resources.ApplyResources(this.tabControl, "tabControl1");
+            this.tabControl.Name = "tabControl1";
+            this.tabControl.SelectedIndex = 0;
             // 
             // CollectorsForm2
             // 
             resources.ApplyResources(this, "$this");
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControl);
             this.Name = "CollectorsForm2";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -68,6 +68,6 @@ namespace Flavor.Forms {
         protected System.Windows.Forms.SaveFileDialog saveSpecterFileDialog;
         private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
         private System.Windows.Forms.ToolStripMenuItem distractFromCurrentToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabControl;
     }
 }

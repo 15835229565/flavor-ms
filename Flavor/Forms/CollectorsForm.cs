@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
@@ -75,8 +74,15 @@ namespace Flavor.Forms {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
             //set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
-        protected CollectorsForm() {
+        [Obsolete]
+        protected CollectorsForm()
+            : base() {
             // do not use! for designer only!
+            InitializeComponent();
+            Panel = new GraphPanel();
+        }
+        protected CollectorsForm(Graph graph, bool hint)
+            : base() {
             InitializeComponent();
 
             collect1_graph.GraphPane.Legend.IsVisible = false;
@@ -90,8 +96,7 @@ namespace Flavor.Forms {
 
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
-        }
-        protected CollectorsForm(Graph graph, bool hint): this() {
+
             this.graph = graph;
             
             preciseSpectrumDisplayed = hint;
@@ -109,14 +114,14 @@ namespace Flavor.Forms {
             col2Text = prefix + COL2_TITLE + modeText;
         }
 
-        protected sealed override GraphPanel newPanel() {
-            GraphPanel panel = getPanel();
-            panel.Graph = graph;
-            return panel;
-        }
-        protected virtual GraphPanel getPanel() {
-            return new GraphPanel();
-        }
+        //protected sealed override GraphPanel newPanel() {
+        //    GraphPanel panel = getPanel();
+        //    panel.Graph = graph;
+        //    return panel;
+        //}
+        //protected virtual GraphPanel getPanel() {
+        //    return new GraphPanel();
+        //}
 
         private void InvokeAxisModeChange() {
             if (this.InvokeRequired) {
@@ -155,7 +160,7 @@ namespace Flavor.Forms {
         protected override sealed void SetSize() {
             if (graphs == null)
                 return;
-            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
+            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel != null && Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
             collect1_graph.Dock = DockStyle.None;
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
@@ -201,7 +206,7 @@ namespace Flavor.Forms {
         protected override sealed void RefreshGraph() {
             RefreshGraph(Graph.Recreate.Both);
         }
-        protected void RefreshGraph(Graph.Recreate recreate) {
+        private void RefreshGraph(Graph.Recreate recreate) {
             if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
                 collect1_graph.Refresh();
             if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)

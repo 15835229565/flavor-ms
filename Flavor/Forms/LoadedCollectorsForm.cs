@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using Flavor.Controls;
 using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
@@ -12,18 +10,22 @@ namespace Flavor.Forms {
         private string DisplayedFileName {
             get { return System.IO.Path.GetFileName(displayedFileName); }
         }
+        [Obsolete]
         protected LoadedCollectorsForm(): base() {
             // do not use! for designer only!
             InitializeComponent();
-            Panel.Enable();
+            Panel = new GraphPanel();
         }
         public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
             : base(graph, hint) {
             InitializeComponent();
+            // TODO: different for precise & scan
+            Panel = new GraphPanel();
+            Panel.Graph = graph;
+            Panel.Enable();
+
             displayedFileName = fileName;
             this.Text = DisplayedFileName;
-
-            Panel.Enable();
 
             if (PreciseSpectrumDisplayed) {
                 // search temporary here

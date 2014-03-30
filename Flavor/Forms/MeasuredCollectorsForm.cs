@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Flavor.Controls;
 using Graph = Flavor.Common.Graph;
@@ -22,38 +17,42 @@ namespace Flavor.Forms {
             : base(Graph.Instance, false) {
             InitializeComponent();
         }
-        protected sealed override GraphPanel getPanel() {
-            if (PreciseSpectrumDisplayed)
-                return new PreciseMeasureGraphPanel();
-            return new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
-		}
+        //protected sealed override GraphPanel getPanel() {
+        //    if (PreciseSpectrumDisplayed)
+        //        return new PreciseMeasureGraphPanel();
+        //    return new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
+        //}
 
         #region IMeasured Members
 
         public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
             PreciseSpectrumDisplayed = isPrecise;
-            initPanel();
-            (Panel as MeasureGraphPanel).MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
-            prepareControlsOnMeasureStart();
-            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
-            Show();
-            Activate();
-        }
-        private void prepareControlsOnMeasureStart() {
-            // not so good..
-            if (PreciseSpectrumDisplayed)
+            
+            MeasureGraphPanel panel;
+            if (isPrecise) {
+                panel = new PreciseMeasureGraphPanel();
                 // search temporary here
                 // TODO: use extension method getUsed()
                 setXScaleLimits(Config.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
-            else
+            } else {
+                panel = new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
                 setXScaleLimits();
+            }
+            panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
+            Panel = panel;
+            Panel.Graph = Graph.Instance;
 
             Panel.Enable();
             // TODO: and set it visible together with menu item set checked!
 
             specterSavingEnabled = false;
+
             Graph.ResetPointListsWithEvent();
+            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
+            
+            Show();
+            Activate();
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
@@ -88,8 +87,7 @@ namespace Flavor.Forms {
             refreshGraphicsOnMeasureStep();
         }
         private void refreshGraphicsOnMeasureStep() {
-            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
-            panel.performStep();
+            (Panel as MeasureGraphPanel).performStep();
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();
         }

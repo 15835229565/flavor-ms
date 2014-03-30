@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
@@ -76,15 +75,20 @@ namespace Flavor.Forms {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
             //set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
-        protected CollectorsForm2() {
+        [Obsolete]
+        protected CollectorsForm2()
+            : base() {
             // do not use! for designer only!
+            InitializeComponent();
+            Panel = new GraphPanel();
+        }
+        protected CollectorsForm2(Graph graph, bool hint)
+            : base() {
             InitializeComponent();
 
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
-        }
-        protected CollectorsForm2(Graph graph, bool hint)
-            : this() {
+
             this.graph = graph;
 
             preciseSpectrumDisplayed = hint;
@@ -99,7 +103,7 @@ namespace Flavor.Forms {
                 setXScaleLimits();
             }
 
-            tabControl1.SuspendLayout();
+            tabControl.SuspendLayout();
             SuspendLayout();
             int i = 0;
             foreach (var collector in graph.Collectors) {
@@ -108,19 +112,20 @@ namespace Flavor.Forms {
                 } else {
                     var tabPage = new System.Windows.Forms.TabPage();
                     tabPage.SuspendLayout();
-                    tabControl1.Controls.Add(tabPage);
+                    tabControl.Controls.Add(tabPage);
                     {
-                        var zedgraphcontrol = new Flavor.Controls.ZedGraphControlPlus();
-                        tabPage.Controls.Add(zedgraphcontrol);
-                        zedgraphcontrol.PointValueEvent += ZedGraphControlPlus_PointValueEvent;
-                        zedgraphcontrol.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
-                        zedgraphcontrol.ScrollMaxX = maxX[i];
-                        zedgraphcontrol.ScrollMinX = minX[i];
+                        var zgc = new Flavor.Controls.ZedGraphControlPlus();
+                        tabPage.Controls.Add(zgc);
+                        zgc.PointValueEvent += ZedGraphControlPlus_PointValueEvent;
+                        zgc.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
+                        zgc.ScrollMaxX = maxX[i];
+                        zgc.ScrollMinX = minX[i];
 
-                        zedgraphcontrol.GraphPane.Legend.IsVisible = false;
-                        zedgraphcontrol.Dock = DockStyle.Fill;
+                        zgc.GraphPane.Legend.IsVisible = false;
+                        zgc.Dock = DockStyle.Fill;
 
-                        graphs[i] = zedgraphcontrol;
+                        zgc.Tag = i + 1;
+                        graphs[i] = zgc;
                     }
                     tabPage.UseVisualStyleBackColor = true;
                     tabPage.Text = prefix + i + modeText;
@@ -128,7 +133,7 @@ namespace Flavor.Forms {
                 }
                 ++i;
             }
-            tabControl1.ResumeLayout(false);
+            tabControl.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
 
@@ -143,15 +148,6 @@ namespace Flavor.Forms {
             string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
             col1Text = prefix + COL1_TITLE + modeText;
             col2Text = prefix + COL2_TITLE + modeText;
-        }
-
-        protected sealed override GraphPanel newPanel() {
-            GraphPanel panel = getPanel();
-            panel.Graph = graph;
-            return panel;
-        }
-        protected virtual GraphPanel getPanel() {
-            return new GraphPanel();
         }
 
         private void InvokeAxisModeChange() {
@@ -176,34 +172,18 @@ namespace Flavor.Forms {
         }
 
         protected override sealed void CreateGraph() {
-            CreateGraph(Graph.Recreate.Both);
+            CreateGraph(true);
         }
-        private void CreateGraph(Graph.Recreate recreate) {
+        private  void CreateGraph(bool recreate) {
             if (graph != null) {
                 specterSavingEnabled = false;
                 string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
                 for (int i = 0; i < graphs.Length; ++i) {
                     if (graphs[i] != null)
-                        ZedGraphRebirth(i, graph.Collectors[i], prefix + (i + 1) + modeText);
+                        ZedGraphRebirth(i, graph.Collectors[i], prefix);
                 }
-                
-                /*if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
-                    ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
-                if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-                    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);*/
             }
             RefreshGraph(recreate);
-        }
-        [Obsolete]
-        protected override sealed void SetSize() {
-            if (graphs == null)
-                return;
-            /*Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
-            collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
-            collect1_graph.Size = size;
-            
-            collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
-            collect2_graph.Size = size;*/
         }
 
         protected void setXScaleLimits() {
@@ -249,10 +229,10 @@ namespace Flavor.Forms {
         }
 
         protected override sealed void RefreshGraph() {
-            RefreshGraph(Graph.Recreate.Both);
+            RefreshGraph(true);
         }
-        protected void RefreshGraph(Graph.Recreate recreate) {
-            if (recreate != Graph.Recreate.None)
+        protected void RefreshGraph(bool recreate) {
+            if (recreate)
                 foreach (var zedgraphcontrol in graphs) {
                     if (zedgraphcontrol != null)
                         zedgraphcontrol.Refresh();
@@ -269,11 +249,11 @@ namespace Flavor.Forms {
             }
         }
 
-        protected void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string title) {
-            GraphPane myPane = graphs[zgcIndex].GraphPane;
+        protected void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string prefix) {
+            var zgc = graphs[zgcIndex];
+            GraphPane myPane = zgc.GraphPane;
 
-            graphs[zgcIndex].Parent.Text = title;
-            //myPane.Title.Text = title;
+            graphs[zgcIndex].Parent.Text = prefix + zgc.Tag + modeText;
             myPane.YAxis.Title.Text = Y_AXIS_TITLE;
             
             switch (graph.AxisDisplayMode) {
@@ -341,7 +321,7 @@ namespace Flavor.Forms {
         }
         private void refreshGraph(Graph.Recreate recreate) {
             if (recreate != Graph.Recreate.None) {
-                CreateGraph(recreate);
+                CreateGraph();
                 return;
             }
             RefreshGraph();
@@ -358,7 +338,8 @@ namespace Flavor.Forms {
                 int index = args.Index;
                 if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
                     // TODO: proper collector number here
-                    byte collectorNumber = (byte)((sender == graphs[0]) ? 1 : 2);
+                    //byte collectorNumber = (byte)((sender == graphs[0]) ? 1 : 2);
+                    byte collectorNumber = (byte)(sender as ZedGraphControlPlus).Tag;
 
                     ushort step = (ushort)pls.Step[index].X;
 
@@ -453,9 +434,31 @@ namespace Flavor.Forms {
             }
             if (graph.isPreciseSpectrum) {
                 long peakSum = -1;
-                int curveIndex1 = graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
-                int curveIndex2 = graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
+
+                var collector = graph.Collectors[(int)sender.Tag - 1];
                 string comment = null;
+                try {
+                    Graph.pListScaled row = null;
+                    switch (graph.AxisDisplayMode) {
+                        case Graph.pListScaled.DisplayValue.Step:
+                            row = collector.First(pls => curve.Points.Equals(pls.Step));
+                            break;
+                        case Graph.pListScaled.DisplayValue.Voltage:
+                            row = collector.First(pls => curve.Points.Equals(pls.Voltage));
+                            break;
+                        case Graph.pListScaled.DisplayValue.Mass:
+                            row = collector.First(pls => curve.Points.Equals(pls.Mass));
+                            break;
+                    }
+                    peakSum = row.PeakSum;
+                    comment = row.PEDreference.Comment;
+                } catch (InvalidOperationException) {
+                    // strangely no match
+                } catch (NullReferenceException) {
+                    // strangely null PEDreference
+                }
+                /*int curveIndex1 = graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
+                int curveIndex2 = graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
                 if (-1 != curveIndex1) {
                     var row = graph.DisplayedRows1[curveIndex1];
                     peakSum = row.PeakSum;
@@ -468,7 +471,7 @@ namespace Flavor.Forms {
                     try {
                         comment = row.PEDreference.Comment;
                     } catch { }
-                }
+                }*/
                 if (peakSum != -1) {
                     tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);
                     if (comment != null)
