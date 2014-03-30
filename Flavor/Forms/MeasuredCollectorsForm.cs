@@ -7,7 +7,7 @@ using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
-    internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
+    internal partial class MeasuredCollectorsForm: CollectorsForm2, IMeasured {
         public event EventHandler MeasureCancelRequested;
         protected virtual void OnMeasureCancelRequested() {
             if (MeasureCancelRequested != null)

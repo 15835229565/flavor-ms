@@ -107,9 +107,9 @@ namespace Flavor.Forms {
             SuspendLayout();
             int i = 0;
             foreach (var collector in graph.Collectors) {
-                if (collector.TrueForAll(pls => { return pls.isEmpty; })) {
-                    graphs[i] = null;
-                } else {
+                //if (collector.TrueForAll(pls => { return pls.isEmpty; })) {
+                //    graphs[i] = null;
+                //} else {
                     var tabPage = new System.Windows.Forms.TabPage();
                     tabPage.SuspendLayout();
                     tabControl.Controls.Add(tabPage);
@@ -122,6 +122,11 @@ namespace Flavor.Forms {
                         zgc.ScrollMinX = minX[i];
 
                         zgc.GraphPane.Legend.IsVisible = false;
+                        zgc.GraphPane.Title.IsVisible = false;
+                        zgc.GraphPane.Margin.All = 0;
+                        zgc.GraphPane.Margin.Top = 10;
+                        zgc.GraphPane.XAxis.Title.FontSpec.Size = 12;
+                        zgc.GraphPane.YAxis.Title.FontSpec.Size = 12;
                         zgc.Dock = DockStyle.Fill;
 
                         zgc.Tag = i + 1;
@@ -130,7 +135,7 @@ namespace Flavor.Forms {
                     tabPage.UseVisualStyleBackColor = true;
                     tabPage.Text = prefix + i + modeText;
                     tabPage.ResumeLayout(false);
-                }
+                //}
                 ++i;
             }
             tabControl.ResumeLayout(false);
