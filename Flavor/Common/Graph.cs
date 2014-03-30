@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ZedGraph;
 
 namespace Flavor.Common {
@@ -168,9 +169,10 @@ namespace Flavor.Common {
             }
         }
 
-        private Spectrum collectors;
+        //private Spectrum collectors;
+        internal Spectrum Collectors { get; private set; }
         internal CommonOptions CommonOptions {
-            get { return collectors.CommonOptions; }
+            get { return Collectors.CommonOptions; }
         }
         private List<Utility.PreciseEditorData> preciseData = null;
         internal List<Utility.PreciseEditorData> PreciseData {
@@ -190,7 +192,7 @@ namespace Flavor.Common {
         private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = useAxisMode ? axisMode : pListScaled.DisplayValue.Step;
-            foreach (pListScaled pLS in collectors[col - 1]) {
+            foreach (pListScaled pLS in Collectors[col - 1]) {
                 temp.Add(pLS.Points(am));
             }
             return temp;
@@ -222,25 +224,22 @@ namespace Flavor.Common {
         [Obsolete]
         internal Collector DisplayedRows1 {
             get {
-                return collectors[0];
+                return Collectors[0];
             }
         }
         [Obsolete]
         internal Collector DisplayedRows2 {
             get {
-                return collectors[1];
+                return Collectors[1];
             }
         }
         
         internal bool isPreciseSpectrum {
             get {
-                if (this != instance && preciseData != null) {
+                if (this != instance && preciseData != null)
                     return true;
-                }
-                // TODO:!
-                if ((collectors[0].Count > 1) || (collectors[1].Count > 1)) {
+                if (Collectors.Any(c => { return c.Count > 1; }))
                     return true;
-                }
                 return false;
             }
         }
@@ -256,13 +255,13 @@ namespace Flavor.Common {
 
         internal static void Reset() {
             instance.ResetPointLists();
-            instance.collectors.CommonOptions = Config.CommonOptions;
+            instance.Collectors.CommonOptions = Config.CommonOptions;
             instance.preciseData = Config.PreciseData;
             instance.DisplayingMode = Displaying.Measured;
         }
         internal static void ResetForMonitor() {
             instance.ResetPointLists();
-            instance.collectors.CommonOptions = Config.CommonOptions;
+            instance.Collectors.CommonOptions = Config.CommonOptions;
             instance.preciseData = Config.PreciseDataWithChecker;
             instance.DisplayingMode = Displaying.Measured;
         }
@@ -273,8 +272,8 @@ namespace Flavor.Common {
 
         // scan mode
         internal static void updateGraphDuringScanMeasure(int y1, int y2, ushort pnt) {
-            instance.collectors[0][0].Add(pnt, y1);
-            instance.collectors[1][0].Add(pnt, y2);
+            instance.Collectors[0][0].Add(pnt, y1);
+            instance.Collectors[1][0].Add(pnt, y2);
             lastPoint = pnt;
             instance.OnNewGraphData(Recreate.None);
         }
@@ -298,7 +297,7 @@ namespace Flavor.Common {
                     }
                     // order is important here!:
                     ped.AssociatedPoints = temp;
-                    instance.collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
+                    instance.Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
                 }
             }
             // TODO: better solution!
@@ -334,16 +333,16 @@ namespace Flavor.Common {
             // TODO: move scaling defaults up to Config
         }
         internal Graph(CommonOptions commonOpts, params double[] coeffs) {
-            collectors = new Spectrum(commonOpts, coeffs);
+            Collectors = new Spectrum(commonOpts, coeffs);
         }
 
         internal void ResetPointLists() {
-            collectors.Clear();
+            Collectors.Clear();
         }
 
         internal void updateGraphAfterScanLoad(PointPairListPlus pl1, PointPairListPlus pl2) {
-            collectors[0][0].SetRows(pl1);
-            collectors[1][0].SetRows(pl2);
+            Collectors[0][0].SetRows(pl1);
+            Collectors[1][0].SetRows(pl2);
         }
         internal void updateGraphAfterScanLoad(PointPairListPlus pl1, PointPairListPlus pl2, DateTime dt) {
             updateGraphAfterScanLoad(pl1, pl2);
@@ -355,7 +354,7 @@ namespace Flavor.Common {
                 if (ped == null || ped.AssociatedPoints == null || ped.AssociatedPoints.Count == 0)
                     continue;
                 // TODO: check if skipping of empty data rows can lead to program misbehaviour
-                collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
+                Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
             }
         }
         internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds, DateTime dt, short shift) {
@@ -388,7 +387,7 @@ namespace Flavor.Common {
         #region Graph scaling to mass coeffs
         internal bool setScalingCoeff(byte col, ushort pnt, double mass) {
             double value = mass * CommonOptions.scanVoltageReal(pnt);
-            bool result = collectors.RecomputeMassRows(col, value);
+            bool result = Collectors.RecomputeMassRows(col, value);
             if (result && axisMode == pListScaled.DisplayValue.Mass) {
                 OnNewGraphData(col == 1 ? Recreate.Col1 : Recreate.Col2);
             }

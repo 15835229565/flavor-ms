@@ -325,7 +325,7 @@ namespace Flavor.Forms {
 
                         item = new ToolStripMenuItem();
                         item.Text = "Вычесть из текущего с перенормировкой на точку";
-                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, isFirstCollector, ped); });
+                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, isFirst, ped); });
                         items.Add(item);
 
                         if (ped != null) {
@@ -421,7 +421,7 @@ namespace Flavor.Forms {
             }
             return tooltipData;
         }
-        private void GraphForm_OnDiffOnPoint(ushort step, bool? isFirstCollector, PreciseEditorData pedReference) {
+        private void GraphForm_OnDiffOnPoint(ushort step, byte? collectorNumber, PreciseEditorData pedReference) {
             if (PreciseSpectrumDisplayed) {
                 openSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
             } else {
@@ -429,7 +429,7 @@ namespace Flavor.Forms {
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    Config.distractSpectra(openSpecterFileDialog.FileName, step, isFirstCollector, pedReference, graph);
+                    Config.distractSpectra(openSpecterFileDialog.FileName, step, collectorNumber, pedReference, graph);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }

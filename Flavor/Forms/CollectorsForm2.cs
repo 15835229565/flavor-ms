@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -60,7 +61,7 @@ namespace Flavor.Forms {
                 setTitles();
             }
         }
-        private ushort[] minX = { Config.MIN_STEP, Config.MIN_STEP }, maxX = { Config.MAX_STEP, Config.MAX_STEP };
+        private ushort[] minX, maxX;
         internal protected bool specterSavingEnabled {
             private get {
                 return saveToolStripMenuItem.Enabled;
@@ -79,39 +80,64 @@ namespace Flavor.Forms {
             // do not use! for designer only!
             InitializeComponent();
 
-            collect1_graph.GraphPane.Legend.IsVisible = false;
-            collect2_graph.GraphPane.Legend.IsVisible = false;
-            collect1_graph.ScrollMaxX = maxX[0];
-            collect1_graph.ScrollMinX = minX[0];
-            collect2_graph.ScrollMaxX = maxX[1];
-            collect2_graph.ScrollMinX = minX[1];
-
-            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
-
             ToolStripItemCollection items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
         }
-        protected CollectorsForm2(Graph graph, bool hint): this() {
+        protected CollectorsForm2(Graph graph, bool hint)
+            : this() {
             this.graph = graph;
-
-            //graph.Collectors.Count
-            // TODO: for each collector
-            /*var tabPage = new System.Windows.Forms.TabPage();
-            tabControl1.SuspendLayout();
-            tabPage.SuspendLayout();
-            SuspendLayout();
-            tabControl1.Controls.Add(tabPage);
-            tabPage.Controls.Add(zedgraphcontrol);
-            tabPage.UseVisualStyleBackColor = true;*/
 
             preciseSpectrumDisplayed = hint;
             setTitles();
+            string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
+
+            {
+                int count = graph.Collectors.Count;
+                graphs = new ZedGraphControlPlus[count];
+                minX = new ushort[count];
+                maxX = new ushort[count];
+                setXScaleLimits();
+            }
+
+            tabControl1.SuspendLayout();
+            SuspendLayout();
+            int i = 0;
+            foreach (var collector in graph.Collectors) {
+                if (collector.TrueForAll(pls => { return pls.isEmpty; })) {
+                    graphs[i] = null;
+                } else {
+                    var tabPage = new System.Windows.Forms.TabPage();
+                    tabPage.SuspendLayout();
+                    tabControl1.Controls.Add(tabPage);
+                    {
+                        var zedgraphcontrol = new Flavor.Controls.ZedGraphControlPlus();
+                        tabPage.Controls.Add(zedgraphcontrol);
+                        zedgraphcontrol.PointValueEvent += ZedGraphControlPlus_PointValueEvent;
+                        zedgraphcontrol.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
+                        zedgraphcontrol.ScrollMaxX = maxX[i];
+                        zedgraphcontrol.ScrollMinX = minX[i];
+
+                        zedgraphcontrol.GraphPane.Legend.IsVisible = false;
+                        zedgraphcontrol.Dock = DockStyle.Fill;
+
+                        graphs[i] = zedgraphcontrol;
+                    }
+                    tabPage.UseVisualStyleBackColor = true;
+                    tabPage.Text = prefix + i + modeText;
+                    tabPage.ResumeLayout(false);
+                }
+                ++i;
+            }
+            tabControl1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
 
             graph.OnNewGraphData += InvokeRefreshGraph;
             graph.OnAxisModeChanged += InvokeAxisModeChange;
             graph.OnDisplayModeChanged += InvokeGraphModified;
         }
 
+        [Obsolete]
         private void setTitles() {
             modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
             string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
@@ -155,75 +181,99 @@ namespace Flavor.Forms {
         private void CreateGraph(Graph.Recreate recreate) {
             if (graph != null) {
                 specterSavingEnabled = false;
-                if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
+                string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
+                for (int i = 0; i < graphs.Length; ++i) {
+                    if (graphs[i] != null)
+                        ZedGraphRebirth(i, graph.Collectors[i], prefix + (i + 1) + modeText);
+                }
+                
+                /*if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
                     ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
                 if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-                    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
+                    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);*/
             }
             RefreshGraph(recreate);
         }
+        [Obsolete]
         protected override sealed void SetSize() {
             if (graphs == null)
                 return;
-            Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
+            /*Size size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (3 * VERT_GRAPH_INDENT)) / 2);
             collect1_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
             collect1_graph.Size = size;
             
             collect2_graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT + (ClientSize.Height - (VERT_GRAPH_INDENT)) / 2);
-            collect2_graph.Size = size;
+            collect2_graph.Size = size;*/
         }
 
         protected void setXScaleLimits() {
-            setXScaleLimits(Config.sPoint, Config.ePoint, Config.sPoint, Config.ePoint);
+            setXScaleLimits(Config.sPoint, Config.ePoint);
         }
-        protected void setXScaleLimits(ushort minX1, ushort maxX1, ushort minX2, ushort maxX2) {
-            if (minX1 < maxX1) {
-                minX[0] = minX1;
-                maxX[0] = maxX1;
-            } else {
-                minX[0] = Config.MIN_STEP;
-                maxX[0] = Config.MAX_STEP;
+        protected void setXScaleLimits(ushort min, ushort max) {
+            if (min > max) {
+                min = Config.MIN_STEP;
+                max = Config.MAX_STEP;
             }
-            if (minX2 < maxX2) {
-                minX[1] = minX2;
-                maxX[1] = maxX2;
-            } else {
-                minX[1] = Config.MIN_STEP;
-                maxX[1] = Config.MAX_STEP;
+            for (int i = 0; i < minX.Length; ++i) {
+                minX[i] = min;
+                maxX[i] = max;
             }
         }
         protected void setXScaleLimits(List<PreciseEditorData> peds) {
-            ushort[] maxX = { Config.MIN_STEP, Config.MIN_STEP }, minX = { Config.MAX_STEP, Config.MAX_STEP };
+            int count = graphs.Length;
+            ushort[] maxX = new ushort[count], minX = new ushort[count];
+            for (int i = 0; i < minX.Length; ++i) {
+                minX[i] = Config.MAX_STEP;
+                maxX[i] = Config.MIN_STEP;
+            }
             foreach (PreciseEditorData ped in peds) {
                 int col = ped.Collector - 1;
+                if (col > count) {
+                    // error! wrong collectors number
+                }
                 ushort lowBound = (ushort)(ped.Step - ped.Width);
+                if (lowBound < Config.MIN_STEP) {
+                    // error! wrong step
+                }
                 ushort upBound = (ushort)(ped.Step + ped.Width);
+                if (upBound > Config.MAX_STEP) {
+                    // error! wrong step
+                }
                 if (minX[col] > lowBound)
                     minX[col] = lowBound;
                 if (maxX[col] < upBound)
                     maxX[col] = upBound;
             }
-            setXScaleLimits(minX[0], maxX[0], minX[1], maxX[1]);
+            this.minX = minX;
+            this.maxX = maxX;
         }
 
         protected override sealed void RefreshGraph() {
             RefreshGraph(Graph.Recreate.Both);
         }
         protected void RefreshGraph(Graph.Recreate recreate) {
-            if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
+            if (recreate != Graph.Recreate.None)
+                foreach (var zedgraphcontrol in graphs) {
+                    if (zedgraphcontrol != null)
+                        zedgraphcontrol.Refresh();
+                }
+            /*if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
                 collect1_graph.Refresh();
             if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-                collect2_graph.Refresh();
+                collect2_graph.Refresh();*/
         }
         protected void yAxisChange() {
-            collect1_graph.AxisChange();
-            collect2_graph.AxisChange();
+            foreach (var zedgraphcontrol in graphs) {
+                if (zedgraphcontrol != null)
+                    zedgraphcontrol.AxisChange();
+            }
         }
 
         protected void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string title) {
             GraphPane myPane = graphs[zgcIndex].GraphPane;
-            
-            myPane.Title.Text = title;
+
+            graphs[zgcIndex].Parent.Text = title;
+            //myPane.Title.Text = title;
             myPane.YAxis.Title.Text = Y_AXIS_TITLE;
             
             switch (graph.AxisDisplayMode) {
@@ -240,7 +290,7 @@ namespace Flavor.Forms {
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
                     //limits inverted due to point-to-mass law
-                    Collector col = zgcIndex == 0 ? graph.DisplayedRows1 : graph.DisplayedRows2;
+                    Collector col = graph.Collectors[zgcIndex];
                     myPane.XAxis.Scale.Min = col.pointToMass(maxX[zgcIndex]);
                     myPane.XAxis.Scale.Max = col.pointToMass(minX[zgcIndex]);
                     break;
@@ -307,9 +357,8 @@ namespace Flavor.Forms {
                 Graph.pListScaled pls;
                 int index = args.Index;
                 if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
-                    // TODO: collector number here
-                    bool isFirstCollector = sender == collect1_graph;
-                    byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
+                    // TODO: proper collector number here
+                    byte collectorNumber = (byte)((sender == graphs[0]) ? 1 : 2);
 
                     ushort step = (ushort)pls.Step[index].X;
 
@@ -317,14 +366,14 @@ namespace Flavor.Forms {
                     item.Text = "Добавить точку в редактор";
                     item.Click += new System.EventHandler((s, e) => {
                         // TODO: raise event here and move code below to mainForm
-                        new AddPointForm(step, isFirst).ShowDialog();
+                        new AddPointForm(step, collectorNumber).ShowDialog();
                     });
                     items.Add(item);
 
                     item = new ToolStripMenuItem();
-                    item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
+                    item.Text = "Коэффициент коллектора " + collectorNumber;
                     item.Click += new System.EventHandler((s, e) => {
-                        if (new SetScalingCoeffForm(step, isFirst, graph).ShowDialog() == DialogResult.Yes)
+                        if (new SetScalingCoeffForm(step, collectorNumber, graph).ShowDialog() == DialogResult.Yes)
                             Modified = true;
                     });
                     items.Add(item);
@@ -333,7 +382,7 @@ namespace Flavor.Forms {
 
                         item = new ToolStripMenuItem();
                         item.Text = "Вычесть из текущего с перенормировкой на точку";
-                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, isFirstCollector, ped); });
+                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, collectorNumber, ped); });
                         items.Add(item);
 
                         if (ped != null) {
@@ -429,7 +478,7 @@ namespace Flavor.Forms {
             }
             return tooltipData;
         }
-        private void GraphForm_OnDiffOnPoint(ushort step, bool? isFirstCollector, PreciseEditorData pedReference) {
+        private void GraphForm_OnDiffOnPoint(ushort step, byte? collectorNumber, PreciseEditorData pedReference) {
             if (PreciseSpectrumDisplayed) {
                 openSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
             } else {
@@ -437,7 +486,7 @@ namespace Flavor.Forms {
             }
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    Config.distractSpectra(openSpecterFileDialog.FileName, step, isFirstCollector, pedReference, graph);
+                    Config.distractSpectra(openSpecterFileDialog.FileName, step, collectorNumber, pedReference, graph);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
