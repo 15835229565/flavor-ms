@@ -114,15 +114,6 @@ namespace Flavor.Forms {
             col2Text = prefix + COL2_TITLE + modeText;
         }
 
-        //protected sealed override GraphPanel newPanel() {
-        //    GraphPanel panel = getPanel();
-        //    panel.Graph = graph;
-        //    return panel;
-        //}
-        //protected virtual GraphPanel getPanel() {
-        //    return new GraphPanel();
-        //}
-
         private void InvokeAxisModeChange() {
             if (this.InvokeRequired) {
                 this.Invoke(new Graph.AxisModeEventHandler(CreateGraph));

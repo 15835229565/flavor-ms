@@ -44,11 +44,6 @@ namespace Flavor.Forms
             Panel = new PreciseMeasureGraphPanel();
             Panel.Graph = Graph.Instance;
         }
-        //protected override GraphPanel newPanel() {
-        //    PreciseMeasureGraphPanel panel = new PreciseMeasureGraphPanel();
-        //    panel.Graph = Graph.Instance;
-        //    return panel;
-        //}
 
         protected override sealed void CreateGraph() {
             ZedGraphRebirth(list, FORM_TITLE);

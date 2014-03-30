@@ -17,11 +17,6 @@ namespace Flavor.Forms {
             : base(Graph.Instance, false) {
             InitializeComponent();
         }
-        //protected sealed override GraphPanel getPanel() {
-        //    if (PreciseSpectrumDisplayed)
-        //        return new PreciseMeasureGraphPanel();
-        //    return new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
-        //}
 
         #region IMeasured Members
 

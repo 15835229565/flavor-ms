@@ -18,8 +18,6 @@ namespace Flavor.Forms {
         private GraphPanel panel;
         protected GraphPanel Panel {
             get {
-                //if (panel == null)
-                //    initPanel();
 				return panel;
             }
             set {
@@ -32,34 +30,13 @@ namespace Flavor.Forms {
                 
                 panel = value;
                 Controls.Add(panel);
-                //panel.BackColor = System.Drawing.SystemColors.Control;
-                //panel.Dock = System.Windows.Forms.DockStyle.Right;
-                panel.Location = new System.Drawing.Point(493, 24);
-                panel.Size = new System.Drawing.Size(280, 667);
+                panel.Width = 280;
+                panel.Dock = System.Windows.Forms.DockStyle.Right;
                 panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
                 panel.EnabledChanged += toggleMeasurePanel;
             }
         }
 
-        /*protected void initPanel() {
-            if (panel != null) {
-                panel.EnabledChanged -= toggleMeasurePanel;
-                this.Controls.Remove(panel);
-            }
-            panel = newPanel();
-            //panel.BackColor = System.Drawing.SystemColors.Control;
-            //panel.Dock = System.Windows.Forms.DockStyle.Right;
-            panel.Location = new System.Drawing.Point(493, 24);
-            panel.Size = new System.Drawing.Size(280, 667);
-            panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
-            panel.EnabledChanged += toggleMeasurePanel;
-
-            this.Controls.Add(panel);
-        }
-        protected virtual GraphPanel newPanel() {
-            return null;
-        }*/
-        
         internal protected GraphForm()
             : base() {
             InitializeComponent();
