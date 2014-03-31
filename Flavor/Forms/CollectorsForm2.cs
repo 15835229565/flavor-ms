@@ -142,7 +142,7 @@ namespace Flavor.Forms {
             ResumeLayout(false);
             PerformLayout();
 
-            graph.OnNewGraphData += InvokeRefreshGraph;
+            graph.NewGraphData += InvokeRefreshGraph;
             graph.OnAxisModeChanged += InvokeAxisModeChange;
             graph.OnDisplayModeChanged += InvokeGraphModified;
         }
@@ -316,7 +316,7 @@ namespace Flavor.Forms {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        private void InvokeRefreshGraph(Graph.Recreate recreate) {
+        private void InvokeRefreshGraph(int[] recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -324,8 +324,8 @@ namespace Flavor.Forms {
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(Graph.Recreate recreate) {
-            if (recreate != Graph.Recreate.None) {
+        private void refreshGraph(int[] recreate) {
+            if (recreate.Length != 0) {
                 CreateGraph();
                 return;
             }
@@ -527,7 +527,7 @@ namespace Flavor.Forms {
         }
         
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            graph.OnNewGraphData -= InvokeRefreshGraph;
+            graph.NewGraphData -= InvokeRefreshGraph;
             graph.OnAxisModeChanged -= InvokeAxisModeChange;
             graph.OnDisplayModeChanged -= InvokeGraphModified;
             base.OnFormClosing(e);

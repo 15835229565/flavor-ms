@@ -121,7 +121,7 @@ namespace Flavor.Forms
         }
 
         // temporary?
-        private void InvokeRefreshGraph(Graph.Recreate recreate) {
+        private void InvokeRefreshGraph(int[] recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -129,8 +129,8 @@ namespace Flavor.Forms
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(Graph.Recreate recreate) {
-            if (recreate != Graph.Recreate.None) {
+        private void refreshGraph(int[] recreate) {
+            if (recreate.Length != 0) {
                 if (time == -1) {
                     CreateGraph();
                 } else {
@@ -172,7 +172,7 @@ namespace Flavor.Forms
 
             (Panel as MeasureGraphPanel).MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
             // temporary?
-            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
+            Graph.Instance.NewGraphData += InvokeRefreshGraph;
             Panel.Enable();
             Show();
             Activate();
@@ -180,7 +180,7 @@ namespace Flavor.Forms
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             // temporary?
-            Graph.Instance.OnNewGraphData -= InvokeRefreshGraph;
+            Graph.Instance.NewGraphData -= InvokeRefreshGraph;
             time = -1;
         }
         #endregion

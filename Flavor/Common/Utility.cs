@@ -266,7 +266,7 @@ namespace Flavor.Common {
             foreach (double coeff in coeffs)
                 Add(new Collector(coeff));
         }
-        internal IEnumerable<int> RecomputeMassRows(double[] coeffs) {
+        internal int[] RecomputeMassRows(double[] coeffs) {
             if (this.Count != coeffs.Length)
                 throw new ArgumentOutOfRangeException("coeffs");
             var result = new List<int>(coeffs.Length);
@@ -276,11 +276,10 @@ namespace Flavor.Common {
                 if (coeff == collector.Coeff)
                     continue;
                 collector.Coeff = coeff;
-                result.Add(i);
+                //natural-based index
+                result.Add(i + 1);
             }
-            if (result.Count == 0)
-                return Enumerable.Empty<int>();
-            return result;
+            return result.ToArray();
         }
         internal bool RecomputeMassRows(byte collectorNumber, double coeff) {
             //natural-based index

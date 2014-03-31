@@ -8,14 +8,15 @@ namespace Flavor.Controls {
             InitializeComponent();
         }
         private void refreshGraphicsOnPreciseStep() {
+            var g = Graph as Graph.MeasureGraph;
             label37.Visible = true;
-            peakNumberLabel.Text = (Graph.CurrentPeak.pNumber + 1).ToString();
+            peakNumberLabel.Text = (g.CurrentPeak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;
             label39.Visible = true;
-            peakCenterLabel.Text = Graph.CurrentPeak.Step.ToString();
+            peakCenterLabel.Text = g.CurrentPeak.Step.ToString();
             peakCenterLabel.Visible = true;
             label41.Visible = true;
-            peakWidthLabel.Text = Graph.CurrentPeak.Width.ToString();
+            peakWidthLabel.Text = g.CurrentPeak.Width.ToString();
             peakWidthLabel.Visible = true;
 
             scanRealTimeLabel.Visible = true;
@@ -23,7 +24,7 @@ namespace Flavor.Controls {
             label35.Visible = true;
             label36.Visible = true;
 
-            if (Graph.CurrentPeak.Collector == 1) {
+            if (g.CurrentPeak.Collector == 1) {
                 detector1CountsLabel.Visible = true;
                 label15.Visible = true;
                 detector2CountsLabel.Visible = false;

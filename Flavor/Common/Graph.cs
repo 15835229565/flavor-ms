@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ZedGraph;
+using System.Collections;
 
 namespace Flavor.Common {
     public class Graph {
-        private static Graph instance = null;
-        internal static Graph Instance {
+        private static MeasureGraph instance = null;
+        internal static MeasureGraph Instance {
             get {
                 if (instance == null) {
-                    instance = new Graph(Config.CommonOptions, Config.COLLECTOR_COEFFS);
+                    instance = new MeasureGraph(Config.CommonOptions, Config.COLLECTOR_COEFFS);
                     instance.DisplayingMode = Displaying.Measured;
                     instance.preciseData = Config.PreciseData;
                 }
@@ -21,12 +22,21 @@ namespace Flavor.Common {
             Loaded,
             Diff
         }
-        [Flags][Obsolete]
-        internal enum Recreate {
-            None,
-            Col1,
-            Col2,
-            Both = Col1 | Col2,
+        internal class Recreate: IEnumerable<int> {
+            public readonly static IEnumerable<int> None = Enumerable.Empty<int>();
+            public readonly IEnumerable<int> All = new Recreate { };
+            private Recreate() { }
+            #region IEnumerable<int> Members
+            public IEnumerator<int> GetEnumerator() {
+                for (int i = 1; i <= Config.COLLECTOR_COEFFS.Length; ++i)
+                    yield return i;
+            }
+            #endregion
+            #region IEnumerable Members
+            IEnumerator IEnumerable.GetEnumerator() {
+                return GetEnumerator();
+            }
+            #endregion
         }
         // TODO: move to view, not data (Utility)
         public class pListScaled {
@@ -135,11 +145,16 @@ namespace Flavor.Common {
             }
         }
         
-        internal delegate void GraphEventHandler(Recreate recreate);
+        internal delegate void GraphEventHandler(int[] recreate);
         internal delegate void AxisModeEventHandler();
         internal delegate void DisplayModeEventHandler(Displaying mode);
 
-        internal event GraphEventHandler OnNewGraphData;
+        internal event GraphEventHandler NewGraphData;
+        private void OnNewGraphData(params int[] recreate) {
+            //lock here?
+            if (NewGraphData != null)
+                NewGraphData(recreate);
+        }
         internal event AxisModeEventHandler OnAxisModeChanged;
         internal event DisplayModeEventHandler OnDisplayModeChanged;
 
@@ -169,7 +184,6 @@ namespace Flavor.Common {
             }
         }
 
-        //private Spectrum collectors;
         internal Spectrum Collectors { get; private set; }
         internal CommonOptions CommonOptions {
             get { return Collectors.CommonOptions; }
@@ -243,70 +257,75 @@ namespace Flavor.Common {
                 return false;
             }
         }
-        #region only during measure (static)
-        private static ushort lastPoint;
-        internal static ushort LastPoint {
-            get { return lastPoint; }
-        }
-        private static Utility.PreciseEditorData curPeak;
-        internal static Utility.PreciseEditorData CurrentPeak {
-            get { return curPeak; }
-        }
-
-        internal static void Reset() {
-            instance.ResetPointLists();
-            instance.Collectors.CommonOptions = Config.CommonOptions;
-            instance.preciseData = Config.PreciseData;
-            instance.DisplayingMode = Displaying.Measured;
-        }
-        internal static void ResetForMonitor() {
-            instance.ResetPointLists();
-            instance.Collectors.CommonOptions = Config.CommonOptions;
-            instance.preciseData = Config.PreciseDataWithChecker;
-            instance.DisplayingMode = Displaying.Measured;
-        }
-        internal static void ResetPointListsWithEvent() {
-            Reset();
-            instance.OnNewGraphData(Recreate.Both);
-        }
-
-        // scan mode
-        internal static void updateGraphDuringScanMeasure(int y1, int y2, ushort pnt) {
-            instance.Collectors[0][0].Add(pnt, y1);
-            instance.Collectors[1][0].Add(pnt, y2);
-            lastPoint = pnt;
-            instance.OnNewGraphData(Recreate.None);
-        }
-
-        // precise mode
-        internal static void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
-            lastPoint = pnt;
-            curPeak = curped;
-            instance.OnNewGraphData(Recreate.None);
-        }
-        internal static void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, /*Obsolete*/short? shift) {
-            for (int i = 0; i < peds.Count; ++i) {
-                Utility.PreciseEditorData ped = peds[i];
-                if (ped.Use) {
-                    PointPairListPlus temp = new PointPairListPlus();
-                    {
-                        long[] countRow = senseModeCounts[i];
-                        // really need? ped.Step += shift;
-                        for (int j = 0; j < countRow.Length; ++j)
-                            temp.Add(ped.Step - ped.Width + j, countRow[j]);
-                    }
-                    // order is important here!:
-                    ped.AssociatedPoints = temp;
-                    instance.Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
-                }
+        #region only during measure
+        internal class MeasureGraph: Graph {
+            private ushort lastPoint;
+            public ushort LastPoint {
+                get { return lastPoint; }
             }
-            // TODO: better solution!
-            instance.OnNewGraphData(Recreate.Both);
-        }
+            private Utility.PreciseEditorData curPeak;
+            public Utility.PreciseEditorData CurrentPeak {
+                get { return curPeak; }
+            }
 
-        internal static void setDateTimeAndShift(DateTime dt, short? shift) {
-            instance.dateTime = dt;
-            instance.shift = shift;
+            public MeasureGraph(CommonOptions commonOpts, params double[] coeffs)
+                : base(commonOpts, coeffs) { }
+
+            public void Reset() {
+                ResetPointLists();
+                Collectors.CommonOptions = Config.CommonOptions;
+                preciseData = Config.PreciseData;
+                DisplayingMode = Displaying.Measured;
+            }
+            public void ResetForMonitor() {
+                ResetPointLists();
+                Collectors.CommonOptions = Config.CommonOptions;
+                preciseData = Config.PreciseDataWithChecker;
+                DisplayingMode = Displaying.Measured;
+            }
+            public void ResetPointListsWithEvent() {
+                Reset();
+                OnNewGraphData(1, 2);
+            }
+
+            // scan mode
+            public void updateGraphDuringScanMeasure(int y1, int y2, ushort pnt) {
+                Collectors[0][0].Add(pnt, y1);
+                Collectors[1][0].Add(pnt, y2);
+                lastPoint = pnt;
+                OnNewGraphData();
+            }
+
+            // precise mode
+            public void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
+                lastPoint = pnt;
+                curPeak = curped;
+                OnNewGraphData();
+            }
+            public void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, /*Obsolete*/short? shift) {
+                for (int i = 0; i < peds.Count; ++i) {
+                    Utility.PreciseEditorData ped = peds[i];
+                    if (ped.Use) {
+                        PointPairListPlus temp = new PointPairListPlus();
+                        {
+                            long[] countRow = senseModeCounts[i];
+                            // really need? ped.Step += shift;
+                            for (int j = 0; j < countRow.Length; ++j)
+                                temp.Add(ped.Step - ped.Width + j, countRow[j]);
+                        }
+                        // order is important here!:
+                        ped.AssociatedPoints = temp;
+                        Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
+                    }
+                }
+                // TODO: better solution!
+                OnNewGraphData(1, 2);
+            }
+
+            public void setDateTimeAndShift(DateTime dt, short? shift) {
+                dateTime = dt;
+                shift = shift;
+            }
         }
         #endregion
         #region peak to add (static)
@@ -327,11 +346,6 @@ namespace Flavor.Common {
         internal static event PointAddedDelegate OnPointAdded;
         #endregion
         
-        //[Obsolete]
-        //internal Graph(CommonOptions commonOpts)
-        //    : this(commonOpts, 2770 * 28, 896.5 * 18) {
-        //    // TODO: move scaling defaults up to Config
-        //}
         internal Graph(CommonOptions commonOpts, params double[] coeffs) {
             Collectors = new Spectrum(commonOpts, coeffs);
         }
@@ -370,8 +384,8 @@ namespace Flavor.Common {
             updateGraphAfterScanLoad(pl1, pl2, DateTime.MaxValue);
             DisplayingMode = Displaying.Diff;
             //lock here?
-            if (newData && OnNewGraphData != null)
-                OnNewGraphData(Recreate.Both);
+            if (newData)
+                OnNewGraphData(1, 2);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
             ResetPointLists();
@@ -381,15 +395,15 @@ namespace Flavor.Common {
             updateGraphAfterPreciseLoad(peds, DateTime.MaxValue, short.MaxValue);
             DisplayingMode = Displaying.Diff;
             //lock here?
-            if (newData && OnNewGraphData != null)
-                OnNewGraphData(Recreate.Both);
+            if (newData)
+                OnNewGraphData(1, 2);
         }
         #region Graph scaling to mass coeffs
         internal bool setScalingCoeff(byte col, ushort pnt, double mass) {
             double value = mass * CommonOptions.scanVoltageReal(pnt);
             bool result = Collectors.RecomputeMassRows(col, value);
             if (result && axisMode == pListScaled.DisplayValue.Mass) {
-                OnNewGraphData(col == 1 ? Recreate.Col1 : Recreate.Col2);
+                OnNewGraphData(col);
             }
             return result;
         }

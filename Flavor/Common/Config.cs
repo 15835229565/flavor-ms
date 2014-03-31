@@ -444,7 +444,7 @@ namespace Flavor.Common {
         }
         internal static void autoSaveSpectrumFile() {
             DateTime dt = System.DateTime.Now;
-            Graph.setDateTimeAndShift(dt, short.MaxValue);
+            Graph.Instance.setDateTimeAndShift(dt, short.MaxValue);
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
 
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
@@ -453,7 +453,7 @@ namespace Flavor.Common {
         }
         internal static DateTime autoSavePreciseSpectrumFile(short? shift) {
             DateTime dt = System.DateTime.Now;
-            Graph.setDateTimeAndShift(dt, shift);
+            Graph.Instance.setDateTimeAndShift(dt, shift);
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
 
             ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);

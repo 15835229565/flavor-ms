@@ -102,7 +102,7 @@ namespace Flavor.Forms {
             preciseSpectrumDisplayed = hint;
             setTitles();
 
-            graph.OnNewGraphData += InvokeRefreshGraph;
+            graph.NewGraphData += InvokeRefreshGraph;
             graph.OnAxisModeChanged += InvokeAxisModeChange;
             graph.OnDisplayModeChanged += InvokeGraphModified;
         }
@@ -136,15 +136,21 @@ namespace Flavor.Forms {
         }
 
         protected override sealed void CreateGraph() {
-            CreateGraph(Graph.Recreate.Both);
+            CreateGraph(new int[] { 1, 2 });
         }
-        private void CreateGraph(Graph.Recreate recreate) {
+        private void CreateGraph(int[] recreate) {
             if (graph != null) {
                 specterSavingEnabled = false;
-                if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
-                    ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
-                if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-                    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
+                foreach (int i in recreate) {
+                    if (i == 1)
+                        ZedGraphRebirth(0, graph.Collectors[0], col1Text);
+                    if (i == 2)
+                        ZedGraphRebirth(1, graph.Collectors[1], col2Text);
+                }
+                //if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
+                //    ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
+                //if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
+                //    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             }
             RefreshGraph(recreate);
         }
@@ -195,13 +201,19 @@ namespace Flavor.Forms {
         }
 
         protected override sealed void RefreshGraph() {
-            RefreshGraph(Graph.Recreate.Both);
+            RefreshGraph(new int[] { 1, 2 });
         }
-        private void RefreshGraph(Graph.Recreate recreate) {
-            if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
-                collect1_graph.Refresh();
-            if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-                collect2_graph.Refresh();
+        private void RefreshGraph(int[] recreate) {
+            foreach (int i in recreate) {
+                if (i == 1)
+                    collect1_graph.Refresh();
+                if (i == 2)
+                    collect2_graph.Refresh();
+            }
+            //if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
+            //    collect1_graph.Refresh();
+            //if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
+            //    collect2_graph.Refresh();
         }
         protected void yAxisChange() {
             collect1_graph.AxisChange();
@@ -269,7 +281,7 @@ namespace Flavor.Forms {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        private void InvokeRefreshGraph(Graph.Recreate recreate) {
+        private void InvokeRefreshGraph(int[] recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
                 this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
@@ -277,8 +289,8 @@ namespace Flavor.Forms {
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(Graph.Recreate recreate) {
-            if (recreate != Graph.Recreate.None) {
+        private void refreshGraph(int[] recreate) {
+            if (recreate.Length != 0) {
                 CreateGraph(recreate);
                 return;
             }
@@ -458,7 +470,7 @@ namespace Flavor.Forms {
         }
         
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            graph.OnNewGraphData -= InvokeRefreshGraph;
+            graph.NewGraphData -= InvokeRefreshGraph;
             graph.OnAxisModeChanged -= InvokeAxisModeChange;
             graph.OnDisplayModeChanged -= InvokeGraphModified;
             base.OnFormClosing(e);
