@@ -71,23 +71,10 @@ namespace Flavor.Common {
     }
     
     internal abstract class CommonData {
-        private ushort heatCurrent;
-        private ushort emissionCurrent;
-
-        private ushort ionizationVoltage;
-
-        private ushort focusVoltage1;
-        private ushort focusVoltage2;
-
-        internal ushort hCurrent {
-            get { return heatCurrent; }
-            set { heatCurrent = value; }
-        }
+        internal ushort hCurrent { get; set; }
         internal double hCurrentReal {
-            get { return hCurrentConvert(heatCurrent); }
-            set {
-                heatCurrent = hCurrentConvert(value);
-            }
+            get { return hCurrentConvert(hCurrent); }
+            set { hCurrent = hCurrentConvert(value); }
         }
         internal static double hCurrentConvert(ushort current) {
             return (double)current / 4096;
@@ -96,15 +83,10 @@ namespace Flavor.Common {
             return genericConvert((ushort)(current * 4096));
         }
 
-        internal ushort eCurrent {
-            get { return emissionCurrent; }
-            set { emissionCurrent = value; }
-        }
+        internal ushort eCurrent { get; set; }
         internal double eCurrentReal {
-            get { return eCurrentConvert(emissionCurrent); }
-            set {
-                emissionCurrent = eCurrentConvert(value);
-            }
+            get { return eCurrentConvert(eCurrent); }
+            set { eCurrent = eCurrentConvert(value); }
         }
         internal static double eCurrentConvert(ushort current) {
             return 50 * (double)current / 4096;
@@ -113,15 +95,10 @@ namespace Flavor.Common {
             return genericConvert((ushort)((current / 50) * 4096));
         }
 
-        internal ushort iVoltage {
-            get { return ionizationVoltage; }
-            set { ionizationVoltage = value; }
-        }
+        internal ushort iVoltage { get; set; }
         internal double iVoltageReal {
-            get { return iVoltageConvert(ionizationVoltage); }
-            set {
-                ionizationVoltage = iVoltageConvert(value);
-            }
+            get { return iVoltageConvert(iVoltage); }
+            set { iVoltage = iVoltageConvert(value); }
         }
         internal static double iVoltageConvert(ushort voltage) {
             return 150 * (double)voltage / 4096;
@@ -130,15 +107,10 @@ namespace Flavor.Common {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
-        internal ushort fV1 {
-            get { return focusVoltage1; }
-            set { focusVoltage1 = value; }
-        }
+        internal ushort fV1 { get; set; }
         internal double fV1Real {
-            get { return fV1Convert(focusVoltage1); }
-            set {
-                focusVoltage1 = fV1Convert(value);
-            }
+            get { return fV1Convert(fV1); }
+            set { fV1 = fV1Convert(value); }
         }
         internal static double fV1Convert(ushort voltage) {
             return 150 * (double)voltage / 4096;
@@ -147,15 +119,10 @@ namespace Flavor.Common {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
-        internal ushort fV2 {
-            get { return focusVoltage2; }
-            set { focusVoltage2 = value; }
-        }
+        internal ushort fV2 { get; set; }
         internal double fV2Real {
-            get { return fV2Convert(focusVoltage2); }
-            set {
-                focusVoltage2 = fV2Convert(value);
-            }
+            get { return fV2Convert(fV2); }
+            set { fV2 = fV2Convert(value); }
         }
         internal static double fV2Convert(ushort voltage) {
             return 150 * (double)voltage / 4096;
@@ -163,95 +130,42 @@ namespace Flavor.Common {
         internal static ushort fV2Convert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
+        
         protected static ushort genericConvert(ushort x) {
             return x < 4096 ? x : (ushort)4095;
         }
     }
     internal class CommonOptions: CommonData {
-        // defaults
-        private ushort beforeTime = 100;
-        private ushort forwardTime = 100;
-        private ushort backwardTime = 400;
-        private bool forwardAsBefore = false;
-
-        internal ushort befTime {
-            get { return beforeTime; }
-            set { beforeTime = value; }
-        }
+        internal ushort befTime { get; set; }
         internal ushort befTimeReal {
-            get { return (ushort)(beforeTime * 5); }
-            set {
-                beforeTime = (ushort)(value / 5);
-            }
+            get { return (ushort)(befTime * 5); }
+            set { befTime = (ushort)(value / 5); }
         }
-        internal ushort fTime {
-            get { return forwardTime; }
-            set { forwardTime = value; }
-        }
+        internal ushort fTime { get; set; }
         internal ushort fTimeReal {
-            get { return (ushort)(forwardTime * 5); }
-            set {
-                forwardTime = (ushort)(value / 5);
-            }
+            get { return (ushort)(fTime * 5); }
+            set { fTime = (ushort)(value / 5); }
         }
-        internal ushort bTime {
-            get { return backwardTime; }
-            set { backwardTime = value; }
-        }
+        internal ushort bTime { get; set; }
         internal ushort bTimeReal {
-            get { return (ushort)(backwardTime * 5); }
-            set {
-                backwardTime = (ushort)(value / 5);
-            }
+            get { return (ushort)(bTime * 5); }
+            set { bTime = (ushort)(value / 5); }
         }
-        internal bool ForwardTimeEqualsBeforeTime {
-            get { return forwardAsBefore; }
-            set { forwardAsBefore = value; }
-        }
-
-        // defaults
-        private ushort expTime = 200;
-        private ushort idleTime = 10;
-        private ushort CPVoltage = 3780;
-        internal CommonOptions() {
-            // defaults
-            iVoltage = 1911;
-            hCurrent = 0;
-            eCurrent = 79;
-            fV1 = 2730;
-            fV2 = 2730;
-        }
-        internal ushort eTime {
-            get { return expTime; }
-            set { expTime = value; }
-        }
+        internal bool ForwardTimeEqualsBeforeTime { get; set; }
+        internal ushort eTime { get; set; }
         internal ushort eTimeReal {
-            get { return (ushort)(expTime * 5); }
-            set {
-                expTime = (ushort)(value / 5);
-            }
+            get { return (ushort)(eTime * 5); }
+            set { eTime = (ushort)(value / 5); }
         }
-
-        internal ushort iTime {
-            get { return idleTime; }
-            set { idleTime = value; }
-        }
+        internal ushort iTime { get; set; }
         internal ushort iTimeReal {
-            get { return (ushort)(5 * idleTime); }
-            set {
-                idleTime = (ushort)(value / 5);
-            }
+            get { return (ushort)(5 * iTime); }
+            set { iTime = (ushort)(value / 5); }
         }
-
-        internal ushort CP {
-            get { return CPVoltage; }
-            set { CPVoltage = value; }
-        }
+        internal ushort CP { get; set; }
         internal double CPReal {
-            get { return CPConvert(CPVoltage); }
-            set {
-                CPVoltage = CPConvert(value);
-            }
+            get { return CPConvert(CP); }
+            set { CP = CPConvert(value); }
         }
         internal static double CPConvert(ushort coeff) {
             return (10 / (double)coeff) * 4096;
@@ -260,6 +174,21 @@ namespace Flavor.Common {
             return genericConvert((ushort)((10 / coeff) * 4096));
         }
 
+        internal CommonOptions() {
+            // defaults
+            iVoltage = 1911;
+            hCurrent = 0;
+            eCurrent = 79;
+            fV1 = 2730;
+            fV2 = 2730;
+            befTime = 100;
+            fTime = 100;
+            bTime = 400;
+            ForwardTimeEqualsBeforeTime = false;
+            eTime = 200;
+            iTime = 10;
+            CP = 3780;
+        }
         // scan voltage modification law
         internal static ushort scanVoltage(ushort step) {
             if (step > Config.MAX_STEP) step = Config.MAX_STEP;
@@ -277,13 +206,13 @@ namespace Flavor.Common {
         public override string ToString() {
             return (new StringBuilder())
                 .Append(START)
-                .Append(expTime)
+                .Append(eTime)
                 .Append(DELIMITER)
-                .Append(idleTime)
+                .Append(iTime)
                 .Append(DELIMITER)
                 .Append(iVoltage)
                 .Append(DELIMITER)
-                .Append(CPVoltage)
+                .Append(CP)
                 .Append(DELIMITER)
                 .Append(hCurrent)
                 .Append(DELIMITER)
@@ -337,9 +266,28 @@ namespace Flavor.Common {
             foreach (double coeff in coeffs)
                 Add(new Collector(coeff));
         }
-        internal bool RecomputeMassRows(byte col, double coeff) {
-            var collector = this[col - 1];
-            if (coeff == collector.Coeff)
+        internal IEnumerable<int> RecomputeMassRows(double[] coeffs) {
+            if (this.Count != coeffs.Length)
+                throw new ArgumentOutOfRangeException("coeffs");
+            var result = new List<int>(coeffs.Length);
+            for (int i = 0; i < coeffs.Length; ++i) {
+                var collector = this[i];
+                double coeff = coeffs[i];
+                if (coeff == collector.Coeff)
+                    continue;
+                collector.Coeff = coeff;
+                result.Add(i);
+            }
+            if (result.Count == 0)
+                return Enumerable.Empty<int>();
+            return result;
+        }
+        internal bool RecomputeMassRows(byte collectorNumber, double coeff) {
+            //natural-based index
+            if (collectorNumber > this.Count || collectorNumber < 1)
+                throw new ArgumentOutOfRangeException("collectorNumber");
+            var collector = this[--collectorNumber];
+            if (collector.Coeff == coeff)
                 return false;
             collector.Coeff = coeff;
             return true;

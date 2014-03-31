@@ -40,6 +40,8 @@ namespace Flavor.Common {
         private static ushort startPoint = MIN_STEP;
         private static ushort endPoint = MAX_STEP;
 
+        internal static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18 };
+        
         internal const int PEAK_NUMBER = 20;
 
         private static CommonOptions commonOpts;
@@ -827,22 +829,17 @@ namespace Flavor.Common {
         #endregion
         #region XML configs
         private interface IScalingCoeffsReader: IAnyReader {
-            void loadScalingCoeffs(Graph graph);
+            double[] loadScalingCoeffs();
         }
         private interface ISpectrumReader: ICommonOptionsReader, IPreciseDataReader {
             bool readSpectrum(out Graph graph);
-            bool Hint {
-                get;
-                set;
-            }
+            bool Hint { get; set; }
             Graph.Displaying openSpectrumFile(PointPairListPlus pl12, PointPairListPlus pl22, out CommonOptions commonOpts);
             bool openPreciseSpectrumFile(PreciseSpectrum peds);
         }
         private interface IMainConfig: ICommonOptionsReader, IPreciseDataReader, IScalingCoeffsReader {
             void read();
-            XmlDocument XML {
-                get;
-            }
+            XmlDocument XML { get; }
         }
         private interface ILibraryReader: IAnyReader {
             void readOnce(List<string> ids, List<string> loadedMasses);
@@ -1119,12 +1116,8 @@ namespace Flavor.Common {
                         }
                         // BAD: really uses previous values!
                     }
-                    public XmlDocument XML {
-                        get {
-                            return xmlData;
-                        }
-                    }
-                    public void loadScalingCoeffs(Graph graph) {
+                    public XmlDocument XML { get { return xmlData; } }
+                    public double[] loadScalingCoeffs() {
                         // parse from already loaded config
                         XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                         if (interfaceNode == null)
@@ -1132,15 +1125,14 @@ namespace Flavor.Common {
                         try {
                             double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            graph.DisplayedRows1.Coeff = col1Coeff;
-                            graph.DisplayedRows2.Coeff = col2Coeff;
+                            return new double[] { col1Coeff, col2Coeff };
                         } catch (FormatException) {
                             throw new ConfigLoadException("", "", filename);
                         }
                     }
                     #endregion
                     private void loadMassCoeffs() {
-                        loadScalingCoeffs(Graph.Instance);
+                        Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
                     }
                 }
                 public class SpectrumReader: Reader, ISpectrumReader {
@@ -1239,7 +1231,7 @@ namespace Flavor.Common {
                         CommonOptions commonOpts;
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
-                        graph = new Graph(commonOpts);
+                        graph = new Graph(commonOpts, COLLECTOR_COEFFS);
                         switch (result) {
                             case Graph.Displaying.Measured:
                                 graph.updateGraphAfterScanLoad(pl1, pl2);
@@ -1255,7 +1247,7 @@ namespace Flavor.Common {
                         PreciseSpectrum peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
-                            graph = new Graph(peds.CommonOptions);
+                            graph = new Graph(peds.CommonOptions, COLLECTOR_COEFFS);
                             graph.updateGraphAfterPreciseLoad(peds);
                         } else {
                             //TODO: other solution!
@@ -1365,13 +1357,12 @@ namespace Flavor.Common {
                     }
                     protected virtual PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStep, ushort peakWidth) { return null; }
                     protected virtual void loadDelays(XmlNode commonNode, CommonOptions opts) { }
-                    public void loadScalingCoeffs(Graph graph) {
+                    public double[] loadScalingCoeffs() {
                         try {
                             XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                             double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            graph.DisplayedRows1.Coeff = col1Coeff;
-                            graph.DisplayedRows2.Coeff = col2Coeff;
+                            return new double[] { col1Coeff, col2Coeff };
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
                         } catch (FormatException) {
@@ -1454,25 +1445,10 @@ namespace Flavor.Common {
                         }
                         // BAD: really uses previous values!
                     }
-                    public XmlDocument XML {
-                        get {
-                            return xmlData;
-                        }
-                    }
+                    public XmlDocument XML { get { return xmlData; } }
                     #endregion
                     private void loadMassCoeffs() {
-                        loadScalingCoeffs(Graph.Instance);
-                        /*try {
-                            XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
-                            double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            Graph.Instance.DisplayedRows1.Coeff = col1Coeff;
-                            Graph.Instance.DisplayedRows2.Coeff = col2Coeff;
-                        } catch (NullReferenceException) {
-                            throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
-                        } catch (FormatException) {
-                            throw new ConfigLoadException("Неверный формат данных", CONFIG_FILE_READ_ERROR, filename);
-                        }*/
+                        Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
                     }
                     protected override void loadDelays(XmlNode commonNode, CommonOptions opts) {
                         try {
@@ -1558,12 +1534,13 @@ namespace Flavor.Common {
                         CommonOptions commonOpts;
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
-                        graph = new Graph(commonOpts);
+                        double[] coeffs = COLLECTOR_COEFFS;
                         try {
-                            loadScalingCoeffs(graph);
+                            coeffs = loadScalingCoeffs();
                         } catch (ConfigLoadException) {
                             // do nothing
                         }
+                        graph = new Graph(commonOpts, coeffs);
                         switch (result) {
                             case Graph.Displaying.Measured:
                                 graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
@@ -1580,12 +1557,13 @@ namespace Flavor.Common {
                         PreciseSpectrum peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
-                            graph = new Graph(peds.CommonOptions);
+                            double[] coeffs = COLLECTOR_COEFFS;
                             try {
-                                loadScalingCoeffs(graph);
+                                coeffs = loadScalingCoeffs();
                             } catch (ConfigLoadException) {
                                 // do nothing
                             }
+                            graph = new Graph(peds.CommonOptions, coeffs);
                             switch (res) {
                                 case Graph.Displaying.Measured:
                                     short shift = short.MaxValue;
@@ -1730,14 +1708,13 @@ namespace Flavor.Common {
                 public class CommonOptionsReader: Reader, ICommonOptionsReader { }
                 public class PreciseDataReader: Reader, IPreciseDataReader { }
                 public abstract class ComplexReader: Reader, IScalingCoeffsReader {
-                    public void loadScalingCoeffs(Graph graph) {
+                    public double[] loadScalingCoeffs() {
                         // TODO: class-dependent messages
                         try {
                             XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                             double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            graph.DisplayedRows1.Coeff = col1Coeff;
-                            graph.DisplayedRows2.Coeff = col2Coeff;
+                            return new double[] { col1Coeff, col2Coeff };
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
                         } catch (FormatException) {
@@ -1767,7 +1744,7 @@ namespace Flavor.Common {
                             //use hard-coded defaults
                         }
                         try {
-                            loadScalingCoeffs(Graph.Instance);
+                            Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
                         } catch (ConfigLoadException) {
                             //cle.visualise();
                             //use hard-coded defaults
@@ -1818,11 +1795,7 @@ namespace Flavor.Common {
                         }
                         // BAD: really uses previous values!
                     }
-                    public XmlDocument XML {
-                        get {
-                            return xmlData;
-                        }
-                    }
+                    public XmlDocument XML { get { return xmlData; } }
                     #endregion
                     protected override void loadDelays(XmlNode commonNode, CommonOptions opts) {
                         try {
@@ -1908,8 +1881,7 @@ namespace Flavor.Common {
                         CommonOptions commonOpts;
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
-                        graph = new Graph(commonOpts);
-                        loadScalingCoeffs(graph);
+                        graph = new Graph(commonOpts, loadScalingCoeffs());
                         switch (result) {
                             case Graph.Displaying.Measured:
                                 graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
@@ -1926,8 +1898,7 @@ namespace Flavor.Common {
                         PreciseSpectrum peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
-                            graph = new Graph(peds.CommonOptions);
-                            loadScalingCoeffs(graph);
+                            graph = new Graph(peds.CommonOptions, loadScalingCoeffs());
                             switch (res) {
                                 case Graph.Displaying.Measured:
                                     short shift = short.MaxValue;
@@ -2073,14 +2044,15 @@ namespace Flavor.Common {
                 public class CommonOptionsReader: Reader, ICommonOptionsReader { }
                 public class PreciseDataReader: Reader, IPreciseDataReader { }
                 public abstract class ComplexReader: Reader, IScalingCoeffsReader {
-                    public void loadScalingCoeffs(Graph graph) {
+                    public double[] loadScalingCoeffs() {
                         // TODO: class-dependent messages
                         try {
                             XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                             double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            graph.DisplayedRows1.Coeff = col1Coeff;
-                            graph.DisplayedRows2.Coeff = col2Coeff;
+                            return new double[]{ col1Coeff, col2Coeff };
+                            //graph.DisplayedRows1.Coeff = col1Coeff;
+                            //graph.DisplayedRows2.Coeff = col2Coeff;
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
                         } catch (FormatException) {
@@ -2110,7 +2082,7 @@ namespace Flavor.Common {
                             //use hard-coded defaults
                         }
                         try {
-                            loadScalingCoeffs(Graph.Instance);
+                            Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
                         } catch (ConfigLoadException) {
                             //cle.visualise();
                             //use hard-coded defaults
@@ -2327,8 +2299,7 @@ namespace Flavor.Common {
                         CommonOptions commonOpts;
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
 
-                        graph = new Graph(commonOpts);
-                        loadScalingCoeffs(graph);
+                        graph = new Graph(commonOpts, loadScalingCoeffs());
                         switch (result) {
                             case Graph.Displaying.Measured:
                                 graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
@@ -2345,8 +2316,7 @@ namespace Flavor.Common {
                         PreciseSpectrum peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
-                            graph = new Graph(peds.CommonOptions);
-                            loadScalingCoeffs(graph);
+                            graph = new Graph(peds.CommonOptions, loadScalingCoeffs());
                             switch (res) {
                                 case Graph.Displaying.Measured:
                                     short shift = short.MaxValue;

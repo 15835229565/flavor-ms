@@ -9,7 +9,7 @@ namespace Flavor.Common {
         internal static Graph Instance {
             get {
                 if (instance == null) {
-                    instance = new Graph(Config.CommonOptions);
+                    instance = new Graph(Config.CommonOptions, Config.COLLECTOR_COEFFS);
                     instance.DisplayingMode = Displaying.Measured;
                     instance.preciseData = Config.PreciseData;
                 }
@@ -327,11 +327,11 @@ namespace Flavor.Common {
         internal static event PointAddedDelegate OnPointAdded;
         #endregion
         
-        [Obsolete]
-        internal Graph(CommonOptions commonOpts)
-            : this(commonOpts, 2770 * 28, 896.5 * 18) {
-            // TODO: move scaling defaults up to Config
-        }
+        //[Obsolete]
+        //internal Graph(CommonOptions commonOpts)
+        //    : this(commonOpts, 2770 * 28, 896.5 * 18) {
+        //    // TODO: move scaling defaults up to Config
+        //}
         internal Graph(CommonOptions commonOpts, params double[] coeffs) {
             Collectors = new Spectrum(commonOpts, coeffs);
         }
