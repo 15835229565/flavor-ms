@@ -22,6 +22,7 @@ namespace Flavor.Common {
             Loaded,
             Diff
         }
+        // TODO: use IEnumerable instead of int[]
         internal class Recreate: IEnumerable<int> {
             public readonly static IEnumerable<int> None = Enumerable.Empty<int>();
             public readonly IEnumerable<int> All = new Recreate { };
@@ -145,16 +146,17 @@ namespace Flavor.Common {
             }
         }
         
+        // TODO: move to MeasureGraph (but is used on diff)
         internal delegate void GraphEventHandler(int[] recreate);
-        internal delegate void AxisModeEventHandler();
-        internal delegate void DisplayModeEventHandler(Displaying mode);
-
         internal event GraphEventHandler NewGraphData;
         private void OnNewGraphData(params int[] recreate) {
             //lock here?
             if (NewGraphData != null)
                 NewGraphData(recreate);
         }
+
+        internal delegate void AxisModeEventHandler();
+        internal delegate void DisplayModeEventHandler(Displaying mode);
         internal event AxisModeEventHandler OnAxisModeChanged;
         internal event DisplayModeEventHandler OnDisplayModeChanged;
 
@@ -257,16 +259,10 @@ namespace Flavor.Common {
                 return false;
             }
         }
-        #region only during measure
+
         internal class MeasureGraph: Graph {
-            private ushort lastPoint;
-            public ushort LastPoint {
-                get { return lastPoint; }
-            }
-            private Utility.PreciseEditorData curPeak;
-            public Utility.PreciseEditorData CurrentPeak {
-                get { return curPeak; }
-            }
+            public ushort LastPoint { get; private set; }
+            public Utility.PreciseEditorData CurrentPeak { get; private set; }
 
             public MeasureGraph(CommonOptions commonOpts, params double[] coeffs)
                 : base(commonOpts, coeffs) { }
@@ -292,14 +288,14 @@ namespace Flavor.Common {
             public void updateGraphDuringScanMeasure(int y1, int y2, ushort pnt) {
                 Collectors[0][0].Add(pnt, y1);
                 Collectors[1][0].Add(pnt, y2);
-                lastPoint = pnt;
+                LastPoint = pnt;
                 OnNewGraphData();
             }
 
             // precise mode
             public void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
-                lastPoint = pnt;
-                curPeak = curped;
+                LastPoint = pnt;
+                CurrentPeak = curped;
                 OnNewGraphData();
             }
             public void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, /*Obsolete*/short? shift) {
@@ -327,7 +323,6 @@ namespace Flavor.Common {
                 shift = shift;
             }
         }
-        #endregion
         #region peak to add (static)
         private static Utility.PreciseEditorData peakToAdd = null;
         internal static Utility.PreciseEditorData PointToAdd {
