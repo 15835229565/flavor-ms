@@ -6,13 +6,14 @@ using Flavor.Common.Messaging.Commands;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
+    [Obsolete]
     internal static class Commander {
         internal static event ProgramEventHandler ProgramStateChanged;
         internal static event ProgramEventHandler MeasureCancelled;
         private static void OnMeasureCancelled() {
             // TODO: lock here?
             if (MeasureCancelled != null)
-                MeasureCancelled();
+                MeasureCancelled(pState);
         }
         internal static event MessageHandler ErrorOccured;
         internal static event MessageHandler AsyncReplyReceived;
@@ -27,7 +28,6 @@ namespace Flavor.Common {
             get { return measureMode; }
         }
 
-        //private
         internal static ProgramStates pState {
             get {
                 return programState;
@@ -37,7 +37,7 @@ namespace Flavor.Common {
                     programState = value;
                     if (value == ProgramStates.Start)
                         Disable();
-                    ProgramStateChanged();
+                    ProgramStateChanged(pState);
                     //OnProgramStateChanged(value);
                 };
             }
@@ -61,7 +61,7 @@ namespace Flavor.Common {
             set {
                 if (handleBlock != value) {
                     handleBlock = value;
-                    ProgramStateChanged();
+                    ProgramStateChanged(pState);
                 };
             }
         }
@@ -77,7 +77,7 @@ namespace Flavor.Common {
             private set {
                 if (isConnected != value) {
                     isConnected = value;
-                    ProgramStateChanged();
+                    ProgramStateChanged(pState);
                 }
             }
         }

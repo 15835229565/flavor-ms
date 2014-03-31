@@ -292,7 +292,6 @@ namespace Flavor.Common {
             hCurrentEnable = Convert.ToBoolean(value & 1 << 5);
             turboReplyFault = Convert.ToBoolean(value & 1 << 6);
 
-            Commander.hBlock = !highVoltageOn;//!!!
             OnDeviceStatusChanged();
         }
 

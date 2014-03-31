@@ -61,6 +61,7 @@ namespace Flavor.Common {
         private readonly SingleMeasureEventArgs firstMeasureEventArgs;
         private readonly SingleMeasureEventArgs generalMeasureEventArgs;
 
+        public bool CancelRequested { private get; set; }
         private MeasureMode(ushort befTime, ushort eTime) {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
@@ -72,7 +73,7 @@ namespace Flavor.Common {
             if (toContinue())
             {
                 // TODO:!
-                if (Commander.measureCancelRequested)
+                if (CancelRequested)
                 {
                     stop();
                     return true;

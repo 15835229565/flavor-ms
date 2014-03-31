@@ -20,12 +20,17 @@ namespace Flavor.Common.Messaging {
                 return syncObj == null ? (syncObj = (ToSend as ICollection).SyncRoot) : syncObj; 
             }
         }
-
+        [Obsolete]
         internal MessageQueue()
             : base() {
             elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
             SendTimer = new System.Timers.Timer(1000);
             SendTimer.Enabled = false;
+        }
+        private ModBusNew protocol = null;
+        internal MessageQueue(ModBusNew protocol)
+            : this() {
+            this.protocol = protocol;
         }
         internal void Clear() {
             lock (SyncRoot) {
@@ -175,8 +180,11 @@ namespace Flavor.Common.Messaging {
                         if (0 == Try) {
                             StartSending();
                         }
-                        // TODO: change to Protocol
-                        ModBus.Send(packet.Data);
+                        // TODO: !
+                        if (protocol != null)
+                            protocol.Send(packet.Data);
+                        else
+                            ModBus.Send(packet.Data);
                         break;
                     }
                     if (dequeueToSendInsideLock(ref packet))

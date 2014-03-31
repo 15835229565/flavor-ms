@@ -69,28 +69,9 @@ namespace Flavor.Forms {
         }
         private OptionsForm oForm = null;
         private readonly ICommander commander;
-        internal MainForm2(ICommander commander) {
+        internal MainForm2(ICommander commander): base() {
             this.commander = commander;
             InitializeComponent();
-            populateStatusTreeView();
-            CollectorsForm.Visible = true;
-            // do not activate so early!
-            //MonitorForm.Visible = false;
-
-            Config.getInitialDirectory();
-
-            Device.OnDeviceStateChanged += InvokeRefreshDeviceState;
-            Device.OnDeviceStatusChanged += InvokeRefreshDeviceStatus;
-            Device.OnVacuumStateChanged += InvokeRefreshVacuumState;
-            Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
-            Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
-            Device.Init();
-            RefreshDeviceState();
-            RefreshVacuumState();
-
-            commander.ProgramStateChanged += InvokeRefreshButtons;
-            //!!! moved up to Program
-            //commander.setProgramStateWithoutUndo(ProgramStates.Start);
         }
         #region Status TreeView population
         private TreeNodePlus rootNode;
@@ -227,9 +208,49 @@ namespace Flavor.Forms {
         }
         #endregion
         protected sealed override void OnLoad(EventArgs e) {
-            openConfigFileToolStripMenuItem_Click(this, e);
             base.OnLoad(e);
+
+            // loads config (can be Config-dependent)
+            Config.getInitialDirectory();
+            openConfigFileToolStripMenuItem_Click(this, e);
+
+            populateStatusTreeView();
+            CollectorsForm.Visible = true;
+            // do not activate so early!
+            //MonitorForm.Visible = false;
+
+            Device.OnDeviceStateChanged += InvokeRefreshDeviceState;
+            Device.OnDeviceStatusChanged += InvokeRefreshDeviceStatus;
+            Device.OnVacuumStateChanged += InvokeRefreshVacuumState;
+            Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
+            Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
+            Device.Init();
+            RefreshDeviceState();
+            RefreshVacuumState();
+
+            commander.ProgramStateChanged += InvokeRefreshButtons;
+            //!!! moved up to Program
+            //commander.setProgramStateWithoutUndo(ProgramStates.Start);
         }
+        protected sealed override void OnFormClosing(FormClosingEventArgs e) {
+            if (commander.pState != ProgramStates.Start &&
+                MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes) {
+                e.Cancel = true;
+                return;
+            }
+            if (commander.DeviceIsConnected)
+                commander.Disconnect();
+            Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
+            Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
+            Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
+            Device.OnTurboPumpStatusChanged -= InvokeRefreshTurboPumpStatus;
+            Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
+
+            commander.ProgramStateChanged -= InvokeRefreshButtons;
+
+            base.OnFormClosing(e);
+        }
+
         protected sealed override void OnShown(EventArgs e) {
             base.OnShown(e);
             Activate();
@@ -239,7 +260,8 @@ namespace Flavor.Forms {
             Close();
         }
         private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
-            (new ConnectOptionsForm()).ShowDialog();
+            if ((new ConnectOptionsForm(commander.AvailablePorts)).ShowDialog() == DialogResult.OK)
+                commander.Reconnect();
         }
 
         private void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -255,9 +277,35 @@ namespace Flavor.Forms {
             where T: OptionsForm, new() {
             if (oForm == null) {
                 oForm = new T();
+                oForm.Load += (s, a) => {
+                    var args = a as OptionsForm.LoadEventArgs;
+                    commander.ProgramStateChanged += args.Method;
+                    var state = commander.pState;
+                    args.Enabled = (state == ProgramStates.Ready ||
+                        state == ProgramStates.WaitHighVoltage ||
+                        state == ProgramStates.Measure ||
+                        state == ProgramStates.BackgroundMeasureReady ||
+                        state == ProgramStates.WaitBackgroundMeasure);
+                    args.NotRareModeRequested = commander.notRareModeRequested;
+                };
+                oForm.FormClosing += (s, a) => {
+                    var args = a as OptionsForm.ClosingEventArgs;
+                    commander.ProgramStateChanged -= args.Method;
+                    switch (oForm.DialogResult) {
+                        case DialogResult.Yes:
+                            commander.SendSettings();
+                            commander.notRareModeRequested = args.NotRareModeRequested;
+                            break;
+                        case DialogResult.OK:
+                            commander.notRareModeRequested = args.NotRareModeRequested;
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                    }
+                };
                 oForm.FormClosed += (s, a) => {
                     oForm = null;
-                    RefreshButtons();
+                    RefreshButtons(commander.pState);
                 };
                 oForm.Show();
             } else if (oForm as T == null)
@@ -316,7 +364,7 @@ namespace Flavor.Forms {
 
             form.MeasureCancelRequested += ChildForm_MeasureCancelRequested;
             // order is important here!
-            form.initMeasure(isPrecise);
+            form.initMeasure(commander.CurrentMeasureMode.StepsCount, isPrecise);
 
             commander.MeasureCancelled += InvokeCancelScan;
             commander.ErrorOccured += Commander_OnError;
@@ -328,8 +376,7 @@ namespace Flavor.Forms {
         }
         private void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
             (sender as IMeasured).MeasureCancelRequested -= ChildForm_MeasureCancelRequested;
-            // TODO: event
-            commander.measureCancelRequested = true;
+            commander.MeasureCancelRequested = true;
         }
         //TODO: make 2 subscribers. one for logging, another for displaying.
         private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
@@ -619,16 +666,16 @@ namespace Flavor.Forms {
         }
 
         // TODO: program state as method parameter (avoid thread run)
-        internal void InvokeRefreshButtons() {
+        internal void InvokeRefreshButtons(ProgramStates state) {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new ProgramEventHandler(RefreshButtons));
+                this.BeginInvoke(new ProgramEventHandler(RefreshButtons), state);
                 return;
             }
-            RefreshButtons();
+            RefreshButtons(state);
         }
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
-        private void RefreshButtons() {
+        private void RefreshButtons(ProgramStates state) {
             bool block = !commander.hBlock;
             if (block) {
                 unblock_butt.Text = "Включить блокировку";
@@ -637,7 +684,7 @@ namespace Flavor.Forms {
                 unblock_butt.Text = "Снять блокировку";
                 unblock_butt.ForeColor = Color.Green;
             }
-            switch (commander.pState) {
+            switch (state) {
                 case ProgramStates.Start:
                     bool connected = commander.DeviceIsConnected;
                     if (connected) {
@@ -693,14 +740,15 @@ namespace Flavor.Forms {
             measureToolStripMenuItem.Enabled = measureOptions;
         }
 
-        private void InvokeCancelScan() {
+        // TODO: another handler
+        private void InvokeCancelScan(ProgramStates state) {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new ProgramEventHandler(CancelScan));
+                this.BeginInvoke(new ProgramEventHandler(CancelScan), state);
                 return;
             }
-            CancelScan();
+            CancelScan(state);
         }
-        private void CancelScan() {
+        private void CancelScan(ProgramStates state) {
             commander.MeasureCancelled -= InvokeCancelScan;
             commander.ErrorOccured -= Commander_OnError;
             
@@ -720,25 +768,6 @@ namespace Flavor.Forms {
 
         private void ParameterToolStripMenuItem_Click(object sender, EventArgs e) {
             parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
-        }
-
-        protected sealed override void OnFormClosing(FormClosingEventArgs e) {
-            if (commander.pState != ProgramStates.Start &&
-                MessageBox.Show(this, EXIT_MESSAGE, EXIT_CAPTION, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes) {
-                e.Cancel = true;
-                return;
-            }
-            if (commander.DeviceIsConnected)
-                commander.Disconnect();
-            Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
-            Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
-            Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
-            Device.OnTurboPumpStatusChanged -= InvokeRefreshTurboPumpStatus;
-            Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
-
-            commander.ProgramStateChanged -= InvokeRefreshButtons;
-            
-            base.OnFormClosing(e);
         }
 
         private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {

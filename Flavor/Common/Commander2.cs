@@ -67,6 +67,15 @@ namespace Flavor.Common {
 
         private MessageQueueWithAutomatedStatusChecks toSend;
 
+        private bool measureCancelRequested = false;
+        public override bool MeasureCancelRequested {
+            protected get { return measureCancelRequested; }
+            set {
+                measureCancelRequested = value;
+                CurrentMeasureMode.CancelRequested = value;
+            }
+        }
+
         private void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
             ServicePacket command = e.Command;
             //var code = e.Code;
@@ -79,7 +88,7 @@ namespace Flavor.Common {
                     toSend.IsRareMode = false;
                     setProgramStateWithoutUndo(ProgramStates.Start);
                     //Commander.hBlock = true;//!!!
-                    measureCancelRequested = false;
+                    MeasureCancelRequested = false;
                 }
                 return;
             }
@@ -99,7 +108,7 @@ namespace Flavor.Common {
                         toSend.IsRareMode = false;
                         setProgramStateWithoutUndo(ProgramStates.Start);
                         //Commander.hBlock = true;//!!!
-                        measureCancelRequested = false;
+                        MeasureCancelRequested = false;
                     }
                     return;
                 }
@@ -228,6 +237,7 @@ namespace Flavor.Common {
             }*/
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
+                hBlock = !Device.highVoltageOn;
             }
             if (Command is IUpdateGraph) {
                 if (CurrentMeasureMode == null) {
@@ -423,7 +433,7 @@ namespace Flavor.Common {
         }
 
         private void Disable() {
-            measureCancelRequested = false;
+            MeasureCancelRequested = false;
             toSend.IsRareMode = false;
             // TODO: lock here (request from ui may cause synchro errors)
             // or use async action paradigm
@@ -454,7 +464,7 @@ namespace Flavor.Common {
             setProgramState(state);
 
             toSend.IsRareMode = !notRareModeRequested;
-            measureCancelRequested = false;
+            MeasureCancelRequested = false;
             SendSettings();
         }
 
@@ -489,7 +499,7 @@ namespace Flavor.Common {
             if (pState == ProgramStates.Measure ||
                 pState == ProgramStates.WaitBackgroundMeasure ||
                 pState == ProgramStates.BackgroundMeasureReady)//strange..
-                measureCancelRequested = true;
+                MeasureCancelRequested = true;
             toSend.AddToSend(new UserRequest.enableHighVoltage(hBlock));
         }
 
@@ -502,7 +512,7 @@ namespace Flavor.Common {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
-                    toSend = new MessageQueueWithAutomatedStatusChecks();
+                    toSend = new MessageQueueWithAutomatedStatusChecks(protocol);
                     toSend.IsOperating = true;
                     DeviceIsConnected = true;
                     break;

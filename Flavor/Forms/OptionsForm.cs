@@ -3,15 +3,13 @@ using System.Windows.Forms;
 using Config = Flavor.Common.Config;
 using CommonOptions = Flavor.Common.CommonOptions;
 // really here?
-using Commander = Flavor.Common.Commander;
 using ProgramStates = Flavor.Common.ProgramStates;
-using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
+using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
 namespace Flavor.Forms {
     internal partial class OptionsForm: Form {
         protected OptionsForm() {
             InitializeComponent();
-            Commander.ProgramStateChanged += InvokeSetVisibility;
         }
 
         private void loadCommonData(CommonOptions co) {
@@ -57,14 +55,25 @@ namespace Flavor.Forms {
                 (double)hCurrentNumericUpDown.Value,
                 (double)fV1NumericUpDown.Value,
                 (double)fV2NumericUpDown.Value);
-            Commander.notRareModeRequested = rareModeCheckBox.Checked;
+            //Commander.notRareModeRequested = rareModeCheckBox.Checked;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         protected virtual void applyButton_Click(object sender, EventArgs e) {
-            Commander.sendSettings();
-            ok_butt_Click(sender, e);
+            //Commander.sendSettings();
+            Config.saveGlobalCommonOptions(
+                (ushort)expTimeNumericUpDown.Value,
+                (ushort)idleTimeNumericUpDown.Value,
+                (double)iVoltageNumericUpDown.Value,
+                (double)CPNumericUpDown.Value,
+                (double)eCurrentNumericUpDown.Value,
+                (double)hCurrentNumericUpDown.Value,
+                (double)fV1NumericUpDown.Value,
+                (double)fV2NumericUpDown.Value);
+            //Commander.notRareModeRequested = rareModeCheckBox.Checked;
+            this.DialogResult = DialogResult.Yes;
+            this.Close();
         }
 
         protected void saveFileButton_Click(object sender, EventArgs e) {
@@ -91,21 +100,27 @@ namespace Flavor.Forms {
             fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             hCurrentNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
         }
-        private void InvokeSetVisibility() {
-            this.Invoke(new DeviceEventHandler(() => {
+        private void InvokeSetVisibility(ProgramStates state) {
+            this.Invoke(new Action(() => {
                 // TODO: avoid bringing to front..
-                this.Visible = Commander.pState != ProgramStates.Measure ||
-                    Commander.pState != ProgramStates.BackgroundMeasureReady ||
-                    Commander.pState != ProgramStates.WaitBackgroundMeasure;
+                this.Visible = state != ProgramStates.Measure ||
+                    state != ProgramStates.BackgroundMeasureReady ||
+                    state != ProgramStates.WaitBackgroundMeasure;
             }));
         }
+        public class LoadEventArgs: EventArgs {
+            public bool Enabled { get; set; }
+            public bool NotRareModeRequested { get; set; }
+            public ProgramEventHandler Method { get; set; }
+        }
         protected override void OnLoad(EventArgs e) {
-            rareModeCheckBox.Checked = Commander.notRareModeRequested;
-            if (Commander.pState == ProgramStates.Ready ||
-                Commander.pState == ProgramStates.WaitHighVoltage ||
-                Commander.pState == ProgramStates.Measure ||
-                Commander.pState == ProgramStates.BackgroundMeasureReady ||
-                Commander.pState == ProgramStates.WaitBackgroundMeasure) {
+            var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs();
+            args.Method += InvokeSetVisibility;
+            base.OnLoad(args);
+            //Commander.ProgramStateChanged += InvokeSetVisibility;
+            //rareModeCheckBox.Checked = Commander.notRareModeRequested;
+            rareModeCheckBox.Checked = args.NotRareModeRequested;
+            if (args.Enabled) {
                 applyButton.Enabled = true;
                 applyButton.Visible = true;
             } else {
@@ -115,11 +130,19 @@ namespace Flavor.Forms {
             CommonOptions co = Config.CommonOptions;
             if (co != null)
                 loadCommonData(Config.CommonOptions);
-            base.OnLoad(e);
+        }
+        public class ClosingEventArgs: FormClosingEventArgs {
+            public bool NotRareModeRequested { get; set; }
+            public ProgramEventHandler Method { get; set; }
+            public ClosingEventArgs(FormClosingEventArgs args)
+                : base(args.CloseReason, args.Cancel) { }
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            Commander.ProgramStateChanged -= InvokeSetVisibility;
-            base.OnFormClosing(e);
+            //Commander.ProgramStateChanged -= InvokeSetVisibility;
+            var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
+            args.NotRareModeRequested = rareModeCheckBox.Checked;
+            args.Method += InvokeSetVisibility;
+            base.OnFormClosing(args);
         }
     }
 }

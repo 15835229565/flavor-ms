@@ -7,7 +7,7 @@ using Config = Flavor.Common.Config;
 // really here?
 using Commander = Flavor.Common.Commander;
 using ProgramStates = Flavor.Common.ProgramStates;
-using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
+using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
 using PreciseSpectrum = Flavor.Common.PreciseSpectrum;
 using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
@@ -22,20 +22,19 @@ namespace Flavor.Forms {
         public PreciseOptionsForm()
             : base() {
             InitializeComponent();
-            Commander.ProgramStateChanged += InvokeEnableForm;
         }
 
-        private void InvokeEnableForm() {
+        private void InvokeEnableForm(ProgramStates state) {
             if (this.InvokeRequired) {
-                DeviceEventHandler InvokeDelegate = EnableForm;
-                this.Invoke(InvokeDelegate);
+                ProgramEventHandler InvokeDelegate = EnableForm;
+                this.Invoke(InvokeDelegate, state);
             } else {
-                EnableForm();
+                EnableForm(state);
             }
         }
 
-        private void EnableForm() {
-            switch (Commander.pState) {
+        private void EnableForm(ProgramStates state) {
+            switch (state) {
                 case ProgramStates.Start:
                 case ProgramStates.WaitInit:
                 case ProgramStates.Init:
@@ -152,6 +151,11 @@ namespace Flavor.Forms {
         }
 
         protected override void OnLoad(EventArgs e) {
+            var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs();
+            args.Method += InvokeEnableForm;
+            base.OnLoad(args);
+            //Commander.ProgramStateChanged += InvokeEnableForm;
+
             bool enable = Graph.PointToAdd != null;
 
             this.SuspendLayout();
@@ -175,12 +179,13 @@ namespace Flavor.Forms {
             if (!enable) {
                 Graph.OnPointAdded += Graph_OnPointAdded;
             }
-            base.OnLoad(e);
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
+            var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
+            args.Method += InvokeEnableForm;
+            //Commander.ProgramStateChanged -= InvokeEnableForm;
             Graph.OnPointAdded -= Graph_OnPointAdded;
-            Commander.ProgramStateChanged -= InvokeEnableForm;
-            base.OnFormClosing(e);
+            base.OnFormClosing(args);
         }
     }
 }

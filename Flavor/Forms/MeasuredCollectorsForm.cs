@@ -20,7 +20,7 @@ namespace Flavor.Forms {
 
         #region IMeasured Members
 
-        public void initMeasure(bool isPrecise) {
+        public void initMeasure(int progressMaximum, bool isPrecise) {
             // TODO: different types of panel
             PreciseSpectrumDisplayed = isPrecise;
             
@@ -35,10 +35,11 @@ namespace Flavor.Forms {
                 setXScaleLimits();
             }
             panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
-            Panel = panel;
             Graph.MeasureGraph g = Graph.Instance;
-            Panel.Graph = g;
+            panel.Graph = g;
+            panel.ProgressMaximum = progressMaximum;
 
+            Panel = panel;
             Panel.Enable();
             // TODO: and set it visible together with menu item set checked!
 

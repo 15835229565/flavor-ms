@@ -4,6 +4,7 @@ using System.IO.Ports;
 using Flavor.Common.Messaging.Commands;
 
 namespace Flavor.Common.Messaging {
+    [Obsolete]
     internal static class ModBus {
         internal enum CommandCode: byte {
             None = 0x00,

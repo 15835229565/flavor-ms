@@ -12,6 +12,7 @@ namespace Flavor.Controls {
         public MeasureGraphPanel() {
             InitializeComponent();
         }
+        public int ProgressMaximum { get; set; }
         private void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
             OnMeasureCancelRequested();
@@ -39,8 +40,7 @@ namespace Flavor.Controls {
             cancelScanButton.Visible = true;
 
             scanProgressBar.Value = 0;
-            // TODO: set as property
-            scanProgressBar.Maximum = Commander.CurrentMeasureMode.StepsCount;
+            scanProgressBar.Maximum = ProgressMaximum;
             if (scanProgressBar.Maximum == 0) {
                 scanProgressBar.Style = ProgressBarStyle.Marquee;
             } else {
@@ -55,7 +55,7 @@ namespace Flavor.Controls {
                 if (scanProgressBar.Value == scanProgressBar.Maximum) {
                     // if already full line - reinit
                     scanProgressBar.Value = 0;
-                    scanProgressBar.Maximum = Commander.CurrentMeasureMode.StepsCount;
+                    scanProgressBar.Maximum = ProgressMaximum;
                 }
                 scanProgressBar.PerformStep();
             }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using Flavor.Common;
-
-namespace Flavor.Controls {
+﻿namespace Flavor.Controls {
     public partial class ScanMeasureGraphPanel: MeasureGraphPanel {
         public ScanMeasureGraphPanel(ushort start, ushort end) {
             InitializeComponent();

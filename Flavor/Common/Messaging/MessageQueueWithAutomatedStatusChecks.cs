@@ -63,8 +63,18 @@ namespace Flavor.Common.Messaging {
             TurboPumpCheckTimer.Enabled = operating;
         }
 
+        [Obsolete]
         internal MessageQueueWithAutomatedStatusChecks()
             : base() {
+            statusElapsed = new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
+            turboElapsed = new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
+
+            lock (locker) {
+                toggleRareMode();
+            }
+        }
+        internal MessageQueueWithAutomatedStatusChecks(ModBusNew protocol)
+            : base(protocol) {
             statusElapsed = new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
             turboElapsed = new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
 

@@ -320,7 +320,7 @@ namespace Flavor.Common {
 
             public void setDateTimeAndShift(DateTime dt, short? shift) {
                 dateTime = dt;
-                shift = shift;
+                this.shift = shift;
             }
         }
         #region peak to add (static)

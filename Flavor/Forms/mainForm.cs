@@ -19,6 +19,7 @@ using Device = Flavor.Common.Device;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
+    [Obsolete]
     internal partial class mainForm: Form {
         // TODO: move to resource file
         private const string EXIT_CAPTION = "Предупреждение об отключении";
@@ -233,7 +234,8 @@ namespace Flavor.Forms {
             Close();
         }
         private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
-            (new ConnectOptionsForm()).ShowDialog();
+            if ((new ConnectOptionsForm(Commander.AvailablePorts)).ShowDialog() == DialogResult.OK)
+                Commander.reconnect();
         }
 
         private void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -249,9 +251,35 @@ namespace Flavor.Forms {
             where T: OptionsForm, new() {
             if (oForm == null) {
                 oForm = new T();
+                oForm.Load += (s, a) => {
+                    var args = a as OptionsForm.LoadEventArgs;
+                    Commander.ProgramStateChanged += args.Method;
+                    var state = Commander.pState;
+                    args.Enabled = (state == ProgramStates.Ready ||
+                        state == ProgramStates.WaitHighVoltage ||
+                        state == ProgramStates.Measure ||
+                        state == ProgramStates.BackgroundMeasureReady ||
+                        state == ProgramStates.WaitBackgroundMeasure);
+                    args.NotRareModeRequested = Commander.notRareModeRequested;
+                };
+                oForm.FormClosing += (s, a) => {
+                    var args = a as OptionsForm.ClosingEventArgs;
+                    Commander.ProgramStateChanged -= args.Method;
+                    switch (oForm.DialogResult) {
+                        case DialogResult.Yes:
+                            Commander.sendSettings();
+                            Commander.notRareModeRequested = args.NotRareModeRequested;
+                            break;
+                        case DialogResult.OK:
+                            Commander.notRareModeRequested = args.NotRareModeRequested;
+                            break;
+                        case DialogResult.Cancel:
+                            break;
+                    }
+                };
                 oForm.FormClosed += (s, a) => {
                     oForm = null;
-                    RefreshButtons();
+                    RefreshButtons(Commander.pState);
                 };
                 oForm.Show();
             } else if (oForm as T == null)
@@ -310,7 +338,7 @@ namespace Flavor.Forms {
 
             form.MeasureCancelRequested += ChildForm_MeasureCancelRequested;
             // order is important here!
-            form.initMeasure(isPrecise);
+            form.initMeasure(Commander.CurrentMeasureMode.StepsCount, isPrecise);
 
             Commander.MeasureCancelled += InvokeCancelScan;
             Commander.ErrorOccured += Commander_OnError;
@@ -613,16 +641,16 @@ namespace Flavor.Forms {
         }
 
         // TODO: program state as method parameter (avoid thread run)
-        internal void InvokeRefreshButtons() {
+        internal void InvokeRefreshButtons(ProgramStates state) {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new ProgramEventHandler(RefreshButtons));
+                this.BeginInvoke(new ProgramEventHandler(RefreshButtons), state);
                 return;
             }
-            RefreshButtons();
+            RefreshButtons(state);
         }
         // bool block, Commander.programStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
-        private void RefreshButtons() {
+        private void RefreshButtons(ProgramStates state) {
             bool block = !Commander.hBlock;
             if (block) {
                 unblock_butt.Text = "Включить блокировку";
@@ -631,7 +659,7 @@ namespace Flavor.Forms {
                 unblock_butt.Text = "Снять блокировку";
                 unblock_butt.ForeColor = Color.Green;
             }
-            switch (Commander.pState) {
+            switch (state) {
                 case ProgramStates.Start:
                     bool connected = Commander.DeviceIsConnected;
                     if (connected) {
@@ -687,14 +715,14 @@ namespace Flavor.Forms {
             measureToolStripMenuItem.Enabled = measureOptions;
         }
 
-        private void InvokeCancelScan() {
+        private void InvokeCancelScan(ProgramStates state) {
             if (this.InvokeRequired) {
-                this.BeginInvoke(new ProgramEventHandler(CancelScan));
+                this.BeginInvoke(new ProgramEventHandler(CancelScan), state);
                 return;
             }
-            CancelScan();
+            CancelScan(state);
         }
-        private void CancelScan() {
+        private void CancelScan(ProgramStates state) {
             Commander.MeasureCancelled -= InvokeCancelScan;
             Commander.ErrorOccured -= Commander_OnError;
             

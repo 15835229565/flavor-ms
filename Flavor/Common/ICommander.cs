@@ -14,8 +14,8 @@ namespace Flavor.Common {
         WaitShutdown,
     }
 
-    public delegate void ProgramEventHandler();
-    //public delegate void ProgramEventHandler(ProgramStates state);
+    //public delegate void ProgramEventHandler();
+    public delegate void ProgramEventHandler(ProgramStates state);
     public delegate void MessageHandler(string msg);
 
     interface ILog {
@@ -93,7 +93,7 @@ namespace Flavor.Common {
         protected virtual void OnProgramStateChanged() {
             // TODO: lock here?
             if (ProgramStateChanged != null)
-                ProgramStateChanged();
+                ProgramStateChanged(pState);
         }
         abstract public void Init();
         abstract public void Shutdown();
@@ -110,14 +110,15 @@ namespace Flavor.Common {
         #endregion
 
         public MeasureMode CurrentMeasureMode { get; protected set; }
-        internal bool measureCancelRequested { get; set; }
+        abstract public bool MeasureCancelRequested { protected get; set; }
         abstract public bool SomePointsUsed { get; }
         #region IMeasureActions Members
+        // TODO: other event class here!
         public event ProgramEventHandler MeasureCancelled;
         protected virtual void OnMeasureCancelled() {
             // TODO: lock here?
             if (MeasureCancelled != null)
-                MeasureCancelled();
+                MeasureCancelled(pState);
         }
         abstract public void Scan();
         abstract public bool Sense();

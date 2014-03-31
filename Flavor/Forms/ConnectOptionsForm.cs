@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Windows.Forms;
 using Config = Flavor.Common.Config;
-//?
-using Commander = Flavor.Common.Commander;
 
 namespace Flavor.Forms {
     internal partial class ConnectOptionsForm: Form {
-        internal ConnectOptionsForm() {
+        internal ConnectOptionsForm(string[] ports) {
             InitializeComponent();
             serialPortComboBox.Text = Config.Port;
             baudrateComboBox.Text = Config.BaudRate.ToString();
-            serialPortComboBox.Items.AddRange(Commander.AvailablePorts);
+            serialPortComboBox.Items.AddRange(ports);
         }
 
         private void cancel_butt_Click(object sender, EventArgs e) {
-            this.Close();
+            Close();
         }
 
         private void ok_butt_Click(object sender, EventArgs e) {
             Config.saveGlobalConnectOptions(serialPortComboBox.Text, ushort.Parse(baudrateComboBox.Text));
-            Commander.reconnect();
-            this.Close();
+            Close();
         }
     }
 }

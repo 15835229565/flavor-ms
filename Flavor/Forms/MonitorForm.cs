@@ -145,8 +145,8 @@ namespace Flavor.Forms
             panel.performStep();
         }
         #region IMeasured Members
-        //parameter here is obsolete
-        public void initMeasure(bool isPrecise) {
+        //parameters here are obsolete?
+        public void initMeasure(int progressMaximum, bool isPrecise) {
             list = new List<PointPairListPlusWithMaxCapacity>();
             sums = new List<long>();
             //!!
