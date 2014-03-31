@@ -20,6 +20,11 @@ namespace Flavor.Common.Messaging {
                 return syncObj == null ? (syncObj = (ToSend as ICollection).SyncRoot) : syncObj; 
             }
         }
+        public event EventHandler Undo;
+        protected virtual void OnUndo() {
+            if (Undo != null)
+                Undo(this, EventArgs.Empty);
+        }
         [Obsolete]
         internal MessageQueue()
             : base() {
@@ -160,7 +165,8 @@ namespace Flavor.Common.Messaging {
                 if (packet != null)
                     ConsoleWriter.WriteLine("Device not answering to {0}", packet.Id);
 
-                Commander.setProgramStateWithoutUndo(Commander.pStatePrev);
+                OnUndo();
+                //Commander.setProgramStateWithoutUndo(Commander.pStatePrev);
             }
         }
 

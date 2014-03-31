@@ -44,8 +44,7 @@ namespace Flavor.Common {
         }
 
         internal static ProgramStates pStatePrev { get; private set; }
-        // TODO: remove two remaining references to this method and make it private
-        internal static void setProgramStateWithoutUndo(ProgramStates state) {
+        private static void setProgramStateWithoutUndo(ProgramStates state) {
             pState = state;
             pStatePrev = pState;
         }
@@ -527,6 +526,7 @@ namespace Flavor.Common {
             switch (res) {
                 case ModBus.PortStates.Opening:
                     toSend = new MessageQueueWithAutomatedStatusChecks();
+                    toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
                     toSend.IsOperating = true;
                     DeviceIsConnected = true;
                     break;
@@ -543,6 +543,7 @@ namespace Flavor.Common {
         }
         internal static ModBus.PortStates Disconnect() {
             toSend.IsOperating = false;
+            toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             toSend.Clear();
             ModBus.PortStates res = ModBus.Close();
             switch (res) {

@@ -1,7 +1,9 @@
-﻿namespace Flavor.Common.Messaging.Commands {
+﻿using CommandCode = Flavor.Common.Messaging.ModBusNew.CommandCode;
+
+namespace Flavor.Common.Messaging.Commands {
     internal abstract class ServicePacket {
         internal abstract class Sync: ServicePacket {
-            internal abstract ModBus.CommandCode Id { get; }
+            internal abstract CommandCode Id { get; }
         }
     }
 

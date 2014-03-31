@@ -25,8 +25,7 @@ namespace Flavor.Common {
             }
         }
 
-        // TODO: remove two remaining references to this method and make it private
-        internal void setProgramStateWithoutUndo(ProgramStates state) {
+        private void setProgramStateWithoutUndo(ProgramStates state) {
             pState = state;
             pStatePrev = pState;
         }
@@ -72,7 +71,8 @@ namespace Flavor.Common {
             protected get { return measureCancelRequested; }
             set {
                 measureCancelRequested = value;
-                CurrentMeasureMode.CancelRequested = value;
+                if (value && CurrentMeasureMode != null)
+                    CurrentMeasureMode.CancelRequested = value;
             }
         }
 
@@ -82,8 +82,12 @@ namespace Flavor.Common {
 
             if (command is AsyncErrorReply) {
                 CheckInterfaces(command);
-                // 2 events..
-                OnAsyncReplyReceived(string.Format("Device says: {0}", ((AsyncErrorReply)command).errorMessage));
+
+                string message = string.Format("Device says: {0}", ((AsyncErrorReply)command).errorMessage);
+                OnAsyncReplyReceived(message);
+                // TODO: subscribe in Config for event
+                Config.logCrash(message);
+
                 if (pState != ProgramStates.Start) {
                     toSend.IsRareMode = false;
                     setProgramStateWithoutUndo(ProgramStates.Start);
@@ -514,6 +518,7 @@ namespace Flavor.Common {
                 case PortLevel.PortStates.Opening:
                     toSend = new MessageQueueWithAutomatedStatusChecks(protocol);
                     toSend.IsOperating = true;
+                    toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
                     DeviceIsConnected = true;
                     break;
                 case PortLevel.PortStates.Opened:
@@ -529,6 +534,7 @@ namespace Flavor.Common {
         }
         public override PortLevel.PortStates Disconnect() {
             toSend.IsOperating = false;
+            toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             toSend.Clear();
             PortLevel.PortStates res = port.Close();
             switch (res) {

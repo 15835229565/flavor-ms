@@ -247,17 +247,17 @@ namespace Flavor.Common.Messaging {
                 //!!!
                 case CommandCode.InternalError:
                     if (raw_command.Length == 3)
-                        packet = new AsyncErrorReply.logInternalError(raw_command);
+                        packet = new AsyncErrorReply.logInternalError(raw_command[1]);
                     break;
                 //!!!
                 case CommandCode.InvalidSystemState:
                     if (raw_command.Length == 2)
-                        packet = new AsyncErrorReply.logInvalidSystemState(raw_command);
+                        packet = new AsyncErrorReply.logInvalidSystemState();
                     break;
                 //!!!
                 case CommandCode.VacuumCrash:
                     if (raw_command.Length == 3)
-                        packet = new AsyncErrorReply.logVacuumCrash(raw_command);
+                        packet = new AsyncErrorReply.logVacuumCrash(raw_command[1]);
                     break;
                 //!!!
                 case CommandCode.TurboPumpFailure:
@@ -267,12 +267,12 @@ namespace Flavor.Common.Messaging {
                 //!!!
                 case CommandCode.PowerFail:
                     if (raw_command.Length == 2)
-                        packet = new AsyncErrorReply.logPowerFail(raw_command);
+                        packet = new AsyncErrorReply.logPowerFail();
                     break;
                 //!!!
                 case CommandCode.InvalidVacuumState:
                     if (raw_command.Length == 2)
-                        packet = new AsyncErrorReply.logInvalidVacuumState(raw_command);
+                        packet = new AsyncErrorReply.logInvalidVacuumState();
                     break;
                 //!!!
                 case CommandCode.AdcPlaceIonSrc:

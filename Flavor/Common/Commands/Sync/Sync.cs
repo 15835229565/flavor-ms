@@ -1,4 +1,6 @@
-﻿namespace Flavor.Common.Messaging.Commands {
+﻿using CommandCode = Flavor.Common.Messaging.ModBusNew.CommandCode;
+
+namespace Flavor.Common.Messaging.Commands {
     abstract class SyncReply: ServicePacket.Sync {
         public class updateState: SyncReply, IUpdateDevice, IAutomatedReply {
             private byte sysState;
@@ -13,8 +15,8 @@
             }
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.GetState; }
+            internal override CommandCode Id {
+                get { return CommandCode.GetState; }
             }
 
             #region IAutomatedReply Members
@@ -81,18 +83,18 @@
 
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.GetStatus; }
+            internal override CommandCode Id {
+                get { return CommandCode.GetStatus; }
             }
         }
         public class confirmShutdown: SyncReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.Shutdown; }
+            internal override CommandCode Id {
+                get { return CommandCode.Shutdown; }
             }
         }
         public class confirmInit: SyncReply, IAutomatedReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.Init; }
+            internal override CommandCode Id {
+                get { return CommandCode.Init; }
             }
 
             #region IReply Members
@@ -110,8 +112,8 @@
             }
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetHeatCurrent; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetHeatCurrent; }
             }
         }
         public class confirmECurrent: SyncReply, IAutomatedReply {
@@ -121,13 +123,13 @@
             }
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetEmissionCurrent; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetEmissionCurrent; }
             }
         }
         public class confirmIVoltage: SyncReply, IAutomatedReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetIonizationVoltage; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetIonizationVoltage; }
             }
 
             #region IReply Members
@@ -143,23 +145,23 @@
             }
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetFocusVoltage1; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetFocusVoltage1; }
             }
         }
         public class confirmF2Voltage: SyncReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetFocusVoltage2; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetFocusVoltage2; }
             }
         }
         public class confirmSVoltage: SyncReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetScanVoltage; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetScanVoltage; }
             }
         }
         public class confirmCP: SyncReply, IAutomatedReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetCapacitorVoltage; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetCapacitorVoltage; }
             }
 
             #region IReply Members
@@ -169,8 +171,8 @@
             #endregion
         }
         public class confirmMeasure: SyncReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.Measure; }
+            internal override CommandCode Id {
+                get { return CommandCode.Measure; }
             }
         }
         public class updateCounts: SyncReply, IUpdateDevice, IUpdateGraph {
@@ -191,8 +193,8 @@
 
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.GetCounts; }
+            internal override CommandCode Id {
+                get { return CommandCode.GetCounts; }
             }
         }
         public class confirmHECurrent: SyncReply, IAutomatedReply {
@@ -202,13 +204,13 @@
             }
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.heatCurrentEnable; }
+            internal override CommandCode Id {
+                get { return CommandCode.heatCurrentEnable; }
             }
         }
         public class confirmHighVoltage: SyncReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.EnableHighVoltage; }
+            internal override CommandCode Id {
+                get { return CommandCode.EnableHighVoltage; }
             }
         }
         public class updateTurboPumpStatus: SyncReply, IUpdateDevice {
@@ -248,13 +250,13 @@
 
             #endregion
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.GetTurboPumpStatus; }
+            internal override CommandCode Id {
+                get { return CommandCode.GetTurboPumpStatus; }
             }
         }
         public class confirmForvacuumLevel: SyncReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.SetForvacuumLevel; }
+            internal override CommandCode Id {
+                get { return CommandCode.SetForvacuumLevel; }
             }
         }
     }

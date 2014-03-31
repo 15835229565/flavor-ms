@@ -359,17 +359,17 @@ namespace Flavor.Common.Messaging {
                             return null;
                         case CommandCode.InternalError:
                             if (raw_command.Length == 3) {
-                                return new AsyncErrorReply.logInternalError(raw_command);
+                                return new AsyncErrorReply.logInternalError(raw_command[1]);
                             }
                             return null;
                         case CommandCode.InvalidSystemState:
                             if (raw_command.Length == 2) {
-                                return new AsyncErrorReply.logInvalidSystemState(raw_command);
+                                return new AsyncErrorReply.logInvalidSystemState();
                             }
                             return null;
                         case CommandCode.VacuumCrash:
                             if (raw_command.Length == 3) {
-                                return new AsyncErrorReply.logVacuumCrash(raw_command);
+                                return new AsyncErrorReply.logVacuumCrash(raw_command[1]);
                             }
                             return null;
                         case CommandCode.TurboPumpFailure:
@@ -379,12 +379,12 @@ namespace Flavor.Common.Messaging {
                             return null;
                         case CommandCode.PowerFail:
                             if (raw_command.Length == 2) {
-                                return new AsyncErrorReply.logPowerFail(raw_command);
+                                return new AsyncErrorReply.logPowerFail();
                             }
                             return null;
                         case CommandCode.InvalidVacuumState:
                             if (raw_command.Length == 2) {
-                                return new AsyncErrorReply.logInvalidVacuumState(raw_command);
+                                return new AsyncErrorReply.logInvalidVacuumState();
                             }
                             return null;
                         case CommandCode.AdcPlaceIonSrc:

@@ -1,3 +1,5 @@
+using CommandCode = Flavor.Common.Messaging.ModBusNew.CommandCode;
+
 namespace Flavor.Common.Messaging.Commands {
     internal abstract class SyncErrorReply: ServicePacket.Sync {
         internal class logInvalidCommand: SyncErrorReply {
@@ -7,38 +9,38 @@ namespace Flavor.Common.Messaging.Commands {
                 //command = errorcommand;
             }
 
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.InvalidCommand; }
+            internal override CommandCode Id {
+                get { return CommandCode.InvalidCommand; }
             }
         }
 
         internal class logInvalidChecksum: SyncErrorReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.InvalidChecksum; }
+            internal override CommandCode Id {
+                get { return CommandCode.InvalidChecksum; }
             }
         }
 
         internal class logInvalidPacket: SyncErrorReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.InvalidPacket; }
+            internal override CommandCode Id {
+                get { return CommandCode.InvalidPacket; }
             }
         }
 
         internal class logInvalidLength: SyncErrorReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.InvalidLength; }
+            internal override CommandCode Id {
+                get { return CommandCode.InvalidLength; }
             }
         }
 
         internal class logInvalidData: SyncErrorReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.InvalidData; }
+            internal override CommandCode Id {
+                get { return CommandCode.InvalidData; }
             }
         }
 
         internal class logInvalidState: SyncErrorReply {
-            internal override ModBus.CommandCode Id {
-                get { return ModBus.CommandCode.InvalidState; }
+            internal override CommandCode Id {
+                get { return CommandCode.InvalidState; }
             }
         }
     }
