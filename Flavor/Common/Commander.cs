@@ -89,7 +89,7 @@ namespace Flavor.Common {
         internal static void Realize(ServicePacket Command) {
             if (Command is AsyncErrorReply) {
                 CheckInterfaces(Command);
-                ConsoleWriter.WriteLine("Device says: {0}", ((AsyncErrorReply)Command).errorMessage);
+                //ConsoleWriter.WriteLine("Device says: {0}", ((AsyncErrorReply)Command).errorMessage);
                 AsyncReplyReceived(((AsyncErrorReply)Command).errorMessage);
                 if (pState != ProgramStates.Start) {
                     toSend.IsRareMode = false;
@@ -102,15 +102,15 @@ namespace Flavor.Common {
             if (Command is AsyncReply) {
                 CheckInterfaces(Command);
                 if (Command is AsyncReply.confirmShutdowned) {
-                    ConsoleWriter.WriteLine("System is shutdowned");
+                    //ConsoleWriter.WriteLine("System is shutdowned");
                     setProgramStateWithoutUndo(ProgramStates.Start);
                     hBlock = true;
-                    ConsoleWriter.WriteLine(pState);
+                    //ConsoleWriter.WriteLine(pState);
                     Device.Init();
                     return;
                 }
                 if (Command is AsyncReply.SystemReseted) {
-                    ConsoleWriter.WriteLine("System reseted");
+                    //ConsoleWriter.WriteLine("System reseted");
                     AsyncReplyReceived("Система переинициализировалась");
                     if (pState != ProgramStates.Start) {
                         toSend.IsRareMode = false;
@@ -155,15 +155,15 @@ namespace Flavor.Common {
                 }
                 CheckInterfaces(Command);
                 if (Command is SyncReply.confirmInit) {
-                    ConsoleWriter.WriteLine("Init request confirmed");
+                    //ConsoleWriter.WriteLine("Init request confirmed");
                     setProgramStateWithoutUndo(ProgramStates.Init);
-                    ConsoleWriter.WriteLine(pState);
+                    //ConsoleWriter.WriteLine(pState);
                     return;
                 }
                 if (Command is SyncReply.confirmShutdown) {
-                    ConsoleWriter.WriteLine("Shutdown request confirmed");
+                    //ConsoleWriter.WriteLine("Shutdown request confirmed");
                     setProgramStateWithoutUndo(ProgramStates.Shutdown);
-                    ConsoleWriter.WriteLine(pState);
+                    //ConsoleWriter.WriteLine(pState);
                     return;
                 }
                 // On The Fly part!!!
@@ -199,7 +199,7 @@ namespace Flavor.Common {
                             setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
                             break;
                     }
-                    ConsoleWriter.WriteLine(pState);
+                    //ConsoleWriter.WriteLine(pState);
                     onTheFly = false;
                     return;
                 }
@@ -266,12 +266,12 @@ namespace Flavor.Common {
         }
 
         internal static void Init() {
-            ConsoleWriter.WriteLine(pState);
+            //ConsoleWriter.WriteLine(pState);
 
             setProgramState(ProgramStates.WaitInit);
             toSend.AddToSend(new UserRequest.sendInit());
 
-            ConsoleWriter.WriteLine(pState);
+            //ConsoleWriter.WriteLine(pState);
         }
         internal static void Shutdown() {
             Disable();
@@ -306,7 +306,7 @@ namespace Flavor.Common {
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
-                    ConsoleWriter.WriteLine("No points for precise mode measure.");
+                    //ConsoleWriter.WriteLine("No points for precise mode measure.");
                     return false;
                 }
             }
@@ -339,7 +339,7 @@ namespace Flavor.Common {
                         if (matrix != null)
                             matrix.Init();
                         else {
-                            ConsoleWriter.WriteLine("Error in peak data format or duplicate substance.");
+                            //ConsoleWriter.WriteLine("Error in peak data format or duplicate substance.");
                             return null;
                         }
                     } else
@@ -364,7 +364,7 @@ namespace Flavor.Common {
                     }
                     return true;
                 } else {
-                    ConsoleWriter.WriteLine("No points for monitor mode measure.");
+                    //ConsoleWriter.WriteLine("No points for monitor mode measure.");
                     return null;
                 }
             } else if (pState == ProgramStates.BackgroundMeasureReady) {
@@ -470,7 +470,7 @@ namespace Flavor.Common {
             */
         }
         private static void initMeasure(ProgramStates state) {
-            ConsoleWriter.WriteLine(pState);
+            //ConsoleWriter.WriteLine(pState);
             if (measureMode != null && measureMode.isOperating) {
                 //error. something in operation
                 throw new Exception("Measure mode already in operation.");

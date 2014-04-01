@@ -2,29 +2,37 @@ using System;
 
 namespace Flavor.Common {
     internal static class ConsoleWriter {
+        private static readonly object locker = new object();
+
         internal static void Subscribe(ILog o) {
-            o.Log += new MessageHandler(Commander2_Log);
+            o.Log += Log;
         }
-        internal static void Desubscribe(ILog o) {
-            o.Log -= new MessageHandler(Commander2_Log);
+        internal static void Unsubscribe(ILog o) {
+            o.Log -= Log;
         }
-        private static void Commander2_Log(string msg) {
+        private static void Log(string msg) {
             WriteLine(msg);
         }
-        internal static void Write(char c) {
+        private static void Write(char c) {
             Console.Write(c);
         }
+        // used in Config
         internal static void Write(string s) {
-            Console.Write(s);
+            lock (locker) {
+                Console.Write(s);
+            }
         }
-        internal static void WriteLine() {
+        private static void WriteLine() {
             Console.WriteLine();
         }
-        internal static void WriteLine(object value) {
+        private static void WriteLine(object value) {
             Console.WriteLine(value);
         }
+        // Used in UI
         internal static void WriteLine(string format, params object[] args) {
-            Console.WriteLine(format, args);
+            lock (locker) {
+                Console.WriteLine(format, args);
+            }
         }
     }
 }

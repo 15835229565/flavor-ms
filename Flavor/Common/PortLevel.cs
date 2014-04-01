@@ -168,13 +168,6 @@ namespace Flavor.Common {
                 serialPort.Write(message, 0, message.Length);
             } catch {
                 OnErrorPort(false, "Error writing this command to serial port:");
-            } finally {
-                // TODO: move up!
-                Flavor.Common.ConsoleWriter.Write("[out]");
-                foreach (byte b in message) {
-                    Flavor.Common.ConsoleWriter.Write((char)b);
-                }
-                Flavor.Common.ConsoleWriter.WriteLine();
             }
         }
     }

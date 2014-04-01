@@ -511,12 +511,14 @@ namespace Flavor.Common {
         private ModBusNew protocol;
         public Commander2() {
             protocol = new ModBusNew(port);
+            ConsoleWriter.Subscribe(protocol);
         }
         public override PortLevel.PortStates Connect() {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
                     toSend = new MessageQueueWithAutomatedStatusChecks(protocol);
+                    ConsoleWriter.Subscribe(toSend);
                     toSend.IsOperating = true;
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
                     DeviceIsConnected = true;
@@ -534,6 +536,7 @@ namespace Flavor.Common {
         }
         public override PortLevel.PortStates Disconnect() {
             toSend.IsOperating = false;
+            ConsoleWriter.Unsubscribe(toSend);
             toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             toSend.Clear();
             PortLevel.PortStates res = port.Close();

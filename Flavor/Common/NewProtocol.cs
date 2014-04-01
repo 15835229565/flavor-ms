@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Flavor.Common.Messaging.Commands;
+using System.Text;
 
 namespace Flavor.Common.Messaging {
-    internal class ModBusNew: IDisposable {
+    internal class ModBusNew: IDisposable, ILog {
         public class CommandReceivedEventArgs: EventArgs {
             private readonly CommandCode code;
             private readonly ServicePacket command;
@@ -94,8 +95,7 @@ namespace Flavor.Common.Messaging {
         }
         private readonly ModbusByteDispatcher byteDispatcher;
         public ModBusNew(PortLevel port) {
-            byteDispatcher = new ModbusByteDispatcher(port, false);
-            byteDispatcher.PackageReceived += ParsePackageReceived;
+            byteDispatcher = new ModbusByteDispatcher(port, false, OnLog, Parse);
         }
 
         private static byte ComputeChecksum(byte[] data) {
@@ -107,9 +107,6 @@ namespace Flavor.Common.Messaging {
         }
         private static bool checkCS(byte[] data) {
             return true ^ Convert.ToBoolean(ComputeChecksum(data));
-        }
-        private void ParsePackageReceived(object sender, ModbusByteDispatcher.PackageReceivedEventArgs e) {
-            Parse(e.Bytes);
         }
         private void Parse(byte[] raw_command) {
             int minLength = 2;
@@ -374,38 +371,31 @@ namespace Flavor.Common.Messaging {
         }
 
         #region IDisposable Members
-
         public void Dispose() {
-            byteDispatcher.PackageReceived -= ParsePackageReceived;
             byteDispatcher.Dispose();
         }
-
+        #endregion
+        #region ILog Members
+        public event MessageHandler Log;
+        protected virtual void OnLog(string message) {
+            if (Log != null)
+                Log(message);
+        }
         #endregion
         class ModbusByteDispatcher: IDisposable {
-            public class PackageReceivedEventArgs: EventArgs {
-                private readonly byte[] bytes;
-                public byte[] Bytes {
-                    get { return bytes; }
-                }
-                public PackageReceivedEventArgs(byte[] bytes) {
-                    this.bytes = bytes;
-                }
-            }
-            public delegate void PackageReceivedDelegate(object sender, PackageReceivedEventArgs e);
-            public event PackageReceivedDelegate PackageReceived;
-            protected void OnPackageReceived(byte[] bytes) {
-                if (PackageReceived != null)
-                    PackageReceived(this, new PackageReceivedEventArgs(bytes));
-            }
             private readonly PortLevel port;
             private readonly bool singleByteDispatching;
-            public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching) {
+            private readonly Action<string> log;
+            private readonly Action<byte[]> parse;
+            public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching, Action<string> log, Action<byte[]> parse) {
                 this.port = port;
                 this.singleByteDispatching = singleByteDispatching;
                 if (singleByteDispatching)
                     port.ByteReceived += PortByteReceived;
                 else
                     port.BytesReceived += PortBytesReceived;
+                this.log = log;
+                this.parse = parse;
             }
             private readonly List<byte> PacketBuffer = new List<byte>();
             private enum PacketingState {
@@ -427,7 +417,7 @@ namespace Flavor.Common.Messaging {
                 DispatchByte(e.Byte);
             }
             private void DispatchByte(byte data) {
-                Flavor.Common.ConsoleWriter.Write((char)data);
+                //Flavor.Common.ConsoleWriter.Write((char)data);
                 switch (PackState) {
                     case PacketingState.Idle: {
                             if (data == (byte)':') {
@@ -435,18 +425,19 @@ namespace Flavor.Common.Messaging {
                                 PackState = PacketingState.WaitUpper;
                             } else {
                                 // rise a logging event here
-                                Flavor.Common.ConsoleWriter.WriteLine("Error({0})", data);
+                                log(string.Format("Error({0})", data));
+                                //Flavor.Common.ConsoleWriter.WriteLine("Error({0})", data);
                                 //Symbol outside packet
                             }
                             break;
                         }
                     case PacketingState.WaitUpper: {
                             if (data == 0x0d) {
-                                OnPackageReceived(PacketBuffer.ToArray());
+                                parse(PacketBuffer.ToArray());
                                 //PacketReceived.Add(PacketBuffer.ToArray());
                                 PacketBuffer.Clear();
 
-                                Flavor.Common.ConsoleWriter.WriteLine();
+                                //Flavor.Common.ConsoleWriter.WriteLine();
                                 PackState = PacketingState.Idle;
                             } else {
                                 UpperNibble = GetInt(data);
@@ -471,7 +462,6 @@ namespace Flavor.Common.Messaging {
                 pack.Add((byte)'\r');
                 return pack.ToArray();
             }
-            // used in Async.Error..
             private static IEnumerable<byte> buildPackBody(byte[] data, byte checksum) {
                 var pack = new List<byte>(2 * data.Length + 2);
                 for (int i = 0; i < data.Length; i++) {
@@ -512,9 +502,14 @@ namespace Flavor.Common.Messaging {
                     port.BytesReceived -= PortBytesReceived;
             }
             #endregion
-
             public void Transmit(byte[] message, byte checksum) {
-                port.Send(buildPack(message, checksum));
+                byte[] pack = buildPack(message, checksum);
+                port.Send(pack);
+                var sb = new StringBuilder("[out]");
+                foreach (byte b in message) {
+                    sb.Append(b);
+                }
+                log(sb.ToString());
             }
         }
     }
