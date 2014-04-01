@@ -194,11 +194,7 @@ namespace Flavor.Common.Messaging {
                         if (0 == Try) {
                             StartSending();
                         }
-                        // TODO: !
-                        if (protocol != null)
-                            protocol.Send(packet.Data);
-                        else
-                            ModBus.Send(packet.Data);
+                        protocol.Send(packet.Data);
                         break;
                     }
                     if (dequeueToSendInsideLock(ref packet))

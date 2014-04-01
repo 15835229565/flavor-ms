@@ -89,7 +89,6 @@
     <Compile Include="Common\Commands\Sync\Sync.Error.cs" />
     <Compile Include="Common\Commands\Sync\Sync.cs" />
     <Compile Include="Common\Commands\UI\UI.cs" />
-    <Compile Include="Common\Commander.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\ConsoleWriter.cs" />
     <Compile Include="Common\Commander2.cs" />
@@ -102,7 +101,6 @@
     <Compile Include="Common\MeasureMode.cs" />
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
-    <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Pifagor.cs" />
     <Compile Include="Common\PortLevel.cs" />
     <Compile Include="Common\SPI_Devices.cs" />
@@ -285,12 +283,6 @@
     <Compile Include="Forms\GraphForm.Designer.cs">
       <DependentUpon>GraphForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\mainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\mainForm.Designer.cs">
-      <DependentUpon>mainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\PlacePointForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -430,10 +422,6 @@
     <EmbeddedResource Include="Forms\GraphForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GraphForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\mainForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>mainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

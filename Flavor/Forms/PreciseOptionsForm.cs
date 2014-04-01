@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Flavor.Controls;
 using Config = Flavor.Common.Config;
 // really here?
-using Commander = Flavor.Common.Commander;
 using ProgramStates = Flavor.Common.ProgramStates;
 using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
