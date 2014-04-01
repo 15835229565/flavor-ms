@@ -512,6 +512,14 @@ namespace Flavor.Common {
         public Commander2() {
             protocol = new ModBusNew(port);
             ConsoleWriter.Subscribe(protocol);
+            port.ErrorPort += (s, e) => {
+                // TODO: more accurate
+                OnErrorOccured(e.Message);
+            };
+            protocol.ErrorCommand += (s, e) => {
+                // TODO: more accurate
+                OnLog(e.Message);
+            };
         }
         public override PortLevel.PortStates Connect() {
             PortLevel.PortStates res = port.Open();
