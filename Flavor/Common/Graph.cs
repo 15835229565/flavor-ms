@@ -23,15 +23,36 @@ namespace Flavor.Common {
             Diff
         }
         // TODO: use IEnumerable instead of int[]
-        internal class Recreate: IEnumerable<int> {
+        internal abstract class Recreate: IEnumerable<int> {
             public readonly static IEnumerable<int> None = Enumerable.Empty<int>();
-            public readonly IEnumerable<int> All = new Recreate { };
-            private Recreate() { }
-            #region IEnumerable<int> Members
-            public IEnumerator<int> GetEnumerator() {
-                for (int i = 1; i <= Config.COLLECTOR_COEFFS.Length; ++i)
-                    yield return i;
+            public static IEnumerable<int> All(int n) {
+                return new RecreateAll(n);
             }
+            public static IEnumerable<int> Set(params int[] ns) {
+                return new RecreateSet(ns);
+            }
+            private class RecreateAll: Recreate {
+                private int N { get; set; }
+                #region IEnumerable<int> Members
+                public override IEnumerator<int> GetEnumerator() {
+                    for (int i = 1; i <= N; ++i)
+                        yield return i;
+                }
+                #endregion
+                public RecreateAll(int n) { N = n; }
+            }
+            private class RecreateSet: Recreate {
+                private int[] NS { get; set; }
+                #region IEnumerable<int> Members
+                public override IEnumerator<int> GetEnumerator() {
+                    foreach (int i in NS)
+                        yield return i;
+                }
+                #endregion
+                public RecreateSet(int[] ns) { NS = ns; }
+            }
+            #region IEnumerable<int> Members
+            public abstract IEnumerator<int> GetEnumerator();
             #endregion
             #region IEnumerable Members
             IEnumerator IEnumerable.GetEnumerator() {
