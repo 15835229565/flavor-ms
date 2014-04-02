@@ -182,7 +182,6 @@ namespace Flavor.Forms {
         protected override void OnFormClosing(FormClosingEventArgs e) {
             var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
             args.Method += InvokeEnableForm;
-            //Commander.ProgramStateChanged -= InvokeEnableForm;
             Graph.OnPointAdded -= Graph_OnPointAdded;
             base.OnFormClosing(args);
         }

@@ -240,38 +240,30 @@ namespace Flavor.Common.Messaging {
                     if (raw_command.Length == 2)
                         packet = new SyncErrorReply.logInvalidState();
                     break;
-                //TODO: less bytes!
-                //!!!
                 case CommandCode.InternalError:
                     if (raw_command.Length == 3)
                         packet = new AsyncErrorReply.logInternalError(raw_command[1]);
                     break;
-                //!!!
                 case CommandCode.InvalidSystemState:
                     if (raw_command.Length == 2)
                         packet = new AsyncErrorReply.logInvalidSystemState();
                     break;
-                //!!!
                 case CommandCode.VacuumCrash:
                     if (raw_command.Length == 3)
                         packet = new AsyncErrorReply.logVacuumCrash(raw_command[1]);
                     break;
-                //!!!
                 case CommandCode.TurboPumpFailure:
                     if (raw_command.Length == 17)
                         packet = new AsyncErrorReply.logTurboPumpFailure(raw_command);
                     break;
-                //!!!
                 case CommandCode.PowerFail:
                     if (raw_command.Length == 2)
                         packet = new AsyncErrorReply.logPowerFail();
                     break;
-                //!!!
                 case CommandCode.InvalidVacuumState:
                     if (raw_command.Length == 2)
                         packet = new AsyncErrorReply.logInvalidVacuumState();
                     break;
-                //!!!
                 case CommandCode.AdcPlaceIonSrc:
                     //!!!
                     if (raw_command.Length >= 2)
@@ -417,27 +409,22 @@ namespace Flavor.Common.Messaging {
                 DispatchByte(e.Byte);
             }
             private void DispatchByte(byte data) {
-                //Flavor.Common.ConsoleWriter.Write((char)data);
                 switch (PackState) {
                     case PacketingState.Idle: {
                             if (data == (byte)':') {
                                 PacketBuffer.Clear();
                                 PackState = PacketingState.WaitUpper;
                             } else {
-                                // rise a logging event here
-                                log(string.Format("Error({0})", data));
-                                //Flavor.Common.ConsoleWriter.WriteLine("Error({0})", data);
                                 //Symbol outside packet
+                                log(string.Format("Error({0})", data));
                             }
                             break;
                         }
                     case PacketingState.WaitUpper: {
                             if (data == 0x0d) {
                                 parse(PacketBuffer.ToArray());
-                                //PacketReceived.Add(PacketBuffer.ToArray());
                                 PacketBuffer.Clear();
 
-                                //Flavor.Common.ConsoleWriter.WriteLine();
                                 PackState = PacketingState.Idle;
                             } else {
                                 UpperNibble = GetInt(data);

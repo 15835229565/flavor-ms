@@ -147,10 +147,6 @@ namespace Flavor.Forms {
                     if (i == 2)
                         ZedGraphRebirth(1, graph.Collectors[1], col2Text);
                 }
-                //if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
-                //    ZedGraphRebirth(0, graph.DisplayedRows1, col1Text);
-                //if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-                //    ZedGraphRebirth(1, graph.DisplayedRows2, col2Text);
             }
             RefreshGraph(recreate);
         }
@@ -210,10 +206,6 @@ namespace Flavor.Forms {
                 if (i == 2)
                     collect2_graph.Refresh();
             }
-            //if ((recreate & Graph.Recreate.Col1) == Graph.Recreate.Col1)
-            //    collect1_graph.Refresh();
-            //if ((recreate & Graph.Recreate.Col2) == Graph.Recreate.Col2)
-            //    collect2_graph.Refresh();
         }
         protected void yAxisChange() {
             collect1_graph.AxisChange();
@@ -240,7 +232,7 @@ namespace Flavor.Forms {
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
                     //limits inverted due to point-to-mass law
-                    Collector col = zgcIndex == 0 ? graph.DisplayedRows1 : graph.DisplayedRows2;
+                    Collector col = zgcIndex == 0 ? graph.Collectors[0] : graph.Collectors[1];
                     myPane.XAxis.Scale.Min = col.pointToMass(maxX[zgcIndex]);
                     myPane.XAxis.Scale.Max = col.pointToMass(minX[zgcIndex]);
                     break;
@@ -315,31 +307,31 @@ namespace Flavor.Forms {
 
                     item = new ToolStripMenuItem();
                     item.Text = "Добавить точку в редактор";
-                    item.Click += new System.EventHandler((s, e) => {
+                    item.Click += (s, e) => {
                         // TODO: raise event here and move code below to mainForm
                         new AddPointForm(step, isFirst).ShowDialog();
-                    });
+                    };
                     items.Add(item);
 
                     item = new ToolStripMenuItem();
                     item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
-                    item.Click += new System.EventHandler((s, e) => {
+                    item.Click += (s, e) => {
                         if (new SetScalingCoeffForm(step, isFirst, graph).ShowDialog() == DialogResult.Yes)
                             Modified = true;
-                    });
+                    };
                     items.Add(item);
                     {
                         PreciseEditorData ped = pls.PEDreference;
 
                         item = new ToolStripMenuItem();
                         item.Text = "Вычесть из текущего с перенормировкой на точку";
-                        item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(step, isFirst, ped); });
+                        item.Click += (s, e) => GraphForm_OnDiffOnPoint(step, isFirst, ped);
                         items.Add(item);
 
                         if (ped != null) {
                             item = new ToolStripMenuItem();
                             item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
-                            item.Click += new System.EventHandler((s, e) => { GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped); });
+                            item.Click += (s, e) => GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped);
                             items.Add(item);
                         }
                     }
@@ -366,21 +358,15 @@ namespace Flavor.Forms {
 
             stepViewItem.Text = "Ступени";
             stepViewItem.CheckOnClick = true;
-            stepViewItem.CheckedChanged += new System.EventHandler((s, e) => {
-                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
-            });
+            stepViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
 
             voltageViewItem.Text = "Напряжение";
             voltageViewItem.CheckOnClick = true;
-            voltageViewItem.CheckedChanged += new System.EventHandler((s, e) => {
-                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
-            });
+            voltageViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
 
             massViewItem.Text = "Масса";
             massViewItem.CheckOnClick = true;
-            massViewItem.CheckedChanged += new System.EventHandler((s, e) => {
-                graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
-            });
+            massViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
 
             item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
             item.Text = "Выбрать шкалу";
@@ -408,13 +394,13 @@ namespace Flavor.Forms {
                 int curveIndex2 = graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
                 string comment = null;
                 if (-1 != curveIndex1) {
-                    var row = graph.DisplayedRows1[curveIndex1];
+                    var row = graph.Collectors[0][curveIndex1];
                     peakSum = row.PeakSum;
                     try {
                         comment = row.PEDreference.Comment;
                     } catch { }
                 } else if (-1 != curveIndex2) {
-                    var row = graph.DisplayedRows2[curveIndex2];
+                    var row = graph.Collectors[1][curveIndex2];
                     peakSum = row.PeakSum;
                     try {
                         comment = row.PEDreference.Comment;

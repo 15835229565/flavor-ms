@@ -20,7 +20,6 @@ namespace Flavor.Common {
                     if (value == ProgramStates.Start)
                         Disable();
                     OnProgramStateChanged();
-                    //OnProgramStateChanged(value);
                 };
             }
         }
@@ -91,7 +90,6 @@ namespace Flavor.Common {
                 if (pState != ProgramStates.Start) {
                     toSend.IsRareMode = false;
                     setProgramStateWithoutUndo(ProgramStates.Start);
-                    //Commander.hBlock = true;//!!!
                     MeasureCancelRequested = false;
                 }
                 return;
@@ -111,7 +109,6 @@ namespace Flavor.Common {
                     if (pState != ProgramStates.Start) {
                         toSend.IsRareMode = false;
                         setProgramStateWithoutUndo(ProgramStates.Start);
-                        //Commander.hBlock = true;//!!!
                         MeasureCancelRequested = false;
                     }
                     return;
@@ -235,10 +232,6 @@ namespace Flavor.Common {
             if (Command is IAutomatedReply) {
                 toSend.AddToSend(((IAutomatedReply)Command).AutomatedReply());
             }
-            // OBSOLETE (ISend only in UI)
-            /*if (Command is ISend) {
-                toSend.AddToSend((ISend)Command);
-            }*/
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
                 hBlock = !Device.highVoltageOn;
@@ -271,8 +264,8 @@ namespace Flavor.Common {
             if (pState == ProgramStates.Ready) {
                 Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
-                CurrentMeasureMode.SuccessfulExit += (s, e) => { Config.autoSaveSpectrumFile(); };
-                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => { Graph.Instance.updateGraphDuringScanMeasure(Device.Detector1, Device.Detector2, p); };
+                CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
+                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, Device.Detector1, Device.Detector2);
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -282,14 +275,14 @@ namespace Flavor.Common {
                     Graph.Instance.Reset();
                     {
                         var temp = new MeasureMode.Precise();
-                        temp.SaveResults += (s, e) => { Config.autoSavePreciseSpectrumFile(e.Shift); };
+                        temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile(e.Shift);
                         CurrentMeasureMode = temp;
                     }
                     CurrentMeasureMode.SuccessfulExit += (s, e) => {
                         var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
                         Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                     };
-                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => { Graph.Instance.updateGraphDuringPreciseMeasure(p, peak); };
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak);
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
@@ -335,15 +328,15 @@ namespace Flavor.Common {
                     // TODO: feed measure mode with start shift value (really?)
                     short? startShiftValue = 0;
                     var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
-                    temp.SaveResults += (s, e) => { Config.autoSaveMonitorSpectrumFile(e.Shift); };
+                    temp.SaveResults += (s, e) => Config.autoSaveMonitorSpectrumFile(e.Shift);
                     CurrentMeasureMode = temp;
-                    CurrentMeasureMode.Finalize += (s, e) => { Config.finalizeMonitorFile(); };
-                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => { Graph.Instance.updateGraphDuringPreciseMeasure(p, peak); };
+                    CurrentMeasureMode.Finalize += (s, e) => Config.finalizeMonitorFile();
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak);
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(ProgramStates.WaitBackgroundMeasure);
                         background = new FixedSizeQueue<List<long>>(backgroundCycles);
-                        // or maybe fake realization: one item, always recounting (accumulate values)..
+                        // or maybe Enumerator realization: one item, always recounting (accumulate values)..
                         Graph.Instance.NewGraphData += NewBackgroundMeasureReady;
                     } else {
                         initMeasure(ProgramStates.Measure);
@@ -446,6 +439,7 @@ namespace Flavor.Common {
         }
         public override void SendSettings() {
             toSend.AddToSend(new UserRequest.sendIVoltage());
+            // All sequence is:
             /*
             Commander.AddToSend(new sendCP());
             Commander.AddToSend(new enableECurrent());

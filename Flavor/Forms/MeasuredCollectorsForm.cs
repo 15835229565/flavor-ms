@@ -78,9 +78,7 @@ namespace Flavor.Forms {
             refreshGraph(recreate);
         }
         private void refreshGraph(int[] recreate) {
-            // not trivial value..
-            //if (recreate == Graph.Recreate.Both)
-            //    return;
+            // TODO: use recreate to refresh only affected collectors
             refreshGraphicsOnMeasureStep();
         }
         private void refreshGraphicsOnMeasureStep() {

@@ -210,10 +210,6 @@ namespace Flavor.Forms {
         protected sealed override void OnLoad(EventArgs e) {
             base.OnLoad(e);
 
-            // loads config (can be Config-dependent)
-            Config.getInitialDirectory();
-            openConfigFileToolStripMenuItem_Click(this, e);
-
             populateStatusTreeView();
             CollectorsForm.Visible = true;
             // do not activate so early!
@@ -229,8 +225,6 @@ namespace Flavor.Forms {
             RefreshVacuumState();
 
             commander.ProgramStateChanged += InvokeRefreshButtons;
-            //!!! moved up to Program
-            //commander.setProgramStateWithoutUndo(ProgramStates.Start);
         }
         protected sealed override void OnFormClosing(FormClosingEventArgs e) {
             if (commander.pState != ProgramStates.Start &&

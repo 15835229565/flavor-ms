@@ -237,24 +237,12 @@ namespace Flavor.Common {
                 return getPointPairs(2, false);
             }
         }
-        [Obsolete]
-        internal Collector DisplayedRows1 {
-            get {
-                return Collectors[0];
-            }
-        }
-        [Obsolete]
-        internal Collector DisplayedRows2 {
-            get {
-                return Collectors[1];
-            }
-        }
         
         internal bool isPreciseSpectrum {
             get {
                 if (this != instance && preciseData != null)
                     return true;
-                if (Collectors.Any(c => { return c.Count > 1; }))
+                if (Collectors.Any(c => c.Count > 1))
                     return true;
                 return false;
             }
@@ -281,13 +269,18 @@ namespace Flavor.Common {
             }
             public void ResetPointListsWithEvent() {
                 Reset();
+                // TODO: All collectors
                 OnNewGraphData(1, 2);
             }
 
             // scan mode
-            public void updateGraphDuringScanMeasure(int y1, int y2, ushort pnt) {
-                Collectors[0][0].Add(pnt, y1);
-                Collectors[1][0].Add(pnt, y2);
+            public void updateGraphDuringScanMeasure(ushort pnt, params int[] ys) {
+                int count = ys.Length;
+                if (count != Collectors.Count)
+                    throw new ArgumentOutOfRangeException("ys");
+                for (int i = 0; i < count; ++i) {
+                    Collectors[i][0].Add(pnt, ys[i]);
+                }
                 LastPoint = pnt;
                 OnNewGraphData();
             }
@@ -314,7 +307,7 @@ namespace Flavor.Common {
                         Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
                     }
                 }
-                // TODO: better solution!
+                // TODO: only affected collectors
                 OnNewGraphData(1, 2);
             }
 
@@ -349,13 +342,17 @@ namespace Flavor.Common {
             Collectors.Clear();
         }
 
-        internal void updateGraphAfterScanLoad(PointPairListPlus pl1, PointPairListPlus pl2) {
-            Collectors[0][0].SetRows(pl1);
-            Collectors[1][0].SetRows(pl2);
+        internal void updateGraphAfterScanLoad(params PointPairListPlus[] plists) {
+            int count = plists.Length;
+            if (count != Collectors.Count)
+                throw new ArgumentOutOfRangeException("plists");
+            for (int i = 0; i < count; ++i) {
+                Collectors[i][0].SetRows(plists[i]);
+            }
         }
-        internal void updateGraphAfterScanLoad(PointPairListPlus pl1, PointPairListPlus pl2, DateTime dt) {
-            updateGraphAfterScanLoad(pl1, pl2);
+        internal void updateGraphAfterScanLoad(DateTime dt, params PointPairListPlus[] plists) {
             this.dateTime = dt;
+            updateGraphAfterScanLoad(plists);
         }
         internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
@@ -372,14 +369,15 @@ namespace Flavor.Common {
             this.shift = shift;
         }
 
-        internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2) {
-            updateGraphAfterScanDiff(pl1, pl2, true);
+        internal void updateGraphAfterScanDiff(params PointPairListPlus[] plists) {
+            updateGraphAfterScanDiff(true, plists);
         }
-        internal void updateGraphAfterScanDiff(PointPairListPlus pl1, PointPairListPlus pl2, bool newData) {
-            updateGraphAfterScanLoad(pl1, pl2, DateTime.MaxValue);
+        internal void updateGraphAfterScanDiff(bool newData, params PointPairListPlus[] plists) {
+            updateGraphAfterScanLoad(DateTime.MaxValue, plists);
             DisplayingMode = Displaying.Diff;
             //lock here?
             if (newData)
+                // TODO: All collectors
                 OnNewGraphData(1, 2);
         }
         internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
@@ -391,6 +389,7 @@ namespace Flavor.Common {
             DisplayingMode = Displaying.Diff;
             //lock here?
             if (newData)
+                // TODO: only affected collectors
                 OnNewGraphData(1, 2);
         }
         #region Graph scaling to mass coeffs

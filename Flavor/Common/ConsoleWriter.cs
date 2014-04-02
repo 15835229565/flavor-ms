@@ -28,7 +28,7 @@ namespace Flavor.Common {
         private static void WriteLine(object value) {
             Console.WriteLine(value);
         }
-        // Used in UI
+        // used in UI
         internal static void WriteLine(string format, params object[] args) {
             lock (locker) {
                 Console.WriteLine(format, args);

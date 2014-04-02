@@ -18,15 +18,21 @@ namespace Flavor {
             //suppress russian language user interface
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
 
-            //mainForm MSControl = new mainForm();
-            //Commander.setProgramStateWithoutUndo(ProgramStates.Start);
-            //MSControl.WindowState = FormWindowState.Maximized;
+            // TODO: load config to use proper Commander and set proper form parameters
+            Config.getInitialDirectory();
+            EventHandler onLoad = null;
+            try {
+                Config.loadGlobalConfig();
+            } catch (Config.ConfigLoadException cle) {
+                onLoad = (s, e) => cle.visualise();
+            }
+
             var commander = new Commander2();
-            MainForm2 MSControl2 = new MainForm2(commander);
+            MainForm2 MSControl = new MainForm2(commander);
+            MSControl.Load += onLoad;
             //commander.setProgramStateWithoutUndo(ProgramStates.Start);
-            MSControl2.WindowState = FormWindowState.Maximized;
-            //Application.Run(MSControl);
-            Application.Run(MSControl2);
+            MSControl.WindowState = FormWindowState.Maximized;
+            Application.Run(MSControl);
         }
     }
 }

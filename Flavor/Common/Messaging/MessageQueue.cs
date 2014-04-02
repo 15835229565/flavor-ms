@@ -11,8 +11,7 @@ namespace Flavor.Common.Messaging {
         private bool turboToSend = false;
 
         private Queue<UserRequest> ToSend = new Queue<UserRequest>();
-        private System.Timers.Timer SendTimer;
-        private System.Timers.ElapsedEventHandler elapsed;
+        private System.Timers.Timer sendTimer;
 
         private object syncObj = null;
         private object SyncRoot {
@@ -25,23 +24,16 @@ namespace Flavor.Common.Messaging {
             if (Undo != null)
                 Undo(this, EventArgs.Empty);
         }
-        [Obsolete]
-        internal MessageQueue() {
-            elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
-            SendTimer = new System.Timers.Timer(1000);
-            SendTimer.Enabled = false;
-        }
         private ModBusNew protocol = null;
         internal MessageQueue(ModBusNew protocol) {
             this.protocol = protocol;
-            elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
-            SendTimer = new System.Timers.Timer(1000);
-            SendTimer.Enabled = false;
+            sendTimer = new System.Timers.Timer(1000);
+            sendTimer.Enabled = false;
         }
         internal void Clear() {
             lock (SyncRoot) {
-                lock (SendTimer) {
-                    if (SendTimer.Enabled) {
+                lock (sendTimer) {
+                    if (sendTimer.Enabled) {
                         StopSending();
                     }
                 }
@@ -83,7 +75,6 @@ namespace Flavor.Common.Messaging {
             lock (SyncRoot) {
                 if (ToSend.Count == 0) {
                     OnLog(string.Format("Received {0}. While waiting for nothing.", command));
-                    //ConsoleWriter.WriteLine("Received {0}. While waiting for nothing.", command);
                     return null;
                 }
                 peekToSendInsideLock(ref packet);
@@ -93,7 +84,6 @@ namespace Flavor.Common.Messaging {
                 }
                 if (packet.Id != ((SyncReply)command).Id) {
                     OnLog(string.Format("Received {0}. While waiting for {1}.", command, packet));
-                    //ConsoleWriter.WriteLine("Received {0}. While waiting for {1}.", command, packet);
                     return null;
                 }
                 StopSending();
@@ -124,33 +114,31 @@ namespace Flavor.Common.Messaging {
         }
 
         private void StartSending() {
-            lock (SendTimer) {
-                if (SendTimer.Enabled || Try != 0) {
+            lock (sendTimer) {
+                if (sendTimer.Enabled || Try != 0) {
                     OnLog("Error. SendTimer already started.");
-                    //ConsoleWriter.WriteLine("Error. SendTimer already started.");
                     return;
                 }
                 Try = 1;
-                SendTimer.Elapsed += elapsed;
-                SendTimer.Enabled = true;
+                sendTimer.Elapsed += SendTime_Elapsed;
+                sendTimer.Enabled = true;
             }
         }
         private void StopSending() {
-            lock (SendTimer) {
-                if (!SendTimer.Enabled || Try == 0) {
+            lock (sendTimer) {
+                if (!sendTimer.Enabled || Try == 0) {
                     OnLog("Error. SendTimer already stopped.");
-                    //ConsoleWriter.WriteLine("Error. SendTimer already stopped.");
                     return;
                 }
-                SendTimer.Elapsed -= elapsed;
-                SendTimer.Enabled = false;
+                sendTimer.Elapsed -= SendTime_Elapsed;
+                sendTimer.Enabled = false;
                 Try = 0;
             }
         }
 
         private void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
             lock (SyncRoot) {
-                lock (SendTimer) {
+                lock (sendTimer) {
                     ++Try;
                     if (Try <= Config.Try) {
                         Send();
@@ -161,26 +149,21 @@ namespace Flavor.Common.Messaging {
                 UserRequest packet = null;
                 if (ToSend.Count == 0)
                     OnLog("Error. Packet queue is empty but sending counter is not zero.");
-                    //ConsoleWriter.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
                 else {
                     if (dequeueToSendInsideLock(ref packet)) {
                         if (packet == null)
                             OnLog("Error. In message queue null found.");
-                            //ConsoleWriter.WriteLine("Error. In message queue null found.");
                     }
                 }
                 if (packet != null)
                     OnLog(string.Format("Device not answering to {0}", packet.Id));
-                    //ConsoleWriter.WriteLine("Device not answering to {0}", packet.Id);
-
                 OnUndo();
-                //Commander.setProgramStateWithoutUndo(Commander.pStatePrev);
             }
         }
 
         private void trySend() {
-            lock (SendTimer) {
-                if (!SendTimer.Enabled) {
+            lock (sendTimer) {
+                if (!sendTimer.Enabled) {
                     Send();
                 }
             }
@@ -215,7 +198,6 @@ namespace Flavor.Common.Messaging {
                 return true;
             } catch (InvalidOperationException) {
                 OnLog("Error. Dequeue failed though someting must be in queue.");
-                //ConsoleWriter.WriteLine("Error. Dequeue failed though someting must be in queue.");
             }
             try {
                 ToSend.Clear();
@@ -224,10 +206,8 @@ namespace Flavor.Common.Messaging {
                 return false;
             } catch (InvalidOperationException) {
                 OnLog("Error. Cannot clear message queue.");
-                //ConsoleWriter.WriteLine("Error. Cannot clear message queue.");
             }
             OnLog("Message queue recreation.");
-            //ConsoleWriter.WriteLine("Message queue recreation.");
             ToSend = new Queue<UserRequest>();
             statusToSend = false;
             turboToSend = false;
@@ -238,10 +218,8 @@ namespace Flavor.Common.Messaging {
                 packet = ToSend.Peek();
                 if (packet == null)
                     OnLog("Error. In message queue null found.");
-                    //ConsoleWriter.WriteLine("Error. In message queue null found.");
             } catch (InvalidOperationException) {
                 OnLog("Error. Peek failed though someting must be in queue.");
-                //ConsoleWriter.WriteLine("Error. Peek failed though someting must be in queue.");
             }
         }
         #region ILog Members

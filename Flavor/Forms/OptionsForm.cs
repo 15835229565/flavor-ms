@@ -55,13 +55,11 @@ namespace Flavor.Forms {
                 (double)hCurrentNumericUpDown.Value,
                 (double)fV1NumericUpDown.Value,
                 (double)fV2NumericUpDown.Value);
-            //Commander.notRareModeRequested = rareModeCheckBox.Checked;
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         protected virtual void applyButton_Click(object sender, EventArgs e) {
-            //Commander.sendSettings();
             Config.saveGlobalCommonOptions(
                 (ushort)expTimeNumericUpDown.Value,
                 (ushort)idleTimeNumericUpDown.Value,
@@ -71,7 +69,6 @@ namespace Flavor.Forms {
                 (double)hCurrentNumericUpDown.Value,
                 (double)fV1NumericUpDown.Value,
                 (double)fV2NumericUpDown.Value);
-            //Commander.notRareModeRequested = rareModeCheckBox.Checked;
             this.DialogResult = DialogResult.Yes;
             this.Close();
         }
@@ -117,8 +114,6 @@ namespace Flavor.Forms {
             var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs();
             args.Method += InvokeSetVisibility;
             base.OnLoad(args);
-            //Commander.ProgramStateChanged += InvokeSetVisibility;
-            //rareModeCheckBox.Checked = Commander.notRareModeRequested;
             rareModeCheckBox.Checked = args.NotRareModeRequested;
             if (args.Enabled) {
                 applyButton.Enabled = true;
@@ -138,7 +133,6 @@ namespace Flavor.Forms {
                 : base(args.CloseReason, args.Cancel) { }
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            //Commander.ProgramStateChanged -= InvokeSetVisibility;
             var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
             args.NotRareModeRequested = rareModeCheckBox.Checked;
             args.Method += InvokeSetVisibility;

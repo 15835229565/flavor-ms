@@ -11,16 +11,11 @@ namespace Flavor.Forms {
         private byte myCol = 0;
         private ushort myStep = 0;
         private Graph graph;
-		private float mass;
-        public float Mass {
-            get { return mass; }
-            set { mass = value; }
-        }
         internal SetScalingCoeffForm()
             : base() {
             InitializeComponent();
             // TODO: better solution, make new CustomTextBoxClass or extension method
-            this.massTextBox.KeyPress += new KeyPressEventHandler(Utility.positiveNumericTextbox_TextChanged);
+            this.massTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
         }
 
         internal SetScalingCoeffForm(ushort step, byte col, Graph graph)
@@ -57,7 +52,6 @@ namespace Flavor.Forms {
         }
 
         protected void cancelButton_Click(object sender, EventArgs e) {
-            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
     }

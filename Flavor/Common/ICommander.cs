@@ -14,7 +14,6 @@ namespace Flavor.Common {
         WaitShutdown,
     }
 
-    //public delegate void ProgramEventHandler();
     public delegate void ProgramEventHandler(ProgramStates state);
     public delegate void MessageHandler(string msg);
 
@@ -34,7 +33,6 @@ namespace Flavor.Common {
 
         void Unblock();
 
-        //OptionsForm only
         void SendSettings();
     }
     interface IConnectionActions {
@@ -42,7 +40,6 @@ namespace Flavor.Common {
         PortLevel.PortStates Connect();
         PortLevel.PortStates Disconnect();
 
-        //ConnectOptionsForm only
         void Reconnect();
         string[] AvailablePorts { get; }
     }

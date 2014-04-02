@@ -1277,10 +1277,10 @@ namespace Flavor.Common {
                         graph = new Graph(commonOpts, loadScalingCoeffs());
                         switch (result) {
                             case Graph.Displaying.Measured:
-                                graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
+                                graph.updateGraphAfterScanLoad(loadTimeStamp(), pl1, pl2);
                                 return true;
                             case Graph.Displaying.Diff:
-                                graph.updateGraphAfterScanDiff(pl1, pl2, false);
+                                graph.updateGraphAfterScanDiff(false, pl1, pl2);
                                 return true;
                             default:
                                 return false;
@@ -1496,7 +1496,7 @@ namespace Flavor.Common {
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
                     private void saveMassCoeffs() {
-                        saveScalingCoeffs(Graph.Instance.DisplayedRows1.Coeff, Graph.Instance.DisplayedRows2.Coeff);
+                        saveScalingCoeffs(Graph.Instance.Collectors[0].Coeff, Graph.Instance.Collectors[1].Coeff);
                     }
                     private void saveCheckOptions() {
                         //checkpeak & iterations
@@ -1887,10 +1887,10 @@ namespace Flavor.Common {
                         graph = new Graph(commonOpts, loadScalingCoeffs());
                         switch (result) {
                             case Graph.Displaying.Measured:
-                                graph.updateGraphAfterScanLoad(pl1, pl2, loadTimeStamp());
+                                graph.updateGraphAfterScanLoad(loadTimeStamp(), pl1, pl2);
                                 return true;
                             case Graph.Displaying.Diff:
-                                graph.updateGraphAfterScanDiff(pl1, pl2, false);
+                                graph.updateGraphAfterScanDiff(false, pl1, pl2);
                                 return true;
                             default:
                                 return false;
@@ -2106,7 +2106,7 @@ namespace Flavor.Common {
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
                     private void saveMassCoeffs() {
-                        saveScalingCoeffs(Graph.Instance.DisplayedRows1.Coeff, Graph.Instance.DisplayedRows2.Coeff);
+                        saveScalingCoeffs(Graph.Instance.Collectors[0].Coeff, Graph.Instance.Collectors[1].Coeff);
                     }
                     private void saveCheckOptions() {
                         //checkpeak & iterations
@@ -2173,7 +2173,7 @@ namespace Flavor.Common {
                     createCommonOptsStub(doc, rootNode);
                     writer.saveCommonOptions(graph.CommonOptions);
                 }
-                writer.saveScalingCoeffs(graph.DisplayedRows1.Coeff, graph.DisplayedRows2.Coeff);
+                writer.saveScalingCoeffs(graph.Collectors[0].Coeff, graph.Collectors[1].Coeff);
                 return writer;
             }
             public static ICommonOptionsReader getCommonOptionsReader(string confName) {
