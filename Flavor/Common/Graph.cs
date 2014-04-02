@@ -23,7 +23,7 @@ namespace Flavor.Common {
             Diff
         }
         // TODO: use IEnumerable instead of int[]
-        internal abstract class Recreate: IEnumerable<int> {
+        private abstract class Recreate: IEnumerable<int> {
             public readonly static IEnumerable<int> None = Enumerable.Empty<int>();
             public static IEnumerable<int> All(int n) {
                 return new RecreateAll(n);
@@ -169,12 +169,28 @@ namespace Flavor.Common {
         
         // TODO: move to MeasureGraph (but is used on diff)
         internal delegate void GraphEventHandler(int[] recreate);
+        //internal delegate void GraphEventHandler(IEnumerable<int> recreate);
         internal event GraphEventHandler NewGraphData;
         private void OnNewGraphData(params int[] recreate) {
             //lock here?
             if (NewGraphData != null)
                 NewGraphData(recreate);
         }
+        //private void OnNewGraphData(params int[] recreate) {
+        //    //lock here?
+        //    if (NewGraphData != null)
+        //        NewGraphData(Recreate.Set(recreate));
+        //}
+        //private void OnNewGraphDataNone() {
+        //    //lock here?
+        //    if (NewGraphData != null)
+        //        NewGraphData(Recreate.None);
+        //}
+        //private void OnNewGraphDataAll() {
+        //    //lock here?
+        //    if (NewGraphData != null)
+        //        NewGraphData(Recreate.All(Collectors.Count));
+        //}
 
         internal delegate void AxisModeEventHandler();
         internal delegate void DisplayModeEventHandler(Displaying mode);
