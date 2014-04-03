@@ -1,4 +1,4 @@
-﻿using Flavor.Common.Messaging.Commands;
+﻿using Flavor.Common.Messaging;
 
 namespace Flavor.Common {
     public enum ProgramStates: byte {

@@ -83,23 +83,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Commands.cs" />
-    <Compile Include="Common\Commands\Async\Async.cs" />
-    <Compile Include="Common\Commands\Async\Async.Error.cs" />
-    <Compile Include="Common\Commands\Interfaces\Interfaces.cs" />
-    <Compile Include="Common\Commands\Sync\Sync.Error.cs" />
-    <Compile Include="Common\Commands\Sync\Sync.cs" />
-    <Compile Include="Common\Commands\UI\UI.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\Async.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\Async.Error.cs" />
+    <Compile Include="Common\Messaging\Interfaces.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\Sync.Error.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\Sync.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\UI.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\ConsoleWriter.cs" />
     <Compile Include="Common\Commander2.cs" />
     <Compile Include="Common\ICommander.cs" />
     <Compile Include="Common\MC.cs" />
+    <Compile Include="Common\Messaging\Almazov\AlexProtocol.cs" />
     <Compile Include="Common\Messaging\ByteArrayEventArgs.cs" />
     <Compile Include="Common\Messaging\CommandReceivedEventArgs.cs" />
     <Compile Include="Common\Messaging\ErrorCommandEventArgs.cs" />
     <Compile Include="Common\Messaging\IByteDispatcher.cs" />
     <Compile Include="Common\Messaging\IProtocol.cs" />
-    <Compile Include="Common\NewProtocol.cs" />
+    <Compile Include="Common\Messaging\ServicePacket.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\ModBus.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
     <Compile Include="Common\Library\Matrix.cs" />

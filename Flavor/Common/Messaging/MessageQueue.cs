@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using UserRequest = Flavor.Common.Messaging.Commands.UserRequest;
-using SyncReply = Flavor.Common.Messaging.Commands.SyncReply;
 using System.Collections;
 
 namespace Flavor.Common.Messaging {
-    class MessageQueue: ILog {
+    class MessageQueue<T>: ILog {
         private byte Try = 0;
-        private bool statusToSend = false;
-        private bool turboToSend = false;
 
-        private Queue<UserRequest> ToSend = new Queue<UserRequest>();
+        private Queue<ServicePacket<T>.UserRequest> toSend = new Queue<ServicePacket<T>.UserRequest>();
         private System.Timers.Timer sendTimer;
 
         private object syncObj = null;
         private object SyncRoot {
             get {
-                return syncObj == null ? (syncObj = (ToSend as ICollection).SyncRoot) : syncObj; 
+                return syncObj == null ? (syncObj = (toSend as ICollection).SyncRoot) : syncObj; 
             }
         }
         public event EventHandler Undo;
@@ -24,8 +20,8 @@ namespace Flavor.Common.Messaging {
             if (Undo != null)
                 Undo(this, EventArgs.Empty);
         }
-        private IProtocol protocol = null;
-        internal MessageQueue(IProtocol protocol) {
+        private IProtocol<T> protocol = null;
+        internal MessageQueue(IProtocol<T> protocol) {
             this.protocol = protocol;
             sendTimer = new System.Timers.Timer(1000);
             sendTimer.Enabled = false;
@@ -37,32 +33,22 @@ namespace Flavor.Common.Messaging {
                         StopSending();
                     }
                 }
-                statusToSend = false;
-                turboToSend = false;
-                ToSend.Clear();
+                toSend.Clear();
             }
         }
-        internal void AddToSend(UserRequest Command)//Enqueue
+        internal void AddToSend(ServicePacket<T>.UserRequest command)//Enqueue
         {
             lock (SyncRoot) {
-                if (Command is UserRequest.requestStatus) {
-                    if (statusToSend) {
+                if (command is IStatusRequest) {
+                    if (toSend.Contains(command))
                         return;
-                    }
-                    statusToSend = true;
-                } else if (Command is UserRequest.getTurboPumpStatus) {
-                    if (turboToSend) {
-                        return;
-                    }
-                    turboToSend = true;
                 }
-
-                ToSend.Enqueue(Command);
+                toSend.Enqueue(command);
                 trySend();
             }
         }
-        internal UserRequest Dequeue() {
-            UserRequest packet = null;
+        internal ServicePacket<T>.UserRequest Dequeue() {
+            ServicePacket<T>.UserRequest packet = null;
             lock (SyncRoot) {
                 dequeueToSendInsideLock(ref packet);
                 StopSending();
@@ -70,10 +56,10 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        internal UserRequest Peek(SyncReply command) {
-            UserRequest packet = null;
+        internal ServicePacket<T>.UserRequest Peek(ServicePacket<T>.Sync command) {
+            ServicePacket<T>.UserRequest packet = null;
             lock (SyncRoot) {
-                if (ToSend.Count == 0) {
+                if (toSend.Count == 0) {
                     OnLog(string.Format("Received {0}. While waiting for nothing.", command));
                     return null;
                 }
@@ -82,7 +68,7 @@ namespace Flavor.Common.Messaging {
                     dequeueToSendInsideLock(ref packet);
                     return null;
                 }
-                if (packet.Id != ((SyncReply)command).Id) {
+                if (!packet.Id.Equals(command.Id)) {
                     OnLog(string.Format("Received {0}. While waiting for {1}.", command, packet));
                     return null;
                 }
@@ -95,22 +81,22 @@ namespace Flavor.Common.Messaging {
         }
 
         protected void addStatusRequest() {
-            lock (SyncRoot) {
+            throw new NotImplementedException();
+            /*lock (SyncRoot) {
                 if (!statusToSend) {
-                    ToSend.Enqueue(new UserRequest.requestStatus());
-                    statusToSend = true;
+                    toSend.Enqueue(new ServicePacket<T>.User.requestStatus());
                     trySend();
                 }
-            }
+            }*/
         }
         protected void addTurboPumpStatusRequest() {
-            lock (SyncRoot) {
+            throw new NotImplementedException();
+            /*lock (SyncRoot) {
                 if (!turboToSend) {
-                    ToSend.Enqueue(new UserRequest.getTurboPumpStatus());
-                    turboToSend = true;
+                    toSend.Enqueue(new ServicePacket<T>.User.getTurboPumpStatus());
                 }
                 trySend();
-            }
+            }*/
         }
 
         private void StartSending() {
@@ -146,8 +132,8 @@ namespace Flavor.Common.Messaging {
                     }
                     StopSending();
                 }
-                UserRequest packet = null;
-                if (ToSend.Count == 0)
+                ServicePacket<T>.UserRequest packet = null;
+                if (toSend.Count == 0)
                     OnLog("Error. Packet queue is empty but sending counter is not zero.");
                 else {
                     if (dequeueToSendInsideLock(ref packet)) {
@@ -170,8 +156,8 @@ namespace Flavor.Common.Messaging {
         }
         private void Send() {
             lock (SyncRoot) {
-                while (ToSend.Count > 0) {
-                    UserRequest packet = null;
+                while (toSend.Count > 0) {
+                    ServicePacket<T>.UserRequest packet = null;
                     peekToSendInsideLock(ref packet);
                     if (packet != null) {
                         if (0 == Try) {
@@ -187,35 +173,26 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        private bool dequeueToSendInsideLock(ref UserRequest packet) {
+        private bool dequeueToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
             try {
-                packet = ToSend.Dequeue();
-                if (packet is UserRequest.requestStatus) {
-                    statusToSend = false;
-                } else if (packet is UserRequest.getTurboPumpStatus) {
-                    turboToSend = false;
-                }
+                packet = toSend.Dequeue();
                 return true;
             } catch (InvalidOperationException) {
                 OnLog("Error. Dequeue failed though someting must be in queue.");
             }
             try {
-                ToSend.Clear();
-                statusToSend = false;
-                turboToSend = false;
+                toSend.Clear();
                 return false;
             } catch (InvalidOperationException) {
                 OnLog("Error. Cannot clear message queue.");
             }
             OnLog("Message queue recreation.");
-            ToSend = new Queue<UserRequest>();
-            statusToSend = false;
-            turboToSend = false;
+            toSend = new Queue<ServicePacket<T>.UserRequest>();
             return false;
         }
-        private void peekToSendInsideLock(ref UserRequest packet) {
+        private void peekToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
             try {
-                packet = ToSend.Peek();
+                packet = toSend.Peek();
                 if (packet == null)
                     OnLog("Error. In message queue null found.");
             } catch (InvalidOperationException) {

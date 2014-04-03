@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 using Flavor.Common.Messaging;
-using Flavor.Common.Messaging.Commands;
+using Flavor.Common.Messaging.SevMorGeo;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
@@ -63,7 +63,7 @@ namespace Flavor.Common {
             }
         }
 
-        private MessageQueueWithAutomatedStatusChecks toSend;
+        private MessageQueueWithAutomatedStatusChecks<ModBus.CommandCode> toSend;
 
         private bool measureCancelRequested = false;
         public override bool MeasureCancelRequested {
@@ -75,13 +75,13 @@ namespace Flavor.Common {
             }
         }
 
-        private void Realize(object sender, CommandReceivedEventArgs e) {
-            ServicePacket command = e.Command;
+        private void Realize(object sender, CommandReceivedEventArgs<ModBus.CommandCode> e) {
+            var command = e.Command;
 
-            if (command is AsyncErrorReply) {
+            if (command is ServicePacket<ModBus.CommandCode>.AsyncError) {
                 CheckInterfaces(command);
 
-                string message = string.Format("Device says: {0}", ((AsyncErrorReply)command).errorMessage);
+                string message = string.Format("Device says: {0}", ((ServicePacket<ModBus.CommandCode>.AsyncError)command).Message);
                 OnAsyncReplyReceived(message);
                 // TODO: subscribe in Config for event
                 Config.logCrash(message);
@@ -93,9 +93,9 @@ namespace Flavor.Common {
                 }
                 return;
             }
-            if (command is AsyncReply) {
+            if (command is ServicePacket<ModBus.CommandCode>.Async) {
                 CheckInterfaces(command);
-                if (command is AsyncReply.confirmShutdowned) {
+                if (command is confirmShutdowned) {
                     OnLog("System is shutdowned");
                     setProgramStateWithoutUndo(ProgramStates.Start);
                     hBlock = true;
@@ -103,7 +103,7 @@ namespace Flavor.Common {
                     Device.Init();
                     return;
                 }
-                if (command is AsyncReply.SystemReseted) {
+                if (command is SystemReseted) {
                     OnAsyncReplyReceived("Система переинициализировалась");
                     if (pState != ProgramStates.Start) {
                         toSend.IsRareMode = false;
@@ -112,7 +112,7 @@ namespace Flavor.Common {
                     }
                     return;
                 }
-                if (command is AsyncReply.confirmVacuumReady) {
+                if (command is confirmVacuumReady) {
                     if (hBlock) {
                         setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
                     } else {
@@ -120,46 +120,46 @@ namespace Flavor.Common {
                     }
                     return;
                 }
-                if (command is AsyncReply.confirmHighVoltageOff) {
+                if (command is confirmHighVoltageOff) {
                     hBlock = true;
                     setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);//???
                     return;
                 }
-                if (command is AsyncReply.confirmHighVoltageOn) {
+                if (command is confirmHighVoltageOn) {
                     hBlock = false;
                     if (pState == ProgramStates.WaitHighVoltage) {
                         setProgramStateWithoutUndo(ProgramStates.Ready);
                     }
-                    toSend.AddToSend(new UserRequest.sendSVoltage(0));//Set ScanVoltage to low limit
-                    toSend.AddToSend(new UserRequest.sendIVoltage());// и остальные напряжения затем
+                    toSend.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
+                    toSend.AddToSend(new sendIVoltage());// и остальные напряжения затем
                     return;
                 }
                 return;
             }
-            if (command is SyncErrorReply) {
+            if (command is ServicePacket<ModBus.CommandCode>.SyncError) {
                 toSend.Dequeue();
                 CheckInterfaces(command);
                 return;
             }
-            if (command is SyncReply) {
-                if (null == toSend.Peek((SyncReply)command)) {
+            if (command is ServicePacket<ModBus.CommandCode>.Sync) {
+                if (null == toSend.Peek((ServicePacket<ModBus.CommandCode>.Sync)command)) {
                     return;
                 }
                 CheckInterfaces(command);
-                if (command is SyncReply.confirmInit) {
+                if (command is confirmInit) {
                     OnLog("Init request confirmed");
                     setProgramStateWithoutUndo(ProgramStates.Init);
                     OnLog(pState.ToString());
                     return;
                 }
-                if (command is SyncReply.confirmShutdown) {
+                if (command is confirmShutdown) {
                     OnLog("Shutdown request confirmed");
                     setProgramStateWithoutUndo(ProgramStates.Shutdown);
                     OnLog(pState.ToString());
                     return;
                 }
                 // On The Fly part!!!
-                if (onTheFly && (pState == ProgramStates.Start) && (command is SyncReply.updateStatus)) {
+                if (onTheFly && (pState == ProgramStates.Start) && (command is updateStatus)) {
                     switch (Device.sysState) {
                         case Device.DeviceStates.Init:
                         case Device.DeviceStates.VacuumInit:
@@ -174,7 +174,7 @@ namespace Flavor.Common {
                             break;
 
                         case Device.DeviceStates.Measured:
-                            toSend.AddToSend(new UserRequest.getCounts());
+                            toSend.AddToSend(new getCounts());
                             // waiting for fake counts reply
                             break;
                         case Device.DeviceStates.Measuring:
@@ -195,7 +195,7 @@ namespace Flavor.Common {
                     onTheFly = false;
                     return;
                 }
-                if (command is SyncReply.updateCounts) {
+                if (command is updateCounts) {
                     if (CurrentMeasureMode == null) {
                         // fake reply caught here (in order to put device into proper state)
                         hBlock = false;
@@ -207,12 +207,12 @@ namespace Flavor.Common {
                     }
                     return;
                 }
-                if (command is SyncReply.confirmSVoltage) {
+                if (command is confirmSVoltage) {
                     if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                        CurrentMeasureMode.NextMeasure((t1, t2) => { toSend.AddToSend(new UserRequest.sendMeasure(t1, t2)); });
+                        CurrentMeasureMode.NextMeasure((t1, t2) => { toSend.AddToSend(new sendMeasure(t1, t2)); });
                     }
                 }
-                if (command is SyncReply.confirmF2Voltage) {
+                if (command is confirmF2Voltage) {
                     if (pState == ProgramStates.Measure ||
                         pState == ProgramStates.WaitBackgroundMeasure) {
                         toSend.IsRareMode = !notRareModeRequested;
@@ -226,10 +226,11 @@ namespace Flavor.Common {
             }
         } 
 
-        private void CheckInterfaces(ServicePacket Command) {
+        private void CheckInterfaces(ServicePacket<ModBus.CommandCode> Command) {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
-                toSend.AddToSend(((IAutomatedReply)Command).AutomatedReply());
+                // BAD!
+                toSend.AddToSend(((IAutomatedReply)Command).AutomatedReply() as ServicePacket<ModBus.CommandCode>.UserRequest);
             }
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
@@ -248,13 +249,13 @@ namespace Flavor.Common {
             OnLog(pState.ToString());
 
             setProgramState(ProgramStates.WaitInit);
-            toSend.AddToSend(new UserRequest.sendInit());
+            toSend.AddToSend(new sendInit());
 
             OnLog(pState.ToString());
         }
         public override void Shutdown() {
             Disable();
-            toSend.AddToSend(new UserRequest.sendShutdown());
+            toSend.AddToSend(new sendShutdown());
             setProgramState(ProgramStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
         }
@@ -437,7 +438,7 @@ namespace Flavor.Common {
             CurrentMeasureMode = null;//?
         }
         public override void SendSettings() {
-            toSend.AddToSend(new UserRequest.sendIVoltage());
+            toSend.AddToSend(new sendIVoltage());
             // All sequence is:
             /*
             Commander.AddToSend(new sendCP());
@@ -481,7 +482,7 @@ namespace Flavor.Common {
             setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
         }
         private void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
-            toSend.AddToSend(new UserRequest.sendSVoltage(e.Step));
+            toSend.AddToSend(new sendSVoltage(e.Step));
         }
         public override bool SomePointsUsed {
             get {
@@ -497,13 +498,13 @@ namespace Flavor.Common {
                 pState == ProgramStates.WaitBackgroundMeasure ||
                 pState == ProgramStates.BackgroundMeasureReady)//strange..
                 MeasureCancelRequested = true;
-            toSend.AddToSend(new UserRequest.enableHighVoltage(hBlock));
+            toSend.AddToSend(new enableHighVoltage(hBlock));
         }
 
         private PortLevel port = new PortLevel();
-        private IProtocol protocol;
+        private IProtocol<ModBus.CommandCode> protocol;
         public Commander2() {
-            protocol = new ModBusNew(port);
+            protocol = new ModBus(port);
             ConsoleWriter.Subscribe(protocol);
             port.ErrorPort += (s, e) => {
                 // TODO: more accurate
@@ -518,7 +519,7 @@ namespace Flavor.Common {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
-                    toSend = new MessageQueueWithAutomatedStatusChecks(protocol);
+                    toSend = new MessageQueueWithAutomatedStatusChecks<ModBus.CommandCode>(protocol);
                     ConsoleWriter.Subscribe(toSend);
                     toSend.IsOperating = true;
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);

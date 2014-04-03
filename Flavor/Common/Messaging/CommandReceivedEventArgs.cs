@@ -1,10 +1,9 @@
 ﻿using System;
-using Flavor.Common.Messaging.Commands;
 
 namespace Flavor.Common.Messaging {
-    class CommandReceivedEventArgs: EventArgs {
-        public ServicePacket Command { get; private set; }
-        public CommandReceivedEventArgs(ServicePacket command) {
+    public class CommandReceivedEventArgs<T>: EventArgs {
+        public ServicePacket<T> Command { get; private set; }
+        public CommandReceivedEventArgs(ServicePacket<T> command) {
             Command = command;
         }
     }

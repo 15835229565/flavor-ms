@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Flavor.Common.Messaging {
-    class MessageQueueWithAutomatedStatusChecks: MessageQueue {
+    class MessageQueueWithAutomatedStatusChecks<T>: MessageQueue<T> {
         // TODO: use 1 timer
         private System.Timers.Timer DeviceStatusCheckTimer;
         private System.Timers.Timer TurboPumpCheckTimer;
@@ -70,7 +70,7 @@ namespace Flavor.Common.Messaging {
             TurboPumpCheckTimer.Enabled = operating;
         }
 
-        internal MessageQueueWithAutomatedStatusChecks(IProtocol protocol)
+        internal MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol)
             : base(protocol) {
             initTimers();
         }

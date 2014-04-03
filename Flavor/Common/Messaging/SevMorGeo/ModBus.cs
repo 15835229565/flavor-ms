@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Flavor.Common.Messaging.Commands;
 using System.Text;
 
-namespace Flavor.Common.Messaging {
-    internal class ModBusNew: IProtocol {
+namespace Flavor.Common.Messaging.SevMorGeo {
+    internal class ModBus: IProtocol<ModBus.CommandCode> {
         #region IProtocol Members
-        public event EventHandler<CommandReceivedEventArgs> CommandReceived;
-        protected void OnCommandReceived(ServicePacket command) {
+        public event EventHandler<CommandReceivedEventArgs<CommandCode>> CommandReceived;
+        protected void OnCommandReceived(ServicePacket<CommandCode> command) {
             if (CommandReceived != null)
-                CommandReceived(this, new CommandReceivedEventArgs(command));
+                CommandReceived(this, new CommandReceivedEventArgs<CommandCode>(command));
         }
         public event EventHandler<ErrorCommandEventArgs> ErrorCommand;
         protected void OnErrorCommand(byte[] data, string message) {
@@ -69,7 +68,7 @@ namespace Flavor.Common.Messaging {
             HighVoltageOn = 0xE6
         }
         private readonly IByteDispatcher byteDispatcher;
-        public ModBusNew(PortLevel port) {
+        public ModBus(PortLevel port) {
             byteDispatcher = new ModbusByteDispatcher(port, false);
             byteDispatcher.PackageReceived += Parse;
             byteDispatcher.Log += OnLog;
@@ -97,15 +96,15 @@ namespace Flavor.Common.Messaging {
                 return;
             }
             CommandCode commandcode = (CommandCode)raw_command[0];
-            ServicePacket packet = null;
+            ServicePacket<ModBus.CommandCode> packet = null;
             switch (commandcode) {
                 case CommandCode.GetState:
                     if (raw_command.Length == 3)
-                        packet = new SyncReply.updateState(raw_command[1]);
+                        packet = new updateState(raw_command[1]);
                     break;
                 case CommandCode.GetStatus:
                     if (raw_command.Length == 29)
-                        packet = new SyncReply.updateStatus(raw_command[1],
+                        packet = new updateStatus(raw_command[1],
                                                 raw_command[2],
                                                 (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
                                                 (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
@@ -123,60 +122,60 @@ namespace Flavor.Common.Messaging {
                     break;
                 case CommandCode.Shutdown:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmShutdown();
+                        packet = new confirmShutdown();
                     break;
                 case CommandCode.Init:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmInit();
+                        packet = new confirmInit();
                     break;
                 case CommandCode.SetHeatCurrent:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmHCurrent();
+                        packet = new confirmHCurrent();
                     break;
                 case CommandCode.SetEmissionCurrent:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmECurrent();
+                        packet = new confirmECurrent();
                     break;
                 case CommandCode.SetIonizationVoltage:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmIVoltage();
+                        packet = new confirmIVoltage();
                     break;
                 case CommandCode.SetFocusVoltage1:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmF1Voltage();
+                        packet = new confirmF1Voltage();
                     break;
                 case CommandCode.SetFocusVoltage2:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmF2Voltage();
+                        packet = new confirmF2Voltage();
                     break;
                 case CommandCode.SetScanVoltage:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmSVoltage();
+                        packet = new confirmSVoltage();
                     break;
                 case CommandCode.SetCapacitorVoltage:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmCP();
+                        packet = new confirmCP();
                     break;
                 case CommandCode.Measure:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmMeasure();
+                        packet = new confirmMeasure();
                     break;
                 case CommandCode.GetCounts:
                     if (raw_command.Length == 8)
-                        packet = new SyncReply.updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
+                        packet = new updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
                                                 (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16));
                     break;
                 case CommandCode.heatCurrentEnable:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmHECurrent();
+                        packet = new confirmHECurrent();
                     break;
                 case CommandCode.EnableHighVoltage:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmHighVoltage();
+                        packet = new confirmHighVoltage();
                     break;
                 case CommandCode.GetTurboPumpStatus:
                     if (raw_command.Length == 17)
-                        packet = new SyncReply.updateTurboPumpStatus((ushort)((ushort)raw_command[1] + ((ushort)raw_command[2] << 8)),
+                        packet = new updateTurboPumpStatus((ushort)((ushort)raw_command[1] + ((ushort)raw_command[2] << 8)),
                                                 (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
                                                 (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
                                                 (ushort)((ushort)raw_command[7] + ((ushort)raw_command[8] << 8)),
@@ -188,98 +187,98 @@ namespace Flavor.Common.Messaging {
                     break;
                 case CommandCode.SetForvacuumLevel:
                     if (raw_command.Length == 2)
-                        packet = new SyncReply.confirmForvacuumLevel();
+                        packet = new confirmForvacuumLevel();
                     break;
                 case CommandCode.InvalidCommand:
                     if (raw_command.Length > 2) {
                         //TODO: do not copy CS (last byte)!
                         byte[] tempArray = new byte[raw_command.Length - 1];
                         raw_command.CopyTo(tempArray, 1);
-                        packet = new SyncErrorReply.logInvalidCommand(tempArray);
+                        packet = new logInvalidCommand(tempArray);
                     }
                     break;
                 case CommandCode.InvalidChecksum:
                     if (raw_command.Length == 2)
-                        packet = new SyncErrorReply.logInvalidChecksum();
+                        packet = new logInvalidChecksum();
                     break;
                 case CommandCode.InvalidPacket:
                     if (raw_command.Length == 2)
-                        packet = new SyncErrorReply.logInvalidPacket();
+                        packet = new logInvalidPacket();
                     break;
                 case CommandCode.InvalidLength:
                     if (raw_command.Length == 2)
-                        packet = new SyncErrorReply.logInvalidLength();
+                        packet = new logInvalidLength();
                     break;
                 case CommandCode.InvalidData:
                     if (raw_command.Length == 2)
-                        packet = new SyncErrorReply.logInvalidData();
+                        packet = new logInvalidData();
                     break;
                 case CommandCode.InvalidState:
                     if (raw_command.Length == 2)
-                        packet = new SyncErrorReply.logInvalidState();
+                        packet = new logInvalidState();
                     break;
                 case CommandCode.InternalError:
                     if (raw_command.Length == 3)
-                        packet = new AsyncErrorReply.logInternalError(raw_command[1]);
+                        packet = new logInternalError(raw_command[1]);
                     break;
                 case CommandCode.InvalidSystemState:
                     if (raw_command.Length == 2)
-                        packet = new AsyncErrorReply.logInvalidSystemState();
+                        packet = new logInvalidSystemState();
                     break;
                 case CommandCode.VacuumCrash:
                     if (raw_command.Length == 3)
-                        packet = new AsyncErrorReply.logVacuumCrash(raw_command[1]);
+                        packet = new logVacuumCrash(raw_command[1]);
                     break;
                 case CommandCode.TurboPumpFailure:
                     if (raw_command.Length == 17)
-                        packet = new AsyncErrorReply.logTurboPumpFailure(raw_command);
+                        packet = new logTurboPumpFailure(raw_command);
                     break;
                 case CommandCode.PowerFail:
                     if (raw_command.Length == 2)
-                        packet = new AsyncErrorReply.logPowerFail();
+                        packet = new logPowerFail();
                     break;
                 case CommandCode.InvalidVacuumState:
                     if (raw_command.Length == 2)
-                        packet = new AsyncErrorReply.logInvalidVacuumState();
+                        packet = new logInvalidVacuumState();
                     break;
                 case CommandCode.AdcPlaceIonSrc:
                     //!!!
                     if (raw_command.Length >= 2)
-                        packet = new AsyncErrorReply.logAdcPlaceIonSrc(raw_command);
+                        packet = new logAdcPlaceIonSrc(raw_command);
                     break;
                 case CommandCode.AdcPlaceScanv:
                     //!!!
                     if (raw_command.Length >= 2)
-                        packet = new AsyncErrorReply.logAdcPlaceScanv(raw_command);
+                        packet = new logAdcPlaceScanv(raw_command);
                     break;
                 case CommandCode.AdcPlaceControlm:
                     //!!!
                     if (raw_command.Length >= 2)
-                        packet = new AsyncErrorReply.logAdcPlaceControlm(raw_command);
+                        packet = new logAdcPlaceControlm(raw_command);
                     break;
                 case CommandCode.Measured:
                     if (raw_command.Length == 2)
-                        packet = new AsyncReply.requestCounts();
+                        packet = new requestCounts();
                     break;
                 case CommandCode.VacuumReady:
                     if (raw_command.Length == 2)
-                        packet = new AsyncReply.confirmVacuumReady();
+                        packet = new confirmVacuumReady();
                     break;
                 case CommandCode.SystemShutdowned:
                     if (raw_command.Length == 2)
-                        packet = new AsyncReply.confirmShutdowned();
+                        packet = new confirmShutdowned();
                     break;
                 case CommandCode.SystemReseted:
                     if (raw_command.Length == 2)
-                        packet = new AsyncReply.SystemReseted();
+                        packet = new SystemReseted();
                     break;
                 case CommandCode.HighVoltageOff:
                     if (raw_command.Length == 2)
-                        packet = new AsyncReply.confirmHighVoltageOff();
+                        packet = new confirmHighVoltageOff();
                     break;
                 case CommandCode.HighVoltageOn:
                     if (raw_command.Length == 2)
-                        packet = new AsyncReply.confirmHighVoltageOn();
+                        packet = new confirmHighVoltageOn();
                     break;
                 default:
                     OnErrorCommand(raw_command, "Неверная команда");
