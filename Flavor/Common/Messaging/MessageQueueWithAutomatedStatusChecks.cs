@@ -4,9 +4,7 @@ using System.Text;
 
 namespace Flavor.Common.Messaging {
     class MessageQueueWithAutomatedStatusChecks<T>: MessageQueue<T> {
-        // TODO: use 1 timer
-        private System.Timers.Timer DeviceStatusCheckTimer;
-        private System.Timers.Timer TurboPumpCheckTimer;
+        private System.Timers.Timer statusCheckTimer;
 
         private readonly object locker = new object();
 
@@ -17,40 +15,24 @@ namespace Flavor.Common.Messaging {
                 lock (locker) {
                     if (value != isRareMode) {
                         isRareMode = value;
-                        stopTimers();
-                        toggleRareMode();
+                        statusCheckTimer.Enabled = false;
+                        statusCheckTimer.Elapsed -= StatusCheckTime_Elapsed;
+                        statusCheckTimer.Close();
+                        Init();
                     }
                 }
             }
         }
 
-        private void stopTimers() {
-            if (operating) {
-                DeviceStatusCheckTimer.Enabled = false;
-                TurboPumpCheckTimer.Enabled = false;
-            }
-        }
-        private void toggleRareMode() {
-            DeviceStatusCheckTimer.Elapsed -= StatusCheckTime_Elapsed;
-            TurboPumpCheckTimer.Elapsed -= TurboPumpCheckTime_Elapsed;
-            DeviceStatusCheckTimer.Close();
-            TurboPumpCheckTimer.Close();
-            initTimers();
-        }
-        private void initTimers() {
+        private void Init() {
+            bool rare = IsRareMode;
             // TODO: move this hard-coded defaults to Config
-            // TODO: one timer with 1:2 or 1:4 package frequence ratio
-            bool rare = isRareMode;
-            double deviceCheckInterval = rare ? 10000 : 500;
-            double turboCheckInterval = rare ? 20000 : 2000;
-
-            DeviceStatusCheckTimer = new System.Timers.Timer(deviceCheckInterval);
-            TurboPumpCheckTimer = new System.Timers.Timer(turboCheckInterval);
-
+            double checkInterval = rare ? 10000 : 500;
+            statusCheckTimer = new System.Timers.Timer(checkInterval);
             toggleOperation();
+            statusCheckTimer.Elapsed += StatusCheckTime_Elapsed;
 
-            DeviceStatusCheckTimer.Elapsed += StatusCheckTime_Elapsed;
-            TurboPumpCheckTimer.Elapsed += TurboPumpCheckTime_Elapsed;
+            requestEnumerator = StatusRequestEnumerator();
         }
 
         private bool operating = false;
@@ -66,21 +48,42 @@ namespace Flavor.Common.Messaging {
             }
         }
         private void toggleOperation() {
-            DeviceStatusCheckTimer.Enabled = operating;
-            TurboPumpCheckTimer.Enabled = operating;
+            statusCheckTimer.Enabled = operating;
         }
 
-        internal MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol)
+        private readonly ServicePacket<T>.UserRequest statusCheck;
+        private readonly ServicePacket<T>.UserRequest vacuumCheck;
+        internal MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, ServicePacket<T>.UserRequest statusCheck, ServicePacket<T>.UserRequest vacuumCheck)
             : base(protocol) {
-            initTimers();
+            this.statusCheck = statusCheck;
+            this.vacuumCheck = vacuumCheck;
+            Init();
         }
 
-        // TODO: use Enumerator to get next status request package
-        private void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            addStatusRequest();
+        private IEnumerator<ServicePacket<T>.UserRequest> StatusRequestEnumerator() {
+            bool rare = IsRareMode;
+            // TODO: move this hard-coded defaults to Config
+            int factor = rare ? 3 : 5;
+            for (int i = 0; ; ) {
+                if (i == 0)
+                    yield return vacuumCheck;
+                else 
+                    yield return statusCheck;
+                ++i;
+                i %= factor;
+            }
         }
-        private void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            addTurboPumpStatusRequest();
+        private IEnumerator<ServicePacket<T>.UserRequest> requestEnumerator;
+        private ServicePacket<T>.UserRequest StatusRequest() {
+            requestEnumerator.MoveNext();
+            return requestEnumerator.Current;
+        }
+        private void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            var request = StatusRequest();
+            // to prevent queue overflow
+            if (Contains(request))
+                return;
+            Enqueue(request);
         }
     }
 }

@@ -130,8 +130,8 @@ namespace Flavor.Common {
                     if (pState == ProgramStates.WaitHighVoltage) {
                         setProgramStateWithoutUndo(ProgramStates.Ready);
                     }
-                    toSend.AddToSend(new sendSVoltage(0));//Set ScanVoltage to low limit
-                    toSend.AddToSend(new sendIVoltage());// и остальные напряжения затем
+                    toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
+                    toSend.Enqueue(new sendIVoltage());// и остальные напряжения затем
                     return;
                 }
                 return;
@@ -174,7 +174,7 @@ namespace Flavor.Common {
                             break;
 
                         case Device.DeviceStates.Measured:
-                            toSend.AddToSend(new getCounts());
+                            toSend.Enqueue(new getCounts());
                             // waiting for fake counts reply
                             break;
                         case Device.DeviceStates.Measuring:
@@ -209,7 +209,7 @@ namespace Flavor.Common {
                 }
                 if (command is confirmSVoltage) {
                     if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                        CurrentMeasureMode.NextMeasure((t1, t2) => { toSend.AddToSend(new sendMeasure(t1, t2)); });
+                        CurrentMeasureMode.NextMeasure((t1, t2) => { toSend.Enqueue(new sendMeasure(t1, t2)); });
                     }
                 }
                 if (command is confirmF2Voltage) {
@@ -230,7 +230,7 @@ namespace Flavor.Common {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
                 // BAD!
-                toSend.AddToSend(((IAutomatedReply)Command).AutomatedReply() as ServicePacket<ModBus.CommandCode>.UserRequest);
+                toSend.Enqueue(((IAutomatedReply)Command).AutomatedReply() as ServicePacket<ModBus.CommandCode>.UserRequest);
             }
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
@@ -249,13 +249,13 @@ namespace Flavor.Common {
             OnLog(pState.ToString());
 
             setProgramState(ProgramStates.WaitInit);
-            toSend.AddToSend(new sendInit());
+            toSend.Enqueue(new sendInit());
 
             OnLog(pState.ToString());
         }
         public override void Shutdown() {
             Disable();
-            toSend.AddToSend(new sendShutdown());
+            toSend.Enqueue(new sendShutdown());
             setProgramState(ProgramStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
         }
@@ -438,7 +438,7 @@ namespace Flavor.Common {
             CurrentMeasureMode = null;//?
         }
         public override void SendSettings() {
-            toSend.AddToSend(new sendIVoltage());
+            toSend.Enqueue(new sendIVoltage());
             // All sequence is:
             /*
             Commander.AddToSend(new sendCP());
@@ -482,7 +482,7 @@ namespace Flavor.Common {
             setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
         }
         private void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
-            toSend.AddToSend(new sendSVoltage(e.Step));
+            toSend.Enqueue(new sendSVoltage(e.Step));
         }
         public override bool SomePointsUsed {
             get {
@@ -498,7 +498,7 @@ namespace Flavor.Common {
                 pState == ProgramStates.WaitBackgroundMeasure ||
                 pState == ProgramStates.BackgroundMeasureReady)//strange..
                 MeasureCancelRequested = true;
-            toSend.AddToSend(new enableHighVoltage(hBlock));
+            toSend.Enqueue(new enableHighVoltage(hBlock));
         }
 
         private PortLevel port = new PortLevel();
@@ -519,7 +519,7 @@ namespace Flavor.Common {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
-                    toSend = new MessageQueueWithAutomatedStatusChecks<ModBus.CommandCode>(protocol);
+                    toSend = new MessageQueueWithAutomatedStatusChecks<ModBus.CommandCode>(protocol, new requestStatus(), new getTurboPumpStatus());
                     ConsoleWriter.Subscribe(toSend);
                     toSend.IsOperating = true;
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);

@@ -393,8 +393,16 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                     case PacketingState.WaitUpper: {
                             if (data == 0x0d) {
                                 OnPackageReceived(PacketBuffer.ToArray());
+                                // BAD!
+                                var sb = new StringBuilder("[in]");
+                                byte cs = PacketBuffer[PacketBuffer.Count - 1];
+                                PacketBuffer.RemoveAt(PacketBuffer.Count - 1);
+                                foreach (byte b in buildPackBody(PacketBuffer.ToArray(), cs)) {
+                                    sb.Append((char)b);
+                                }
+                                OnLog(sb.ToString());
+                                
                                 PacketBuffer.Clear();
-
                                 PackState = PacketingState.Idle;
                             } else {
                                 UpperNibble = GetInt(data);
@@ -469,8 +477,8 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 byte[] pack = buildPack(message, checksum);
                 port.Send(pack);
                 var sb = new StringBuilder("[out]");
-                foreach (byte b in message) {
-                    sb.Append(b);
+                foreach (byte b in pack) {
+                    sb.Append((char)b);
                 }
                 OnLog(sb.ToString());
             }

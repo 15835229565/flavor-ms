@@ -6,13 +6,13 @@ namespace Flavor.Common.Messaging {
     class MessageQueue<T>: ILog {
         private byte Try = 0;
 
-        private Queue<ServicePacket<T>.UserRequest> toSend = new Queue<ServicePacket<T>.UserRequest>();
+        private Queue<ServicePacket<T>.UserRequest> queue = new Queue<ServicePacket<T>.UserRequest>();
         private System.Timers.Timer sendTimer;
 
         private object syncObj = null;
         private object SyncRoot {
             get {
-                return syncObj == null ? (syncObj = (toSend as ICollection).SyncRoot) : syncObj; 
+                return syncObj == null ? (syncObj = (queue as ICollection).SyncRoot) : syncObj; 
             }
         }
         public event EventHandler Undo;
@@ -23,6 +23,7 @@ namespace Flavor.Common.Messaging {
         private IProtocol<T> protocol = null;
         internal MessageQueue(IProtocol<T> protocol) {
             this.protocol = protocol;
+            // TODO: configurable
             sendTimer = new System.Timers.Timer(1000);
             sendTimer.Enabled = false;
         }
@@ -33,17 +34,13 @@ namespace Flavor.Common.Messaging {
                         StopSending();
                     }
                 }
-                toSend.Clear();
+                queue.Clear();
             }
         }
-        internal void AddToSend(ServicePacket<T>.UserRequest command)//Enqueue
+        internal void Enqueue(ServicePacket<T>.UserRequest command)
         {
             lock (SyncRoot) {
-                if (command is IStatusRequest) {
-                    if (toSend.Contains(command))
-                        return;
-                }
-                toSend.Enqueue(command);
+                queue.Enqueue(command);
                 trySend();
             }
         }
@@ -59,7 +56,7 @@ namespace Flavor.Common.Messaging {
         internal ServicePacket<T>.UserRequest Peek(ServicePacket<T>.Sync command) {
             ServicePacket<T>.UserRequest packet = null;
             lock (SyncRoot) {
-                if (toSend.Count == 0) {
+                if (queue.Count == 0) {
                     OnLog(string.Format("Received {0}. While waiting for nothing.", command));
                     return null;
                 }
@@ -79,26 +76,9 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-
-        protected void addStatusRequest() {
-            throw new NotImplementedException();
-            /*lock (SyncRoot) {
-                if (!statusToSend) {
-                    toSend.Enqueue(new ServicePacket<T>.User.requestStatus());
-                    trySend();
-                }
-            }*/
+        protected bool Contains(ServicePacket<T>.UserRequest item) {
+            return queue.Contains(item);
         }
-        protected void addTurboPumpStatusRequest() {
-            throw new NotImplementedException();
-            /*lock (SyncRoot) {
-                if (!turboToSend) {
-                    toSend.Enqueue(new ServicePacket<T>.User.getTurboPumpStatus());
-                }
-                trySend();
-            }*/
-        }
-
         private void StartSending() {
             lock (sendTimer) {
                 if (sendTimer.Enabled || Try != 0) {
@@ -133,7 +113,7 @@ namespace Flavor.Common.Messaging {
                     StopSending();
                 }
                 ServicePacket<T>.UserRequest packet = null;
-                if (toSend.Count == 0)
+                if (queue.Count == 0)
                     OnLog("Error. Packet queue is empty but sending counter is not zero.");
                 else {
                     if (dequeueToSendInsideLock(ref packet)) {
@@ -156,7 +136,7 @@ namespace Flavor.Common.Messaging {
         }
         private void Send() {
             lock (SyncRoot) {
-                while (toSend.Count > 0) {
+                while (queue.Count > 0) {
                     ServicePacket<T>.UserRequest packet = null;
                     peekToSendInsideLock(ref packet);
                     if (packet != null) {
@@ -175,24 +155,24 @@ namespace Flavor.Common.Messaging {
 
         private bool dequeueToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
             try {
-                packet = toSend.Dequeue();
+                packet = queue.Dequeue();
                 return true;
             } catch (InvalidOperationException) {
                 OnLog("Error. Dequeue failed though someting must be in queue.");
             }
             try {
-                toSend.Clear();
+                queue.Clear();
                 return false;
             } catch (InvalidOperationException) {
                 OnLog("Error. Cannot clear message queue.");
             }
             OnLog("Message queue recreation.");
-            toSend = new Queue<ServicePacket<T>.UserRequest>();
+            queue = new Queue<ServicePacket<T>.UserRequest>();
             return false;
         }
         private void peekToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
             try {
-                packet = toSend.Peek();
+                packet = queue.Peek();
                 if (packet == null)
                     OnLog("Error. In message queue null found.");
             } catch (InvalidOperationException) {
