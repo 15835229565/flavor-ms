@@ -348,7 +348,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 Log(message);
         }
         #endregion
-        class ModbusByteDispatcher: IByteDispatcher {
+        private class ModbusByteDispatcher: IByteDispatcher {
             private readonly PortLevel port;
             private readonly bool singleByteDispatching;
             public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching) {
