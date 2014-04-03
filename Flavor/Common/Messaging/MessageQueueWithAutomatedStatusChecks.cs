@@ -70,7 +70,7 @@ namespace Flavor.Common.Messaging {
             TurboPumpCheckTimer.Enabled = operating;
         }
 
-        internal MessageQueueWithAutomatedStatusChecks(ModBusNew protocol)
+        internal MessageQueueWithAutomatedStatusChecks(IProtocol protocol)
             : base(protocol) {
             initTimers();
         }

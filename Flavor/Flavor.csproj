@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{535B18E6-1D63-4BA6-A3DD-BC986502133B}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -94,6 +94,11 @@
     <Compile Include="Common\Commander2.cs" />
     <Compile Include="Common\ICommander.cs" />
     <Compile Include="Common\MC.cs" />
+    <Compile Include="Common\Messaging\ByteArrayEventArgs.cs" />
+    <Compile Include="Common\Messaging\CommandReceivedEventArgs.cs" />
+    <Compile Include="Common\Messaging\ErrorCommandEventArgs.cs" />
+    <Compile Include="Common\Messaging\IByteDispatcher.cs" />
+    <Compile Include="Common\Messaging\IProtocol.cs" />
     <Compile Include="Common\NewProtocol.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />

@@ -4,47 +4,22 @@ using Flavor.Common.Messaging.Commands;
 using System.Text;
 
 namespace Flavor.Common.Messaging {
-    internal class ModBusNew: IDisposable, ILog {
-        public class CommandReceivedEventArgs: EventArgs {
-            private readonly CommandCode code;
-            private readonly ServicePacket command;
-            public CommandCode Code {
-                get { return code; }
-            }
-            public ServicePacket Command {
-                get { return command; }
-            }
-            public CommandReceivedEventArgs(CommandCode code, ServicePacket command) {
-                this.code = code;
-                this.command = command;
-            }
-        }
-        public delegate void CommandReceivedDelegate(object sender, CommandReceivedEventArgs e);
-        public event CommandReceivedDelegate CommandReceived;
-        protected void OnCommandReceived(CommandCode code, ServicePacket command) {
+    internal class ModBusNew: IProtocol {
+        #region IProtocol Members
+        public event EventHandler<CommandReceivedEventArgs> CommandReceived;
+        protected void OnCommandReceived(ServicePacket command) {
             if (CommandReceived != null)
-                CommandReceived(this, new CommandReceivedEventArgs(code, command));
+                CommandReceived(this, new CommandReceivedEventArgs(command));
         }
-        public class ErrorCommandEventArgs {
-            private readonly string message;
-            public string Message {
-                get { return message; }
-            }
-            private readonly byte[] data;
-            public byte[] Data {
-                get { return data; }
-            }
-            public ErrorCommandEventArgs(byte[] data, string message) {
-                this.message = message;
-                this.data = data;
-            }
-        }
-        public delegate void ErrorCommandDelegate(object sender, ErrorCommandEventArgs e);
-        public event ErrorCommandDelegate ErrorCommand;
+        public event EventHandler<ErrorCommandEventArgs> ErrorCommand;
         protected void OnErrorCommand(byte[] data, string message) {
             if (ErrorCommand != null)
                 ErrorCommand(this, new ErrorCommandEventArgs(data, message));
         }
+        public void Send(byte[] message) {
+            byteDispatcher.Transmit(message, ComputeChecksum(message));
+        }
+        #endregion
         //TODO: structure code-length
         internal enum CommandCode: byte {
             None = 0x00,// & min length
@@ -93,9 +68,11 @@ namespace Flavor.Common.Messaging {
             HighVoltageOff = 0xE5,
             HighVoltageOn = 0xE6
         }
-        private readonly ModbusByteDispatcher byteDispatcher;
+        private readonly IByteDispatcher byteDispatcher;
         public ModBusNew(PortLevel port) {
-            byteDispatcher = new ModbusByteDispatcher(port, false, OnLog, Parse);
+            byteDispatcher = new ModbusByteDispatcher(port, false);
+            byteDispatcher.PackageReceived += Parse;
+            byteDispatcher.Log += OnLog;
         }
 
         private static byte ComputeChecksum(byte[] data) {
@@ -108,7 +85,8 @@ namespace Flavor.Common.Messaging {
         private static bool checkCS(byte[] data) {
             return true ^ Convert.ToBoolean(ComputeChecksum(data));
         }
-        private void Parse(byte[] raw_command) {
+        private void Parse(object sender, ByteArrayEventArgs e) {
+            var raw_command = e.Data;
             int minLength = 2;
             if (raw_command.Length < minLength) {
                 OnErrorCommand(raw_command, "Короткий пакет");
@@ -311,10 +289,7 @@ namespace Flavor.Common.Messaging {
                 OnErrorCommand(raw_command, "Неверная длина");
                 return;
             }
-            OnCommandReceived(commandcode, packet);
-        }
-        internal void Send(byte[] message) {
-            byteDispatcher.Transmit(message, ComputeChecksum(message));
+            OnCommandReceived(packet);
         }
 
         internal static byte[] collectData(params object[] values) {
@@ -374,20 +349,16 @@ namespace Flavor.Common.Messaging {
                 Log(message);
         }
         #endregion
-        class ModbusByteDispatcher: IDisposable {
+        class ModbusByteDispatcher: IByteDispatcher {
             private readonly PortLevel port;
             private readonly bool singleByteDispatching;
-            private readonly Action<string> log;
-            private readonly Action<byte[]> parse;
-            public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching, Action<string> log, Action<byte[]> parse) {
+            public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching) {
                 this.port = port;
                 this.singleByteDispatching = singleByteDispatching;
                 if (singleByteDispatching)
                     port.ByteReceived += PortByteReceived;
                 else
                     port.BytesReceived += PortBytesReceived;
-                this.log = log;
-                this.parse = parse;
             }
             private readonly List<byte> PacketBuffer = new List<byte>();
             private enum PacketingState {
@@ -416,13 +387,13 @@ namespace Flavor.Common.Messaging {
                                 PackState = PacketingState.WaitUpper;
                             } else {
                                 //Symbol outside packet
-                                log(string.Format("Error({0})", data));
+                                OnLog(string.Format("Error({0})", data));
                             }
                             break;
                         }
                     case PacketingState.WaitUpper: {
                             if (data == 0x0d) {
-                                parse(PacketBuffer.ToArray());
+                                OnPackageReceived(PacketBuffer.ToArray());
                                 PacketBuffer.Clear();
 
                                 PackState = PacketingState.Idle;
@@ -489,6 +460,12 @@ namespace Flavor.Common.Messaging {
                     port.BytesReceived -= PortBytesReceived;
             }
             #endregion
+            #region IByteDispatcher Members
+            public event EventHandler<ByteArrayEventArgs> PackageReceived;
+            protected virtual void OnPackageReceived(byte[] data) {
+                if (PackageReceived != null)
+                    PackageReceived(this, new ByteArrayEventArgs(data));
+            }
             public void Transmit(byte[] message, byte checksum) {
                 byte[] pack = buildPack(message, checksum);
                 port.Send(pack);
@@ -496,8 +473,16 @@ namespace Flavor.Common.Messaging {
                 foreach (byte b in message) {
                     sb.Append(b);
                 }
-                log(sb.ToString());
+                OnLog(sb.ToString());
             }
+            #endregion
+            #region ILog Members
+            public event MessageHandler Log;
+            protected virtual void OnLog(string message) {
+                if (Log != null)
+                    Log(message);
+            }
+            #endregion
         }
     }
 }

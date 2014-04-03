@@ -75,9 +75,8 @@ namespace Flavor.Common {
             }
         }
 
-        private void Realize(object sender, ModBusNew.CommandReceivedEventArgs e) {
+        private void Realize(object sender, CommandReceivedEventArgs e) {
             ServicePacket command = e.Command;
-            //var code = e.Code;
 
             if (command is AsyncErrorReply) {
                 CheckInterfaces(command);
@@ -502,7 +501,7 @@ namespace Flavor.Common {
         }
 
         private PortLevel port = new PortLevel();
-        private ModBusNew protocol;
+        private IProtocol protocol;
         public Commander2() {
             protocol = new ModBusNew(port);
             ConsoleWriter.Subscribe(protocol);

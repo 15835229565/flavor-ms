@@ -24,8 +24,8 @@ namespace Flavor.Common.Messaging {
             if (Undo != null)
                 Undo(this, EventArgs.Empty);
         }
-        private ModBusNew protocol = null;
-        internal MessageQueue(ModBusNew protocol) {
+        private IProtocol protocol = null;
+        internal MessageQueue(IProtocol protocol) {
             this.protocol = protocol;
             sendTimer = new System.Timers.Timer(1000);
             sendTimer.Enabled = false;
