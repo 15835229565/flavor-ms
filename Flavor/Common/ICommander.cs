@@ -36,12 +36,12 @@ namespace Flavor.Common {
         void SendSettings();
     }
     interface IConnectionActions {
-        event ProgramEventHandler ProgramStateChanged;
-        PortLevel.PortStates Connect();
-        PortLevel.PortStates Disconnect();
+        //event ProgramEventHandler ProgramStateChanged;
+        void Connect();
+        void Disconnect();
 
-        void Reconnect();
-        string[] AvailablePorts { get; }
+        //void Reconnect();
+        //string[] AvailablePorts { get; }
     }
     interface IMeasureActions {
         event ProgramEventHandler ProgramStateChanged;
@@ -100,11 +100,11 @@ namespace Flavor.Common {
 
         abstract public bool DeviceIsConnected { get; protected set; }
         #region IConnectionActions Members
-        abstract public PortLevel.PortStates Connect();
-        abstract public PortLevel.PortStates Disconnect();
+        abstract public void Connect();
+        abstract public void Disconnect();
+        #endregion
         abstract public void Reconnect();
         abstract public string[] AvailablePorts { get; }
-        #endregion
 
         public MeasureMode CurrentMeasureMode { get; protected set; }
         abstract public bool MeasureCancelRequested { protected get; set; }

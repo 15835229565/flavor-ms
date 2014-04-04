@@ -515,7 +515,7 @@ namespace Flavor.Common {
                 OnLog(e.Message);
             };
         }
-        public override PortLevel.PortStates Connect() {
+        public override void Connect() {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
@@ -534,9 +534,8 @@ namespace Flavor.Common {
                     // фигня
                     break;
             }
-            return res;
         }
-        public override PortLevel.PortStates Disconnect() {
+        public override void Disconnect() {
             toSend.IsOperating = false;
             ConsoleWriter.Unsubscribe(toSend);
             toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
@@ -556,23 +555,13 @@ namespace Flavor.Common {
                     // фигня
                     break;
             }
-            return res;
         }
 
         public override void Reconnect() {
             if (DeviceIsConnected) {
-                switch (Disconnect()) {
-                    case PortLevel.PortStates.Closing:
-                        port.Open();
-                        break;
-                    case PortLevel.PortStates.Closed:
-                        break;
-                    case PortLevel.PortStates.ErrorClosing:
-                        break;
-                    default:
-                        // фигня
-                        break;
-                }
+                Disconnect();
+                if (!DeviceIsConnected)
+                    port.Open();
             }
         }
         public override string[] AvailablePorts {

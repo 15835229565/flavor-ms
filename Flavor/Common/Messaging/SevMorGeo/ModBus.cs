@@ -8,210 +8,210 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             : base(new ModbusByteDispatcher(port, false)) { }
         //TODO: structure code-length
         protected override void Parse(object sender, ByteArrayEventArgs e) {
-            var raw_command = e.Data;
+            var rawCommand = e.Data;
             int minLength = 2;
-            if (raw_command.Length < minLength) {
-                OnErrorCommand(raw_command, "Короткий пакет");
+            if (rawCommand.Length < minLength) {
+                OnErrorCommand(rawCommand, "Короткий пакет");
                 return;
             }
-            if (!CheckCS(raw_command)) {
-                OnErrorCommand(raw_command, "Неверная контрольная сумма");
+            if (!CheckCS(rawCommand)) {
+                OnErrorCommand(rawCommand, "Неверная контрольная сумма");
                 return;
             }
-            CommandCode commandcode = (CommandCode)raw_command[0];
+            CommandCode code = (CommandCode)rawCommand[0];
             ServicePacket<CommandCode> packet = null;
-            switch (commandcode) {
+            switch (code) {
                 case CommandCode.GetState:
-                    if (raw_command.Length == 3)
-                        packet = new updateState(raw_command[1]);
+                    if (rawCommand.Length == 3)
+                        packet = new updateState(rawCommand[1]);
                     break;
                 case CommandCode.GetStatus:
-                    if (raw_command.Length == 29)
-                        packet = new updateStatus(raw_command[1],
-                                                raw_command[2],
-                                                (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
-                                                (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
-                                                (ushort)((ushort)raw_command[7] + ((ushort)raw_command[8] << 8)),
-                                                (ushort)((ushort)raw_command[9] + ((ushort)raw_command[10] << 8)),
-                                                (ushort)((ushort)raw_command[11] + ((ushort)raw_command[12] << 8)),
-                                                (ushort)((ushort)raw_command[13] + ((ushort)raw_command[14] << 8)),
-                                                (ushort)((ushort)raw_command[15] + ((ushort)raw_command[16] << 8)),
-                                                (ushort)((ushort)raw_command[17] + ((ushort)raw_command[18] << 8)),
-                                                (ushort)((ushort)raw_command[19] + ((ushort)raw_command[20] << 8)),
-                                                (ushort)((ushort)raw_command[21] + ((ushort)raw_command[22] << 8)),
-                                                (ushort)((ushort)raw_command[23] + ((ushort)raw_command[24] << 8)),
-                                                raw_command[25],
-                                                (ushort)((ushort)raw_command[26] + ((ushort)raw_command[27] << 8)));
+                    if (rawCommand.Length == 29)
+                        packet = new updateStatus(rawCommand[1],
+                                                rawCommand[2],
+                                                (ushort)((ushort)rawCommand[3] + ((ushort)rawCommand[4] << 8)),
+                                                (ushort)((ushort)rawCommand[5] + ((ushort)rawCommand[6] << 8)),
+                                                (ushort)((ushort)rawCommand[7] + ((ushort)rawCommand[8] << 8)),
+                                                (ushort)((ushort)rawCommand[9] + ((ushort)rawCommand[10] << 8)),
+                                                (ushort)((ushort)rawCommand[11] + ((ushort)rawCommand[12] << 8)),
+                                                (ushort)((ushort)rawCommand[13] + ((ushort)rawCommand[14] << 8)),
+                                                (ushort)((ushort)rawCommand[15] + ((ushort)rawCommand[16] << 8)),
+                                                (ushort)((ushort)rawCommand[17] + ((ushort)rawCommand[18] << 8)),
+                                                (ushort)((ushort)rawCommand[19] + ((ushort)rawCommand[20] << 8)),
+                                                (ushort)((ushort)rawCommand[21] + ((ushort)rawCommand[22] << 8)),
+                                                (ushort)((ushort)rawCommand[23] + ((ushort)rawCommand[24] << 8)),
+                                                rawCommand[25],
+                                                (ushort)((ushort)rawCommand[26] + ((ushort)rawCommand[27] << 8)));
                     break;
                 case CommandCode.Shutdown:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmShutdown();
                     break;
                 case CommandCode.Init:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmInit();
                     break;
                 case CommandCode.SetHeatCurrent:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmHCurrent();
                     break;
                 case CommandCode.SetEmissionCurrent:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmECurrent();
                     break;
                 case CommandCode.SetIonizationVoltage:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmIVoltage();
                     break;
                 case CommandCode.SetFocusVoltage1:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmF1Voltage();
                     break;
                 case CommandCode.SetFocusVoltage2:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmF2Voltage();
                     break;
                 case CommandCode.SetScanVoltage:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmSVoltage();
                     break;
                 case CommandCode.SetCapacitorVoltage:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmCP();
                     break;
                 case CommandCode.Measure:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmMeasure();
                     break;
                 case CommandCode.GetCounts:
-                    if (raw_command.Length == 8)
-                        packet = new updateCounts((int)raw_command[1] + ((int)raw_command[2] << 8) + ((int)raw_command[3] << 16),
-                                                (int)raw_command[4] + ((int)raw_command[5] << 8) + ((int)raw_command[6] << 16));
+                    if (rawCommand.Length == 8)
+                        packet = new updateCounts((int)rawCommand[1] + ((int)rawCommand[2] << 8) + ((int)rawCommand[3] << 16),
+                                                (int)rawCommand[4] + ((int)rawCommand[5] << 8) + ((int)rawCommand[6] << 16));
                     break;
                 case CommandCode.heatCurrentEnable:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmHECurrent();
                     break;
                 case CommandCode.EnableHighVoltage:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmHighVoltage();
                     break;
                 case CommandCode.GetTurboPumpStatus:
-                    if (raw_command.Length == 17)
-                        packet = new updateTurboPumpStatus((ushort)((ushort)raw_command[1] + ((ushort)raw_command[2] << 8)),
-                                                (ushort)((ushort)raw_command[3] + ((ushort)raw_command[4] << 8)),
-                                                (ushort)((ushort)raw_command[5] + ((ushort)raw_command[6] << 8)),
-                                                (ushort)((ushort)raw_command[7] + ((ushort)raw_command[8] << 8)),
-                                                (ushort)((ushort)raw_command[9] + ((ushort)raw_command[10] << 8)),
-                                                (ushort)((ushort)raw_command[11] + ((ushort)raw_command[12] << 8)),
-                                                raw_command[13],
-                                                raw_command[14],
-                                                raw_command[15]);
+                    if (rawCommand.Length == 17)
+                        packet = new updateTurboPumpStatus((ushort)((ushort)rawCommand[1] + ((ushort)rawCommand[2] << 8)),
+                                                (ushort)((ushort)rawCommand[3] + ((ushort)rawCommand[4] << 8)),
+                                                (ushort)((ushort)rawCommand[5] + ((ushort)rawCommand[6] << 8)),
+                                                (ushort)((ushort)rawCommand[7] + ((ushort)rawCommand[8] << 8)),
+                                                (ushort)((ushort)rawCommand[9] + ((ushort)rawCommand[10] << 8)),
+                                                (ushort)((ushort)rawCommand[11] + ((ushort)rawCommand[12] << 8)),
+                                                rawCommand[13],
+                                                rawCommand[14],
+                                                rawCommand[15]);
                     break;
                 case CommandCode.SetForvacuumLevel:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmForvacuumLevel();
                     break;
                 case CommandCode.InvalidCommand:
-                    if (raw_command.Length > 2) {
+                    if (rawCommand.Length > 2) {
                         //TODO: do not copy CS (last byte)!
-                        byte[] tempArray = new byte[raw_command.Length - 1];
-                        raw_command.CopyTo(tempArray, 1);
+                        byte[] tempArray = new byte[rawCommand.Length - 1];
+                        rawCommand.CopyTo(tempArray, 1);
                         packet = new logInvalidCommand(tempArray);
                     }
                     break;
                 case CommandCode.InvalidChecksum:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidChecksum();
                     break;
                 case CommandCode.InvalidPacket:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidPacket();
                     break;
                 case CommandCode.InvalidLength:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidLength();
                     break;
                 case CommandCode.InvalidData:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidData();
                     break;
                 case CommandCode.InvalidState:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidState();
                     break;
                 case CommandCode.InternalError:
-                    if (raw_command.Length == 3)
-                        packet = new logInternalError(raw_command[1]);
+                    if (rawCommand.Length == 3)
+                        packet = new logInternalError(rawCommand[1]);
                     break;
                 case CommandCode.InvalidSystemState:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidSystemState();
                     break;
                 case CommandCode.VacuumCrash:
-                    if (raw_command.Length == 3)
-                        packet = new logVacuumCrash(raw_command[1]);
+                    if (rawCommand.Length == 3)
+                        packet = new logVacuumCrash(rawCommand[1]);
                     break;
                 case CommandCode.TurboPumpFailure:
-                    if (raw_command.Length == 17)
-                        packet = new logTurboPumpFailure(raw_command);
+                    if (rawCommand.Length == 17)
+                        packet = new logTurboPumpFailure(rawCommand);
                     break;
                 case CommandCode.PowerFail:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logPowerFail();
                     break;
                 case CommandCode.InvalidVacuumState:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new logInvalidVacuumState();
                     break;
                 case CommandCode.AdcPlaceIonSrc:
                     //!!!
-                    if (raw_command.Length >= 2)
-                        packet = new logAdcPlaceIonSrc(raw_command);
+                    if (rawCommand.Length >= 2)
+                        packet = new logAdcPlaceIonSrc(rawCommand);
                     break;
                 case CommandCode.AdcPlaceScanv:
                     //!!!
-                    if (raw_command.Length >= 2)
-                        packet = new logAdcPlaceScanv(raw_command);
+                    if (rawCommand.Length >= 2)
+                        packet = new logAdcPlaceScanv(rawCommand);
                     break;
                 case CommandCode.AdcPlaceControlm:
                     //!!!
-                    if (raw_command.Length >= 2)
-                        packet = new logAdcPlaceControlm(raw_command);
+                    if (rawCommand.Length >= 2)
+                        packet = new logAdcPlaceControlm(rawCommand);
                     break;
                 case CommandCode.Measured:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new requestCounts();
                     break;
                 case CommandCode.VacuumReady:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmVacuumReady();
                     break;
                 case CommandCode.SystemShutdowned:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmShutdowned();
                     break;
                 case CommandCode.SystemReseted:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new SystemReseted();
                     break;
                 case CommandCode.HighVoltageOff:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmHighVoltageOff();
                     break;
                 case CommandCode.HighVoltageOn:
-                    if (raw_command.Length == 2)
+                    if (rawCommand.Length == 2)
                         packet = new confirmHighVoltageOn();
                     break;
                 default:
-                    OnErrorCommand(raw_command, "Неверная команда");
+                    OnErrorCommand(rawCommand, "Неверная команда");
                     return;
             }
             if (packet == null) {
-                OnErrorCommand(raw_command, "Неверная длина");
+                OnErrorCommand(rawCommand, "Неверная длина");
                 return;
             }
-            OnCommandReceived(packet);
+            OnCommandReceived(code, packet);
         }
 
         protected override byte ComputeCS(IEnumerable<byte> data) {

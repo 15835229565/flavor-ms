@@ -32,6 +32,7 @@ namespace Flavor.Common.Messaging {
             toggleOperation();
             statusCheckTimer.Elapsed += StatusCheckTime_Elapsed;
 
+            //requestEnumerator = StatusRequestEnumerator2();
             requestEnumerator = StatusRequestEnumerator();
         }
 
@@ -53,13 +54,33 @@ namespace Flavor.Common.Messaging {
 
         private readonly ServicePacket<T>.UserRequest statusCheck;
         private readonly ServicePacket<T>.UserRequest vacuumCheck;
+        [Obsolete]
         internal MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, ServicePacket<T>.UserRequest statusCheck, ServicePacket<T>.UserRequest vacuumCheck)
             : base(protocol) {
             this.statusCheck = statusCheck;
             this.vacuumCheck = vacuumCheck;
             Init();
         }
-
+        private readonly IEnumerable<KeyValuePair<T, CommandRecord<T>>> statusCheckers;
+        internal MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, IEnumerable<KeyValuePair<T, CommandRecord<T>>> statusCheckers)
+            : base(protocol) {
+            this.statusCheckers = statusCheckers;
+            Init();
+        }
+        private IEnumerator<ServicePacket<T>.UserRequest> StatusRequestEnumerator2() {
+            for ( ; ; ) {
+                foreach (var x in statusCheckers) {
+                    var y = x.Value as StatusUserCommandRecord<T>;
+                    if (y == null)
+                        continue;
+                    for (int i = 0; ; ++i) {
+                        if (i < (isRareMode ? y.Priority : y.Priority))//!!!
+                            yield return y.Send();
+                    }
+                }
+            }
+        }
+        [Obsolete]
         private IEnumerator<ServicePacket<T>.UserRequest> StatusRequestEnumerator() {
             bool rare = IsRareMode;
             // TODO: move this hard-coded defaults to Config

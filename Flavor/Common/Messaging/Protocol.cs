@@ -13,9 +13,9 @@ namespace Flavor.Common.Messaging {
         protected abstract void Parse(object sender, ByteArrayEventArgs e);
         #region IProtocol<T> Members
         public event EventHandler<CommandReceivedEventArgs<T>> CommandReceived;
-        protected virtual void OnCommandReceived(ServicePacket<T> command) {
+        protected virtual void OnCommandReceived(T code, ServicePacket<T> command) {
             if (CommandReceived != null)
-                CommandReceived(this, new CommandReceivedEventArgs<T>(command));
+                CommandReceived(this, new CommandReceivedEventArgs<T>(code, command));
         }
         public event EventHandler<ErrorCommandEventArgs> ErrorCommand;
         protected virtual void OnErrorCommand(byte[] data, string message) {

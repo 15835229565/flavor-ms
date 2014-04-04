@@ -1,14 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
     internal class AlexProtocol: CheckableProtocol<CommandCode> {
-        public AlexProtocol(PortLevel port)
-            : base(new AlexProtocolByteDispatcher(port, false)) { }
+        private readonly CommandDictionary<CommandCode> dictionary;
+        public AlexProtocol(PortLevel port, CommandDictionary<CommandCode> dictionary)
+            : base(new AlexProtocolByteDispatcher(port, false)) {
+            this.dictionary = dictionary;
+        }
         protected override void Parse(object sender, ByteArrayEventArgs e) {
-            throw new NotImplementedException();
+            var rawCommand = e.Data;
+            int length = rawCommand.Length;
+            if (length < dictionary.MinLength) {
+                OnErrorCommand(rawCommand, "Короткий пакет");
+                return;
+            }
+            if (!CheckCS(rawCommand)) {
+                OnErrorCommand(rawCommand, "Неверная контрольная сумма");
+                return;
+            }
+            CommandCode code = (CommandCode)rawCommand[0];
+            if (!dictionary.ContainsKey(code)) {
+                OnErrorCommand(rawCommand, "Неверная команда");
+                return;
+            }
+            var record = dictionary[code];
+            if (!record.CheckLength(length)) {
+                OnErrorCommand(rawCommand, "Неверная длина");
+                return;
+            }
+            OnCommandReceived(code, record.Parse(rawCommand));
         }
 
         protected override byte ComputeCS(IEnumerable<byte> data) {
