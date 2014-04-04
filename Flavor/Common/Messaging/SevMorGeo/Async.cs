@@ -1,4 +1,4 @@
-﻿using AsyncReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.ModBus.CommandCode>.Async;
+﻿using AsyncReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.Async;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class requestCounts: AsyncReply, IAutomatedReply {

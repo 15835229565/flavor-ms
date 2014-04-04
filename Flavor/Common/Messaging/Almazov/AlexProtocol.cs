@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
-    internal class AlexProtocol: IProtocol<AlexProtocol.CommandCode> {
-        internal enum CommandCode { }
+    internal class AlexProtocol: IProtocol<CommandCode> {
         private readonly IByteDispatcher byteDispatcher;
         public AlexProtocol(PortLevel port) {
             byteDispatcher = new ByteDispatcher(port);

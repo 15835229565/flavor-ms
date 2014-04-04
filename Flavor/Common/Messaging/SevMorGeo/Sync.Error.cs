@@ -1,5 +1,5 @@
-using CommandCode = Flavor.Common.Messaging.SevMorGeo.ModBus.CommandCode;
-using SyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.ModBus.CommandCode>.SyncError;
+using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
+using SyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.SyncError;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class logInvalidCommand: SyncErrorReply {

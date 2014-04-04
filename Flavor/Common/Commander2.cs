@@ -63,7 +63,7 @@ namespace Flavor.Common {
             }
         }
 
-        private MessageQueueWithAutomatedStatusChecks<ModBus.CommandCode> toSend;
+        private MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
 
         private bool measureCancelRequested = false;
         public override bool MeasureCancelRequested {
@@ -75,13 +75,13 @@ namespace Flavor.Common {
             }
         }
 
-        private void Realize(object sender, CommandReceivedEventArgs<ModBus.CommandCode> e) {
+        private void Realize(object sender, CommandReceivedEventArgs<CommandCode> e) {
             var command = e.Command;
 
-            if (command is ServicePacket<ModBus.CommandCode>.AsyncError) {
+            if (command is ServicePacket<CommandCode>.AsyncError) {
                 CheckInterfaces(command);
 
-                string message = string.Format("Device says: {0}", ((ServicePacket<ModBus.CommandCode>.AsyncError)command).Message);
+                string message = string.Format("Device says: {0}", ((ServicePacket<CommandCode>.AsyncError)command).Message);
                 OnAsyncReplyReceived(message);
                 // TODO: subscribe in Config for event
                 Config.logCrash(message);
@@ -93,7 +93,7 @@ namespace Flavor.Common {
                 }
                 return;
             }
-            if (command is ServicePacket<ModBus.CommandCode>.Async) {
+            if (command is ServicePacket<CommandCode>.Async) {
                 CheckInterfaces(command);
                 if (command is confirmShutdowned) {
                     OnLog("System is shutdowned");
@@ -136,13 +136,13 @@ namespace Flavor.Common {
                 }
                 return;
             }
-            if (command is ServicePacket<ModBus.CommandCode>.SyncError) {
+            if (command is ServicePacket<CommandCode>.SyncError) {
                 toSend.Dequeue();
                 CheckInterfaces(command);
                 return;
             }
-            if (command is ServicePacket<ModBus.CommandCode>.Sync) {
-                if (null == toSend.Peek((ServicePacket<ModBus.CommandCode>.Sync)command)) {
+            if (command is ServicePacket<CommandCode>.Sync) {
+                if (null == toSend.Peek((ServicePacket<CommandCode>.Sync)command)) {
                     return;
                 }
                 CheckInterfaces(command);
@@ -226,11 +226,11 @@ namespace Flavor.Common {
             }
         } 
 
-        private void CheckInterfaces(ServicePacket<ModBus.CommandCode> Command) {
+        private void CheckInterfaces(ServicePacket<CommandCode> Command) {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
                 // BAD!
-                toSend.Enqueue(((IAutomatedReply)Command).AutomatedReply() as ServicePacket<ModBus.CommandCode>.UserRequest);
+                toSend.Enqueue(((IAutomatedReply)Command).AutomatedReply() as ServicePacket<CommandCode>.UserRequest);
             }
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();
@@ -502,7 +502,7 @@ namespace Flavor.Common {
         }
 
         private PortLevel port = new PortLevel();
-        private IProtocol<ModBus.CommandCode> protocol;
+        private IProtocol<CommandCode> protocol;
         public Commander2() {
             protocol = new ModBus(port);
             ConsoleWriter.Subscribe(protocol);
@@ -519,7 +519,7 @@ namespace Flavor.Common {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
-                    toSend = new MessageQueueWithAutomatedStatusChecks<ModBus.CommandCode>(protocol, new requestStatus(), new getTurboPumpStatus());
+                    toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol, new requestStatus(), new getTurboPumpStatus());
                     ConsoleWriter.Subscribe(toSend);
                     toSend.IsOperating = true;
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);

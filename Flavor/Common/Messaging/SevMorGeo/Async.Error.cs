@@ -1,4 +1,4 @@
-﻿using AsyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.ModBus.CommandCode>.AsyncError;
+﻿using AsyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.AsyncError;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class logInternalError: AsyncErrorReply {
