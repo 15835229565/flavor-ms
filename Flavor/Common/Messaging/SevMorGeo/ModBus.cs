@@ -3,48 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    internal class ModBus: IProtocol<CommandCode> {
-        #region IProtocol Members
-        public event EventHandler<CommandReceivedEventArgs<CommandCode>> CommandReceived;
-        protected void OnCommandReceived(ServicePacket<CommandCode> command) {
-            if (CommandReceived != null)
-                CommandReceived(this, new CommandReceivedEventArgs<CommandCode>(command));
-        }
-        public event EventHandler<ErrorCommandEventArgs> ErrorCommand;
-        protected void OnErrorCommand(byte[] data, string message) {
-            if (ErrorCommand != null)
-                ErrorCommand(this, new ErrorCommandEventArgs(data, message));
-        }
-        public void Send(byte[] message) {
-            byteDispatcher.Transmit(buildPackBody(message, ComputeChecksum(message)));
-        }
-        #endregion
+    internal class ModBus: CheckableProtocol<CommandCode> {
+        public ModBus(PortLevel port)
+            : base(new ModbusByteDispatcher(port, false)) { }
         //TODO: structure code-length
-        private readonly IByteDispatcher byteDispatcher;
-        public ModBus(PortLevel port) {
-            byteDispatcher = new ModbusByteDispatcher(port, false);
-            byteDispatcher.PackageReceived += Parse;
-            byteDispatcher.Log += OnLog;
-        }
-
-        private static byte ComputeChecksum(byte[] data) {
-            byte checkSum = 0;
-            for (int i = 0; i < data.Length; i++) {
-                checkSum -= data[i];
-            }
-            return checkSum;
-        }
-        private static bool checkCS(byte[] data) {
-            return true ^ Convert.ToBoolean(ComputeChecksum(data));
-        }
-        private void Parse(object sender, ByteArrayEventArgs e) {
+        protected override void Parse(object sender, ByteArrayEventArgs e) {
             var raw_command = e.Data;
             int minLength = 2;
             if (raw_command.Length < minLength) {
                 OnErrorCommand(raw_command, "Короткий пакет");
                 return;
             }
-            if (!checkCS(raw_command)) {
+            if (!CheckCS(raw_command)) {
                 OnErrorCommand(raw_command, "Неверная контрольная сумма");
                 return;
             }
@@ -244,6 +214,18 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             OnCommandReceived(packet);
         }
 
+        protected override byte ComputeCS(IEnumerable<byte> data) {
+            byte checkSum = 0;
+            foreach (byte b in data)
+                checkSum -= b;
+            return checkSum;
+        }
+        protected override ICollection<byte> buildPackBody(IEnumerable<byte> data, byte checksum) {
+            var pack = new List<byte>(data);
+            pack.Add(checksum);
+            return pack;
+        }
+
         internal static byte[] collectData(params object[] values) {
             List<byte> data = new List<byte>();
             foreach (object o in values) {
@@ -288,41 +270,27 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             if (value > 16777215) value = 16777215;
             return new byte[] { (byte)(value), (byte)(value >> 8), (byte)(value >> 16) };
         }
-        private static ICollection<byte> buildPackBody(byte[] data, byte checksum) {
-            var pack = new List<byte>(data);
-            pack.Add(checksum);
-            return pack;
-        }
-
-        #region IDisposable Members
-        public void Dispose() {
-            byteDispatcher.Dispose();
-        }
-        #endregion
-        #region ILog Members
-        public event MessageHandler Log;
-        protected virtual void OnLog(string message) {
-            if (Log != null)
-                Log(message);
-        }
-        #endregion
         private class ModbusByteDispatcher: ByteDispatcher {
+            private readonly byte START = (byte)':';
+            private readonly byte END = 0x0d;
             public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching)
                 : base(port, singleByteDispatching) { }
-            private readonly List<byte> PacketBuffer = new List<byte>();
+            private readonly List<byte> packetBuffer = new List<byte>();
             private enum PacketingState {
                 Idle,
                 WaitUpper,
                 WaitLower
             }
-            private PacketingState PackState = PacketingState.Idle;
-            private byte UpperNibble;
+            private PacketingState state = PacketingState.Idle;
+            private byte upperNibble;
+            private readonly List<byte> byteBuffer = new List<byte>();
             protected override void DispatchByte(byte data) {
-                switch (PackState) {
+                switch (state) {
                     case PacketingState.Idle: {
-                            if (data == (byte)':') {
-                                PacketBuffer.Clear();
-                                PackState = PacketingState.WaitUpper;
+                            if (data == START) {
+                                packetBuffer.Clear();
+                                byteBuffer.Clear();
+                                state = PacketingState.WaitUpper;
                             } else {
                                 //Symbol outside packet
                                 OnLog(string.Format("Error({0})", data));
@@ -330,40 +298,38 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                             break;
                         }
                     case PacketingState.WaitUpper: {
-                            if (data == 0x0d) {
-                                OnPackageReceived(PacketBuffer.ToArray());
-                                // BAD!
-                                var sb = new StringBuilder("[in]");
-                                foreach (byte b in buildPackBody(PacketBuffer.ToArray())) {
-                                    sb.Append((char)b);
-                                }
-                                OnLog(sb.ToString());
+                            if (data == END) {
+                                OnPackageReceived(packetBuffer.ToArray());
+                                OnLog("[in]", byteBuffer);
                                 
-                                PacketBuffer.Clear();
-                                PackState = PacketingState.Idle;
+                                packetBuffer.Clear();
+                                byteBuffer.Clear();
+                                state = PacketingState.Idle;
                             } else {
-                                UpperNibble = GetInt(data);
-                                PackState = PacketingState.WaitLower;
+                                upperNibble = GetInt(data);
+                                byteBuffer.Add(data);
+                                state = PacketingState.WaitLower;
                             }
                             break;
                         }
                     case PacketingState.WaitLower: {
-                            byte LowerNibble = GetInt(data);
-                            LowerNibble |= (byte)(UpperNibble << 4);
-                            PacketBuffer.Add(LowerNibble);
-                            PackState = PacketingState.WaitUpper;
+                            byte lowerNibble = GetInt(data);
+                            lowerNibble |= (byte)(upperNibble << 4);
+                            packetBuffer.Add(lowerNibble);
+                            byteBuffer.Add(data);
+                            state = PacketingState.WaitUpper;
                             break;
                         }
                 }
             }
-            private static ICollection<byte> buildPack(ICollection<byte> data) {
+            private ICollection<byte> buildPack(ICollection<byte> data) {
                 var pack = new List<byte>(2 * data.Count + 2);
-                pack.Add((byte)':');
+                pack.Add(START);
                 pack.AddRange(buildPackBody(data));
-                pack.Add((byte)'\r');
+                pack.Add(END);
                 return pack;
             }
-            private static ICollection<byte> buildPackBody(ICollection<byte> data) {
+            private ICollection<byte> buildPackBody(ICollection<byte> data) {
                 var pack = new List<byte>(2 * data.Count);
                 foreach (byte b in data) {
                     pack.Add(GetNibble(b >> 4));
@@ -371,15 +337,17 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 }
                 return pack;
             }
-            private static byte GetNibble(int data) {
+            private byte GetNibble(int data) {
                 data &= 0x0F;
                 if (data < 10) {
-                    return (byte)(data + (int)'0');
+                    data += (int)'0';
                 } else {
-                    return (byte)(data + (int)'a' - 10);
+                    data += (int)'a';
+                    data -= 10;
                 }
+                return (byte)data;
             }
-            private static byte GetInt(int data) {
+            private byte GetInt(int data) {
                 if (data >= (byte)'0' && data <= (int)'9') {
                     return (byte)(data - (int)'0');
                 }
@@ -392,15 +360,18 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 return 0;
             }
 
+            private void OnLog(string prefix, ICollection<byte> pack) {
+                var sb = new StringBuilder(prefix);
+                foreach (byte b in pack) {
+                    sb.Append((char)b);
+                }
+                OnLog(sb.ToString());
+            }
             #region IByteDispatcher Members
             public override void Transmit(ICollection<byte> pack) {
                 var message = buildPack(pack);
                 base.Transmit(message);
-                //var sb = new StringBuilder("[out]");
-                //foreach (byte b in message) {
-                //    sb.Append((char)b);
-                //}
-                //OnLog(sb.ToString());
+                OnLog("[out]", pack);
             }
             #endregion
         }

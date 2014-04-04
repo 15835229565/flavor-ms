@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Flavor.Common.Messaging {
     abstract class ByteDispatcher: IByteDispatcher {
@@ -35,11 +34,6 @@ namespace Flavor.Common.Messaging {
         }
         public virtual void Transmit(ICollection<byte> pack) {
             port.Send(pack.ToArray());
-            var sb = new StringBuilder("[out]");
-            foreach (byte b in pack) {
-                sb.Append((char)b);
-            }
-            OnLog(sb.ToString());
         }
         #endregion
         #region IDisposable Members
