@@ -26,5 +26,12 @@
         SPI_CP_SetVoltage = 43,
         // TODO: prove it is right!
         //SPI_CP_GetVoltage = 62,
+        
+        Sync_Error = 255,
+
+        LAM_Event = 254,
+
+        LAM_CriticalError = 252,
+        LAM_InternalError = 253,
     }
 }

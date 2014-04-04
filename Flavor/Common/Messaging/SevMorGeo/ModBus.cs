@@ -16,7 +16,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 ErrorCommand(this, new ErrorCommandEventArgs(data, message));
         }
         public void Send(byte[] message) {
-            byteDispatcher.Transmit(message, ComputeChecksum(message));
+            byteDispatcher.Transmit(buildPackBody(message, ComputeChecksum(message)));
         }
         #endregion
         //TODO: structure code-length
@@ -288,6 +288,11 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             if (value > 16777215) value = 16777215;
             return new byte[] { (byte)(value), (byte)(value >> 8), (byte)(value >> 16) };
         }
+        private static ICollection<byte> buildPackBody(byte[] data, byte checksum) {
+            var pack = new List<byte>(data);
+            pack.Add(checksum);
+            return pack;
+        }
 
         #region IDisposable Members
         public void Dispose() {
@@ -301,17 +306,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 Log(message);
         }
         #endregion
-        private class ModbusByteDispatcher: IByteDispatcher {
-            private readonly PortLevel port;
-            private readonly bool singleByteDispatching;
-            public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching) {
-                this.port = port;
-                this.singleByteDispatching = singleByteDispatching;
-                if (singleByteDispatching)
-                    port.ByteReceived += PortByteReceived;
-                else
-                    port.BytesReceived += PortBytesReceived;
-            }
+        private class ModbusByteDispatcher: ByteDispatcher {
+            public ModbusByteDispatcher(PortLevel port, bool singleByteDispatching)
+                : base(port, singleByteDispatching) { }
             private readonly List<byte> PacketBuffer = new List<byte>();
             private enum PacketingState {
                 Idle,
@@ -320,18 +317,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             }
             private PacketingState PackState = PacketingState.Idle;
             private byte UpperNibble;
-            private void PortBytesReceived(object sender, PortLevel.BytesReceivedEventArgs e) {
-                DispatchBytes(e.Bytes, e.Count);
-            }
-            private void DispatchBytes(byte[] bytes, int count) {
-                for (int i = 0; i < count; ++i) {
-                    DispatchByte(bytes[i]);
-                }
-            }
-            private void PortByteReceived(object sender, PortLevel.ByteReceivedEventArgs e) {
-                DispatchByte(e.Byte);
-            }
-            private void DispatchByte(byte data) {
+            protected override void DispatchByte(byte data) {
                 switch (PackState) {
                     case PacketingState.Idle: {
                             if (data == (byte)':') {
@@ -348,9 +334,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                                 OnPackageReceived(PacketBuffer.ToArray());
                                 // BAD!
                                 var sb = new StringBuilder("[in]");
-                                byte cs = PacketBuffer[PacketBuffer.Count - 1];
-                                PacketBuffer.RemoveAt(PacketBuffer.Count - 1);
-                                foreach (byte b in buildPackBody(PacketBuffer.ToArray(), cs)) {
+                                foreach (byte b in buildPackBody(PacketBuffer.ToArray())) {
                                     sb.Append((char)b);
                                 }
                                 OnLog(sb.ToString());
@@ -372,22 +356,19 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                         }
                 }
             }
-            // TODO: move checksum up
-            private static byte[] buildPack(byte[] data, byte checksum) {
-                var pack = new List<byte>(2 * data.Length + 4);
+            private static ICollection<byte> buildPack(ICollection<byte> data) {
+                var pack = new List<byte>(2 * data.Count + 2);
                 pack.Add((byte)':');
-                pack.AddRange(buildPackBody(data, checksum));
+                pack.AddRange(buildPackBody(data));
                 pack.Add((byte)'\r');
-                return pack.ToArray();
+                return pack;
             }
-            private static IEnumerable<byte> buildPackBody(byte[] data, byte checksum) {
-                var pack = new List<byte>(2 * data.Length + 2);
-                for (int i = 0; i < data.Length; i++) {
-                    pack.Add(GetNibble(data[i] >> 4));
-                    pack.Add(GetNibble(data[i]));
+            private static ICollection<byte> buildPackBody(ICollection<byte> data) {
+                var pack = new List<byte>(2 * data.Count);
+                foreach (byte b in data) {
+                    pack.Add(GetNibble(b >> 4));
+                    pack.Add(GetNibble(b));
                 }
-                pack.Add(GetNibble(checksum >> 4));
-                pack.Add(GetNibble(checksum));
                 return pack;
             }
             private static byte GetNibble(int data) {
@@ -411,36 +392,15 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 return 0;
             }
 
-            #region IDisposable Members
-
-            public void Dispose() {
-                if (singleByteDispatching)
-                    port.ByteReceived -= PortByteReceived;
-                else
-                    port.BytesReceived -= PortBytesReceived;
-            }
-            #endregion
             #region IByteDispatcher Members
-            public event EventHandler<ByteArrayEventArgs> PackageReceived;
-            protected virtual void OnPackageReceived(byte[] data) {
-                if (PackageReceived != null)
-                    PackageReceived(this, new ByteArrayEventArgs(data));
-            }
-            public void Transmit(byte[] message, byte checksum) {
-                byte[] pack = buildPack(message, checksum);
-                port.Send(pack);
-                var sb = new StringBuilder("[out]");
-                foreach (byte b in pack) {
-                    sb.Append((char)b);
-                }
-                OnLog(sb.ToString());
-            }
-            #endregion
-            #region ILog Members
-            public event MessageHandler Log;
-            protected virtual void OnLog(string message) {
-                if (Log != null)
-                    Log(message);
+            public override void Transmit(ICollection<byte> pack) {
+                var message = buildPack(pack);
+                base.Transmit(message);
+                //var sb = new StringBuilder("[out]");
+                //foreach (byte b in message) {
+                //    sb.Append((char)b);
+                //}
+                //OnLog(sb.ToString());
             }
             #endregion
         }

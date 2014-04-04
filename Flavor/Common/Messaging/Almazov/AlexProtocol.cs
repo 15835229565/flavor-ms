@@ -6,41 +6,24 @@ using System.Text;
 namespace Flavor.Common.Messaging.Almazov {
     internal class AlexProtocol: IProtocol<CommandCode> {
         private readonly IByteDispatcher byteDispatcher;
-        public AlexProtocol(PortLevel port) {
-            byteDispatcher = new ByteDispatcher(port);
+        public AlexProtocol(PortLevel port, bool singleByteDispatching) {
+            byteDispatcher = new AlexProtocolByteDispatcher(port, singleByteDispatching);
             byteDispatcher.PackageReceived += Parse;
             byteDispatcher.Log += OnLog;
         }
         private void Parse(object sender, ByteArrayEventArgs e) {
             throw new NotImplementedException();
         }
-        private class ByteDispatcher: IByteDispatcher {
-            public ByteDispatcher(PortLevel port) {
+        private class AlexProtocolByteDispatcher: ByteDispatcher {
+            public AlexProtocolByteDispatcher(PortLevel port, bool singleByteDispatching)
+                : base(port, singleByteDispatching) { }
+            protected override void DispatchByte(byte data) {
                 throw new NotImplementedException();
             }
-
             #region IByteDispatcher Members
-
-            public event EventHandler<ByteArrayEventArgs> PackageReceived;
-
-            public void Transmit(byte[] message, byte checksum) {
+            public override void Transmit(ICollection<byte> pack) {
                 throw new NotImplementedException();
             }
-
-            #endregion
-
-            #region IDisposable Members
-
-            public void Dispose() {
-                throw new NotImplementedException();
-            }
-
-            #endregion
-
-            #region ILog Members
-
-            public event MessageHandler Log;
-
             #endregion
         }
         #region IProtocol Members

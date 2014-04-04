@@ -85,6 +85,7 @@
     <Compile Include="Common\Commands.cs" />
     <Compile Include="Common\Messaging\Almazov\CommandCode.cs" />
     <Compile Include="Common\Messaging\Almazov\Flags.cs" />
+    <Compile Include="Common\Messaging\ByteDispatcher.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Async.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Async.Error.cs" />
     <Compile Include="Common\Messaging\Interfaces.cs" />
