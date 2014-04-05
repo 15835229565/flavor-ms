@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using AsyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.AsyncError;
+using AsyncErrorReply = Flavor.Common.Messaging.AsyncError<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class logInternalError: AsyncErrorReply {

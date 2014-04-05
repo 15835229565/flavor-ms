@@ -89,6 +89,8 @@
     <Compile Include="Common\Messaging\CheckableProtocol.cs" />
     <Compile Include="Common\Messaging\CommandDictionary.cs" />
     <Compile Include="Common\Messaging\CommandRecord.cs" />
+    <Compile Include="Common\Messaging\PackageDictionary.cs" />
+    <Compile Include="Common\Messaging\PackageRecord.cs" />
     <Compile Include="Common\Messaging\Protocol.cs" />
     <Compile Include="Common\Messaging\Realizer.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Async.cs" />
@@ -109,7 +111,7 @@
     <Compile Include="Common\Messaging\ErrorCommandEventArgs.cs" />
     <Compile Include="Common\Messaging\IByteDispatcher.cs" />
     <Compile Include="Common\Messaging\IProtocol.cs" />
-    <Compile Include="Common\Messaging\ServicePacket.cs" />
+    <Compile Include="Common\Messaging\ServicePackets.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\ModBus.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Common\Graph.cs" />
@@ -117,8 +119,6 @@
     <Compile Include="Common\MeasureMode.cs" />
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
-    <Compile Include="Common\Messaging\StatusUserCommandRecord.cs" />
-    <Compile Include="Common\Messaging\UserCommandRecord.cs" />
     <Compile Include="Common\Pifagor.cs" />
     <Compile Include="Common\PortLevel.cs" />
     <Compile Include="Common\SPI_Devices.cs" />

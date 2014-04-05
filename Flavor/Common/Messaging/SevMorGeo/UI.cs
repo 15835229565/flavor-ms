@@ -1,5 +1,5 @@
 ﻿using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
-using UserRequest = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.UserRequest;
+using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class requestState: UserRequest {

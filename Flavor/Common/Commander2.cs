@@ -78,10 +78,10 @@ namespace Flavor.Common {
         private void Realize(object sender, CommandReceivedEventArgs<CommandCode> e) {
             var command = e.Command;
 
-            if (command is ServicePacket<CommandCode>.AsyncError) {
+            if (command is AsyncError<CommandCode>) {
                 CheckInterfaces(command);
 
-                string message = string.Format("Device says: {0}", ((ServicePacket<CommandCode>.AsyncError)command).Message);
+                string message = string.Format("Device says: {0}", ((AsyncError<CommandCode>)command).Message);
                 OnAsyncReplyReceived(message);
                 // TODO: subscribe in Config for event
                 Config.logCrash(message);
@@ -93,7 +93,7 @@ namespace Flavor.Common {
                 }
                 return;
             }
-            if (command is ServicePacket<CommandCode>.Async) {
+            if (command is Async<CommandCode>) {
                 CheckInterfaces(command);
                 if (command is confirmShutdowned) {
                     OnLog("System is shutdowned");
@@ -136,13 +136,13 @@ namespace Flavor.Common {
                 }
                 return;
             }
-            if (command is ServicePacket<CommandCode>.SyncError) {
+            if (command is SyncError<CommandCode>) {
                 toSend.Dequeue();
                 CheckInterfaces(command);
                 return;
             }
-            if (command is ServicePacket<CommandCode>.Sync) {
-                if (null == toSend.Peek((ServicePacket<CommandCode>.Sync)command)) {
+            if (command is Sync<CommandCode>) {
+                if (null == toSend.Peek((Sync<CommandCode>)command)) {
                     return;
                 }
                 CheckInterfaces(command);
@@ -230,7 +230,7 @@ namespace Flavor.Common {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
                 // BAD!
-                toSend.Enqueue(((IAutomatedReply)Command).AutomatedReply() as ServicePacket<CommandCode>.UserRequest);
+                toSend.Enqueue(((IAutomatedReply)Command).AutomatedReply() as UserRequest<CommandCode>);
             }
             if (Command is IUpdateDevice) {
                 ((IUpdateDevice)Command).UpdateDevice();

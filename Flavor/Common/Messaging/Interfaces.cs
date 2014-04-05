@@ -1,5 +1,8 @@
-﻿namespace Flavor.Common.Messaging {
-    interface IId<T> {
+﻿using System;
+
+namespace Flavor.Common.Messaging {
+    interface IId<T> where T
+        : struct, IConvertible, IComparable {
         T Id { get; }
     }
     interface ISend {

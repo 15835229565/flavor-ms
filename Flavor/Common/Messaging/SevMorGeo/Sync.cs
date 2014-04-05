@@ -1,5 +1,5 @@
 ﻿using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
-using SyncReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.Sync;
+using SyncReply = Flavor.Common.Messaging.SyncReply<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     class updateState: SyncReply, IUpdateDevice, IAutomatedReply {

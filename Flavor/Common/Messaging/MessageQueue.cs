@@ -7,7 +7,7 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable {
         byte Try = 0;
 
-        Queue<ServicePacket<T>.UserRequest> queue = new Queue<ServicePacket<T>.UserRequest>();
+        Queue<UserRequest<T>> queue = new Queue<UserRequest<T>>();
         // TODO: configurable
         readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
 
@@ -41,15 +41,15 @@ namespace Flavor.Common.Messaging {
             }
         }
         protected virtual void OnClear() { }
-        public void Enqueue(ServicePacket<T>.UserRequest command)
+        public void Enqueue(UserRequest<T> command)
         {
             lock (SyncRoot) {
                 queue.Enqueue(command);
                 trySend();
             }
         }
-        public ServicePacket<T>.UserRequest Dequeue() {
-            ServicePacket<T>.UserRequest packet = null;
+        public UserRequest<T> Dequeue() {
+            UserRequest<T> packet = null;
             lock (SyncRoot) {
                 dequeueToSendInsideLock(ref packet);
                 StopSending();
@@ -57,8 +57,8 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        public ServicePacket<T>.UserRequest Peek(ServicePacket<T>.Sync command) {
-            ServicePacket<T>.UserRequest packet = null;
+        public UserRequest<T> Peek(Sync<T> command) {
+            UserRequest<T> packet = null;
             lock (SyncRoot) {
                 if (queue.Count == 0) {
                     OnLog(string.Format("Received {0}. While waiting for nothing.", command));
@@ -80,7 +80,7 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        protected bool Contains(ServicePacket<T>.UserRequest item) {
+        protected bool Contains(UserRequest<T> item) {
             return queue.Contains(item);
         }
         void StartSending() {
@@ -116,7 +116,7 @@ namespace Flavor.Common.Messaging {
                     }
                     StopSending();
                 }
-                ServicePacket<T>.UserRequest packet = null;
+                UserRequest<T> packet = null;
                 if (queue.Count == 0)
                     OnLog("Error. Packet queue is empty but sending counter is not zero.");
                 else {
@@ -141,7 +141,7 @@ namespace Flavor.Common.Messaging {
         void Send() {
             lock (SyncRoot) {
                 while (queue.Count > 0) {
-                    ServicePacket<T>.UserRequest packet = null;
+                    UserRequest<T> packet = null;
                     peekToSendInsideLock(ref packet);
                     if (packet != null) {
                         if (0 == Try) {
@@ -157,7 +157,7 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        bool dequeueToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
+        bool dequeueToSendInsideLock(ref UserRequest<T> packet) {
             try {
                 packet = queue.Dequeue();
                 return true;
@@ -171,10 +171,10 @@ namespace Flavor.Common.Messaging {
                 OnLog("Error. Cannot clear message queue.");
             }
             OnLog("Message queue recreation.");
-            queue = new Queue<ServicePacket<T>.UserRequest>();
+            queue = new Queue<UserRequest<T>>();
             return false;
         }
-        void peekToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
+        void peekToSendInsideLock(ref UserRequest<T> packet) {
             try {
                 packet = queue.Peek();
                 if (packet == null)

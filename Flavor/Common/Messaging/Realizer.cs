@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Flavor.Common.Messaging {
     abstract class Realizer<T>: ILog, IAsyncReplyReceived, IConnectionActions
@@ -23,7 +20,7 @@ namespace Flavor.Common.Messaging {
             void Act(ServicePacket<T> command);
         }
         readonly MessageQueue<T> toSend;
-        protected void Enqueue(ServicePacket<T>.UserRequest command) {
+        protected void Enqueue(UserRequest<T> command) {
             toSend.Enqueue(command);
         }
         protected virtual void Realize(object sender, CommandReceivedEventArgs<T> e) {

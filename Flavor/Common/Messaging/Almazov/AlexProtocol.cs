@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlexProtocol: CheckableProtocol<CommandCode> {
         public AlexProtocol(PortLevel port, CommandDictionary<CommandCode> dictionary)
             : base(new AlexProtocolByteDispatcher(port, false), GetDictionary()) { }
-        static CommandDictionary<CommandCode> GetDictionary() {
-            return new CommandDictionary<CommandCode>();
-        }
 
         protected override byte ComputeCS(IList<byte> data) {
             byte checkSum = 0;
@@ -22,16 +20,16 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         class AlexProtocolByteDispatcher: ByteDispatcher {
-            private readonly byte LOCK = 13;
-            private readonly byte KEY = 58;
+            readonly byte LOCK = 13;
+            readonly byte KEY = 58;
             public AlexProtocolByteDispatcher(PortLevel port, bool singleByteDispatching)
                 : base(port, singleByteDispatching) { }
-            private readonly List<byte> packetBuffer = new List<byte>();
-            private enum PacketingState {
+            readonly List<byte> packetBuffer = new List<byte>();
+            enum PacketingState {
                 Idle,
                 Wait,
             }
-            private PacketingState state = PacketingState.Idle;
+            PacketingState state = PacketingState.Idle;
             protected override void DispatchByte(byte data) {
                 switch (state) {
                     case PacketingState.Idle: {
@@ -57,21 +55,21 @@ namespace Flavor.Common.Messaging.Almazov {
                         }
                 }
             }
-            private ICollection<byte> buildPack(ICollection<byte> data) {
+            ICollection<byte> buildPack(ICollection<byte> data) {
                 var pack = new List<byte>(data.Count + 2);
                 pack.Add(KEY);
                 pack.AddRange(data);
                 pack.Add(LOCK);
                 return pack;
             }
-            private ICollection<byte> buildPackBody(ICollection<byte> data) {
+            ICollection<byte> buildPackBody(ICollection<byte> data) {
                 var pack = new List<byte>(data.Count);
                 foreach (byte b in data) {
                     pack.Add(b);
                 }
                 return pack;
             }
-            private void OnLog(string prefix, ICollection<byte> pack) {
+            void OnLog(string prefix, ICollection<byte> pack) {
                 var sb = new StringBuilder(prefix);
                 foreach (byte b in pack) {
                     sb.Append((char)b);
@@ -80,7 +78,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
                 OnLog(sb.ToString());
             }
-            private byte GetNibble(int data) {
+            byte GetNibble(int data) {
                 data &= 0x0F;
                 if (data < 10) {
                     data += (int)'0';
@@ -96,6 +94,25 @@ namespace Flavor.Common.Messaging.Almazov {
                 OnLog("[out]", pack);
             }
             #endregion
+        }
+        delegate Predicate<int> PredicateGenerator(int value);
+        static CommandDictionary<CommandCode> GetDictionary() {
+            var d = new CommandDictionary<CommandCode>();
+            PredicateGenerator eq = value => (l => l == value);
+            PredicateGenerator more = value => (l => l > value);
+            PredicateGenerator moreeq = value => (l => l >= value);
+            Action<IList<byte>> trim = l => {
+                l.RemoveAt(0);
+                l.RemoveAt(l.Count - 1);
+            };
+            Action<CommandCode, Predicate<int>, CommandRecord<CommandCode>.Parser> add = (code, predicate, parser) => d[(byte)code] = new CommandRecord<CommandCode>(predicate, parser);
+            // TODO: commands here
+            //add(CommandCode.CPU_Status, eq(4), rawCommand => {
+            //    trim(rawCommand);
+            //    return ServicePacket<CommandCode>.Sync
+            //});
+            
+            return d;
         }
     }
 }

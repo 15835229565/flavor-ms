@@ -52,15 +52,15 @@ namespace Flavor.Common.Messaging {
             IsOperating = false;
         }
 
-        readonly ServicePacket<T>.UserRequest statusCheck;
-        readonly ServicePacket<T>.UserRequest vacuumCheck;
-        public MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, ServicePacket<T>.UserRequest statusCheck, ServicePacket<T>.UserRequest vacuumCheck)
+        readonly UserRequest<T> statusCheck;
+        readonly UserRequest<T> vacuumCheck;
+        public MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, UserRequest<T> statusCheck, UserRequest<T> vacuumCheck)
             : base(protocol) {
             this.statusCheck = statusCheck;
             this.vacuumCheck = vacuumCheck;
             //OnInit();
         }
-        IEnumerator<ServicePacket<T>.UserRequest> StatusRequestEnumerator() {
+        IEnumerator<UserRequest<T>> StatusRequestEnumerator() {
             bool rare = IsRareMode;
             // TODO: move this hard-coded defaults to Config
             int factor = rare ? 3 : 5;
@@ -73,8 +73,8 @@ namespace Flavor.Common.Messaging {
                 i %= factor;
             }
         }
-        IEnumerator<ServicePacket<T>.UserRequest> requestEnumerator;
-        ServicePacket<T>.UserRequest StatusRequest() {
+        IEnumerator<UserRequest<T>> requestEnumerator;
+        UserRequest<T> StatusRequest() {
             requestEnumerator.MoveNext();
             return requestEnumerator.Current;
         }
