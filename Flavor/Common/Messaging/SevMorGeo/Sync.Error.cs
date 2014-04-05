@@ -1,11 +1,12 @@
 using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
 using SyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.SyncError;
+using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class logInvalidCommand: SyncErrorReply {
         //private byte[] command;
 
-        internal logInvalidCommand(byte[] errorcommand) {
+        internal logInvalidCommand(IList<byte> errorcommand) {
             //command = errorcommand;
         }
 

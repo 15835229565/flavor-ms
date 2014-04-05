@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging {
     public class ErrorCommandEventArgs: ByteArrayEventArgs {
         public string Message { get; private set; }
-        public ErrorCommandEventArgs(byte[] data, string message)
+        public ErrorCommandEventArgs(IList<byte> data, string message)
             : base(data) {
             Message = message;
         }

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 
 namespace Flavor.Common.Messaging {
-    abstract class Realizer<T>: ILog, IAsyncReplyReceived, IConnectionActions {
-        private readonly CommandDictionary<T> dictionary;
-        private IProtocol<T> protocol;
-        protected Realizer(IProtocol<T> protocol, CommandDictionary<T> dictionary) {
+    abstract class Realizer<T>: ILog, IAsyncReplyReceived, IConnectionActions
+        where T: struct, IConvertible, IComparable {
+        readonly CommandDictionary<T> dictionary;
+        IProtocol<T> protocol;
+        protected Realizer(IProtocol<T> protocol, CommandDictionary<T> dictionary, MessageQueue<T> queue) {
             this.dictionary = dictionary;
             this.protocol = protocol;
             ConsoleWriter.Subscribe(this);
@@ -16,16 +17,17 @@ namespace Flavor.Common.Messaging {
                 // TODO: more accurate
                 OnLog(e.Message);
             };
+            toSend = queue;
         }
         protected interface IActor {
             void Act(ServicePacket<T> command);
         }
-        private MessageQueueWithAutomatedStatusChecks<T> toSend;
+        readonly MessageQueue<T> toSend;
         protected void Enqueue(ServicePacket<T>.UserRequest command) {
             toSend.Enqueue(command);
         }
         protected virtual void Realize(object sender, CommandReceivedEventArgs<T> e) {
-            T code = e.Code;
+            byte code = e.Code;
             var command = e.Command;
             if (!dictionary.ContainsKey(code)) {
                 // Strange error
@@ -36,20 +38,12 @@ namespace Flavor.Common.Messaging {
                 actor.Act(command);
         }
         #region IConnectionActions Members
-        public void Connect() {
-            dictionary.Where(record => {
-                var userRequest = record.Value as StatusUserCommandRecord<T>;
-                if (userRequest == null)
-                    return false;
-                return true;
-            });
-            //toSend = new MessageQueueWithAutomatedStatusChecks<T>(protocol, new requestStatus(), new getTurboPumpStatus());
+        public virtual void Connect() {
+            toSend.Clear();
             ConsoleWriter.Subscribe(toSend);
-            toSend.IsOperating = true;
             //toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
         }
-        public void Disconnect() {
-            toSend.IsOperating = false;
+        public virtual void Disconnect() {
             ConsoleWriter.Unsubscribe(toSend);
             //toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             toSend.Clear();

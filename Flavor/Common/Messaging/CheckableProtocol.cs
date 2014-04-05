@@ -2,18 +2,26 @@
 using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging {
-    abstract class CheckableProtocol<T>: Protocol<T> {
-        protected CheckableProtocol(IByteDispatcher byteDispatcher)
-            : base(byteDispatcher) { }
+    abstract class CheckableProtocol<T>: Protocol<T>
+        where T: struct, IConvertible, IComparable {
+        protected CheckableProtocol(IByteDispatcher byteDispatcher, CommandDictionary<T> dictionary)
+            : base(byteDispatcher, dictionary) { }
         #region IProtocol Members
-        public override void Send(IEnumerable<byte> message) {
+        public override void Send(IList<byte> message) {
             base.Send(buildPackBody(message, ComputeCS(message)));
         }
         #endregion
-        protected abstract byte ComputeCS(IEnumerable<byte> data);
-        protected bool CheckCS(byte[] data) {
+        protected override bool CheckPassed(IList<byte> rawCommand) {
+            if (!CheckCS(rawCommand)) {
+                OnErrorCommand(rawCommand, "Неверная контрольная сумма");
+                return false;
+            }
+            return true;
+        }
+        protected abstract byte ComputeCS(IList<byte> data);
+        protected bool CheckCS(IList<byte> data) {
             return true ^ Convert.ToBoolean(ComputeCS(data));
         }
-        protected abstract ICollection<byte> buildPackBody(IEnumerable<byte> data, byte checksum);
+        protected abstract IList<byte> buildPackBody(IList<byte> data, byte checksum);
     }
 }

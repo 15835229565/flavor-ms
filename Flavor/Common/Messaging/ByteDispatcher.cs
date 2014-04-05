@@ -28,7 +28,7 @@ namespace Flavor.Common.Messaging {
         protected abstract void DispatchByte(byte data);
         #region IByteDispatcher Members
         public event EventHandler<ByteArrayEventArgs> PackageReceived;
-        protected virtual void OnPackageReceived(byte[] data) {
+        protected virtual void OnPackageReceived(IList<byte> data) {
             if (PackageReceived != null)
                 PackageReceived(this, new ByteArrayEventArgs(data));
         }

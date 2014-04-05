@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Collections;
 
 namespace Flavor.Common.Messaging {
-    class MessageQueue<T>: ILog {
-        private byte Try = 0;
+    class MessageQueue<T>: ILog
+        where T: struct, IConvertible, IComparable {
+        byte Try = 0;
 
-        private Queue<ServicePacket<T>.UserRequest> queue = new Queue<ServicePacket<T>.UserRequest>();
-        private System.Timers.Timer sendTimer;
+        Queue<ServicePacket<T>.UserRequest> queue = new Queue<ServicePacket<T>.UserRequest>();
+        // TODO: configurable
+        readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
 
-        private object syncObj = null;
-        private object SyncRoot {
+        object syncObj = null;
+        object SyncRoot {
             get {
                 return syncObj == null ? (syncObj = (queue as ICollection).SyncRoot) : syncObj; 
             }
@@ -20,15 +22,16 @@ namespace Flavor.Common.Messaging {
             if (Undo != null)
                 Undo(this, EventArgs.Empty);
         }
-        private IProtocol<T> protocol = null;
-        internal MessageQueue(IProtocol<T> protocol) {
+        IProtocol<T> protocol = null;
+        public MessageQueue(IProtocol<T> protocol) {
             this.protocol = protocol;
-            // TODO: configurable
-            sendTimer = new System.Timers.Timer(1000);
             sendTimer.Enabled = false;
+            OnInit(false);
         }
-        internal void Clear() {
+        protected virtual void OnInit(bool start) { }
+        public void Clear() {
             lock (SyncRoot) {
+                OnClear();
                 lock (sendTimer) {
                     if (sendTimer.Enabled) {
                         StopSending();
@@ -37,14 +40,15 @@ namespace Flavor.Common.Messaging {
                 queue.Clear();
             }
         }
-        internal void Enqueue(ServicePacket<T>.UserRequest command)
+        protected virtual void OnClear() { }
+        public void Enqueue(ServicePacket<T>.UserRequest command)
         {
             lock (SyncRoot) {
                 queue.Enqueue(command);
                 trySend();
             }
         }
-        internal ServicePacket<T>.UserRequest Dequeue() {
+        public ServicePacket<T>.UserRequest Dequeue() {
             ServicePacket<T>.UserRequest packet = null;
             lock (SyncRoot) {
                 dequeueToSendInsideLock(ref packet);
@@ -53,7 +57,7 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        internal ServicePacket<T>.UserRequest Peek(ServicePacket<T>.Sync command) {
+        public ServicePacket<T>.UserRequest Peek(ServicePacket<T>.Sync command) {
             ServicePacket<T>.UserRequest packet = null;
             lock (SyncRoot) {
                 if (queue.Count == 0) {
@@ -79,7 +83,7 @@ namespace Flavor.Common.Messaging {
         protected bool Contains(ServicePacket<T>.UserRequest item) {
             return queue.Contains(item);
         }
-        private void StartSending() {
+        void StartSending() {
             lock (sendTimer) {
                 if (sendTimer.Enabled || Try != 0) {
                     OnLog("Error. SendTimer already started.");
@@ -90,7 +94,7 @@ namespace Flavor.Common.Messaging {
                 sendTimer.Enabled = true;
             }
         }
-        private void StopSending() {
+        void StopSending() {
             lock (sendTimer) {
                 if (!sendTimer.Enabled || Try == 0) {
                     OnLog("Error. SendTimer already stopped.");
@@ -102,7 +106,7 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        private void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+        void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
             lock (SyncRoot) {
                 lock (sendTimer) {
                     ++Try;
@@ -127,14 +131,14 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        private void trySend() {
+        void trySend() {
             lock (sendTimer) {
                 if (!sendTimer.Enabled) {
                     Send();
                 }
             }
         }
-        private void Send() {
+        void Send() {
             lock (SyncRoot) {
                 while (queue.Count > 0) {
                     ServicePacket<T>.UserRequest packet = null;
@@ -153,7 +157,7 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        private bool dequeueToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
+        bool dequeueToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
             try {
                 packet = queue.Dequeue();
                 return true;
@@ -170,7 +174,7 @@ namespace Flavor.Common.Messaging {
             queue = new Queue<ServicePacket<T>.UserRequest>();
             return false;
         }
-        private void peekToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
+        void peekToSendInsideLock(ref ServicePacket<T>.UserRequest packet) {
             try {
                 packet = queue.Peek();
                 if (packet == null)

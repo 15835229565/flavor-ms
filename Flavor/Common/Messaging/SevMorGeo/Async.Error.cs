@@ -1,4 +1,5 @@
-﻿using AsyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.AsyncError;
+﻿using System.Collections.Generic;
+using AsyncErrorReply = Flavor.Common.Messaging.ServicePacket<Flavor.Common.Messaging.SevMorGeo.CommandCode>.AsyncError;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     internal class logInternalError: AsyncErrorReply {
@@ -41,7 +42,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public override string Message {
             get { return "Turbopump failure"; }
         }
-        internal logTurboPumpFailure(byte[] commandline) {
+        internal logTurboPumpFailure(IList<byte> commandline) {
             turboSpeed = (ushort)((ushort)commandline[1] + ((ushort)commandline[2] << 8));
             turboCurrent = (ushort)((ushort)commandline[3] + ((ushort)commandline[4] << 8));
             pwm = (ushort)((ushort)commandline[5] + ((ushort)commandline[6] << 8));
@@ -85,20 +86,20 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public override string Message {
             get { return "AdcPlaceIonSrc"; }
         }
-        internal logAdcPlaceIonSrc(byte[] commandline) { }
+        internal logAdcPlaceIonSrc(IList<byte> commandline) { }
     }
 
     internal class logAdcPlaceScanv: AsyncErrorReply {
         public override string Message {
             get { return "AdcPlaceScanv"; }
         }
-        internal logAdcPlaceScanv(byte[] commandline) { }
+        internal logAdcPlaceScanv(IList<byte> commandline) { }
     }
 
     internal class logAdcPlaceControlm: AsyncErrorReply {
         public override string Message {
             get { return "AdcPlaceControlm"; }
         }
-        internal logAdcPlaceControlm(byte[] commandline) { }
+        internal logAdcPlaceControlm(IList<byte> commandline) { }
     }
 }

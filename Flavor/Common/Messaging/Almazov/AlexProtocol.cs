@@ -2,49 +2,26 @@
 using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
-    internal class AlexProtocol: CheckableProtocol<CommandCode> {
-        private readonly CommandDictionary<CommandCode> dictionary;
+    class AlexProtocol: CheckableProtocol<CommandCode> {
         public AlexProtocol(PortLevel port, CommandDictionary<CommandCode> dictionary)
-            : base(new AlexProtocolByteDispatcher(port, false)) {
-            this.dictionary = dictionary;
-        }
-        protected override void Parse(object sender, ByteArrayEventArgs e) {
-            var rawCommand = e.Data;
-            int length = rawCommand.Length;
-            if (length < dictionary.MinLength) {
-                OnErrorCommand(rawCommand, "Короткий пакет");
-                return;
-            }
-            if (!CheckCS(rawCommand)) {
-                OnErrorCommand(rawCommand, "Неверная контрольная сумма");
-                return;
-            }
-            CommandCode code = (CommandCode)rawCommand[0];
-            if (!dictionary.ContainsKey(code)) {
-                OnErrorCommand(rawCommand, "Неверная команда");
-                return;
-            }
-            var record = dictionary[code];
-            if (!record.CheckLength(length)) {
-                OnErrorCommand(rawCommand, "Неверная длина");
-                return;
-            }
-            OnCommandReceived(code, record.Parse(rawCommand));
+            : base(new AlexProtocolByteDispatcher(port, false), GetDictionary()) { }
+        static CommandDictionary<CommandCode> GetDictionary() {
+            return new CommandDictionary<CommandCode>();
         }
 
-        protected override byte ComputeCS(IEnumerable<byte> data) {
+        protected override byte ComputeCS(IList<byte> data) {
             byte checkSum = 0;
             foreach (byte b in data)
                 checkSum -= b;
             return checkSum;
         }
-        protected override ICollection<byte> buildPackBody(IEnumerable<byte> data, byte checksum) {
+        protected override IList<byte> buildPackBody(IList<byte> data, byte checksum) {
             var pack = new List<byte>(data);
             pack.Add(checksum);
             return pack;
         }
 
-        private class AlexProtocolByteDispatcher: ByteDispatcher {
+        class AlexProtocolByteDispatcher: ByteDispatcher {
             private readonly byte LOCK = 13;
             private readonly byte KEY = 58;
             public AlexProtocolByteDispatcher(PortLevel port, bool singleByteDispatching)
@@ -69,7 +46,7 @@ namespace Flavor.Common.Messaging.Almazov {
                         }
                     case PacketingState.Wait: {
                             if (data == LOCK) {
-                                OnPackageReceived(packetBuffer.ToArray());
+                                OnPackageReceived(packetBuffer);
                                 OnLog("[in]", packetBuffer);
                                 packetBuffer.Clear();
                                 state = PacketingState.Idle;

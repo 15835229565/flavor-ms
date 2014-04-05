@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging {
-    interface IProtocol<T>: IDisposable, ILog {
+    interface IProtocol<T>: IDisposable, ILog
+        where T: struct, IConvertible, IComparable {
         event EventHandler<CommandReceivedEventArgs<T>> CommandReceived;
         event EventHandler<ErrorCommandEventArgs> ErrorCommand;
-        void Send(IEnumerable<byte> message);
+        void Send(IList<byte> message);
     }
 }

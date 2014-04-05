@@ -514,15 +514,16 @@ namespace Flavor.Common {
                 // TODO: more accurate
                 OnLog(e.Message);
             };
+            toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol, new requestStatus(), new getTurboPumpStatus());
         }
         public override void Connect() {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
-                    toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol, new requestStatus(), new getTurboPumpStatus());
+                    toSend.Clear();
                     ConsoleWriter.Subscribe(toSend);
-                    toSend.IsOperating = true;
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
+                    toSend.IsOperating = true;
                     DeviceIsConnected = true;
                     break;
                 case PortLevel.PortStates.Opened:
@@ -537,8 +538,8 @@ namespace Flavor.Common {
         }
         public override void Disconnect() {
             toSend.IsOperating = false;
-            ConsoleWriter.Unsubscribe(toSend);
             toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
+            ConsoleWriter.Unsubscribe(toSend);
             toSend.Clear();
             PortLevel.PortStates res = port.Close();
             switch (res) {
