@@ -1,5 +1,5 @@
 ﻿namespace Flavor.Common.Messaging.Almazov {
-    enum Flags: byte {
+    enum DeviceFlags: byte {
         HVE = 71,
         PRGE = 72,
         EDCD = 73,

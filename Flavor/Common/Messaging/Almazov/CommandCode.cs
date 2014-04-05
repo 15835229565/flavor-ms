@@ -32,6 +32,7 @@
         LAM_Event = 254,
 
         LAM_CriticalError = 252,
+        // TODO: why not procrssed?
         LAM_InternalError = 253,
     }
 }

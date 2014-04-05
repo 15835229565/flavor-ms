@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging {
     public abstract class ServicePacket<T>
@@ -11,7 +12,7 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable { }
     public abstract class UserRequest<T>: Sync<T>, ISend
         where T: struct, IConvertible, IComparable {
-        public abstract byte[] Data { get; }
+        public abstract IList<byte> Data { get; }
     }
     public abstract class SyncError<T>: Sync<T>
         where T: struct, IConvertible, IComparable { }

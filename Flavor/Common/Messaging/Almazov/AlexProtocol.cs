@@ -19,6 +19,19 @@ namespace Flavor.Common.Messaging.Almazov {
             return pack;
         }
 
+        public static IList<byte> collectData(byte functCode, params object[] values) {
+            List<byte> data = new List<byte>();
+            data.Add(functCode);
+            foreach (object o in values) {
+                if (o is byte)
+                    data.Add((byte)o);
+                //if (o is ushort)
+                //    data.AddRange(ushort2ByteArray((ushort)o));
+                //if (o is int)
+                //    data.AddRange(int2ByteArray((int)o));
+            }
+            return data;
+        }
         class AlexProtocolByteDispatcher: ByteDispatcher {
             readonly byte LOCK = 13;
             readonly byte KEY = 58;
@@ -107,10 +120,12 @@ namespace Flavor.Common.Messaging.Almazov {
             };
             Action<CommandCode, Predicate<int>, CommandRecord<CommandCode>.Parser> add = (code, predicate, parser) => d[(byte)code] = new CommandRecord<CommandCode>(predicate, parser);
             // TODO: commands here
-            //add(CommandCode.CPU_Status, eq(4), rawCommand => {
-            //    trim(rawCommand);
-            //    return ServicePacket<CommandCode>.Sync
-            //});
+            add(CommandCode.CPU_Status, eq(4), rawCommand => new CPUStatusReply(rawCommand[1], rawCommand[2]));
+            add(CommandCode.Sync_Error, eq(4), rawCommand => new SyncErrorReply(rawCommand[1], rawCommand[2]));
+            add(CommandCode.LAM_Event, eq(3), rawCommand => new LAMEvent(rawCommand[1]));
+            add(CommandCode.LAM_CriticalError, eq(3), rawCommand => new LAMCriticalError(rawCommand[1]));
+            // TODO: check length!
+            //add(CommandCode.LAM_InternalError, eq(3), rawCommand => new LAMInternalError(rawCommand[1]));
             
             return d;
         }

@@ -18,8 +18,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             return pack;
         }
 
-        public static byte[] collectData(params object[] values) {
+        public static IList<byte> collectData(byte functCode, params object[] values) {
             List<byte> data = new List<byte>();
+            data.Add(functCode);
             foreach (object o in values) {
                 if (o is byte)
                     data.Add((byte)o);
@@ -28,9 +29,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 if (o is int)
                     data.AddRange(int2ByteArray((int)o));
             }
-            return data.ToArray();
+            return data;
         }
-        public static byte[] collectData(byte functCode) {
+        /*public static byte[] collectData(byte functCode) {
             return new byte[] { functCode };
         }
         public static byte[] collectData(byte functCode, byte value) {
@@ -51,7 +52,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             data.AddRange(int2ByteArray(value1));
             data.AddRange(int2ByteArray(value2));
             return data.ToArray();
-        }
+        }*/
         static byte[] ushort2ByteArray(ushort value) {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;

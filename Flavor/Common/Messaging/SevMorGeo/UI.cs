@@ -1,4 +1,5 @@
-﻿using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
+﻿using System.Collections.Generic;
+using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
 using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
@@ -7,7 +8,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.GetState; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion
@@ -18,7 +19,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.GetStatus; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion
@@ -29,7 +30,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.Shutdown; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion
@@ -40,7 +41,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.Init; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion
@@ -51,7 +52,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetHeatCurrent; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, Config.CommonOptions.hCurrent); }
         }
         #endregion
@@ -62,7 +63,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetEmissionCurrent; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, Config.CommonOptions.eCurrent); }
         }
         #endregion
@@ -73,7 +74,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetIonizationVoltage; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, Config.CommonOptions.iVoltage); }
         }
         #endregion
@@ -84,7 +85,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetFocusVoltage1; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, Config.CommonOptions.fV1); }
         }
         #endregion
@@ -95,7 +96,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetFocusVoltage2; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, Config.CommonOptions.fV2); }
         }
         #endregion
@@ -112,7 +113,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetScanVoltage; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, SVoltage); }
         }
         #endregion
@@ -123,7 +124,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetCapacitorVoltage; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, Config.CommonOptions.CP); }
         }
         #endregion
@@ -142,7 +143,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.Measure; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             //!!!
             get {
                 ConsoleWriter.WriteLine("Measure intervals: {0} + {1}", itime * 5, etime * 5);
@@ -157,7 +158,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.GetCounts; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion
@@ -168,7 +169,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.heatCurrentEnable; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, 0); }
         }
         #endregion
@@ -179,7 +180,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.heatCurrentEnable; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, 1); }
         }
         #endregion
@@ -196,7 +197,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.EnableHighVoltage; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id, HVenable); }
         }
         #endregion
@@ -207,7 +208,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.GetTurboPumpStatus; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion
@@ -218,7 +219,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetForvacuumLevel; }
         }
         #region ISend Members
-        public override byte[] Data {
+        public override IList<byte> Data {
             get { return ModBus.collectData((byte)Id); }
         }
         #endregion

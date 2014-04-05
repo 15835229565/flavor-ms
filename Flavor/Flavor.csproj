@@ -83,8 +83,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Commands.cs" />
+    <Compile Include="Common\Messaging\Almazov\Async.cs" />
+    <Compile Include="Common\Messaging\Almazov\Async.Error.cs" />
     <Compile Include="Common\Messaging\Almazov\CommandCode.cs" />
-    <Compile Include="Common\Messaging\Almazov\Flags.cs" />
+    <Compile Include="Common\Messaging\Almazov\DeviceFlags.cs" />
+    <Compile Include="Common\Messaging\Almazov\Sync.cs" />
+    <Compile Include="Common\Messaging\Almazov\Sync.Error.cs" />
+    <Compile Include="Common\Messaging\Almazov\User.cs" />
     <Compile Include="Common\Messaging\ByteDispatcher.cs" />
     <Compile Include="Common\Messaging\CheckableProtocol.cs" />
     <Compile Include="Common\Messaging\CommandDictionary.cs" />

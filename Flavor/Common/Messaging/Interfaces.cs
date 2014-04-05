@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging {
     interface IId<T> where T
@@ -6,7 +7,7 @@ namespace Flavor.Common.Messaging {
         T Id { get; }
     }
     interface ISend {
-        byte[] Data { get; }
+        IList<byte> Data { get; }
     }
     interface IAutomatedReply {
         ISend AutomatedReply();
