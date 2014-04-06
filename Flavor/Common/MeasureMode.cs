@@ -4,7 +4,7 @@ using System.Timers;
 
 namespace Flavor.Common {
     // TODO: remove dependencies from Commander, Config
-    abstract internal class MeasureMode {
+    abstract class MeasureMode {
         public class NoListenersException: Exception { }
         public class VoltageStepEventArgs: EventArgs {
             public ushort Step { get; private set; }
@@ -47,26 +47,26 @@ namespace Flavor.Common {
                 Finalize(this, EventArgs.Empty);
         }
 
-        private readonly object locker = new object();
+        readonly object locker = new object();
 
         private bool operating = false;
-        internal bool isOperating {
+        public bool isOperating {
             get { return operating; }
         }
 
-        private ushort pointValue = 0;
+        ushort pointValue = 0;
 
-        private SingleMeasureEventArgs customMeasureEventArgs = null;
+        SingleMeasureEventArgs customMeasureEventArgs = null;
 
-        private readonly SingleMeasureEventArgs firstMeasureEventArgs;
-        private readonly SingleMeasureEventArgs generalMeasureEventArgs;
+        readonly SingleMeasureEventArgs firstMeasureEventArgs;
+        readonly SingleMeasureEventArgs generalMeasureEventArgs;
 
         public bool CancelRequested { private get; set; }
-        private MeasureMode(ushort befTime, ushort eTime) {
+        MeasureMode(ushort befTime, ushort eTime) {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
         }
-        internal bool onUpdateCounts() {
+        public bool onUpdateCounts() {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
             saveData();
@@ -91,7 +91,7 @@ namespace Flavor.Common {
             }
             return true;
         }
-        private void stop() {
+        void stop() {
             OnFinalize();
             operating = false;
             OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
@@ -102,7 +102,7 @@ namespace Flavor.Common {
         abstract protected void saveData();
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
-        internal virtual bool Start() {
+        public virtual bool Start() {
             //first measure point with increased idle time
             customMeasureEventArgs = firstMeasureEventArgs;
             operating = true;
@@ -110,19 +110,19 @@ namespace Flavor.Common {
         }
         // external usage only
         public Action<ushort, Utility.PreciseEditorData> GraphUpdateDelegate { get; set; }
-        abstract internal void UpdateGraph();
+        abstract public void UpdateGraph();
         // external usage only
-        abstract internal int StepsCount { get; }
-        internal void NextMeasure(Action<ushort, ushort> send) {
+        abstract public int StepsCount { get; }
+        public void NextMeasure(Action<ushort, ushort> send) {
             var args = customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs;
             send(args.IdleTime, args.ExpositionTime);
         }
 
-        internal class Scan: MeasureMode {
-            private readonly ushort sPoint;
-            private readonly ushort ePoint;
+        public class Scan: MeasureMode {
+            readonly ushort sPoint;
+            readonly ushort ePoint;
 
-            internal Scan()
+            public Scan()
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
@@ -137,7 +137,7 @@ namespace Flavor.Common {
                 return pointValue <= ePoint;
             }
 
-            internal override bool Start() {
+            public override bool Start() {
                 if (!base.Start()) {
                     return false;
                 }
@@ -145,15 +145,15 @@ namespace Flavor.Common {
                 pointValue = sPoint;
                 return onNextStep();
             }
-            internal override void UpdateGraph() {
+            public override void UpdateGraph() {
                 ushort pnt = pointValue;
                 GraphUpdateDelegate(--pnt, null);
             }
-            internal override int StepsCount {
+            public override int StepsCount {
                 get { return ePoint - sPoint + 1; }
             }
         }
-        internal class Precise: MeasureMode {
+        public class Precise: MeasureMode {
             public class SaveResultsEventArgs: EventArgs {
                 public short? Shift { get; private set; }
                 public SaveResultsEventArgs(short? shift) {
@@ -167,28 +167,28 @@ namespace Flavor.Common {
                     SaveResults(this, new SaveResultsEventArgs(shift));
                 // senseModeCounts here?
             }
-            private List<Utility.PreciseEditorData> senseModePoints;
-            private long[][] senseModeCounts;
-            private byte senseModePeak = 0;
-            private Utility.PreciseEditorData SenseModePeak {
+            List<Utility.PreciseEditorData> senseModePoints;
+            long[][] senseModeCounts;
+            byte senseModePeak = 0;
+            Utility.PreciseEditorData SenseModePeak {
                 get { return senseModePoints[senseModePeak]; }
             }
-            private ushort[] senseModePeakIterationMax;
-            private ushort[] senseModePeakIteration;
-            private ushort smpiSumMax;//ushort?
-            private ushort smpiSum;//ushort?
+            ushort[] senseModePeakIterationMax;
+            ushort[] senseModePeakIteration;
+            ushort smpiSumMax;//ushort?
+            ushort smpiSum;//ushort?
 
-            private bool noPoints = true;
-            private int stepPoints = 0;
+            bool noPoints = true;
+            int stepPoints = 0;
 
-            private short? shift = null;
+            short? shift = null;
 
-            private readonly SingleMeasureEventArgs forwardMeasureEventArgs;
-            private readonly SingleMeasureEventArgs backwardMeasureEventArgs;
+            readonly SingleMeasureEventArgs forwardMeasureEventArgs;
+            readonly SingleMeasureEventArgs backwardMeasureEventArgs;
 
-            internal Precise()
+            public Precise()
                 : this(Config.PreciseData.getUsed(), 0) { }
-            private Precise(List<Utility.PreciseEditorData> peaks, short? shift)
+            Precise(List<Utility.PreciseEditorData> peaks, short? shift)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
@@ -274,7 +274,7 @@ namespace Flavor.Common {
                 return true;
             }
 
-            internal override bool Start() {
+            public override bool Start() {
                 if (noPoints) {
                     OnDisable();
                     return false;
@@ -284,7 +284,7 @@ namespace Flavor.Common {
                 }
                 return onNextStep();
             }
-            private bool init(bool initCounts) {
+            bool init(bool initCounts) {
                 smpiSum = smpiSumMax;
                 senseModePeak = 0;
                 senseModePeakIteration = senseModePeakIterationMax.Clone() as ushort[];
@@ -296,19 +296,19 @@ namespace Flavor.Common {
                 }
                 return base.Start();
             }
-            internal override void UpdateGraph() {
+            public override void UpdateGraph() {
                 ushort pnt = pointValue;
                 GraphUpdateDelegate(--pnt, SenseModePeak);
             }
-            internal override int StepsCount {
+            public override int StepsCount {
                 get { return stepPoints; }
             }
-            internal class Monitor: Precise {
-                private class MeasureStopper {
-                    private int counter;
-                    private readonly Timer timer;
-                    private bool timerElapsed = false;
-                    internal MeasureStopper(int counterLimit, int timeLimit) {
+            public class Monitor: Precise {
+                class MeasureStopper {
+                    int counter;
+                    readonly Timer timer;
+                    bool timerElapsed = false;
+                    public MeasureStopper(int counterLimit, int timeLimit) {
                         counter = counterLimit == 0 ? -1 : counterLimit;
                         if (timeLimit > 0) {
                             timer = new Timer();
@@ -319,26 +319,26 @@ namespace Flavor.Common {
                         }
                     }
 
-                    private void timer_Elapsed(object sender, ElapsedEventArgs e) {
+                    void timer_Elapsed(object sender, ElapsedEventArgs e) {
                         timerElapsed = true;
                         timer.Elapsed -= timer_Elapsed;
                     }
-                    internal void next() {
+                    public void next() {
                         if (counter == -1) {
                             // produce infinite loop
                             return;
                         }
                         --counter;
                     }
-                    internal bool ready() {
+                    public bool ready() {
                         return timerElapsed || counter == 0;
                     }
-                    internal int estimatedTurns() {
+                    public int estimatedTurns() {
                         // estimated operation duration
                         return counter;
                     }
 
-                    internal void startTimer() {
+                    public void startTimer() {
                         if (timer == null) {
                             return;
                         }
@@ -346,16 +346,16 @@ namespace Flavor.Common {
                     }
                 }
 
-                private readonly MeasureStopper stopper;
+                readonly MeasureStopper stopper;
                 
-                private readonly Utility.PreciseEditorData peak;
-                private readonly int checkerIndex;
+                readonly Utility.PreciseEditorData peak;
+                readonly int checkerIndex;
                 
-                private bool spectrumIsValid = true;
-                private readonly ushort allowedShift;
-                private long[] prevIteration = null;
+                bool spectrumIsValid = true;
+                readonly ushort allowedShift;
+                long[] prevIteration = null;
 
-                internal Monitor(short? initialShift, ushort allowedShift, int timeLimit)
+                public Monitor(short? initialShift, ushort allowedShift, int timeLimit)
                     : base(Graph.Instance.PreciseData.getUsed(), initialShift) {
                     // TODO: getWithId()
                     this.allowedShift = allowedShift;
@@ -398,7 +398,7 @@ namespace Flavor.Common {
                     // specially do not stop cycle
                     return isSpectrumValid2(curPeak, true);
                 }
-                private bool isSpectrumValid2(Utility.PreciseEditorData curPeak, bool ignoreInvalidity) {
+                bool isSpectrumValid2(Utility.PreciseEditorData curPeak, bool ignoreInvalidity) {
                     if (!shift.HasValue || !curPeak.Equals(peak) || prevIteration == null) {
                         // if peak is null also exit here
                         // do not store value here!
@@ -431,14 +431,14 @@ namespace Flavor.Common {
                     }
                     return spectrumIsValid = true;
                 }
-                internal override bool Start() {
+                public override bool Start() {
                     if (!base.Start()) {
                         return false;
                     }
                     stopper.startTimer();
                     return true;
                 }
-                internal override int StepsCount {
+                public override int StepsCount {
                     get {
                         int stopperTurns = stopper.estimatedTurns();
                         if (stopperTurns <= 0) {

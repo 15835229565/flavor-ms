@@ -7,12 +7,12 @@ using ProgramStates = Flavor.Common.ProgramStates;
 using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
 namespace Flavor.Forms {
-    internal partial class OptionsForm: Form {
+    partial class OptionsForm: Form {
         protected OptionsForm() {
             InitializeComponent();
         }
 
-        private void loadCommonData(CommonOptions co) {
+        void loadCommonData(CommonOptions co) {
             // TODO: remove hard-coded numbers here (use constants in Config)
             setupNumericUpDown(expTimeNumericUpDown, 10, 10000, co.eTimeReal);
             setupNumericUpDown(idleTimeNumericUpDown, 10, 100, co.iTimeReal);
@@ -24,7 +24,7 @@ namespace Flavor.Forms {
             setupNumericUpDown(fV1NumericUpDown, 20, 150, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
             setupNumericUpDown(fV2NumericUpDown, 20, 150, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
         }
-        private void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
+        void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
             updown.Minimum = min;
             updown.Maximum = max;
             decimal temp = (decimal)value;
@@ -34,9 +34,9 @@ namespace Flavor.Forms {
                 temp = updown.Maximum;
             updown.Value = temp;
         }
-        private delegate ushort ConvertTo(double value);
-        private delegate double ConvertFro(ushort value);
-        private void setupNumericUpDown(NumericUpDown updown, double min, double max, double value, ConvertTo conv1, ConvertFro conv2) {
+        delegate ushort ConvertTo(double value);
+        delegate double ConvertFro(ushort value);
+        void setupNumericUpDown(NumericUpDown updown, double min, double max, double value, ConvertTo conv1, ConvertFro conv2) {
             setupNumericUpDown(updown, (decimal)conv2(conv1(min)), (decimal)conv2(conv1(max)), value);
         }
 
@@ -91,13 +91,13 @@ namespace Flavor.Forms {
             }
         }
 
-        private void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e) {
+        void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e) {
             CPNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
             hCurrentNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
         }
-        private void InvokeSetVisibility(ProgramStates state) {
+        void InvokeSetVisibility(ProgramStates state) {
             this.Invoke(new Action(() => {
                 // TODO: avoid bringing to front..
                 this.Visible = state != ProgramStates.Measure ||

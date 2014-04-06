@@ -19,28 +19,28 @@ using Device = Flavor.Common.Device;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
-    internal partial class MainForm2: Form/*, IMeasured*/ {
+    partial class MainForm2: Form/*, IMeasured*/ {
         // TODO: move to resource file
-        private const string EXIT_CAPTION = "Предупреждение об отключении";
-        private const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
-        private const string MODE_START_FAILURE_CAPTION = "Ошибка при старте режима измерения";
-        private const string PRECISE_MODE_START_FAILURE_MESSAGE = "Точный режим: нет измеряемых пиков.";
-        private const string MONITOR_MODE_START_FAILURE_MESSAGE = "Режим мониторинга: нет измеряемых пиков или ошибка формирования матрицы из библиотеки спектров.";
-        private const string SHUTDOWN_CAPTION = "Предупреждение об отключении";
-        private const string SHUTDOWN_MESSAGE = "Внимание!\n" +
+        const string EXIT_CAPTION = "Предупреждение об отключении";
+        const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
+        const string MODE_START_FAILURE_CAPTION = "Ошибка при старте режима измерения";
+        const string PRECISE_MODE_START_FAILURE_MESSAGE = "Точный режим: нет измеряемых пиков.";
+        const string MONITOR_MODE_START_FAILURE_MESSAGE = "Режим мониторинга: нет измеряемых пиков или ошибка формирования матрицы из библиотеки спектров.";
+        const string SHUTDOWN_CAPTION = "Предупреждение об отключении";
+        const string SHUTDOWN_MESSAGE = "Внимание!\n" +
                                                 "Проверьте герметизацию системы ввода перед отключением прибора (установку заглушки).\n" +
                                                 "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Отмена.";
 
-        private const string ON_TEXT = "Включен";
-        private const string ON_TEXT1 = "Включено";
-        private const string OFF_TEXT = "Выключен";
-        private const string OFF_TEXT1 = "Выключено";
-        private const string OPENED_TEXT = "Открыт";
-        private const string CLOSED_TEXT = "Закрыт";
+        const string ON_TEXT = "Включен";
+        const string ON_TEXT1 = "Включено";
+        const string OFF_TEXT = "Выключен";
+        const string OFF_TEXT1 = "Выключено";
+        const string OPENED_TEXT = "Открыт";
+        const string CLOSED_TEXT = "Закрыт";
 
-        //private IMeasured activeMeasureChild;
-        private MeasuredCollectorsForm collectorsForm = null;
-        private MeasuredCollectorsForm CollectorsForm {
+        //IMeasured activeMeasureChild;
+        MeasuredCollectorsForm collectorsForm = null;
+        MeasuredCollectorsForm CollectorsForm {
             get {
                 if (collectorsForm == null) {
                     collectorsForm = new MeasuredCollectorsForm();
@@ -49,8 +49,8 @@ namespace Flavor.Forms {
                 return collectorsForm;
             }
         }
-        private MonitorForm monitorForm = null;
-        private MonitorForm MonitorForm {
+        MonitorForm monitorForm = null;
+        MonitorForm MonitorForm {
             get {
                 if (monitorForm == null) {
                     monitorForm = new MonitorForm();
@@ -59,7 +59,7 @@ namespace Flavor.Forms {
                 return monitorForm;
             }
         }
-        private GraphForm GForm {
+        GraphForm GForm {
             get {
                 Form child = ActiveMdiChild;
                 if (child == null)
@@ -67,9 +67,10 @@ namespace Flavor.Forms {
                 return child as GraphForm;
             }
         }
-        private OptionsForm oForm = null;
-        private readonly ICommander commander;
-        internal MainForm2(ICommander commander): base() {
+        OptionsForm oForm = null;
+        readonly ICommander commander;
+        public MainForm2(ICommander commander)
+            : base() {
             this.commander = commander;
             InitializeComponent();
         }
@@ -250,24 +251,24 @@ namespace Flavor.Forms {
             Activate();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+        void exitToolStripMenuItem_Click(object sender, EventArgs e) {
             Close();
         }
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
+        void connectToolStripMenuItem_Click(object sender, EventArgs e) {
             if ((new ConnectOptionsForm(commander.AvailablePorts)).ShowDialog() == DialogResult.OK)
                 commander.Reconnect();
         }
 
-        private void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
+        void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
             showOptionsForm<ScanOptionsForm>();
         }
-        private void senseToolStripMenuItem_Click(object sender, EventArgs e) {
+        void senseToolStripMenuItem_Click(object sender, EventArgs e) {
             showOptionsForm<PreciseOptionsForm>();
         }
-        private void monitorToolStripMenuItem_Click(object sender, EventArgs e) {
+        void monitorToolStripMenuItem_Click(object sender, EventArgs e) {
             showOptionsForm<MonitorOptionsForm>();
         }
-        private void showOptionsForm<T>()
+        void showOptionsForm<T>()
             where T: OptionsForm, new() {
             if (oForm == null) {
                 oForm = new T();
@@ -308,11 +309,11 @@ namespace Flavor.Forms {
                 oForm.Activate();
             // TODO: disable other menu items or close already opened?
         }
-        private void initSys_butt_Click(object sender, EventArgs e) {
+        void initSys_butt_Click(object sender, EventArgs e) {
             initSys_butt.Enabled = false;
             commander.Init();
         }
-        private void shutSys_butt_Click(object sender, EventArgs e) {
+        void shutSys_butt_Click(object sender, EventArgs e) {
             if (commander.pState != ProgramStates.Start)
             {
                 if (MessageBox.Show(this, SHUTDOWN_MESSAGE, SHUTDOWN_CAPTION, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.OK)
@@ -321,26 +322,26 @@ namespace Flavor.Forms {
             shutSys_butt.Enabled = false;
             commander.Shutdown();
         }
-        private void unblock_butt_Click(object sender, EventArgs e) {
+        void unblock_butt_Click(object sender, EventArgs e) {
             unblock_butt.Enabled = false;
             commander.Unblock();
         }
 
-        private void Commander_OnError(string msg) {
+        void Commander_OnError(string msg) {
             MessageBox.Show(this, msg);
         }
-        private void overview_button_Click(object sender, EventArgs e) {
+        void overview_button_Click(object sender, EventArgs e) {
             commander.Scan();
             ChildFormInit(CollectorsForm, false);
         }
-        private void sensmeasure_button_Click(object sender, EventArgs e) {
+        void sensmeasure_button_Click(object sender, EventArgs e) {
             if (commander.Sense()) {
                 ChildFormInit(CollectorsForm, true);
             } else {
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void monitorToolStripButton_Click(object sender, EventArgs e) {
+        void monitorToolStripButton_Click(object sender, EventArgs e) {
             // lock PreciseData for modification
             bool? result = commander.Monitor();
             if (result.HasValue) {
@@ -351,7 +352,7 @@ namespace Flavor.Forms {
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void ChildFormInit(IMeasured form, bool isPrecise) {
+        void ChildFormInit(IMeasured form, bool isPrecise) {
             overview_button.Enabled = false;
             sensmeasure_button.Enabled = false;
             monitorToolStripButton.Enabled = false;
@@ -368,12 +369,12 @@ namespace Flavor.Forms {
             else
                 CollectorsForm.Hide();
         }
-        private void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
+        void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
             (sender as IMeasured).MeasureCancelRequested -= ChildForm_MeasureCancelRequested;
             commander.MeasureCancelRequested = true;
         }
         //TODO: make 2 subscribers. one for logging, another for displaying.
-        private void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
+        void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
             string msg = new StringBuilder("Turbopump: ")
                 .Append(isFault ? "failure (" : "warning (")
                 .AppendFormat("{0:X2}", bits)
@@ -382,19 +383,19 @@ namespace Flavor.Forms {
             Config.logTurboPumpAlert(msg);
         }
 
-        private void InvokeRefreshUserMessage(string msg) {
+        void InvokeRefreshUserMessage(string msg) {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new MessageHandler(RefreshUserMessage), msg);
                 return;
             }
             RefreshUserMessage(msg);
         }
-        private void RefreshUserMessage(string msg) {
+        void RefreshUserMessage(string msg) {
             measure_StatusLabel.Text = msg;
         }
 
         // TODO: Device state as method parameter (avoid thread run)
-        private void InvokeRefreshDeviceState() {
+        void InvokeRefreshDeviceState() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshDeviceState));
                 return;
@@ -402,7 +403,7 @@ namespace Flavor.Forms {
             RefreshDeviceState();
         }
         // Device.DeviceState state
-        private void RefreshDeviceState() {
+        void RefreshDeviceState() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             switch (Device.sysState) {
@@ -468,14 +469,14 @@ namespace Flavor.Forms {
         }
 
         // TODO: turbo pump state as method parameter (avoid thread run)
-        private void InvokeRefreshTurboPumpStatus() {
+        void InvokeRefreshTurboPumpStatus() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshTurboPumpStatus));
                 return;
             }
             RefreshTurboPumpStatus();
         }
-        private void RefreshTurboPumpStatus() {
+        void RefreshTurboPumpStatus() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
 
@@ -491,14 +492,14 @@ namespace Flavor.Forms {
         }
 
         // TODO: Device status as method parameter (avoid thread run)
-        private void InvokeRefreshDeviceStatus() {
+        void InvokeRefreshDeviceStatus() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
                 return;
             }
             RefreshDeviceStatus();
         }
-        private void RefreshDeviceStatus() {
+        void RefreshDeviceStatus() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             if (Device.fPumpOn) {
@@ -554,7 +555,7 @@ namespace Flavor.Forms {
         }
 
         // TODO: vacuum state as method parameter (avoid thread run)
-        private void InvokeRefreshVacuumState() {
+        void InvokeRefreshVacuumState() {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new DeviceEventHandler(RefreshVacuumState));
                 return;
@@ -562,7 +563,7 @@ namespace Flavor.Forms {
             RefreshVacuumState();
         }
         // Device.VacuumStates state
-        private void RefreshVacuumState() {
+        void RefreshVacuumState() {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             switch (Device.vacState) {
@@ -660,7 +661,7 @@ namespace Flavor.Forms {
         }
 
         // TODO: program state as method parameter (avoid thread run)
-        internal void InvokeRefreshButtons(ProgramStates state) {
+        void InvokeRefreshButtons(ProgramStates state) {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new ProgramEventHandler(RefreshButtons), state);
                 return;
@@ -669,7 +670,7 @@ namespace Flavor.Forms {
         }
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
-        private void RefreshButtons(ProgramStates state) {
+        void RefreshButtons(ProgramStates state) {
             bool block = !commander.hBlock;
             if (block) {
                 unblock_butt.Text = "Включить блокировку";
@@ -720,7 +721,7 @@ namespace Flavor.Forms {
                     break;
             }
         }
-        private void setButtons(bool connect, bool init, bool shutdown, bool block, bool scan, bool precise, bool monitor, bool measureOptions) {
+        void setButtons(bool connect, bool init, bool shutdown, bool block, bool scan, bool precise, bool monitor, bool measureOptions) {
             connectToolStripButton.Enabled = connect;
 
             initSys_butt.Enabled = init;
@@ -735,14 +736,14 @@ namespace Flavor.Forms {
         }
 
         // TODO: another handler
-        private void InvokeCancelScan(ProgramStates state) {
+        void InvokeCancelScan(ProgramStates state) {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new ProgramEventHandler(CancelScan), state);
                 return;
             }
             CancelScan(state);
         }
-        private void CancelScan(ProgramStates state) {
+        void CancelScan(ProgramStates state) {
             commander.MeasureCancelled -= InvokeCancelScan;
             commander.ErrorOccured -= Commander_OnError;
             
@@ -752,19 +753,19 @@ namespace Flavor.Forms {
                 MonitorForm.deactivateOnMeasureStop();
         }
 
-        private void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
+        void ToolBarToolStripMenuItem_Click(object sender, EventArgs e) {
             controlToolStrip.Visible = toolBarToolStripMenuItem.Checked;
         }
 
-        private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
+        void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
             statusStrip.Visible = statusBarToolStripMenuItem.Checked;
         }
 
-        private void ParameterToolStripMenuItem_Click(object sender, EventArgs e) {
+        void ParameterToolStripMenuItem_Click(object sender, EventArgs e) {
             parameterPanel.Visible = ParameterToolStripMenuItem.Checked;
         }
 
-        private void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
+        void openConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
             try {
                 Config.loadGlobalConfig();
             } catch (Config.ConfigLoadException cle) {
@@ -772,11 +773,11 @@ namespace Flavor.Forms {
             }
         }
 
-        private void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
+        void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
             Config.saveGlobalConfig();
         }
 
-        private void connectToolStripButton_Click(object sender, EventArgs e) {
+        void connectToolStripButton_Click(object sender, EventArgs e) {
             // TODO: use button properties
             if (commander.DeviceIsConnected) {
                 commander.Disconnect();
@@ -787,12 +788,12 @@ namespace Flavor.Forms {
             }
         }
 
-        private void delaysToolStripMenuItem_Click(object sender, EventArgs e) {
+        void delaysToolStripMenuItem_Click(object sender, EventArgs e) {
             DelaysOptionsForm dForm = new DelaysOptionsForm();
             dForm.ShowDialog();
         }
 
-        private void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
+        void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
             openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.SPECTRUM_FILE_DIALOG_FILTER, Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 foreach (Form childForm in MdiChildren) {
@@ -826,7 +827,7 @@ namespace Flavor.Forms {
             form.Show();
         }
 
-        private void closeAllToolStripMenuItem_Click(object sender, EventArgs e) {
+        void closeAllToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (Form childForm in MdiChildren) {
                 if (childForm == collectorsForm)
                     continue;

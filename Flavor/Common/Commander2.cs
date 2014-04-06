@@ -472,9 +472,9 @@ namespace Flavor.Common {
             }
             CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
-            
-            Disable();
+
             setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
+            Disable();
         }
         void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
             toSend.Enqueue(new sendSVoltage(e.Step));
@@ -512,12 +512,29 @@ namespace Flavor.Common {
             notRareModeRequested = true;
             // TODO: move this hard-coded defaults to Config
             toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
-                new StatusRequestGenerator<CommandCode>(new requestStatus(), new getTurboPumpStatus(), () => notRareModeRequested ? 5 : 3),
-                () => notRareModeRequested ? 500 : 10000);
-            RareModeChanged += t => { toSend.Stop(); toSend.Start(); };
-            ProgramStateChanged += s => { 
-                // TODO:
+                new StatusRequestGenerator<CommandCode>(new requestStatus(), new getTurboPumpStatus(), () => notRare() ? 5 : 3),
+                () => notRare() ? 500 : 10000);
+            //RareModeChanged += t => {
+            //    if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure) {
+            //        toSend.Stop();
+            //        toSend.Start();
+            //    }
+            //};
+            ProgramStateChanged += s => {
+                if (s == ProgramStates.Measure || s == ProgramStates.BackgroundMeasureReady || s == ProgramStates.WaitBackgroundMeasure) {
+                    toSend.Stop();
+                    toSend.Start();
+                }
             };
+            MeasureCancelled += s => {
+                toSend.Stop();
+                toSend.Start();
+            };
+        }
+        bool notRare() {
+            if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
+                return notRareModeRequested;
+            return true;
         }
         class StatusRequestGenerator<T>: IStatusRequestGenerator<T>
             where T: struct, IConvertible, IComparable {
