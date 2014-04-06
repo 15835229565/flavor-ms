@@ -1,7 +1,7 @@
 ﻿using Flavor.Common.Messaging;
 
 namespace Flavor.Common {
-    public enum ProgramStates: byte {
+    enum ProgramStates: byte {
         Start,
         Shutdown,
         Init,
@@ -14,8 +14,9 @@ namespace Flavor.Common {
         WaitShutdown,
     }
 
-    public delegate void ProgramEventHandler(ProgramStates state);
-    public delegate void MessageHandler(string msg);
+    delegate void ProgramEventHandler(ProgramStates state);
+    delegate void MessageHandler(string msg);
+    delegate void BoolEventHandler(bool t);
 
     interface ILog {
         event MessageHandler Log;
@@ -83,8 +84,25 @@ namespace Flavor.Common {
 
         abstract public ProgramStates pState { get; protected set; }
         public ProgramStates pStatePrev { get; protected set; }
-        abstract internal bool hBlock { get; set; }
-        public bool notRareModeRequested { get; set; }
+        public abstract bool hBlock { get; set; }
+        public event BoolEventHandler RareModeChanged;
+        protected virtual void OnRareModeChanged(bool t) {
+            // TODO: lock here?
+            if (RareModeChanged != null)
+                RareModeChanged(t);
+        }
+        bool rare;
+        public bool notRareModeRequested { 
+            get {
+                return rare;
+            }
+            set {
+                if (rare == value)
+                    return;
+                rare = value;
+                OnRareModeChanged(value);
+            }
+        }
         #region IGlobalActions Members
         public event ProgramEventHandler ProgramStateChanged;
         protected virtual void OnProgramStateChanged() {

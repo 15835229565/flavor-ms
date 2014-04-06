@@ -26,12 +26,9 @@ namespace Flavor.Common.Messaging {
         public MessageQueue(IProtocol<T> protocol) {
             this.protocol = protocol;
             sendTimer.Enabled = false;
-            OnInit(false);
         }
-        protected virtual void OnInit(bool start) { }
         public void Clear() {
             lock (SyncRoot) {
-                OnClear();
                 lock (sendTimer) {
                     if (sendTimer.Enabled) {
                         StopSending();
@@ -40,7 +37,6 @@ namespace Flavor.Common.Messaging {
                 queue.Clear();
             }
         }
-        protected virtual void OnClear() { }
         public void Enqueue(UserRequest<T> command)
         {
             lock (SyncRoot) {

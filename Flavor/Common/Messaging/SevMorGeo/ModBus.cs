@@ -31,28 +31,6 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             }
             return data;
         }
-        /*public static byte[] collectData(byte functCode) {
-            return new byte[] { functCode };
-        }
-        public static byte[] collectData(byte functCode, byte value) {
-            return new byte[] { functCode, value };
-        }
-        public static byte[] collectData(byte functCode, ushort value) {
-            byte[] data = ushort2ByteArray(value);
-            return new byte[] { functCode, data[0], data[1] };
-        }
-        public static byte[] collectData(byte functCode, ushort value1, ushort value2) {
-            byte[] data1 = ushort2ByteArray(value1);
-            byte[] data2 = ushort2ByteArray(value2);
-            return new byte[] { functCode, data1[0], data1[1], data2[0], data2[1] };
-        }
-        public static byte[] collectData(byte functCode, int value1, int value2) {
-            List<byte> data = new List<byte>();
-            data.Add(functCode);
-            data.AddRange(int2ByteArray(value1));
-            data.AddRange(int2ByteArray(value2));
-            return data.ToArray();
-        }*/
         static byte[] ushort2ByteArray(ushort value) {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;
@@ -164,7 +142,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             public override void Transmit(ICollection<byte> pack) {
                 var message = buildPack(pack);
                 base.Transmit(message);
-                OnLog("[out]", pack);
+                OnLog("[out]", message);
             }
             #endregion
         }

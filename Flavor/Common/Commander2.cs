@@ -6,10 +6,10 @@ using Flavor.Common.Messaging.SevMorGeo;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
-    internal class Commander2: ICommander {
-        private bool onTheFly = true;
+    class Commander2: ICommander {
+        bool onTheFly = true;
 
-        private ProgramStates programState = ProgramStates.Start;
+        ProgramStates programState = ProgramStates.Start;
         public override ProgramStates pState {
             get {
                 return programState;
@@ -24,17 +24,17 @@ namespace Flavor.Common {
             }
         }
 
-        private void setProgramStateWithoutUndo(ProgramStates state) {
+        void setProgramStateWithoutUndo(ProgramStates state) {
             pState = state;
             pStatePrev = pState;
         }
-        private void setProgramState(ProgramStates state) {
+        void setProgramState(ProgramStates state) {
             pStatePrev = pState;
             pState = state;
         }
 
-        private bool handleBlock = true;
-        internal override bool hBlock {
+        bool handleBlock = true;
+        public override bool hBlock {
             get {
                 return handleBlock;
             }
@@ -46,7 +46,7 @@ namespace Flavor.Common {
             }
         }
 
-        private bool isConnected = false;
+        bool isConnected = false;
         public override bool DeviceIsConnected {
             get {
                 return isConnected;
@@ -63,9 +63,9 @@ namespace Flavor.Common {
             }
         }
 
-        private MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
+        MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
 
-        private bool measureCancelRequested = false;
+        bool measureCancelRequested = false;
         public override bool MeasureCancelRequested {
             protected get { return measureCancelRequested; }
             set {
@@ -75,7 +75,7 @@ namespace Flavor.Common {
             }
         }
 
-        private void Realize(object sender, CommandReceivedEventArgs<CommandCode> e) {
+        void Realize(object sender, CommandReceivedEventArgs<CommandCode> e) {
             var command = e.Command;
 
             if (command is AsyncError<CommandCode>) {
@@ -87,7 +87,6 @@ namespace Flavor.Common {
                 Config.logCrash(message);
 
                 if (pState != ProgramStates.Start) {
-                    toSend.IsRareMode = false;
                     setProgramStateWithoutUndo(ProgramStates.Start);
                     MeasureCancelRequested = false;
                 }
@@ -106,7 +105,6 @@ namespace Flavor.Common {
                 if (command is SystemReseted) {
                     OnAsyncReplyReceived("Система переинициализировалась");
                     if (pState != ProgramStates.Start) {
-                        toSend.IsRareMode = false;
                         setProgramStateWithoutUndo(ProgramStates.Start);
                         MeasureCancelRequested = false;
                     }
@@ -215,7 +213,6 @@ namespace Flavor.Common {
                 if (command is confirmF2Voltage) {
                     if (pState == ProgramStates.Measure ||
                         pState == ProgramStates.WaitBackgroundMeasure) {
-                        toSend.IsRareMode = !notRareModeRequested;
                         if (!CurrentMeasureMode.Start()) {
                             OnErrorOccured("Нет точек для измерения.");
                         }
@@ -226,7 +223,7 @@ namespace Flavor.Common {
             }
         } 
 
-        private void CheckInterfaces(ServicePacket<CommandCode> Command) {
+        void CheckInterfaces(ServicePacket<CommandCode> Command) {
             // TODO: make common auto-action
             if (Command is IAutomatedReply) {
                 // BAD!
@@ -294,10 +291,10 @@ namespace Flavor.Common {
         }
 
         // TODO: use simple arrays
-        private FixedSizeQueue<List<long>> background;
-        private Matrix matrix;
-        private List<long> backgroundResult;
-        private bool doBackgroundPremeasure;
+        FixedSizeQueue<List<long>> background;
+        Matrix matrix;
+        List<long> backgroundResult;
+        bool doBackgroundPremeasure;
         public override bool? Monitor() {
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
@@ -364,7 +361,7 @@ namespace Flavor.Common {
                 return null;
             }
         }
-        private void NewBackgroundMeasureReady(int[] recreate) {
+        void NewBackgroundMeasureReady(int[] recreate) {
             // TODO: more accurately
             if (recreate.Length == Graph.Instance.Collectors.Count) {
                 List<long> currentMeasure = new List<long>();
@@ -385,7 +382,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        private void NewMonitorMeasureReady(int[] recreate) {
+        void NewMonitorMeasureReady(int[] recreate) {
             if (recreate.Length == 0)
                 return;
             List<long> currentMeasure = new List<long>();
@@ -418,7 +415,7 @@ namespace Flavor.Common {
                 // TODO: put here all automatic logic from measure modes
             }
         }
-        private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
+        static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility
             if (workingValue.Count != nextElem.Count)
                 // data length mismatch
@@ -429,9 +426,8 @@ namespace Flavor.Common {
             return workingValue;
         }
 
-        private void Disable() {
+        void Disable() {
             MeasureCancelRequested = false;
-            toSend.IsRareMode = false;
             // TODO: lock here (request from ui may cause synchro errors)
             // or use async action paradigm
             OnMeasureCancelled();
@@ -450,7 +446,7 @@ namespace Flavor.Common {
             Commander.AddToSend(new sendF2Voltage());
             */
         }
-        private void initMeasure(ProgramStates state) {
+        void initMeasure(ProgramStates state) {
             OnLog(pState.ToString());
             if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
                 //error. something in operation
@@ -461,12 +457,11 @@ namespace Flavor.Common {
             
             setProgramState(state);
 
-            toSend.IsRareMode = !notRareModeRequested;
             MeasureCancelRequested = false;
             SendSettings();
         }
 
-        private void CurrentMeasureMode_Disable(object sender, EventArgs e) {
+        void CurrentMeasureMode_Disable(object sender, EventArgs e) {
             if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
                 if (pState == ProgramStates.Measure) {
                     Graph.Instance.NewGraphData -= NewMonitorMeasureReady;
@@ -481,7 +476,7 @@ namespace Flavor.Common {
             Disable();
             setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
         }
-        private void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
+        void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
             toSend.Enqueue(new sendSVoltage(e.Step));
         }
         public override bool SomePointsUsed {
@@ -501,8 +496,8 @@ namespace Flavor.Common {
             toSend.Enqueue(new enableHighVoltage(hBlock));
         }
 
-        private PortLevel port = new PortLevel();
-        private IProtocol<CommandCode> protocol;
+        PortLevel port = new PortLevel();
+        IProtocol<CommandCode> protocol;
         public Commander2() {
             protocol = new ModBus(port);
             ConsoleWriter.Subscribe(protocol);
@@ -514,7 +509,43 @@ namespace Flavor.Common {
                 // TODO: more accurate
                 OnLog(e.Message);
             };
-            toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol, new requestStatus(), new getTurboPumpStatus());
+            notRareModeRequested = true;
+            // TODO: move this hard-coded defaults to Config
+            toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
+                new StatusRequestGenerator<CommandCode>(new requestStatus(), new getTurboPumpStatus(), () => notRareModeRequested ? 5 : 3),
+                () => notRareModeRequested ? 500 : 10000);
+            RareModeChanged += t => { toSend.Stop(); toSend.Start(); };
+            ProgramStateChanged += s => { 
+                // TODO:
+            };
+        }
+        class StatusRequestGenerator<T>: IStatusRequestGenerator<T>
+            where T: struct, IConvertible, IComparable {
+            int i = 0;
+            int f;
+            readonly UserRequest<T> statusCheck, vacuumCheck;
+            readonly Generator<int> factor;
+            public UserRequest<T> Next {
+                get {
+                    UserRequest<T> res;
+                    if (i == 0)
+                        res = vacuumCheck;
+                    else
+                        res = statusCheck;
+                    ++i;
+                    i %= f;
+                    return res;
+                }
+            }
+            public void Reset() {
+                f = factor();
+            }
+            public StatusRequestGenerator(UserRequest<T> statusCheck, UserRequest<T> vacuumCheck, Generator<int> factor) {
+                this.factor = factor;
+                this.statusCheck = statusCheck;
+                this.vacuumCheck = vacuumCheck;
+                Reset();
+            }
         }
         public override void Connect() {
             PortLevel.PortStates res = port.Open();
@@ -523,7 +554,7 @@ namespace Flavor.Common {
                     toSend.Clear();
                     ConsoleWriter.Subscribe(toSend);
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
-                    toSend.IsOperating = true;
+                    toSend.Start();
                     DeviceIsConnected = true;
                     break;
                 case PortLevel.PortStates.Opened:
@@ -537,7 +568,7 @@ namespace Flavor.Common {
             }
         }
         public override void Disconnect() {
-            toSend.IsOperating = false;
+            toSend.Stop();
             toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             ConsoleWriter.Unsubscribe(toSend);
             toSend.Clear();

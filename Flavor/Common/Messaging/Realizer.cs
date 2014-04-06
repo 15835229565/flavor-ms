@@ -3,11 +3,12 @@
 namespace Flavor.Common.Messaging {
     abstract class Realizer<T>: ILog, IAsyncReplyReceived, IConnectionActions
         where T: struct, IConvertible, IComparable {
-        readonly CommandDictionary<T> dictionary;
+        readonly PackageDictionary<T> dictionary;
         IProtocol<T> protocol;
-        protected Realizer(IProtocol<T> protocol, CommandDictionary<T> dictionary, MessageQueue<T> queue) {
+        protected Realizer(IProtocol<T> protocol, PackageDictionary<T> dictionary, MessageQueue<T> queue) {
             this.dictionary = dictionary;
             this.protocol = protocol;
+            // here?
             ConsoleWriter.Subscribe(this);
             ConsoleWriter.Subscribe(protocol);
             protocol.ErrorCommand += (s, e) => {
@@ -16,23 +17,22 @@ namespace Flavor.Common.Messaging {
             };
             toSend = queue;
         }
-        protected interface IActor {
-            void Act(ServicePacket<T> command);
-        }
         readonly MessageQueue<T> toSend;
         protected void Enqueue(UserRequest<T> command) {
             toSend.Enqueue(command);
         }
         protected virtual void Realize(object sender, CommandReceivedEventArgs<T> e) {
             byte code = e.Code;
-            var command = e.Command;
             if (!dictionary.ContainsKey(code)) {
                 // Strange error
                 return;
             }
-            var actor = dictionary[code] as IActor;
-            if (actor != null)
-                actor.Act(command);
+            dictionary[code].Act(e.Command);
+        }
+        public event ProgramEventHandler ProgramStateChangeRequested;
+        protected virtual void OnProgramStateChangeRequested(ProgramStates state) {
+            if (ProgramStateChangeRequested != null)
+                ProgramStateChangeRequested(state);
         }
         #region IConnectionActions Members
         public virtual void Connect() {

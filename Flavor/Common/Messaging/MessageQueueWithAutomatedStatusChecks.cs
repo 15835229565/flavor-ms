@@ -1,85 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Flavor.Common.Messaging {
     class MessageQueueWithAutomatedStatusChecks<T>: MessageQueue<T>
         where T: struct, IConvertible, IComparable {
-        System.Timers.Timer statusCheckTimer;
+        readonly System.Timers.Timer statusCheckTimer = new System.Timers.Timer();
 
         readonly object locker = new object();
 
-        bool isRareMode = false;
-        public bool IsRareMode {
-            get { return isRareMode; }
-            set {
-                lock (locker) {
-                    if (value != isRareMode) {
-                        isRareMode = value;
-                        bool state = statusCheckTimer.Enabled;
-                        IsOperating = false;
-                        statusCheckTimer.Elapsed -= StatusCheckTime_Elapsed;
-                        statusCheckTimer.Close();
-                        OnInit(state);
-                    }
-                }
-            }
+        public void Start() {
+            statusCheckTimer.Interval = interval();
+            statusCheckTimer.Start();
+        }
+        public void Stop() {
+            statusCheckTimer.Stop();
+            requestSequence.Reset();
         }
 
-        protected override void OnInit(bool start) {
-            bool rare = IsRareMode;
-            // TODO: move this hard-coded defaults to Config
-            double checkInterval = rare ? 10000 : 500;
-            statusCheckTimer = new System.Timers.Timer(checkInterval);
-            statusCheckTimer.Elapsed += StatusCheckTime_Elapsed;
-            IsOperating = start;
-
-            requestEnumerator = StatusRequestEnumerator();
-        }
-
-        bool operating = false;
-        public bool IsOperating {
-            set {
-                lock (locker) {
-                    if (value != operating) {
-                        operating = value;
-                        statusCheckTimer.Enabled = operating;
-                    }
-                }
-            }
-        }
-        protected override void OnClear() {
-            IsOperating = false;
-        }
-
-        readonly UserRequest<T> statusCheck;
-        readonly UserRequest<T> vacuumCheck;
-        public MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, UserRequest<T> statusCheck, UserRequest<T> vacuumCheck)
+        readonly IStatusRequestGenerator<T> requestSequence;
+        readonly Generator<double> interval;
+        public MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, IStatusRequestGenerator<T> requestSequence, Generator<double> interval)
             : base(protocol) {
-            this.statusCheck = statusCheck;
-            this.vacuumCheck = vacuumCheck;
-            //OnInit();
-        }
-        IEnumerator<UserRequest<T>> StatusRequestEnumerator() {
-            bool rare = IsRareMode;
-            // TODO: move this hard-coded defaults to Config
-            int factor = rare ? 3 : 5;
-            for (int i = 0; ; ) {
-                if (i == 0)
-                    yield return vacuumCheck;
-                else 
-                    yield return statusCheck;
-                ++i;
-                i %= factor;
-            }
-        }
-        IEnumerator<UserRequest<T>> requestEnumerator;
-        UserRequest<T> StatusRequest() {
-            requestEnumerator.MoveNext();
-            return requestEnumerator.Current;
+            this.requestSequence = requestSequence;
+            this.interval = interval;
+            statusCheckTimer.Elapsed += StatusCheckTime_Elapsed;
         }
         void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            var request = StatusRequest();
+            var request = requestSequence.Next;
             // to prevent queue overflow
             if (Contains(request))
                 return;

@@ -32,7 +32,8 @@
         LAM_Event = 254,
 
         LAM_CriticalError = 252,
-        // TODO: why not procrssed?
+        // TODO: why not processed?
+        // TODO: check length
         LAM_InternalError = 253,
     }
 }
