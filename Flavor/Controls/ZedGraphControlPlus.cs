@@ -7,7 +7,7 @@ using Flavor.Common;
 
 namespace Flavor.Controls
 {
-    public partial class ZedGraphControlPlus: ZedGraphControl {
+    partial class ZedGraphControlPlus: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
             private ContextMenuStrip menuStrip;
             public ContextMenuStrip MenuStrip {

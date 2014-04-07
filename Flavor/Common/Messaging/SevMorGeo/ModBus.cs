@@ -5,7 +5,7 @@ using System.Text;
 namespace Flavor.Common.Messaging.SevMorGeo {
     class ModBus: CheckableProtocol<CommandCode> {
         public ModBus(PortLevel port)
-            : base(new ModbusByteDispatcher(port, false), GetDictionary()) { }
+            : base(new ModbusByteDispatcher(port, false)) { }
         protected override byte ComputeCS(IList<byte> data) {
             byte checkSum = 0;
             foreach (byte b in data)
@@ -147,10 +147,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             #endregion
         }
         delegate Predicate<int> PredicateGenerator(int value);
-        static CommandDictionary<CommandCode> GetDictionary() {
+        protected override CommandDictionary<CommandCode> GetDictionary() {
             var d = new CommandDictionary<CommandCode>();
             PredicateGenerator eq = value => (l => l == value);
-            PredicateGenerator more = value => (l => l > value);
             PredicateGenerator moreeq = value => (l => l >= value);
             Action<IList<byte>> trim = l => {
                 l.RemoveAt(0);
@@ -197,7 +196,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                                                 rawCommand[14],
                                                 rawCommand[15]));
             add(CommandCode.SetForvacuumLevel, eq(2), rawCommand => new confirmForvacuumLevel());
-            add(CommandCode.InvalidCommand, more(2), rawCommand => {
+            add(CommandCode.InvalidCommand, moreeq(3), rawCommand => {
                 trim(rawCommand);
                 return new logInvalidCommand(rawCommand);
             });

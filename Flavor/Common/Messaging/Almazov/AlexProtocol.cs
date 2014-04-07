@@ -5,7 +5,7 @@ using System.Text;
 namespace Flavor.Common.Messaging.Almazov {
     class AlexProtocol: CheckableProtocol<CommandCode> {
         public AlexProtocol(PortLevel port, CommandDictionary<CommandCode> dictionary)
-            : base(new AlexProtocolByteDispatcher(port, false), GetDictionary()) { }
+            : base(new AlexProtocolByteDispatcher(port, false)) { }
 
         protected override byte ComputeCS(IList<byte> data) {
             byte checkSum = 0;
@@ -109,10 +109,9 @@ namespace Flavor.Common.Messaging.Almazov {
             #endregion
         }
         delegate Predicate<int> PredicateGenerator(int value);
-        static CommandDictionary<CommandCode> GetDictionary() {
+        protected override CommandDictionary<CommandCode> GetDictionary() {
             var d = new CommandDictionary<CommandCode>();
             PredicateGenerator eq = value => (l => l == value);
-            PredicateGenerator more = value => (l => l > value);
             PredicateGenerator moreeq = value => (l => l >= value);
             Action<IList<byte>> trim = l => {
                 l.RemoveAt(0);

@@ -25,8 +25,8 @@ namespace Flavor.Forms {
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.MenuStrip menuStrip;
-            System.Windows.Forms.ToolStripMenuItem fileMenu;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm2));
+            System.Windows.Forms.ToolStripMenuItem fileMenu;
             System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem viewMenu;
             System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
@@ -345,6 +345,7 @@ namespace Flavor.Forms {
             // 
             this.unblock_butt.BackColor = System.Drawing.Color.White;
             resources.ApplyResources(this.unblock_butt, "unblock_butt");
+            this.unblock_butt.ForeColor = System.Drawing.Color.Green;
             this.unblock_butt.Name = "unblock_butt";
             this.unblock_butt.Click += new System.EventHandler(this.unblock_butt_Click);
             // 
@@ -408,7 +409,7 @@ namespace Flavor.Forms {
             // 
             this.openSpecterFileDialog.InitialDirectory = ".";
             // 
-            // mainForm
+            // MainForm2
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -419,7 +420,7 @@ namespace Flavor.Forms {
             this.Controls.Add(this.statusStrip);
             this.IsMdiContainer = true;
             this.MainMenuStrip = menuStrip;
-            this.Name = "mainForm";
+            this.Name = "MainForm2";
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);

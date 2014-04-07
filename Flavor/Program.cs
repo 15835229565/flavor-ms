@@ -28,10 +28,16 @@ namespace Flavor {
             }
 
             var commander = new Commander2();
+            ConsoleWriter.Subscribe(commander);
+
             MainForm2 MSControl = new MainForm2(commander);
+            MSControl.Connect += commander.Connect;
+            MSControl.Init += commander.Init;
+            MSControl.Shutdown += commander.Shutdown;
+            MSControl.Unblock += commander.Unblock;
             MSControl.Load += onLoad;
-            //commander.setProgramStateWithoutUndo(ProgramStates.Start);
             MSControl.WindowState = FormWindowState.Maximized;
+            
             Application.Run(MSControl);
         }
     }

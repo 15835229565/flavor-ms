@@ -1,4 +1,5 @@
-﻿using Flavor.Common.Messaging;
+﻿using System;
+using Flavor.Common.Messaging;
 
 namespace Flavor.Common {
     enum ProgramStates: byte {
@@ -29,16 +30,16 @@ namespace Flavor.Common {
     }
     interface IGlobalActions {
         event ProgramEventHandler ProgramStateChanged;
-        void Init();
-        void Shutdown();
+        void Init(object sender, EventArgs<bool> e);
+        void Shutdown(object sender, EventArgs<bool> e);
 
-        void Unblock();
+        void Unblock(object sender, EventArgs<bool> e);
 
         void SendSettings();
     }
     interface IConnectionActions {
         //event ProgramEventHandler ProgramStateChanged;
-        void Connect();
+        void Connect(object sender, CallBackEventArgs<bool, string> e);
         void Disconnect();
 
         //void Reconnect();
@@ -56,18 +57,18 @@ namespace Flavor.Common {
         #region ILog Members
         public event MessageHandler Log;
         protected virtual void OnLog(string msg) {
-            // TODO: lock here?
-            if (Log != null)
-                Log(msg);
+            var temp = Log;
+            if (temp != null)
+                temp(msg);
         }
         #endregion
         
         #region IErrorOccured Members
         public event MessageHandler ErrorOccured;
         protected virtual void OnErrorOccured(string msg) {
-            // TODO: lock here?
-            if (ErrorOccured != null)
-                ErrorOccured(msg);
+            var temp = ErrorOccured;
+            if (temp != null)
+                temp(msg);
             OnLog(msg);
         }
         #endregion
@@ -75,9 +76,9 @@ namespace Flavor.Common {
         #region IAsyncReplyReceived Members
         public event MessageHandler AsyncReplyReceived;
         protected virtual void OnAsyncReplyReceived(string msg) {
-            // TODO: lock here?
-            if (AsyncReplyReceived != null)
-                AsyncReplyReceived(msg);
+            var temp = AsyncReplyReceived;
+            if (temp != null)
+                temp(msg);
             OnLog(msg);
         }
         #endregion
@@ -87,9 +88,9 @@ namespace Flavor.Common {
         public abstract bool hBlock { get; set; }
         public event BoolEventHandler RareModeChanged;
         protected virtual void OnRareModeChanged(bool t) {
-            // TODO: lock here?
-            if (RareModeChanged != null)
-                RareModeChanged(t);
+            var temp = RareModeChanged;
+            if (temp != null)
+                temp(t);
         }
         bool rare;
         public bool notRareModeRequested { 
@@ -106,19 +107,19 @@ namespace Flavor.Common {
         #region IGlobalActions Members
         public event ProgramEventHandler ProgramStateChanged;
         protected virtual void OnProgramStateChanged() {
-            // TODO: lock here?
-            if (ProgramStateChanged != null)
-                ProgramStateChanged(pState);
+            var temp = ProgramStateChanged;
+            if (temp != null)
+                temp(pState);
         }
-        abstract public void Init();
-        abstract public void Shutdown();
-        abstract public void Unblock();
+        abstract public void Init(object sender, EventArgs<bool> e);
+        abstract public void Shutdown(object sender, EventArgs<bool> e);
+        abstract public void Unblock(object sender, EventArgs<bool> e);
         abstract public void SendSettings();
         #endregion
 
         abstract public bool DeviceIsConnected { get; protected set; }
         #region IConnectionActions Members
-        abstract public void Connect();
+        abstract public void Connect(object sender, CallBackEventArgs<bool, string> e);
         abstract public void Disconnect();
         #endregion
         abstract public void Reconnect();
@@ -131,9 +132,9 @@ namespace Flavor.Common {
         // TODO: other event class here!
         public event ProgramEventHandler MeasureCancelled;
         protected virtual void OnMeasureCancelled() {
-            // TODO: lock here?
-            if (MeasureCancelled != null)
-                MeasureCancelled(pState);
+            var temp = MeasureCancelled;
+            if (temp != null)
+                temp(pState);
         }
         abstract public void Scan();
         abstract public bool Sense();

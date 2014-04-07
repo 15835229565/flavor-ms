@@ -1,7 +1,7 @@
 ﻿using AsyncReply = Flavor.Common.Messaging.Async<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    internal class requestCounts: AsyncReply, IAutomatedReply {
+    class requestCounts: AsyncReply, IAutomatedReply {
         #region IReply Members
         public ISend AutomatedReply() {
             //хорошо бы сюда на автомате очистку Commander.CustomMeasure...
@@ -10,18 +10,18 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class confirmVacuumReady: AsyncReply, IUpdateDevice {
+    class confirmVacuumReady: AsyncReply, IUpdateDevice {
         #region IUpdateDevice Members
         public void UpdateDevice() {
         }
         #endregion
     }
 
-    internal class confirmShutdowned: AsyncReply { }
+    class confirmShutdowned: AsyncReply { }
 
-    internal class SystemReseted: AsyncReply { }
+    class SystemReseted: AsyncReply { }
 
-    internal class confirmHighVoltageOff: AsyncReply { }
+    class confirmHighVoltageOff: AsyncReply { }
 
-    internal class confirmHighVoltageOn: AsyncReply { }
+    class confirmHighVoltageOn: AsyncReply { }
 }

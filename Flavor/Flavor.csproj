@@ -103,6 +103,7 @@
     <Compile Include="Common\Messaging\SevMorGeo\Async.Error.cs" />
     <Compile Include="Common\Messaging\Interfaces.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\CommandCode.cs" />
+    <Compile Include="Common\Messaging\SevMorGeo\SevMorGeoRealizer.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Sync.Error.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Sync.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\UI.cs" />

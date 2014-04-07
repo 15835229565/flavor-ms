@@ -38,6 +38,82 @@ namespace Flavor.Forms {
         const string OPENED_TEXT = "Открыт";
         const string CLOSED_TEXT = "Закрыт";
 
+        EventHandler<CallBackEventArgs<bool, string>> _connect;
+        public event EventHandler<CallBackEventArgs<bool, string>> Connect {
+            add {
+                if (value == null)
+                    return;
+                _connect += value;
+                connectToolStripButton.Visible = true;
+            }
+            remove {
+                var evt = _connect;
+                evt -= value;
+                if (evt == null)
+                    return;
+                connectToolStripButton.Visible = false;
+            }
+        }
+        protected virtual void OnConnect(CallBackEventArgs<bool, string> e) {
+            _connect.Raise(this, e);
+        }
+        EventHandler<EventArgs<bool>> _init;
+        public event EventHandler<EventArgs<bool>> Init {
+            add {
+                if (value == null)
+                    return;
+                _init += value;
+                initSys_butt.Visible = true;
+            }
+            remove {
+                var evt = _init;
+                evt -= value;
+                if (evt == null)
+                    return;
+                initSys_butt.Visible = false;
+            }
+        }
+        protected virtual void OnInit(EventArgs<bool> e) {
+            _init.Raise(this, e);
+        }
+        EventHandler<EventArgs<bool>> _shutdown;
+        public event EventHandler<EventArgs<bool>> Shutdown {
+            add {
+                if (value == null)
+                    return;
+                _shutdown += value;
+                shutSys_butt.Visible = true;
+            }
+            remove {
+                var evt = _shutdown;
+                evt -= value;
+                if (evt == null)
+                    return;
+                shutSys_butt.Visible = false;
+            }
+        }
+        protected virtual void OnShutdown(EventArgs<bool> e) {
+            _shutdown.Raise(this, e);
+        }
+        EventHandler<EventArgs<bool>> _unblock;
+        public event EventHandler<EventArgs<bool>> Unblock {
+            add {
+                if (value == null)
+                    return;
+                _unblock += value;
+                unblock_butt.Visible = true;
+            }
+            remove {
+                var evt = _unblock;
+                evt -= value;
+                if (evt == null)
+                    return;
+                unblock_butt.Visible = false;
+            }
+        }
+        protected virtual void OnUnblock(EventArgs<bool> e) {
+            _unblock.Raise(this, e);
+        }
         //IMeasured activeMeasureChild;
         MeasuredCollectorsForm collectorsForm = null;
         MeasuredCollectorsForm CollectorsForm {
@@ -73,6 +149,13 @@ namespace Flavor.Forms {
             : base() {
             this.commander = commander;
             InitializeComponent();
+            connectToolStripButton.Visible = false;
+            connectToolStripButton.Tag = false;
+            initSys_butt.Visible = false;
+            initSys_butt.Tag = false;
+            shutSys_butt.Visible = false;
+            unblock_butt.Visible = false;
+            unblock_butt.Tag = false;
         }
         #region Status TreeView population
         private TreeNodePlus rootNode;
@@ -309,22 +392,71 @@ namespace Flavor.Forms {
                 oForm.Activate();
             // TODO: disable other menu items or close already opened?
         }
+
+        void connectToolStripButton_Click(object sender, EventArgs e) {
+            connectToolStripButton.Enabled = false;
+            bool old = (bool)connectToolStripButton.Tag;
+            var ee = new CallBackEventArgs<bool, string>(old, null);
+            OnConnect(ee);
+            bool connected = ee.Value;
+            if (old != connected) {
+                var callBack = ee.Handler;
+                if (connected) {
+                    //callBack += new EventHandler<EventArgs<string>>((object s, EventArgs<string> args) => InvokeRefreshUserMessage(args.Value));
+                    // BAD!
+                    commander.AsyncReplyReceived += InvokeRefreshUserMessage;
+                    connectToolStripButton.Text = "Разъединить";
+                    connectToolStripButton.ForeColor = Color.Red;
+                } else {
+                    connectToolStripButton.Text = "Соединить";
+                    connectToolStripButton.ForeColor = Color.Green;
+                    //callBack -= new EventHandler<EventArgs<string>>((object s, EventArgs<string> args) => InvokeRefreshUserMessage(args.Value));
+                    // BAD!
+                    commander.AsyncReplyReceived -= InvokeRefreshUserMessage;
+                }
+                connectToolStripButton.Tag = connected;
+                // BAD!
+                RefreshButtons(commander.pState);
+            }
+            connectToolStripButton.Enabled = true;
+        }
         void initSys_butt_Click(object sender, EventArgs e) {
             initSys_butt.Enabled = false;
-            commander.Init();
+            bool old = (bool)initSys_butt.Tag;
+            var ee = new CallBackEventArgs<bool>(old, null);
+            OnInit(ee);
+            bool inited = ee.Value;
+            if (old != inited) {
+                initSys_butt.Tag = inited;
+            }
         }
         void shutSys_butt_Click(object sender, EventArgs e) {
-            if (commander.pState != ProgramStates.Start)
+            //if (commander.pState != ProgramStates.Start)
+            if ((bool)initSys_butt.Tag)
             {
                 if (MessageBox.Show(this, SHUTDOWN_MESSAGE, SHUTDOWN_CAPTION, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.OK)
                     return;
             }
             shutSys_butt.Enabled = false;
-            commander.Shutdown();
+            var ee = new EventArgs<bool>(false);
+            OnShutdown(ee);
         }
         void unblock_butt_Click(object sender, EventArgs e) {
             unblock_butt.Enabled = false;
-            commander.Unblock();
+            bool old = (bool)unblock_butt.Tag;
+            var ee = new EventArgs<bool>(false);
+            OnUnblock(ee);
+            bool unblocked = ee.Value;
+            if (old != unblocked) {
+                if (unblocked) {
+                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.ForeColor = Color.Red;
+                } else {
+                    unblock_butt.Text = "Снять блокировку";
+                    unblock_butt.ForeColor = Color.Green;
+                }
+                unblock_butt.Tag = unblocked;
+            }
         }
 
         void Commander_OnError(string msg) {
@@ -671,25 +803,10 @@ namespace Flavor.Forms {
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
         void RefreshButtons(ProgramStates state) {
-            bool block = !commander.hBlock;
-            if (block) {
-                unblock_butt.Text = "Включить блокировку";
-                unblock_butt.ForeColor = Color.Red;
-            } else {
-                unblock_butt.Text = "Снять блокировку";
-                unblock_butt.ForeColor = Color.Green;
-            }
             switch (state) {
                 case ProgramStates.Start:
-                    bool connected = commander.DeviceIsConnected;
-                    if (connected) {
-                        connectToolStripButton.Text = "Разъединить";
-                        connectToolStripButton.ForeColor = Color.Red;
-                    } else {
-                        connectToolStripButton.Text = "Соединить";
-                        connectToolStripButton.ForeColor = Color.Green;
-                    }
-                    setButtons(true, connected, connected, connected && block, false, false, false, true);
+                    bool connected = (bool)connectToolStripButton.Tag;
+                    setButtons(true, connected, connected, false, false, false, false, true);
                     break;
                 case ProgramStates.Init:
                     setButtons(false, false, true, false, false, false, false, true);
@@ -698,8 +815,8 @@ namespace Flavor.Forms {
                     setButtons(false, false, true, true, false, false, false, true);
                     break;
                 case ProgramStates.Ready:
-                    bool canDoPrecise = block && commander.SomePointsUsed;
-                    setButtons(false, false, true, true, block, canDoPrecise, canDoPrecise, true);
+                    bool canDoPrecise = commander.SomePointsUsed;
+                    setButtons(false, false, true, true, true, canDoPrecise, canDoPrecise, true);
                     monitorToolStripButton.Text = "Режим мониторинга";
                     break;
                 case ProgramStates.WaitBackgroundMeasure:
@@ -775,17 +892,6 @@ namespace Flavor.Forms {
 
         void saveConfigFileToolStripMenuItem_Click(object sender, EventArgs e) {
             Config.saveGlobalConfig();
-        }
-
-        void connectToolStripButton_Click(object sender, EventArgs e) {
-            // TODO: use button properties
-            if (commander.DeviceIsConnected) {
-                commander.Disconnect();
-                commander.AsyncReplyReceived -= InvokeRefreshUserMessage;
-            } else {
-                commander.AsyncReplyReceived += InvokeRefreshUserMessage;
-                commander.Connect();
-            }
         }
 
         void delaysToolStripMenuItem_Click(object sender, EventArgs e) {

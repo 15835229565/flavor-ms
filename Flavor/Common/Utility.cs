@@ -4,130 +4,66 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace Flavor.Common {
-    public class FixedSizeQueue<T> {
-        private readonly Queue<T> queue;
-        private readonly int maxCapacity;
-        //
-        // Summary:
-        //     Initializes a new instance of the FixedSizeQueue<T> class
-        //     that is empty and has the specified maximum capacity.
-        //
-        // Parameters:
-        //   capacity:
-        //     The maximum number of elements that the FixedSizeQueue<T>
-        //     can contain.
-        //
-        // Exceptions:
-        //   System.ArgumentOutOfRangeException:
-        //     capacity is less than one.
-        public FixedSizeQueue(int capacity) {
-            if (capacity < 1)
-                throw new System.ArgumentOutOfRangeException("capacity", capacity, "capacity is less than one");
-            maxCapacity = capacity;
-            queue = new Queue<T>(capacity);
-        }
-
-        // Summary:
-        //     Gets the number of elements contained in the FixedSizeQueue<T>.
-        //
-        // Returns:
-        //     The number of elements contained in the FixedSizeQueue<T>.
-        public int Count { get { return queue.Count; } }
-
-        // Summary:
-        //     Removes all objects from the FixedSizeQueue<T>.
-        public void Clear() {
-            queue.Clear();
-        }
-        //
-        // Summary:
-        //     Adds an object to the end of the FixedSizeQueue<T>.
-        //
-        // Parameters:
-        //   item:
-        //     The object to add to the FixedSizeQueue<T>. The value can
-        //     be null for reference types.
-        public void Enqueue(T item) {
-            if (queue.Count == maxCapacity) {
-                queue.Dequeue();
-            }
-            queue.Enqueue(item);
-        }
-        //
-        // Summary:
-        //     Returns whether the instance of FixedSizeQueue<T> contains maximum number of elements.
-        //
-        // Returns:
-        //     A boolean value indicating whether the instance of FixedSizeQueue<T> contains maximum number of elements.
-        public bool IsFull {
-            get { return queue.Count == maxCapacity; }
-        }
-        public T Aggregate(Func<T, T, T> func) {
-            return queue.Aggregate(func);
-        }
-    }
-    
-    internal abstract class CommonData {
-        internal ushort hCurrent { get; set; }
-        internal double hCurrentReal {
+    abstract class CommonData {
+        public ushort hCurrent { get; set; }
+        public double hCurrentReal {
             get { return hCurrentConvert(hCurrent); }
             set { hCurrent = hCurrentConvert(value); }
         }
-        internal static double hCurrentConvert(ushort current) {
+        public static double hCurrentConvert(ushort current) {
             return (double)current / 4096;
         }
-        internal static ushort hCurrentConvert(double current) {
+        public static ushort hCurrentConvert(double current) {
             return genericConvert((ushort)(current * 4096));
         }
 
-        internal ushort eCurrent { get; set; }
-        internal double eCurrentReal {
+        public ushort eCurrent { get; set; }
+        public double eCurrentReal {
             get { return eCurrentConvert(eCurrent); }
             set { eCurrent = eCurrentConvert(value); }
         }
-        internal static double eCurrentConvert(ushort current) {
+        public static double eCurrentConvert(ushort current) {
             return 50 * (double)current / 4096;
         }
-        internal static ushort eCurrentConvert(double current) {
+        public static ushort eCurrentConvert(double current) {
             return genericConvert((ushort)((current / 50) * 4096));
         }
 
-        internal ushort iVoltage { get; set; }
-        internal double iVoltageReal {
+        public ushort iVoltage { get; set; }
+        public double iVoltageReal {
             get { return iVoltageConvert(iVoltage); }
             set { iVoltage = iVoltageConvert(value); }
         }
-        internal static double iVoltageConvert(ushort voltage) {
+        public static double iVoltageConvert(ushort voltage) {
             return 150 * (double)voltage / 4096;
         }
-        internal static ushort iVoltageConvert(double voltage) {
+        public static ushort iVoltageConvert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
-        internal ushort fV1 { get; set; }
-        internal double fV1Real {
+        public ushort fV1 { get; set; }
+        public double fV1Real {
             get { return fV1Convert(fV1); }
             set { fV1 = fV1Convert(value); }
         }
-        internal static double fV1Convert(ushort voltage) {
+        public static double fV1Convert(ushort voltage) {
             return 150 * (double)voltage / 4096;
         }
-        internal static ushort fV1Convert(double voltage) {
+        public static ushort fV1Convert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
 
-        internal ushort fV2 { get; set; }
-        internal double fV2Real {
+        public ushort fV2 { get; set; }
+        public double fV2Real {
             get { return fV2Convert(fV2); }
             set { fV2 = fV2Convert(value); }
         }
-        internal static double fV2Convert(ushort voltage) {
+        public static double fV2Convert(ushort voltage) {
             return 150 * (double)voltage / 4096;
         }
-        internal static ushort fV2Convert(double voltage) {
+        public static ushort fV2Convert(double voltage) {
             return genericConvert((ushort)((voltage / 150) * 4096));
         }
         
@@ -135,46 +71,46 @@ namespace Flavor.Common {
             return x < 4096 ? x : (ushort)4095;
         }
     }
-    internal class CommonOptions: CommonData {
-        internal ushort befTime { get; set; }
-        internal ushort befTimeReal {
+    class CommonOptions: CommonData {
+        public ushort befTime { get; set; }
+        public ushort befTimeReal {
             get { return (ushort)(befTime * 5); }
             set { befTime = (ushort)(value / 5); }
         }
-        internal ushort fTime { get; set; }
-        internal ushort fTimeReal {
+        public ushort fTime { get; set; }
+        public ushort fTimeReal {
             get { return (ushort)(fTime * 5); }
             set { fTime = (ushort)(value / 5); }
         }
-        internal ushort bTime { get; set; }
-        internal ushort bTimeReal {
+        public ushort bTime { get; set; }
+        public ushort bTimeReal {
             get { return (ushort)(bTime * 5); }
             set { bTime = (ushort)(value / 5); }
         }
-        internal bool ForwardTimeEqualsBeforeTime { get; set; }
-        internal ushort eTime { get; set; }
-        internal ushort eTimeReal {
+        public bool ForwardTimeEqualsBeforeTime { get; set; }
+        public ushort eTime { get; set; }
+        public ushort eTimeReal {
             get { return (ushort)(eTime * 5); }
             set { eTime = (ushort)(value / 5); }
         }
-        internal ushort iTime { get; set; }
-        internal ushort iTimeReal {
+        public ushort iTime { get; set; }
+        public ushort iTimeReal {
             get { return (ushort)(5 * iTime); }
             set { iTime = (ushort)(value / 5); }
         }
-        internal ushort CP { get; set; }
-        internal double CPReal {
+        public ushort CP { get; set; }
+        public double CPReal {
             get { return CPConvert(CP); }
             set { CP = CPConvert(value); }
         }
-        internal static double CPConvert(ushort coeff) {
+        public static double CPConvert(ushort coeff) {
             return (10 / (double)coeff) * 4096;
         }
-        internal static ushort CPConvert(double coeff) {
+        public static ushort CPConvert(double coeff) {
             return genericConvert((ushort)((10 / coeff) * 4096));
         }
 
-        internal CommonOptions() {
+        public CommonOptions() {
             // defaults
             iVoltage = 1911;
             hCurrent = 0;
@@ -190,19 +126,19 @@ namespace Flavor.Common {
             CP = 3780;
         }
         // scan voltage modification law
-        internal static ushort scanVoltage(ushort step) {
+        public static ushort scanVoltage(ushort step) {
             if (step > Config.MAX_STEP) step = Config.MAX_STEP;
             return (ushort)(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
             //if (step <= 456) return (ushort)(4095 - 5 * step);
             //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
-        internal static double scanVoltageReal(ushort step) {
+        public static double scanVoltageReal(ushort step) {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
 
-        private const string DELIMITER = " ";
-        private const string START = "{";
-        private const string END = "}";
+        const string DELIMITER = " ";
+        const string START = "{";
+        const string END = "}";
         public override string ToString() {
             return (new StringBuilder())
                 .Append(START)
@@ -225,8 +161,8 @@ namespace Flavor.Common {
         }
     }
 
-    internal class Collector: List<Graph.pListScaled> {
-        private double coeff;
+    class Collector: List<Graph.pListScaled> {
+        double coeff;
         public double Coeff {
             get { return coeff; }
             set {
@@ -238,12 +174,12 @@ namespace Flavor.Common {
             }
         }
 
-        internal Collector(double coeff) {
+        public Collector(double coeff) {
             this.coeff = coeff;
             // data row for scan (has no PED reference)
             Add(new Graph.pListScaled(this));
         }
-        internal double pointToMass(ushort pnt) {
+        public double pointToMass(ushort pnt) {
             return coeff / CommonOptions.scanVoltageReal(pnt);
         }
         public new void Clear() {
@@ -255,9 +191,9 @@ namespace Flavor.Common {
             Add(new Graph.pListScaled(this, ppl));
         }
     }
-    internal class Spectrum: List<Collector> {
-        internal CommonOptions CommonOptions { get; set; }
-        internal Spectrum(CommonOptions cd, params double[] coeffs)
+    class Spectrum: List<Collector> {
+        public CommonOptions CommonOptions { get; set; }
+        public Spectrum(CommonOptions cd, params double[] coeffs)
             : base(coeffs.Length) {
             // better to clone here?
             CommonOptions = cd;
@@ -266,7 +202,7 @@ namespace Flavor.Common {
             foreach (double coeff in coeffs)
                 Add(new Collector(coeff));
         }
-        internal int[] RecomputeMassRows(double[] coeffs) {
+        public int[] RecomputeMassRows(double[] coeffs) {
             if (this.Count != coeffs.Length)
                 throw new ArgumentOutOfRangeException("coeffs");
             var result = new List<int>(coeffs.Length);
@@ -281,7 +217,7 @@ namespace Flavor.Common {
             }
             return result.ToArray();
         }
-        internal bool RecomputeMassRows(byte collectorNumber, double coeff) {
+        public bool RecomputeMassRows(byte collectorNumber, double coeff) {
             //natural-based index
             if (collectorNumber > this.Count || collectorNumber < 1)
                 throw new ArgumentOutOfRangeException("collectorNumber");
@@ -297,64 +233,64 @@ namespace Flavor.Common {
         }
     }
 
-    internal class PreciseSpectrum: List<Utility.PreciseEditorData> {
-        private CommonOptions myCommonOptions = null;
-        internal PreciseSpectrum(CommonOptions cd)
+    class PreciseSpectrum: List<Utility.PreciseEditorData> {
+        CommonOptions myCommonOptions = null;
+        public PreciseSpectrum(CommonOptions cd)
             : this() {
             // better to clone here?
             myCommonOptions = cd;
         }
-        internal PreciseSpectrum()
+        public PreciseSpectrum()
             : base() {
         }
-        internal PreciseSpectrum(IEnumerable<Utility.PreciseEditorData> other)
+        public PreciseSpectrum(IEnumerable<Utility.PreciseEditorData> other)
             : base(other) {
             // TODO: check that copies here!
         }
-        internal CommonOptions CommonOptions {
+        public CommonOptions CommonOptions {
             get { return myCommonOptions; }
             set { myCommonOptions = value; }
         }
     }
 
-    public class PointPairListPlus: ZedGraph.PointPairList {
-        private Utility.PreciseEditorData myPED;
-        private Graph.pListScaled myPLS;
+    class PointPairListPlus: ZedGraph.PointPairList {
+        Utility.PreciseEditorData myPED;
+        Graph.pListScaled myPLS;
 
-        internal Utility.PreciseEditorData PEDreference {
+        public Utility.PreciseEditorData PEDreference {
             get { return myPED; }
             set { myPED = value; }
         }
-        internal Graph.pListScaled PLSreference {
+        public Graph.pListScaled PLSreference {
             get { return myPLS; }
             set { myPLS = value; }
         }
 
-        internal PointPairListPlus()
+        public PointPairListPlus()
             : base() {
             myPED = null;
             myPLS = null;
         }
-        internal PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
+        public PointPairListPlus(Utility.PreciseEditorData ped, Graph.pListScaled pls)
             : base() {
             myPED = ped;
             myPLS = pls;
         }
-        internal PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
+        public PointPairListPlus(PointPairListPlus other, Utility.PreciseEditorData ped, Graph.pListScaled pls)
             : base(other) {
             myPED = ped;
             myPLS = pls;
         }
     }
     #region TreeNodes
-    internal class TreeNodePlus: System.Windows.Forms.TreeNode {
-        internal enum States {
+    class TreeNodePlus: System.Windows.Forms.TreeNode {
+        public enum States {
             Ok,
             Warning,
             Error
         }
         protected States myState = States.Ok;
-        internal virtual States State {
+        public virtual States State {
             get { return myState; }
             set {
                 if (myState != value) {
@@ -367,11 +303,11 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal TreeNodePlus(string text, TreeNode[] nodes)
+        public TreeNodePlus(string text, TreeNode[] nodes)
             : base(text, nodes) { }
         protected TreeNodePlus()
             : base() { }
-        private void setStateImageKey() {
+        void setStateImageKey() {
             switch (myState) {
                 case States.Ok:
                     StateImageKey = "";
@@ -384,7 +320,7 @@ namespace Flavor.Common {
                     break;
             }
         }
-        private void computeState(States previous, States current) {
+        void computeState(States previous, States current) {
             if (myState < previous) {
                 // illegal state
                 throw new InvalidOperationException();
@@ -400,7 +336,7 @@ namespace Flavor.Common {
                 State = computeState(current);
             }
         }
-        private States computeState(States hint) {
+        States computeState(States hint) {
             States result = hint;
             foreach (TreeNodePlus node in Nodes) {
                 if (result < node.State) {
@@ -412,8 +348,8 @@ namespace Flavor.Common {
             return result;
         }
     }
-    internal class TreeNodeLeaf: TreeNodePlus {
-        internal override States State {
+    class TreeNodeLeaf: TreeNodePlus {
+        public override States State {
             get { return myState; }
             set {
                 if (myState != value) {
@@ -425,20 +361,10 @@ namespace Flavor.Common {
                 }
             }
         }
-        private new TreeNodeCollection Nodes {
+        new TreeNodeCollection Nodes {
             get { return base.Nodes; }
         }
-        /*internal new string Text
-        {
-            get { return base.Text; }
-            set 
-            {
-                if (base.Text != value)
-                    base.Text = value;
-            }
-        }*/
-
-        private void setForeColor() {
+        void setForeColor() {
             switch (State) {
                 case States.Ok:
                     ForeColor = Color.Green;
@@ -451,35 +377,27 @@ namespace Flavor.Common {
                     break;
             }
         }
-        internal TreeNodeLeaf()
+        public TreeNodeLeaf()
             : base() {
             setForeColor();
         }
     }
-    internal class TreeNodePair: TreeNodePlus {
-        private new TreeNodeCollection Nodes {
+    class TreeNodePair: TreeNodePlus {
+        new TreeNodeCollection Nodes {
             get { return base.Nodes; }
         }
-        internal TreeNodePair(string text, TreeNodeLeaf valueNode)
+        public TreeNodePair(string text, TreeNodeLeaf valueNode)
             : base() {
             Text = text;
             Nodes.Add(valueNode);
         }
     }
     #endregion
-    public static class Utility {
-        // extension method for EventHandler
-        public static void Raise<T>(this EventHandler<T> handler, object sender, T args)
-          where T: EventArgs {
-            if (handler != null) handler(sender, args);
-            //seem not to be necessary..
-            //EventHandler<T> evt = handler;
-            //if (evt != null) evt(sender, args);
-        }
+    static class Utility {
         public static List<PreciseEditorData> getUsed(this List<PreciseEditorData> peds) {
             return peds.FindAll(PreciseEditorData.PeakIsUsed);
         }
-        internal static List<PreciseEditorData> getUsed(this PreciseSpectrum peds) {
+        public static List<PreciseEditorData> getUsed(this PreciseSpectrum peds) {
             return peds.FindAll(PreciseEditorData.PeakIsUsed);
         }
         public static List<PreciseEditorData> getWithId(this List<PreciseEditorData> peds) {
@@ -491,7 +409,7 @@ namespace Flavor.Common {
         }
         #region PreciseEditorData
         public class PreciseEditorData: IComparable<PreciseEditorData> {
-            internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
+            public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
                 pointNumber = pn;
                 step = st;
                 collector = co;
@@ -499,32 +417,32 @@ namespace Flavor.Common {
                 width = wi;
                 precision = pr;
             }
-            internal PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+            public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
                 : this(pn, st, co, it, wi, pr) {
                 comment = comm;
             }
-            internal PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
+            public PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
                 : this(pn, st, co, it, wi, pr, comm) {
                 usethis = useit;
             }
-            internal PreciseEditorData(PreciseEditorData other)
+            public PreciseEditorData(PreciseEditorData other)
                 : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment) {
                 associatedPoints = other.associatedPoints == null ? null : new PointPairListPlus(other.associatedPoints, this, null);
             }
             // use for generate checker peak
-            internal PreciseEditorData(PreciseEditorData other, ushort iterations)
+            public PreciseEditorData(PreciseEditorData other, ushort iterations)
                 : this(other.usethis, other.pointNumber, other.step, other.collector, iterations, other.width, other.precision, other.comment) {
             }
-            private bool usethis = true;
-            private byte pointNumber;
-            private ushort step;
-            private byte collector;
-            private ushort iterations;
-            private ushort width;
-            private float precision;
-            private string comment = "";
-            private PointPairListPlus associatedPoints = null;
-            internal PointPairListPlus AssociatedPoints {
+            bool usethis = true;
+            byte pointNumber;
+            ushort step;
+            byte collector;
+            ushort iterations;
+            ushort width;
+            float precision;
+            string comment = "";
+            PointPairListPlus associatedPoints = null;
+            public PointPairListPlus AssociatedPoints {
                 get { return associatedPoints; }
                 set {
                     if (value == null) {
@@ -539,35 +457,35 @@ namespace Flavor.Common {
                     associatedPoints = new PointPairListPlus(value, this, null);
                 }
             }
-            internal bool Use {
+            public bool Use {
                 get { return usethis; }
                 //set { usethis = value; }
             }
-            internal byte pNumber {
+            public byte pNumber {
                 get { return pointNumber; }
                 //set { pointNumber = value; }
             }
-            internal ushort Step {
+            public ushort Step {
                 get { return step; }
                 //set { step = value; }
             }
-            internal byte Collector {
+            public byte Collector {
                 get { return collector; }
                 //set { collector = value; }
             }
-            internal ushort Iterations {
+            public ushort Iterations {
                 get { return iterations; }
                 //set { iterations = value; }
             }
-            internal ushort Width {
+            public ushort Width {
                 get { return width; }
                 //set { width = value; }
             }
-            internal float Precision {
+            public float Precision {
                 get { return precision; }
                 //set { precision = value; }
             }
-            internal string Comment {
+            public string Comment {
                 get { return comment; }
                 //set { comment = value; }
             }
@@ -583,11 +501,11 @@ namespace Flavor.Common {
                 //later it will be better!
                 return base.GetHashCode();
             }
-            private const string DELIMITER = " ";
-            private const string START = "{";
-            private const string END = "}";
-            private const string START_SUBST = "&start;";
-            private const string END_SUBST = "&end;";
+            const string DELIMITER = " ";
+            const string START = "{";
+            const string END = "}";
+            const string START_SUBST = "&start;";
+            const string END_SUBST = "&end;";
             public override string ToString() {
                 return (new StringBuilder())
                     .Append(START)
@@ -609,7 +527,7 @@ namespace Flavor.Common {
                     .Append(comment.Replace("&", "&amp;").Replace(START, START_SUBST).Replace(END, END_SUBST))
                     .Append(END).ToString();
             }
-            internal static List<PreciseEditorData> fromString(string str) {
+            public static List<PreciseEditorData> fromString(string str) {
                 //better pattern = @"{(\d+)\s+(True|False)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s*?(.*?)}";
                 Match match = new Regex((new StringBuilder())
                     .Append(START)
@@ -653,16 +571,15 @@ namespace Flavor.Common {
                 return res;
             }
             #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
-            internal static Predicate<PreciseEditorData> PeakIsUsed =
+            public readonly static Predicate<PreciseEditorData> PeakIsUsed =
                 ped => ped != null && ped.usethis;
-            internal static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue =
+            public readonly static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue =
                 (ped1, ped2) => genericCompare(ped1, ped2, ped => ped == null, () => {
                     if (ped1.step != ped2.step)
                         return ped1.step - ped2.step;
                     return ped2.pointNumber - ped1.pointNumber;
                 });
-            private delegate int FakeComparison();
-            private static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, FakeComparison comparison) {
+            static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, Generator<int> comparison) {
                 // stub for any comparison
                 if (predicate(ped1)) {
                     if (predicate(ped2))
@@ -693,17 +610,17 @@ namespace Flavor.Common {
         }
         #endregion
         #region Textbox charset limitations
-        internal static void oneDigitTextbox_TextChanged(object sender, KeyPressEventArgs e) {
+        public static void oneDigitTextbox_TextChanged(object sender, KeyPressEventArgs e) {
             genericProcessKeyPress(sender, e, ch => (ch == '1' || ch == '2'));
         }
-        internal static void integralTextbox_TextChanged(object sender, KeyPressEventArgs e) {
+        public static void integralTextbox_TextChanged(object sender, KeyPressEventArgs e) {
             genericProcessKeyPress(sender, e, ch => Char.IsNumber(ch));
         }
-        internal static void positiveNumericTextbox_TextChanged(object sender, KeyPressEventArgs e) {
+        public static void positiveNumericTextbox_TextChanged(object sender, KeyPressEventArgs e) {
             //!!! decimal separator here !!!
             genericProcessKeyPress(sender, e, ch => (Char.IsNumber(ch) || (ch == '.' && !(sender as TextBox).Text.Contains("."))));
         }
-        private static void genericProcessKeyPress(object sender, KeyPressEventArgs e, Predicate<char> isAllowed){
+        static void genericProcessKeyPress(object sender, KeyPressEventArgs e, Predicate<char> isAllowed){
             if (!(sender is TextBox))
                 return;
             char ch = e.KeyChar;

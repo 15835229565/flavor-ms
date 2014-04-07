@@ -1,22 +1,14 @@
 ﻿using System;
 
 namespace Flavor.Common.Messaging {
-    abstract class Realizer<T>: ILog, IAsyncReplyReceived, IConnectionActions
+    abstract class Realizer<T>: ILog, IAsyncReplyReceived
         where T: struct, IConvertible, IComparable {
         readonly PackageDictionary<T> dictionary;
-        IProtocol<T> protocol;
-        protected Realizer(IProtocol<T> protocol, PackageDictionary<T> dictionary, MessageQueue<T> queue) {
-            this.dictionary = dictionary;
-            this.protocol = protocol;
-            // here?
-            ConsoleWriter.Subscribe(this);
-            ConsoleWriter.Subscribe(protocol);
-            protocol.ErrorCommand += (s, e) => {
-                // TODO: more accurate
-                OnLog(e.Message);
-            };
+        protected Realizer(MessageQueue<T> queue) {
             toSend = queue;
+            dictionary = GetDictionary();
         }
+        protected abstract PackageDictionary<T> GetDictionary();
         readonly MessageQueue<T> toSend;
         protected void Enqueue(UserRequest<T> command) {
             toSend.Enqueue(command);
@@ -27,39 +19,39 @@ namespace Flavor.Common.Messaging {
                 // Strange error
                 return;
             }
-            dictionary[code].Act(e.Command);
+            var actor = dictionary[code];
+            if (actor != null)
+                actor.Act(e.Command);
         }
         public event ProgramEventHandler ProgramStateChangeRequested;
         protected virtual void OnProgramStateChangeRequested(ProgramStates state) {
             if (ProgramStateChangeRequested != null)
                 ProgramStateChangeRequested(state);
         }
-        #region IConnectionActions Members
         public virtual void Connect() {
             toSend.Clear();
             ConsoleWriter.Subscribe(toSend);
             //toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
         }
         public virtual void Disconnect() {
-            ConsoleWriter.Unsubscribe(toSend);
-            //toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             toSend.Clear();
+            //toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
+            ConsoleWriter.Unsubscribe(toSend);
         }
-        #endregion
         #region ILog Members
         public event MessageHandler Log;
         protected virtual void OnLog(string msg) {
-            // TODO: lock here?
-            if (Log != null)
-                Log(msg);
+            var evt = Log;
+            if (evt != null)
+                evt(msg);
         }
         #endregion
         #region IAsyncReplyReceived Members
         public event MessageHandler AsyncReplyReceived;
         protected virtual void OnAsyncReplyReceived(string msg) {
-            // TODO: lock here?
-            if (AsyncReplyReceived != null)
-                AsyncReplyReceived(msg);
+            var evt = AsyncReplyReceived;
+            if (evt != null)
+                evt(msg);
             OnLog(msg);
         }
         #endregion

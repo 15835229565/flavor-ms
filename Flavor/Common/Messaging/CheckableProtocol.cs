@@ -4,8 +4,8 @@ using System.Collections.Generic;
 namespace Flavor.Common.Messaging {
     abstract class CheckableProtocol<T>: Protocol<T>
         where T: struct, IConvertible, IComparable {
-        protected CheckableProtocol(IByteDispatcher byteDispatcher, CommandDictionary<T> dictionary)
-            : base(byteDispatcher, dictionary) { }
+        protected CheckableProtocol(IByteDispatcher byteDispatcher)
+            : base(byteDispatcher) { }
         #region IProtocol Members
         public override void Send(IList<byte> message) {
             base.Send(buildPackBody(message, ComputeCS(message)));

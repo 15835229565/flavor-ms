@@ -7,8 +7,6 @@ using Flavor.Common.Library;
 
 namespace Flavor.Common {
     class Commander2: ICommander {
-        bool onTheFly = true;
-
         ProgramStates programState = ProgramStates.Start;
         public override ProgramStates pState {
             get {
@@ -58,7 +56,7 @@ namespace Flavor.Common {
                         protocol.CommandReceived += Realize;
                     else
                         protocol.CommandReceived -= Realize;
-                    OnProgramStateChanged();
+                    //OnProgramStateChanged();
                 }
             }
         }
@@ -75,6 +73,7 @@ namespace Flavor.Common {
             }
         }
 
+        bool onTheFly = true;
         void Realize(object sender, CommandReceivedEventArgs<CommandCode> e) {
             var command = e.Command;
 
@@ -140,9 +139,8 @@ namespace Flavor.Common {
                 return;
             }
             if (command is Sync<CommandCode>) {
-                if (null == toSend.Peek((Sync<CommandCode>)command)) {
+                if (null == toSend.Peek((Sync<CommandCode>)command))
                     return;
-                }
                 CheckInterfaces(command);
                 if (command is confirmInit) {
                     OnLog("Init request confirmed");
@@ -207,7 +205,7 @@ namespace Flavor.Common {
                 }
                 if (command is confirmSVoltage) {
                     if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                        CurrentMeasureMode.NextMeasure((t1, t2) => { toSend.Enqueue(new sendMeasure(t1, t2)); });
+                        CurrentMeasureMode.NextMeasure((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2)));
                     }
                 }
                 if (command is confirmF2Voltage) {
@@ -242,18 +240,20 @@ namespace Flavor.Common {
             }
         }
 
-        public override void Init() {
+        public override void Init(object sender, EventArgs<bool> e) {
             OnLog(pState.ToString());
 
             setProgramState(ProgramStates.WaitInit);
+            e.Value = true;
             toSend.Enqueue(new sendInit());
 
             OnLog(pState.ToString());
         }
-        public override void Shutdown() {
+        public override void Shutdown(object sender, EventArgs<bool> e) {
             Disable();
             toSend.Enqueue(new sendShutdown());
             setProgramState(ProgramStates.WaitShutdown);
+            e.Value = true;
             // TODO: добавить контрольное время ожидания выключения
         }
 
@@ -488,12 +488,14 @@ namespace Flavor.Common {
             }
         }
 
-        public override void Unblock() {
+        public override void Unblock(object sender, EventArgs<bool> e) {
             if (pState == ProgramStates.Measure ||
                 pState == ProgramStates.WaitBackgroundMeasure ||
                 pState == ProgramStates.BackgroundMeasureReady)//strange..
                 MeasureCancelRequested = true;
             toSend.Enqueue(new enableHighVoltage(hBlock));
+            // TODO: check!
+            e.Value = hBlock;
         }
 
         PortLevel port = new PortLevel();
@@ -505,37 +507,39 @@ namespace Flavor.Common {
                 // TODO: more accurate
                 OnErrorOccured(e.Message);
             };
+            // TODO: to Realizer
             protocol.ErrorCommand += (s, e) => {
                 // TODO: more accurate
                 OnLog(e.Message);
             };
             notRareModeRequested = true;
             // TODO: move this hard-coded defaults to Config
+            // TODO: to Realizer
             toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
                 new StatusRequestGenerator<CommandCode>(new requestStatus(), new getTurboPumpStatus(), () => notRare() ? 5 : 3),
                 () => notRare() ? 500 : 10000);
-            //RareModeChanged += t => {
-            //    if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure) {
-            //        toSend.Stop();
-            //        toSend.Start();
-            //    }
-            //};
             ProgramStateChanged += s => {
                 if (s == ProgramStates.Measure || s == ProgramStates.BackgroundMeasureReady || s == ProgramStates.WaitBackgroundMeasure) {
+                    //Realizer.Reset();
                     toSend.Stop();
                     toSend.Start();
                 }
             };
             MeasureCancelled += s => {
+                //Realizer.Reset();
                 toSend.Stop();
                 toSend.Start();
             };
+
+            var r = new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
+            ConsoleWriter.Subscribe(r);
         }
         bool notRare() {
             if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
                 return notRareModeRequested;
             return true;
         }
+        // TODO: to Realizer
         class StatusRequestGenerator<T>: IStatusRequestGenerator<T>
             where T: struct, IConvertible, IComparable {
             int i = 0;
@@ -564,14 +568,26 @@ namespace Flavor.Common {
                 Reset();
             }
         }
-        public override void Connect() {
+        public override void Connect(object sender, CallBackEventArgs<bool, string> e) {
+            if (DeviceIsConnected) {
+                Disconnect();
+            } else {
+                Connect();
+            }
+            e.Value = DeviceIsConnected;
+            //TODO:!
+            //e.Handler = AsyncReplyReceived;
+        }
+        void Connect() {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
+                    // TODO: to Realizer
                     toSend.Clear();
                     ConsoleWriter.Subscribe(toSend);
                     toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
                     toSend.Start();
+
                     DeviceIsConnected = true;
                     break;
                 case PortLevel.PortStates.Opened:
@@ -585,10 +601,12 @@ namespace Flavor.Common {
             }
         }
         public override void Disconnect() {
+            // TODO: to Realizer
             toSend.Stop();
+            toSend.Clear();
             toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
             ConsoleWriter.Unsubscribe(toSend);
-            toSend.Clear();
+
             PortLevel.PortStates res = port.Close();
             switch (res) {
                 case PortLevel.PortStates.Closing:

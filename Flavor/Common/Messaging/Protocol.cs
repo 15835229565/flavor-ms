@@ -6,13 +6,14 @@ namespace Flavor.Common.Messaging {
     abstract class Protocol<T>: IProtocol<T>
         where T: struct, IConvertible, IComparable {
         readonly IByteDispatcher byteDispatcher;
-        protected Protocol(IByteDispatcher byteDispatcher, CommandDictionary<T> dictionary) {
+        protected Protocol(IByteDispatcher byteDispatcher) {
             this.byteDispatcher = byteDispatcher;
             byteDispatcher.PackageReceived += Parse;
             byteDispatcher.Log += OnLog;
-            this.dictionary = dictionary;
+            this.dictionary = GetDictionary();
         }
         readonly CommandDictionary<T> dictionary;
+        protected abstract CommandDictionary<T> GetDictionary();
         protected void Parse(object sender, ByteArrayEventArgs e) {
             var rawCommand = e.Data;
             int length = rawCommand.Count;
@@ -23,7 +24,6 @@ namespace Flavor.Common.Messaging {
             if (!CheckPassed(rawCommand))
                 return;
             byte code = rawCommand[0];
-            //T code = (T)rawCommand[0];
             if (!dictionary.ContainsKey(code)) {
                 OnErrorCommand(rawCommand, "Неверная команда");
                 return;

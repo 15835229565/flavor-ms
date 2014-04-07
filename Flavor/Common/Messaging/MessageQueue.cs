@@ -25,6 +25,11 @@ namespace Flavor.Common.Messaging {
         IProtocol<T> protocol = null;
         public MessageQueue(IProtocol<T> protocol) {
             this.protocol = protocol;
+            protocol.ErrorCommand += (s, e) => {
+                // TODO: more accurate
+                OnLog(e.Message);
+            };
+            ConsoleWriter.Subscribe(protocol);
             sendTimer.Enabled = false;
         }
         public void Clear() {

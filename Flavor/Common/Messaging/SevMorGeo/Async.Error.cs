@@ -2,47 +2,47 @@
 using AsyncErrorReply = Flavor.Common.Messaging.AsyncError<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    internal class logInternalError: AsyncErrorReply {
+    class logInternalError: AsyncErrorReply {
         public override string Message {
             get { return "Internal error " + internalError; }
         }
-        private byte internalError;
-        internal logInternalError(byte error) {
+        byte internalError;
+        public logInternalError(byte error) {
             internalError = error;
         }
     }
 
-    internal class logInvalidSystemState: AsyncErrorReply {
+    class logInvalidSystemState: AsyncErrorReply {
         public override string Message {
             get { return "Wrong system state"; }
         }
-        internal logInvalidSystemState() { }
+        public logInvalidSystemState() { }
     }
 
-    internal class logVacuumCrash: AsyncErrorReply {
+    class logVacuumCrash: AsyncErrorReply {
         public override string Message {
             get { return "Vacuum crash state " + vacState; }
         }
         byte vacState;
-        internal logVacuumCrash(byte state) {
+        public logVacuumCrash(byte state) {
             vacState = state;
         }
     }
 
-    internal class logTurboPumpFailure: AsyncErrorReply, IUpdateDevice {
-        private ushort turboSpeed;
-        private ushort turboCurrent;
-        private ushort pwm;
-        private ushort pumpTemp;
-        private ushort driveTemp;
-        private ushort operationTime;
-        private byte v1;
-        private byte v2;
-        private byte v3;
+    class logTurboPumpFailure: AsyncErrorReply, IUpdateDevice {
+        ushort turboSpeed;
+        ushort turboCurrent;
+        ushort pwm;
+        ushort pumpTemp;
+        ushort driveTemp;
+        ushort operationTime;
+        byte v1;
+        byte v2;
+        byte v3;
         public override string Message {
             get { return "Turbopump failure"; }
         }
-        internal logTurboPumpFailure(IList<byte> commandline) {
+        public logTurboPumpFailure(IList<byte> commandline) {
             turboSpeed = (ushort)((ushort)commandline[1] + ((ushort)commandline[2] << 8));
             turboCurrent = (ushort)((ushort)commandline[3] + ((ushort)commandline[4] << 8));
             pwm = (ushort)((ushort)commandline[5] + ((ushort)commandline[6] << 8));
@@ -68,38 +68,38 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class logPowerFail: AsyncErrorReply {
+    class logPowerFail: AsyncErrorReply {
         public override string Message {
             get { return "Device power fail"; }
         }
-        internal logPowerFail() { }
+        public logPowerFail() { }
     }
 
-    internal class logInvalidVacuumState: AsyncErrorReply {
+    class logInvalidVacuumState: AsyncErrorReply {
         public override string Message {
             get { return "Wrong vacuum state"; }
         }
-        internal logInvalidVacuumState() { }
+        public logInvalidVacuumState() { }
     }
 
-    internal class logAdcPlaceIonSrc: AsyncErrorReply {
+    class logAdcPlaceIonSrc: AsyncErrorReply {
         public override string Message {
             get { return "AdcPlaceIonSrc"; }
         }
-        internal logAdcPlaceIonSrc(IList<byte> commandline) { }
+        public logAdcPlaceIonSrc(IList<byte> commandline) { }
     }
 
-    internal class logAdcPlaceScanv: AsyncErrorReply {
+    class logAdcPlaceScanv: AsyncErrorReply {
         public override string Message {
             get { return "AdcPlaceScanv"; }
         }
-        internal logAdcPlaceScanv(IList<byte> commandline) { }
+        public logAdcPlaceScanv(IList<byte> commandline) { }
     }
 
-    internal class logAdcPlaceControlm: AsyncErrorReply {
+    class logAdcPlaceControlm: AsyncErrorReply {
         public override string Message {
             get { return "AdcPlaceControlm"; }
         }
-        internal logAdcPlaceControlm(IList<byte> commandline) { }
+        public logAdcPlaceControlm(IList<byte> commandline) { }
     }
 }
