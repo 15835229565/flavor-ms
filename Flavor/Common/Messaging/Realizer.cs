@@ -36,16 +36,15 @@ namespace Flavor.Common.Messaging {
             FirstStatus.Raise(this, new EventArgs<Action>(onTheFly));
         }
 
-        protected readonly IProtocol<T> protocol;
+        readonly IProtocol<T> protocol;
+        readonly MessageQueue<T> toSend;
         readonly PackageDictionary<T> dictionary;
-        protected Realizer(IProtocol<T> protocol) {
+        protected Realizer(IProtocol<T> protocol, MessageQueue<T> queue) {
             this.protocol = protocol;
-            toSend = GetQueue();
+            toSend = queue;
             dictionary = GetDictionary();
         }
-        protected abstract MessageQueue<T> GetQueue();
         protected abstract PackageDictionary<T> GetDictionary();
-        protected readonly MessageQueue<T> toSend;
         public abstract void SetOperationBlock(bool block);
         public abstract void SetOperationToggle(bool on);
         public abstract void SetSettings();
@@ -59,6 +58,7 @@ namespace Flavor.Common.Messaging {
             var actor = dictionary[code];
             if (actor != null)
                 actor.Act(e.Command);
+            // Act must exist!
         }
         [Obsolete]
         public event ProgramEventHandler ProgramStateChangeRequested;

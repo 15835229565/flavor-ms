@@ -316,8 +316,8 @@ namespace Flavor.Forms {
                 e.Cancel = true;
                 return;
             }
-            if (commander.DeviceIsConnected)
-                commander.Disconnect();
+            //if (commander.DeviceIsConnected)
+            //    commander.Disconnect();
             Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
             Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
             Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
@@ -448,13 +448,6 @@ namespace Flavor.Forms {
             OnUnblock(ee);
             bool unblocked = ee.Value;
             if (old != unblocked) {
-                if (unblocked) {
-                    unblock_butt.Text = "Включить блокировку";
-                    unblock_butt.ForeColor = Color.Red;
-                } else {
-                    unblock_butt.Text = "Снять блокировку";
-                    unblock_butt.ForeColor = Color.Green;
-                }
                 unblock_butt.Tag = unblocked;
             }
         }
@@ -812,23 +805,33 @@ namespace Flavor.Forms {
                     setButtons(false, false, true, false, false, false, false, true);
                     break;
                 case ProgramStates.WaitHighVoltage:
+                    unblock_butt.Text = "Снять блокировку";
+                    unblock_butt.ForeColor = Color.Green;
                     setButtons(false, false, true, true, false, false, false, true);
                     break;
                 case ProgramStates.Ready:
+                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.ForeColor = Color.Red;
                     bool canDoPrecise = commander.SomePointsUsed;
                     setButtons(false, false, true, true, true, canDoPrecise, canDoPrecise, true);
                     monitorToolStripButton.Text = "Режим мониторинга";
                     break;
                 case ProgramStates.WaitBackgroundMeasure:
+                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.ForeColor = Color.Red;
                     setButtons(false, false, true, true, false, false, false, false);
                     monitorToolStripButton.Text = "Измерение фона";
                     break;
                 case ProgramStates.BackgroundMeasureReady:
+                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.ForeColor = Color.Red;
                     setButtons(false, false, true, true, false, false, true, false);
                     monitorToolStripButton.Text = "Начать мониторинг";
                     break;
                 case ProgramStates.Measure:
                     setButtons(false, false, true, true, false, false, false, false);
+                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.ForeColor = Color.Red;
                     monitorToolStripButton.Text = "Режим мониторинга";
                     break;
                 case ProgramStates.WaitInit:

@@ -185,7 +185,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.GetCounts, eq(8), rawCommand => new updateCounts((int)rawCommand[1] + ((int)rawCommand[2] << 8) + ((int)rawCommand[3] << 16),
                                                 (int)rawCommand[4] + ((int)rawCommand[5] << 8) + ((int)rawCommand[6] << 16)));
             add(CommandCode.heatCurrentEnable, eq(2), rawCommand => new confirmHECurrent());
-            add(CommandCode.EnableHighVoltage, eq(2), rawCommand => new confirmHighVoltage());
+            add(CommandCode.EnableHighVoltage, eq(2), rawCommand => { 
+                return new confirmHighVoltage();
+            });
             add(CommandCode.GetTurboPumpStatus, eq(17), rawCommand => new updateTurboPumpStatus((ushort)((ushort)rawCommand[1] + ((ushort)rawCommand[2] << 8)),
                                                 (ushort)((ushort)rawCommand[3] + ((ushort)rawCommand[4] << 8)),
                                                 (ushort)((ushort)rawCommand[5] + ((ushort)rawCommand[6] << 8)),

@@ -85,7 +85,7 @@ namespace Flavor.Common {
 
         abstract public ProgramStates pState { get; protected set; }
         public ProgramStates pStatePrev { get; protected set; }
-        public abstract bool hBlock { get; set; }
+        //public abstract bool hBlock { get; set; }
         public event BoolEventHandler RareModeChanged;
         protected virtual void OnRareModeChanged(bool t) {
             var temp = RareModeChanged;
@@ -117,7 +117,7 @@ namespace Flavor.Common {
         abstract public void SendSettings();
         #endregion
 
-        abstract public bool DeviceIsConnected { get; protected set; }
+        //abstract public bool DeviceIsConnected { get; protected set; }
         #region IConnectionActions Members
         abstract public void Connect(object sender, CallBackEventArgs<bool, string> e);
         abstract public void Disconnect();

@@ -2,17 +2,16 @@
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     class SevMorGeoRealizer: Realizer<CommandCode> {
-        readonly Generator<int> factor;
-        readonly Generator<double> interval;
+        readonly MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
         public SevMorGeoRealizer(PortLevel port, Generator<int> factor, Generator<double> interval)
-            : base(new ModBus(port)) {
-            this.factor = factor;
-            this.interval = interval;
-        }
-        protected override MessageQueue<CommandCode> GetQueue() {
-            return new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
+            : this(new ModBus(port), factor, interval) { }
+        SevMorGeoRealizer(IProtocol<CommandCode> protocol, Generator<int> factor, Generator<double> interval)
+            : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
                 new StatusRequestGenerator(new requestStatus(), new getTurboPumpStatus(), factor),
-                interval);
+                interval)) { }
+        SevMorGeoRealizer(IProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
+            : base(protocol, queue) {
+            toSend = queue;
         }
         class StatusRequestGenerator : IStatusRequestGenerator<CommandCode> {
             int i = 0;
@@ -57,20 +56,19 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public override void SetMeasureStep(ushort step) {
             toSend.Enqueue(new sendSVoltage(step));
         }
-        public override void Connect(Action undo)
-        {
+        public override void Connect(Action undo) {
             base.Connect(undo);
-            (toSend as MessageQueueWithAutomatedStatusChecks<CommandCode>).Start();
+            toSend.Start();
         }
         public override void Disconnect(Action undo) {
-            (toSend as MessageQueueWithAutomatedStatusChecks<CommandCode>).Stop();
+            toSend.Stop();
             base.Disconnect(undo);
             onTheFly = true;
         }
         // TODO: move to abstract ancestor
         public void Reset() {
-            (toSend as MessageQueueWithAutomatedStatusChecks<CommandCode>).Stop();
-            (toSend as MessageQueueWithAutomatedStatusChecks<CommandCode>).Start();
+            toSend.Stop();
+            toSend.Start();
         }
         bool onTheFly = true;
         protected override PackageDictionary<CommandCode> GetDictionary() {
@@ -83,7 +81,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 // TODO: subscribe in Config for event
                 Config.logCrash(message);
             };
-            Action<ServicePacket<CommandCode>> syncErrorAction = p => toSend.Dequeue();
+            Action<ServicePacket<CommandCode>> syncErrorAction = p => {
+                toSend.Dequeue();
+            };
             Action<ServicePacket<CommandCode>> sendAction = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<CommandCode>);
             Action<ServicePacket<CommandCode>> updateDeviceAction = p => ((IUpdateDevice)p).UpdateDevice();
             Action<ServicePacket<CommandCode>, Action<ServicePacket<CommandCode>>> sync = (p, act) => {
@@ -95,7 +95,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.InternalError, asyncErrorAction);
             add(CommandCode.InvalidSystemState, asyncErrorAction);
             add(CommandCode.VacuumCrash, asyncErrorAction);
-            add(CommandCode.TurboPumpFailure, asyncErrorAction += updateDeviceAction);
+            add(CommandCode.TurboPumpFailure, asyncErrorAction + updateDeviceAction);
             add(CommandCode.PowerFail, asyncErrorAction);
             add(CommandCode.InvalidVacuumState, asyncErrorAction);
             add(CommandCode.AdcPlaceIonSrc, asyncErrorAction);
@@ -103,7 +103,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.AdcPlaceControlm, asyncErrorAction);
 
             add(CommandCode.Measured, sendAction);
-            add(CommandCode.VacuumReady, updateDeviceAction += p => OnSystemReady());
+            add(CommandCode.VacuumReady, updateDeviceAction + (p => OnSystemReady()));
             add(CommandCode.SystemShutdowned, p => OnSystemDown(false));
             add(CommandCode.SystemReseted, p => {
                 OnAsyncReplyReceived("Система переинициализировалась");
@@ -123,16 +123,16 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.InvalidData, syncErrorAction);
             add(CommandCode.InvalidState, syncErrorAction);
 
-            add(CommandCode.GetState, p1 => sync(p1, updateDeviceAction/* += sendAction*/));
-            add(CommandCode.GetStatus, p1 => sync(p1, updateDeviceAction += p => {
+            add(CommandCode.GetState, p1 => sync(p1, updateDeviceAction/* + sendAction*/));
+            add(CommandCode.GetStatus, p1 => sync(p1, updateDeviceAction + (p => {
                 if (onTheFly) {
                     // waiting for fake counts reply
                     OnFirstStatus(() => toSend.Enqueue(new getCounts()));
                     onTheFly = false;
                 }
-            }));
+            })));
             add(CommandCode.Shutdown, p1 => sync(p1, p => OnOperationToggle(false)));
-            add(CommandCode.Init, p1 => sync(p1, p => OnOperationToggle(true)/* += sendAction*/));
+            add(CommandCode.Init, p1 => sync(p1, p => OnOperationToggle(true)/* + sendAction*/));
 
             // settings sequence
             add(CommandCode.SetIonizationVoltage, p1 => sync(p1, sendAction));
@@ -145,11 +145,11 @@ namespace Flavor.Common.Messaging.SevMorGeo {
 
             add(CommandCode.SetScanVoltage, p1 => sync(p1, p => OnMeasureSend((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2)))));
 
-            add(CommandCode.Measure, null);
-            add(CommandCode.GetCounts, p1 => sync(p1, updateDeviceAction += p => OnMeasureDone()));
-            add(CommandCode.EnableHighVoltage, null);
+            add(CommandCode.Measure, p1 => sync(p1, p => { }));
+            add(CommandCode.GetCounts, p1 => sync(p1, updateDeviceAction + (p => OnMeasureDone())));
+            add(CommandCode.EnableHighVoltage, p1 => sync(p1, p => { }));
             add(CommandCode.GetTurboPumpStatus, p1 => sync(p1, updateDeviceAction));
-            add(CommandCode.SetForvacuumLevel, null);
+            add(CommandCode.SetForvacuumLevel, p1 => sync(p1, p => { }));
             return d;
         }
     }

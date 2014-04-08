@@ -31,31 +31,8 @@ namespace Flavor.Common {
             pState = state;
         }
 
-        bool handleBlock = true;
-        public override bool hBlock {
-            get {
-                return handleBlock;
-            }
-            set {
-                if (handleBlock != value) {
-                    handleBlock = value;
-                    OnProgramStateChanged();
-                };
-            }
-        }
-
-        bool isConnected = false;
-        public override bool DeviceIsConnected {
-            get {
-                return isConnected;
-            }
-            protected set {
-                if (isConnected != value) {
-                    isConnected = value;
-                }
-            }
-        }
-
+        bool hBlock = true;
+        bool DeviceIsConnected = false;
         bool measureCancelRequested = false;
         public override bool MeasureCancelRequested {
             protected get { return measureCancelRequested; }
