@@ -52,16 +52,9 @@ namespace Flavor.Common {
             protected set {
                 if (isConnected != value) {
                     isConnected = value;
-                    if (value)
-                        protocol.CommandReceived += Realize;
-                    else
-                        protocol.CommandReceived -= Realize;
-                    //OnProgramStateChanged();
                 }
             }
         }
-
-        MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
 
         bool measureCancelRequested = false;
         public override bool MeasureCancelRequested {
@@ -73,185 +66,18 @@ namespace Flavor.Common {
             }
         }
 
-        bool onTheFly = true;
-        void Realize(object sender, CommandReceivedEventArgs<CommandCode> e) {
-            var command = e.Command;
-
-            if (command is AsyncError<CommandCode>) {
-                CheckInterfaces(command);
-
-                string message = string.Format("Device says: {0}", ((AsyncError<CommandCode>)command).Message);
-                OnAsyncReplyReceived(message);
-                // TODO: subscribe in Config for event
-                Config.logCrash(message);
-
-                if (pState != ProgramStates.Start) {
-                    setProgramStateWithoutUndo(ProgramStates.Start);
-                    MeasureCancelRequested = false;
-                }
-                return;
-            }
-            if (command is Async<CommandCode>) {
-                CheckInterfaces(command);
-                if (command is confirmShutdowned) {
-                    OnLog("System is shutdowned");
-                    setProgramStateWithoutUndo(ProgramStates.Start);
-                    hBlock = true;
-                    OnLog(pState.ToString());
-                    Device.Init();
-                    return;
-                }
-                if (command is SystemReseted) {
-                    OnAsyncReplyReceived("Система переинициализировалась");
-                    if (pState != ProgramStates.Start) {
-                        setProgramStateWithoutUndo(ProgramStates.Start);
-                        MeasureCancelRequested = false;
-                    }
-                    return;
-                }
-                if (command is confirmVacuumReady) {
-                    if (hBlock) {
-                        setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
-                    } else {
-                        setProgramStateWithoutUndo(ProgramStates.Ready);
-                    }
-                    return;
-                }
-                if (command is confirmHighVoltageOff) {
-                    hBlock = true;
-                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);//???
-                    return;
-                }
-                if (command is confirmHighVoltageOn) {
-                    hBlock = false;
-                    if (pState == ProgramStates.WaitHighVoltage) {
-                        setProgramStateWithoutUndo(ProgramStates.Ready);
-                    }
-                    toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
-                    toSend.Enqueue(new sendIVoltage());// и остальные напряжения затем
-                    return;
-                }
-                return;
-            }
-            if (command is SyncError<CommandCode>) {
-                toSend.Dequeue();
-                CheckInterfaces(command);
-                return;
-            }
-            if (command is Sync<CommandCode>) {
-                if (null == toSend.Peek((Sync<CommandCode>)command))
-                    return;
-                CheckInterfaces(command);
-                if (command is confirmInit) {
-                    OnLog("Init request confirmed");
-                    setProgramStateWithoutUndo(ProgramStates.Init);
-                    OnLog(pState.ToString());
-                    return;
-                }
-                if (command is confirmShutdown) {
-                    OnLog("Shutdown request confirmed");
-                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
-                    OnLog(pState.ToString());
-                    return;
-                }
-                // On The Fly part!!!
-                if (onTheFly && (pState == ProgramStates.Start) && (command is updateStatus)) {
-                    switch (Device.sysState) {
-                        case Device.DeviceStates.Init:
-                        case Device.DeviceStates.VacuumInit:
-                            hBlock = true;
-                            setProgramStateWithoutUndo(ProgramStates.Init);
-                            break;
-
-                        case Device.DeviceStates.ShutdownInit:
-                        case Device.DeviceStates.Shutdowning:
-                            hBlock = true;
-                            setProgramStateWithoutUndo(ProgramStates.Shutdown);
-                            break;
-
-                        case Device.DeviceStates.Measured:
-                            toSend.Enqueue(new getCounts());
-                            // waiting for fake counts reply
-                            break;
-                        case Device.DeviceStates.Measuring:
-                            // async message here with auto send-back
-                            // and waiting for fake counts reply
-                            break;
-
-                        case Device.DeviceStates.Ready:
-                            hBlock = false;
-                            setProgramStateWithoutUndo(ProgramStates.Ready);
-                            break;
-                        case Device.DeviceStates.WaitHighVoltage:
-                            hBlock = true;
-                            setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
-                            break;
-                    }
-                    OnLog(pState.ToString());
-                    onTheFly = false;
-                    return;
-                }
-                if (command is updateCounts) {
-                    if (CurrentMeasureMode == null) {
-                        // fake reply caught here (in order to put device into proper state)
-                        hBlock = false;
-                        setProgramStateWithoutUndo(ProgramStates.Ready);
-                        return;
-                    }
-                    if (!CurrentMeasureMode.onUpdateCounts()) {
-                        OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
-                    }
-                    return;
-                }
-                if (command is confirmSVoltage) {
-                    if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                        CurrentMeasureMode.NextMeasure((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2)));
-                    }
-                }
-                if (command is confirmF2Voltage) {
-                    if (pState == ProgramStates.Measure ||
-                        pState == ProgramStates.WaitBackgroundMeasure) {
-                        if (!CurrentMeasureMode.Start()) {
-                            OnErrorOccured("Нет точек для измерения.");
-                        }
-                    }
-                    return;
-                }
-                return;
-            }
-        } 
-
-        void CheckInterfaces(ServicePacket<CommandCode> Command) {
-            // TODO: make common auto-action
-            if (Command is IAutomatedReply) {
-                // BAD!
-                toSend.Enqueue(((IAutomatedReply)Command).AutomatedReply() as UserRequest<CommandCode>);
-            }
-            if (Command is IUpdateDevice) {
-                ((IUpdateDevice)Command).UpdateDevice();
-                hBlock = !Device.highVoltageOn;
-            }
-            if (Command is IUpdateGraph) {
-                if (CurrentMeasureMode == null) {
-                    //error
-                    return;
-                }
-                CurrentMeasureMode.UpdateGraph();
-            }
-        }
-
         public override void Init(object sender, EventArgs<bool> e) {
             OnLog(pState.ToString());
 
             setProgramState(ProgramStates.WaitInit);
             e.Value = true;
-            toSend.Enqueue(new sendInit());
+            r.SetOperationToggle(true);
 
             OnLog(pState.ToString());
         }
         public override void Shutdown(object sender, EventArgs<bool> e) {
             Disable();
-            toSend.Enqueue(new sendShutdown());
+            r.SetOperationToggle(false);
             setProgramState(ProgramStates.WaitShutdown);
             e.Value = true;
             // TODO: добавить контрольное время ожидания выключения
@@ -434,17 +260,7 @@ namespace Flavor.Common {
             CurrentMeasureMode = null;//?
         }
         public override void SendSettings() {
-            toSend.Enqueue(new sendIVoltage());
-            // All sequence is:
-            /*
-            Commander.AddToSend(new sendCP());
-            Commander.AddToSend(new enableECurrent());
-            Commander.AddToSend(new enableHCurrent());
-            Commander.AddToSend(new sendECurrent());
-            Commander.AddToSend(new sendHCurrent());
-            Commander.AddToSend(new sendF1Voltage());
-            Commander.AddToSend(new sendF2Voltage());
-            */
+            r.SetSettings();
         }
         void initMeasure(ProgramStates state) {
             OnLog(pState.ToString());
@@ -477,7 +293,7 @@ namespace Flavor.Common {
             Disable();
         }
         void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
-            toSend.Enqueue(new sendSVoltage(e.Step));
+            r.SetMeasureStep(e.Step);
         }
         public override bool SomePointsUsed {
             get {
@@ -493,80 +309,142 @@ namespace Flavor.Common {
                 pState == ProgramStates.WaitBackgroundMeasure ||
                 pState == ProgramStates.BackgroundMeasureReady)//strange..
                 MeasureCancelRequested = true;
-            toSend.Enqueue(new enableHighVoltage(hBlock));
+            r.SetOperationBlock(hBlock);
             // TODO: check!
             e.Value = hBlock;
         }
 
-        PortLevel port = new PortLevel();
-        IProtocol<CommandCode> protocol;
+        readonly PortLevel port = new PortLevel();
+        readonly Realizer<CommandCode> r;
         public Commander2() {
-            protocol = new ModBus(port);
-            ConsoleWriter.Subscribe(protocol);
             port.ErrorPort += (s, e) => {
                 // TODO: more accurate
                 OnErrorOccured(e.Message);
             };
-            // TODO: to Realizer
-            protocol.ErrorCommand += (s, e) => {
-                // TODO: more accurate
-                OnLog(e.Message);
-            };
             notRareModeRequested = true;
-            // TODO: move this hard-coded defaults to Config
-            // TODO: to Realizer
-            toSend = new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
-                new StatusRequestGenerator<CommandCode>(new requestStatus(), new getTurboPumpStatus(), () => notRare() ? 5 : 3),
-                () => notRare() ? 500 : 10000);
+            var r = new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
+            
+            // eliminate local events!
             ProgramStateChanged += s => {
                 if (s == ProgramStates.Measure || s == ProgramStates.BackgroundMeasureReady || s == ProgramStates.WaitBackgroundMeasure) {
-                    //Realizer.Reset();
-                    toSend.Stop();
-                    toSend.Start();
+                    r.Reset();
                 }
             };
-            MeasureCancelled += s => {
-                //Realizer.Reset();
-                toSend.Stop();
-                toSend.Start();
-            };
+            MeasureCancelled += s => r.Reset();
 
-            var r = new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
             ConsoleWriter.Subscribe(r);
+            r.SystemDown += (s, e) => {
+                if (e.Value) {
+                    if (pState != ProgramStates.Start) {
+                        setProgramStateWithoutUndo(ProgramStates.Start);
+                        MeasureCancelRequested = false;
+                    }
+                } else {
+                    OnLog("System is shutdowned");
+                    setProgramStateWithoutUndo(ProgramStates.Start);
+                    hBlock = true;
+                    OnLog(pState.ToString());
+                    Device.Init();
+                }
+            };
+            r.SystemReady += (s, e) => {
+                if (hBlock) {
+                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
+                } else {
+                    setProgramStateWithoutUndo(ProgramStates.Ready);
+                }
+            };
+            r.OperationBlock += (s, e) => {
+                hBlock = e.Value;
+                if (hBlock) {
+                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);//???
+                }
+                else {
+                    if (pState == ProgramStates.WaitHighVoltage) {
+                        setProgramStateWithoutUndo(ProgramStates.Ready);
+                    }
+                }
+            };
+            r.OperationToggle += (s, e) => {
+                if (e.Value) {
+                    OnLog("Init request confirmed");
+                    setProgramStateWithoutUndo(ProgramStates.Init);
+                }
+                else {
+                    OnLog("Shutdown request confirmed");
+                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
+                }
+                OnLog(pState.ToString());
+            };
+            r.MeasurePreconfigured += (s, e) => {
+                if (pState == ProgramStates.Measure ||
+                    pState == ProgramStates.WaitBackgroundMeasure) {
+                    if (!CurrentMeasureMode.Start()) {
+                        OnErrorOccured("Нет точек для измерения.");
+                    }
+                }
+            };
+            r.MeasureSend += (s, e) => {
+                if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
+                    CurrentMeasureMode.NextMeasure(e.Value);
+                }
+            };
+            r.MeasureDone += (s, e) => {
+                if (CurrentMeasureMode == null) {
+                    // fake reply caught here (in order to put device into proper state)
+                    hBlock = false;
+                    setProgramStateWithoutUndo(ProgramStates.Ready);
+                    return;
+                }
+                // TODO: graph update event (move to Device-Graph bound, otherwise order is important)
+                CurrentMeasureMode.UpdateGraph();
+                if (!CurrentMeasureMode.onUpdateCounts()) {
+                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                }
+            };
+            r.FirstStatus += r_FirstStatus;
+            this.r = r;
+        }
+        void r_FirstStatus(object sender, EventArgs<Action> e) {
+            (sender as Realizer<CommandCode>).FirstStatus -= r_FirstStatus;
+            switch (Device.sysState)
+            {
+                case Device.DeviceStates.Init:
+                case Device.DeviceStates.VacuumInit:
+                    hBlock = true;
+                    setProgramStateWithoutUndo(ProgramStates.Init);
+                    break;
+
+                case Device.DeviceStates.ShutdownInit:
+                case Device.DeviceStates.Shutdowning:
+                    hBlock = true;
+                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
+                    break;
+
+                case Device.DeviceStates.Measured:
+                    e.Value();
+                    // waiting for fake counts reply
+                    break;
+                case Device.DeviceStates.Measuring:
+                    // async message here with auto send-back
+                    // and waiting for fake counts reply
+                    break;
+
+                case Device.DeviceStates.Ready:
+                    hBlock = false;
+                    setProgramStateWithoutUndo(ProgramStates.Ready);
+                    break;
+                case Device.DeviceStates.WaitHighVoltage:
+                    hBlock = true;
+                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
+                    break;
+            }
+            OnLog(pState.ToString());
         }
         bool notRare() {
             if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
                 return notRareModeRequested;
             return true;
-        }
-        // TODO: to Realizer
-        class StatusRequestGenerator<T>: IStatusRequestGenerator<T>
-            where T: struct, IConvertible, IComparable {
-            int i = 0;
-            int f;
-            readonly UserRequest<T> statusCheck, vacuumCheck;
-            readonly Generator<int> factor;
-            public UserRequest<T> Next {
-                get {
-                    UserRequest<T> res;
-                    if (i == 0)
-                        res = vacuumCheck;
-                    else
-                        res = statusCheck;
-                    ++i;
-                    i %= f;
-                    return res;
-                }
-            }
-            public void Reset() {
-                f = factor();
-            }
-            public StatusRequestGenerator(UserRequest<T> statusCheck, UserRequest<T> vacuumCheck, Generator<int> factor) {
-                this.factor = factor;
-                this.statusCheck = statusCheck;
-                this.vacuumCheck = vacuumCheck;
-                Reset();
-            }
         }
         public override void Connect(object sender, CallBackEventArgs<bool, string> e) {
             if (DeviceIsConnected) {
@@ -583,10 +461,7 @@ namespace Flavor.Common {
             switch (res) {
                 case PortLevel.PortStates.Opening:
                     // TODO: to Realizer
-                    toSend.Clear();
-                    ConsoleWriter.Subscribe(toSend);
-                    toSend.Undo += (s, e) => setProgramStateWithoutUndo(pStatePrev);
-                    toSend.Start();
+                    r.Connect(() => setProgramStateWithoutUndo(pStatePrev));
 
                     DeviceIsConnected = true;
                     break;
@@ -601,17 +476,13 @@ namespace Flavor.Common {
             }
         }
         public override void Disconnect() {
-            // TODO: to Realizer
-            toSend.Stop();
-            toSend.Clear();
-            toSend.Undo -= (s, e) => setProgramStateWithoutUndo(pStatePrev);
-            ConsoleWriter.Unsubscribe(toSend);
+            r.Disconnect(() => setProgramStateWithoutUndo(pStatePrev));
 
             PortLevel.PortStates res = port.Close();
             switch (res) {
                 case PortLevel.PortStates.Closing:
                     DeviceIsConnected = false;
-                    onTheFly = true;// надо ли здесь???
+                    //onTheFly = true;// надо ли здесь???
                     break;
                 case PortLevel.PortStates.Closed:
                     DeviceIsConnected = false;
