@@ -65,7 +65,7 @@ namespace Flavor.Common {
                 Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
                 CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
-                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, Device.Detector1, Device.Detector2);
+                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, Device.Detectors);
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -247,7 +247,14 @@ namespace Flavor.Common {
             }
             CurrentMeasureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable += CurrentMeasureMode_Disable;
-            
+            // TODO: move inside MeasureMode
+            Device.CountsUpdated += (s, e) => { 
+                CurrentMeasureMode.UpdateGraph();
+                if (!CurrentMeasureMode.onUpdateCounts()) {
+                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                }
+            };
+
             setProgramState(state);
 
             MeasureCancelRequested = false;
@@ -263,6 +270,13 @@ namespace Flavor.Common {
                 }
                 matrix = null;
             }
+            // TODO: move inside MeasureMode
+            Device.CountsUpdated -= (s, ee) => { 
+                CurrentMeasureMode.UpdateGraph();
+                if (!CurrentMeasureMode.onUpdateCounts()) {
+                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                }
+            };
             CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
 
@@ -298,7 +312,7 @@ namespace Flavor.Common {
                 // TODO: more accurate
                 OnErrorOccured(e.Message);
             };
-            notRareModeRequested = true;
+            notRareModeRequested = false;
             var r = new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
             
             // eliminate local events!
@@ -371,12 +385,6 @@ namespace Flavor.Common {
                     // fake reply caught here (in order to put device into proper state)
                     hBlock = false;
                     setProgramStateWithoutUndo(ProgramStates.Ready);
-                    return;
-                }
-                // TODO: graph update event (move to Device-Graph bound, otherwise order is important)
-                CurrentMeasureMode.UpdateGraph();
-                if (!CurrentMeasureMode.onUpdateCounts()) {
-                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
                 }
             };
             r.FirstStatus += r_FirstStatus;

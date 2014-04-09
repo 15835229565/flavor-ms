@@ -5,13 +5,13 @@ namespace Flavor.Common {
     delegate void TurboPumpAlertEventHandler(bool isFault, byte bits);
 
     static class Device {
-        internal static event DeviceEventHandler OnDeviceStateChanged;
-        internal static event DeviceEventHandler OnDeviceStatusChanged;
-        internal static event DeviceEventHandler OnVacuumStateChanged;
-        internal static event DeviceEventHandler OnTurboPumpStatusChanged;
-        internal static event TurboPumpAlertEventHandler OnTurboPumpAlert;
+        public static event DeviceEventHandler OnDeviceStateChanged;
+        public static event DeviceEventHandler OnDeviceStatusChanged;
+        public static event DeviceEventHandler OnVacuumStateChanged;
+        public static event DeviceEventHandler OnTurboPumpStatusChanged;
+        public static event TurboPumpAlertEventHandler OnTurboPumpAlert;
 
-        internal enum DeviceStates: byte {
+        public enum DeviceStates: byte {
             Start = 0,
             Init,
             VacuumInit,
@@ -27,7 +27,7 @@ namespace Flavor.Common {
             ConstantsWrite = 32
         }
 
-        internal enum VacuumStates: byte {
+        public enum VacuumStates: byte {
             Idle = 0x00,
             Init = 0x01,
             StartingForvacuumPump = 0x02,
@@ -54,27 +54,27 @@ namespace Flavor.Common {
             VacuumShutdownProbeLeak = 0x28
         }
 
-        private static DeviceStates systemState;
-        private static VacuumStates vacuumState;
+        static DeviceStates systemState;
+        static VacuumStates vacuumState;
 
-        private static bool forPumpOn;
-        private static bool pValve;
-        private static bool hvValve;
+        static bool forPumpOn;
+        static bool pValve;
+        static bool hvValve;
 
-        private static bool turboPumpOn;
-        private static bool trFault;
+        static bool turboPumpOn;
+        static bool trFault;
 
-        private static bool hvOn;
+        static bool hvOn;
 
-        private static bool heatCurrentEnable;
+        static bool heatCurrentEnable;
 
-        private static ushort forVacuumValue;
-        private static ushort hVacuumValue;
+        static ushort forVacuumValue;
+        static ushort hVacuumValue;
 
-        private static int Detector1Value;
-        private static int Detector2Value;
+        static int Detector1Value;
+        static int Detector2Value;
 
-        internal static DeviceStates sysState {
+        public static DeviceStates sysState {
             get { return systemState; }
             set {
                 if (systemState != value) {
@@ -90,7 +90,7 @@ namespace Flavor.Common {
             }
         }
 
-        internal static VacuumStates vacState {
+        public static VacuumStates vacState {
             get { return vacuumState; }
             set {
                 if (vacuumState != value) {
@@ -100,27 +100,27 @@ namespace Flavor.Common {
             }
         }
 
-        internal static bool fPumpOn {
+        public static bool fPumpOn {
             get { return forPumpOn; }
             private set { forPumpOn = value; }
         }
 
-        internal static bool probeValve {
+        public static bool probeValve {
             get { return pValve; }
             private set { pValve = value; }
         }
 
-        internal static bool highVacuumValve {
+        public static bool highVacuumValve {
             get { return hvValve; }
             private set { hvValve = value; }
         }
 
-        internal static bool tPumpOn {
+        public static bool tPumpOn {
             get { return turboPumpOn; }
             private set { turboPumpOn = value; }
         }
 
-        internal static bool turboReplyFault {
+        public static bool turboReplyFault {
             get { return trFault; }
             private set {
                 if (value != trFault) {
@@ -132,46 +132,52 @@ namespace Flavor.Common {
             }
         }
 
-        internal static bool highVoltageOn {
+        public static bool highVoltageOn {
             get { return hvOn; }
             private set { hvOn = value; }
         }
 
-        internal static bool hCurrentEnable {
+        public static bool hCurrentEnable {
             get { return heatCurrentEnable; }
             private set { heatCurrentEnable = value; }
         }
 
-        internal static ushort fVacuum {
+        public static ushort fVacuum {
             get { return forVacuumValue; }
             set { forVacuumValue = value; }
         }
-        internal static double fVacuumReal {
+        public static double fVacuumReal {
             get { return 2 * 5 * (double)fVacuum / 4096; }
         }
 
-        internal static ushort hVacuum {
+        public static ushort hVacuum {
             get { return hVacuumValue; }
             set { hVacuumValue = value; }
         }
-        internal static double hVacuumReal {
+        public static double hVacuumReal {
             get { return 2 * 5 * (double)hVacuum / 4096; }
         }
 
-        internal static int Detector1 {
-            get { return Detector1Value; }
-            set { Detector1Value = value; }
+        public static EventHandler<EventArgs<int[]>> CountsUpdated;
+        static void OnCountsUpdated() {
+            CountsUpdated.Raise(null, new EventArgs<int[]>(Detectors));
         }
-        internal static int Detector2 {
-            get { return Detector2Value; }
-            set { Detector2Value = value; }
+        // TODO: configurable
+        static int[] detectors = new int[2];
+        public static int[] Detectors {
+            get { return (int[])detectors.Clone(); }
+            set {
+                if (value == null || value.Length != detectors.Length)
+                    return;
+                value.CopyTo(detectors, 0);
+            }
         }
 
-        private static DevCommonData deviceCommonData = new DevCommonData();
-        internal static DevCommonData DeviceCommonData {
+        static DevCommonData deviceCommonData = new DevCommonData();
+        public static DevCommonData DeviceCommonData {
             get { return deviceCommonData; }
         }
-        internal class DevCommonData: CommonData {
+        public class DevCommonData: CommonData {
             private ushort condVoltagePlus;
             private ushort condVoltageMin;
 
@@ -206,7 +212,7 @@ namespace Flavor.Common {
             }
         }
 
-        internal struct TurboPump {
+        public struct TurboPump {
             private static ushort tpSpeed;
             internal static ushort Speed {
                 get { return tpSpeed; }
@@ -283,7 +289,7 @@ namespace Flavor.Common {
             }
         }
 
-        internal static void relaysState(byte value) {
+        public static void relaysState(byte value) {
             fPumpOn = Convert.ToBoolean(value & 1);
             tPumpOn = Convert.ToBoolean(value & 1 << 1);
             probeValve = Convert.ToBoolean(value & 1 << 2);
@@ -295,7 +301,7 @@ namespace Flavor.Common {
             OnDeviceStatusChanged();
         }
 
-        internal static void Init() {
+        public static void Init() {
             Device.sysState = DeviceStates.Start;
             Device.vacState = VacuumStates.Idle;
             Device.fVacuum = 0;

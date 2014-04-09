@@ -61,8 +61,9 @@ namespace Flavor.Controls {
             }
             stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
             scanRealTimeLabel.Text = CommonOptions.scanVoltageReal(Graph.Instance.LastPoint).ToString("f1");
-            detector1CountsLabel.Text = Device.Detector1.ToString();
-            detector2CountsLabel.Text = Device.Detector2.ToString();
+            int[] detectors = Device.Detectors;
+            detector1CountsLabel.Text = detectors[0].ToString();
+            detector2CountsLabel.Text = detectors[1].ToString();
         }
 
         protected sealed override void disableControls() {

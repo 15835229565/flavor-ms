@@ -176,10 +176,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         }
     }
     class updateCounts: SyncReply, IUpdateDevice, IUpdateGraph {
-        private int Detector1;
-        private int Detector2;
+        int Detector1;
+        int Detector2;
 
-        internal updateCounts(int value1, int value2) {
+        public updateCounts(int value1, int value2) {
             Detector1 = value1;
             Detector2 = value2;
         }
@@ -187,8 +187,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #region IUpdateDevice Members
 
         public void UpdateDevice() {
-            Device.Detector1 = Detector1;
-            Device.Detector2 = Detector2;
+            Device.Detectors = new int[] { Detector1, Detector2 };
+            //Device.Detector1 = Detector1;
+            //Device.Detector2 = Detector2;
         }
 
         #endregion

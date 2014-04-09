@@ -30,21 +30,15 @@ namespace Flavor.Common {
 
         public event EventHandler SuccessfulExit;
         protected virtual void OnSuccessfulExit(EventArgs args) {
-            // TODO: lock here?
-            if (SuccessfulExit != null)
-                SuccessfulExit(this, args);
+            SuccessfulExit.Raise(this, args);
         }
         public event EventHandler Disable;
         protected virtual void OnDisable() {
-            // TODO: lock here?
-            if (Disable != null)
-                Disable(this, EventArgs.Empty);
+            Disable.Raise(this, EventArgs.Empty);
         }
         public event EventHandler Finalize;
         protected virtual void OnFinalize() {
-            // TODO: lock here?
-            if (Finalize != null)
-                Finalize(this, EventArgs.Empty);
+            Finalize.Raise(this, EventArgs.Empty);
         }
 
         readonly object locker = new object();
@@ -217,7 +211,8 @@ namespace Flavor.Common {
             }
             protected override void saveData() {
                 Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
-                senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += peak.Collector == 1 ? Device.Detector1 : Device.Detector2;
+                int[] detectors = Device.Detectors;
+                senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += peak.Collector == 1 ? detectors[0] : detectors[1];
             }
             public class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }
