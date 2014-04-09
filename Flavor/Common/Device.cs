@@ -170,6 +170,7 @@ namespace Flavor.Common {
                 if (value == null || value.Length != detectors.Length)
                     return;
                 value.CopyTo(detectors, 0);
+                OnCountsUpdated();
             }
         }
 

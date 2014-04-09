@@ -127,6 +127,8 @@
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\Messaging\Almazov\Pifagor.cs" />
+    <Compile Include="Common\Messaging\SyncAsyncCheckableProtocol.cs" />
+    <Compile Include="Common\Messaging\SyncCheckableProtocol.cs" />
     <Compile Include="Common\PortLevel.cs" />
     <Compile Include="Common\Messaging\Almazov\SPI_Devices.cs" />
     <Compile Include="Common\Messaging\Almazov\TIC.cs" />

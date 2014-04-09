@@ -3,7 +3,7 @@ using SyncReply = Flavor.Common.Messaging.SyncReply<Flavor.Common.Messaging.SevM
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     class updateState: SyncReply, IUpdateDevice, IAutomatedReply {
-        private byte sysState;
+        byte sysState;
 
         public updateState(byte value) {
             sysState = value;
@@ -27,23 +27,23 @@ namespace Flavor.Common.Messaging.SevMorGeo {
     }
     class updateStatus: SyncReply, IUpdateDevice {
 
-        private byte sysState;
-        private byte vacState;
-        private ushort fVacuum;
-        private ushort hVacuum;
-        private ushort hCurrent;
-        private ushort eCurrent;
-        private ushort iVoltage;
-        private ushort fV1;
-        private ushort fV2;
-        private ushort sVoltage;
-        private ushort cVPlus;
-        private ushort cVMin;
-        private ushort dVoltage;
-        private byte relaysStates;
-        private ushort turboSpeed;
+        byte sysState;
+        byte vacState;
+        ushort fVacuum;
+        ushort hVacuum;
+        ushort hCurrent;
+        ushort eCurrent;
+        ushort iVoltage;
+        ushort fV1;
+        ushort fV2;
+        ushort sVoltage;
+        ushort cVPlus;
+        ushort cVMin;
+        ushort dVoltage;
+        byte relaysStates;
+        ushort turboSpeed;
 
-        internal updateStatus(byte value1, byte value2, ushort value3, ushort value4, ushort value5, ushort value6, ushort value7, ushort value8, ushort value9, ushort value10, ushort value11, ushort value12, ushort value13, byte value14, /*byte value15,*/ ushort value16) {
+        public updateStatus(byte value1, byte value2, ushort value3, ushort value4, ushort value5, ushort value6, ushort value7, ushort value8, ushort value9, ushort value10, ushort value11, ushort value12, ushort value13, byte value14, /*byte value15,*/ ushort value16) {
             sysState = value1;
             vacState = value2;
             fVacuum = value3;
@@ -215,17 +215,17 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         }
     }
     class updateTurboPumpStatus: SyncReply, IUpdateDevice {
-        private ushort turboSpeed;
-        private ushort turboCurrent;
-        private ushort pwm;
-        private ushort pumpTemp;
-        private ushort driveTemp;
-        private ushort operationTime;
-        private byte v1;
-        private byte v2;
-        private byte v3;
+        ushort turboSpeed;
+        ushort turboCurrent;
+        ushort pwm;
+        ushort pumpTemp;
+        ushort driveTemp;
+        ushort operationTime;
+        byte v1;
+        byte v2;
+        byte v3;
 
-        internal updateTurboPumpStatus(ushort value1, ushort value2, ushort value3, ushort value4, ushort value5, ushort value6, byte value7, byte value8, byte value9) {
+        public updateTurboPumpStatus(ushort value1, ushort value2, ushort value3, ushort value4, ushort value5, ushort value6, byte value7, byte value8, byte value9) {
             turboSpeed = value1;
             turboCurrent = value2;
             pwm = value3;

@@ -1,6 +1,6 @@
 ﻿namespace Flavor.Common.Messaging.SevMorGeo {
     enum CommandCode: byte {
-        None = 0x00,// & min length
+        None = 0x00,
         //sync
         GetState = 0x01,
         GetStatus = 0x02,

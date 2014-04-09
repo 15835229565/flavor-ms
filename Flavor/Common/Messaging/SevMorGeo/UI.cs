@@ -3,7 +3,7 @@ using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
 using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    internal class requestState: UserRequest {
+    class requestState: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.GetState; }
         }
@@ -14,7 +14,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class requestStatus: UserRequest, IStatusRequest {
+    class requestStatus: UserRequest, IStatusRequest {
         public override CommandCode Id {
             get { return CommandCode.GetStatus; }
         }
@@ -25,7 +25,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendShutdown: UserRequest {
+    class sendShutdown: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.Shutdown; }
         }
@@ -36,7 +36,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendInit: UserRequest {
+    class sendInit: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.Init; }
         }
@@ -47,7 +47,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendHCurrent: UserRequest {
+    class sendHCurrent: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.SetHeatCurrent; }
         }
@@ -58,7 +58,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendECurrent: UserRequest {
+    class sendECurrent: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.SetEmissionCurrent; }
         }
@@ -69,7 +69,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendIVoltage: UserRequest {
+    class sendIVoltage: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.SetIonizationVoltage; }
         }
@@ -80,7 +80,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendF1Voltage: UserRequest {
+    class sendF1Voltage: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.SetFocusVoltage1; }
         }
@@ -91,7 +91,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendF2Voltage: UserRequest {
+    class sendF2Voltage: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.SetFocusVoltage2; }
         }
@@ -102,10 +102,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendSVoltage: UserRequest {
-        private ushort SVoltage;
+    class sendSVoltage: UserRequest {
+        ushort SVoltage;
 
-        internal sendSVoltage(ushort step) {
+        public sendSVoltage(ushort step) {
             SVoltage = CommonOptions.scanVoltage(step);
         }
 
@@ -119,7 +119,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendCapacitorVoltage: UserRequest {
+    class sendCapacitorVoltage: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.SetCapacitorVoltage; }
         }
@@ -130,11 +130,11 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class sendMeasure: UserRequest {
-        private ushort itime;
-        private ushort etime;
+    class sendMeasure: UserRequest {
+        ushort itime;
+        ushort etime;
 
-        internal sendMeasure(ushort iT, ushort eT) {
+        public sendMeasure(ushort iT, ushort eT) {
             itime = iT;
             etime = eT;
         }
@@ -153,7 +153,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class getCounts: UserRequest {
+    class getCounts: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.GetCounts; }
         }
@@ -164,7 +164,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class enableHCurrent: UserRequest {
+    class enableHCurrent: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.heatCurrentEnable; }
         }
@@ -175,7 +175,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class disableHCurrent: UserRequest {
+    class disableHCurrent: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.heatCurrentEnable; }
         }
@@ -186,10 +186,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class enableHighVoltage: UserRequest {
-        private byte HVenable;
+    class enableHighVoltage: UserRequest {
+        byte HVenable;
 
-        internal enableHighVoltage(bool enable) {
+        public enableHighVoltage(bool enable) {
             HVenable = enable ? (byte)1 : (byte)0;
         }
 
@@ -203,7 +203,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         #endregion
     }
 
-    internal class getTurboPumpStatus: UserRequest, IStatusRequest {
+    class getTurboPumpStatus: UserRequest, IStatusRequest {
         public override CommandCode Id {
             get { return CommandCode.GetTurboPumpStatus; }
         }
