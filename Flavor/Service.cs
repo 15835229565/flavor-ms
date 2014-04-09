@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Flavor {
     delegate T Generator<T>();
+    delegate T Processor<T>(T obj);
     class EventArgs<T>: EventArgs {
         public T Value { get; set; }
         public EventArgs(T value) {

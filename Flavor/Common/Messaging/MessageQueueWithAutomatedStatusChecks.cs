@@ -19,7 +19,7 @@ namespace Flavor.Common.Messaging {
 
         readonly IStatusRequestGenerator<T> requestSequence;
         readonly Generator<double> interval;
-        public MessageQueueWithAutomatedStatusChecks(IProtocol<T> protocol, IStatusRequestGenerator<T> requestSequence, Generator<double> interval)
+        public MessageQueueWithAutomatedStatusChecks(ISyncProtocol<T> protocol, IStatusRequestGenerator<T> requestSequence, Generator<double> interval)
             : base(protocol) {
             this.requestSequence = requestSequence;
             this.interval = interval;

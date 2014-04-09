@@ -36,10 +36,10 @@ namespace Flavor.Common.Messaging {
             FirstStatus.Raise(this, new EventArgs<Action>(onTheFly));
         }
 
-        readonly IProtocol<T> protocol;
+        readonly IAsyncProtocol<T> protocol;
         readonly MessageQueue<T> toSend;
         readonly PackageDictionary<T> dictionary;
-        protected Realizer(IProtocol<T> protocol, MessageQueue<T> queue) {
+        protected Realizer(IAsyncProtocol<T> protocol, MessageQueue<T> queue) {
             this.protocol = protocol;
             toSend = queue;
             dictionary = GetDictionary();
@@ -49,16 +49,17 @@ namespace Flavor.Common.Messaging {
         public abstract void SetOperationToggle(bool on);
         public abstract void SetSettings();
         public abstract void SetMeasureStep(ushort step);
-        protected virtual void Realize(object sender, CommandReceivedEventArgs<T> e) {
+        protected bool Realize<T1>(object sender, CommandReceivedEventArgs<T, T1> e)
+            where T1: ServicePacket<T> {
             byte code = e.Code;
             if (!dictionary.ContainsKey(code)) {
                 // Strange error
-                return;
+                return false;
             }
             var actor = dictionary[code];
-            if (actor != null)
+            if (actor != null && actor.Act != null)
                 actor.Act(e.Command);
-            // Act must exist!
+            return true;
         }
         [Obsolete]
         public event ProgramEventHandler ProgramStateChangeRequested;
@@ -70,13 +71,31 @@ namespace Flavor.Common.Messaging {
             toSend.Clear();
             ConsoleWriter.Subscribe(toSend);
             toSend.Undo += (s, e) => undo();
-            protocol.CommandReceived += Realize;
+            toSend.CommandApproved += (s, e) => Realize<Sync<T>>(s, e);
+            protocol.AsyncCommandReceived += (s, e) => Realize<Async<T>>(s, e);
+            protocol.AsyncErrorReceived += protocol_AsyncErrorReceived;
+            //protocol.CommandReceived += (s, e) => { };
+            protocol.ErrorCommand += (s, e) => OnLog(e.Message);
         }
         public virtual void Disconnect(Action undo) {
-            protocol.CommandReceived -= Realize;
+            protocol.AsyncCommandReceived -= (s, e) => Realize<Async<T>>(s, e);
+            protocol.AsyncErrorReceived += protocol_AsyncErrorReceived;
+            //protocol.CommandReceived -= (s, e) => { };
+            protocol.ErrorCommand -= (s, e) => OnLog(e.Message);
             toSend.Clear();
             toSend.Undo -= (s, e) => undo();
+            toSend.CommandApproved -= (s, e) => Realize<Sync<T>>(s, e);
             ConsoleWriter.Unsubscribe(toSend);
+        }
+        private void protocol_AsyncErrorReceived(object sender, CommandReceivedEventArgs<T, AsyncError<T>> e) {
+            // TODO: check behaviour!
+            if (Realize<AsyncError<T>>(sender, e)) {
+                string message = string.Format("Device says: {0}", e.Command.Message);
+                OnSystemDown(true);
+                OnAsyncReplyReceived(message);
+                // TODO: subscribe in Config for event
+                Config.logCrash(message);
+            }
         }
         #region ILog Members
         public event MessageHandler Log;

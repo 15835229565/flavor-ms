@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
-    class AlexProtocol: CheckableProtocol<CommandCode> {
+    class AlexProtocol: SyncAsyncCheckableProtocol<CommandCode> {
         public AlexProtocol(PortLevel port, CommandDictionary<CommandCode> dictionary)
             : base(new AlexProtocolByteDispatcher(port, false)) { }
 
@@ -109,22 +109,34 @@ namespace Flavor.Common.Messaging.Almazov {
             #endregion
         }
         delegate Predicate<int> PredicateGenerator(int value);
+        delegate T1 PackageGenerator<T, T1>(IList<byte> rawCommand)
+            where T: struct, IConvertible, IComparable
+            where T1: ServicePacket<T>;
+        delegate Action<IList<byte>> CodeAdder(byte code);
+        delegate CodeAdder ActionGenerator<T>(PackageGenerator<CommandCode, T> gen)
+            where T: ServicePacket<CommandCode>;
         protected override CommandDictionary<CommandCode> GetDictionary() {
             var d = new CommandDictionary<CommandCode>();
             PredicateGenerator eq = value => (l => l == value);
             PredicateGenerator moreeq = value => (l => l >= value);
-            Action<IList<byte>> trim = l => {
+            ActionGenerator<SyncReply<CommandCode>> sync = gen => (code => (list => OnSyncCommandReceived(code, gen(list))));
+            ActionGenerator<SyncError<CommandCode>> syncerr = gen => (code => (list => OnSyncErrorReceived(code, gen(list))));
+            ActionGenerator<Async<CommandCode>> async = gen => (code => (list => OnAsyncCommandReceived(code, gen(list))));
+            ActionGenerator<AsyncError<CommandCode>> asyncerr = gen => (code => (list => OnAsyncErrorReceived(code, gen(list))));
+            Processor<IList<byte>> trim = l => {
                 l.RemoveAt(0);
                 l.RemoveAt(l.Count - 1);
+                return l;
             };
-            Action<CommandCode, Predicate<int>, CommandRecord<CommandCode>.Parser> add = (code, predicate, parser) => d[(byte)code] = new CommandRecord<CommandCode>(predicate, parser);
+            Action<CommandCode, Predicate<int>, CodeAdder> add = (code, predicate, action) =>
+                d[(byte)code] = new CommandRecord<CommandCode>(predicate, action((byte)code));
             // TODO: commands here
-            add(CommandCode.CPU_Status, eq(4), rawCommand => new CPUStatusReply(rawCommand[1], rawCommand[2]));
-            add(CommandCode.Sync_Error, eq(4), rawCommand => new SyncErrorReply(rawCommand[1], rawCommand[2]));
-            add(CommandCode.LAM_Event, eq(3), rawCommand => new LAMEvent(rawCommand[1]));
-            add(CommandCode.LAM_CriticalError, eq(3), rawCommand => new LAMCriticalError(rawCommand[1]));
+            add(CommandCode.CPU_Status, eq(4), sync(raw => new CPUStatusReply(raw[1], raw[2])));
+            add(CommandCode.Sync_Error, eq(4), syncerr(raw => new SyncErrorReply(raw[1], raw[2])));
+            add(CommandCode.LAM_Event, eq(3), async(raw => new LAMEvent(raw[1])));
+            add(CommandCode.LAM_CriticalError, eq(3), asyncerr(raw => new LAMCriticalError(raw[1])));
             // TODO: check length!
-            //add(CommandCode.LAM_InternalError, eq(3), rawCommand => new LAMInternalError(rawCommand[1]));
+            //add(CommandCode.LAM_InternalError, eq(3), asyncerr(raw => new LAMInternalError(raw[1])));
             
             return d;
         }

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Flavor.Common.Messaging {
     abstract class Protocol<T>: IProtocol<T>
         where T: struct, IConvertible, IComparable {
-        readonly IByteDispatcher byteDispatcher;
-        protected Protocol(IByteDispatcher byteDispatcher) {
-            this.byteDispatcher = byteDispatcher;
-            byteDispatcher.PackageReceived += Parse;
-            byteDispatcher.Log += OnLog;
+        protected Protocol() {
             this.dictionary = GetDictionary();
         }
         readonly CommandDictionary<T> dictionary;
@@ -33,28 +28,21 @@ namespace Flavor.Common.Messaging {
                 OnErrorCommand(rawCommand, "Неверная длина");
                 return;
             }
-            OnCommandReceived(code, record.Parse(rawCommand));
+            record.Act(rawCommand);
         }
         protected abstract bool CheckPassed(IList<byte> rawCommand);
         #region IProtocol<T> Members
-        public event EventHandler<CommandReceivedEventArgs<T>> CommandReceived;
+        public event EventHandler<CommandReceivedEventArgs<T, ServicePacket<T>>> CommandReceived;
         protected virtual void OnCommandReceived(byte code, ServicePacket<T> command) {
-            if (CommandReceived != null)
-                CommandReceived(this, new CommandReceivedEventArgs<T>(code, command));
+            CommandReceived.Raise(this, new CommandReceivedEventArgs<T, ServicePacket<T>>(code, command));
         }
         public event EventHandler<ErrorCommandEventArgs> ErrorCommand;
         protected virtual void OnErrorCommand(IList<byte> data, string message) {
-            if (ErrorCommand != null)
-                ErrorCommand(this, new ErrorCommandEventArgs(data, message));
-        }
-        public virtual void Send(IList<byte> message) {
-            byteDispatcher.Transmit(message.ToList());
+            ErrorCommand.Raise(this, new ErrorCommandEventArgs(data, message));
         }
         #endregion
         #region IDisposable Members
-        public virtual void Dispose() {
-            byteDispatcher.Dispose();
-        }
+        public abstract void Dispose();
         #endregion
         #region ILog Members
         public event MessageHandler Log;

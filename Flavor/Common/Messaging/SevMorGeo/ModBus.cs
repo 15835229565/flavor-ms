@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    class ModBus: CheckableProtocol<CommandCode> {
+    class ModBus: SyncAsyncCheckableProtocol<CommandCode> {
         public ModBus(PortLevel port)
             : base(new ModbusByteDispatcher(port, false)) { }
         protected override byte ComputeCS(IList<byte> data) {
@@ -147,91 +147,93 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             #endregion
         }
         delegate Predicate<int> PredicateGenerator(int value);
+        delegate T1 PackageGenerator<T, T1>(IList<byte> rawCommand)
+            where T: struct, IConvertible, IComparable
+            where T1: ServicePacket<T>;
+        delegate Action<IList<byte>> CodeAdder(byte code);
+        delegate CodeAdder ActionGenerator<T>(PackageGenerator<CommandCode, T> gen)
+            where T: ServicePacket<CommandCode>;
         protected override CommandDictionary<CommandCode> GetDictionary() {
             var d = new CommandDictionary<CommandCode>();
             PredicateGenerator eq = value => (l => l == value);
             PredicateGenerator moreeq = value => (l => l >= value);
-            Action<IList<byte>> trim = l => {
+            ActionGenerator<SyncReply<CommandCode>> sync = gen => (code => (list => OnSyncCommandReceived(code, gen(list))));
+            ActionGenerator<SyncError<CommandCode>> syncerr = gen => (code => (list => OnSyncErrorReceived(code, gen(list))));
+            ActionGenerator<Async<CommandCode>> async = gen => (code => (list => OnAsyncCommandReceived(code, gen(list))));
+            ActionGenerator<AsyncError<CommandCode>> asyncerr = gen => (code => (list => OnAsyncErrorReceived(code, gen(list))));
+            Processor<IList<byte>> trim = l => {
                 l.RemoveAt(0);
                 l.RemoveAt(l.Count - 1);
+                return l;
             };
-            Action<CommandCode, Predicate<int>, CommandRecord<CommandCode>.Parser> add = (code, predicate, parser) => d[(byte)code] = new CommandRecord<CommandCode>(predicate, parser);
-            add(CommandCode.GetState, eq(3), rawCommand => new updateState(rawCommand[1]));
-            add(CommandCode.GetStatus, eq(29), rawCommand => new updateStatus(rawCommand[1],
-                                                rawCommand[2],
-                                                (ushort)((ushort)rawCommand[3] + ((ushort)rawCommand[4] << 8)),
-                                                (ushort)((ushort)rawCommand[5] + ((ushort)rawCommand[6] << 8)),
-                                                (ushort)((ushort)rawCommand[7] + ((ushort)rawCommand[8] << 8)),
-                                                (ushort)((ushort)rawCommand[9] + ((ushort)rawCommand[10] << 8)),
-                                                (ushort)((ushort)rawCommand[11] + ((ushort)rawCommand[12] << 8)),
-                                                (ushort)((ushort)rawCommand[13] + ((ushort)rawCommand[14] << 8)),
-                                                (ushort)((ushort)rawCommand[15] + ((ushort)rawCommand[16] << 8)),
-                                                (ushort)((ushort)rawCommand[17] + ((ushort)rawCommand[18] << 8)),
-                                                (ushort)((ushort)rawCommand[19] + ((ushort)rawCommand[20] << 8)),
-                                                (ushort)((ushort)rawCommand[21] + ((ushort)rawCommand[22] << 8)),
-                                                (ushort)((ushort)rawCommand[23] + ((ushort)rawCommand[24] << 8)),
-                                                rawCommand[25],
-                                                (ushort)((ushort)rawCommand[26] + ((ushort)rawCommand[27] << 8))));
-            add(CommandCode.Shutdown, eq(2), rawCommand => new confirmShutdown());
-            add(CommandCode.Init, eq(2), rawCommand => new confirmInit());
-            add(CommandCode.SetHeatCurrent, eq(2), rawCommand => new confirmHCurrent());
-            add(CommandCode.SetEmissionCurrent, eq(2), rawCommand => new confirmECurrent());
-            add(CommandCode.SetIonizationVoltage, eq(2), rawCommand => new confirmIVoltage());
-            add(CommandCode.SetFocusVoltage1, eq(2), rawCommand => new confirmF1Voltage());
-            add(CommandCode.SetFocusVoltage2, eq(2), rawCommand => new confirmF2Voltage());
-            add(CommandCode.SetScanVoltage, eq(2), rawCommand => new confirmSVoltage());
-            add(CommandCode.SetCapacitorVoltage, eq(2), rawCommand => new confirmCP());
-            add(CommandCode.Measure, eq(2), rawCommand => new confirmMeasure());
-            add(CommandCode.GetCounts, eq(8), rawCommand => new updateCounts((int)rawCommand[1] + ((int)rawCommand[2] << 8) + ((int)rawCommand[3] << 16),
-                                                (int)rawCommand[4] + ((int)rawCommand[5] << 8) + ((int)rawCommand[6] << 16)));
-            add(CommandCode.heatCurrentEnable, eq(2), rawCommand => new confirmHECurrent());
-            add(CommandCode.EnableHighVoltage, eq(2), rawCommand => { 
-                return new confirmHighVoltage();
-            });
-            add(CommandCode.GetTurboPumpStatus, eq(17), rawCommand => new updateTurboPumpStatus((ushort)((ushort)rawCommand[1] + ((ushort)rawCommand[2] << 8)),
-                                                (ushort)((ushort)rawCommand[3] + ((ushort)rawCommand[4] << 8)),
-                                                (ushort)((ushort)rawCommand[5] + ((ushort)rawCommand[6] << 8)),
-                                                (ushort)((ushort)rawCommand[7] + ((ushort)rawCommand[8] << 8)),
-                                                (ushort)((ushort)rawCommand[9] + ((ushort)rawCommand[10] << 8)),
-                                                (ushort)((ushort)rawCommand[11] + ((ushort)rawCommand[12] << 8)),
-                                                rawCommand[13],
-                                                rawCommand[14],
-                                                rawCommand[15]));
-            add(CommandCode.SetForvacuumLevel, eq(2), rawCommand => new confirmForvacuumLevel());
-            add(CommandCode.InvalidCommand, moreeq(3), rawCommand => {
-                trim(rawCommand);
-                return new logInvalidCommand(rawCommand);
-            });
-            add(CommandCode.InvalidChecksum, eq(2), rawCommand => new logInvalidChecksum());
-            add(CommandCode.InvalidPacket, eq(2), rawCommand => new logInvalidPacket());
-            add(CommandCode.InvalidLength, eq(2), rawCommand => new logInvalidLength());
-            add(CommandCode.InvalidData, eq(2), rawCommand => new logInvalidData());
-            add(CommandCode.InvalidState, eq(2), rawCommand => new logInvalidState());
-            add(CommandCode.InternalError, eq(3), rawCommand => new logInternalError(rawCommand[1]));
-            add(CommandCode.InvalidSystemState, eq(2), rawCommand => new logInvalidSystemState());
-            add(CommandCode.VacuumCrash, eq(3), rawCommand => new logVacuumCrash(rawCommand[1]));
+            Action<CommandCode, Predicate<int>, CodeAdder> add = (code, predicate, action) =>
+                d[(byte)code] = new CommandRecord<CommandCode>(predicate, action((byte)code));
+            
+            add(CommandCode.GetState, eq(3), sync(raw => new updateState(raw[1])));
+            add(CommandCode.GetStatus, eq(29), sync(raw => new updateStatus(raw[1],
+                                                raw[2],
+                                                (ushort)((ushort)raw[3] + ((ushort)raw[4] << 8)),
+                                                (ushort)((ushort)raw[5] + ((ushort)raw[6] << 8)),
+                                                (ushort)((ushort)raw[7] + ((ushort)raw[8] << 8)),
+                                                (ushort)((ushort)raw[9] + ((ushort)raw[10] << 8)),
+                                                (ushort)((ushort)raw[11] + ((ushort)raw[12] << 8)),
+                                                (ushort)((ushort)raw[13] + ((ushort)raw[14] << 8)),
+                                                (ushort)((ushort)raw[15] + ((ushort)raw[16] << 8)),
+                                                (ushort)((ushort)raw[17] + ((ushort)raw[18] << 8)),
+                                                (ushort)((ushort)raw[19] + ((ushort)raw[20] << 8)),
+                                                (ushort)((ushort)raw[21] + ((ushort)raw[22] << 8)),
+                                                (ushort)((ushort)raw[23] + ((ushort)raw[24] << 8)),
+                                                raw[25],
+                                                (ushort)((ushort)raw[26] + ((ushort)raw[27] << 8)))));
+            add(CommandCode.Shutdown, eq(2), sync(raw => new confirmShutdown()));
+            add(CommandCode.Init, eq(2), sync(raw => new confirmInit()));
+            add(CommandCode.SetHeatCurrent, eq(2), sync(raw => new confirmHCurrent()));
+            add(CommandCode.SetEmissionCurrent, eq(2), sync(raw => new confirmECurrent()));
+            add(CommandCode.SetIonizationVoltage, eq(2), sync(raw => new confirmIVoltage()));
+            add(CommandCode.SetFocusVoltage1, eq(2), sync(raw => new confirmF1Voltage()));
+            add(CommandCode.SetFocusVoltage2, eq(2), sync(raw => new confirmF2Voltage()));
+            add(CommandCode.SetScanVoltage, eq(2), sync(raw => new confirmSVoltage()));
+            add(CommandCode.SetCapacitorVoltage, eq(2), sync(raw => new confirmCP()));
+            add(CommandCode.Measure, eq(2), sync(raw => new confirmMeasure()));
+            add(CommandCode.GetCounts, eq(8), sync(raw => new updateCounts((int)raw[1] + ((int)raw[2] << 8) + ((int)raw[3] << 16),
+                                                (int)raw[4] + ((int)raw[5] << 8) + ((int)raw[6] << 16))));
+            add(CommandCode.heatCurrentEnable, eq(2), sync(raw => new confirmHECurrent()));
+            add(CommandCode.EnableHighVoltage, eq(2), sync(raw => new confirmHighVoltage()));
+            add(CommandCode.GetTurboPumpStatus, eq(17), sync(raw => new updateTurboPumpStatus((ushort)((ushort)raw[1] + ((ushort)raw[2] << 8)),
+                                                (ushort)((ushort)raw[3] + ((ushort)raw[4] << 8)),
+                                                (ushort)((ushort)raw[5] + ((ushort)raw[6] << 8)),
+                                                (ushort)((ushort)raw[7] + ((ushort)raw[8] << 8)),
+                                                (ushort)((ushort)raw[9] + ((ushort)raw[10] << 8)),
+                                                (ushort)((ushort)raw[11] + ((ushort)raw[12] << 8)),
+                                                raw[13],
+                                                raw[14],
+                                                raw[15])));
+            add(CommandCode.SetForvacuumLevel, eq(2), sync(raw => new confirmForvacuumLevel()));
+
+            add(CommandCode.InvalidCommand, moreeq(3), syncerr(raw => new logInvalidCommand(trim(raw))));
+            add(CommandCode.InvalidChecksum, eq(2), syncerr(raw => new logInvalidChecksum()));
+            add(CommandCode.InvalidPacket, eq(2), syncerr(raw => new logInvalidPacket()));
+            add(CommandCode.InvalidLength, eq(2), syncerr(raw => new logInvalidLength()));
+            add(CommandCode.InvalidData, eq(2), syncerr(raw => new logInvalidData()));
+            add(CommandCode.InvalidState, eq(2), syncerr(raw => new logInvalidState()));
+            
+            add(CommandCode.InternalError, eq(3), asyncerr(raw => new logInternalError(raw[1])));
+            add(CommandCode.InvalidSystemState, eq(2), asyncerr(raw => new logInvalidSystemState()));
+            add(CommandCode.VacuumCrash, eq(3), asyncerr(raw => new logVacuumCrash(raw[1])));
             // see GetTurboPumpStatus!
-            add(CommandCode.TurboPumpFailure, eq(17), rawCommand => new logTurboPumpFailure(rawCommand));
-            add(CommandCode.PowerFail, eq(2), rawCommand => new logPowerFail());
-            add(CommandCode.InvalidVacuumState, eq(2), rawCommand => new logInvalidVacuumState());
-            add(CommandCode.AdcPlaceIonSrc, moreeq(2), rawCommand => {
-                trim(rawCommand);
-                return new logAdcPlaceIonSrc(rawCommand);
-            });
-            add(CommandCode.AdcPlaceScanv, moreeq(2), rawCommand => {
-                trim(rawCommand);
-                return new logAdcPlaceScanv(rawCommand);
-            });
-            add(CommandCode.AdcPlaceControlm, moreeq(2), rawCommand => {
-                trim(rawCommand);
-                return new logAdcPlaceControlm(rawCommand);
-            });
-            add(CommandCode.Measured, eq(2), rawCommand => new requestCounts());
-            add(CommandCode.VacuumReady, eq(2), rawCommand => new confirmVacuumReady());
-            add(CommandCode.SystemShutdowned, eq(2), rawCommand => new confirmShutdowned());
-            add(CommandCode.SystemReseted, eq(2), rawCommand => new SystemReseted());
-            add(CommandCode.HighVoltageOff, eq(2), rawCommand => new confirmHighVoltageOff());
-            add(CommandCode.HighVoltageOn, eq(2), rawCommand => new confirmHighVoltageOn());
+            add(CommandCode.TurboPumpFailure, eq(17), asyncerr(raw => new logTurboPumpFailure(raw)));
+            add(CommandCode.PowerFail, eq(2), asyncerr(raw => new logPowerFail()));
+            add(CommandCode.InvalidVacuumState, eq(2), asyncerr(raw => new logInvalidVacuumState()));
+            add(CommandCode.AdcPlaceIonSrc, moreeq(2), asyncerr(raw => new logAdcPlaceIonSrc(trim(raw))));
+            add(CommandCode.AdcPlaceScanv, moreeq(2), asyncerr(raw => new logAdcPlaceScanv(trim(raw))));
+            add(CommandCode.AdcPlaceControlm, moreeq(2), asyncerr(raw => new logAdcPlaceControlm(trim(raw))));
+            
+            add(CommandCode.Measured, eq(2), async(raw => new requestCounts()));
+            add(CommandCode.VacuumReady, eq(2), async(raw => new confirmVacuumReady()));
+            add(CommandCode.SystemShutdowned, eq(2), async(raw => new confirmShutdowned()));
+            add(CommandCode.SystemReseted, eq(2), async(raw => new SystemReseted()));
+            add(CommandCode.HighVoltageOff, eq(2), async(raw => new confirmHighVoltageOff()));
+            add(CommandCode.HighVoltageOn, eq(2), async(raw => new confirmHighVoltageOn()));
             return d;
         }
     }

@@ -19,15 +19,23 @@ namespace Flavor.Common.Messaging {
         }
         public event EventHandler Undo;
         protected virtual void OnUndo() {
-            if (Undo != null)
-                Undo(this, EventArgs.Empty);
+            Undo.Raise(this, EventArgs.Empty);
         }
-        IProtocol<T> protocol = null;
-        public MessageQueue(IProtocol<T> protocol) {
+        public event EventHandler<CommandReceivedEventArgs<T, Sync<T>>> CommandApproved;
+        protected virtual void OnCommandApproved(byte code, Sync<T> command) {
+            CommandApproved.Raise(this, new CommandReceivedEventArgs<T,Sync<T>>(code, command));
+        }
+        ISyncProtocol<T> protocol = null;
+        public MessageQueue(ISyncProtocol<T> protocol) {
             this.protocol = protocol;
-            protocol.ErrorCommand += (s, e) => {
-                // TODO: more accurate
-                OnLog(e.Message);
+            protocol.SyncCommandReceived += (s, e) => {
+                var command = e.Command;
+                if (null != Peek(command))
+                    OnCommandApproved(e.Code, command);
+            };
+            protocol.SyncErrorReceived += (s, e) => { 
+                Dequeue();
+                OnCommandApproved(e.Code, e.Command);
             };
             ConsoleWriter.Subscribe(protocol);
             sendTimer.Enabled = false;
@@ -49,7 +57,7 @@ namespace Flavor.Common.Messaging {
                 trySend();
             }
         }
-        public UserRequest<T> Dequeue() {
+        UserRequest<T> Dequeue() {
             UserRequest<T> packet = null;
             lock (SyncRoot) {
                 dequeueToSendInsideLock(ref packet);
@@ -58,7 +66,7 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        public UserRequest<T> Peek(Sync<T> command) {
+        UserRequest<T> Peek(Sync<T> command) {
             UserRequest<T> packet = null;
             lock (SyncRoot) {
                 if (queue.Count == 0) {
