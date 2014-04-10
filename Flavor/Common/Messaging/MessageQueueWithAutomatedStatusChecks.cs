@@ -20,7 +20,9 @@ namespace Flavor.Common.Messaging {
         readonly IStatusRequestGenerator<T> requestSequence;
         readonly Generator<double> interval;
         public MessageQueueWithAutomatedStatusChecks(ISyncProtocol<T> protocol, IStatusRequestGenerator<T> requestSequence, Generator<double> interval)
-            : base(protocol) {
+            : this(protocol, requestSequence, interval, EqualityComparer<Sync<T>>.Default) { }
+        public MessageQueueWithAutomatedStatusChecks(ISyncProtocol<T> protocol, IStatusRequestGenerator<T> requestSequence, Generator<double> interval, IEqualityComparer<Sync<T>> comparer)
+            : base(protocol, comparer) {
             this.requestSequence = requestSequence;
             this.interval = interval;
             statusCheckTimer.Elapsed += StatusCheckTime_Elapsed;

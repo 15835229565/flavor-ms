@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlexProtocol: SyncAsyncCheckableProtocol<CommandCode> {
-        public AlexProtocol(PortLevel port, CommandDictionary<CommandCode> dictionary)
+        public AlexProtocol(PortLevel port)
             : base(new AlexProtocolByteDispatcher(port, false)) { }
 
         protected override byte ComputeCS(IList<byte> data) {

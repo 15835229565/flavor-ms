@@ -34,12 +34,12 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         static byte[] ushort2ByteArray(ushort value) {
             if (value < 0) value = 0;
             if (value > 4095) value = 4095;
-            return new byte[] { (byte)(value), (byte)(value >> 8) };
+            return new byte[] { (byte)value, (byte)(value >> 8) };
         }
         static byte[] int2ByteArray(int value) {
             if (value < 0) value = 0;
             if (value > 16777215) value = 16777215;
-            return new byte[] { (byte)(value), (byte)(value >> 8), (byte)(value >> 16) };
+            return new byte[] { (byte)value, (byte)(value >> 8), (byte)(value >> 16) };
         }
         class ModbusByteDispatcher: ByteDispatcher {
             readonly byte START = (byte)':';

@@ -13,7 +13,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             : base(protocol, queue) {
             toSend = queue;
         }
-        class StatusRequestGenerator : IStatusRequestGenerator<CommandCode> {
+        class StatusRequestGenerator: IStatusRequestGenerator<CommandCode> {
             int i = 0;
             int f;
             readonly UserRequest<CommandCode> statusCheck, vacuumCheck;
@@ -76,7 +76,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
             Action<ServicePacket<CommandCode>> sendAction = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<CommandCode>);
             Action<ServicePacket<CommandCode>> updateDeviceAction = p => ((IUpdateDevice)p).UpdateDevice();
-            
+            //async error
             add(CommandCode.InternalError, null);
             add(CommandCode.InvalidSystemState, null);
             add(CommandCode.VacuumCrash, null);
@@ -86,7 +86,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.AdcPlaceIonSrc, null);
             add(CommandCode.AdcPlaceScanv, null);
             add(CommandCode.AdcPlaceControlm, null);
-
+            //async
             add(CommandCode.Measured, sendAction);
             add(CommandCode.VacuumReady, updateDeviceAction + (p => OnSystemReady()));
             add(CommandCode.SystemShutdowned, p => OnSystemDown(false));
@@ -100,14 +100,14 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
                 toSend.Enqueue(new sendIVoltage());// и остальные напряжения затем
             });
-            
+            //sync error
             add(CommandCode.InvalidCommand, null);
             add(CommandCode.InvalidChecksum, null);
             add(CommandCode.InvalidPacket, null);
             add(CommandCode.InvalidLength, null);
             add(CommandCode.InvalidData, null);
             add(CommandCode.InvalidState, null);
-
+            //sync
             add(CommandCode.GetState, updateDeviceAction/* + sendAction*/);
             add(CommandCode.GetStatus, updateDeviceAction + (p => {
                 if (onTheFly) {

@@ -8,7 +8,7 @@ namespace Flavor.Common.Messaging {
         byte Try = 0;
 
         Queue<UserRequest<T>> queue = new Queue<UserRequest<T>>();
-        // TODO: configurable
+        // TODO: configurable time interval
         readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
 
         object syncObj = null;
@@ -25,8 +25,11 @@ namespace Flavor.Common.Messaging {
         protected virtual void OnCommandApproved(byte code, Sync<T> command) {
             CommandApproved.Raise(this, new CommandReceivedEventArgs<T,Sync<T>>(code, command));
         }
-        ISyncProtocol<T> protocol = null;
-        public MessageQueue(ISyncProtocol<T> protocol) {
+        readonly ISyncProtocol<T> protocol;
+        readonly IEqualityComparer<Sync<T>> comparer;
+        public MessageQueue(ISyncProtocol<T> protocol)
+            : this(protocol, EqualityComparer<Sync<T>>.Default) { }
+        public MessageQueue(ISyncProtocol<T> protocol, IEqualityComparer<Sync<T>> comparer) {
             this.protocol = protocol;
             protocol.SyncCommandReceived += (s, e) => {
                 var command = e.Command;
@@ -38,6 +41,7 @@ namespace Flavor.Common.Messaging {
                 OnCommandApproved(e.Code, e.Command);
             };
             ConsoleWriter.Subscribe(protocol);
+            this.comparer = comparer;
             sendTimer.Enabled = false;
         }
         public void Clear() {
@@ -78,7 +82,7 @@ namespace Flavor.Common.Messaging {
                     dequeueToSendInsideLock(ref packet);
                     return null;
                 }
-                if (!packet.Id.Equals(command.Id)) {
+                if (!comparer.Equals(command, packet)) {
                     OnLog(string.Format("Received {0}. While waiting for {1}.", command, packet));
                     return null;
                 }

@@ -7,6 +7,14 @@ namespace Flavor.Common.Messaging {
     public abstract class Sync<T>: ServicePacket<T>, IId<T>
         where T: struct, IConvertible, IComparable {
         public abstract T Id { get; }
+        public override bool Equals(object other) {
+            if (other is Sync<T>)
+                return Id.Equals((other as Sync<T>).Id);
+            return false;
+        }
+        public override int GetHashCode() {
+            return base.GetHashCode() + 13 * Id.GetHashCode();
+        }
     }
     public abstract class SyncReply<T>: Sync<T>
         where T: struct, IConvertible, IComparable { }
