@@ -19,7 +19,7 @@ using Device = Flavor.Common.Device;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
-    partial class MainForm2: Form/*, IMeasured*/ {
+    partial class MainForm2: Form, IMSControl/*, IMeasured*/ {
         // TODO: move to resource file
         const string EXIT_CAPTION = "Предупреждение об отключении";
         const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
@@ -57,8 +57,8 @@ namespace Flavor.Forms {
         protected virtual void OnConnect(CallBackEventArgs<bool, string> e) {
             _connect.Raise(this, e);
         }
-        EventHandler<EventArgs<bool>> _init;
-        public event EventHandler<EventArgs<bool>> Init {
+        EventHandler<CallBackEventArgs<bool>> _init;
+        public event EventHandler<CallBackEventArgs<bool>> Init {
             add {
                 if (value == null)
                     return;
@@ -73,11 +73,11 @@ namespace Flavor.Forms {
                 initSys_butt.Visible = false;
             }
         }
-        protected virtual void OnInit(EventArgs<bool> e) {
+        protected virtual void OnInit(CallBackEventArgs<bool> e) {
             _init.Raise(this, e);
         }
-        EventHandler<EventArgs<bool>> _shutdown;
-        public event EventHandler<EventArgs<bool>> Shutdown {
+        EventHandler<CallBackEventArgs<bool>> _shutdown;
+        public event EventHandler<CallBackEventArgs<bool>> Shutdown {
             add {
                 if (value == null)
                     return;
@@ -92,11 +92,11 @@ namespace Flavor.Forms {
                 shutSys_butt.Visible = false;
             }
         }
-        protected virtual void OnShutdown(EventArgs<bool> e) {
+        protected virtual void OnShutdown(CallBackEventArgs<bool> e) {
             _shutdown.Raise(this, e);
         }
-        EventHandler<EventArgs<bool>> _unblock;
-        public event EventHandler<EventArgs<bool>> Unblock {
+        EventHandler<CallBackEventArgs<bool>> _unblock;
+        public event EventHandler<CallBackEventArgs<bool>> Unblock {
             add {
                 if (value == null)
                     return;
@@ -111,7 +111,7 @@ namespace Flavor.Forms {
                 unblock_butt.Visible = false;
             }
         }
-        protected virtual void OnUnblock(EventArgs<bool> e) {
+        protected virtual void OnUnblock(CallBackEventArgs<bool> e) {
             _unblock.Raise(this, e);
         }
         //IMeasured activeMeasureChild;
@@ -316,8 +316,6 @@ namespace Flavor.Forms {
                 e.Cancel = true;
                 return;
             }
-            //if (commander.DeviceIsConnected)
-            //    commander.Disconnect();
             Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
             Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
             Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
@@ -402,7 +400,6 @@ namespace Flavor.Forms {
             if (old != connected) {
                 var callBack = ee.Handler;
                 if (connected) {
-                    //callBack += new EventHandler<EventArgs<string>>((object s, EventArgs<string> args) => InvokeRefreshUserMessage(args.Value));
                     // BAD!
                     commander.AsyncReplyReceived += InvokeRefreshUserMessage;
                     connectToolStripButton.Text = "Разъединить";
@@ -410,7 +407,6 @@ namespace Flavor.Forms {
                 } else {
                     connectToolStripButton.Text = "Соединить";
                     connectToolStripButton.ForeColor = Color.Green;
-                    //callBack -= new EventHandler<EventArgs<string>>((object s, EventArgs<string> args) => InvokeRefreshUserMessage(args.Value));
                     // BAD!
                     commander.AsyncReplyReceived -= InvokeRefreshUserMessage;
                 }
@@ -420,36 +416,32 @@ namespace Flavor.Forms {
             }
             connectToolStripButton.Enabled = true;
         }
-        void initSys_butt_Click(object sender, EventArgs e) {
-            initSys_butt.Enabled = false;
-            bool old = (bool)initSys_butt.Tag;
-            var ee = new CallBackEventArgs<bool>(old, null);
-            OnInit(ee);
-            bool inited = ee.Value;
-            if (old != inited) {
-                initSys_butt.Tag = inited;
+
+        void ButtonClick(ToolStripButton button, Action<CallBackEventArgs<bool>> action) {
+            button.Enabled = false;
+            bool old = (bool)button.Tag;
+            var ee = new CallBackEventArgs<bool>(old, (s, eee) => {
+                button.Enabled = true;
+                button.Tag = old;
+            });
+            action(ee);
+            bool res = ee.Value;
+            if (old != res) {
+                button.Tag = res;
             }
         }
+        void initSys_butt_Click(object sender, EventArgs e) {
+            ButtonClick(initSys_butt, OnInit);
+        }
         void shutSys_butt_Click(object sender, EventArgs e) {
-            //if (commander.pState != ProgramStates.Start)
-            if ((bool)initSys_butt.Tag)
-            {
+            if ((bool)initSys_butt.Tag) {
                 if (MessageBox.Show(this, SHUTDOWN_MESSAGE, SHUTDOWN_CAPTION, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.OK)
                     return;
             }
-            shutSys_butt.Enabled = false;
-            var ee = new EventArgs<bool>(false);
-            OnShutdown(ee);
+            ButtonClick(shutSys_butt, OnShutdown);
         }
         void unblock_butt_Click(object sender, EventArgs e) {
-            unblock_butt.Enabled = false;
-            bool old = (bool)unblock_butt.Tag;
-            var ee = new EventArgs<bool>(false);
-            OnUnblock(ee);
-            bool unblocked = ee.Value;
-            if (old != unblocked) {
-                unblock_butt.Tag = unblocked;
-            }
+            ButtonClick(unblock_butt, OnUnblock);
         }
 
         void Commander_OnError(string msg) {

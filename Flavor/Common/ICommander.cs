@@ -30,20 +30,11 @@ namespace Flavor.Common {
     }
     interface IGlobalActions {
         event ProgramEventHandler ProgramStateChanged;
-        void Init(object sender, EventArgs<bool> e);
-        void Shutdown(object sender, EventArgs<bool> e);
-
-        void Unblock(object sender, EventArgs<bool> e);
-
         void SendSettings();
     }
     interface IConnectionActions {
-        //event ProgramEventHandler ProgramStateChanged;
         void Connect(object sender, CallBackEventArgs<bool, string> e);
         void Disconnect();
-
-        //void Reconnect();
-        //string[] AvailablePorts { get; }
     }
     interface IMeasureActions {
         event ProgramEventHandler ProgramStateChanged;
@@ -54,6 +45,7 @@ namespace Flavor.Common {
     }
 
     abstract class ICommander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IConnectionActions, IMeasureActions {
+        public abstract void Bind(IMSControl form);
         #region ILog Members
         public event MessageHandler Log;
         protected virtual void OnLog(string msg) {
@@ -84,8 +76,6 @@ namespace Flavor.Common {
         #endregion
 
         abstract public ProgramStates pState { get; protected set; }
-        public ProgramStates pStatePrev { get; protected set; }
-        //public abstract bool hBlock { get; set; }
         public event BoolEventHandler RareModeChanged;
         protected virtual void OnRareModeChanged(bool t) {
             var temp = RareModeChanged;
@@ -111,13 +101,9 @@ namespace Flavor.Common {
             if (temp != null)
                 temp(pState);
         }
-        abstract public void Init(object sender, EventArgs<bool> e);
-        abstract public void Shutdown(object sender, EventArgs<bool> e);
-        abstract public void Unblock(object sender, EventArgs<bool> e);
         abstract public void SendSettings();
         #endregion
 
-        //abstract public bool DeviceIsConnected { get; protected set; }
         #region IConnectionActions Members
         abstract public void Connect(object sender, CallBackEventArgs<bool, string> e);
         abstract public void Disconnect();

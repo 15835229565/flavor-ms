@@ -40,29 +40,28 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 Reset();
             }
         }
-        public override void SetOperationBlock(bool block) {
-            toSend.Enqueue(new enableHighVoltage(block));
+        protected override UserRequest<CommandCode> Block(bool block) {
+            return new enableHighVoltage(block);
         }
-        public override void SetOperationToggle(bool on) {
+        protected override UserRequest<CommandCode> OperationOnOff(bool on) {
             if (on)
-                toSend.Enqueue(new sendInit());
+                return new sendInit();
             else
-                toSend.Enqueue(new sendShutdown());
+                return new sendShutdown();
         }
-        public override void SetSettings() {
-            toSend.Enqueue(new sendIVoltage());
-            //And all sequence (see in dictionary)
+        protected override UserRequest<CommandCode> Settings() {
+            return new sendIVoltage();
         }
-        public override void SetMeasureStep(ushort step) {
-            toSend.Enqueue(new sendSVoltage(step));
+        protected override UserRequest<CommandCode> MeasureStep(ushort step) {
+            return new sendSVoltage(step);
         }
-        public override void Connect(Action undo) {
-            base.Connect(undo);
+        public override void Connect() {
+            base.Connect();
             toSend.Start();
         }
-        public override void Disconnect(Action undo) {
+        public override void Disconnect() {
             toSend.Stop();
-            base.Disconnect(undo);
+            base.Disconnect();
             onTheFly = true;
         }
         // TODO: move to abstract ancestor
@@ -74,21 +73,19 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         protected override PackageDictionary<CommandCode> GetDictionary() {
             var d = new PackageDictionary<CommandCode>();
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
-            Action<ServicePacket<CommandCode>> sendAction = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<CommandCode>);
-            Action<ServicePacket<CommandCode>> updateDeviceAction = p => ((IUpdateDevice)p).UpdateDevice();
             //async error
             add(CommandCode.InternalError, null);
             add(CommandCode.InvalidSystemState, null);
             add(CommandCode.VacuumCrash, null);
-            add(CommandCode.TurboPumpFailure, updateDeviceAction);
+            add(CommandCode.TurboPumpFailure, updateDevice);
             add(CommandCode.PowerFail, null);
             add(CommandCode.InvalidVacuumState, null);
             add(CommandCode.AdcPlaceIonSrc, null);
             add(CommandCode.AdcPlaceScanv, null);
             add(CommandCode.AdcPlaceControlm, null);
             //async
-            add(CommandCode.Measured, sendAction);
-            add(CommandCode.VacuumReady, updateDeviceAction + (p => OnSystemReady()));
+            add(CommandCode.Measured, autoSend);
+            add(CommandCode.VacuumReady, updateDevice + (p => OnSystemReady()));
             add(CommandCode.SystemShutdowned, p => OnSystemDown(false));
             add(CommandCode.SystemReseted, p => {
                 OnAsyncReplyReceived("Система переинициализировалась");
@@ -108,8 +105,8 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.InvalidData, null);
             add(CommandCode.InvalidState, null);
             //sync
-            add(CommandCode.GetState, updateDeviceAction/* + sendAction*/);
-            add(CommandCode.GetStatus, updateDeviceAction + (p => {
+            add(CommandCode.GetState, updateDevice/* + sendAction*/);
+            add(CommandCode.GetStatus, updateDevice + (p => {
                 if (onTheFly) {
                     // waiting for fake counts reply
                     OnFirstStatus(() => toSend.Enqueue(new getCounts()));
@@ -120,20 +117,20 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.Init, p => OnOperationToggle(true)/* + sendAction*/);
 
             // settings sequence
-            add(CommandCode.SetIonizationVoltage, sendAction);
-            add(CommandCode.SetCapacitorVoltage, sendAction);
-            add(CommandCode.heatCurrentEnable, sendAction);
-            add(CommandCode.SetEmissionCurrent, sendAction);
-            add(CommandCode.SetHeatCurrent, sendAction);
-            add(CommandCode.SetFocusVoltage1, sendAction);
+            add(CommandCode.SetIonizationVoltage, autoSend);
+            add(CommandCode.SetCapacitorVoltage, autoSend);
+            add(CommandCode.heatCurrentEnable, autoSend);
+            add(CommandCode.SetEmissionCurrent, autoSend);
+            add(CommandCode.SetHeatCurrent, autoSend);
+            add(CommandCode.SetFocusVoltage1, autoSend);
             add(CommandCode.SetFocusVoltage2, p => OnMeasurePreconfigured());
 
             add(CommandCode.SetScanVoltage, p => OnMeasureSend((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2))));
 
             add(CommandCode.Measure, null);
-            add(CommandCode.GetCounts, updateDeviceAction + (p => OnMeasureDone()));
+            add(CommandCode.GetCounts, updateDevice + (p => OnMeasureDone()));
             add(CommandCode.EnableHighVoltage, null);
-            add(CommandCode.GetTurboPumpStatus, updateDeviceAction);
+            add(CommandCode.GetTurboPumpStatus, updateDevice);
             add(CommandCode.SetForvacuumLevel, null);
             return d;
         }

@@ -17,7 +17,6 @@ namespace Flavor.Common.Messaging.Almazov {
             toSend = queue;
         }
         class StatusRequestGenerator: IStatusRequestGenerator<CommandCode> {
-            int i = 0;
             int f;
             readonly UserRequest<CommandCode> statusCheck, vacuumCheck;
             readonly Generator<int> factor;
@@ -39,19 +38,19 @@ namespace Flavor.Common.Messaging.Almazov {
             }
         }
 
-    public override void SetOperationBlock(bool block) {
+        protected override UserRequest<CommandCode> Block(bool block) {
             throw new NotImplementedException();
         }
 
-        public override void SetOperationToggle(bool on) {
+        protected override UserRequest<CommandCode> OperationOnOff(bool on) {
             throw new NotImplementedException();
         }
 
-        public override void SetSettings() {
+        protected override UserRequest<CommandCode> Settings() {
             throw new NotImplementedException();
         }
 
-        public override void SetMeasureStep(ushort step) {
+        protected override UserRequest<CommandCode> MeasureStep(ushort step) {
             throw new NotImplementedException();
         }
 
@@ -59,8 +58,6 @@ namespace Flavor.Common.Messaging.Almazov {
         protected override PackageDictionary<CommandCode> GetDictionary() {
             var d = new PackageDictionary<CommandCode>();
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
-            Action<ServicePacket<CommandCode>> sendAction = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<CommandCode>);
-            Action<ServicePacket<CommandCode>> updateDeviceAction = p => ((IUpdateDevice)p).UpdateDevice();
             //async error
             add(CommandCode.LAM_CriticalError, null);
             //async

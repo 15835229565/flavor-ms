@@ -8,6 +8,7 @@ using Flavor.Common.Library;
 namespace Flavor.Common {
     class Commander2: ICommander {
         ProgramStates programState = ProgramStates.Start;
+        ProgramStates pStatePrev = ProgramStates.Start;
         public override ProgramStates pState {
             get {
                 return programState;
@@ -43,22 +44,45 @@ namespace Flavor.Common {
             }
         }
 
-        public override void Init(object sender, EventArgs<bool> e) {
+        void SubscribeToUndo(EventHandler handler) {
+            ProgramEventHandler ph = s => realizer.Undo -= handler; ;
+            ph += s => this.ProgramStateChanged -= ph;
+            handler += (s, e) => {
+                realizer.Undo -= handler;
+                this.ProgramStateChanged -= ph;
+            };
+            realizer.Undo += handler;
+            this.ProgramStateChanged += ph;
+        }
+        void Init(object sender, CallBackEventArgs<bool> e) {
             OnLog(pState.ToString());
 
             setProgramState(ProgramStates.WaitInit);
             e.Value = true;
-            r.SetOperationToggle(true);
+            SubscribeToUndo(e.Handler);
+            realizer.SetOperationToggle(true);
 
             OnLog(pState.ToString());
         }
-        public override void Shutdown(object sender, EventArgs<bool> e) {
+        void Shutdown(object sender, CallBackEventArgs<bool> e) {
             Disable();
-            r.SetOperationToggle(false);
             setProgramState(ProgramStates.WaitShutdown);
             e.Value = true;
+            SubscribeToUndo(e.Handler);
+            realizer.SetOperationToggle(false);
             // TODO: добавить контрольное время ожидания выключения
         }
+        void Unblock(object sender, CallBackEventArgs<bool> e) {
+            if (pState == ProgramStates.Measure ||
+                pState == ProgramStates.WaitBackgroundMeasure ||
+                pState == ProgramStates.BackgroundMeasureReady)//strange..
+                MeasureCancelRequested = true;
+            // TODO: check!
+            e.Value = hBlock;
+            SubscribeToUndo(e.Handler);
+            realizer.SetOperationBlock(hBlock);
+        }
+
 
         public override void Scan() {
             if (pState == ProgramStates.Ready) {
@@ -237,7 +261,7 @@ namespace Flavor.Common {
             CurrentMeasureMode = null;//?
         }
         public override void SendSettings() {
-            r.SetSettings();
+            realizer.SetSettings();
         }
         void initMeasure(ProgramStates state) {
             OnLog(pState.ToString());
@@ -248,19 +272,14 @@ namespace Flavor.Common {
             CurrentMeasureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable += CurrentMeasureMode_Disable;
             // TODO: move inside MeasureMode
-            Device.CountsUpdated += (s, e) => { 
-                CurrentMeasureMode.UpdateGraph();
-                if (!CurrentMeasureMode.onUpdateCounts()) {
-                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
-                }
-            };
+            Device.CountsUpdated += deviceCountsUpdated;
 
             setProgramState(state);
 
             MeasureCancelRequested = false;
             SendSettings();
         }
-
+        readonly EventHandler<EventArgs<int[]>> deviceCountsUpdated;
         void CurrentMeasureMode_Disable(object sender, EventArgs e) {
             if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
                 if (pState == ProgramStates.Measure) {
@@ -271,12 +290,7 @@ namespace Flavor.Common {
                 matrix = null;
             }
             // TODO: move inside MeasureMode
-            Device.CountsUpdated -= (s, ee) => { 
-                CurrentMeasureMode.UpdateGraph();
-                if (!CurrentMeasureMode.onUpdateCounts()) {
-                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
-                }
-            };
+            Device.CountsUpdated -= deviceCountsUpdated;
             CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
 
@@ -284,7 +298,7 @@ namespace Flavor.Common {
             Disable();
         }
         void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
-            r.SetMeasureStep(e.Step);
+            realizer.SetMeasureStep(e.Step);
         }
         public override bool SomePointsUsed {
             get {
@@ -295,19 +309,12 @@ namespace Flavor.Common {
             }
         }
 
-        public override void Unblock(object sender, EventArgs<bool> e) {
-            if (pState == ProgramStates.Measure ||
-                pState == ProgramStates.WaitBackgroundMeasure ||
-                pState == ProgramStates.BackgroundMeasureReady)//strange..
-                MeasureCancelRequested = true;
-            r.SetOperationBlock(hBlock);
-            // TODO: check!
-            e.Value = hBlock;
-        }
-
         readonly PortLevel port = new PortLevel();
-        readonly Realizer<CommandCode> r;
+        readonly Realizer<CommandCode> realizer;
+        readonly EventHandler undoProgramState;
+        readonly EventHandler<EventArgs<Action>> onTheFlyAction;
         public Commander2() {
+            undoProgramState = (s, e) => setProgramStateWithoutUndo(pStatePrev);
             port.ErrorPort += (s, e) => {
                 // TODO: more accurate
                 OnErrorOccured(e.Message);
@@ -387,49 +394,64 @@ namespace Flavor.Common {
                     setProgramStateWithoutUndo(ProgramStates.Ready);
                 }
             };
-            r.FirstStatus += r_FirstStatus;
-            this.r = r;
-        }
-        void r_FirstStatus(object sender, EventArgs<Action> e) {
-            (sender as Realizer<CommandCode>).FirstStatus -= r_FirstStatus;
-            switch (Device.sysState)
-            {
-                case Device.DeviceStates.Init:
-                case Device.DeviceStates.VacuumInit:
-                    hBlock = true;
-                    setProgramStateWithoutUndo(ProgramStates.Init);
-                    break;
+            deviceCountsUpdated = (s, e) => {
+                CurrentMeasureMode.UpdateGraph();
+                if (!CurrentMeasureMode.onUpdateCounts()) {
+                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                }
+            };
+            onTheFlyAction = (s, e) => {
+                (s as Realizer<CommandCode>).FirstStatus -= onTheFlyAction;
+                switch (Device.sysState) {
+                    case Device.DeviceStates.Init:
+                    case Device.DeviceStates.VacuumInit:
+                        hBlock = true;
+                        setProgramStateWithoutUndo(ProgramStates.Init);
+                        break;
 
-                case Device.DeviceStates.ShutdownInit:
-                case Device.DeviceStates.Shutdowning:
-                    hBlock = true;
-                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
-                    break;
+                    case Device.DeviceStates.ShutdownInit:
+                    case Device.DeviceStates.Shutdowning:
+                        hBlock = true;
+                        setProgramStateWithoutUndo(ProgramStates.Shutdown);
+                        break;
 
-                case Device.DeviceStates.Measured:
-                    e.Value();
-                    // waiting for fake counts reply
-                    break;
-                case Device.DeviceStates.Measuring:
-                    // async message here with auto send-back
-                    // and waiting for fake counts reply
-                    break;
+                    case Device.DeviceStates.Measured:
+                        e.Value();
+                        // waiting for fake counts reply
+                        break;
+                    case Device.DeviceStates.Measuring:
+                        // async message here with auto send-back
+                        // and waiting for fake counts reply
+                        break;
 
-                case Device.DeviceStates.Ready:
-                    hBlock = false;
-                    setProgramStateWithoutUndo(ProgramStates.Ready);
-                    break;
-                case Device.DeviceStates.WaitHighVoltage:
-                    hBlock = true;
-                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
-                    break;
-            }
-            OnLog(pState.ToString());
+                    case Device.DeviceStates.Ready:
+                        hBlock = false;
+                        setProgramStateWithoutUndo(ProgramStates.Ready);
+                        break;
+                    case Device.DeviceStates.WaitHighVoltage:
+                        hBlock = true;
+                        setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
+                        break;
+                }
+                OnLog(pState.ToString());
+            }; 
+            r.FirstStatus += onTheFlyAction;
+            realizer = r;
         }
         bool notRare() {
             if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
                 return notRareModeRequested;
             return true;
+        }
+        event EventHandler Undo;
+        protected virtual void OnUndo() {
+            Undo.Raise(this, EventArgs.Empty);
+        }
+        public override void Bind(IMSControl view) {
+            view.Connect += Connect;
+            view.Init += Init;
+            view.Shutdown += Shutdown;
+            view.Unblock += Unblock;
         }
         public override void Connect(object sender, CallBackEventArgs<bool, string> e) {
             if (DeviceIsConnected) {
@@ -438,15 +460,15 @@ namespace Flavor.Common {
                 Connect();
             }
             e.Value = DeviceIsConnected;
-            //TODO:!
-            //e.Handler = AsyncReplyReceived;
+            // TODO: own event
+            //e.Handler = this.RareModeChanged;
         }
         void Connect() {
             PortLevel.PortStates res = port.Open();
             switch (res) {
                 case PortLevel.PortStates.Opening:
-                    // TODO: to Realizer
-                    r.Connect(() => setProgramStateWithoutUndo(pStatePrev));
+                    realizer.Undo += undoProgramState;
+                    realizer.Connect();
 
                     DeviceIsConnected = true;
                     break;
@@ -461,13 +483,13 @@ namespace Flavor.Common {
             }
         }
         public override void Disconnect() {
-            r.Disconnect(() => setProgramStateWithoutUndo(pStatePrev));
+            realizer.Disconnect();
+            realizer.Undo -= undoProgramState;
 
             PortLevel.PortStates res = port.Close();
             switch (res) {
                 case PortLevel.PortStates.Closing:
                     DeviceIsConnected = false;
-                    //onTheFly = true;// надо ли здесь???
                     break;
                 case PortLevel.PortStates.Closed:
                     DeviceIsConnected = false;

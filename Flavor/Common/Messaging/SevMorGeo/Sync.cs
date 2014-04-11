@@ -188,8 +188,6 @@ namespace Flavor.Common.Messaging.SevMorGeo {
 
         public void UpdateDevice() {
             Device.Detectors = new int[] { Detector1, Detector2 };
-            //Device.Detector1 = Detector1;
-            //Device.Detector2 = Detector2;
         }
 
         #endregion

@@ -21,6 +21,10 @@ namespace Flavor.Common.Messaging {
         protected virtual void OnUndo() {
             Undo.Raise(this, EventArgs.Empty);
         }
+        public event EventHandler<EventArgs<UserRequest<T>>> NotAnsweringTo;
+        protected virtual void OnNotAnsweringTo(UserRequest<T> packet) {
+            NotAnsweringTo.Raise(this, new EventArgs<UserRequest<T>>(packet));
+        }
         public event EventHandler<CommandReceivedEventArgs<T, Sync<T>>> CommandApproved;
         protected virtual void OnCommandApproved(byte code, Sync<T> command) {
             CommandApproved.Raise(this, new CommandReceivedEventArgs<T,Sync<T>>(code, command));
@@ -138,8 +142,10 @@ namespace Flavor.Common.Messaging {
                             OnLog("Error. In message queue null found.");
                     }
                 }
-                if (packet != null)
+                if (packet != null) {
+                    OnNotAnsweringTo(packet);
                     OnLog(string.Format("Device not answering to {0}", packet.Id));
+                }
                 OnUndo();
             }
         }

@@ -35,6 +35,10 @@ namespace Flavor.Common.Messaging {
         protected virtual void OnFirstStatus(Action onTheFly) {
             FirstStatus.Raise(this, new EventArgs<Action>(onTheFly));
         }
+        public event EventHandler Undo;
+        protected virtual void OnUndo() {
+            Undo.Raise(this, EventArgs.Empty);
+        }
 
         readonly IAsyncProtocol<T> protocol;
         readonly MessageQueue<T> toSend;
@@ -42,13 +46,55 @@ namespace Flavor.Common.Messaging {
         protected Realizer(IAsyncProtocol<T> protocol, MessageQueue<T> queue) {
             this.protocol = protocol;
             toSend = queue;
+            realizeSync = (s, e) => Realize<Sync<T>>(s, e);
+            realizeAsync = (s, e) => Realize<Async<T>>(s, e);
+            autoSend = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<T>);
+            updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
+            // after all other is initialized
             dictionary = GetDictionary();
         }
+        protected readonly Action<ServicePacket<T>> autoSend;
+        protected readonly Action<ServicePacket<T>> updateDevice;
         protected abstract PackageDictionary<T> GetDictionary();
-        public abstract void SetOperationBlock(bool block);
-        public abstract void SetOperationToggle(bool on);
-        public abstract void SetSettings();
-        public abstract void SetMeasureStep(ushort step);
+
+        void SendUndoable(UserRequest<T> packet) {
+            EventHandler<EventArgs<UserRequest<T>>> undo = new EventHandler<EventArgs<UserRequest<T>>>(delegate { });
+            EventHandler<CommandReceivedEventArgs<T, Sync<T>>> discard = new EventHandler<CommandReceivedEventArgs<T, Sync<T>>>(delegate { });
+            undo += (s, e) => {
+                if (Equals(e.Value, packet)) {
+                    toSend.NotAnsweringTo -= undo;
+                    toSend.CommandApproved -= discard;
+                    OnUndo();
+                }
+            };
+            discard += (s, e) => {
+                if (Equals(e.Command, packet)) {
+                    toSend.NotAnsweringTo -= undo;
+                    toSend.CommandApproved -= discard;
+                }
+            };
+            toSend.NotAnsweringTo += undo;
+            toSend.CommandApproved += discard;
+            toSend.Enqueue(packet);
+        }
+        public void SetOperationBlock(bool block) {
+            SendUndoable(Block(block));
+        }
+        protected abstract UserRequest<T> Block(bool block);
+        public void SetOperationToggle(bool on) {
+            SendUndoable(OperationOnOff(on));
+        }
+        protected abstract UserRequest<T> OperationOnOff(bool on);
+        public void SetSettings() {
+            toSend.Enqueue(Settings());
+            //SendUndoable(Settings());
+        }
+        protected abstract UserRequest<T> Settings();
+        public void SetMeasureStep(ushort step) {
+            toSend.Enqueue(MeasureStep(step));
+            //SendUndoable(MeasureStep(step));
+        }
+        protected abstract UserRequest<T> MeasureStep(ushort step);
         protected bool Realize<T1>(object sender, CommandReceivedEventArgs<T, T1> e)
             where T1: ServicePacket<T> {
             byte code = e.Code;
@@ -67,27 +113,27 @@ namespace Flavor.Common.Messaging {
             if (ProgramStateChangeRequested != null)
                 ProgramStateChangeRequested(state);
         }
-        public virtual void Connect(Action undo) {
+        readonly EventHandler<CommandReceivedEventArgs<T, Sync<T>>> realizeSync;
+        readonly EventHandler<CommandReceivedEventArgs<T, Async<T>>> realizeAsync;
+        public virtual void Connect() {
             toSend.Clear();
             ConsoleWriter.Subscribe(toSend);
-            toSend.Undo += (s, e) => undo();
-            toSend.CommandApproved += (s, e) => Realize<Sync<T>>(s, e);
-            protocol.AsyncCommandReceived += (s, e) => Realize<Async<T>>(s, e);
-            protocol.AsyncErrorReceived += protocol_AsyncErrorReceived;
-            //protocol.CommandReceived += (s, e) => { };
-            protocol.ErrorCommand += (s, e) => OnLog(e.Message);
+            toSend.CommandApproved += realizeSync;
+            protocol.AsyncCommandReceived += realizeAsync;
+            protocol.AsyncErrorReceived += realizeAsyncError;
+            //protocol.CommandReceived +=;
+            protocol.ErrorCommand += OnLog;
         }
-        public virtual void Disconnect(Action undo) {
-            protocol.AsyncCommandReceived -= (s, e) => Realize<Async<T>>(s, e);
-            protocol.AsyncErrorReceived += protocol_AsyncErrorReceived;
-            //protocol.CommandReceived -= (s, e) => { };
-            protocol.ErrorCommand -= (s, e) => OnLog(e.Message);
+        public virtual void Disconnect() {
+            protocol.AsyncCommandReceived -= realizeAsync;
+            protocol.AsyncErrorReceived -= realizeAsyncError;
+            //protocol.CommandReceived -=;
+            protocol.ErrorCommand -= OnLog;
             toSend.Clear();
-            toSend.Undo -= (s, e) => undo();
-            toSend.CommandApproved -= (s, e) => Realize<Sync<T>>(s, e);
+            toSend.CommandApproved -= realizeSync;
             ConsoleWriter.Unsubscribe(toSend);
         }
-        private void protocol_AsyncErrorReceived(object sender, CommandReceivedEventArgs<T, AsyncError<T>> e) {
+        private void realizeAsyncError(object sender, CommandReceivedEventArgs<T, AsyncError<T>> e) {
             // TODO: check behaviour!
             if (Realize<AsyncError<T>>(sender, e)) {
                 string message = string.Format("Device says: {0}", e.Command.Message);
@@ -99,6 +145,11 @@ namespace Flavor.Common.Messaging {
         }
         #region ILog Members
         public event MessageHandler Log;
+        void OnLog(object sender, ErrorCommandEventArgs e) {
+            var evt = Log;
+            if (evt != null)
+                evt(e.Message);
+        }
         protected virtual void OnLog(string msg) {
             var evt = Log;
             if (evt != null)

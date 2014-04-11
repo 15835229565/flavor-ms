@@ -142,7 +142,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             public override void Transmit(ICollection<byte> pack) {
                 var message = buildPack(pack);
                 base.Transmit(message);
-                OnLog("[out]", message);
+                OnLog("[out]", buildPackBody(pack));
             }
             #endregion
         }

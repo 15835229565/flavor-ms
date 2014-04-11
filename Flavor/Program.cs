@@ -31,13 +31,11 @@ namespace Flavor {
             ConsoleWriter.Subscribe(commander);
 
             MainForm2 MSControl = new MainForm2(commander);
-            MSControl.Connect += commander.Connect;
-            MSControl.Init += commander.Init;
-            MSControl.Shutdown += commander.Shutdown;
-            MSControl.Unblock += commander.Unblock;
             MSControl.Load += onLoad;
             MSControl.WindowState = FormWindowState.Maximized;
-            
+
+            commander.Bind(MSControl);
+
             Application.Run(MSControl);
         }
     }
