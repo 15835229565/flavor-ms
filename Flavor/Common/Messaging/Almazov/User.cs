@@ -8,7 +8,27 @@ namespace Flavor.Common.Messaging.Almazov {
             get { return CommandCode.CPU_Status; }
         }
         public override IList<byte> Data {
-            get { return AlexProtocol.collectData((byte)Id); }
+            get { return AlexProtocol.collectData(Id); }
+        }
+    }
+    class HighVoltagePermittedStatusRequest: UserRequest {
+        public override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id); }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.HVE; }
+        }
+    }
+    class OperationBlockRequest: UserRequest {
+        readonly bool? on;
+        public OperationBlockRequest(bool? on) {
+            this.on = on;
+        }
+        public override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id, on.HasValue ? (on.Value ? 1 : 0) : byte.MaxValue); }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.PRGE; }
         }
     }
 }

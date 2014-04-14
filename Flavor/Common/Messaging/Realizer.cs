@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Flavor.Common.Messaging {
-    abstract class Realizer<T>: ILog, IAsyncReplyReceived
+    abstract class Realizer<T>: IRealizer, IAsyncReplyReceived
         where T: struct, IConvertible, IComparable {
         public event EventHandler<EventArgs<bool>> SystemDown;
         protected virtual void OnSystemDown(bool error) {
@@ -133,6 +133,7 @@ namespace Flavor.Common.Messaging {
             toSend.CommandApproved -= realizeSync;
             ConsoleWriter.Unsubscribe(toSend);
         }
+        public abstract void Reset();
         private void realizeAsyncError(object sender, CommandReceivedEventArgs<T, AsyncError<T>> e) {
             // TODO: check behaviour!
             if (Realize<AsyncError<T>>(sender, e)) {

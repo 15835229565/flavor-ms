@@ -11,7 +11,7 @@ using Graph = Flavor.Common.Graph;
 // divide into 2 parts
 using Config = Flavor.Common.Config;
 // controller
-using ICommander = Flavor.Common.ICommander;
+using ICommander = Flavor.Common.Commander;
 using ProgramStates = Flavor.Common.ProgramStates;
 using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 using MessageHandler = Flavor.Common.MessageHandler;

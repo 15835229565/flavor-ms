@@ -32,4 +32,32 @@ namespace Flavor.Common.Messaging.Almazov {
             get { return CommandCode.CPU_Status; }
         }
     }
+    class HighVoltagePermittedStatusReply: SyncReply, IUpdateDevice {
+        readonly bool enabled;
+        public HighVoltagePermittedStatusReply(bool enabled) {
+            this.enabled = enabled;
+        }
+        public override CommandCode Id {
+            get { return CommandCode.HVE; }
+        }
+        #region IUpdateDevice Members
+        public void UpdateDevice() {
+            throw new System.NotImplementedException();
+        }
+        #endregion
+    }
+    class OperationBlockReply: SyncReply, IUpdateDevice {
+        readonly bool? on;
+        public OperationBlockReply(bool? on) {
+            this.on = on;
+        }
+        public override CommandCode Id {
+            get { return CommandCode.PRGE; }
+        }
+        #region IUpdateDevice Members
+        public void UpdateDevice() {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
 }

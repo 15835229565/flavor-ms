@@ -26,6 +26,13 @@
         SPI_CP_SetVoltage = 43,
         // TODO: prove it is right!
         //SPI_CP_GetVoltage = 62,
+        HVE = 71,
+        PRGE = 72,
+        EDCD = 73,
+        SEMV1 = 74,
+        SEMV2 = 75,
+        SEMV3 = 76,
+        SPUMP = 77,
         
         Sync_Error = 255,
 

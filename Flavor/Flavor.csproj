@@ -82,6 +82,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AlmazovCommander.cs" />
+    <Compile Include="Common\Commander.cs" />
     <Compile Include="Common\Messaging\Almazov\AlmazovRealizer.cs" />
     <Compile Include="Common\Messaging\Almazov\Commands.cs" />
     <Compile Include="Common\Messaging\Almazov\Async.cs" />
@@ -95,11 +97,13 @@
     <Compile Include="Common\Messaging\CheckableProtocol.cs" />
     <Compile Include="Common\Messaging\CommandDictionary.cs" />
     <Compile Include="Common\Messaging\CommandRecord.cs" />
+    <Compile Include="Common\Messaging\IRealizer.cs" />
     <Compile Include="Common\Messaging\IStatusRequestGenerator.cs" />
     <Compile Include="Common\Messaging\PackageDictionary.cs" />
     <Compile Include="Common\Messaging\PackageRecord.cs" />
     <Compile Include="Common\Messaging\Protocol.cs" />
     <Compile Include="Common\Messaging\Realizer.cs" />
+    <Compile Include="Common\Messaging\RealizerWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Async.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Async.Error.cs" />
     <Compile Include="Common\Messaging\Interfaces.cs" />
@@ -110,7 +114,7 @@
     <Compile Include="Common\Messaging\SevMorGeo\UI.cs" />
     <Compile Include="Common\Config.cs" />
     <Compile Include="Common\ConsoleWriter.cs" />
-    <Compile Include="Common\Commander2.cs" />
+    <Compile Include="Common\SevMorGeoCommander.cs" />
     <Compile Include="Common\ICommander.cs" />
     <Compile Include="Common\Messaging\Almazov\MC.cs" />
     <Compile Include="Common\Messaging\Almazov\AlexProtocol.cs" />

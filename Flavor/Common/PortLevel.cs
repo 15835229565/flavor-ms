@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO.Ports;
 
 namespace Flavor.Common {
-    internal class PortLevel {
-        internal enum PortStates {
+    class PortLevel {
+        public enum PortStates {
             Closed,
             Opened,
             Closing,
@@ -13,7 +13,7 @@ namespace Flavor.Common {
             ErrorOpening
         }
         public class ByteReceivedEventArgs: EventArgs {
-            private readonly byte b;
+            readonly byte b;
             public byte Byte {
                 get { return b; }
             }
@@ -71,14 +71,14 @@ namespace Flavor.Common {
             if (ErrorPort != null)
                 ErrorPort(this, new ErrorPortEventArgs(isSevere, message));
         }
-        private SerialPort serialPort = null;
-        private void Receiving() {
+        SerialPort serialPort = null;
+        void Receiving() {
             serialPort.DataReceived += _serialPort_DataReceived;
         }
-        private void StopReceiving() {
+        void StopReceiving() {
             serialPort.DataReceived -= _serialPort_DataReceived;
         }
-        private void _serialPort_DataReceived(object sender, EventArgs e) {
+        void _serialPort_DataReceived(object sender, EventArgs e) {
             SerialPort port = sender as SerialPort;
             List<byte> bytes = new List<byte>(port.BytesToRead);
             while (port.IsOpen && port.BytesToRead > 0) {
@@ -95,7 +95,7 @@ namespace Flavor.Common {
             OnBytesReceived(bytes.ToArray());
         }
         // NOW not used..
-        private void SerialPortDataReceived(object sender, EventArgs e) {
+        void SerialPortDataReceived(object sender, EventArgs e) {
             SerialPort port = sender as SerialPort;
             int n = port.BytesToRead;
             byte[] bytes = new byte[n];
@@ -111,10 +111,10 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal static string[] AvailablePorts {
+        public static string[] AvailablePorts {
             get { return SerialPort.GetPortNames(); }
         }
-        internal PortStates Open() {
+        public PortStates Open() {
             if (serialPort != null) {
                 if (serialPort.IsOpen) {
                     OnErrorPort(false, "Port already opened");
@@ -141,7 +141,7 @@ namespace Flavor.Common {
             Receiving();
             return PortStates.Opening;
         }
-        internal PortStates Close() {
+        public PortStates Close() {
             if (serialPort == null) {
                 OnErrorPort(true, "Порт не инициализирован");
                 System.Windows.Forms.MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
@@ -163,7 +163,7 @@ namespace Flavor.Common {
             }
             return PortStates.Closing;
         }
-        internal void Send(byte[] message) {
+        public void Send(byte[] message) {
             try {
                 serialPort.Write(message, 0, message.Length);
             } catch {

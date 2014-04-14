@@ -6,7 +6,7 @@ namespace Flavor.Common.Messaging.Almazov {
         public LAMEvent(byte number) {
             this.number = number;
         }
-        enum LAM : byte {
+        enum LAM: byte {
             Unknown = 0,
             RTC_end = 1,      //RTC закончил измерение
             SPI_conf_done = 2,//После включения HVE все SPI устройства были настроены!

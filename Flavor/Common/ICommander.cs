@@ -1,7 +1,4 @@
-﻿using System;
-using Flavor.Common.Messaging;
-
-namespace Flavor.Common {
+﻿namespace Flavor.Common {
     enum ProgramStates: byte {
         Start,
         Shutdown,
@@ -32,99 +29,11 @@ namespace Flavor.Common {
         event ProgramEventHandler ProgramStateChanged;
         void SendSettings();
     }
-    interface IConnectionActions {
-        void Connect(object sender, CallBackEventArgs<bool, string> e);
-        void Disconnect();
-    }
     interface IMeasureActions {
         event ProgramEventHandler ProgramStateChanged;
         event ProgramEventHandler MeasureCancelled;
         void Scan();
         bool Sense();
         bool? Monitor();
-    }
-
-    abstract class ICommander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IConnectionActions, IMeasureActions {
-        public abstract void Bind(IMSControl form);
-        #region ILog Members
-        public event MessageHandler Log;
-        protected virtual void OnLog(string msg) {
-            var temp = Log;
-            if (temp != null)
-                temp(msg);
-        }
-        #endregion
-        
-        #region IErrorOccured Members
-        public event MessageHandler ErrorOccured;
-        protected virtual void OnErrorOccured(string msg) {
-            var temp = ErrorOccured;
-            if (temp != null)
-                temp(msg);
-            OnLog(msg);
-        }
-        #endregion
-
-        #region IAsyncReplyReceived Members
-        public event MessageHandler AsyncReplyReceived;
-        protected virtual void OnAsyncReplyReceived(string msg) {
-            var temp = AsyncReplyReceived;
-            if (temp != null)
-                temp(msg);
-            OnLog(msg);
-        }
-        #endregion
-
-        abstract public ProgramStates pState { get; protected set; }
-        public event BoolEventHandler RareModeChanged;
-        protected virtual void OnRareModeChanged(bool t) {
-            var temp = RareModeChanged;
-            if (temp != null)
-                temp(t);
-        }
-        bool rare;
-        public bool notRareModeRequested { 
-            get {
-                return rare;
-            }
-            set {
-                if (rare == value)
-                    return;
-                rare = value;
-                OnRareModeChanged(value);
-            }
-        }
-        #region IGlobalActions Members
-        public event ProgramEventHandler ProgramStateChanged;
-        protected virtual void OnProgramStateChanged() {
-            var temp = ProgramStateChanged;
-            if (temp != null)
-                temp(pState);
-        }
-        abstract public void SendSettings();
-        #endregion
-
-        #region IConnectionActions Members
-        abstract public void Connect(object sender, CallBackEventArgs<bool, string> e);
-        abstract public void Disconnect();
-        #endregion
-        abstract public void Reconnect();
-        abstract public string[] AvailablePorts { get; }
-
-        public MeasureMode CurrentMeasureMode { get; protected set; }
-        abstract public bool MeasureCancelRequested { protected get; set; }
-        abstract public bool SomePointsUsed { get; }
-        #region IMeasureActions Members
-        // TODO: other event class here!
-        public event ProgramEventHandler MeasureCancelled;
-        protected virtual void OnMeasureCancelled() {
-            var temp = MeasureCancelled;
-            if (temp != null)
-                temp(pState);
-        }
-        abstract public void Scan();
-        abstract public bool Sense();
-        abstract public bool? Monitor();
-        #endregion
     }
 }

@@ -19,9 +19,9 @@ namespace Flavor.Common.Messaging.Almazov {
             return pack;
         }
 
-        public static IList<byte> collectData(byte functCode, params object[] values) {
+        public static IList<byte> collectData(CommandCode functCode, params object[] values) {
             List<byte> data = new List<byte>();
-            data.Add(functCode);
+            data.Add((byte)functCode);
             foreach (object o in values) {
                 if (o is byte)
                     data.Add((byte)o);
@@ -132,8 +132,23 @@ namespace Flavor.Common.Messaging.Almazov {
                 d[(byte)code] = new CommandRecord<CommandCode>(predicate, action((byte)code));
             // TODO: commands here
             add(CommandCode.CPU_Status, eq(4), sync(raw => new CPUStatusReply(raw[1], raw[2])));
+            add(CommandCode.HVE, eq(3), sync(raw => new HighVoltagePermittedStatusReply(raw[1] == 0 ? true : false)));
+            add(CommandCode.PRGE, eq(3), sync(raw => {
+                byte on = raw[1];
+                bool? res;
+                if (on == 254)
+                    res = null;
+                else if (on == 1)
+                    res = true;
+                else
+                    res = false;
+                return new OperationBlockReply(res);
+            }));
+
             add(CommandCode.Sync_Error, eq(4), syncerr(raw => new SyncErrorReply(raw[1], raw[2])));
+            
             add(CommandCode.LAM_Event, eq(3), async(raw => new LAMEvent(raw[1])));
+            
             add(CommandCode.LAM_CriticalError, eq(3), asyncerr(raw => new LAMCriticalError(raw[1])));
             // TODO: check length!
             //add(CommandCode.LAM_InternalError, eq(3), asyncerr(raw => new LAMInternalError(raw[1])));

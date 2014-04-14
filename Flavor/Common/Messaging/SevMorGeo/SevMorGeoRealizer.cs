@@ -1,8 +1,7 @@
 ﻿using System;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    class SevMorGeoRealizer: Realizer<CommandCode> {
-        readonly MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
+    class SevMorGeoRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
         public SevMorGeoRealizer(PortLevel port, Generator<int> factor, Generator<double> interval)
             : this(new ModBus(port), factor, interval) { }
         SevMorGeoRealizer(ISyncAsyncProtocol<CommandCode> protocol, Generator<int> factor, Generator<double> interval)
@@ -10,9 +9,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 new StatusRequestGenerator(new requestStatus(), new getTurboPumpStatus(), factor),
                 interval)) { }
         SevMorGeoRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
-            : base(protocol, queue) {
-            toSend = queue;
-        }
+            : base(protocol, queue) { }
         class StatusRequestGenerator: IStatusRequestGenerator<CommandCode> {
             int i = 0;
             int f;
@@ -55,19 +52,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         protected override UserRequest<CommandCode> MeasureStep(ushort step) {
             return new sendSVoltage(step);
         }
-        public override void Connect() {
-            base.Connect();
-            toSend.Start();
-        }
         public override void Disconnect() {
-            toSend.Stop();
             base.Disconnect();
             onTheFly = true;
-        }
-        // TODO: move to abstract ancestor
-        public void Reset() {
-            toSend.Stop();
-            toSend.Start();
         }
         bool onTheFly = true;
         protected override PackageDictionary<CommandCode> GetDictionary() {
@@ -105,7 +92,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.InvalidData, null);
             add(CommandCode.InvalidState, null);
             //sync
-            add(CommandCode.GetState, updateDevice/* + sendAction*/);
+            add(CommandCode.GetState, updateDevice/* + autoSend*/);
             add(CommandCode.GetStatus, updateDevice + (p => {
                 if (onTheFly) {
                     // waiting for fake counts reply
@@ -114,7 +101,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
                 }
             }));
             add(CommandCode.Shutdown, p => OnOperationToggle(false));
-            add(CommandCode.Init, p => OnOperationToggle(true)/* + sendAction*/);
+            add(CommandCode.Init, p => OnOperationToggle(true)/* + autoSend*/);
 
             // settings sequence
             add(CommandCode.SetIonizationVoltage, autoSend);

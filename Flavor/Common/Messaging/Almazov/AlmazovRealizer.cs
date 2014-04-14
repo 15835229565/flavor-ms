@@ -1,47 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Flavor.Common.Messaging.Almazov {
-    class AlmazovRealizer: Realizer<CommandCode> {
-        readonly MessageQueueWithAutomatedStatusChecks<CommandCode> toSend;
-        public AlmazovRealizer(PortLevel port, Generator<int> factor, Generator<double> interval)
-            : this(new AlexProtocol(port), factor, interval) { }
-        AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, Generator<int> factor, Generator<double> interval)
+    class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
+        public AlmazovRealizer(PortLevel port, Generator<double> interval)
+            : this(new AlexProtocol(port), interval) { }
+        AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, Generator<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
-                new StatusRequestGenerator(null, null, factor),
+                new StatusRequestGenerator(new CPUStatusRequest(), new HighVoltagePermittedStatusRequest(), new OperationBlockRequest(null)),
                 interval)) { }
         AlmazovRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
-            : base(protocol, queue) {
-            toSend = queue;
-        }
+            : base(protocol, queue) { }
         class StatusRequestGenerator: IStatusRequestGenerator<CommandCode> {
-            int f;
-            readonly UserRequest<CommandCode> statusCheck, vacuumCheck;
-            readonly Generator<int> factor;
+            int i = 0;
+            readonly int f;
+            readonly UserRequest<CommandCode>[] checkCommands;
             public UserRequest<CommandCode> Next {
                 get {
                     UserRequest<CommandCode> res;
-                    throw new NotImplementedException();
+                    res = checkCommands[i];
+                    ++i;
+                    i %= f;
                     return res;
                 }
             }
-            public void Reset() {
-                f = factor();
-            }
-            public StatusRequestGenerator(UserRequest<CommandCode> statusCheck, UserRequest<CommandCode> vacuumCheck, Generator<int> factor) {
-                this.factor = factor;
-                this.statusCheck = statusCheck;
-                this.vacuumCheck = vacuumCheck;
+            public void Reset() { }
+            public StatusRequestGenerator(params UserRequest<CommandCode>[] checkCommands) {
+                this.checkCommands = checkCommands;
+                this.f = checkCommands.Length;
                 Reset();
             }
         }
 
         protected override UserRequest<CommandCode> Block(bool block) {
-            throw new NotImplementedException();
+            return new OperationBlockRequest(block);
         }
 
+        [Obsolete]
         protected override UserRequest<CommandCode> OperationOnOff(bool on) {
             throw new NotImplementedException();
         }
@@ -61,12 +55,18 @@ namespace Flavor.Common.Messaging.Almazov {
             //async error
             add(CommandCode.LAM_CriticalError, null);
             //async
-            add(CommandCode.LAM_Event, null);
+            add(CommandCode.LAM_Event, updateDevice + (p => OnSystemReady()));
             //sync error
             add(CommandCode.Sync_Error, null);
             //sync
-            add(CommandCode.CPU_Status, null/*updateDeviceAction*/);
-            throw new NotImplementedException();
+            add(CommandCode.CPU_Status, null/*updateDevice*/);
+            add(CommandCode.HVE, updateDevice + (p => OnSystemReady()));
+            add(CommandCode.PRGE, updateDevice + (p => OnOperationBlock(true)) + (p => {
+                if (onTheFly) {
+                    OnFirstStatus(() => { });
+                    onTheFly = false;
+                }
+            }));
             return d;
         }
     }

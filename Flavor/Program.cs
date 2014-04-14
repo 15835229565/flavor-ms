@@ -27,7 +27,8 @@ namespace Flavor {
                 onLoad = (s, e) => cle.visualise();
             }
 
-            var commander = new Commander2();
+            //var commander = new AlmazovCommander();
+            var commander = new SevMorGeoCommader();
             ConsoleWriter.Subscribe(commander);
 
             MainForm2 MSControl = new MainForm2(commander);
