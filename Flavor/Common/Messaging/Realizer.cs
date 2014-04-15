@@ -11,6 +11,10 @@ namespace Flavor.Common.Messaging {
         protected virtual void OnSystemReady() {
             SystemReady.Raise(this, EventArgs.Empty);
         }
+        public event EventHandler<EventArgs<IUpdateDevice>> UpdateDevice;
+        protected virtual void OnUpdateDevice(IUpdateDevice packet) {
+            UpdateDevice.Raise(this, new EventArgs<IUpdateDevice>(packet));
+        }
         public event EventHandler<EventArgs<bool>> OperationBlock;
         protected virtual void OnOperationBlock(bool on) {
             OperationBlock.Raise(this, new EventArgs<bool>(on));
@@ -49,11 +53,14 @@ namespace Flavor.Common.Messaging {
             realizeSync = (s, e) => Realize<Sync<T>>(s, e);
             realizeAsync = (s, e) => Realize<Async<T>>(s, e);
             autoSend = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<T>);
-            updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
+            //updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
+            // TODO: modify dictionary to prevent cast
+            updateDevice = p => OnUpdateDevice((IUpdateDevice)p);
             // after all other is initialized
             dictionary = GetDictionary();
         }
         protected readonly Action<ServicePacket<T>> autoSend;
+        // TODO: modify dictionary to prevent cast
         protected readonly Action<ServicePacket<T>> updateDevice;
         protected abstract PackageDictionary<T> GetDictionary();
 

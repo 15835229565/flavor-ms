@@ -8,7 +8,8 @@ namespace Flavor.Common {
     class SevMorGeoCommader: Commander {
         readonly EventHandler<EventArgs<int[]>> deviceCountsUpdated;
         public SevMorGeoCommader()
-            : base(new PortLevel()) {
+            // TODO: proper device
+            : base(new PortLevel(), null) {
             deviceCountsUpdated = (s, e) => {
                 CurrentMeasureMode.UpdateGraph();
                 if (!CurrentMeasureMode.onUpdateCounts()) {

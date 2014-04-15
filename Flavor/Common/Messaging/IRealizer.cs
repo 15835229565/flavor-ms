@@ -12,6 +12,7 @@ namespace Flavor.Common.Messaging {
     interface ISystemEvents {
         event EventHandler<EventArgs<bool>> SystemDown;
         event EventHandler<EventArgs> SystemReady;
+        event EventHandler<EventArgs<IUpdateDevice>> UpdateDevice;
     }
     interface IOperationBlock {
         event EventHandler<EventArgs<bool>> OperationBlock;

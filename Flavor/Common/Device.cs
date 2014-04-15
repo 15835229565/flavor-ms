@@ -9,6 +9,7 @@ namespace Flavor.Common {
         public static event DeviceEventHandler OnDeviceStatusChanged;
         public static event DeviceEventHandler OnVacuumStateChanged;
         public static event DeviceEventHandler OnTurboPumpStatusChanged;
+        [Obsolete]
         public static event TurboPumpAlertEventHandler OnTurboPumpAlert;
 
         public enum DeviceStates: byte {
@@ -158,7 +159,7 @@ namespace Flavor.Common {
             get { return 2 * 5 * (double)hVacuum / 4096; }
         }
 
-        public static EventHandler<EventArgs<int[]>> CountsUpdated;
+        public static event EventHandler<EventArgs<int[]>> CountsUpdated;
         static void OnCountsUpdated() {
             CountsUpdated.Raise(null, new EventArgs<int[]>(Detectors));
         }
@@ -178,6 +179,7 @@ namespace Flavor.Common {
         public static DevCommonData DeviceCommonData {
             get { return deviceCommonData; }
         }
+        // TODO: struct?        
         public class DevCommonData: CommonData {
             private ushort condVoltagePlus;
             private ushort condVoltageMin;

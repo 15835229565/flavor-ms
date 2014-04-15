@@ -60,8 +60,8 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.Sync_Error, null);
             //sync
             add(CommandCode.CPU_Status, null/*updateDevice*/);
-            add(CommandCode.HVE, updateDevice + (p => OnSystemReady()));
-            add(CommandCode.PRGE, updateDevice + (p => OnOperationBlock(true)) + (p => {
+            add(CommandCode.HVE, updateDevice /*+ (p => OnSystemReady())*/);
+            add(CommandCode.PRGE, updateDevice + /*(p => OnOperationBlock(true)) +*/ (p => {
                 if (onTheFly) {
                     OnFirstStatus(() => { });
                     onTheFly = false;

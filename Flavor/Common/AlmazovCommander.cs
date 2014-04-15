@@ -5,7 +5,8 @@ using Flavor.Common.Messaging.Almazov;
 namespace Flavor.Common {
     class AlmazovCommander: Commander {
         public AlmazovCommander()
-            : base(new PortLevel()) { }
+            // TODO: proper device
+            : base(new PortLevel(), null) { }
         protected override IRealizer GetRealizer(PortLevel port) {
             return new AlmazovRealizer(port, () => notRare() ? 500 : 10000);
         }

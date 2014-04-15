@@ -31,8 +31,8 @@ namespace Flavor.Common {
         internal static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
         internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
         #endregion
-        private static string SerialPort = "COM1";
-        private static ushort SerialBaudRate = 38400;
+        private static string SerialPort = "COM2";
+        private static uint SerialBaudRate = 128000;
         private static byte sendTry = 1;
 
         internal const ushort MIN_STEP = 0;
@@ -130,7 +130,7 @@ namespace Flavor.Common {
             get { return SerialPort; }
             set { SerialPort = value; }
         }
-        internal static ushort BaudRate {
+        internal static uint BaudRate {
             get { return SerialBaudRate; }
             set { SerialBaudRate = value; }
         }
@@ -176,7 +176,7 @@ namespace Flavor.Common {
             commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalConnectOptions(string port, ushort baudrate) {
+        internal static void saveGlobalConnectOptions(string port, uint baudrate) {
             Config.Port = port;
             Config.BaudRate = baudrate;
             mainConfigWriter.write();
@@ -1042,7 +1042,7 @@ namespace Flavor.Common {
                         try {
                             prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
                             SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                            SerialBaudRate = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                            SerialBaudRate = uint.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
                             sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             (new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename)).visualise();
@@ -1652,7 +1652,7 @@ namespace Flavor.Common {
                         try {
                             prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
                             SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                            SerialBaudRate = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                            SerialBaudRate = uint.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
                             sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             (new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename)).visualise();

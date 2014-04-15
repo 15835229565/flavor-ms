@@ -13,6 +13,8 @@ namespace Flavor.Common.Messaging {
         ISend AutomatedReply();
     }
     interface IUpdateDevice {
+        void UpdateDevice(IDevice device);
+        [Obsolete]
         void UpdateDevice();
     }
     interface IUpdateGraph { }

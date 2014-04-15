@@ -9,7 +9,7 @@ namespace Flavor.Common {
         }
         readonly EventHandler undoProgramState;
         readonly EventHandler<EventArgs<Action>> onTheFlyAction;
-        protected Commander(PortLevel port) {
+        protected Commander(PortLevel port, IDevice device) {
             this.port = port;
             port.ErrorPort += (s, e) => {
                 // TODO: more accurate
@@ -48,6 +48,11 @@ namespace Flavor.Common {
                 } else {
                     setProgramStateWithoutUndo(ProgramStates.Ready);
                 }
+            };
+            r.UpdateDevice += (s, e) => {
+                // TODO: proper device
+                if (device != null)
+                    e.Value.UpdateDevice(device);
             };
             r.OperationBlock += (s, e) => {
                 hBlock = e.Value;

@@ -124,7 +124,7 @@ namespace Flavor.Common {
             }
             serialPort = new SerialPort();
             serialPort.PortName = Flavor.Common.Config.Port;
-            serialPort.BaudRate = Flavor.Common.Config.BaudRate;
+            serialPort.BaudRate = (int)Flavor.Common.Config.BaudRate;
             serialPort.DataBits = 8;
             serialPort.Parity = System.IO.Ports.Parity.None;
             serialPort.StopBits = System.IO.Ports.StopBits.One;

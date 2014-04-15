@@ -10,6 +10,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         }
 
         #region IUpdateDevice Members
+        public void UpdateDevice(IDevice device) {
+            throw new System.NotImplementedException();
+        }
         public void UpdateDevice() {
             Device.sysState = (Device.DeviceStates)sysState;
         }
@@ -60,9 +63,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             relaysStates = value14;
             turboSpeed = value16;
         }
-
         #region IUpdateDevice Members
-
+        public void UpdateDevice(IDevice device) {
+            throw new System.NotImplementedException();
+        }
         public void UpdateDevice() {
             Device.sysState = (Device.DeviceStates)sysState;
             Device.vacState = (Device.VacuumStates)vacState;
@@ -80,9 +84,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Device.TurboPump.Speed = turboSpeed;
             Device.relaysState(relaysStates);
         }
-
         #endregion
-
         public override CommandCode Id {
             get { return CommandCode.GetStatus; }
         }
@@ -183,15 +185,14 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Detector1 = value1;
             Detector2 = value2;
         }
-
         #region IUpdateDevice Members
-
+        public void UpdateDevice(IDevice device) {
+            throw new System.NotImplementedException();
+        }
         public void UpdateDevice() {
             Device.Detectors = new int[] { Detector1, Detector2 };
         }
-
         #endregion
-
         public override CommandCode Id {
             get { return CommandCode.GetCounts; }
         }
@@ -234,9 +235,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             v2 = value8;
             v3 = value9;
         }
-
         #region IUpdateDevice Members
-
+        public void UpdateDevice(IDevice device) {
+            throw new System.NotImplementedException();
+        }
         public void UpdateDevice() {
             Device.TurboPump.Speed = turboSpeed;
             Device.TurboPump.Current = turboCurrent;
@@ -246,9 +248,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Device.TurboPump.OperationTime = operationTime;
             Device.TurboPump.relaysState(v1, v2, v3);
         }
-
         #endregion
-
         public override CommandCode Id {
             get { return CommandCode.GetTurboPumpStatus; }
         }

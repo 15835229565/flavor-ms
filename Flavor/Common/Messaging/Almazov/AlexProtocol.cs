@@ -132,7 +132,8 @@ namespace Flavor.Common.Messaging.Almazov {
                 d[(byte)code] = new CommandRecord<CommandCode>(predicate, action((byte)code));
             // TODO: commands here
             add(CommandCode.CPU_Status, eq(4), sync(raw => new CPUStatusReply(raw[1], raw[2])));
-            add(CommandCode.HVE, eq(3), sync(raw => new HighVoltagePermittedStatusReply(raw[1] == 0 ? true : false)));
+            // strangely 4 bytes
+            add(CommandCode.HVE, eq(4), sync(raw => new HighVoltagePermittedStatusReply(raw[1] == 0 ? true : false)));
             add(CommandCode.PRGE, eq(3), sync(raw => {
                 byte on = raw[1];
                 bool? res;

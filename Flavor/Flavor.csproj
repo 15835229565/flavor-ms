@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{535B18E6-1D63-4BA6-A3DD-BC986502133B}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Common\AlmazovCommander.cs" />
     <Compile Include="Common\Commander.cs" />
+    <Compile Include="Common\IDevice.cs" />
     <Compile Include="Common\Messaging\Almazov\AlmazovRealizer.cs" />
     <Compile Include="Common\Messaging\Almazov\Commands.cs" />
     <Compile Include="Common\Messaging\Almazov\Async.cs" />

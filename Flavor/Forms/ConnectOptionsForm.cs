@@ -16,7 +16,7 @@ namespace Flavor.Forms {
         }
 
         private void ok_butt_Click(object sender, EventArgs e) {
-            Config.saveGlobalConnectOptions(serialPortComboBox.Text, ushort.Parse(baudrateComboBox.Text));
+            Config.saveGlobalConnectOptions(serialPortComboBox.Text, uint.Parse(baudrateComboBox.Text));
             Close();
         }
     }

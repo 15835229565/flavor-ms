@@ -54,7 +54,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             v3 = commandline[15];
         }
         #region IUpdateDevice Members
-
+        public void UpdateDevice(IDevice device) {
+            throw new System.NotImplementedException();
+        }
         public void UpdateDevice() {
             Device.TurboPump.Speed = turboSpeed;
             Device.TurboPump.Current = turboCurrent;
@@ -64,7 +66,6 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Device.TurboPump.OperationTime = operationTime;
             Device.TurboPump.relaysState(v1, v2, v3);
         }
-
         #endregion
     }
 

@@ -60,6 +60,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         protected override PackageDictionary<CommandCode> GetDictionary() {
             var d = new PackageDictionary<CommandCode>();
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
+            Action<ServicePacket<CommandCode>> updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
             //async error
             add(CommandCode.InternalError, null);
             add(CommandCode.InvalidSystemState, null);

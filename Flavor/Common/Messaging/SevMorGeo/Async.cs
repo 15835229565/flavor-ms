@@ -12,6 +12,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
 
     class confirmVacuumReady: AsyncReply, IUpdateDevice {
         #region IUpdateDevice Members
+        public void UpdateDevice(IDevice device) {
+            throw new System.NotImplementedException();
+        }
         public void UpdateDevice() {
         }
         #endregion

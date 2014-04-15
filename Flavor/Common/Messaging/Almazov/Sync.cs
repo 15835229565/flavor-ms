@@ -41,6 +41,9 @@ namespace Flavor.Common.Messaging.Almazov {
             get { return CommandCode.HVE; }
         }
         #region IUpdateDevice Members
+        public void UpdateDevice(IDevice device) {
+            //TODO: implement
+        }
         public void UpdateDevice() {
             throw new System.NotImplementedException();
         }
@@ -55,6 +58,9 @@ namespace Flavor.Common.Messaging.Almazov {
             get { return CommandCode.PRGE; }
         }
         #region IUpdateDevice Members
+        public void UpdateDevice(IDevice device) {
+            //TODO: implement
+        }
         public void UpdateDevice() {
             throw new NotImplementedException();
         }
