@@ -110,9 +110,14 @@ namespace Flavor.Common.Messaging {
                 return false;
             }
             var actor = dictionary[code];
-            if (actor != null && actor.Act != null)
-                actor.Act(e.Command);
-            return true;
+            if (actor != null && actor.Act != null) {
+                var command = e.Command;
+                if (command != null) {
+                    actor.Act(command);
+                    return true;
+                }
+            }
+            return false;
         }
         [Obsolete]
         public event ProgramEventHandler ProgramStateChangeRequested;

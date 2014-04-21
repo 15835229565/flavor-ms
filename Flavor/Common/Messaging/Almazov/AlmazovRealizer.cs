@@ -6,7 +6,7 @@ namespace Flavor.Common.Messaging.Almazov {
             : this(new AlexProtocol(port), interval) { }
         AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, Generator<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
-                new StatusRequestGenerator(new CPUStatusRequest(), new HighVoltagePermittedStatusRequest(), new OperationBlockRequest(null)),
+                new StatusRequestGenerator(new TICStatusRequest(), new CPUStatusRequest(), new HighVoltagePermittedStatusRequest(), new OperationBlockRequest(null)),
                 interval)) { }
         AlmazovRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
             : base(protocol, queue) { }
@@ -50,6 +50,7 @@ namespace Flavor.Common.Messaging.Almazov {
 
         bool onTheFly = true;
         protected override PackageDictionary<CommandCode> GetDictionary() {
+            //var d = new System.Collections.Generic.Dictionary<ServicePacket<CommandCode>, PackageRecord<CommandCode>>();
             var d = new PackageDictionary<CommandCode>();
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
             //async error
@@ -67,6 +68,8 @@ namespace Flavor.Common.Messaging.Almazov {
                     onTheFly = false;
                 }
             }));
+            // TODO: proper command detection!
+            add(CommandCode.TIC_Retransmit, updateDevice);
             return d;
         }
     }

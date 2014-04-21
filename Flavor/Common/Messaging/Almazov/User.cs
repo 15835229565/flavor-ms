@@ -31,4 +31,22 @@ namespace Flavor.Common.Messaging.Almazov {
             get { return CommandCode.PRGE; }
         }
     }
+    class TICStatusRequest: UserRequest {
+        public readonly string Request = "?V902\r";
+        public override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id, Request); }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.TIC_Retransmit; }
+        }
+        public override bool Equals(object other) {
+            // BAD: asymmetric
+            if (base.Equals(other))
+                return (other as TICStatusRequest).Request.Equals(this.Request);
+            return false;
+        }
+        public override int GetHashCode() {
+            return base.GetHashCode() + 17 * Request.GetHashCode();
+        }
+    }
 }

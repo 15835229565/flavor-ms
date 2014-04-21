@@ -8,6 +8,7 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable {
         public abstract T Id { get; }
         public override bool Equals(object other) {
+            // BAD: asymmetric
             if (other is Sync<T>)
                 return Id.Equals((other as Sync<T>).Id);
             return false;

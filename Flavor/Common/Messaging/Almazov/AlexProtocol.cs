@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlexProtocol: SyncAsyncCheckableProtocol<CommandCode> {
@@ -25,6 +27,9 @@ namespace Flavor.Common.Messaging.Almazov {
             foreach (object o in values) {
                 if (o is byte)
                     data.Add((byte)o);
+                if (o is string) {
+                    data.AddRange(Encoding.ASCII.GetBytes(o as string));
+                }
                 //if (o is ushort)
                 //    data.AddRange(ushort2ByteArray((ushort)o));
                 //if (o is int)
@@ -40,7 +45,9 @@ namespace Flavor.Common.Messaging.Almazov {
             readonly List<byte> packetBuffer = new List<byte>();
             enum PacketingState {
                 Idle,
+                WaitCommand,
                 Wait,
+                WaitInternalTIC,
             }
             PacketingState state = PacketingState.Idle;
             protected override void DispatchByte(byte data) {
@@ -48,13 +55,30 @@ namespace Flavor.Common.Messaging.Almazov {
                     case PacketingState.Idle: {
                             if (data == KEY) {
                                 packetBuffer.Clear();
-                                state = PacketingState.Wait;
+                                state = PacketingState.WaitCommand;
                             } else {
                                 //Symbol outside packet
                                 OnLog(string.Format("Error({0})", data));
                             }
                             break;
                         }
+                    case PacketingState.WaitCommand: {
+                        // BAD!
+                        if (data == (byte)CommandCode.TIC_Retransmit) {
+                            state = PacketingState.WaitInternalTIC;
+                        } else {
+                            state = PacketingState.Wait;
+                        }
+                        packetBuffer.Add(data);
+                        break;
+                    }
+                    case PacketingState.WaitInternalTIC: {
+                        if (data == LOCK) {
+                            state = PacketingState.Wait;
+                        }
+                        packetBuffer.Add(data);
+                        break;
+                    }
                     case PacketingState.Wait: {
                             if (data == LOCK) {
                                 OnPackageReceived(packetBuffer);
@@ -85,7 +109,6 @@ namespace Flavor.Common.Messaging.Almazov {
             void OnLog(string prefix, ICollection<byte> pack) {
                 var sb = new StringBuilder(prefix);
                 foreach (byte b in pack) {
-                    sb.Append((char)b);
                     sb.Append(GetNibble(b >> 4));
                     sb.Append(GetNibble(b));
                 }
@@ -144,6 +167,29 @@ namespace Flavor.Common.Messaging.Almazov {
                 else
                     res = false;
                 return new OperationBlockReply(res);
+            }));
+            add(CommandCode.TIC_Retransmit, moreeq(28), sync(raw => {
+                Regex expression = new Regex(@"^=V902 ([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+\r$");
+                Match match;
+                match = expression.Match(Encoding.ASCII.GetString(raw.ToArray()));
+                if (match.Success) {
+                    GroupCollection groups = match.Groups;
+                    var turbo = groups[1].Value == "4";
+                    var relay1 = groups[2].Value == "4";
+                    var relay2 = groups[3].Value == "4";
+                    var relay3 = groups[4].Value == "4";
+                    int alert;
+                    try {
+                        alert = int.Parse(groups[5].Value);
+                    } catch (FormatException) {
+                        //error. wrong alert format.
+                        alert = 0;
+                    }
+                    return new TICStatusReply(turbo, relay1, relay2, relay3, alert);
+                } else {
+                    OnErrorCommand(raw, "Wrong TIC status");
+                    return null;
+                }
             }));
 
             add(CommandCode.Sync_Error, eq(4), syncerr(raw => new SyncErrorReply(raw[1], raw[2])));

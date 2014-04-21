@@ -66,4 +66,34 @@ namespace Flavor.Common.Messaging.Almazov {
         }
         #endregion
     }
+    class TICStatusReply: SyncReply, IUpdateDevice {
+        public readonly string Request = "?V902\r";
+        readonly bool turbo, relay1, relay2, relay3;
+        readonly int alert;
+        public TICStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
+            this.turbo = turbo;
+            this.relay1 = relay1;
+            this.relay2 = relay2;
+            this.relay3 = relay3;
+            this.alert = alert;
+        }
+        public override CommandCode Id {
+            get { return CommandCode.TIC_Retransmit; }
+        }
+        public void UpdateDevice(IDevice device) {
+            throw new NotImplementedException();
+        }
+        public void UpdateDevice() {
+            throw new NotImplementedException();
+        }
+        public override bool Equals(object other) {
+            // BAD: asymmetric
+            if (base.Equals(other))
+                return (other as TICStatusRequest).Request.Equals(this.Request);
+            return false;
+        }
+        public override int GetHashCode() {
+            return base.GetHashCode() + 17 * Request.GetHashCode();
+        }
+    }
 }
