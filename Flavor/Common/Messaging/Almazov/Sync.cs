@@ -42,7 +42,7 @@ namespace Flavor.Common.Messaging.Almazov {
         }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
-            //TODO: implement
+            device.OperationReady(enabled);
         }
         public void UpdateDevice() {
             throw new System.NotImplementedException();
@@ -59,7 +59,8 @@ namespace Flavor.Common.Messaging.Almazov {
         }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
-            //TODO: implement
+            if (on.HasValue)
+                device.OperationBlock(on.Value);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();
@@ -81,7 +82,7 @@ namespace Flavor.Common.Messaging.Almazov {
             get { return CommandCode.TIC_Retransmit; }
         }
         public void UpdateDevice(IDevice device) {
-            throw new NotImplementedException();
+            device.UpdateStatus(turbo, relay1, relay2, relay3, alert);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();

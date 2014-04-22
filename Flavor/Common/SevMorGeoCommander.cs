@@ -7,24 +7,80 @@ using Flavor.Common.Library;
 namespace Flavor.Common {
     class SevMorGeoCommader: Commander {
         readonly EventHandler<EventArgs<int[]>> deviceCountsUpdated;
+        SevMorGeoRealizer realizer;
+        readonly EventHandler<EventArgs<Action>> onTheFlyAction;
         public SevMorGeoCommader()
             // TODO: proper device
             : base(new PortLevel(), null) {
             deviceCountsUpdated = (s, e) => {
                 CurrentMeasureMode.UpdateGraph();
-                if (!CurrentMeasureMode.onUpdateCounts()) {
+                if (!CurrentMeasureMode.onUpdateCounts(Device.Detectors)) {
                     OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
                 }
             };
+            realizer.SystemDown += (s, e) => {
+                if (e.Value) {
+                    if (pState != ProgramStates.Start) {
+                        setProgramStateWithoutUndo(ProgramStates.Start);
+                        MeasureCancelRequested = false;
+                    }
+                } else {
+                    OnLog("System is shutdowned");
+                    setProgramStateWithoutUndo(ProgramStates.Start);
+                    hBlock = true;
+                    OnLog(pState.ToString());
+                    Device.Init();
+                }
+            };
+            realizer.OperationToggle += (s, e) => {
+                if (e.Value) {
+                    OnLog("Init request confirmed");
+                    setProgramStateWithoutUndo(ProgramStates.Init);
+                } else {
+                    OnLog("Shutdown request confirmed");
+                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
+                }
+                OnLog(pState.ToString());
+            };
+            onTheFlyAction = (s, e) => {
+                (s as IRealizer).FirstStatus -= onTheFlyAction;
+                switch (Device.sysState) {
+                    case Device.DeviceStates.Init:
+                    case Device.DeviceStates.VacuumInit:
+                        hBlock = true;
+                        setProgramStateWithoutUndo(ProgramStates.Init);
+                        break;
+
+                    case Device.DeviceStates.ShutdownInit:
+                    case Device.DeviceStates.Shutdowning:
+                        hBlock = true;
+                        setProgramStateWithoutUndo(ProgramStates.Shutdown);
+                        break;
+
+                    case Device.DeviceStates.Measured:
+                        e.Value();
+                        // waiting for fake counts reply
+                        break;
+                    case Device.DeviceStates.Measuring:
+                        // async message here with auto send-back
+                        // and waiting for fake counts reply
+                        break;
+
+                    case Device.DeviceStates.Ready:
+                        hBlock = false;
+                        setProgramStateWithoutUndo(ProgramStates.Ready);
+                        break;
+                    case Device.DeviceStates.WaitHighVoltage:
+                        hBlock = true;
+                        setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
+                        break;
+                }
+                OnLog(pState.ToString());
+            };
+            realizer.FirstStatus += onTheFlyAction;
         }
-        protected override IRealizer GetRealizer(PortLevel port) {
-            return new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
-        }
-        // TODO: common
-        bool notRare() {
-            if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
-                return notRareModeRequested;
-            return true;
+        protected override IRealizer GetRealizer(PortLevel port, Generator<bool> notRare) {
+            return realizer = new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
         }
         
         public override void Bind(IMSControl view) {
@@ -86,7 +142,7 @@ namespace Flavor.Common {
                         var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
                         Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                     };
-                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak);
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Device.Detectors);
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
@@ -135,7 +191,7 @@ namespace Flavor.Common {
                     temp.SaveResults += (s, e) => Config.autoSaveMonitorSpectrumFile(e.Shift);
                     CurrentMeasureMode = temp;
                     CurrentMeasureMode.Finalize += (s, e) => Config.finalizeMonitorFile();
-                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak);
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Device.Detectors);
                     
                     if (doBackgroundPremeasure) {
                         initMeasure(ProgramStates.WaitBackgroundMeasure);
@@ -168,7 +224,7 @@ namespace Flavor.Common {
                 return null;
             }
         }
-        void NewBackgroundMeasureReady(int[] recreate) {
+        void NewBackgroundMeasureReady(int[] counts, params int[] recreate) {
             // TODO: more accurately
             if (recreate.Length == Graph.Instance.Collectors.Count) {
                 List<long> currentMeasure = new List<long>();
@@ -189,7 +245,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        void NewMonitorMeasureReady(int[] recreate) {
+        void NewMonitorMeasureReady(int[] counts, params int[] recreate) {
             if (recreate.Length == 0)
                 return;
             List<long> currentMeasure = new List<long>();

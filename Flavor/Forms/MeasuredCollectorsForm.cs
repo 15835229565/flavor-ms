@@ -7,13 +7,13 @@ using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
-    internal partial class MeasuredCollectorsForm: CollectorsForm2, IMeasured {
+    partial class MeasuredCollectorsForm: CollectorsForm2, IMeasured {
         public event EventHandler MeasureCancelRequested;
         protected virtual void OnMeasureCancelRequested() {
             if (MeasureCancelRequested != null)
                 MeasureCancelRequested(this, EventArgs.Empty);
         }
-        internal MeasuredCollectorsForm()
+        public MeasuredCollectorsForm()
             : base(Graph.Instance, false) {
             InitializeComponent();
         }
@@ -64,25 +64,21 @@ namespace Flavor.Forms {
 			return base.saveData();        
 		}
 
-        private void MeasuredCollectorsForm_MeasureCancelRequested(object sender, EventArgs e) {
+        void MeasuredCollectorsForm_MeasureCancelRequested(object sender, EventArgs e) {
             // do something local
             (Panel as MeasureGraphPanel).MeasureCancelRequested -= MeasuredCollectorsForm_MeasureCancelRequested;
             OnMeasureCancelRequested();
         }
 
-        private void InvokeRefreshGraph(int[] recreate) {
-            if (this.InvokeRequired) {
-                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
-                return;
-            }
-            refreshGraph(recreate);
+        void InvokeRefreshGraph(int[] counts, params int[] recreate) {
+            Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
         }
-        private void refreshGraph(int[] recreate) {
+        void refreshGraph(int[] counts, params int[] recreate) {
             // TODO: use recreate to refresh only affected collectors
-            refreshGraphicsOnMeasureStep();
+            refreshGraphicsOnMeasureStep(counts);
         }
-        private void refreshGraphicsOnMeasureStep() {
-            (Panel as MeasureGraphPanel).performStep();
+        void refreshGraphicsOnMeasureStep(int[] counts) {
+            (Panel as MeasureGraphPanel).performStep(counts);
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();
         }

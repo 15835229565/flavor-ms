@@ -8,16 +8,19 @@ namespace Flavor.Common {
             view.Connect += Connect;
         }
         readonly EventHandler undoProgramState;
-        readonly EventHandler<EventArgs<Action>> onTheFlyAction;
+        // BAD!
+        public readonly IDevice device;
         protected Commander(PortLevel port, IDevice device) {
             this.port = port;
             port.ErrorPort += (s, e) => {
                 // TODO: more accurate
                 OnErrorOccured(e.Message);
             };
+            this.device = device;
+
             undoProgramState = (s, e) => setProgramStateWithoutUndo(pStatePrev);
             notRareModeRequested = false;
-            var r = GetRealizer(port);
+            var r = GetRealizer(port, notRare);
             ConsoleWriter.Subscribe(r);
 
             // eliminate local events!
@@ -28,20 +31,6 @@ namespace Flavor.Common {
             };
             MeasureCancelled += s => r.Reset();
 
-            r.SystemDown += (s, e) => {
-                if (e.Value) {
-                    if (pState != ProgramStates.Start) {
-                        setProgramStateWithoutUndo(ProgramStates.Start);
-                        MeasureCancelRequested = false;
-                    }
-                } else {
-                    OnLog("System is shutdowned");
-                    setProgramStateWithoutUndo(ProgramStates.Start);
-                    hBlock = true;
-                    OnLog(pState.ToString());
-                    Device.Init();
-                }
-            };
             r.SystemReady += (s, e) => {
                 if (hBlock) {
                     setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
@@ -64,16 +53,6 @@ namespace Flavor.Common {
                     }
                 }
             };
-            r.OperationToggle += (s, e) => {
-                if (e.Value) {
-                    OnLog("Init request confirmed");
-                    setProgramStateWithoutUndo(ProgramStates.Init);
-                } else {
-                    OnLog("Shutdown request confirmed");
-                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
-                }
-                OnLog(pState.ToString());
-            };
             r.MeasurePreconfigured += (s, e) => {
                 if (pState == ProgramStates.Measure ||
                     pState == ProgramStates.WaitBackgroundMeasure) {
@@ -94,47 +73,16 @@ namespace Flavor.Common {
                     setProgramStateWithoutUndo(ProgramStates.Ready);
                 }
             };
-            onTheFlyAction = (s, e) => {
-                (s as IRealizer).FirstStatus -= onTheFlyAction;
-                switch (Device.sysState) {
-                    case Device.DeviceStates.Init:
-                    case Device.DeviceStates.VacuumInit:
-                        hBlock = true;
-                        setProgramStateWithoutUndo(ProgramStates.Init);
-                        break;
-
-                    case Device.DeviceStates.ShutdownInit:
-                    case Device.DeviceStates.Shutdowning:
-                        hBlock = true;
-                        setProgramStateWithoutUndo(ProgramStates.Shutdown);
-                        break;
-
-                    case Device.DeviceStates.Measured:
-                        e.Value();
-                        // waiting for fake counts reply
-                        break;
-                    case Device.DeviceStates.Measuring:
-                        // async message here with auto send-back
-                        // and waiting for fake counts reply
-                        break;
-
-                    case Device.DeviceStates.Ready:
-                        hBlock = false;
-                        setProgramStateWithoutUndo(ProgramStates.Ready);
-                        break;
-                    case Device.DeviceStates.WaitHighVoltage:
-                        hBlock = true;
-                        setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
-                        break;
-                }
-                OnLog(pState.ToString());
-            };
-            r.FirstStatus += onTheFlyAction;
             this.realizer = r;
 
             hBlock = true;
         }
-        protected abstract IRealizer GetRealizer(PortLevel port);
+        protected abstract IRealizer GetRealizer(PortLevel port, Generator<bool> notRare);
+        bool notRare() {
+            if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
+                return notRareModeRequested;
+            return true;
+        }
         #region ILog Members
         public event MessageHandler Log;
         protected virtual void OnLog(string msg) {
@@ -281,9 +229,10 @@ namespace Flavor.Common {
             get { return PortLevel.AvailablePorts; }
         }
 
-        protected bool hBlock { get; private set; }
+        // TODO: private set!
+        protected bool hBlock { get; set; }
 
-        protected readonly IRealizer realizer;
+        readonly IRealizer realizer;
         public MeasureMode CurrentMeasureMode { get; protected set; }
         bool measureCancelRequested = false;
         public bool MeasureCancelRequested {

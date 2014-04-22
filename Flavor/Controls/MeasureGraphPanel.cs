@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Flavor.Common;
 
 namespace Flavor.Controls {
-    public partial class MeasureGraphPanel: GraphPanel/*, IMeasured*/ {
+    partial class MeasureGraphPanel: GraphPanel/*, IMeasured*/ {
         public event EventHandler MeasureCancelRequested;
         protected virtual void OnMeasureCancelRequested() {
             if (MeasureCancelRequested != null)
@@ -13,7 +13,7 @@ namespace Flavor.Controls {
             InitializeComponent();
         }
         public int ProgressMaximum { get; set; }
-        private void cancelScanButton_Click(object sender, EventArgs e) {
+        void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
             OnMeasureCancelRequested();
         }
@@ -50,7 +50,7 @@ namespace Flavor.Controls {
 
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
         }
-        internal virtual void performStep() {
+        public virtual void performStep(int[] counts) {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
                 if (scanProgressBar.Value == scanProgressBar.Maximum) {
                     // if already full line - reinit
@@ -61,9 +61,9 @@ namespace Flavor.Controls {
             }
             stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
             scanRealTimeLabel.Text = CommonOptions.scanVoltageReal(Graph.Instance.LastPoint).ToString("f1");
-            int[] detectors = Device.Detectors;
-            detector1CountsLabel.Text = detectors[0].ToString();
-            detector2CountsLabel.Text = detectors[1].ToString();
+            //int[] detectors = Device.Detectors;
+            detector1CountsLabel.Text = counts[0].ToString();
+            detector2CountsLabel.Text = counts[1].ToString();
         }
 
         protected sealed override void disableControls() {

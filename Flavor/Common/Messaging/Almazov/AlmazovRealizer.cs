@@ -62,14 +62,14 @@ namespace Flavor.Common.Messaging.Almazov {
             //sync
             add(CommandCode.CPU_Status, null/*updateDevice*/);
             add(CommandCode.HVE, updateDevice /*+ (p => OnSystemReady())*/);
-            add(CommandCode.PRGE, updateDevice + /*(p => OnOperationBlock(true)) +*/ (p => {
+            add(CommandCode.PRGE, updateDevice /*(p => OnOperationBlock(true))*/);
+            // TODO: proper command detection!
+            add(CommandCode.TIC_Retransmit, updateDevice + (p => {
                 if (onTheFly) {
                     OnFirstStatus(() => { });
                     onTheFly = false;
                 }
             }));
-            // TODO: proper command detection!
-            add(CommandCode.TIC_Retransmit, updateDevice);
             return d;
         }
     }

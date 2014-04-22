@@ -4,17 +4,57 @@ using Flavor.Common.Messaging.Almazov;
 
 namespace Flavor.Common {
     class AlmazovCommander: Commander {
+        AlmazovRealizer realizer;
+        //readonly EventHandler<EventArgs<Action>> onTheFlyAction;
+        readonly EventHandler<EventArgs<int[]>> deviceCountsUpdated;
         public AlmazovCommander()
-            // TODO: proper device
-            : base(new PortLevel(), null) { }
-        protected override IRealizer GetRealizer(PortLevel port) {
-            return new AlmazovRealizer(port, () => notRare() ? 500 : 10000);
+            : base(new PortLevel(), new AlmazovDevice()) {
+            deviceCountsUpdated = (s, e) => {
+                CurrentMeasureMode.UpdateGraph();
+                if (!CurrentMeasureMode.onUpdateCounts(device.Detectors)) {
+                    OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                }
+            };
+            device.DeviceStateChanged += (s, e) => {
+                // TODO: change temporary solution
+                var state = (AlmazovDevice.DeviceStates)e.Value;
+                if ((state & AlmazovDevice.DeviceStates.Alert) != 0) {
+                    setProgramStateWithoutUndo(ProgramStates.Shutdown);
+                    return;
+                }
+                if ((state & AlmazovDevice.DeviceStates.PRGE) != 0) {
+                    setProgramStateWithoutUndo(ProgramStates.Ready);
+                    return;
+                }
+                if ((state & AlmazovDevice.DeviceStates.HVE) != 0) {
+                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
+                    return;
+                }
+                setProgramStateWithoutUndo(ProgramStates.Init);
+            };
+                /*realizer.SystemDown += (s, e) => {
+                    if (e.Value) {
+                        if (pState != ProgramStates.Start) {
+                            setProgramStateWithoutUndo(ProgramStates.Start);
+                            MeasureCancelRequested = false;
+                        }
+                    } else {
+                        OnLog("System is shutdowned");
+                        setProgramStateWithoutUndo(ProgramStates.Start);
+                        hBlock = true;
+                        OnLog(pState.ToString());
+                        //Device.Init();
+                    }
+                };*/
+            
+            /*onTheFlyAction = (s, e) => {
+                (s as IRealizer).FirstStatus -= onTheFlyAction;
+                OnLog(pState.ToString());
+            };
+            realizer.FirstStatus += onTheFlyAction;*/
         }
-        // TODO: common
-        bool notRare() {
-            if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
-                return notRareModeRequested;
-            return true;
+        protected override IRealizer GetRealizer(PortLevel port, Generator<bool> notRare) {
+            return realizer = new AlmazovRealizer(port, () => notRare() ? 500 : 10000);
         }
 
         public override void Bind(IMSControl view) {

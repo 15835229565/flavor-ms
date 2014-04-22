@@ -60,10 +60,10 @@ namespace Flavor.Common {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
         }
-        public bool onUpdateCounts() {
+        public bool onUpdateCounts(int[] counts) {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
-            saveData();
+            saveData(counts);
             if (toContinue())
             {
                 // TODO:!
@@ -93,7 +93,7 @@ namespace Flavor.Common {
         }
         // TODO: move to Commander!
         // internal usage only
-        abstract protected void saveData();
+        abstract protected void saveData(int[] counts);
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
         public virtual bool Start() {
@@ -121,7 +121,7 @@ namespace Flavor.Common {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
             }
-            protected override void saveData() { }
+            protected override void saveData(int[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(pointValue);
                 ++pointValue;
@@ -209,10 +209,10 @@ namespace Flavor.Common {
                     smpiSumMax += senseModePoints[i].Iterations; ;
                 }
             }
-            protected override void saveData() {
+            protected override void saveData(int[] counts) {
                 Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
-                int[] detectors = Device.Detectors;
-                senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += peak.Collector == 1 ? detectors[0] : detectors[1];
+                // be careful!
+                senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += counts[peak.Collector - 1];
             }
             public class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }

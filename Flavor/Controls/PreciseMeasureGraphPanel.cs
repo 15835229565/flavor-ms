@@ -3,11 +3,11 @@ using System.Windows.Forms;
 using Flavor.Common;
 
 namespace Flavor.Controls {
-    public partial class PreciseMeasureGraphPanel: MeasureGraphPanel {
+    partial class PreciseMeasureGraphPanel: MeasureGraphPanel {
         public PreciseMeasureGraphPanel() {
             InitializeComponent();
         }
-        private void refreshGraphicsOnPreciseStep() {
+        void refreshGraphicsOnPreciseStep() {
             var g = Graph as Graph.MeasureGraph;
             label37.Visible = true;
             peakNumberLabel.Text = (g.CurrentPeak.pNumber + 1).ToString();
@@ -36,8 +36,8 @@ namespace Flavor.Controls {
                 label16.Visible = true;
             }
         }
-        internal override void performStep() {
-            base.performStep();
+        public override void performStep(int[] counts) {
+            base.performStep(counts);
             refreshGraphicsOnPreciseStep();
         }
     }

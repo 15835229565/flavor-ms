@@ -5,9 +5,9 @@ using ZedGraph;
 using System.Collections;
 
 namespace Flavor.Common {
-    public class Graph {
-        private static MeasureGraph instance = null;
-        internal static MeasureGraph Instance {
+    class Graph {
+        static MeasureGraph instance = null;
+        public static MeasureGraph Instance {
             get {
                 if (instance == null) {
                     instance = new MeasureGraph(Config.CommonOptions, Config.COLLECTOR_COEFFS);
@@ -17,13 +17,13 @@ namespace Flavor.Common {
                 return instance;
             }
         }
-        internal enum Displaying {
+        public enum Displaying {
             Measured,
             Loaded,
             Diff
         }
         // TODO: use IEnumerable instead of int[]
-        private abstract class Recreate: IEnumerable<int> {
+        abstract class Recreate: IEnumerable<int> {
             public readonly static IEnumerable<int> None = Enumerable.Empty<int>();
             public static IEnumerable<int> All(int n) {
                 return new RecreateAll(n);
@@ -31,8 +31,8 @@ namespace Flavor.Common {
             public static IEnumerable<int> Set(params int[] ns) {
                 return new RecreateSet(ns);
             }
-            private class RecreateAll: Recreate {
-                private int N { get; set; }
+            class RecreateAll: Recreate {
+                int N { get; set; }
                 #region IEnumerable<int> Members
                 public override IEnumerator<int> GetEnumerator() {
                     for (int i = 1; i <= N; ++i)
@@ -41,8 +41,8 @@ namespace Flavor.Common {
                 #endregion
                 public RecreateAll(int n) { N = n; }
             }
-            private class RecreateSet: Recreate {
-                private int[] NS { get; set; }
+            class RecreateSet: Recreate {
+                int[] NS { get; set; }
                 #region IEnumerable<int> Members
                 public override IEnumerator<int> GetEnumerator() {
                     foreach (int i in NS)
@@ -168,13 +168,14 @@ namespace Flavor.Common {
         }
         
         // TODO: move to MeasureGraph (but is used on diff)
-        internal delegate void GraphEventHandler(int[] recreate);
+        // TODO: divide into 2 events: counts & graph update!
+        public delegate void GraphEventHandler(int[] counts, params int[] recreate);
         //internal delegate void GraphEventHandler(IEnumerable<int> recreate);
-        internal event GraphEventHandler NewGraphData;
-        private void OnNewGraphData(params int[] recreate) {
+        public event GraphEventHandler NewGraphData;
+        void OnNewGraphData(int[] counts, params int[] recreate) {
             //lock here?
             if (NewGraphData != null)
-                NewGraphData(recreate);
+                NewGraphData(counts, recreate);
         }
         //private void OnNewGraphData(params int[] recreate) {
         //    //lock here?
@@ -192,13 +193,13 @@ namespace Flavor.Common {
         //        NewGraphData(Recreate.All(Collectors.Count));
         //}
 
-        internal delegate void AxisModeEventHandler();
-        internal delegate void DisplayModeEventHandler(Displaying mode);
-        internal event AxisModeEventHandler OnAxisModeChanged;
-        internal event DisplayModeEventHandler OnDisplayModeChanged;
+        public delegate void AxisModeEventHandler();
+        public delegate void DisplayModeEventHandler(Displaying mode);
+        public event AxisModeEventHandler OnAxisModeChanged;
+        public event DisplayModeEventHandler OnDisplayModeChanged;
 
-        private pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
-        internal pListScaled.DisplayValue AxisDisplayMode {
+        pListScaled.DisplayValue axisMode = pListScaled.DisplayValue.Step;
+        public pListScaled.DisplayValue AxisDisplayMode {
             get {
                 return axisMode;
             }
@@ -209,8 +210,8 @@ namespace Flavor.Common {
                 }
             }
         }
-        private Displaying displayMode = Displaying.Loaded;
-        internal Displaying DisplayingMode {
+        Displaying displayMode = Displaying.Loaded;
+        public Displaying DisplayingMode {
             get { return displayMode; }
             private set {
                 if (displayMode != value) {
@@ -223,26 +224,26 @@ namespace Flavor.Common {
             }
         }
 
-        internal Spectrum Collectors { get; private set; }
-        internal CommonOptions CommonOptions {
+        public Spectrum Collectors { get; private set; }
+        public CommonOptions CommonOptions {
             get { return Collectors.CommonOptions; }
         }
-        private List<Utility.PreciseEditorData> preciseData = null;
-        internal List<Utility.PreciseEditorData> PreciseData {
+        List<Utility.PreciseEditorData> preciseData = null;
+        public List<Utility.PreciseEditorData> PreciseData {
             get { return preciseData; }
         }
         
-        private DateTime dateTime = DateTime.MaxValue;
-        internal DateTime DateTime {
+        DateTime dateTime = DateTime.MaxValue;
+        public DateTime DateTime {
             get { return dateTime; }
         }
-        private short? shift = null;
-        internal short? Shift {
+        short? shift = null;
+        public short? Shift {
             get { return shift; }
         }
 
         //TODO: move to view, not data
-        private List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
+        List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
             List<PointPairListPlus> temp = new List<PointPairListPlus>();
             pListScaled.DisplayValue am = useAxisMode ? axisMode : pListScaled.DisplayValue.Step;
             foreach (pListScaled pLS in Collectors[col - 1]) {
@@ -251,31 +252,31 @@ namespace Flavor.Common {
             return temp;
         }
         [Obsolete]
-        internal List<PointPairListPlus> Displayed1 {
+        public List<PointPairListPlus> Displayed1 {
             get {
                 return getPointPairs(1, true);
             }
         }
         [Obsolete]
-        internal List<PointPairListPlus> Displayed2 {
+        public List<PointPairListPlus> Displayed2 {
             get {
                 return getPointPairs(2, true);
             }
         }
         [Obsolete]
-        internal List<PointPairListPlus> Displayed1Steps {
+        public List<PointPairListPlus> Displayed1Steps {
             get {
                 return getPointPairs(1, false);
             }
         }
         [Obsolete]
-        internal List<PointPairListPlus> Displayed2Steps {
+        public List<PointPairListPlus> Displayed2Steps {
             get {
                 return getPointPairs(2, false);
             }
         }
         
-        internal bool isPreciseSpectrum {
+        public bool isPreciseSpectrum {
             get {
                 if (this != instance && preciseData != null)
                     return true;
@@ -285,7 +286,7 @@ namespace Flavor.Common {
             }
         }
 
-        internal class MeasureGraph: Graph {
+        public class MeasureGraph: Graph {
             public ushort LastPoint { get; private set; }
             public Utility.PreciseEditorData CurrentPeak { get; private set; }
 
@@ -307,7 +308,7 @@ namespace Flavor.Common {
             public void ResetPointListsWithEvent() {
                 Reset();
                 // TODO: All collectors
-                OnNewGraphData(1, 2);
+                OnNewGraphData(null, 1, 2);
             }
 
             // scan mode
@@ -319,14 +320,14 @@ namespace Flavor.Common {
                     Collectors[i][0].Add(pnt, ys[i]);
                 }
                 LastPoint = pnt;
-                OnNewGraphData();
+                OnNewGraphData(ys);
             }
 
             // precise mode
-            public void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped) {
+            public void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped, params int[] ys) {
                 LastPoint = pnt;
                 CurrentPeak = curped;
-                OnNewGraphData();
+                OnNewGraphData(ys);
             }
             public void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, /*Obsolete*/short? shift) {
                 for (int i = 0; i < peds.Count; ++i) {
@@ -345,7 +346,7 @@ namespace Flavor.Common {
                     }
                 }
                 // TODO: only affected collectors
-                OnNewGraphData(1, 2);
+                OnNewGraphData(null, 1, 2);
             }
 
             public void setDateTimeAndShift(DateTime dt, short? shift) {
@@ -354,8 +355,8 @@ namespace Flavor.Common {
             }
         }
         #region peak to add (static)
-        private static Utility.PreciseEditorData peakToAdd = null;
-        internal static Utility.PreciseEditorData PointToAdd {
+        static Utility.PreciseEditorData peakToAdd = null;
+        public static Utility.PreciseEditorData PointToAdd {
             get { return peakToAdd; }
             set {
                 if (peakToAdd != value) {
@@ -367,19 +368,19 @@ namespace Flavor.Common {
                 }
             }
         }
-        internal delegate void PointAddedDelegate(bool notNull);
-        internal static event PointAddedDelegate OnPointAdded;
+        public delegate void PointAddedDelegate(bool notNull);
+        public static event PointAddedDelegate OnPointAdded;
         #endregion
         
-        internal Graph(CommonOptions commonOpts, params double[] coeffs) {
+        public Graph(CommonOptions commonOpts, params double[] coeffs) {
             Collectors = new Spectrum(commonOpts, coeffs);
         }
 
-        internal void ResetPointLists() {
+        public void ResetPointLists() {
             Collectors.Clear();
         }
 
-        internal void updateGraphAfterScanLoad(params PointPairListPlus[] plists) {
+        public void updateGraphAfterScanLoad(params PointPairListPlus[] plists) {
             int count = plists.Length;
             if (count != Collectors.Count)
                 throw new ArgumentOutOfRangeException("plists");
@@ -387,11 +388,11 @@ namespace Flavor.Common {
                 Collectors[i][0].SetRows(plists[i]);
             }
         }
-        internal void updateGraphAfterScanLoad(DateTime dt, params PointPairListPlus[] plists) {
+        public void updateGraphAfterScanLoad(DateTime dt, params PointPairListPlus[] plists) {
             this.dateTime = dt;
             updateGraphAfterScanLoad(plists);
         }
-        internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
+        public void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
             preciseData = peds;
             foreach (Utility.PreciseEditorData ped in peds) {
                 if (ped == null || ped.AssociatedPoints == null || ped.AssociatedPoints.Count == 0)
@@ -400,41 +401,41 @@ namespace Flavor.Common {
                 Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
             }
         }
-        internal void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds, DateTime dt, short shift) {
+        public void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds, DateTime dt, short shift) {
             updateGraphAfterPreciseLoad(peds);
             this.dateTime = dt;
             this.shift = shift;
         }
 
-        internal void updateGraphAfterScanDiff(params PointPairListPlus[] plists) {
+        public void updateGraphAfterScanDiff(params PointPairListPlus[] plists) {
             updateGraphAfterScanDiff(true, plists);
         }
-        internal void updateGraphAfterScanDiff(bool newData, params PointPairListPlus[] plists) {
+        public void updateGraphAfterScanDiff(bool newData, params PointPairListPlus[] plists) {
             updateGraphAfterScanLoad(DateTime.MaxValue, plists);
             DisplayingMode = Displaying.Diff;
             //lock here?
             if (newData)
                 // TODO: All collectors
-                OnNewGraphData(1, 2);
+                OnNewGraphData(null, 1, 2);
         }
-        internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
+        public void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
             ResetPointLists();
             updateGraphAfterPreciseDiff(peds, true);
         }
-        internal void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds, bool newData) {
+        public void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds, bool newData) {
             updateGraphAfterPreciseLoad(peds, DateTime.MaxValue, short.MaxValue);
             DisplayingMode = Displaying.Diff;
             //lock here?
             if (newData)
                 // TODO: only affected collectors
-                OnNewGraphData(1, 2);
+                OnNewGraphData(null, 1, 2);
         }
         #region Graph scaling to mass coeffs
-        internal bool setScalingCoeff(byte col, ushort pnt, double mass) {
+        public bool setScalingCoeff(byte col, ushort pnt, double mass) {
             double value = mass * CommonOptions.scanVoltageReal(pnt);
             bool result = Collectors.RecomputeMassRows(col, value);
             if (result && axisMode == pListScaled.DisplayValue.Mass) {
-                OnNewGraphData(col);
+                OnNewGraphData(null, col);
             }
             return result;
         }

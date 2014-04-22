@@ -298,13 +298,18 @@ namespace Flavor.Forms {
             CollectorsForm.Visible = true;
             // do not activate so early!
             //MonitorForm.Visible = false;
-
-            Device.OnDeviceStateChanged += InvokeRefreshDeviceState;
-            Device.OnDeviceStatusChanged += InvokeRefreshDeviceStatus;
-            Device.OnVacuumStateChanged += InvokeRefreshVacuumState;
-            Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
-            Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
-            Device.Init();
+            var device = commander.device;
+            if (device == null) {
+                Device.OnDeviceStateChanged += InvokeRefreshDeviceState;
+                Device.OnDeviceStatusChanged += InvokeRefreshDeviceStatus;
+                Device.OnVacuumStateChanged += InvokeRefreshVacuumState;
+                Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
+                Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
+                Device.Init();
+            } else {
+                // BAD!
+                device.DeviceStateChanged += RefreshDeviceStateAsync;
+            }
             RefreshDeviceState();
             RefreshVacuumState();
 
@@ -316,11 +321,16 @@ namespace Flavor.Forms {
                 e.Cancel = true;
                 return;
             }
-            Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
-            Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
-            Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
-            Device.OnTurboPumpStatusChanged -= InvokeRefreshTurboPumpStatus;
-            Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
+            var device = commander.device;
+            if (device == null) {
+                Device.OnDeviceStateChanged -= InvokeRefreshDeviceState;
+                Device.OnDeviceStatusChanged -= InvokeRefreshDeviceStatus;
+                Device.OnVacuumStateChanged -= InvokeRefreshVacuumState;
+                Device.OnTurboPumpStatusChanged -= InvokeRefreshTurboPumpStatus;
+                Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
+            } else {
+                device.DeviceStateChanged -= RefreshDeviceStateAsync;
+            }
 
             commander.ProgramStateChanged -= InvokeRefreshButtons;
 
@@ -511,6 +521,10 @@ namespace Flavor.Forms {
             measure_StatusLabel.Text = msg;
         }
 
+        void RefreshDeviceStateAsync(object sender, EventArgs<byte> e) {
+            // TODO:!
+            //BeginInvoke();
+        }
         // TODO: Device state as method parameter (avoid thread run)
         void InvokeRefreshDeviceState() {
             if (this.InvokeRequired) {

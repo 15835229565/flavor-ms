@@ -10,21 +10,21 @@ using PointPairListPlus = Flavor.Common.PointPairListPlus;
 
 namespace Flavor.Forms
 {
-    internal partial class MonitorForm: GraphForm, IMeasured {
+    partial class MonitorForm: GraphForm, IMeasured {
         public event EventHandler MeasureCancelRequested;
         protected virtual void OnMeasureCancelRequested() {
             if (MeasureCancelRequested != null)
                 MeasureCancelRequested(this, EventArgs.Empty);
         }
-        private const string FORM_TITLE = "Режим мониторинга";
-        private const string X_AXIS_TITLE = "Итерации";
-        private const string Y_AXIS_RELATIVE = " (отн.)";
-        private const string NORM_ITEM_TEXT = "Нормировать";
-        private const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
+        const string FORM_TITLE = "Режим мониторинга";
+        const string X_AXIS_TITLE = "Итерации";
+        const string Y_AXIS_RELATIVE = " (отн.)";
+        const string NORM_ITEM_TEXT = "Нормировать";
+        const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
-        private double time = -1;
-        public class PointPairListPlusWithMaxCapacity: PointPairListPlus {
-            private const int MAX_CAPACITY = 1000;
+        double time = -1;
+        class PointPairListPlusWithMaxCapacity: PointPairListPlus {
+            const int MAX_CAPACITY = 1000;
             public PointPairListPlusWithMaxCapacity() : base() { }
             public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
             public new void Add(PointPair pp) {
@@ -34,10 +34,10 @@ namespace Flavor.Forms
                 }
             }
         }
-        private List<PointPairListPlusWithMaxCapacity> list;
-        private int rowsCount;
-        private List<long> sums;
-        private List<PointPairListPlusWithMaxCapacity> normalizedList = null;
+        List<PointPairListPlusWithMaxCapacity> list;
+        int rowsCount;
+        List<long> sums;
+        List<PointPairListPlusWithMaxCapacity> normalizedList = null;
 
         public MonitorForm() {
             InitializeComponent();
@@ -95,7 +95,7 @@ namespace Flavor.Forms
             graph.Size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (2 * VERT_GRAPH_INDENT)));
         }
 
-        protected void ZedGraphRebirth(List<PointPairListPlusWithMaxCapacity> dataPoints, string title) {
+        void ZedGraphRebirth(List<PointPairListPlusWithMaxCapacity> dataPoints, string title) {
             GraphPane myPane = graph.GraphPane;
             
             myPane.Title.Text = title;
@@ -121,15 +121,10 @@ namespace Flavor.Forms
         }
 
         // temporary?
-        private void InvokeRefreshGraph(int[] recreate) {
-            if (this.InvokeRequired) {
-                // TODO: NullPointerException here..
-                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
-                return;
-            }
-            refreshGraph(recreate);
+        void InvokeRefreshGraph(int[] counts, params int[] recreate) {
+            Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
         }
-        private void refreshGraph(int[] recreate) {
+        void refreshGraph(int[] counts, params int[] recreate) {
             if (recreate.Length != 0) {
                 if (time == -1) {
                     CreateGraph();
@@ -138,11 +133,11 @@ namespace Flavor.Forms
                     time += 1;
                 }
             }
-            refreshGraphicsOnMeasureStep();
+            refreshGraphicsOnMeasureStep(counts);
         }
-        private void refreshGraphicsOnMeasureStep() {
+        void refreshGraphicsOnMeasureStep(int[] counts) {
             MeasureGraphPanel panel = Panel as MeasureGraphPanel;
-            panel.performStep();
+            panel.performStep(counts);
         }
         #region IMeasured Members
         //parameters here are obsolete?
@@ -184,12 +179,12 @@ namespace Flavor.Forms
             time = -1;
         }
         #endregion
-        private void MonitorForm_MeasureCancelRequested(object sender, EventArgs e) {
+        void MonitorForm_MeasureCancelRequested(object sender, EventArgs e) {
             // do something local
             (Panel as MeasureGraphPanel).MeasureCancelRequested -= MonitorForm_MeasureCancelRequested;
             OnMeasureCancelRequested();
         }
-        private void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
+        void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
             if (sender is ZedGraphControlMonitor) {
                 ToolStripItemCollection items = args.MenuStrip.Items;
                 ToolStripMenuItem item = new ToolStripMenuItem();
@@ -201,7 +196,7 @@ namespace Flavor.Forms
                 items.Add(item);
             }
         }
-        private void NormItemCheckStateChanged(object sender, EventArgs e) {
+        void NormItemCheckStateChanged(object sender, EventArgs e) {
             // TODO: modify graph title
             if (normalizedList != null) {
                 normalizedList = null;
@@ -221,7 +216,7 @@ namespace Flavor.Forms
             graph.Refresh();
         }
 
-        private string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
+        string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
             PointPair pp = curve[iPt];
             string tooltipData = normalizedList == null ?
                                  string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y) :

@@ -72,9 +72,6 @@ namespace Flavor.Common {
         static ushort forVacuumValue;
         static ushort hVacuumValue;
 
-        static int Detector1Value;
-        static int Detector2Value;
-
         public static DeviceStates sysState {
             get { return systemState; }
             set {

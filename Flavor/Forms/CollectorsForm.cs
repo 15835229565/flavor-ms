@@ -13,23 +13,23 @@ using PointPairListPlus = Flavor.Common.PointPairListPlus;
 using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
-    internal partial class CollectorsForm: GraphForm {
-        private readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
-        private readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
-        private readonly string DIFF_TITLE = Resources.CollectorsForm_DiffTitle;
-        private readonly string PREC_TITLE = Resources.CollectorsForm_PreciseTitle;
-        private readonly string SCAN_TITLE = Resources.CollectorsForm_ScanTitle;
+    partial class CollectorsForm: GraphForm {
+        readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
+        readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
+        readonly string DIFF_TITLE = Resources.CollectorsForm_DiffTitle;
+        readonly string PREC_TITLE = Resources.CollectorsForm_PreciseTitle;
+        readonly string SCAN_TITLE = Resources.CollectorsForm_ScanTitle;
 
-        private readonly string X_AXIS_TITLE_STEP = Resources.CollectorsForm_XAxisTitleStep;
-        private readonly string X_AXIS_TITLE_MASS = Resources.CollectorsForm_XAxisTitleMass;
-        private readonly string X_AXIS_TITLE_VOLT = Resources.CollectorsForm_XAxisTitleVoltage;
+        readonly string X_AXIS_TITLE_STEP = Resources.CollectorsForm_XAxisTitleStep;
+        readonly string X_AXIS_TITLE_MASS = Resources.CollectorsForm_XAxisTitleMass;
+        readonly string X_AXIS_TITLE_VOLT = Resources.CollectorsForm_XAxisTitleVoltage;
 
-        private string col1Text;
-        private string col2Text;
-        private string modeText;
+        string col1Text;
+        string col2Text;
+        string modeText;
 
-        private Graph graph;
-        private bool modified = false;
+        Graph graph;
+        bool modified = false;
 
         protected bool Modified {
             get { return modified; }
@@ -44,8 +44,8 @@ namespace Flavor.Forms {
             Activate();
         }
 
-        private ZedGraphControlPlus[] graphs = null;
-        private bool preciseSpectrumDisplayed;
+        ZedGraphControlPlus[] graphs = null;
+        bool preciseSpectrumDisplayed;
         // TODO: make more clear here. now in Graph can be mistake
         protected bool PreciseSpectrumDisplayed {
             get { return preciseSpectrumDisplayed; }
@@ -59,8 +59,8 @@ namespace Flavor.Forms {
                 setTitles();
             }
         }
-        private ushort[] minX = { Config.MIN_STEP, Config.MIN_STEP }, maxX = { Config.MAX_STEP, Config.MAX_STEP };
-        internal protected bool specterSavingEnabled {
+        ushort[] minX = { Config.MIN_STEP, Config.MIN_STEP }, maxX = { Config.MAX_STEP, Config.MAX_STEP };
+        protected bool specterSavingEnabled {
             private get {
                 return saveToolStripMenuItem.Enabled;
             }
@@ -70,7 +70,7 @@ namespace Flavor.Forms {
                 distractFromCurrentToolStripMenuItem.Enabled = value && (graph.DisplayingMode != Graph.Displaying.Diff);
             }
         }
-        internal bool specterDiffEnabled {
+        public bool specterDiffEnabled {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
             //set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
@@ -107,28 +107,28 @@ namespace Flavor.Forms {
             graph.OnDisplayModeChanged += InvokeGraphModified;
         }
 
-        private void setTitles() {
+        void setTitles() {
             modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
             string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
             col1Text = prefix + COL1_TITLE + modeText;
             col2Text = prefix + COL2_TITLE + modeText;
         }
 
-        private void InvokeAxisModeChange() {
+        void InvokeAxisModeChange() {
             if (this.InvokeRequired) {
                 this.Invoke(new Graph.AxisModeEventHandler(CreateGraph));
                 return;
             }
             CreateGraph();
         }
-        private void InvokeGraphModified(Graph.Displaying mode) {
+        void InvokeGraphModified(Graph.Displaying mode) {
             if (this.InvokeRequired) {
                 this.Invoke(new Graph.DisplayModeEventHandler(GraphModified), mode);
                 return;
             }
             GraphModified(mode);
         }
-        private void GraphModified(Graph.Displaying mode) {
+        void GraphModified(Graph.Displaying mode) {
             if (mode == Graph.Displaying.Diff) {
                 setTitles();
                 Modified = true;
@@ -199,7 +199,7 @@ namespace Flavor.Forms {
         protected override sealed void RefreshGraph() {
             RefreshGraph(new int[] { 1, 2 });
         }
-        private void RefreshGraph(int[] recreate) {
+        void RefreshGraph(int[] recreate) {
             foreach (int i in recreate) {
                 if (i == 1)
                     collect1_graph.Refresh();
@@ -269,19 +269,19 @@ namespace Flavor.Forms {
             // Calculate the Axis Scale Ranges
             graphs[zgcIndex].AxisChange();
         }
-        private void distractFromCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
+        void distractFromCurrentToolStripMenuItem_Click(object sender, EventArgs e) {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        private void InvokeRefreshGraph(int[] recreate) {
+        void InvokeRefreshGraph(int[] counts, params int[] recreate) {
             if (this.InvokeRequired) {
                 // TODO: NullPointerException here..
-                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
+                this.Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
                 return;
             }
             refreshGraph(recreate);
         }
-        private void refreshGraph(int[] recreate) {
+        void refreshGraph(int[] counts, params int[] recreate) {
             if (recreate.Length != 0) {
                 CreateGraph(recreate);
                 return;
@@ -289,7 +289,7 @@ namespace Flavor.Forms {
             RefreshGraph();
         }
 
-        private void ZedGraphControlPlus_ContextMenuBuilder(object sender, ZedGraphControlPlus.ContextMenuBuilderEventArgs args) {
+        void ZedGraphControlPlus_ContextMenuBuilder(object sender, ZedGraphControlPlus.ContextMenuBuilderEventArgs args) {
             ToolStripItemCollection items = args.MenuStrip.Items;
             ToolStripItem item = new ToolStripSeparator();
             items.Add(item);
@@ -374,7 +374,7 @@ namespace Flavor.Forms {
             items.Add(item);
         }
 
-        private string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
+        string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
             string tooltipData = "";
             PointPair pp = curve[iPt];
             switch (graph.AxisDisplayMode) {
@@ -415,7 +415,7 @@ namespace Flavor.Forms {
             }
             return tooltipData;
         }
-        private void GraphForm_OnDiffOnPoint(ushort step, byte? collectorNumber, PreciseEditorData pedReference) {
+        void GraphForm_OnDiffOnPoint(ushort step, byte? collectorNumber, PreciseEditorData pedReference) {
             if (PreciseSpectrumDisplayed) {
                 openSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
             } else {
