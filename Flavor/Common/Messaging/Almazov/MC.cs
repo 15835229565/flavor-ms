@@ -1004,13 +1004,13 @@ namespace Flavor.Xmega32A4U_testBoard
                     message += "\r                          Полученная команда слишком коротка!";
                     return new List<byte>();
                 }
-                if (rDATA.First<byte>() == Command.KEY)
+                if (rDATA.First() == Command.KEY)
                 {
                     rDATA.RemoveAt(0);                              //Удаляем ключ
-                    if (rDATA.Last<byte>() == Command.LOCK)
+                    if (rDATA.Last() == Command.LOCK)
                     {
                         rDATA.RemoveAt(rDATA.Count - 1);        //Удаляем затвор
-                        byte CheckSum = rDATA.Last<byte>();
+                        byte CheckSum = rDATA.Last();
                         rDATA.RemoveAt(rDATA.Count - 1);        //Удаляем контрольную сумму
                         byte calcedCheckSum = calcCheckSum(rDATA.ToArray());
                         if (CheckSum == calcedCheckSum)

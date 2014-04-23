@@ -109,8 +109,8 @@ namespace Flavor.Common.Messaging.Almazov {
             void OnLog(string prefix, ICollection<byte> pack) {
                 var sb = new StringBuilder(prefix);
                 foreach (byte b in pack) {
-                    sb.Append(GetNibble(b >> 4));
-                    sb.Append(GetNibble(b));
+                    sb.Append((char)GetNibble(b >> 4));
+                    sb.Append((char)GetNibble(b));
                 }
                 OnLog(sb.ToString());
             }
@@ -171,7 +171,8 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.TIC_Retransmit, moreeq(28), sync(raw => {
                 Regex expression = new Regex(@"^=V902 ([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+\r$");
                 Match match;
-                match = expression.Match(Encoding.ASCII.GetString(raw.ToArray()));
+                var command = Encoding.ASCII.GetString(trim(raw).ToArray());
+                match = expression.Match(command);
                 if (match.Success) {
                     GroupCollection groups = match.Groups;
                     var turbo = groups[1].Value == "4";
