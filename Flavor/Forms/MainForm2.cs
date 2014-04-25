@@ -430,10 +430,11 @@ namespace Flavor.Forms {
         void ButtonClick(ToolStripButton button, Action<CallBackEventArgs<bool>> action) {
             button.Enabled = false;
             bool old = (bool)button.Tag;
-            var ee = new CallBackEventArgs<bool>(old, (s, eee) => {
-                button.Enabled = true;
-                button.Tag = old;
-            });
+            var ee = new CallBackEventArgs<bool>(old, (s, eee) => Invoke(new Action(() => {
+                    button.Enabled = true;
+                    button.Tag = old;
+                }))
+            );
             action(ee);
             bool res = ee.Value;
             if (old != res) {
