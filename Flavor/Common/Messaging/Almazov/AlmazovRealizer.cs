@@ -32,8 +32,7 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         protected override UserRequest<CommandCode> Block(bool block) {
-            bool on = !block;
-            return new OperationBlockRequest(on);
+            return new OperationBlockRequest(block);
         }
 
         [Obsolete]

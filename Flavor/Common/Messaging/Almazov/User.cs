@@ -25,7 +25,12 @@ namespace Flavor.Common.Messaging.Almazov {
             this.on = on;
         }
         public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
+            get {
+                if (on.HasValue) {
+                    ;
+                }
+                return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue);
+            }
         }
         public override CommandCode Id {
             get { return CommandCode.PRGE; }

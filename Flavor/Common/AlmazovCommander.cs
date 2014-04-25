@@ -23,10 +23,12 @@ namespace Flavor.Common {
                     return;
                 }
                 if ((state & AlmazovDevice.DeviceStates.PRGE) != 0) {
+                    hBlock = false;
                     setProgramStateWithoutUndo(ProgramStates.Ready);
                     return;
                 }
                 if ((state & AlmazovDevice.DeviceStates.HVE) != 0) {
+                    hBlock = true;
                     setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
                     return;
                 }
