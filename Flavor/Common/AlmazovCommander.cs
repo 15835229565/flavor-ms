@@ -32,6 +32,12 @@ namespace Flavor.Common {
                 }
                 setProgramStateWithoutUndo(ProgramStates.Init);
             };
+            device.VacuumStateChanged += (s, e) => {
+                var ee = e as EventArgs<bool>;
+                // workaround for detecting Relay1 change
+                if (ee != null)
+                    realizer.SetOperationToggle(ee.Value);
+            };
                 /*realizer.SystemDown += (s, e) => {
                     if (e.Value) {
                         if (pState != ProgramStates.Start) {

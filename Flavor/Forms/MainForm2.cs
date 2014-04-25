@@ -527,11 +527,7 @@ namespace Flavor.Forms {
         }
         // TODO: Device state as method parameter (avoid thread run)
         void InvokeRefreshDeviceState() {
-            if (this.InvokeRequired) {
-                this.BeginInvoke(new DeviceEventHandler(RefreshDeviceState));
-                return;
-            }
-            RefreshDeviceState();
+            BeginInvoke(new DeviceEventHandler(RefreshDeviceState));
         }
         // Device.DeviceState state
         void RefreshDeviceState() {
@@ -601,11 +597,7 @@ namespace Flavor.Forms {
 
         // TODO: turbo pump state as method parameter (avoid thread run)
         void InvokeRefreshTurboPumpStatus() {
-            if (this.InvokeRequired) {
-                this.BeginInvoke(new DeviceEventHandler(RefreshTurboPumpStatus));
-                return;
-            }
-            RefreshTurboPumpStatus();
+            BeginInvoke(new DeviceEventHandler(RefreshTurboPumpStatus));
         }
         void RefreshTurboPumpStatus() {
             parameterPanel.SuspendLayout();
@@ -624,11 +616,7 @@ namespace Flavor.Forms {
 
         // TODO: Device status as method parameter (avoid thread run)
         void InvokeRefreshDeviceStatus() {
-            if (this.InvokeRequired) {
-                this.BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
-                return;
-            }
-            RefreshDeviceStatus();
+            BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
         }
         void RefreshDeviceStatus() {
             parameterPanel.SuspendLayout();
@@ -687,11 +675,7 @@ namespace Flavor.Forms {
 
         // TODO: vacuum state as method parameter (avoid thread run)
         void InvokeRefreshVacuumState() {
-            if (this.InvokeRequired) {
-                this.BeginInvoke(new DeviceEventHandler(RefreshVacuumState));
-                return;
-            }
-            RefreshVacuumState();
+            BeginInvoke(new DeviceEventHandler(RefreshVacuumState));
         }
         // Device.VacuumStates state
         void RefreshVacuumState() {

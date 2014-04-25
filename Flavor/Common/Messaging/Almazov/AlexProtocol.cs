@@ -156,16 +156,21 @@ namespace Flavor.Common.Messaging.Almazov {
             // TODO: commands here
             add(CommandCode.CPU_Status, eq(4), sync(raw => new CPUStatusReply(raw[1], raw[2])));
             // strangely 4 bytes
-            add(CommandCode.HVE, eq(4), sync(raw => new HighVoltagePermittedStatusReply(raw[1] == 0 ? true : false)));
+            add(CommandCode.HVE, eq(4), sync(raw => new HighVoltagePermittedStatusReply(raw[2] == 0 ? true : false)));
             add(CommandCode.PRGE, eq(3), sync(raw => {
-                byte on = raw[1];
                 bool? res;
-                if (on == 254)
-                    res = null;
-                else if (on == 1)
-                    res = true;
-                else
-                    res = false;
+                switch (raw[1]) {
+                    case 0:
+                        res = false;
+                        break;
+                    case 1:
+                        res = true;
+                        break;
+                    case 254:
+                    default:
+                        res = null;
+                        break;
+                }
                 return new OperationBlockReply(res);
             }));
             add(CommandCode.TIC_Retransmit, moreeq(28), sync(raw => {
@@ -191,6 +196,21 @@ namespace Flavor.Common.Messaging.Almazov {
                     OnErrorCommand(raw, "Wrong TIC status");
                     return null;
                 }
+            }));
+            add(CommandCode.SEMV1, eq(3), sync(raw => {
+                bool? res;
+                switch (raw[1]) {
+                    case 0:
+                        res = false;
+                        break;
+                    case 1:
+                        res = true;
+                        break;
+                    default:
+                        res = null;
+                        break;
+                }
+                return new Valve1Reply(res);
             }));
 
             add(CommandCode.Sync_Error, eq(4), syncerr(raw => new SyncErrorReply(raw[1], raw[2])));

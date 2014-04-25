@@ -32,12 +32,14 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         protected override UserRequest<CommandCode> Block(bool block) {
-            return new OperationBlockRequest(block);
+            bool on = !block;
+            return new OperationBlockRequest(on);
         }
 
         [Obsolete]
         protected override UserRequest<CommandCode> OperationOnOff(bool on) {
-            throw new NotImplementedException();
+            // workaround for detecting Relay1 change
+            return new Valve1Request(on);
         }
 
         protected override UserRequest<CommandCode> Settings() {
@@ -50,13 +52,12 @@ namespace Flavor.Common.Messaging.Almazov {
 
         bool onTheFly = true;
         protected override PackageDictionary<CommandCode> GetDictionary() {
-            //var d = new System.Collections.Generic.Dictionary<ServicePacket<CommandCode>, PackageRecord<CommandCode>>();
             var d = new PackageDictionary<CommandCode>();
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
             //async error
             add(CommandCode.LAM_CriticalError, null);
             //async
-            add(CommandCode.LAM_Event, updateDevice + (p => OnSystemReady()));
+            add(CommandCode.LAM_Event, /*updateDevice + */(p => OnSystemReady()));
             //sync error
             add(CommandCode.Sync_Error, null);
             //sync
@@ -70,6 +71,7 @@ namespace Flavor.Common.Messaging.Almazov {
                     onTheFly = false;
                 }
             }));
+            add(CommandCode.SEMV1, updateDevice);
             return d;
         }
     }

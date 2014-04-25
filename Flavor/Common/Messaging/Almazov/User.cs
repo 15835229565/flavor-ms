@@ -25,7 +25,7 @@ namespace Flavor.Common.Messaging.Almazov {
             this.on = on;
         }
         public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id, on.HasValue ? (on.Value ? 1 : 0) : byte.MaxValue); }
+            get { return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
         }
         public override CommandCode Id {
             get { return CommandCode.PRGE; }
@@ -47,6 +47,18 @@ namespace Flavor.Common.Messaging.Almazov {
         }
         public override int GetHashCode() {
             return base.GetHashCode() + 17 * Request.GetHashCode();
+        }
+    }
+    class Valve1Request: UserRequest {
+        readonly bool? on;
+        public Valve1Request(bool? on) {
+            this.on = on;
+        }
+        public override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.SEMV1; }
         }
     }
 }

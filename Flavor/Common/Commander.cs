@@ -127,12 +127,12 @@ namespace Flavor.Common {
             get {
                 return programState;
             }
-            protected set {
+            private set {
                 if (programState != value) {
                     programState = value;
                     if (value == ProgramStates.Start)
                         Disable();
-                    OnProgramStateChanged();
+                    OnProgramStateChanged(value);
                 };
             }
         }
@@ -156,10 +156,10 @@ namespace Flavor.Common {
         }
         #region IGlobalActions Members
         public event ProgramEventHandler ProgramStateChanged;
-        protected virtual void OnProgramStateChanged() {
+        protected virtual void OnProgramStateChanged(ProgramStates state) {
             var temp = ProgramStateChanged;
             if (temp != null)
-                temp(pState);
+                temp(state);
         }
         public void SendSettings() {
             realizer.SetSettings();

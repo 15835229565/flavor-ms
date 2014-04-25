@@ -97,4 +97,23 @@ namespace Flavor.Common.Messaging.Almazov {
             return base.GetHashCode() + 17 * Request.GetHashCode();
         }
     }
+    class Valve1Reply: SyncReply, IUpdateDevice {
+        readonly bool? on;
+        public Valve1Reply(bool? on) {
+            this.on = on;
+        }
+        public override CommandCode Id {
+            get { return CommandCode.SEMV1; }
+        }
+        #region IUpdateDevice Members
+        public void UpdateDevice(IDevice device) {
+            // TODO: check Valve1 is turned on/off according to Relay1
+            //if (on.HasValue)
+            //    device.UpdateStatus();
+        }
+        public void UpdateDevice() {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
 }
