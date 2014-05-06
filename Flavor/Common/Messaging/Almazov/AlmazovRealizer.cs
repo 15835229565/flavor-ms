@@ -32,6 +32,8 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         protected override UserRequest<CommandCode> Block(bool block) {
+            // TODO: stop status requests for several seconds or until SPI_conf_done is received
+            //toSend.Stop();
             return new OperationBlockRequest(block);
         }
 
