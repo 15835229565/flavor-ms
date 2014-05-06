@@ -34,13 +34,14 @@
         SEMV3 = 76,
         SPUMP = 77,
         
-        Sync_Error = 255,
+        Service_Message = 0,
+        //Sync_Error = 255,
 
-        LAM_Event = 254,
+        //LAM_Event = 254,
 
-        LAM_CriticalError = 252,
+        //LAM_CriticalError = 252,
         // TODO: why not processed?
         // TODO: check length
-        LAM_InternalError = 253,
+        //LAM_InternalError = 253,
     }
 }

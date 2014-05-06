@@ -54,11 +54,17 @@ namespace Flavor.Common.Messaging.Almazov {
             var d = new PackageDictionary<CommandCode>();
             Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
             //async error
-            add(CommandCode.LAM_CriticalError, null);
+            //add(CommandCode.LAM_CriticalError, null);
             //async
-            add(CommandCode.LAM_Event, /*updateDevice + */(p => OnSystemReady()));
+            //add(CommandCode.LAM_Event, /*updateDevice + */(p => OnSystemReady()));
             //sync error
-            add(CommandCode.Sync_Error, null);
+            //add(CommandCode.Sync_Error, null);
+
+            add(CommandCode.Service_Message, p => {
+                if (p is LAMEvent && (p as LAMEvent).number == 21) {
+                    OnSystemReady();
+                }
+            });
             //sync
             add(CommandCode.CPU_Status, null/*updateDevice*/);
             add(CommandCode.HVE, updateDevice /*+ (p => OnSystemReady())*/);

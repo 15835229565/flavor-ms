@@ -38,58 +38,62 @@ namespace Flavor.Common.Messaging.Almazov {
             return data;
         }
         class AlexProtocolByteDispatcher: ByteDispatcher {
-            readonly byte LOCK = 13;
-            readonly byte KEY = 58;
+            const byte KEY = 250, LOCK = 251, SERVICE = 252;
             public AlexProtocolByteDispatcher(PortLevel port, bool singleByteDispatching)
                 : base(port, singleByteDispatching) { }
             readonly List<byte> packetBuffer = new List<byte>();
             enum PacketingState {
                 Idle,
-                WaitCommand,
                 Wait,
-                WaitInternalTIC,
+                WaitLiteral,
             }
             PacketingState state = PacketingState.Idle;
             protected override void DispatchByte(byte data) {
                 switch (state) {
-                    case PacketingState.Idle: {
-                            if (data == KEY) {
-                                packetBuffer.Clear();
-                                state = PacketingState.WaitCommand;
-                            } else {
-                                //Symbol outside packet
-                                OnLog(string.Format("Error({0})", data));
-                            }
-                            break;
-                        }
-                    case PacketingState.WaitCommand: {
-                        // BAD!
-                        if (data == (byte)CommandCode.TIC_Retransmit) {
-                            state = PacketingState.WaitInternalTIC;
+                    case PacketingState.Idle:
+                        if (data == KEY) {
+                            packetBuffer.Clear();
+                            state = PacketingState.Wait;
                         } else {
-                            state = PacketingState.Wait;
+                            //Symbol outside packet
+                            OnLog(string.Format("Symbol outside packet: <{0}>", data));
                         }
-                        packetBuffer.Add(data);
                         break;
-                    }
-                    case PacketingState.WaitInternalTIC: {
-                        if (data == LOCK) {
-                            state = PacketingState.Wait;
+                    case PacketingState.WaitLiteral:
+                        switch (data) {
+                            case 0:
+                            case 1:
+                            case 2:
+                                data += 250;    
+                                packetBuffer.Add(data);
+                                break;
+                            default:
+                                //Wrong literal
+                                OnLog(string.Format("Wrong literal: <{0}>", data));
+                                break;
                         }
-                        packetBuffer.Add(data);
+                        state = PacketingState.Wait;
                         break;
-                    }
-                    case PacketingState.Wait: {
-                            if (data == LOCK) {
+                    case PacketingState.Wait:
+                        switch (data) {
+                            case LOCK:
                                 OnPackageReceived(packetBuffer);
                                 OnLog("[in]", packetBuffer);
                                 packetBuffer.Clear();
                                 state = PacketingState.Idle;
-                            } else {
+                                break;
+                            case SERVICE:
+                                state = PacketingState.WaitLiteral;
+                                break;
+                            case KEY:
+                                //Key inside packet
+                                OnLog("Key inside packet");
+                                break;
+                            default:
                                 packetBuffer.Add(data);
-                            }
-                            break;
+                                break;
                         }
+                        break;
                 }
             }
             ICollection<byte> buildPack(ICollection<byte> data) {
@@ -213,11 +217,57 @@ namespace Flavor.Common.Messaging.Almazov {
                 return new Valve1Reply(res);
             }));
 
-            add(CommandCode.Sync_Error, eq(4), syncerr(raw => new SyncErrorReply(raw[1], raw[2])));
+            // BAD temporary solution
+            ActionGenerator<ServicePacket<CommandCode>> service = gen => (code => (list => {
+                switch (list[1]) {
+                    case 1:
+                    case 10:
+                        OnSyncErrorReceived(code, gen(list) as SyncError<CommandCode>);
+                        break;
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                        OnAsyncCommandReceived(code, gen(list) as Async<CommandCode>);
+                        break;
+                    case 30:
+                    case 31:
+                        OnAsyncErrorReceived(code, gen(list) as AsyncError<CommandCode>);
+                        break;
+                    case 41:
+                    case 42:
+                        OnAsyncErrorReceived(code, gen(list) as AsyncError<CommandCode>);
+                        break;
+                    default:
+                        break;
+                }
+            }));
+            add(CommandCode.Service_Message, eq(3), service(raw => {
+                byte code = raw[1];
+                switch (code) {
+                    case 1:
+                    case 10:
+                        return new SyncErrorReply(code);
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                        return new LAMEvent(code);
+                    case 30:
+                    case 31:
+                        return new LAMCriticalError(code);
+                    case 41:
+                    case 42:
+                        return new LAMInternalError(code);
+                    default:
+                        return null;
+                }
+            }));
+            //add(CommandCode.Sync_Error, eq(4), syncerr(raw => new SyncErrorReply(raw[1])));
             
-            add(CommandCode.LAM_Event, eq(3), async(raw => new LAMEvent(raw[1])));
+            //add(CommandCode.LAM_Event, eq(3), async(raw => new LAMEvent(raw[1])));
             
-            add(CommandCode.LAM_CriticalError, eq(3), asyncerr(raw => new LAMCriticalError(raw[1])));
+            //add(CommandCode.LAM_CriticalError, eq(3), asyncerr(raw => new LAMCriticalError(raw[1])));
             // TODO: check length!
             //add(CommandCode.LAM_InternalError, eq(3), asyncerr(raw => new LAMInternalError(raw[1])));
             

@@ -9,9 +9,8 @@ namespace Flavor.Common.Messaging.Almazov {
             this.error = error;
         }
         enum Critical_Error {
-            Unknown = 0,
-            HVE_error_decode = 1, //Ошибка декодирования сообщения от TIC'a!
-            HVE_error_noResponse = 2,//TIC не ответил!
+            TIC_error_decode = 30, //Ошибка декодирования сообщения от TIC'a!
+            TIC_error_noResponse = 31,//TIC не ответил!
         }
         public override string Message {
             get { return "Critical error " + error; }

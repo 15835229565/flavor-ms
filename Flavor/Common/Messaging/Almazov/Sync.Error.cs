@@ -4,19 +4,17 @@ using SyncError = Flavor.Common.Messaging.SyncError<Flavor.Common.Messaging.Alma
 
 namespace Flavor.Common.Messaging.Almazov {
     class SyncErrorReply: SyncError {
-        readonly byte code, data;
-        public SyncErrorReply(byte code, byte data) {
+        readonly byte code;
+        public SyncErrorReply(byte code) {
             this.code = code;
-            this.data = data;
         }
-        enum Code : byte {
-            Unknown = 0,
-            Decoder = 1,       //Такой команды не существует
-            CheckSum = 2,       //Неверная контрольная сумма
+        enum Code: byte {
+            CheckSum = 1,       //Неверная контрольная сумма
+            Decoder = 10,       //Такой команды не существует
         }
 
         public override CommandCode Id {
-            get { return CommandCode.Sync_Error; }
+            get { return CommandCode.Service_Message; }
         }
     }
 }
