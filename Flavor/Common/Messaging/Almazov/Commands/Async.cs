@@ -1,6 +1,6 @@
 ﻿using AsyncReply = Flavor.Common.Messaging.Async<Flavor.Common.Messaging.Almazov.CommandCode>;
 
-namespace Flavor.Common.Messaging.Almazov {
+namespace Flavor.Common.Messaging.Almazov.Commands {
     class LAMEvent: AsyncReply {
         public readonly byte number;
         public LAMEvent(byte number) {

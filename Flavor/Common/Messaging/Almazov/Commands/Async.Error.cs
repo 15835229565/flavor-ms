@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using AsyncErrorReply = Flavor.Common.Messaging.AsyncError<Flavor.Common.Messaging.Almazov.CommandCode>;
 
-namespace Flavor.Common.Messaging.Almazov {
+namespace Flavor.Common.Messaging.Almazov.Commands {
     class LAMCriticalError: AsyncErrorReply {
         readonly byte error;
         public LAMCriticalError(byte error) {

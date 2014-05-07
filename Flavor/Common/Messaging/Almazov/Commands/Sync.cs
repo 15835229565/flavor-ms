@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CommandCode = Flavor.Common.Messaging.Almazov.CommandCode;
 using SyncReply = Flavor.Common.Messaging.SyncReply<Flavor.Common.Messaging.Almazov.CommandCode>;
 
-namespace Flavor.Common.Messaging.Almazov {
+namespace Flavor.Common.Messaging.Almazov.Commands {
     class CPUStatusReply: SyncReply {
         readonly byte incTIC, incMS;
         public CPUStatusReply(byte incTIC, byte incMS) {
@@ -115,5 +115,65 @@ namespace Flavor.Common.Messaging.Almazov {
             throw new NotImplementedException();
         }
         #endregion
+    }
+    class IonSourceSetReply: SyncReply {
+        public override CommandCode Id {
+            get { return CommandCode.SPI_PSIS_SetVoltage; }
+        }
+    }
+    abstract class IonSourceGetReply: SyncReply, IChannel {
+        readonly ushort voltage;
+        protected IonSourceGetReply(ushort voltage) {
+            this.voltage = voltage;
+        }
+        public static IonSourceGetReply Parse(params byte[] data) {
+            // TODO:!
+            return null;
+        }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_PSIS_GetVoltage; }
+        }
+        // what to do with request?
+        public override bool Equals(object other) {
+            // BAD: asymmetric
+            if (base.Equals(other))
+                return (other as IChannel).Channel == this.Channel;
+            return false;
+        }
+        public override int GetHashCode() {
+            return base.GetHashCode() + 19 * Channel.GetHashCode();
+        }
+
+        #region IChannel Members
+        public abstract byte Channel { get; }
+        #endregion
+    }
+    class GetEmissionCurrentReply: IonSourceGetReply {
+        public GetEmissionCurrentReply(ushort voltage)
+            : base(voltage) { }
+        public override byte Channel {
+            get { return 1; }
+        }
+    }
+    class GetIonizationVoltageReply: IonSourceGetReply {
+        public GetIonizationVoltageReply(ushort voltage)
+            : base(voltage) { }
+        public override byte Channel {
+            get { return 2; }
+        }
+    }
+    class GetF1VoltageReply: IonSourceGetReply {
+        public GetF1VoltageReply(ushort voltage)
+            : base(voltage) { }
+        public override byte Channel {
+            get { return 3; }
+        }
+    }
+    class GetF2VoltageReply: IonSourceGetReply {
+        public GetF2VoltageReply(ushort voltage)
+            : base(voltage) { }
+        public override byte Channel {
+            get { return 4; }
+        }
     }
 }

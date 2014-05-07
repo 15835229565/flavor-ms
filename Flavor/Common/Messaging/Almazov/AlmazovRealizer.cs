@@ -1,4 +1,5 @@
 ﻿using System;
+using Flavor.Common.Messaging.Almazov.Commands;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
