@@ -163,6 +163,7 @@ namespace Flavor.Common.Messaging.Almazov {
             // strangely 4 bytes
             add(CommandCode.HVE, eq(4), sync(raw => new HighVoltagePermittedStatusReply(raw[2] == 0 ? true : false)));
             add(CommandCode.PRGE, eq(3), sync(raw => {
+                // TODO: move into command ctor
                 bool? res;
                 switch (raw[1]) {
                     case 0:
@@ -203,6 +204,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             }));
             add(CommandCode.SEMV1, eq(3), sync(raw => {
+                // TODO: move into command ctor
                 bool? res;
                 switch (raw[1]) {
                     case 0:

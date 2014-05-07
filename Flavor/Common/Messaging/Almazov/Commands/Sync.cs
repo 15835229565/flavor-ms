@@ -127,8 +127,30 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             this.voltage = voltage;
         }
         public static IonSourceGetReply Parse(params byte[] data) {
-            // TODO:!
-            return null;
+            try {
+                ushort voltage = data[0];
+                voltage &= 0xF;
+                voltage <<= 8;
+                voltage += data[1];
+                byte channel = data[0];
+                channel >>= 4;
+                ++channel;
+                switch (channel) {
+                    case 1:
+                        return new GetEmissionCurrentReply(voltage);
+                    case 2:
+                        return new GetIonizationVoltageReply(voltage);
+                    case 3:
+                        return new GetF1VoltageReply(voltage);
+                    case 4:
+                        return new GetF2VoltageReply(voltage);
+                    default:
+                        return null;
+                }
+            }
+            catch {
+                return null;
+            }
         }
         public override CommandCode Id {
             get { return CommandCode.SPI_PSIS_GetVoltage; }
