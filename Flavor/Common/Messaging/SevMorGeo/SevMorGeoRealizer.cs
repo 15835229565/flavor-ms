@@ -57,79 +57,68 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             onTheFly = true;
         }
         bool onTheFly = true;
-        void Add<T1>(PackageDictionary<CommandCode> d, Action<ServicePacket<CommandCode>> action)
-            where T1: ServicePacket<CommandCode>, new() {
-            d[new T1()] = new PackageRecord<CommandCode>(action);
-        }
-        Action<ServicePacket<CommandCode>> AutoSend<T1>()
-            where T1: UserRequest<CommandCode>, new() {
-            return p => toSend.Enqueue(new T1());
-        }
-        protected override PackageDictionary<CommandCode> GetDictionary() {
-            var d = new PackageDictionary<CommandCode>();
-            //Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
+        protected override void PopulateDictionary(PackageDictionary<CommandCode> d) {
             Action<ServicePacket<CommandCode>> updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
                 
             //async error
-            Add<logInternalError>(d, null);
-            Add<logInvalidSystemState>(d, null);
-            Add<logVacuumCrash>(d, null);
-            Add<logTurboPumpFailure>(d, updateDevice);
-            Add<logPowerFail>(d, null);
-            Add<logInvalidVacuumState>(d, null);
-            Add<logAdcPlaceIonSrc>(d, null);
-            Add<logAdcPlaceScanv>(d, null);
-            Add<logAdcPlaceControlm>(d, null);
+            Add<logInternalError>();
+            Add<logInvalidSystemState>();
+            Add<logVacuumCrash>();
+            Add<logTurboPumpFailure>(updateDevice);
+            Add<logPowerFail>();
+            Add<logInvalidVacuumState>();
+            Add<logAdcPlaceIonSrc>();
+            Add<logAdcPlaceScanv>();
+            Add<logAdcPlaceControlm>();
             //async
-            Add<requestCounts>(d, AutoSend<getCounts>());
-            Add<confirmVacuumReady>(d, updateDevice + (p => OnSystemReady()));
-            Add<confirmShutdowned>(d, p => OnSystemDown(false));
-            Add<SystemReseted>(d, p => {
+            Add<requestCounts>(AutoSend<getCounts>);
+            Add<confirmVacuumReady>(updateDevice, p => OnSystemReady());
+            Add<confirmShutdowned>(p => OnSystemDown(false));
+            Add<SystemReseted>(p => {
                 OnAsyncReplyReceived("Система переинициализировалась");
                 OnSystemDown(true);
             });
-            Add<confirmHighVoltageOff>(d, p => OnOperationBlock(true));
-            Add<confirmHighVoltageOn>(d, p => {
+            Add<confirmHighVoltageOff>(p => OnOperationBlock(true));
+            Add<confirmHighVoltageOn>(p => {
                 OnOperationBlock(false);
                 toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
                 toSend.Enqueue(new sendIVoltage());// и остальные напряжения затем
             });
             //sync error
-            Add<logInvalidCommand>(d, null);
-            Add<logInvalidChecksum>(d, null);
-            Add<logInvalidPacket>(d, null);
-            Add<logInvalidLength>(d, null);
-            Add<logInvalidData>(d, null);
-            Add<logInvalidState>(d, null);
+            Add<logInvalidCommand>();
+            Add<logInvalidChecksum>();
+            Add<logInvalidPacket>();
+            Add<logInvalidLength>();
+            Add<logInvalidData>();
+            Add<logInvalidState>();
             //sync
-            Add<updateState>(d, updateDevice/* + autoSend*/);
-            Add<updateStatus>(d, updateDevice + (p => {
+            Add<updateState>(updateDevice);
+            Add<updateStatus>(updateDevice, p => {
                 if (onTheFly) {
                     // waiting for fake counts reply
                     OnFirstStatus(() => toSend.Enqueue(new getCounts()));
                     onTheFly = false;
                 }
-            }));
-            Add<confirmShutdown>(d, p => OnOperationToggle(false));
-            Add<confirmInit>(d, p => OnOperationToggle(true)/* + autoSend*/);
+            });
+            Add<confirmShutdown>(p => OnOperationToggle(false));
+            Add<confirmInit>(p => OnOperationToggle(true));
 
             // settings sequence
-            Add<confirmIVoltage>(d, AutoSend<sendCapacitorVoltage>());
-            Add<confirmCP>(d, AutoSend<enableHCurrent>());
-            Add<confirmHECurrent>(d, AutoSend<sendECurrent>());
-            Add<confirmECurrent>(d, AutoSend<sendHCurrent>());
-            Add<confirmHCurrent>(d, AutoSend<sendF1Voltage>());
-            Add<confirmF1Voltage>(d, AutoSend<sendF2Voltage>());
-            Add<confirmF2Voltage>(d, p => OnMeasurePreconfigured());
+            Add<confirmIVoltage>(AutoSend<sendCapacitorVoltage>);
+            Add<confirmCP>(AutoSend<enableHCurrent>);
+            Add<confirmHECurrent>(AutoSend<sendECurrent>);
+            Add<confirmECurrent>(AutoSend<sendHCurrent>);
+            Add<confirmHCurrent>(AutoSend<sendF1Voltage>);
+            Add<confirmF1Voltage>(AutoSend<sendF2Voltage>);
+            Add<confirmF2Voltage>(p => OnMeasurePreconfigured());
 
-            Add<confirmSVoltage>(d, p => OnMeasureSend((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2))));
+            Add<confirmSVoltage>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2))));
 
-            Add<confirmMeasure>(d, null);
-            Add<updateCounts>(d, updateDevice + (p => OnMeasureDone()));
-            Add<confirmHighVoltage>(d, null);
-            Add<updateTurboPumpStatus>(d, updateDevice);
-            Add<confirmForvacuumLevel>(d, null);
-            return d;
+            Add<confirmMeasure>();
+            Add<updateCounts>(updateDevice, p => OnMeasureDone());
+            Add<confirmHighVoltage>();
+            Add<updateTurboPumpStatus>(updateDevice);
+            Add<confirmForvacuumLevel>();
         }
     }
 }

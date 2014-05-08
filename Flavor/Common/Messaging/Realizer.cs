@@ -52,17 +52,22 @@ namespace Flavor.Common.Messaging {
             toSend = queue;
             realizeSync = (s, e) => Realize<Sync<T>>(s, e);
             realizeAsync = (s, e) => Realize<Async<T>>(s, e);
-            //autoSend = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<T>);
-            //updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
-            // TODO: modify dictionary to prevent cast
-            updateDevice = p => OnUpdateDevice((IUpdateDevice)p);
-            // after all other is initialized
-            dictionary = GetDictionary();
+
+            this.dictionary = new PackageDictionary<T>();
+            PopulateDictionary(dictionary);
         }
-        //protected readonly Action<ServicePacket<T>> autoSend;
-        // TODO: modify dictionary to prevent cast
-        protected readonly Action<ServicePacket<T>> updateDevice;
-        protected abstract PackageDictionary<T> GetDictionary();
+        protected void updateDevice(ServicePacket<T> p) {
+            OnUpdateDevice((IUpdateDevice)p);
+        }
+        protected void Add<T1>(params Action<ServicePacket<T>>[] actions)
+            where T1: ServicePacket<T>, new() {
+            this.dictionary[new T1()] = new PackageRecord<T>(actions);
+        }
+        protected void AutoSend<T1>(ServicePacket<T> p)
+            where T1: UserRequest<T>, new() {
+            toSend.Enqueue(new T1());
+        }
+        protected abstract void PopulateDictionary(PackageDictionary<T> d);
 
         void SendUndoable(UserRequest<T> packet) {
             EventHandler<EventArgs<UserRequest<T>>> undo = new EventHandler<EventArgs<UserRequest<T>>>(delegate { });
@@ -144,7 +149,7 @@ namespace Flavor.Common.Messaging {
             ConsoleWriter.Unsubscribe(toSend);
         }
         public abstract void Reset();
-        private void realizeAsyncError(object sender, CommandReceivedEventArgs<T, AsyncError<T>> e) {
+        void realizeAsyncError(object sender, CommandReceivedEventArgs<T, AsyncError<T>> e) {
             // TODO: check behaviour!
             if (Realize<AsyncError<T>>(sender, e)) {
                 string message = string.Format("Device says: {0}", e.Command.Message);

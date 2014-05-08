@@ -53,20 +53,14 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         bool onTheFly = true;
-        void Add<T>(PackageDictionary<CommandCode> d, Action<ServicePacket<CommandCode>> action)
-            where T: ServicePacket<CommandCode>, new() {
-            d[new T()] = new PackageRecord<CommandCode>(action);
-        }
-        protected override PackageDictionary<CommandCode> GetDictionary() {
-            var d = new PackageDictionary<CommandCode>();
-            //Action<ServicePacket<CommandCode>, Action<ServicePacket<CommandCode>>> add = (command, action) => Add(d, command, action);
+        protected override void PopulateDictionary(PackageDictionary<CommandCode> d) {
             //async error
-            Add<LAMCriticalError>(d, null);
-            Add<LAMInternalError>(d, null);
+            Add<LAMCriticalError>();
+            Add<LAMInternalError>();
             //async
-            Add<LAMEvent>(d, /*updateDevice + */(p => OnSystemReady()));
+            Add<LAMEvent>(/*updateDevice, */p => OnSystemReady());
             //sync error
-            Add<SyncErrorReply>(d, null);
+            Add<SyncErrorReply>();
 
             //add(CommandCode.Service_Message, p => {
             //    if (p is LAMEvent && (p as LAMEvent).number == 21) {
@@ -74,18 +68,17 @@ namespace Flavor.Common.Messaging.Almazov {
             //    }
             //});
             //sync
-            Add<CPUStatusReply>(d, null/*updateDevice*/);
-            Add<HighVoltagePermittedStatusReply>(d, updateDevice /*+ (p => OnSystemReady())*/);
-            Add<OperationBlockReply>(d, updateDevice /*(p => OnOperationBlock(true))*/);
+            Add<CPUStatusReply>(/*updateDevice*/);
+            Add<HighVoltagePermittedStatusReply>(updateDevice/*, p => OnSystemReady()*/);
+            Add<OperationBlockReply>(updateDevice/*, p => OnOperationBlock(true)*/);
             // TODO: proper command detection!
-            Add<TICStatusReply>(d, updateDevice + (p => {
+            Add<TICStatusReply>(updateDevice, p => {
                 if (onTheFly) {
                     OnFirstStatus(() => { });
                     onTheFly = false;
                 }
-            }));
-            Add<Valve1Reply>(d, updateDevice);
-            return d;
+            });
+            Add<Valve1Reply>(updateDevice);
         }
     }
 }
