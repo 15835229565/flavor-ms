@@ -5,7 +5,15 @@ namespace Flavor.Common.Messaging {
     abstract class CheckableProtocol<T>: Protocol<T>
         where T: struct, IConvertible, IComparable {
         protected CheckableProtocol()
-            : base() { }
+            : base() {
+            trim = l => {
+                l = base.trim(l);
+                // remove checksum at last position (is formed so as check must return 0)
+                l.RemoveAt(l.Count - 1);
+                return l;
+            };
+        }
+        protected readonly new Processor<IList<byte>> trim;
         protected override bool CheckPassed(IList<byte> rawCommand) {
             if (!CheckCS(rawCommand)) {
                 OnErrorCommand(rawCommand, "Неверная контрольная сумма");
@@ -14,7 +22,7 @@ namespace Flavor.Common.Messaging {
             return true;
         }
         protected abstract byte ComputeCS(IList<byte> data);
-        protected bool CheckCS(IList<byte> data) {
+        bool CheckCS(IList<byte> data) {
             return true ^ Convert.ToBoolean(ComputeCS(data));
         }
     }

@@ -8,6 +8,18 @@ namespace Flavor.Common.Messaging {
             this.dictionary = GetDictionary();
         }
         readonly CommandDictionary<T> dictionary;
+        protected delegate Predicate<int> PredicateGenerator(int value);
+        protected delegate T2 PackageGenerator<T1, T2>(IList<byte> rawCommand)
+            where T1: struct, IConvertible, IComparable
+            where T2: ServicePacket<T1>;
+        protected delegate Action<IList<byte>> CodeAdder(byte code);
+        protected delegate CodeAdder ActionGenerator<T1>(PackageGenerator<T, T1> gen)
+            where T1: ServicePacket<T>;
+        protected readonly PredicateGenerator eq = value => (l => l == value);
+        protected readonly PredicateGenerator moreeq = value => (l => l >= value);
+        //protected delegate Action<T, Predicate<int>, CodeAdder> AddGenerator(CommandDictionary<T> dictionary);
+        //protected readonly AddGenerator addGenerator = d => ((code, predicate, action) =>
+        //        d[(byte)code] = new CommandRecord<T>(predicate, action((byte)code)));
         protected abstract CommandDictionary<T> GetDictionary();
         protected void Parse(object sender, ByteArrayEventArgs e) {
             var rawCommand = e.Data;
@@ -30,6 +42,11 @@ namespace Flavor.Common.Messaging {
             }
             record.Act(rawCommand);
         }
+        protected readonly Processor<IList<byte>> trim = l => {
+            // remove command byte at first position
+            l.RemoveAt(0);
+            return l;
+        };
         protected abstract bool CheckPassed(IList<byte> rawCommand);
         #region IProtocol<T> Members
         public event EventHandler<CommandReceivedEventArgs<T, ServicePacket<T>>> CommandReceived;

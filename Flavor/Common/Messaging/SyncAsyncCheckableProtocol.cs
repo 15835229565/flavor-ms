@@ -4,7 +4,12 @@ namespace Flavor.Common.Messaging {
     abstract class SyncAsyncCheckableProtocol<T>: SyncCheckableProtocol<T>, ISyncAsyncProtocol<T>
         where T: struct, IConvertible, IComparable {
         protected SyncAsyncCheckableProtocol(IByteDispatcher byteDispatcher)
-            : base(byteDispatcher) { }
+            : base(byteDispatcher) {
+            async = gen => (code => (list => OnAsyncCommandReceived(code, gen(list))));
+            asyncerr = gen => (code => (list => OnAsyncErrorReceived(code, gen(list))));
+        }
+        protected readonly ActionGenerator<Async<T>> async;
+        protected readonly ActionGenerator<AsyncError<T>> asyncerr;
         public event EventHandler<CommandReceivedEventArgs<T, Async<T>>> AsyncCommandReceived;
         protected virtual void OnAsyncCommandReceived(byte code, Async<T> command) {
             OnCommandReceived(code, command);
