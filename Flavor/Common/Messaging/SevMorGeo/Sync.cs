@@ -2,12 +2,13 @@
 using SyncReply = Flavor.Common.Messaging.SyncReply<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    class updateState: SyncReply, IUpdateDevice, IAutomatedReply {
+    class updateState: SyncReply, IUpdateDevice {
         byte sysState;
 
         public updateState(byte value) {
             sysState = value;
         }
+        public updateState() { }
 
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
@@ -21,15 +22,8 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public override CommandCode Id {
             get { return CommandCode.GetState; }
         }
-
-        #region IAutomatedReply Members
-        public ISend AutomatedReply() {
-            return new requestStatus();
-        }
-        #endregion
     }
     class updateStatus: SyncReply, IUpdateDevice {
-
         byte sysState;
         byte vacState;
         ushort fVacuum;
@@ -63,6 +57,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             relaysStates = value14;
             turboSpeed = value16;
         }
+        public updateStatus() { }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
             throw new System.NotImplementedException();
@@ -94,59 +89,27 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.Shutdown; }
         }
     }
-    class confirmInit: SyncReply, IAutomatedReply {
+    class confirmInit: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.Init; }
         }
-
-        #region IReply Members
-
-        public ISend AutomatedReply() {
-            return new requestStatus();
-        }
-
-        #endregion
     }
-    class confirmHCurrent: SyncReply, IAutomatedReply {
-        #region IReply Members
-        public ISend AutomatedReply() {
-            return new sendF1Voltage();
-        }
-        #endregion
-
+    class confirmHCurrent: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.SetHeatCurrent; }
         }
     }
-    class confirmECurrent: SyncReply, IAutomatedReply {
-        #region IReply Members
-        public ISend AutomatedReply() {
-            return new sendHCurrent();
-        }
-        #endregion
-
+    class confirmECurrent: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.SetEmissionCurrent; }
         }
     }
-    class confirmIVoltage: SyncReply, IAutomatedReply {
+    class confirmIVoltage: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.SetIonizationVoltage; }
         }
-
-        #region IReply Members
-        public ISend AutomatedReply() {
-            return new sendCapacitorVoltage();
-        }
-        #endregion
     }
-    class confirmF1Voltage: SyncReply, IAutomatedReply {
-        #region IReply Members
-        public ISend AutomatedReply() {
-            return new sendF2Voltage();
-        }
-        #endregion
-
+    class confirmF1Voltage: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.SetFocusVoltage1; }
         }
@@ -161,16 +124,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.SetScanVoltage; }
         }
     }
-    class confirmCP: SyncReply, IAutomatedReply {
+    class confirmCP: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.SetCapacitorVoltage; }
         }
-
-        #region IReply Members
-        public ISend AutomatedReply() {
-            return new enableHCurrent();
-        }
-        #endregion
     }
     class confirmMeasure: SyncReply {
         public override CommandCode Id {
@@ -185,6 +142,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Detector1 = value1;
             Detector2 = value2;
         }
+        public updateCounts() { }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
             throw new System.NotImplementedException();
@@ -197,13 +155,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return CommandCode.GetCounts; }
         }
     }
-    class confirmHECurrent: SyncReply, IAutomatedReply {
-        #region IReply Members
-        public ISend AutomatedReply() {
-            return new sendECurrent();
-        }
-        #endregion
-
+    class confirmHECurrent: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.heatCurrentEnable; }
         }
@@ -235,6 +187,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             v2 = value8;
             v3 = value9;
         }
+        public updateTurboPumpStatus() { }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
             throw new System.NotImplementedException();

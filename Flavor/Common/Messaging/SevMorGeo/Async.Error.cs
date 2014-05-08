@@ -6,10 +6,12 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public override string Message {
             get { return "Internal error " + internalError; }
         }
-        byte internalError;
+        readonly byte internalError;
         public logInternalError(byte error) {
             internalError = error;
         }
+        public logInternalError()
+            : this(0) { }
     }
 
     class logInvalidSystemState: AsyncErrorReply {
@@ -23,7 +25,9 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public override string Message {
             get { return "Vacuum crash state " + vacState; }
         }
-        byte vacState;
+        public logVacuumCrash()
+            : this(0) { }
+        readonly byte vacState;
         public logVacuumCrash(byte state) {
             vacState = state;
         }
@@ -53,6 +57,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             v2 = commandline[14];
             v3 = commandline[15];
         }
+        public logTurboPumpFailure() { }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
             throw new System.NotImplementedException();
@@ -88,6 +93,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return "AdcPlaceIonSrc"; }
         }
         public logAdcPlaceIonSrc(IList<byte> commandline) { }
+        public logAdcPlaceIonSrc() { }
     }
 
     class logAdcPlaceScanv: AsyncErrorReply {
@@ -95,6 +101,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return "AdcPlaceScanv"; }
         }
         public logAdcPlaceScanv(IList<byte> commandline) { }
+        public logAdcPlaceScanv() { }
     }
 
     class logAdcPlaceControlm: AsyncErrorReply {
@@ -102,5 +109,6 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             get { return "AdcPlaceControlm"; }
         }
         public logAdcPlaceControlm(IList<byte> commandline) { }
+        public logAdcPlaceControlm() { }
     }
 }

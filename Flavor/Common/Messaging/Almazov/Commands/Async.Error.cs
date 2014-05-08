@@ -8,6 +8,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public LAMCriticalError(byte error) {
             this.error = error;
         }
+        public LAMCriticalError(): this(0) { }
         enum Critical_Error {
             TIC_error_decode = 30, //Ошибка декодирования сообщения от TIC'a!
             TIC_error_noResponse = 31,//TIC не ответил!
@@ -22,8 +23,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public LAMInternalError(byte error) {
             this.error = error;
         }
-        enum Critical_Error {
-            Unknown = 0,
+        public LAMInternalError() : this(0) { }
+        enum Internal_Error {
             USART_COMP = 1,       //Внутренняя ошибка приёма данных от ПК
             SPI = 2,              //SPI-устройства с таким номером нет  
             TIC_state = 3,        //Неверное состояние TIC таймера!

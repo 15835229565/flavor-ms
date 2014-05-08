@@ -53,33 +53,38 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         bool onTheFly = true;
+        void Add<T>(PackageDictionary<CommandCode> d, Action<ServicePacket<CommandCode>> action)
+            where T: ServicePacket<CommandCode>, new() {
+            d[new T()] = new PackageRecord<CommandCode>(action);
+        }
         protected override PackageDictionary<CommandCode> GetDictionary() {
             var d = new PackageDictionary<CommandCode>();
-            Action<CommandCode, Action<ServicePacket<CommandCode>>> add = (code, action) => d[(byte)code] = new PackageRecord<CommandCode>(action);
+            //Action<ServicePacket<CommandCode>, Action<ServicePacket<CommandCode>>> add = (command, action) => Add(d, command, action);
             //async error
-            //add(CommandCode.LAM_CriticalError, null);
+            Add<LAMCriticalError>(d, null);
+            Add<LAMInternalError>(d, null);
             //async
-            //add(CommandCode.LAM_Event, /*updateDevice + */(p => OnSystemReady()));
+            Add<LAMEvent>(d, /*updateDevice + */(p => OnSystemReady()));
             //sync error
-            //add(CommandCode.Sync_Error, null);
+            Add<SyncErrorReply>(d, null);
 
-            add(CommandCode.Service_Message, p => {
-                if (p is LAMEvent && (p as LAMEvent).number == 21) {
-                    OnSystemReady();
-                }
-            });
+            //add(CommandCode.Service_Message, p => {
+            //    if (p is LAMEvent && (p as LAMEvent).number == 21) {
+            //        OnSystemReady();
+            //    }
+            //});
             //sync
-            add(CommandCode.CPU_Status, null/*updateDevice*/);
-            add(CommandCode.HVE, updateDevice /*+ (p => OnSystemReady())*/);
-            add(CommandCode.PRGE, updateDevice /*(p => OnOperationBlock(true))*/);
+            Add<CPUStatusReply>(d, null/*updateDevice*/);
+            Add<HighVoltagePermittedStatusReply>(d, updateDevice /*+ (p => OnSystemReady())*/);
+            Add<OperationBlockReply>(d, updateDevice /*(p => OnOperationBlock(true))*/);
             // TODO: proper command detection!
-            add(CommandCode.TIC_Retransmit, updateDevice + (p => {
+            Add<TICStatusReply>(d, updateDevice + (p => {
                 if (onTheFly) {
                     OnFirstStatus(() => { });
                     onTheFly = false;
                 }
             }));
-            add(CommandCode.SEMV1, updateDevice);
+            Add<Valve1Reply>(d, updateDevice);
             return d;
         }
     }

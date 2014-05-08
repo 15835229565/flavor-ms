@@ -4,12 +4,8 @@ using SyncError = Flavor.Common.Messaging.SyncError<Flavor.Common.Messaging.SevM
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     class logInvalidCommand: SyncError {
-        //private byte[] command;
-
-        public logInvalidCommand(IList<byte> errorcommand) {
-            //command = errorcommand;
-        }
-
+        public logInvalidCommand(IList<byte> errorcommand) { }
+        public logInvalidCommand() { }
         public override CommandCode Id {
             get { return CommandCode.InvalidCommand; }
         }

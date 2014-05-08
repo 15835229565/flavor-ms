@@ -1,13 +1,7 @@
 ﻿using AsyncReply = Flavor.Common.Messaging.Async<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
-    class requestCounts: AsyncReply, IAutomatedReply {
-        #region IReply Members
-        public ISend AutomatedReply() {
-            //хорошо бы сюда на автомате очистку Commander.CustomMeasure...
-            return new getCounts();
-        }
-        #endregion
+    class requestCounts: AsyncReply {
     }
 
     class confirmVacuumReady: AsyncReply, IUpdateDevice {

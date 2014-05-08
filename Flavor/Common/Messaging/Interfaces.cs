@@ -9,9 +9,6 @@ namespace Flavor.Common.Messaging {
     interface ISend {
         IList<byte> Data { get; }
     }
-    interface IAutomatedReply {
-        ISend AutomatedReply();
-    }
     interface IUpdateDevice {
         void UpdateDevice(IDevice device);
         [Obsolete]

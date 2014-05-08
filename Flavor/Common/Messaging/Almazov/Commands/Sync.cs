@@ -10,6 +10,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             this.incTIC = incTIC;
             this.incMS = incMS;
         }
+        public CPUStatusReply() : this(0, 0) { }
         [Flags]
         enum Incident_PC : byte {
             LOCKisLost = 0x01,       //МК принимал пакет, но в последний байт пакета не затвор
@@ -37,6 +38,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public HighVoltagePermittedStatusReply(bool enabled) {
             this.enabled = enabled;
         }
+        public HighVoltagePermittedStatusReply(): this(false) { }
         public override CommandCode Id {
             get { return CommandCode.HVE; }
         }
@@ -54,6 +56,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public OperationBlockReply(bool? on) {
             this.on = on;
         }
+        public OperationBlockReply(): this(null) { }
         public override CommandCode Id {
             get { return CommandCode.PRGE; }
         }
@@ -78,6 +81,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             this.relay3 = relay3;
             this.alert = alert;
         }
+        public TICStatusReply(): this(false, false, false, false, 0) { }
         public override CommandCode Id {
             get { return CommandCode.TIC_Retransmit; }
         }
@@ -102,6 +106,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public Valve1Reply(bool? on) {
             this.on = on;
         }
+        public Valve1Reply(): this(null) { }
         public override CommandCode Id {
             get { return CommandCode.SEMV1; }
         }

@@ -52,14 +52,14 @@ namespace Flavor.Common.Messaging {
             toSend = queue;
             realizeSync = (s, e) => Realize<Sync<T>>(s, e);
             realizeAsync = (s, e) => Realize<Async<T>>(s, e);
-            autoSend = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<T>);
+            //autoSend = p => toSend.Enqueue(((IAutomatedReply)p).AutomatedReply() as UserRequest<T>);
             //updateDevice = p => ((IUpdateDevice)p).UpdateDevice();
             // TODO: modify dictionary to prevent cast
             updateDevice = p => OnUpdateDevice((IUpdateDevice)p);
             // after all other is initialized
             dictionary = GetDictionary();
         }
-        protected readonly Action<ServicePacket<T>> autoSend;
+        //protected readonly Action<ServicePacket<T>> autoSend;
         // TODO: modify dictionary to prevent cast
         protected readonly Action<ServicePacket<T>> updateDevice;
         protected abstract PackageDictionary<T> GetDictionary();
@@ -104,20 +104,18 @@ namespace Flavor.Common.Messaging {
         protected abstract UserRequest<T> MeasureStep(ushort step);
         protected bool Realize<T1>(object sender, CommandReceivedEventArgs<T, T1> e)
             where T1: ServicePacket<T> {
-            byte code = e.Code;
-            if (!dictionary.ContainsKey(code)) {
+            //byte code = e.Code;
+            var command = e.Command;
+            if (!dictionary.ContainsKey(command)) {
                 // Strange error
                 return false;
             }
-            var actor = dictionary[code];
-            if (actor != null && actor.Act != null) {
-                var command = e.Command;
-                if (command != null) {
-                    actor.Act(command);
-                    return true;
-                }
+            var actor = dictionary[command];
+            if (actor == null || actor.Act == null) {
+                return false;
             }
-            return false;
+            actor.Act(command);
+            return true;
         }
         [Obsolete]
         public event ProgramEventHandler ProgramStateChangeRequested;
