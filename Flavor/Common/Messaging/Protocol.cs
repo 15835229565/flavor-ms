@@ -9,11 +9,14 @@ namespace Flavor.Common.Messaging {
         }
         readonly CommandDictionary<T> dictionary;
         protected delegate Predicate<int> PredicateGenerator(int value);
-        protected delegate T2 PackageGenerator<T1, T2>(IList<byte> rawCommand)
-            where T1: struct, IConvertible, IComparable
-            where T2: ServicePacket<T1>;
+        protected delegate T1 PackageGenerator<T1>(IList<byte> rawCommand)
+            where T1: ServicePacket<T>;
         protected delegate Action<IList<byte>> CodeAdder(byte code);
-        protected delegate CodeAdder ActionGenerator<T1>(PackageGenerator<T, T1> gen)
+        protected CodeAdder Generic<T1>(PackageGenerator<T1> gen, Action<byte, T1> action)
+            where T1: ServicePacket<T> {
+            return code => (list => action(code, gen(list)));
+        }
+        protected delegate CodeAdder ActionGenerator<T1>(PackageGenerator<T1> gen)
             where T1: ServicePacket<T>;
         protected readonly PredicateGenerator eq = value => (l => l == value);
         protected readonly PredicateGenerator moreeq = value => (l => l >= value);

@@ -70,8 +70,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #endregion
     }
-    class TICStatusReply: SyncReply, IUpdateDevice {
-        public readonly string Request = "?V902\r";
+    class TICStatusReply: SyncReply, ITIC, IUpdateDevice {
+        public string Request { get { return "?V902\r"; } }
         readonly bool turbo, relay1, relay2, relay3;
         readonly int alert;
         public TICStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
@@ -94,7 +94,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public override bool Equals(object other) {
             // BAD: asymmetric
             if (base.Equals(other))
-                return (other as TICStatusRequest).Request.Equals(this.Request);
+                return (other as ITIC).Request.Equals(this.Request);
             return false;
         }
         public override int GetHashCode() {

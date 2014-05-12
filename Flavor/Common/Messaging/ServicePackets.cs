@@ -14,7 +14,8 @@ namespace Flavor.Common.Messaging {
             return false;
         }
         public override int GetHashCode() {
-            return base.GetHashCode() + 13 * Id.GetHashCode();
+            //return base.GetHashCode() + 13 * Id.GetHashCode();
+            return Id.GetHashCode();
         }
     }
     public abstract class SyncReply<T>: Sync<T>
@@ -26,9 +27,12 @@ namespace Flavor.Common.Messaging {
     public abstract class SyncError<T>: Sync<T>
         where T: struct, IConvertible, IComparable { }
     public abstract class Async<T>: ServicePacket<T>
-        where T: struct, IConvertible, IComparable { }
+        where T: struct, IConvertible, IComparable {
+        // TODO: override GetHashCode to prevent problems in Dictionary!
+    }
     public abstract class AsyncError<T>: Async<T>
         where T: struct, IConvertible, IComparable {
         public abstract string Message { get; }
+        // TODO: override GetHashCode to prevent problems in Dictionary!
     }
 }

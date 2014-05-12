@@ -2,4 +2,7 @@
     interface IChannel {
         byte Channel { get; }
     }
+    interface ITIC {
+        string Request { get; }
+    }
 }

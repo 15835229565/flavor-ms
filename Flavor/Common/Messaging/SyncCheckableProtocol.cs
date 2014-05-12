@@ -11,11 +11,13 @@ namespace Flavor.Common.Messaging {
             this.byteDispatcher = byteDispatcher;
             byteDispatcher.PackageReceived += Parse;
             byteDispatcher.Log += OnLog;
-            sync = gen => (code => (list => OnSyncCommandReceived(code, gen(list))));
-            syncerr = gen => (code => (list => OnSyncErrorReceived(code, gen(list))));
         }
-        protected readonly ActionGenerator<SyncReply<T>> sync;
-        protected readonly ActionGenerator<SyncError<T>> syncerr;
+        protected CodeAdder sync(PackageGenerator<SyncReply<T>> gen) {
+            return Generic<SyncReply<T>>(gen, OnSyncCommandReceived);
+        }
+        protected CodeAdder syncerr(PackageGenerator<SyncError<T>> gen) {
+            return Generic<SyncError<T>>(gen, OnSyncErrorReceived);
+        }
         public event EventHandler<CommandReceivedEventArgs<T, SyncReply<T>>> SyncCommandReceived;
         protected virtual void OnSyncCommandReceived(byte code, SyncReply<T> command) {
             OnCommandReceived(code, command);

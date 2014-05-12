@@ -36,8 +36,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return CommandCode.PRGE; }
         }
     }
-    class TICStatusRequest: UserRequest {
-        public readonly string Request = "?V902\r";
+    class TICStatusRequest: UserRequest, ITIC {
+        public string Request { get { return "?V902\r"; } }
         public override IList<byte> Data {
             get { return AlexProtocol.collectData(Id, Request); }
         }
@@ -47,7 +47,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public override bool Equals(object other) {
             // BAD: asymmetric
             if (base.Equals(other))
-                return (other as TICStatusRequest).Request.Equals(this.Request);
+                return (other as ITIC).Request.Equals(this.Request);
             return false;
         }
         public override int GetHashCode() {
