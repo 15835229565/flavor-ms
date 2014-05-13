@@ -202,6 +202,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
                 return new Valve1Reply(res);
             }));
+            add(CommandCode.RTC_ReceiveResults, eq(18), sync(raw => new CountsReply(raw)));
 
             // BAD temporary solution
             ActionGenerator<ServicePacket<CommandCode>> service = gen => (code => (list => {
@@ -238,7 +239,7 @@ namespace Flavor.Common.Messaging.Almazov {
                     case 21:
                     case 22:
                     case 23:
-                        return new LAMEvent(code);
+                        return LAMEvent.Parse(code);
                     case 30:
                     case 31:
                         return new LAMCriticalError(code);

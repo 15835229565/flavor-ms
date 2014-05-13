@@ -9,8 +9,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         public void UpdateDevice(IDevice device) {
             throw new System.NotImplementedException();
         }
-        public void UpdateDevice() {
-        }
+        public void UpdateDevice() { }
         #endregion
     }
 

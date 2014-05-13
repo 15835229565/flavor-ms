@@ -167,4 +167,12 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public GetF2VoltageRequest()
             : base(4) { }
     }
+    class CountsRequest: UserRequest {
+        public override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id); }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.RTC_ReceiveResults; }
+        }
+    }
 }

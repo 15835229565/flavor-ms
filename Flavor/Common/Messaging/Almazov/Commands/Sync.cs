@@ -203,4 +203,15 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return 4; }
         }
     }
+
+    class CountsReply: SyncReply {
+        public CountsReply(IList<byte> raw) {
+            // TODO:
+            throw new NotImplementedException();
+        }
+        public CountsReply() { }
+        public override CommandCode Id {
+            get { return CommandCode.RTC_ReceiveResults; }
+        }
+    }
 }

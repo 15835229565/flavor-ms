@@ -58,7 +58,10 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<LAMCriticalError>();
             Add<LAMInternalError>();
             //async
-            Add<LAMEvent>(/*updateDevice, */p => OnSystemReady());
+            Add<RTCMeasureEndLAM>(AutoSend<CountsRequest>);
+            Add<SPIConfDoneLAM>(updateDevice, p => OnSystemReady());
+            Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
+            Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
             //sync error
             Add<SyncErrorReply>();
 
@@ -79,6 +82,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             });
             Add<Valve1Reply>(updateDevice);
+            Add<CountsReply>(p => OnMeasureDone());
         }
     }
 }
