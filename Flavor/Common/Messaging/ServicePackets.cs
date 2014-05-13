@@ -14,7 +14,6 @@ namespace Flavor.Common.Messaging {
             return false;
         }
         public override int GetHashCode() {
-            //return base.GetHashCode() + 13 * Id.GetHashCode();
             return Id.GetHashCode();
         }
     }
@@ -28,11 +27,23 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable { }
     public abstract class Async<T>: ServicePacket<T>
         where T: struct, IConvertible, IComparable {
-        // TODO: override GetHashCode to prevent problems in Dictionary!
+        public override bool Equals(object obj) {
+            // BAD: reflection
+            return obj.GetType().IsInstanceOfType(this);
+        }
+        public override int GetHashCode() {
+            // BAD: reflection
+            return this.GetType().GetHashCode();
+        }
     }
     public abstract class AsyncError<T>: Async<T>
         where T: struct, IConvertible, IComparable {
         public abstract string Message { get; }
-        // TODO: override GetHashCode to prevent problems in Dictionary!
+        public override bool Equals(object obj) {
+            return base.Equals(obj);
+        }
+        public override int GetHashCode() {
+            return base.GetHashCode() + 13 * Message.GetHashCode();
+        }
     }
 }
