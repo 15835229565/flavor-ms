@@ -145,23 +145,7 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.CPU_Status, eq(4), sync(raw => new CPUStatusReply(raw[1], raw[2])));
             // strangely 4 bytes
             add(CommandCode.HVE, eq(4), sync(raw => new HighVoltagePermittedStatusReply(raw[2] == 0 ? true : false)));
-            add(CommandCode.PRGE, eq(3), sync(raw => {
-                // TODO: move into command ctor
-                bool? res;
-                switch (raw[1]) {
-                    case 0:
-                        res = false;
-                        break;
-                    case 1:
-                        res = true;
-                        break;
-                    case 254:
-                    default:
-                        res = null;
-                        break;
-                }
-                return new OperationBlockReply(res);
-            }));
+            add(CommandCode.PRGE, eq(3), sync(raw => OperationBlockReply.Parse(raw[1])));
             add(CommandCode.TIC_Retransmit, moreeq(28), sync(raw => {
                 Regex expression = new Regex(@"^=V902 ([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+\r$");
                 Match match;

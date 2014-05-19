@@ -51,24 +51,43 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #endregion
     }
-    class OperationBlockReply: SyncReply, IUpdateDevice {
-        readonly bool? on;
-        public OperationBlockReply(bool? on) {
-            this.on = on;
+    class OperationBlockReply: SyncReply {
+        public static OperationBlockReply Parse(byte b) {
+            switch (b) {
+                case 0:
+                    return new OperationBlockOffReply();
+                case 1:
+                    return new OperationBlockOnReply();
+                case 254:
+                default:
+                    return new OperationBlockReply();
+            }
         }
-        public OperationBlockReply(): this(null) { }
         public override CommandCode Id {
             get { return CommandCode.PRGE; }
         }
+    }
+    abstract class OperationBlockOnOffReply: OperationBlockReply, IUpdateDevice {
+        readonly bool on;
+        protected OperationBlockOnOffReply(bool on) {
+            this.on = on;
+        }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
-            if (on.HasValue)
-                device.OperationBlock(on.Value);
+            device.OperationBlock(on);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();
         }
         #endregion
+    }
+    class OperationBlockOnReply: OperationBlockOnOffReply {
+        public OperationBlockOnReply()
+            : base(true) { }
+    }
+    class OperationBlockOffReply: OperationBlockOnOffReply {
+        public OperationBlockOffReply()
+            : base(false) { }
     }
     class TICStatusReply: SyncReply, ITIC, IUpdateDevice {
         public string Request { get { return "?V902\r"; } }

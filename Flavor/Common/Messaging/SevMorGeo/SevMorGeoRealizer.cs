@@ -82,7 +82,8 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             Add<confirmHighVoltageOn>(p => {
                 OnOperationBlock(false);
                 toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
-                toSend.Enqueue(new sendIVoltage());// и остальные напряжения затем
+                SetSettings();
+                //toSend.Enqueue(new sendIVoltage());
             });
             //sync error
             Add<logInvalidCommand>();

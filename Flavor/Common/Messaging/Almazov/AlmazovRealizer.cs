@@ -75,7 +75,11 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<LAMInternalError>();
             //async
             Add<RTCMeasureEndLAM>(AutoSend<CountsRequest>);
-            Add<SPIConfDoneLAM>(updateDevice, p => OnSystemReady());
+            Add<SPIConfDoneLAM>(updateDevice, p => {
+                OnOperationBlock(false);
+                //toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
+                SetSettings();
+            });
             Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
             Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
             //sync error
@@ -89,7 +93,9 @@ namespace Flavor.Common.Messaging.Almazov {
             //sync
             Add<CPUStatusReply>(/*updateDevice*/);
             Add<HighVoltagePermittedStatusReply>(updateDevice/*, p => OnSystemReady()*/);
-            Add<OperationBlockReply>(updateDevice/*, p => OnOperationBlock(true)*/);
+            Add<OperationBlockReply>();
+            Add<OperationBlockOnReply>(updateDevice, p => OnOperationBlock(true));
+            Add<OperationBlockOffReply>(updateDevice);
             // TODO: proper command detection!
             Add<TICStatusReply>(updateDevice, p => {
                 if (onTheFly) {
