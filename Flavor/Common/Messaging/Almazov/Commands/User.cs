@@ -113,6 +113,40 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public SetF2VoltageRequest(ushort voltage)
             : base(4, voltage) { }
     }
+    abstract class DetectorSetRequest: SetDACRequest {
+        protected DetectorSetRequest(byte channel, ushort voltage)
+            : base(channel, voltage) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_DPS_SetVoltage; }
+        }
+    }
+    class SetD1VoltageRequest: DetectorSetRequest {
+        public SetD1VoltageRequest(ushort voltage)
+            : base(1, voltage) { }
+    }
+    class SetD2VoltageRequest: DetectorSetRequest {
+        public SetD2VoltageRequest(ushort voltage)
+            : base(2, voltage) { }
+    }
+    class SetD3VoltageRequest: DetectorSetRequest {
+        public SetD3VoltageRequest(ushort voltage)
+            : base(3, voltage) { }
+    }
+    abstract class InletSetRequest: SetDACRequest {
+        protected InletSetRequest(byte channel, ushort voltage)
+            : base(channel, voltage) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_PSInl_SetVoltage; }
+        }
+    }
+    class SetInletVoltageRequest: InletSetRequest {
+        public SetInletVoltageRequest(ushort voltage)
+            : base(1, voltage) { }
+    }
+    class SetHeaterVoltageRequest: InletSetRequest {
+        public SetHeaterVoltageRequest(ushort voltage)
+            : base(2, voltage) { }
+    }
     abstract class GetADCRequest: DACADCRequest, IChannel {
         const byte HBYTE = 127;
         const byte LBYTE_DoubleRange = 16;
@@ -166,6 +200,40 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     class GetF2VoltageRequest: IonSourceGetRequest {
         public GetF2VoltageRequest()
             : base(4) { }
+    }
+    abstract class DetectorGetRequest: GetADCRequest {
+        protected DetectorGetRequest(byte channel)
+            : base(channel) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_DPS_GetVoltage; }
+        }
+    }
+    class GetD1VoltageRequest: DetectorGetRequest {
+        public GetD1VoltageRequest()
+            : base(1) { }
+    }
+    class GetD2VoltageRequest: DetectorGetRequest {
+        public GetD2VoltageRequest()
+            : base(2) { }
+    }
+    class GetD3VoltageRequest: DetectorGetRequest {
+        public GetD3VoltageRequest()
+            : base(3) { }
+    }
+    abstract class InletGetRequest: GetADCRequest {
+        protected InletGetRequest(byte channel)
+            : base(channel) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_PSInl_GetVoltage; }
+        }
+    }
+    class GetInletVoltageRequest: InletGetRequest {
+        public GetInletVoltageRequest()
+            : base(1) { }
+    }
+    class GetHeaterVoltageRequest: InletGetRequest {
+        public GetHeaterVoltageRequest()
+            : base(2) { }
     }
     class CountsRequest: UserRequest {
         public override IList<byte> Data {

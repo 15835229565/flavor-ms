@@ -202,6 +202,14 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
                 return new Valve1Reply(res);
             }));
+
+            add(CommandCode.SPI_PSIS_SetVoltage, eq(2), sync(raw => new IonSourceSetReply()));
+            add(CommandCode.SPI_DPS_SetVoltage, eq(2), sync(raw => new DetectorSetReply()));
+            add(CommandCode.SPI_PSInl_SetVoltage, eq(2), sync(raw => new InletSetReply()));
+            add(CommandCode.SPI_PSIS_GetVoltage, eq(4), sync(raw => IonSourceGetReply.Parse(raw)));
+            add(CommandCode.SPI_DPS_GetVoltage, eq(4), sync(raw => DetectorGetReply.Parse(raw)));
+            add(CommandCode.SPI_PSInl_GetVoltage, eq(4), sync(raw => InletGetReply.Parse(raw)));
+            
             add(CommandCode.RTC_ReceiveResults, eq(18), sync(raw => new CountsReply(raw)));
 
             // BAD temporary solution

@@ -44,7 +44,23 @@ namespace Flavor.Common.Messaging.Almazov {
             return new Valve1Request(on);
         }
 
+        public new void SetSettings() {
+            // TODO: proper data from config
+            toSend.Enqueue(new SetEmissionCurrentRequest(0));
+            toSend.Enqueue(new SetIonizationVoltageRequest(0));
+            toSend.Enqueue(new SetF1VoltageRequest(0));
+            toSend.Enqueue(new SetF2VoltageRequest(0));
+            toSend.Enqueue(new SetD1VoltageRequest(0));
+            toSend.Enqueue(new SetD2VoltageRequest(0));
+            toSend.Enqueue(new SetD3VoltageRequest(0));
+            toSend.Enqueue(new SetInletVoltageRequest(0));
+            toSend.Enqueue(new SetHeaterVoltageRequest(0));
+            // and check
+            toSend.Enqueue(new GetEmissionCurrentRequest());
+        }
+        [Obsolete]
         protected override UserRequest<CommandCode> Settings() {
+            //Cannot autosend sequence
             throw new NotImplementedException();
         }
 
@@ -82,6 +98,21 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             });
             Add<Valve1Reply>(updateDevice);
+
+            Add<IonSourceSetReply>();
+            Add<DetectorSetReply>();
+            Add<InletSetReply>();
+
+            Add<GetEmissionCurrentReply>(AutoSend<GetIonizationVoltageRequest>);
+            Add<GetIonizationVoltageReply>(AutoSend<GetF1VoltageRequest>);
+            Add<GetF2VoltageReply>(AutoSend<GetF2VoltageRequest>);
+            Add<GetF2VoltageReply>(AutoSend<GetD1VoltageRequest>);
+            Add<GetD1VoltageReply>(AutoSend<GetD2VoltageRequest>);
+            Add<GetD2VoltageReply>(AutoSend<GetD3VoltageRequest>);
+            Add<GetD3VoltageReply>(AutoSend<GetInletVoltageRequest>);
+            Add<GetInletVoltageReply>(AutoSend<GetHeaterVoltageRequest>);
+            Add<GetHeaterVoltageReply>();
+
             Add<CountsReply>(p => OnMeasureDone());
         }
     }
