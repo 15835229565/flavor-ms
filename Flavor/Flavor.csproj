@@ -323,6 +323,12 @@
     <Compile Include="Forms\ScanOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\OptionsForm2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OptionsForm2.Designer.cs">
+      <DependentUpon>OptionsForm2.cs</DependentUpon>
+    </Compile>
     <Compile Include="IMSControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -457,6 +463,10 @@
     <EmbeddedResource Include="Forms\GraphForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GraphForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OptionsForm2.resx">
+      <DependentUpon>OptionsForm2.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
