@@ -387,7 +387,6 @@
         #endregion
 
         protected System.Windows.Forms.NumericUpDown fV1NumericUpDown;
-        protected System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
         protected System.Windows.Forms.NumericUpDown CPNumericUpDown;
         protected System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
         protected System.Windows.Forms.NumericUpDown d2VoltageNumericUpDown;
@@ -402,5 +401,6 @@
         private System.Windows.Forms.CheckBox adjustSettingsCheckBox;
         protected System.Windows.Forms.CheckBox rareModeCheckBox;
         protected System.Windows.Forms.NumericUpDown d3VoltageNumericUpDown;
+        private System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
     }
 }

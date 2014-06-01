@@ -1,10 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Flavor.Common.Settings {
+﻿namespace Flavor.Common.Settings {
     class AlmazovCommonData {
+        public ushort d1V { get; set; }
+        public double d1VReal {
+            get { return dVConvert(d1V); }
+            set { d1V = dVConvert(value); }
+        }
+        public ushort d2V { get; set; }
+        public double d2VReal {
+            get { return dVConvert(d2V); }
+            set { d2V = dVConvert(value); }
+        }
+        public ushort d3V { get; set; }
+        public double d3VReal {
+            get { return dVConvert(d3V); }
+            set { d3V = dVConvert(value); }
+        }
+        public static double dVConvert(ushort voltage) {
+            return 5 * 600 * (double)voltage / 4096;
+        }
+        public static ushort dVConvert(double voltage) {
+            return genericConvert((ushort)((voltage / 3000) * 4096));
+        }
+
         public ushort eCurrent { get; set; }
         public double eCurrentReal {
             get { return eCurrentConvert(eCurrent); }

@@ -14,7 +14,7 @@ using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
-    internal partial class PreciseOptionsForm: OptionsForm {
+    internal partial class PreciseOptionsForm: OptionsForm2 {
         private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
         private PreciseSpectrum data = new PreciseSpectrum();
 

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Forms {
-    internal partial class ScanOptionsForm: OptionsForm {
+    internal partial class ScanOptionsForm: OptionsForm2 {
         public ScanOptionsForm()
             : base() {
             InitializeComponent();

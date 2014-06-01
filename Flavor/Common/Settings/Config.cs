@@ -197,18 +197,27 @@ namespace Flavor.Common.Settings {
             mainConfigWriter.savePreciseData(peds, false);
             mainConfigWriter.write();
         }
-        internal static void saveGlobalCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
-            commonOpts.eTimeReal = eT;
-            commonOpts.iTimeReal = iT;
+        public static void temp_saveGO(double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2) {
             commonOpts.iVoltageReal = iV;
-            commonOpts.CPReal = cp;
             commonOpts.eCurrentReal = eC;
-            commonOpts.hCurrentReal = hC;
             commonOpts.fV1Real = fv1;
             commonOpts.fV2Real = fv2;
-            mainConfigWriter.saveCommonOptions(commonOpts);
-            mainConfigWriter.write();
+            commonOpts.d1VReal = d1v;
+            commonOpts.d2VReal = d2v;
+            commonOpts.d3VReal = d3v;
         }
+        //public static void saveGlobalCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
+        //    commonOpts.eTimeReal = eT;
+        //    commonOpts.iTimeReal = iT;
+        //    commonOpts.iVoltageReal = iV;
+        //    commonOpts.CPReal = cp;
+        //    commonOpts.eCurrentReal = eC;
+        //    commonOpts.hCurrentReal = hC;
+        //    commonOpts.fV1Real = fv1;
+        //    commonOpts.fV2Real = fv2;
+        //    mainConfigWriter.saveCommonOptions(commonOpts);
+        //    mainConfigWriter.write();
+        //}
         internal static void saveGlobalConfig() {
             mainConfigWriter.write();
         }
@@ -956,7 +965,7 @@ namespace Flavor.Common.Settings {
                                 opts.iVoltage = iV;
                                 opts.CP = CP;
                                 opts.eCurrent = eC;
-                                opts.hCurrent = hC;
+                                //opts.hCurrent = hC;
                                 opts.fV1 = fV1;
                                 opts.fV2 = fV2;
                                 loadDelays(commonNode, opts);
@@ -1366,7 +1375,7 @@ namespace Flavor.Common.Settings {
                         opts.iVoltageReal = iV;
                         opts.CPReal = cp;
                         opts.eCurrentReal = eC;
-                        opts.hCurrentReal = hC;
+                        //opts.hCurrentReal = hC;
                         opts.fV1Real = fv1;
                         opts.fV2Real = fv2;
                         saveCommonOptions(opts);
@@ -1377,7 +1386,7 @@ namespace Flavor.Common.Settings {
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
                         commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.CP.ToString();
                         commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
-                        commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
+                        //commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = opts.fV1.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = opts.fV2.ToString();
                         /*commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();
@@ -1566,7 +1575,7 @@ namespace Flavor.Common.Settings {
                                 opts.iVoltage = iV;
                                 opts.CP = CP;
                                 opts.eCurrent = eC;
-                                opts.hCurrent = hC;
+                                //opts.hCurrent = hC;
                                 opts.fV1 = fV1;
                                 opts.fV2 = fV2;
                                 loadDelays(commonNode, opts);
@@ -1976,7 +1985,7 @@ namespace Flavor.Common.Settings {
                         opts.iVoltageReal = iV;
                         opts.CPReal = cp;
                         opts.eCurrentReal = eC;
-                        opts.hCurrentReal = hC;
+                        //opts.hCurrentReal = hC;
                         opts.fV1Real = fv1;
                         opts.fV2Real = fv2;
                         saveCommonOptions(opts);
@@ -1987,7 +1996,7 @@ namespace Flavor.Common.Settings {
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
                         commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.CP.ToString();
                         commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
-                        commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
+                        //commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = opts.fV1.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = opts.fV2.ToString();
                         /*commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();

@@ -1,5 +1,6 @@
 ﻿using System;
 using Flavor.Common.Messaging.Almazov.Commands;
+using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
@@ -47,15 +48,16 @@ namespace Flavor.Common.Messaging.Almazov {
 
         public new void SetSettings() {
             // TODO: proper data from config
-            toSend.Enqueue(new SetEmissionCurrentRequest(0));
-            toSend.Enqueue(new SetIonizationVoltageRequest(0));
-            toSend.Enqueue(new SetF1VoltageRequest(0));
-            toSend.Enqueue(new SetF2VoltageRequest(0));
+            var co = Config.CommonOptions;
+            toSend.Enqueue(new SetEmissionCurrentRequest(co.eCurrent));
+            toSend.Enqueue(new SetIonizationVoltageRequest(co.iVoltage));
+            toSend.Enqueue(new SetF1VoltageRequest(co.fV1));
+            toSend.Enqueue(new SetF2VoltageRequest(co.fV2));
             toSend.Enqueue(new SetD1VoltageRequest(0));
             toSend.Enqueue(new SetD2VoltageRequest(0));
             toSend.Enqueue(new SetD3VoltageRequest(0));
-            toSend.Enqueue(new SetInletVoltageRequest(0));
-            toSend.Enqueue(new SetHeaterVoltageRequest(0));
+            //toSend.Enqueue(new SetInletVoltageRequest(0));
+            //toSend.Enqueue(new SetHeaterVoltageRequest(0));
             // and check
             toSend.Enqueue(new GetEmissionCurrentRequest());
         }

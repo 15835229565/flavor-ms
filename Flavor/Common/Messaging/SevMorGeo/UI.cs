@@ -55,7 +55,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         }
         #region ISend Members
         public override IList<byte> Data {
-            get { return ModBus.collectData((byte)Id, Config.CommonOptions.hCurrent); }
+            get { return ModBus.collectData((byte)Id/*, Config.CommonOptions.hCurrent*/); }
         }
         #endregion
     }

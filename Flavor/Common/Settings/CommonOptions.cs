@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Flavor.Common.Settings {
-    class CommonOptions: CommonData {
+//    class CommonOptions: CommonData {
+    class CommonOptions: AlmazovCommonData {
         public ushort befTime { get; set; }
         public ushort befTimeReal {
             get { return (ushort)(befTime * 5); }
@@ -46,7 +45,7 @@ namespace Flavor.Common.Settings {
         public CommonOptions() {
             // defaults
             iVoltage = 1911;
-            hCurrent = 0;
+            //hCurrent = 0;
             eCurrent = 79;
             fV1 = 2730;
             fV2 = 2730;
@@ -83,7 +82,7 @@ namespace Flavor.Common.Settings {
                 .Append(DELIMITER)
                 .Append(CP)
                 .Append(DELIMITER)
-                .Append(hCurrent)
+                //.Append(hCurrent)
                 .Append(DELIMITER)
                 .Append(eCurrent)
                 .Append(DELIMITER)

@@ -296,17 +296,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
         #endregion
 
-        protected System.Windows.Forms.NumericUpDown fV1NumericUpDown;
-        protected System.Windows.Forms.NumericUpDown hCurrentNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown CPNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown idleTimeNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown expTimeNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown fV2NumericUpDown;
         protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
         protected System.Windows.Forms.Button cancel_butt;
@@ -315,5 +308,13 @@
         protected System.Windows.Forms.GroupBox params_groupBox;
         private System.Windows.Forms.CheckBox adjustSettingsCheckBox;
         protected System.Windows.Forms.CheckBox rareModeCheckBox;
+        private System.Windows.Forms.NumericUpDown expTimeNumericUpDown;
+        private System.Windows.Forms.NumericUpDown CPNumericUpDown;
+        private System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
+        private System.Windows.Forms.NumericUpDown idleTimeNumericUpDown;
+        private System.Windows.Forms.NumericUpDown fV1NumericUpDown;
+        private System.Windows.Forms.NumericUpDown hCurrentNumericUpDown;
+        private System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
+        private System.Windows.Forms.NumericUpDown fV2NumericUpDown;
     }
 }

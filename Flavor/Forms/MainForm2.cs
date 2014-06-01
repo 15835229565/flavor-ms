@@ -143,7 +143,7 @@ namespace Flavor.Forms {
                 return child as GraphForm;
             }
         }
-        OptionsForm oForm = null;
+        OptionsForm2 oForm = null;
         readonly ICommander commander;
         public MainForm2(ICommander commander)
             : base() {
@@ -360,11 +360,11 @@ namespace Flavor.Forms {
             showOptionsForm<MonitorOptionsForm>();
         }
         void showOptionsForm<T>()
-            where T: OptionsForm, new() {
+            where T: OptionsForm2, new() {
             if (oForm == null) {
                 oForm = new T();
                 oForm.Load += (s, a) => {
-                    var args = a as OptionsForm.LoadEventArgs;
+                    var args = a as OptionsForm2.LoadEventArgs;
                     commander.ProgramStateChanged += args.Method;
                     var state = commander.pState;
                     args.Enabled = (state == ProgramStates.Ready ||
@@ -375,33 +375,27 @@ namespace Flavor.Forms {
                     args.NotRareModeRequested = commander.notRareModeRequested;
                 };
                 oForm.FormClosing += (s, a) => {
-                    var args = a as OptionsForm.ClosingEventArgs;
+                    var args = a as OptionsForm2.ClosingEventArgs;
                     var ps = args.Parameters;
+                    if (ps != null) {
+                        Config.temp_saveGO((double)ps[0], (double)ps[1], (double)ps[2], (double)ps[3], (double)ps[4], (double)ps[5], (double)ps[6]);
+                        //Config.saveGlobalCommonOptions(
+                        //    (ushort)ps[0],
+                        //    (ushort)ps[1],
+                        //    (double)ps[2],
+                        //    (double)ps[3],
+                        //    (double)ps[4],
+                        //    (double)ps[5],
+                        //    (double)ps[6],
+                        //    (double)ps[7]);
+                    }
                     commander.ProgramStateChanged -= args.Method;
                     switch (oForm.DialogResult) {
                         case DialogResult.Yes:
-                            Config.saveGlobalCommonOptions(
-                                (ushort)ps[0],
-                                (ushort)ps[1],
-                                (double)ps[2],
-                                (double)ps[3],
-                                (double)ps[4],
-                                (double)ps[5],
-                                (double)ps[6],
-                                (double)ps[7]);
                             commander.SendSettings();
                             commander.notRareModeRequested = args.NotRareModeRequested;
                             break;
                         case DialogResult.OK:
-                            Config.saveGlobalCommonOptions(
-                                (ushort)ps[0],
-                                (ushort)ps[1],
-                                (double)ps[2],
-                                (double)ps[3],
-                                (double)ps[4],
-                                (double)ps[5],
-                                (double)ps[6],
-                                (double)ps[7]);
                             commander.notRareModeRequested = args.NotRareModeRequested;
                             break;
                         case DialogResult.Cancel:

@@ -32,7 +32,7 @@ namespace Flavor.Controls {
             iVolt_label.Text = commonOpts.iVoltageReal.ToString("f3");
             cp_label.Text = commonOpts.CPReal.ToString("f3");
             emCurLabel.Text = commonOpts.eCurrentReal.ToString("f3");
-            heatCurLabel.Text = commonOpts.hCurrentReal.ToString("f3");
+            //heatCurLabel.Text = commonOpts.hCurrentReal.ToString("f3");
             f1_label.Text = commonOpts.fV1Real.ToString("f3");
             f2_label.Text = commonOpts.fV2Real.ToString("f3");
 

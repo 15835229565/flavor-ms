@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Flavor.Common.Settings {
+﻿namespace Flavor.Common.Settings {
     abstract class CommonData {
         public ushort hCurrent { get; set; }
         public double hCurrentReal {
