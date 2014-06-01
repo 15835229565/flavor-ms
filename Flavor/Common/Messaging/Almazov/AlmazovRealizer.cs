@@ -53,9 +53,9 @@ namespace Flavor.Common.Messaging.Almazov {
             toSend.Enqueue(new SetIonizationVoltageRequest(co.iVoltage));
             toSend.Enqueue(new SetF1VoltageRequest(co.fV1));
             toSend.Enqueue(new SetF2VoltageRequest(co.fV2));
-            toSend.Enqueue(new SetD1VoltageRequest(0));
-            toSend.Enqueue(new SetD2VoltageRequest(0));
-            toSend.Enqueue(new SetD3VoltageRequest(0));
+            toSend.Enqueue(new SetD1VoltageRequest(co.d1V));
+            toSend.Enqueue(new SetD2VoltageRequest(co.d2V));
+            toSend.Enqueue(new SetD3VoltageRequest(co.d3V));
             //toSend.Enqueue(new SetInletVoltageRequest(0));
             //toSend.Enqueue(new SetHeaterVoltageRequest(0));
             // and check
