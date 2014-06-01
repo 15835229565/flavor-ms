@@ -1,8 +1,8 @@
 using System;
 using System.Windows.Forms;
 using Flavor.Controls;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
-using Graph = Flavor.Common.Graph;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
     internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {

@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
-using Flavor.Common;
+using Graph = Flavor.Common.Data.Measure.Graph;
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
 
 namespace Flavor.Controls {
     partial class MeasureGraphPanel: GraphPanel/*, IMeasured*/ {

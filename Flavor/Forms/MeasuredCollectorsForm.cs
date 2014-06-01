@@ -1,10 +1,10 @@
 using System;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Graph = Flavor.Common.Graph;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using Graph = Flavor.Common.Data.Measure.Graph;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 // be careful with Config data. use constants only!
-using Config = Flavor.Common.Config;
+using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Forms {
     partial class MeasuredCollectorsForm: CollectorsForm2, IMeasured {

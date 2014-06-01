@@ -144,7 +144,7 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;loadFileButton.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <metadata name="saveFileButton.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -171,55 +171,275 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;saveFileButton.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="treeView1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
+  <metadata name="label33.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label33.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="treeView1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 16</value>
+  <data name="label33.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 203</value>
   </data>
-  <data name="treeView1.Nodes" mimetype="application/x-microsoft.net.object.binary.base64">
-    <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
-        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB1TeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5UcmVlTm9kZQkAAAAEVGV4dAROYW1lCUlzQ2hlY2tlZApJbWFnZUluZGV4
-        CEltYWdlS2V5ElNlbGVjdGVkSW1hZ2VJbmRleBBTZWxlY3RlZEltYWdlS2V5CkNoaWxkQ291bnQJY2hp
-        bGRyZW4wAQEAAAEAAQAEAQgICB1TeXN0ZW0uV2luZG93cy5Gb3Jtcy5UcmVlTm9kZQIAAAACAAAABgMA
-        AAAd0JjQvtC90L3Ri9C5INC40YHRgtC+0YfQvdC40LoGBAAAAAdCcmFuY2gxAP////8GBQAAAAD/////
-        CQUAAAABAAAACQYAAAAFBgAAAB1TeXN0ZW0uV2luZG93cy5Gb3Jtcy5UcmVlTm9kZQgAAAAEVGV4dARO
-        YW1lCUlzQ2hlY2tlZApJbWFnZUluZGV4CEltYWdlS2V5ElNlbGVjdGVkSW1hZ2VJbmRleBBTZWxlY3Rl
-        ZEltYWdlS2V5CkNoaWxkQ291bnQBAQAAAQABAAEICAgCAAAABgcAAAAn0J3QsNC/0YDRj9C20LXQvdC4
-        0LUg0LjQvtC90LjQt9Cw0YbQuNC4BggAAAAFTGVhZjEA/////wkFAAAA/////wkFAAAAAAAAAAs=
-</value>
+  <data name="label33.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 13</value>
   </data>
-  <data name="treeView1.Nodes1" mimetype="application/x-microsoft.net.object.binary.base64">
-    <value>
-        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
-        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAAB1TeXN0
-        ZW0uV2luZG93cy5Gb3Jtcy5UcmVlTm9kZQgAAAAEVGV4dAROYW1lCUlzQ2hlY2tlZApJbWFnZUluZGV4
-        CEltYWdlS2V5ElNlbGVjdGVkSW1hZ2VJbmRleBBTZWxlY3RlZEltYWdlS2V5CkNoaWxkQ291bnQBAQAA
-        AQABAAEICAgCAAAABgMAAAAJ0KPQt9C10LsxCQMAAAAA/////wYEAAAAAP////8JBAAAAAAAAAAL
-</value>
+  <data name="label33.TabIndex" type="System.Int32, mscorlib">
+    <value>25</value>
   </data>
-  <data name="treeView1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>264, 205</value>
+  <data name="label33.Text" xml:space="preserve">
+    <value>Фокусирующее напр. (2) (50-150 В)</value>
   </data>
-  <data name="treeView1.TabIndex" type="System.Int32, mscorlib">
-    <value>36</value>
+  <data name="&gt;&gt;label33.Name" xml:space="preserve">
+    <value>label33</value>
   </data>
-  <data name="&gt;&gt;treeView1.Name" xml:space="preserve">
-    <value>treeView1</value>
+  <data name="&gt;&gt;label33.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;treeView1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TreeView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;treeView1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label33.Parent" xml:space="preserve">
     <value>params_groupBox</value>
   </data>
-  <data name="&gt;&gt;treeView1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;label33.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <metadata name="label32.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label32.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label32.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 177</value>
+  </data>
+  <data name="label32.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 13</value>
+  </data>
+  <data name="label32.TabIndex" type="System.Int32, mscorlib">
+    <value>24</value>
+  </data>
+  <data name="label32.Text" xml:space="preserve">
+    <value>Фокусирующее напр. (1) (50-150 В)</value>
+  </data>
+  <data name="&gt;&gt;label32.Name" xml:space="preserve">
+    <value>label32</value>
+  </data>
+  <data name="&gt;&gt;label32.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label32.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label32.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <metadata name="label6.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label6.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 152</value>
+  </data>
+  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 13</value>
+  </data>
+  <data name="label6.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+    <value>Ток эмиссии (1-20 мкА)</value>
+  </data>
+  <data name="&gt;&gt;label6.Name" xml:space="preserve">
+    <value>label6</value>
+  </data>
+  <data name="&gt;&gt;label6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <metadata name="label5.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label5.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 99</value>
+  </data>
+  <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>122, 13</value>
+  </data>
+  <data name="label5.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Коэффициент деления</value>
+  </data>
+  <data name="&gt;&gt;label5.Name" xml:space="preserve">
+    <value>label5</value>
+  </data>
+  <data name="&gt;&gt;label5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <metadata name="label4.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 126</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 13</value>
+  </data>
+  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Напряжение ионизации (50-100 В)</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 47</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 13</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Напряжение Д2 (2200-3000 В)</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 21</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 13</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Напряжение Д1 (2200-3000 В)</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>18</value>
+  </data>
+  <data name="d3VoltageNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 71</value>
+  </data>
+  <data name="d3VoltageNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="d3VoltageNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="d3VoltageNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;d3VoltageNumericUpDown.Name" xml:space="preserve">
+    <value>d3VoltageNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;d3VoltageNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;d3VoltageNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;d3VoltageNumericUpDown.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 73</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>159, 13</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>36</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Напряжение Д3 (2200-3000 В)</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="adjustSettingsCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -246,7 +466,175 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;adjustSettingsCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
+  </data>
+  <data name="fV2NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 201</value>
+  </data>
+  <data name="fV2NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="fV2NumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="fV2NumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.Name" xml:space="preserve">
+    <value>fV2NumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;fV2NumericUpDown.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="fV1NumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 175</value>
+  </data>
+  <data name="fV1NumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="fV1NumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="fV1NumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.Name" xml:space="preserve">
+    <value>fV1NumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;fV1NumericUpDown.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="eCurrentNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 149</value>
+  </data>
+  <data name="eCurrentNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="eCurrentNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
+  </data>
+  <data name="eCurrentNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Name" xml:space="preserve">
+    <value>eCurrentNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="CPNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 97</value>
+  </data>
+  <data name="CPNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="CPNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
+  <data name="CPNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.Name" xml:space="preserve">
+    <value>CPNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;CPNumericUpDown.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="iVoltageNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 123</value>
+  </data>
+  <data name="iVoltageNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="iVoltageNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>28</value>
+  </data>
+  <data name="iVoltageNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.Name" xml:space="preserve">
+    <value>iVoltageNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;iVoltageNumericUpDown.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="d2VoltageNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 45</value>
+  </data>
+  <data name="d2VoltageNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="d2VoltageNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="d2VoltageNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;d2VoltageNumericUpDown.Name" xml:space="preserve">
+    <value>d2VoltageNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;d2VoltageNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;d2VoltageNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;d2VoltageNumericUpDown.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="d1VoltageNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 19</value>
+  </data>
+  <data name="d1VoltageNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
+  </data>
+  <data name="d1VoltageNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>26</value>
+  </data>
+  <data name="d1VoltageNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="&gt;&gt;d1VoltageNumericUpDown.Name" xml:space="preserve">
+    <value>d1VoltageNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;d1VoltageNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;d1VoltageNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;d1VoltageNumericUpDown.ZOrder" xml:space="preserve">
+    <value>11</value>
   </data>
   <data name="params_groupBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>10, 85</value>

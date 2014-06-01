@@ -5,13 +5,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
 using ZedGraph;
-using Graph = Flavor.Common.Graph;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
-using Collector = Flavor.Common.Collector;
-using CommonOptions = Flavor.Common.CommonOptions;
-using PointPairListPlus = Flavor.Common.PointPairListPlus;
+using Graph = Flavor.Common.Data.Measure.Graph;
+using Collector = Flavor.Common.Data.Measure.Collector;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
+using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 // be careful with Config data. use constants only!
-using Config = Flavor.Common.Config;
+using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Forms {
     partial class CollectorsForm2: GraphForm {

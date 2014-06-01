@@ -1,5 +1,5 @@
 ﻿using System;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 
 namespace Flavor.Forms {
     internal partial class PlacePointForm: AddPointForm {

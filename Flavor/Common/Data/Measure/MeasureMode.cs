@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using Config = Flavor.Common.Settings.Config;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Data.Measure {
     // TODO: remove dependencies from Commander, Config
     abstract class MeasureMode {
         public class NoListenersException: Exception { }
@@ -103,7 +104,7 @@ namespace Flavor.Common {
             return true;
         }
         // external usage only
-        public Action<ushort, Utility.PreciseEditorData> GraphUpdateDelegate { get; set; }
+        public Action<ushort, PreciseEditorData> GraphUpdateDelegate { get; set; }
         abstract public void UpdateGraph();
         // external usage only
         abstract public int StepsCount { get; }
@@ -161,10 +162,10 @@ namespace Flavor.Common {
                     SaveResults(this, new SaveResultsEventArgs(shift));
                 // senseModeCounts here?
             }
-            List<Utility.PreciseEditorData> senseModePoints;
+            List<PreciseEditorData> senseModePoints;
             long[][] senseModeCounts;
             byte senseModePeak = 0;
-            Utility.PreciseEditorData SenseModePeak {
+            PreciseEditorData SenseModePeak {
                 get { return senseModePoints[senseModePeak]; }
             }
             ushort[] senseModePeakIterationMax;
@@ -182,7 +183,7 @@ namespace Flavor.Common {
 
             public Precise()
                 : this(Config.PreciseData.getUsed(), 0) { }
-            Precise(List<Utility.PreciseEditorData> peaks, short? shift)
+            Precise(List<PreciseEditorData> peaks, short? shift)
                 : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
                 forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
@@ -197,7 +198,7 @@ namespace Flavor.Common {
 
                 noPoints = false;
                 // only peak value?
-                senseModePoints.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                senseModePoints.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                 senseModePeakIterationMax = new ushort[senseModePoints.Count];
                 smpiSumMax = 0;
                 senseModeCounts = new long[senseModePoints.Count][];
@@ -210,15 +211,15 @@ namespace Flavor.Common {
                 }
             }
             protected override void saveData(int[] counts) {
-                Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
+                PreciseEditorData peak = senseModePoints[senseModePeak];
                 // be careful!
                 senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += counts[peak.Collector - 1];
             }
             public class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }
-                public List<Utility.PreciseEditorData> Points { get; private set; }
+                public List<PreciseEditorData> Points { get; private set; }
                 public short? Shift { get; private set; }
-                public SuccessfulExitEventArgs(long[][] counts, List<Utility.PreciseEditorData> points, short? shift) {
+                public SuccessfulExitEventArgs(long[][] counts, List<PreciseEditorData> points, short? shift) {
                     Counts = counts;
                     Points = points;
                     Shift = shift;
@@ -240,7 +241,7 @@ namespace Flavor.Common {
                 return true;
             }
             protected override bool toContinue() {
-                Utility.PreciseEditorData peak = senseModePoints[senseModePeak];
+                PreciseEditorData peak = senseModePoints[senseModePeak];
                 if ((pointValue > (peak.Step + peak.Width))) {
                     if (!isSpectrumValid(peak)) {
                         // check spectrum validity after any iteration over checker peak
@@ -265,7 +266,7 @@ namespace Flavor.Common {
                 }
                 return true;
             }
-            protected virtual bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+            protected virtual bool isSpectrumValid(PreciseEditorData curPeak) {
                 return true;
             }
 
@@ -343,7 +344,7 @@ namespace Flavor.Common {
 
                 readonly MeasureStopper stopper;
                 
-                readonly Utility.PreciseEditorData peak;
+                readonly PreciseEditorData peak;
                 readonly int checkerIndex;
                 
                 bool spectrumIsValid = true;
@@ -388,12 +389,12 @@ namespace Flavor.Common {
                     prevIteration = prevIteration == null ? null : new long[senseModeCounts[checkerIndex].Length];
                     return true;
                 }
-                protected override bool isSpectrumValid(Utility.PreciseEditorData curPeak) {
+                protected override bool isSpectrumValid(PreciseEditorData curPeak) {
                     // TODO: use options-specific delegate
                     // specially do not stop cycle
                     return isSpectrumValid2(curPeak, true);
                 }
-                bool isSpectrumValid2(Utility.PreciseEditorData curPeak, bool ignoreInvalidity) {
+                bool isSpectrumValid2(PreciseEditorData curPeak, bool ignoreInvalidity) {
                     if (!shift.HasValue || !curPeak.Equals(peak) || prevIteration == null) {
                         // if peak is null also exit here
                         // do not store value here!

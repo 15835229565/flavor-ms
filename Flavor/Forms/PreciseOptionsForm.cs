@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Config = Flavor.Common.Config;
+using Config = Flavor.Common.Settings.Config;
 // really here?
 using ProgramStates = Flavor.Common.ProgramStates;
 using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
-using PreciseSpectrum = Flavor.Common.PreciseSpectrum;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PreciseSpectrum = Flavor.Common.Data.Measure.PreciseSpectrum;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 // remove this reference from here..
-using Graph = Flavor.Common.Graph;
+using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
     internal partial class PreciseOptionsForm: OptionsForm {

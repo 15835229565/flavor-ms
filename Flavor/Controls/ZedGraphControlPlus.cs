@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 using ZedGraph;
 using Flavor.Common;
+using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 
-namespace Flavor.Controls
-{
+namespace Flavor.Controls {
     partial class ZedGraphControlPlus: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
             private ContextMenuStrip menuStrip;
@@ -15,13 +15,13 @@ namespace Flavor.Controls
                     return menuStrip;
                 }
             }
-            private PointPairListPlus ppl;
+            PointPairListPlus ppl;
             public PointPairListPlus Row {
                 get {
                     return ppl;
                 }
             }
-            private int index;
+            int index;
             public int Index {
                 get {
                     return index;

@@ -3,10 +3,11 @@ using Flavor.Common.Messaging.Almazov.Commands;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
-        public AlmazovRealizer(PortLevel port, Generator<double> interval)
-            : this(new AlexProtocol(port), interval) { }
-        AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, Generator<double> interval)
+        public AlmazovRealizer(PortLevel port, byte attempts, Generator<double> interval)
+            : this(new AlexProtocol(port), attempts, interval) { }
+        AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Generator<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
+                attempts,
                 new StatusRequestGenerator(new TICStatusRequest(), new CPUStatusRequest(), new HighVoltagePermittedStatusRequest(), new OperationBlockRequest(null)),
                 interval)) { }
         AlmazovRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)

@@ -1,11 +1,10 @@
-using System;
 using System.Windows.Forms;
-using Flavor.Common;
-using Flavor.Forms;
+using Graph = Flavor.Common.Data.Measure.Graph;
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
 
 namespace Flavor.Controls {
     public partial class GraphPanel: Panel {
-        private Graph graph = null;
+        Graph graph = null;
         internal Graph Graph {
             get { return graph; }
             set { graph = value; }

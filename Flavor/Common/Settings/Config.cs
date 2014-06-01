@@ -5,8 +5,9 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using Flavor.Common.Data.Measure;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Settings {
     static class Config {
         private static IMainConfig mainConfig;
         private static IMainConfigWriter mainConfigWriter;
@@ -44,8 +45,8 @@ namespace Flavor.Common {
         
         internal const int PEAK_NUMBER = 20;
 
-        private static CommonOptions commonOpts;
-        internal static CommonOptions CommonOptions {
+        static CommonOptions commonOpts;
+        public static CommonOptions CommonOptions {
             get { return commonOpts; }
         }
 
@@ -60,37 +61,37 @@ namespace Flavor.Common {
             set { reperPeakIndex = value - 1; }
         }
 
-        private static Utility.PreciseEditorData reperPeak = null;
-        internal static Utility.PreciseEditorData CustomCheckerPeak {
+        private static PreciseEditorData reperPeak = null;
+        internal static PreciseEditorData CustomCheckerPeak {
             get {
                 return reperPeak == null ? null :
-                    new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(), reperPeak.Width, 0, "checker peak");
+                    new PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(), reperPeak.Width, 0, "checker peak");
             }
         }
-        internal static Utility.PreciseEditorData CheckerPeak {
+        internal static PreciseEditorData CheckerPeak {
             get {
                 if (reperPeakIndex == -1)
                     return CustomCheckerPeak;
                 int index = preciseData.FindIndex(peak => peak.pNumber == reperPeakIndex);
                 if (index == -1)
                     return null;
-                return new Utility.PreciseEditorData(preciseData[index], countMaxIteration());
+                return new PreciseEditorData(preciseData[index], countMaxIteration());
             }
         }
         private static ushort countMaxIteration() {
             return countMaxIteration(preciseData.getUsed());
         }
-        private static ushort countMaxIteration(List<Utility.PreciseEditorData> pedl) {
+        private static ushort countMaxIteration(List<PreciseEditorData> pedl) {
             ushort maxIteration = 0;
-            foreach (Utility.PreciseEditorData ped in pedl) {
+            foreach (PreciseEditorData ped in pedl) {
                 maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
             }
             return maxIteration;
         }
 
-        internal static List<Utility.PreciseEditorData> PreciseDataWithChecker {
+        internal static List<PreciseEditorData> PreciseDataWithChecker {
             get {
-                List<Utility.PreciseEditorData> res = preciseData.getUsed();
+                List<PreciseEditorData> res = preciseData.getUsed();
                 if (res.Count == 0) {
                     return null;
                 }
@@ -103,12 +104,12 @@ namespace Flavor.Common {
                         res.Add(CheckerPeak);
                     } else {
                         // peak is also measured. error can be caused by this line (copying)
-                        res[index] = new Utility.PreciseEditorData(res[index], countMaxIteration(res));
+                        res[index] = new PreciseEditorData(res[index], countMaxIteration(res));
                     }
                     return res;
                 }
                 if (reperPeak != null) {
-                    res.Add(new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(res), reperPeak.Width, 0, "checker peak"));
+                    res.Add(new PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(res), reperPeak.Width, 0, "checker peak"));
                 }
                 return res;
             }
@@ -181,7 +182,7 @@ namespace Flavor.Common {
             Config.BaudRate = baudrate;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak, int index, byte backgroundCount) {
+        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, PreciseEditorData peak, int index, byte backgroundCount) {
             iterations = iter;
             timeLimit = timeLim;
             allowedShift = shift;
@@ -213,7 +214,7 @@ namespace Flavor.Common {
         }
         public const string ID_PREFIX_TEMPORARY = "id_";
         public const char COMMENT_DELIMITER_TEMPORARY = '_';
-        internal static double[,] LoadLibrary(List<Utility.PreciseEditorData> peds) {
+        internal static double[,] LoadLibrary(List<PreciseEditorData> peds) {
             int rank = peds.Count;
             ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
             
@@ -221,7 +222,7 @@ namespace Flavor.Common {
             Match match;
             List<string> ids = new List<string>(peds.Count);
             List<string> masses = new List<string>(peds.Count);
-            foreach (Utility.PreciseEditorData ped in peds) {
+            foreach (var ped in peds) {
                 match = expression.Match(ped.Comment);
                 if (match.Success) {
                     GroupCollection groups = match.Groups;
@@ -296,7 +297,7 @@ namespace Flavor.Common {
             writer.write();
         }
         #region Spectra Distraction
-        internal static void distractSpectra(string what, ushort step, byte? collectorNumber, Utility.PreciseEditorData pedReference, Graph graph) {
+        internal static void distractSpectra(string what, ushort step, byte? collectorNumber, PreciseEditorData pedReference, Graph graph) {
             bool hint = !graph.isPreciseSpectrum;
             ISpectrumReader reader = TagHolder.getSpectrumReader(what, hint);
             if (reader.Hint != hint) {
@@ -346,7 +347,7 @@ namespace Flavor.Common {
             }
             PreciseSpectrum peds = new PreciseSpectrum();
             if (reader.openPreciseSpectrumFile(peds)) {
-                List<Utility.PreciseEditorData> temp = new List<Utility.PreciseEditorData>(graph.PreciseData);
+                var temp = new List<PreciseEditorData>(graph.PreciseData);
                 temp.Sort();
                 try {
                     temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
@@ -368,7 +369,7 @@ namespace Flavor.Common {
             }
             return res;
         }
-        private static Utility.PreciseEditorData PreciseEditorDataDiff(Utility.PreciseEditorData target, Utility.PreciseEditorData what, double coeff) {
+        private static PreciseEditorData PreciseEditorDataDiff(PreciseEditorData target, PreciseEditorData what, double coeff) {
             if (target.CompareTo(what) != 0)
                 throw new System.ArgumentException();
             if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) ^ (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
@@ -376,10 +377,10 @@ namespace Flavor.Common {
             if (target.AssociatedPoints != null && what.AssociatedPoints != null && target.AssociatedPoints.Count != what.AssociatedPoints.Count)
                 throw new System.ArgumentException();
             if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) && (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
-                return new Utility.PreciseEditorData(target);
+                return new PreciseEditorData(target);
             if (target.AssociatedPoints.Count != 2 * target.Width + 1)
                 throw new System.ArgumentException();
-            Utility.PreciseEditorData res = new Utility.PreciseEditorData(target);
+            var res = new PreciseEditorData(target);
             for (int i = 0; i < res.AssociatedPoints.Count; ++i) {
                 if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
                     throw new System.ArgumentException();
@@ -387,7 +388,7 @@ namespace Flavor.Common {
             }
             return res;
         }
-        private static List<Utility.PreciseEditorData> PreciseEditorDataListDiff(List<Utility.PreciseEditorData> from, List<Utility.PreciseEditorData> what, ushort step, Utility.PreciseEditorData pedReference) {
+        private static List<PreciseEditorData> PreciseEditorDataListDiff(List<PreciseEditorData> from, List<PreciseEditorData> what, ushort step, PreciseEditorData pedReference) {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
 
@@ -425,7 +426,7 @@ namespace Flavor.Common {
                 }
             }
 
-            List<Utility.PreciseEditorData> res = new List<Utility.PreciseEditorData>(from);
+            var res = new List<PreciseEditorData>(from);
             for (int i = 0; i < res.Count; ++i) {
                 res[i] = PreciseEditorDataDiff(res[i], what[i], coeff);
             }
@@ -498,10 +499,10 @@ namespace Flavor.Common {
         #endregion
         #endregion
         #region Config I/O
-        internal static List<Utility.PreciseEditorData> loadPreciseOptions(string pedConfName) {
+        internal static List<PreciseEditorData> loadPreciseOptions(string pedConfName) {
             return TagHolder.getPreciseDataReader(pedConfName).loadPreciseData();
         }
-        internal static void savePreciseOptions(List<Utility.PreciseEditorData> peds, string pedConfName, bool savePeakSum) {
+        internal static void savePreciseOptions(List<PreciseEditorData> peds, string pedConfName, bool savePeakSum) {
             IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(pedConfName);
             writer.savePreciseData(peds, savePeakSum);
             writer.write();
@@ -619,14 +620,14 @@ namespace Flavor.Common {
             CommonOptions loadCommonOptions();
         }
         private interface IPreciseDataReader: IAnyReader {
-            List<Utility.PreciseEditorData> loadPreciseData();
+            List<PreciseEditorData> loadPreciseData();
         }
         private interface ICommonOptionsWriter: IAnyWriter {
             void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2);
             void saveCommonOptions(CommonOptions opts);
         }
         private interface IPreciseDataWriter: IAnyWriter {
-            void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum);
+            void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum);
         }
         #endregion
         #region Additive configs
@@ -662,7 +663,7 @@ namespace Flavor.Common {
                     private readonly DateTime initialDT;
                     private readonly string filename;
                     private readonly CommonOptions opts;
-                    private readonly List<Utility.PreciseEditorData> precData;
+                    private readonly List<PreciseEditorData> precData;
                     private readonly string header;
                     private readonly StreamWriter sw;
                     private readonly StreamWriter swResolved;
@@ -694,9 +695,9 @@ namespace Flavor.Common {
                         // TODO: copy!
                         //this.graph = graph;
                         opts = graph.CommonOptions;
-                        precData = new List<Utility.PreciseEditorData>(graph.PreciseData);
+                        precData = new List<PreciseEditorData>(graph.PreciseData);
                         //!!!
-                        precData.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                        precData.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                         header = generateHeader();
                         initFile(dt, out filename, out sw, out swResolved);
                     }
@@ -734,7 +735,7 @@ namespace Flavor.Common {
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_PRECISE_OPTIONS)
                             .Append(HEADER_FOOTER_DELIMITER);
-                        foreach (Utility.PreciseEditorData ped in precData) {
+                        foreach (var ped in precData) {
                             sb.Append(ped);
                         }
                         return sb.ToString();
@@ -782,7 +783,7 @@ namespace Flavor.Common {
                             swResolved.WriteLine();
                         }
                         
-                        foreach (Utility.PreciseEditorData ped in precData) {
+                        foreach (var ped in precData) {
                             if (ped.Use) {
                                 sb
                                     .Append(DATA_DELIMITER)
@@ -965,16 +966,16 @@ namespace Flavor.Common {
                             throw new structureErrorOnLoadCommonData(filename);
                         }
                     }
-                    public List<Utility.PreciseEditorData> loadPreciseData() {
+                    public List<PreciseEditorData> loadPreciseData() {
                         try {
                             return LoadPED("");
                         } catch (ConfigLoadException) {
                             return null;
                         }
                     }
-                    protected List<Utility.PreciseEditorData> LoadPED(string errorMessage) {
+                    protected List<PreciseEditorData> LoadPED(string errorMessage) {
                         string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
-                        List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+                        var peds = new List<PreciseEditorData>();
                         for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string peak, iter, width, col;
                             try {
@@ -995,7 +996,7 @@ namespace Flavor.Common {
                                         bool use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
                                         ushort peakStep = ushort.Parse(peak);
                                         ushort peakWidth = ushort.Parse(width);
-                                        Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), peakStep,
+                                       var temp = new PreciseEditorData(use, (byte)(i - 1), peakStep,
                                                                             byte.Parse(col), ushort.Parse(iter),
                                                                             ushort.Parse(width), (float)0, comment);
                                         peakStep -= peakWidth;
@@ -1069,7 +1070,7 @@ namespace Flavor.Common {
                             //use hard-coded defaults
                         }
                         try {
-                            List<Utility.PreciseEditorData> pedl = loadPreciseData();
+                            var pedl = loadPreciseData();
                             if ((pedl != null) && (pedl.Count > 0)) {
                                 //BAD!!! cleaning previous points!!!
                                 preciseData.Clear();
@@ -1084,7 +1085,7 @@ namespace Flavor.Common {
                             ushort step = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
                             byte collector = byte.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
                             ushort width = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
-                            reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
+                            reperPeak = new PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (null checker peak)
                         } catch (FormatException) {
@@ -1384,9 +1385,9 @@ namespace Flavor.Common {
                         commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
                         commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();*/
                     }
-                    public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum) {
+                    public void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum) {
                         clearOldValues();
-                        foreach (Utility.PreciseEditorData ped in peds) {
+                        foreach (var ped in peds) {
                             XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
                             regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
                             regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
@@ -1575,16 +1576,16 @@ namespace Flavor.Common {
                             throw new structureErrorOnLoadCommonData(filename);
                         }
                     }
-                    public List<Utility.PreciseEditorData> loadPreciseData() {
+                    public List<PreciseEditorData> loadPreciseData() {
                         try {
                             return LoadPED("");
                         } catch (ConfigLoadException) {
                             return null;
                         }
                     }
-                    protected List<Utility.PreciseEditorData> LoadPED(string errorMessage) {
+                    protected List<PreciseEditorData> LoadPED(string errorMessage) {
                         string prefix = combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG);
-                        List<Utility.PreciseEditorData> peds = new List<Utility.PreciseEditorData>();
+                        var peds = new List<PreciseEditorData>();
                         for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string peak, iter, width, col;
                             try {
@@ -1605,7 +1606,7 @@ namespace Flavor.Common {
                                         bool use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
                                         ushort peakStep = ushort.Parse(peak);
                                         ushort peakWidth = ushort.Parse(width);
-                                        Utility.PreciseEditorData temp = new Utility.PreciseEditorData(use, (byte)(i - 1), peakStep,
+                                        var temp = new PreciseEditorData(use, (byte)(i - 1), peakStep,
                                                                             byte.Parse(col), ushort.Parse(iter),
                                                                             ushort.Parse(width), (float)0, comment);
                                         peakStep -= peakWidth;
@@ -1679,7 +1680,7 @@ namespace Flavor.Common {
                             //use hard-coded defaults
                         }
                         try {
-                            List<Utility.PreciseEditorData> pedl = loadPreciseData();
+                            var pedl = loadPreciseData();
                             if ((pedl != null) && (pedl.Count > 0)) {
                                 //BAD!!! cleaning previous points!!!
                                 preciseData.Clear();
@@ -1694,7 +1695,7 @@ namespace Flavor.Common {
                             ushort step = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_NUMBER_CONFIG_TAG)).InnerText);
                             byte collector = byte.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_COL_NUMBER_CONFIG_TAG)).InnerText);
                             ushort width = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, PEAK_WIDTH_CONFIG_TAG)).InnerText);
-                            reperPeak = new Utility.PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
+                            reperPeak = new PreciseEditorData(false, 255, step, collector, 0, width, 0, "checker peak");
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (null checker peak)
                         } catch (FormatException) {
@@ -1994,9 +1995,9 @@ namespace Flavor.Common {
                         commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
                         commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();*/
                     }
-                    public void savePreciseData(List<Utility.PreciseEditorData> peds, bool savePeakSum) {
+                    public void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum) {
                         clearOldValues();
-                        foreach (Utility.PreciseEditorData ped in peds) {
+                        foreach (var ped in peds) {
                             XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
                             regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
                             regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();

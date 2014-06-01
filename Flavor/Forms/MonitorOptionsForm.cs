@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Config = Flavor.Common.Config;
+using Config = Flavor.Common.Settings.Config;
 
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 // remove this reference from here..
-using Graph = Flavor.Common.Graph;
+using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
     internal partial class MonitorOptionsForm: PreciseOptionsForm {

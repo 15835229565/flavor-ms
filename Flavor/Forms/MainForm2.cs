@@ -7,9 +7,9 @@ using TreeNodeLeaf = Flavor.Common.TreeNodeLeaf;
 using TreeNodePlus = Flavor.Common.TreeNodePlus;
 using TreeNodePair = Flavor.Common.TreeNodePair;
 // data model
-using Graph = Flavor.Common.Graph;
+using Graph = Flavor.Common.Data.Measure.Graph;
 // divide into 2 parts
-using Config = Flavor.Common.Config;
+using Config = Flavor.Common.Settings.Config;
 // controller
 using ICommander = Flavor.Common.Commander;
 using ProgramStates = Flavor.Common.ProgramStates;
@@ -376,13 +376,32 @@ namespace Flavor.Forms {
                 };
                 oForm.FormClosing += (s, a) => {
                     var args = a as OptionsForm.ClosingEventArgs;
+                    var ps = args.Parameters;
                     commander.ProgramStateChanged -= args.Method;
                     switch (oForm.DialogResult) {
                         case DialogResult.Yes:
+                            Config.saveGlobalCommonOptions(
+                                (ushort)ps[0],
+                                (ushort)ps[1],
+                                (double)ps[2],
+                                (double)ps[3],
+                                (double)ps[4],
+                                (double)ps[5],
+                                (double)ps[6],
+                                (double)ps[7]);
                             commander.SendSettings();
                             commander.notRareModeRequested = args.NotRareModeRequested;
                             break;
                         case DialogResult.OK:
+                            Config.saveGlobalCommonOptions(
+                                (ushort)ps[0],
+                                (ushort)ps[1],
+                                (double)ps[2],
+                                (double)ps[3],
+                                (double)ps[4],
+                                (double)ps[5],
+                                (double)ps[6],
+                                (double)ps[7]);
                             commander.notRareModeRequested = args.NotRareModeRequested;
                             break;
                         case DialogResult.Cancel:

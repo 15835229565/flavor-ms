@@ -1,6 +1,7 @@
 ﻿using System;
 using Flavor.Common.Messaging;
 using Flavor.Common.Messaging.Almazov;
+using Flavor.Common.Settings;
 
 namespace Flavor.Common {
     class AlmazovCommander: Commander {
@@ -62,7 +63,7 @@ namespace Flavor.Common {
             realizer.FirstStatus += onTheFlyAction;*/
         }
         protected override IRealizer GetRealizer(PortLevel port, Generator<bool> notRare) {
-            return realizer = new AlmazovRealizer(port, () => notRare() ? 500 : 10000);
+            return realizer = new AlmazovRealizer(port, Config.Try, () => notRare() ? 500 : 10000);
         }
 
         public override void Bind(IMSControl view) {

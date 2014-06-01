@@ -1,4 +1,5 @@
 ﻿using System;
+using Flavor.Common.Settings;
 
 namespace Flavor.Common.Messaging {
     abstract class Realizer<T>: IRealizer, IAsyncReplyReceived

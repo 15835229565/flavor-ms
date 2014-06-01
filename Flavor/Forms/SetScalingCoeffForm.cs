@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Graph = Flavor.Common.Graph;
-using Config = Flavor.Common.Config;
+using Graph = Flavor.Common.Data.Measure.Graph;
+using Config = Flavor.Common.Settings.Config;
 // remove this reference
 using Utility = Flavor.Common.Utility;
 
 namespace Flavor.Forms {
     partial class SetScalingCoeffForm: Form {
-        private byte myCol = 0;
-        private ushort myStep = 0;
-        private Graph graph;
-        internal SetScalingCoeffForm()
+        byte myCol = 0;
+        ushort myStep = 0;
+        Graph graph;
+        public SetScalingCoeffForm()
             : base() {
             InitializeComponent();
             // TODO: better solution, make new CustomTextBoxClass or extension method
             this.massTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
         }
 
-        internal SetScalingCoeffForm(ushort step, byte col, Graph graph)
+        public SetScalingCoeffForm(ushort step, byte col, Graph graph)
             : this() {
             myCol = col;
             myStep = step;

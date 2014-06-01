@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ZedGraph;
 using System.Collections;
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
+using Config = Flavor.Common.Settings.Config;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Data.Measure {
     class Graph {
         static MeasureGraph instance = null;
         public static MeasureGraph Instance {
@@ -67,8 +69,8 @@ namespace Flavor.Common {
                 Voltage = 1,
                 Mass = 2
             }
-            private readonly Utility.PreciseEditorData myPED;
-            internal Utility.PreciseEditorData PEDreference {
+            private readonly PreciseEditorData myPED;
+            internal PreciseEditorData PEDreference {
                 get { return myPED; }
             }
 
@@ -228,8 +230,8 @@ namespace Flavor.Common {
         public CommonOptions CommonOptions {
             get { return Collectors.CommonOptions; }
         }
-        List<Utility.PreciseEditorData> preciseData = null;
-        public List<Utility.PreciseEditorData> PreciseData {
+        List<PreciseEditorData> preciseData = null;
+        public List<PreciseEditorData> PreciseData {
             get { return preciseData; }
         }
         
@@ -288,7 +290,7 @@ namespace Flavor.Common {
 
         public class MeasureGraph: Graph {
             public ushort LastPoint { get; private set; }
-            public Utility.PreciseEditorData CurrentPeak { get; private set; }
+            public PreciseEditorData CurrentPeak { get; private set; }
 
             public MeasureGraph(CommonOptions commonOpts, params double[] coeffs)
                 : base(commonOpts, coeffs) { }
@@ -324,14 +326,14 @@ namespace Flavor.Common {
             }
 
             // precise mode
-            public void updateGraphDuringPreciseMeasure(ushort pnt, Utility.PreciseEditorData curped, params int[] ys) {
+            public void updateGraphDuringPreciseMeasure(ushort pnt, PreciseEditorData curped, params int[] ys) {
                 LastPoint = pnt;
                 CurrentPeak = curped;
                 OnNewGraphData(ys);
             }
-            public void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<Utility.PreciseEditorData> peds, /*Obsolete*/short? shift) {
+            public void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<PreciseEditorData> peds, /*Obsolete*/short? shift) {
                 for (int i = 0; i < peds.Count; ++i) {
-                    Utility.PreciseEditorData ped = peds[i];
+                    PreciseEditorData ped = peds[i];
                     if (ped.Use) {
                         PointPairListPlus temp = new PointPairListPlus();
                         {
@@ -355,8 +357,8 @@ namespace Flavor.Common {
             }
         }
         #region peak to add (static)
-        static Utility.PreciseEditorData peakToAdd = null;
-        public static Utility.PreciseEditorData PointToAdd {
+        static PreciseEditorData peakToAdd = null;
+        public static PreciseEditorData PointToAdd {
             get { return peakToAdd; }
             set {
                 if (peakToAdd != value) {
@@ -392,16 +394,16 @@ namespace Flavor.Common {
             this.dateTime = dt;
             updateGraphAfterScanLoad(plists);
         }
-        public void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds) {
+        public void updateGraphAfterPreciseLoad(List<PreciseEditorData> peds) {
             preciseData = peds;
-            foreach (Utility.PreciseEditorData ped in peds) {
+            foreach (PreciseEditorData ped in peds) {
                 if (ped == null || ped.AssociatedPoints == null || ped.AssociatedPoints.Count == 0)
                     continue;
                 // TODO: check if skipping of empty data rows can lead to program misbehaviour
                 Collectors[ped.Collector - 1].Add(ped.AssociatedPoints);
             }
         }
-        public void updateGraphAfterPreciseLoad(List<Utility.PreciseEditorData> peds, DateTime dt, short shift) {
+        public void updateGraphAfterPreciseLoad(List<PreciseEditorData> peds, DateTime dt, short shift) {
             updateGraphAfterPreciseLoad(peds);
             this.dateTime = dt;
             this.shift = shift;
@@ -418,11 +420,11 @@ namespace Flavor.Common {
                 // TODO: All collectors
                 OnNewGraphData(null, 1, 2);
         }
-        public void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds) {
+        public void updateGraphAfterPreciseDiff(List<PreciseEditorData> peds) {
             ResetPointLists();
             updateGraphAfterPreciseDiff(peds, true);
         }
-        public void updateGraphAfterPreciseDiff(List<Utility.PreciseEditorData> peds, bool newData) {
+        public void updateGraphAfterPreciseDiff(List<PreciseEditorData> peds, bool newData) {
             updateGraphAfterPreciseLoad(peds, DateTime.MaxValue, short.MaxValue);
             DisplayingMode = Displaying.Diff;
             //lock here?

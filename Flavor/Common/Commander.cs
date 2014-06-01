@@ -1,5 +1,7 @@
 ﻿using System;
 using Flavor.Common.Messaging;
+using Flavor.Common.Data.Measure;
+using Flavor.Common.Settings;
 
 namespace Flavor.Common {
     abstract class Commander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IMeasureActions {
@@ -179,7 +181,7 @@ namespace Flavor.Common {
             //e.Handler = this.RareModeChanged;
         }
         protected virtual PortLevel.PortStates Connect() {
-            PortLevel.PortStates res = port.Open();
+            PortLevel.PortStates res = port.Open(Config.Port, (int)Config.BaudRate);
             switch (res) {
                 case PortLevel.PortStates.Opening:
                     realizer.Undo += undoProgramState;
@@ -222,7 +224,7 @@ namespace Flavor.Common {
             if (DeviceIsConnected) {
                 Disconnect();
                 if (!DeviceIsConnected)
-                    port.Open();
+                    port.Open(Config.Port, (int)Config.BaudRate);
             }
         }
         public string[] AvailablePorts {
@@ -255,7 +257,7 @@ namespace Flavor.Common {
         public bool SomePointsUsed {
             get {
                 if (Config.PreciseData.Count > 0)
-                    foreach (Utility.PreciseEditorData ped in Config.PreciseData)
+                    foreach (PreciseEditorData ped in Config.PreciseData)
                         if (ped.Use) return true;
                 return false;
             }

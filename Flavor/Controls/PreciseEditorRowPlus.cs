@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorRowPlus: PreciseEditorRow {

@@ -114,7 +114,7 @@ namespace Flavor.Common {
         public static string[] AvailablePorts {
             get { return SerialPort.GetPortNames(); }
         }
-        public PortStates Open() {
+        public PortStates Open(string name, int baudrate) {
             if (serialPort != null) {
                 if (serialPort.IsOpen) {
                     OnErrorPort(false, "Port already opened");
@@ -123,8 +123,8 @@ namespace Flavor.Common {
                 serialPort.Dispose();
             }
             serialPort = new SerialPort();
-            serialPort.PortName = Flavor.Common.Config.Port;
-            serialPort.BaudRate = (int)Flavor.Common.Config.BaudRate;
+            serialPort.PortName = name;
+            serialPort.BaudRate = baudrate;
             serialPort.DataBits = 8;
             serialPort.Parity = System.IO.Ports.Parity.None;
             serialPort.StopBits = System.IO.Ports.StopBits.One;

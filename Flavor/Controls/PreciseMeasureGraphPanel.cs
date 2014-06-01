@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Flavor.Common;
+using Flavor.Common.Data.Measure;
 
 namespace Flavor.Controls {
     partial class PreciseMeasureGraphPanel: MeasureGraphPanel {

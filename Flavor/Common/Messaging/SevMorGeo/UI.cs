@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Config = Flavor.Common.Settings.Config;
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
 using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
 using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 

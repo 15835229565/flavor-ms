@@ -4,9 +4,9 @@ using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
 using System.Collections.Generic;
-using Graph = Flavor.Common.Graph;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
-using PointPairListPlus = Flavor.Common.PointPairListPlus;
+using Graph = Flavor.Common.Data.Measure.Graph;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 
 namespace Flavor.Forms
 {

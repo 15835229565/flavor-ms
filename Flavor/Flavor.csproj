@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{535B18E6-1D63-4BA6-A3DD-BC986502133B}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -83,9 +83,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AlmazovCommander.cs" />
-    <Compile Include="Common\AlmazovDevice.cs" />
+    <Compile Include="Common\Data\Controlled\AlmazovDevice.cs" />
     <Compile Include="Common\Commander.cs" />
-    <Compile Include="Common\IDevice.cs" />
+    <Compile Include="Common\Data\Controlled\IDevice.cs" />
+    <Compile Include="Common\Data\Measure\Collector.cs" />
+    <Compile Include="Common\Data\Measure\PointPairListPlus.cs" />
+    <Compile Include="Common\Data\Measure\PreciseEditorData.cs" />
+    <Compile Include="Common\Data\Measure\PreciseSpectrum.cs" />
+    <Compile Include="Common\Data\Measure\Service.cs" />
+    <Compile Include="Common\Data\Measure\Spectrum.cs" />
     <Compile Include="Common\Messaging\Almazov\AlmazovRealizer.cs" />
     <Compile Include="Common\Messaging\Almazov\Commands.cs" />
     <Compile Include="Common\Messaging\Almazov\Commands\Async.cs" />
@@ -114,7 +120,10 @@
     <Compile Include="Common\Messaging\SevMorGeo\Sync.Error.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\Sync.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\UI.cs" />
-    <Compile Include="Common\Config.cs" />
+    <Compile Include="Common\Settings\AlmazovCommonData.cs" />
+    <Compile Include="Common\Settings\CommonData.cs" />
+    <Compile Include="Common\Settings\CommonOptions.cs" />
+    <Compile Include="Common\Settings\Config.cs" />
     <Compile Include="Common\ConsoleWriter.cs" />
     <Compile Include="Common\SevMorGeoCommander.cs" />
     <Compile Include="Common\ICommander.cs" />
@@ -127,10 +136,10 @@
     <Compile Include="Common\Messaging\IProtocol.cs" />
     <Compile Include="Common\Messaging\ServicePackets.cs" />
     <Compile Include="Common\Messaging\SevMorGeo\ModBus.cs" />
-    <Compile Include="Common\Device.cs" />
-    <Compile Include="Common\Graph.cs" />
+    <Compile Include="Common\Data\Controlled\Device.cs" />
+    <Compile Include="Common\Data\Measure\Graph.cs" />
     <Compile Include="Common\Library\Matrix.cs" />
-    <Compile Include="Common\MeasureMode.cs" />
+    <Compile Include="Common\Data\Measure\MeasureMode.cs" />
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
     <Compile Include="Common\Messaging\Almazov\Pifagor.cs" />

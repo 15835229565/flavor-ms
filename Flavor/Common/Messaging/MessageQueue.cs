@@ -31,9 +31,11 @@ namespace Flavor.Common.Messaging {
         }
         readonly ISyncProtocol<T> protocol;
         readonly IEqualityComparer<Sync<T>> comparer;
-        public MessageQueue(ISyncProtocol<T> protocol)
-            : this(protocol, EqualityComparer<Sync<T>>.Default) { }
-        public MessageQueue(ISyncProtocol<T> protocol, IEqualityComparer<Sync<T>> comparer) {
+        readonly byte attempts;
+        public MessageQueue(ISyncProtocol<T> protocol, byte attempts)
+            : this(protocol, EqualityComparer<Sync<T>>.Default, attempts) { }
+        public MessageQueue(ISyncProtocol<T> protocol, IEqualityComparer<Sync<T>> comparer, byte attempts) {
+            this.attempts = attempts;
             this.protocol = protocol;
             protocol.SyncCommandReceived += (s, e) => {
                 var command = e.Command;
@@ -127,7 +129,7 @@ namespace Flavor.Common.Messaging {
             lock (SyncRoot) {
                 lock (sendTimer) {
                     ++Try;
-                    if (Try <= Config.Try) {
+                    if (Try <= attempts) {
                         Send();
                         return;
                     }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 // ?
-using Graph = Flavor.Common.Graph;
+using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
     internal partial class AddPointForm: Form {

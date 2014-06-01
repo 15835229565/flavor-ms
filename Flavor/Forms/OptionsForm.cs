@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using Config = Flavor.Common.Config;
-using CommonOptions = Flavor.Common.CommonOptions;
+using Config = Flavor.Common.Settings.Config;
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
 // really here?
 using ProgramStates = Flavor.Common.ProgramStates;
 using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
@@ -46,29 +46,11 @@ namespace Flavor.Forms {
         }
 
         protected virtual void ok_butt_Click(object sender, EventArgs e) {
-            Config.saveGlobalCommonOptions(
-                (ushort)expTimeNumericUpDown.Value,
-                (ushort)idleTimeNumericUpDown.Value,
-                (double)iVoltageNumericUpDown.Value,
-                (double)CPNumericUpDown.Value,
-                (double)eCurrentNumericUpDown.Value,
-                (double)hCurrentNumericUpDown.Value,
-                (double)fV1NumericUpDown.Value,
-                (double)fV2NumericUpDown.Value);
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         protected virtual void applyButton_Click(object sender, EventArgs e) {
-            Config.saveGlobalCommonOptions(
-                (ushort)expTimeNumericUpDown.Value,
-                (ushort)idleTimeNumericUpDown.Value,
-                (double)iVoltageNumericUpDown.Value,
-                (double)CPNumericUpDown.Value,
-                (double)eCurrentNumericUpDown.Value,
-                (double)hCurrentNumericUpDown.Value,
-                (double)fV1NumericUpDown.Value,
-                (double)fV2NumericUpDown.Value);
             this.DialogResult = DialogResult.Yes;
             this.Close();
         }
@@ -129,6 +111,7 @@ namespace Flavor.Forms {
         public class ClosingEventArgs: FormClosingEventArgs {
             public bool NotRareModeRequested { get; set; }
             public ProgramEventHandler Method { get; set; }
+            public decimal[] Parameters { get; set; }
             public ClosingEventArgs(FormClosingEventArgs args)
                 : base(args.CloseReason, args.Cancel) { }
         }
@@ -136,6 +119,16 @@ namespace Flavor.Forms {
             var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
             args.NotRareModeRequested = rareModeCheckBox.Checked;
             args.Method += InvokeSetVisibility;
+            if (DialogResult == DialogResult.OK || DialogResult == DialogResult.Yes) {
+                args.Parameters = new decimal[] { expTimeNumericUpDown.Value,
+                    idleTimeNumericUpDown.Value,
+                    iVoltageNumericUpDown.Value,
+                    CPNumericUpDown.Value,
+                    eCurrentNumericUpDown.Value,
+                    hCurrentNumericUpDown.Value,
+                    fV1NumericUpDown.Value,
+                    fV2NumericUpDown.Value};
+            }
             base.OnFormClosing(args);
         }
     }

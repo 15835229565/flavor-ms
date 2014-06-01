@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonData = Flavor.Common.Settings.CommonData;
 
 namespace Flavor.Common {
     delegate void DeviceEventHandler();

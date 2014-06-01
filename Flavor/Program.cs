@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Flavor.Forms;
 using Flavor.Common;
+using Flavor.Common.Settings;
 
 namespace Flavor {
     internal static class Program {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using Config = Flavor.Common.Config;
-using CommonOptions = Flavor.Common.CommonOptions;
+using Config = Flavor.Common.Settings.Config;
+using CommonOptions = Flavor.Common.Settings.CommonOptions;
 // really here?
 using ProgramStates = Flavor.Common.ProgramStates;
 using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
@@ -17,12 +17,14 @@ namespace Flavor.Forms {
             //setupNumericUpDown(expTimeNumericUpDown, 10, 10000, co.eTimeReal);
             //setupNumericUpDown(idleTimeNumericUpDown, 10, 100, co.iTimeReal);
 
-            //setupNumericUpDown(iVoltageNumericUpDown, 20, 150, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);
+            setupNumericUpDown(d1VoltageNumericUpDown, 2200, 3000, 2700);
+            setupNumericUpDown(d2VoltageNumericUpDown, 2200, 3000, 2700);
+            setupNumericUpDown(d3VoltageNumericUpDown, 2200, 3000, 2700);
             //setupNumericUpDown(CPNumericUpDown, 10, 12, co.CPReal, CommonOptions.CPConvert, CommonOptions.CPConvert);
-            //setupNumericUpDown(eCurrentNumericUpDown, 0, 10, co.eCurrentReal, CommonOptions.eCurrentConvert, CommonOptions.eCurrentConvert);
-            //setupNumericUpDown(hCurrentNumericUpDown, 0, 1, co.hCurrentReal, CommonOptions.hCurrentConvert, CommonOptions.hCurrentConvert);
-            //setupNumericUpDown(fV1NumericUpDown, 20, 150, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
-            //setupNumericUpDown(fV2NumericUpDown, 20, 150, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
+            setupNumericUpDown(iVoltageNumericUpDown, 50, 100, 80);
+            setupNumericUpDown(eCurrentNumericUpDown, 1, 20, 1);
+            setupNumericUpDown(fV1NumericUpDown, 50, 150, 100);
+            setupNumericUpDown(fV2NumericUpDown, 50, 150, 100);
         }
         void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
             updown.Minimum = min;
@@ -46,29 +48,11 @@ namespace Flavor.Forms {
         }
 
         protected virtual void ok_butt_Click(object sender, EventArgs e) {
-            //Config.saveGlobalCommonOptions(
-            //    (ushort)expTimeNumericUpDown.Value,
-            //    (ushort)idleTimeNumericUpDown.Value,
-            //    (double)iVoltageNumericUpDown.Value,
-            //    (double)CPNumericUpDown.Value,
-            //    (double)eCurrentNumericUpDown.Value,
-            //    (double)hCurrentNumericUpDown.Value,
-            //    (double)fV1NumericUpDown.Value,
-            //    (double)fV2NumericUpDown.Value);
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         protected virtual void applyButton_Click(object sender, EventArgs e) {
-            //Config.saveGlobalCommonOptions(
-            //    (ushort)expTimeNumericUpDown.Value,
-            //    (ushort)idleTimeNumericUpDown.Value,
-            //    (double)iVoltageNumericUpDown.Value,
-            //    (double)CPNumericUpDown.Value,
-            //    (double)eCurrentNumericUpDown.Value,
-            //    (double)hCurrentNumericUpDown.Value,
-            //    (double)fV1NumericUpDown.Value,
-            //    (double)fV2NumericUpDown.Value);
             this.DialogResult = DialogResult.Yes;
             this.Close();
         }
@@ -92,10 +76,12 @@ namespace Flavor.Forms {
         }
 
         void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e) {
-            //CPNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            //fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            //fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            //hCurrentNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            CPNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            d1VoltageNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            d2VoltageNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            d3VoltageNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
         }
         void InvokeSetVisibility(ProgramStates state) {
             this.Invoke(new Action(() => {
@@ -129,6 +115,7 @@ namespace Flavor.Forms {
         public class ClosingEventArgs: FormClosingEventArgs {
             public bool NotRareModeRequested { get; set; }
             public ProgramEventHandler Method { get; set; }
+            public decimal[] Parameters { get; set; }
             public ClosingEventArgs(FormClosingEventArgs args)
                 : base(args.CloseReason, args.Cancel) { }
         }
@@ -136,6 +123,15 @@ namespace Flavor.Forms {
             var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
             args.NotRareModeRequested = rareModeCheckBox.Checked;
             args.Method += InvokeSetVisibility;
+            if (DialogResult == DialogResult.OK || DialogResult == DialogResult.Yes) {
+                args.Parameters = new decimal[] { d1VoltageNumericUpDown.Value,
+                    d2VoltageNumericUpDown.Value,
+                    d3VoltageNumericUpDown.Value,
+                    iVoltageNumericUpDown.Value,
+                    eCurrentNumericUpDown.Value,
+                    fV1NumericUpDown.Value,
+                    fV2NumericUpDown.Value};
+            }
             base.OnFormClosing(args);
         }
     }

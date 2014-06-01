@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Flavor.Common.Messaging;
 using Flavor.Common.Messaging.SevMorGeo;
 using Flavor.Common.Library;
+using Flavor.Common.Data.Measure;
+using Flavor.Common.Settings;
 
 namespace Flavor.Common {
     class SevMorGeoCommader: Commander {
@@ -80,7 +82,7 @@ namespace Flavor.Common {
             realizer.FirstStatus += onTheFlyAction;
         }
         protected override IRealizer GetRealizer(PortLevel port, Generator<bool> notRare) {
-            return realizer = new SevMorGeoRealizer(port, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
+            return realizer = new SevMorGeoRealizer(port, Config.Try, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
         }
         
         public override void Bind(IMSControl view) {
@@ -173,7 +175,7 @@ namespace Flavor.Common {
                     var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
                     if (peaksForMatrix.Count > 0) {
                         // To comply with other processing order (and saved information)
-                        peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                        peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                         matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
                         // What do with empty matrix?
                         if (matrix != null)
@@ -232,8 +234,8 @@ namespace Flavor.Common {
                 var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
                 if (peaksForMatrix.Count > 0) {
                     // To comply with other processing order (and saved information)
-                    peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                    foreach (Utility.PreciseEditorData ped in peaksForMatrix) {
+                    peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                    foreach (PreciseEditorData ped in peaksForMatrix) {
                         //!!!!! null PLSreference! race condition?
                         currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
                     }
@@ -253,8 +255,8 @@ namespace Flavor.Common {
             var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
             if (peaksForMatrix.Count > 0) {
                 // To comply with other processing order (and saved information)
-                peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                foreach (Utility.PreciseEditorData ped in peaksForMatrix) {
+                peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                foreach (PreciseEditorData ped in peaksForMatrix) {
                     currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
                 }
             }
