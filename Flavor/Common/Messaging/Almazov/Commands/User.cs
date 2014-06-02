@@ -117,7 +117,9 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         protected DetectorSetRequest(byte channel, ushort voltage)
             : base(channel, voltage) { }
         public override CommandCode Id {
-            get { return CommandCode.SPI_DPS_SetVoltage; }
+            get {
+                return CommandCode.SPI_DPS_SetVoltage;
+            }
         }
     }
     class SetD1VoltageRequest: DetectorSetRequest {

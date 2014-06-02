@@ -98,7 +98,7 @@ namespace Flavor.Common.Messaging {
             SendUndoable(OperationOnOff(on));
         }
         protected abstract UserRequest<T> OperationOnOff(bool on);
-        public void SetSettings() {
+        public virtual void SetSettings() {
             toSend.Enqueue(Settings());
             //SendUndoable(Settings());
         }

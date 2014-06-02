@@ -46,7 +46,7 @@ namespace Flavor.Common.Messaging.Almazov {
             return new Valve1Request(on);
         }
 
-        public new void SetSettings() {
+        public override void SetSettings() {
             // TODO: proper data from config
             var co = Config.CommonOptions;
             toSend.Enqueue(new SetEmissionCurrentRequest(co.eCurrent));
@@ -59,7 +59,7 @@ namespace Flavor.Common.Messaging.Almazov {
             //toSend.Enqueue(new SetInletVoltageRequest(0));
             //toSend.Enqueue(new SetHeaterVoltageRequest(0));
             // and check
-            toSend.Enqueue(new GetEmissionCurrentRequest());
+            //toSend.Enqueue(new GetEmissionCurrentRequest());
         }
         [Obsolete]
         protected override UserRequest<CommandCode> Settings() {
@@ -81,7 +81,7 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<SPIConfDoneLAM>(updateDevice, p => {
                 OnOperationBlock(false);
                 //toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
-                SetSettings();
+                //SetSettings();
             });
             Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
             Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
