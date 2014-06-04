@@ -78,8 +78,8 @@ namespace Flavor.Common.Messaging.Almazov {
                     case PacketingState.Wait:
                         switch (data) {
                             case LOCK:
-                                OnPackageReceived(packetBuffer);
                                 OnLog("[in]", packetBuffer);
+                                OnPackageReceived(packetBuffer);
                                 packetBuffer.Clear();
                                 state = PacketingState.Idle;
                                 break;
@@ -131,8 +131,8 @@ namespace Flavor.Common.Messaging.Almazov {
             }
             #region IByteDispatcher Members
             public override void Transmit(ICollection<byte> pack) {
-                base.Transmit(buildPack(pack));
                 OnLog("[out]", pack);
+                base.Transmit(buildPack(pack));
             }
             #endregion
         }
