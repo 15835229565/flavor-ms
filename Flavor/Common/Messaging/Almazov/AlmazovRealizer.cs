@@ -54,12 +54,14 @@ namespace Flavor.Common.Messaging.Almazov {
             toSend.Enqueue(new SetF1VoltageRequest(co.fV1));
             toSend.Enqueue(new SetF2VoltageRequest(co.fV2));
             toSend.Enqueue(new SetD1VoltageRequest(co.d1V));
-            toSend.Enqueue(new SetD2VoltageRequest(co.d2V));
+            // now is turned off
+            //toSend.Enqueue(new SetD2VoltageRequest(co.d2V));
             toSend.Enqueue(new SetD3VoltageRequest(co.d3V));
+            // not here, manual operations
             //toSend.Enqueue(new SetInletVoltageRequest(0));
             //toSend.Enqueue(new SetHeaterVoltageRequest(0));
             // and check
-            //toSend.Enqueue(new GetEmissionCurrentRequest());
+            toSend.Enqueue(new GetEmissionCurrentRequest());
         }
         [Obsolete]
         protected override UserRequest<CommandCode> Settings() {
@@ -114,7 +116,7 @@ namespace Flavor.Common.Messaging.Almazov {
 
             Add<GetEmissionCurrentReply>(AutoSend<GetIonizationVoltageRequest>);
             Add<GetIonizationVoltageReply>(AutoSend<GetF1VoltageRequest>);
-            Add<GetF2VoltageReply>(AutoSend<GetF2VoltageRequest>);
+            Add<GetF1VoltageReply>(AutoSend<GetF2VoltageRequest>);
             Add<GetF2VoltageReply>(AutoSend<GetD1VoltageRequest>);
             Add<GetD1VoltageReply>(AutoSend<GetD2VoltageRequest>);
             Add<GetD2VoltageReply>(AutoSend<GetD3VoltageRequest>);

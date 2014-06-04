@@ -149,6 +149,7 @@ namespace Flavor.Common.Messaging {
                     OnLog(string.Format("Device not answering to {0}", packet.Id));
                 }
                 OnUndo();
+                trySend();
             }
         }
 

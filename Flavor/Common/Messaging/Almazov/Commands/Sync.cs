@@ -6,7 +6,8 @@ using SyncReply = Flavor.Common.Messaging.SyncReply<Flavor.Common.Messaging.Alma
 namespace Flavor.Common.Messaging.Almazov.Commands {
     class CPUStatusReply: SyncReply {
         readonly byte incTIC, incMS;
-        public CPUStatusReply(byte incTIC, byte incMS) {
+        // experimental parameter order
+        public CPUStatusReply(byte incMS, byte incTIC) {
             this.incTIC = incTIC;
             this.incMS = incMS;
         }
@@ -156,8 +157,10 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
     }
     abstract class ADCGetReply: SyncReply, IChannel {
+        readonly byte channel;
         readonly ushort voltage;
-        protected ADCGetReply(ushort voltage) {
+        protected ADCGetReply(byte channel, ushort voltage) {
+            this.channel = channel;
             this.voltage = voltage;
         }
         // what to do with request?
@@ -181,12 +184,14 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
 
         #region IChannel Members
-        public abstract byte Channel { get; }
+        public byte Channel { get { return channel; } }
         #endregion
     }
     abstract class IonSourceGetReply: ADCGetReply {
-        protected IonSourceGetReply(ushort voltage)
-            : base(voltage) { }
+        protected IonSourceGetReply(byte channel, ushort voltage)
+            : base(channel, voltage) { }
+        protected IonSourceGetReply(byte channel)
+            : base(channel, 0) { }
         public static IonSourceGetReply Parse(IList<byte> data) {
             ushort voltage;
             byte channel;
@@ -210,43 +215,33 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
     class GetEmissionCurrentReply: IonSourceGetReply {
         public GetEmissionCurrentReply(ushort voltage)
-            : base(voltage) { }
+            : base(1, voltage) { }
         public GetEmissionCurrentReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 1; }
-        }
+            : base(1) { }
     }
     class GetIonizationVoltageReply: IonSourceGetReply {
         public GetIonizationVoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(2, voltage) { }
         public GetIonizationVoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 2; }
-        }
+            : base(2) { }
     }
     class GetF1VoltageReply: IonSourceGetReply {
         public GetF1VoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(3, voltage) { }
         public GetF1VoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 3; }
-        }
+            : base(3) { }
     }
     class GetF2VoltageReply: IonSourceGetReply {
         public GetF2VoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(4, voltage) { }
         public GetF2VoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 4; }
-        }
+            : base(4) { }
     }
     abstract class DetectorGetReply: ADCGetReply {
-        protected DetectorGetReply(ushort voltage)
-            : base(voltage) { }
+        protected DetectorGetReply(byte channel, ushort voltage)
+            : base(channel, voltage) { }
+        protected DetectorGetReply(byte channel)
+            : base(channel, 0) { }
         public static DetectorGetReply Parse(IList<byte> data) {
             ushort voltage;
             byte channel;
@@ -268,34 +263,27 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
     class GetD1VoltageReply: DetectorGetReply {
         public GetD1VoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(1, voltage) { }
         public GetD1VoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 1; }
-        }
+            : base(1) { }
     }
     class GetD2VoltageReply: DetectorGetReply {
         public GetD2VoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(2, voltage) { }
         public GetD2VoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 2; }
-        }
+            : base(2) { }
     }
     class GetD3VoltageReply: DetectorGetReply {
         public GetD3VoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(3, voltage) { }
         public GetD3VoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 3; }
-        }
+            : base(3) { }
     }
     abstract class InletGetReply: ADCGetReply {
-        protected InletGetReply(ushort voltage)
-            : base(voltage) { }
+        protected InletGetReply(byte channel, ushort voltage)
+            : base(channel, voltage) { }
+        protected InletGetReply(byte channel)
+            : base(channel, 0) { }
         public static InletGetReply Parse(IList<byte> data) {
             ushort voltage;
             byte channel;
@@ -315,21 +303,15 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
     class GetInletVoltageReply: InletGetReply {
         public GetInletVoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(1,voltage) { }
         public GetInletVoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 1; }
-        }
+            : base(1) { }
     }
     class GetHeaterVoltageReply: InletGetReply {
         public GetHeaterVoltageReply(ushort voltage)
-            : base(voltage) { }
+            : base(2, voltage) { }
         public GetHeaterVoltageReply()
-            : base(0) { }
-        public override byte Channel {
-            get { return 2; }
-        }
+            : base(2) { }
     }
 
     class CountsReply: SyncReply {
