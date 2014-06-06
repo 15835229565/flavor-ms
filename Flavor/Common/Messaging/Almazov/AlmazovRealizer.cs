@@ -1,6 +1,7 @@
 ﻿using System;
 using Flavor.Common.Messaging.Almazov.Commands;
 using Config = Flavor.Common.Settings.Config;
+using Flavor.Common.Settings;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
@@ -69,7 +70,15 @@ namespace Flavor.Common.Messaging.Almazov {
             throw new NotImplementedException();
         }
 
+        public override void SetMeasureStep(ushort step) {
+            // TODO: proper data from config
+            toSend.Enqueue(new ParentScanVoltageSetRequest(AlmazovCommonData.parentScanVoltage(step)));
+            toSend.Enqueue(new MainScanVoltageSetRequest(AlmazovCommonData.scanVoltage(step)));
+            toSend.Enqueue(new CapacitorVoltageSetRequest(AlmazovCommonData.capVoltage(step)));
+        }
+        [Obsolete]
         protected override UserRequest<CommandCode> MeasureStep(ushort step) {
+            //Cannot autosend sequence
             throw new NotImplementedException();
         }
 
@@ -122,7 +131,10 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<GetD2VoltageReply>(AutoSend<GetD3VoltageRequest>);
             Add<GetD3VoltageReply>(AutoSend<GetInletVoltageRequest>);
             Add<GetInletVoltageReply>(AutoSend<GetHeaterVoltageRequest>);
-            Add<GetHeaterVoltageReply>();
+            Add<GetHeaterVoltageReply>(p => OnMeasurePreconfigured());
+
+            Add<ScanVoltageSetReply>();
+            Add<CapacitorVoltageSetReply>(/*p => OnMeasureSend((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2)))*/);
 
             Add<CountsReply>(p => OnMeasureDone());
         }

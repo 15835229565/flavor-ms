@@ -156,6 +156,16 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return CommandCode.SPI_PSInl_SetVoltage; }
         }
     }
+    class CapacitorVoltageSetReply: SyncReply {
+        public override CommandCode Id {
+            get { return CommandCode.SPI_CP_SetVoltage; }
+        }
+    }
+    class ScanVoltageSetReply: SyncReply {
+        public override CommandCode Id {
+            get { return CommandCode.SPI_Scan_SetVoltage; }
+        }
+    }
     abstract class ADCGetReply: SyncReply, IChannel {
         readonly byte channel;
         readonly ushort voltage;

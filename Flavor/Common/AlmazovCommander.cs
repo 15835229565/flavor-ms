@@ -2,6 +2,7 @@
 using Flavor.Common.Messaging;
 using Flavor.Common.Messaging.Almazov;
 using Flavor.Common.Settings;
+using Flavor.Common.Data.Measure;
 
 namespace Flavor.Common {
     class AlmazovCommander: Commander {
@@ -84,15 +85,57 @@ namespace Flavor.Common {
         }
 
         public override void Scan() {
-            throw new NotImplementedException();
+            if (pState == ProgramStates.Ready) {
+                //Graph.Instance.Reset();
+                CurrentMeasureMode = new MeasureMode.Scan();
+                //CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
+                //CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, Device.Detectors);
+                initMeasure(ProgramStates.Measure);
+            }
         }
-
         public override bool Sense() {
             throw new NotImplementedException();
         }
-
         public override bool? Monitor() {
             throw new NotImplementedException();
+        }
+        void initMeasure(ProgramStates state) {
+            OnLog(pState.ToString());
+            if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
+                //error. something in operation
+                throw new Exception("Measure mode already in operation.");
+            }
+            CurrentMeasureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
+            CurrentMeasureMode.Disable += CurrentMeasureMode_Disable;
+            // TODO: move inside MeasureMode
+            //Device.CountsUpdated += deviceCountsUpdated;
+
+            setProgramState(state);
+
+            MeasureCancelRequested = false;
+            //SendSettings();
+            // temporarily mandatory start
+            CurrentMeasureMode.Start();
+        }
+        void CurrentMeasureMode_Disable(object sender, EventArgs e) {
+            /*if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
+                if (pState == ProgramStates.Measure) {
+                    Graph.Instance.NewGraphData -= NewMonitorMeasureReady;
+                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
+                    Graph.Instance.NewGraphData -= NewBackgroundMeasureReady;
+                }
+                matrix = null;
+            }*/
+            // TODO: move inside MeasureMode
+            //Device.CountsUpdated -= deviceCountsUpdated;
+            CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
+            CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
+
+            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
+            Disable();
+        }
+        void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
+            realizer.SetMeasureStep(e.Step);
         }
     }
 }

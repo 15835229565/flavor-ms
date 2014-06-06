@@ -194,6 +194,9 @@ namespace Flavor.Common.Messaging.Almazov {
                 IonSourceGetReply.Parse(trim(raw))));
             add(CommandCode.SPI_DPS_GetVoltage, eq(4), sync(raw => DetectorGetReply.Parse(trim(raw))));
             add(CommandCode.SPI_PSInl_GetVoltage, eq(4), sync(raw => InletGetReply.Parse(trim(raw))));
+
+            add(CommandCode.SPI_Scan_SetVoltage, eq(2), sync(raw => new ScanVoltageSetReply()));
+            add(CommandCode.SPI_CP_SetVoltage, eq(2), sync(raw => new CapacitorVoltageSetReply()));
             
             add(CommandCode.RTC_ReceiveResults, eq(18), sync(raw => new CountsReply(trim(raw))));
 

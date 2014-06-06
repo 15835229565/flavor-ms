@@ -103,7 +103,7 @@ namespace Flavor.Common.Messaging {
             //SendUndoable(Settings());
         }
         protected abstract UserRequest<T> Settings();
-        public void SetMeasureStep(ushort step) {
+        public virtual void SetMeasureStep(ushort step) {
             toSend.Enqueue(MeasureStep(step));
             //SendUndoable(MeasureStep(step));
         }

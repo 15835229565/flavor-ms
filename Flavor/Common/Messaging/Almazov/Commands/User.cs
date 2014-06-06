@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommandCode = Flavor.Common.Messaging.Almazov.CommandCode;
 using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.Almazov.CommandCode>;
+using System;
 
 namespace Flavor.Common.Messaging.Almazov.Commands {
     class CPUStatusRequest: UserRequest {
@@ -149,6 +150,42 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public SetHeaterVoltageRequest(ushort voltage)
             : base(2, voltage) { }
     }
+    abstract class PreciseVoltageSetRequest: DACADCRequest {
+        readonly uint voltage;
+        protected PreciseVoltageSetRequest(byte channel, uint voltage)
+            : base((byte)(channel + 24)) {
+            voltage &= 0x3FFF;
+            this.voltage = voltage;
+        }
+        public override IList<byte> Data {
+            get {
+                byte[] bytes = BitConverter.GetBytes(voltage << 2);
+                return AlexProtocol.collectData(Id, channel, bytes[1], bytes[0]);
+            }
+        }
+    }
+    class CapacitorVoltageSetRequest: PreciseVoltageSetRequest {
+        public CapacitorVoltageSetRequest(uint voltage)
+            : base(0, voltage) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_CP_SetVoltage; }
+        }
+    }
+    abstract class ScanVoltageSetRequest: PreciseVoltageSetRequest {
+        protected ScanVoltageSetRequest(byte channel, uint voltage)
+            : base(channel, voltage) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPI_Scan_SetVoltage; }
+        }
+    }
+    class ParentScanVoltageSetRequest: ScanVoltageSetRequest {
+        public ParentScanVoltageSetRequest(uint voltage)
+            : base(0, voltage) { }
+    }
+    class MainScanVoltageSetRequest: ScanVoltageSetRequest {
+        public MainScanVoltageSetRequest(uint voltage)
+            : base(1, voltage) { }
+    }
     abstract class GetADCRequest: DACADCRequest, IChannel {
         const byte HBYTE = 127;
         const byte LBYTE_DoubleRange = 16;
@@ -237,6 +274,9 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public GetHeaterVoltageRequest()
             : base(2) { }
     }
+
+    //class GetScanVoltageRequest { }
+    
     class CountsRequest: UserRequest {
         public override IList<byte> Data {
             get { return AlexProtocol.collectData(Id); }

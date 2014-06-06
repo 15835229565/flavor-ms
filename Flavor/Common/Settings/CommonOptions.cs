@@ -61,8 +61,6 @@ namespace Flavor.Common.Settings {
         public static ushort scanVoltage(ushort step) {
             if (step > Config.MAX_STEP) step = Config.MAX_STEP;
             return (ushort)(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
-            //if (step <= 456) return (ushort)(4095 - 5 * step);
-            //return (ushort)(4095 - 5 * 456 - 2 * (step - 456));
         }
         public static double scanVoltageReal(ushort step) {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;

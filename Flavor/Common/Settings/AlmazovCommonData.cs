@@ -73,5 +73,26 @@
         protected static ushort genericConvert(ushort x) {
             return x < 4096 ? x : (ushort)4095;
         }
+        // scan voltage modification law
+        public static uint scanVoltage(ushort step) {
+            //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
+            step &= 0xFFF;
+            uint res = (uint)(step << 2);
+            return res;
+        }
+        public static uint parentScanVoltage(ushort step) {
+            //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
+            double k = 0.73;
+            double voltage = scanVoltage(step) * k;
+            uint res = (uint)voltage;
+            return res;
+        }
+        public static uint capVoltage(ushort step) {
+            //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
+            double k = 1.0 / 21.0;
+            double voltage = scanVoltage(step) * k;
+            uint res = (uint)voltage;
+            return res;
+        }
     }
 }

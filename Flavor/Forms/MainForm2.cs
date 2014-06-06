@@ -473,7 +473,8 @@ namespace Flavor.Forms {
         }
         void overview_button_Click(object sender, EventArgs e) {
             commander.Scan();
-            ChildFormInit(CollectorsForm, false);
+            // temporarily commented
+            //ChildFormInit(CollectorsForm, false);
         }
         void sensmeasure_button_Click(object sender, EventArgs e) {
             if (commander.Sense()) {
