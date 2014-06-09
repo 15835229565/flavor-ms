@@ -39,7 +39,7 @@ namespace Flavor.Common.Messaging.Almazov {
             return data;
         }
         class AlexProtocolByteDispatcher: ByteDispatcher {
-            const byte KEY = 250, LOCK = 251, SERVICE = 252;
+            const byte KEY = 0xFA, LOCK = 0xFB, SERVICE = 0xFC;
             public AlexProtocolByteDispatcher(PortLevel port, bool singleByteDispatching)
                 : base(port, singleByteDispatching) { }
             readonly List<byte> packetBuffer = new List<byte>();
@@ -98,16 +98,26 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             }
             ICollection<byte> buildPack(ICollection<byte> data) {
+                // TODO: more precise count
                 var pack = new List<byte>(data.Count + 2);
                 pack.Add(KEY);
-                pack.AddRange(data);
+                pack.AddRange(buildPackBody(data));
                 pack.Add(LOCK);
                 return pack;
             }
             ICollection<byte> buildPackBody(ICollection<byte> data) {
                 var pack = new List<byte>(data.Count);
                 foreach (byte b in data) {
-                    pack.Add(b);
+                    byte res = b;
+                    switch (res) {
+                        case KEY:
+                        case LOCK:
+                        case SERVICE:
+                            pack.Add(SERVICE);
+                            res -= 250;
+                            break;
+                    }
+                    pack.Add(res);
                 }
                 return pack;
             }

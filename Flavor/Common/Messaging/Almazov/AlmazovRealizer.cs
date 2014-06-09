@@ -50,8 +50,8 @@ namespace Flavor.Common.Messaging.Almazov {
         public override void SetSettings() {
             // TODO: proper data from config
             var co = Config.CommonOptions;
-            toSend.Enqueue(new SetEmissionCurrentRequest(co.eCurrent));
             toSend.Enqueue(new SetIonizationVoltageRequest(co.iVoltage));
+            toSend.Enqueue(new SetEmissionCurrentRequest(co.eCurrent));
             toSend.Enqueue(new SetF1VoltageRequest(co.fV1));
             toSend.Enqueue(new SetF2VoltageRequest(co.fV2));
             toSend.Enqueue(new SetD1VoltageRequest(co.d1V));
@@ -62,7 +62,7 @@ namespace Flavor.Common.Messaging.Almazov {
             //toSend.Enqueue(new SetInletVoltageRequest(0));
             //toSend.Enqueue(new SetHeaterVoltageRequest(0));
             // and check
-            toSend.Enqueue(new GetEmissionCurrentRequest());
+            toSend.Enqueue(new GetD1VoltageRequest());
         }
         [Obsolete]
         protected override UserRequest<CommandCode> Settings() {
@@ -93,7 +93,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 OnOperationBlock(false);
                 //toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
                 //SetSettings();
-            });
+            }, AutoSend<GetD1VoltageRequest>/*fake request to workaround SPI misfunction*/);
             Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
             Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
             //sync error
@@ -123,13 +123,13 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<DetectorSetReply>();
             Add<InletSetReply>();
 
-            Add<GetEmissionCurrentReply>(AutoSend<GetIonizationVoltageRequest>);
-            Add<GetIonizationVoltageReply>(AutoSend<GetF1VoltageRequest>);
-            Add<GetF1VoltageReply>(AutoSend<GetF2VoltageRequest>);
-            Add<GetF2VoltageReply>(AutoSend<GetD1VoltageRequest>);
             Add<GetD1VoltageReply>(AutoSend<GetD2VoltageRequest>);
             Add<GetD2VoltageReply>(AutoSend<GetD3VoltageRequest>);
-            Add<GetD3VoltageReply>(AutoSend<GetInletVoltageRequest>);
+            Add<GetD3VoltageReply>(AutoSend<GetIonizationVoltageRequest>);
+            Add<GetIonizationVoltageReply>(AutoSend<GetEmissionCurrentRequest>);
+            Add<GetEmissionCurrentReply>(AutoSend<GetF1VoltageRequest>);
+            Add<GetF1VoltageReply>(AutoSend<GetF2VoltageRequest>);
+            Add<GetF2VoltageReply>(AutoSend<GetInletVoltageRequest>);
             Add<GetInletVoltageReply>(AutoSend<GetHeaterVoltageRequest>);
             Add<GetHeaterVoltageReply>(p => OnMeasurePreconfigured());
 

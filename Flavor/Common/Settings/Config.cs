@@ -9,54 +9,55 @@ using Flavor.Common.Data.Measure;
 
 namespace Flavor.Common.Settings {
     static class Config {
-        private static IMainConfig mainConfig;
-        private static IMainConfigWriter mainConfigWriter;
+        static IMainConfig mainConfig;
+        static IMainConfigWriter mainConfigWriter;
         
-        private static readonly string INITIAL_DIR = System.IO.Directory.GetCurrentDirectory();
+        static readonly string INITIAL_DIR = System.IO.Directory.GetCurrentDirectory();
 
-        private const string CONFIG_NAME = "config.xml";
-        private const string CRASH_LOG_NAME = "MScrash.log";
-        private const string LIBRARY_NAME = "library.xml";
+        const string CONFIG_NAME = "config.xml";
+        const string CRASH_LOG_NAME = "MScrash.log";
+        const string LIBRARY_NAME = "library.xml";
 
-        private static string mainConfigName;
-        private static string logName;
-        private static string libraryName;
+        static string mainConfigName;
+        static string logName;
+        static string libraryName;
 
         #region File extensions
-        internal const string SPECTRUM_EXT = "sdf";
-        internal const string PRECISE_SPECTRUM_EXT = "psf";
-        internal const string MONITOR_SPECTRUM_EXT = "mon";
+        public const string SPECTRUM_EXT = "sdf";
+        public const string PRECISE_SPECTRUM_EXT = "psf";
+        public const string MONITOR_SPECTRUM_EXT = "mon";
         #endregion
-        internal const string DIFF_FILE_SUFFIX = "~diff";
+        public const string DIFF_FILE_SUFFIX = "~diff";
         #region Dialog filters
         internal static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
         internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
         #endregion
-        private static string SerialPort = "COM2";
-        private static uint SerialBaudRate = 128000;
-        private static byte sendTry = 1;
+        static string SerialPort = "COM2";
+        static uint SerialBaudRate = 128000;
+        static byte sendTry = 1;
 
-        internal const ushort MIN_STEP = 0;
-        internal const ushort MAX_STEP = 1056;
-        private static ushort startPoint = MIN_STEP;
-        private static ushort endPoint = MAX_STEP;
+        public const ushort MIN_STEP = 0;
+        //public const ushort MAX_STEP = 1056;
+        public const ushort MAX_STEP = 4095;
+        static ushort startPoint = MIN_STEP;
+        static ushort endPoint = MAX_STEP;
 
-        internal static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18 };
+        public static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18 };
         
-        internal const int PEAK_NUMBER = 20;
+        public const int PEAK_NUMBER = 20;
 
         static CommonOptions commonOpts;
         public static CommonOptions CommonOptions {
             get { return commonOpts; }
         }
 
-        private static PreciseSpectrum preciseData = new PreciseSpectrum();
-        internal static PreciseSpectrum PreciseData {
+        static PreciseSpectrum preciseData = new PreciseSpectrum();
+        public static PreciseSpectrum PreciseData {
             get { return preciseData; }
         }
 
-        private static int reperPeakIndex = -1;
-        internal static int CheckerPeakIndex {
+        static int reperPeakIndex = -1;
+        public static int CheckerPeakIndex {
             get { return reperPeakIndex + 1; }
             set { reperPeakIndex = value - 1; }
         }
