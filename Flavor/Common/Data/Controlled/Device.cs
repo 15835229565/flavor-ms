@@ -157,14 +157,14 @@ namespace Flavor.Common {
             get { return 2 * 5 * (double)hVacuum / 4096; }
         }
 
-        public static event EventHandler<EventArgs<int[]>> CountsUpdated;
+        public static event EventHandler<EventArgs<uint[]>> CountsUpdated;
         static void OnCountsUpdated() {
-            CountsUpdated.Raise(null, new EventArgs<int[]>(Detectors));
+            CountsUpdated.Raise(null, new EventArgs<uint[]>(Detectors));
         }
         // TODO: configurable
-        static int[] detectors = new int[2];
-        public static int[] Detectors {
-            get { return (int[])detectors.Clone(); }
+        static uint[] detectors = new uint[2];
+        public static uint[] Detectors {
+            get { return (uint[])detectors.Clone(); }
             set {
                 if (value == null || value.Length != detectors.Length)
                     return;

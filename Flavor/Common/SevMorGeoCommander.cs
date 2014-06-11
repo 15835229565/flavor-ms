@@ -8,7 +8,7 @@ using Flavor.Common.Settings;
 
 namespace Flavor.Common {
     class SevMorGeoCommader: Commander {
-        readonly EventHandler<EventArgs<int[]>> deviceCountsUpdated;
+        readonly EventHandler<EventArgs<uint[]>> deviceCountsUpdated;
         SevMorGeoRealizer realizer;
         readonly EventHandler<EventArgs<Action>> onTheFlyAction;
         public SevMorGeoCommader()
@@ -226,7 +226,7 @@ namespace Flavor.Common {
                 return null;
             }
         }
-        void NewBackgroundMeasureReady(int[] counts, params int[] recreate) {
+        void NewBackgroundMeasureReady(uint[] counts, params int[] recreate) {
             // TODO: more accurately
             if (recreate.Length == Graph.Instance.Collectors.Count) {
                 List<long> currentMeasure = new List<long>();
@@ -247,7 +247,7 @@ namespace Flavor.Common {
                 }
             }
         }
-        void NewMonitorMeasureReady(int[] counts, params int[] recreate) {
+        void NewMonitorMeasureReady(uint[] counts, params int[] recreate) {
             if (recreate.Length == 0)
                 return;
             List<long> currentMeasure = new List<long>();

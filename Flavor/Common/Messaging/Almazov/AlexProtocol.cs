@@ -207,7 +207,8 @@ namespace Flavor.Common.Messaging.Almazov {
 
             add(CommandCode.SPI_Scan_SetVoltage, eq(2), sync(raw => new ScanVoltageSetReply()));
             add(CommandCode.SPI_CP_SetVoltage, eq(2), sync(raw => new CapacitorVoltageSetReply()));
-            
+
+            add(CommandCode.RTC_StartMeasure, eq(3), sync(raw => new SendMeasureReply(raw[1])));
             add(CommandCode.RTC_ReceiveResults, eq(18), sync(raw => new CountsReply(trim(raw))));
 
             // BAD temporary solution
@@ -235,7 +236,7 @@ namespace Flavor.Common.Messaging.Almazov {
                         break;
                 }
             }));
-            add(CommandCode.Service_Message, eq(3), service(raw => {
+            add(CommandCode.Service_Message, moreeq(3), service(raw => {
                 byte code = raw[1];
                 switch (code) {
                     case 1:

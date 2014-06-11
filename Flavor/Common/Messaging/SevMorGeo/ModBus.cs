@@ -177,8 +177,8 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             add(CommandCode.SetScanVoltage, eq(2), sync(raw => new confirmSVoltage()));
             add(CommandCode.SetCapacitorVoltage, eq(2), sync(raw => new confirmCP()));
             add(CommandCode.Measure, eq(2), sync(raw => new confirmMeasure()));
-            add(CommandCode.GetCounts, eq(8), sync(raw => new updateCounts((int)raw[1] + ((int)raw[2] << 8) + ((int)raw[3] << 16),
-                                                (int)raw[4] + ((int)raw[5] << 8) + ((int)raw[6] << 16))));
+            add(CommandCode.GetCounts, eq(8), sync(raw => new updateCounts((uint)raw[1] + ((uint)raw[2] << 8) + ((uint)raw[3] << 16),
+                                                (uint)raw[4] + ((uint)raw[5] << 8) + ((uint)raw[6] << 16))));
             add(CommandCode.heatCurrentEnable, eq(2), sync(raw => new confirmHECurrent()));
             add(CommandCode.EnableHighVoltage, eq(2), sync(raw => new confirmHighVoltage()));
             add(CommandCode.GetTurboPumpStatus, eq(17), sync(raw => new updateTurboPumpStatus((ushort)((ushort)raw[1] + ((ushort)raw[2] << 8)),

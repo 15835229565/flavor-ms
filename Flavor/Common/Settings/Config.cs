@@ -42,7 +42,8 @@ namespace Flavor.Common.Settings {
         static ushort startPoint = MIN_STEP;
         static ushort endPoint = MAX_STEP;
 
-        public static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18 };
+        //public static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18 };
+        public static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18, 1 };
         
         public const int PEAK_NUMBER = 20;
 
@@ -1646,7 +1647,8 @@ namespace Flavor.Common.Settings {
                             XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                             double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            return new double[]{ col1Coeff, col2Coeff };
+                            // TODO: proper data!
+                            return new double[]{ col1Coeff, col2Coeff, 1 };
                             //graph.DisplayedRows1.Coeff = col1Coeff;
                             //graph.DisplayedRows2.Coeff = col2Coeff;
                         } catch (NullReferenceException) {

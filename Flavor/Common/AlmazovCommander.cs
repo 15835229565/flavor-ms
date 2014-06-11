@@ -8,7 +8,7 @@ namespace Flavor.Common {
     class AlmazovCommander: Commander {
         AlmazovRealizer realizer;
         //readonly EventHandler<EventArgs<Action>> onTheFlyAction;
-        readonly EventHandler<EventArgs<int[]>> deviceCountsUpdated;
+        readonly EventHandler<EventArgs<uint[]>> deviceCountsUpdated;
         public AlmazovCommander()
             : base(new PortLevel(), new AlmazovDevice()) {
             deviceCountsUpdated = (s, e) => {
@@ -89,7 +89,7 @@ namespace Flavor.Common {
                 //Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
                 //CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
-                //CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, Device.Detectors);
+                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, device.Detectors);
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -108,7 +108,7 @@ namespace Flavor.Common {
             CurrentMeasureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable += CurrentMeasureMode_Disable;
             // TODO: move inside MeasureMode
-            //Device.CountsUpdated += deviceCountsUpdated;
+            device.CountsUpdated += deviceCountsUpdated;
 
             setProgramState(state);
 
@@ -127,7 +127,7 @@ namespace Flavor.Common {
                 matrix = null;
             }*/
             // TODO: move inside MeasureMode
-            //Device.CountsUpdated -= deviceCountsUpdated;
+            device.CountsUpdated -= deviceCountsUpdated;
             CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
             CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
 

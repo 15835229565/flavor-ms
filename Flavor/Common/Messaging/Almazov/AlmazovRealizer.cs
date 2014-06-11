@@ -134,9 +134,11 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<GetHeaterVoltageReply>(p => OnMeasurePreconfigured());
 
             Add<ScanVoltageSetReply>();
-            Add<CapacitorVoltageSetReply>(/*p => OnMeasureSend((t1, t2) => toSend.Enqueue(new sendMeasure(t1, t2)))*/);
+            // no idle time!
+            Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(new SendMeasureRequest(t2))));
 
-            Add<CountsReply>(p => OnMeasureDone());
+            Add<SendMeasureReply>();
+            Add<CountsReply>(updateDevice, p => OnMeasureDone());
         }
     }
 }

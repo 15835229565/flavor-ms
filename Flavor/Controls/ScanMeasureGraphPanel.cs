@@ -16,7 +16,7 @@
             label35.Visible = true;
             label36.Visible = true;
         }
-        public override void performStep(int[] counts) {
+        public override void performStep(uint[] counts) {
             base.performStep(counts);
             refreshGraphicsOnScanStep();
         }

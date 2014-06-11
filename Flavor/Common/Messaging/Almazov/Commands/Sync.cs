@@ -324,14 +324,52 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             : base(2) { }
     }
 
-    class CountsReply: SyncReply {
+    class SendMeasureReply: SyncReply {
+        public SendMeasureReply(byte status) { }
+        public SendMeasureReply() { }
+        public override CommandCode Id {
+            get { return CommandCode.RTC_StartMeasure; }
+        }
+    }
+
+    class CountsReply: SyncReply, IUpdateDevice {
+        readonly byte status;
+        readonly uint COA, COB, COC;
+        readonly double OverTime;
+        const double sourceFrequency = 32.768;//кГц - опорная частота таймера
         public CountsReply(IList<byte> raw) {
-            // TODO:
-            throw new NotImplementedException();
+            status = raw[0];
+            if (status == 0) {
+                COA = (uint)(raw[1] * 16777216 + raw[2] * 65536 + raw[3] * 256 + raw[4]);
+                COB = (uint)(raw[5] * 16777216 + raw[6] * 65536 + raw[7] * 256 + raw[8]);
+                COC = (uint)(raw[9] * 16777216 + raw[10] * 65536 + raw[11] * 256 + raw[12]);
+                double prescaler_long;
+                switch (raw[15]) {
+                    case 1: prescaler_long = sourceFrequency; break;
+                    case 2: prescaler_long = sourceFrequency / 2; break;
+                    case 3: prescaler_long = sourceFrequency / 8; break;
+                    case 4: prescaler_long = sourceFrequency / 16; break;
+                    case 5: prescaler_long = sourceFrequency / 64; break;
+                    case 6: prescaler_long = sourceFrequency / 256; break;
+                    case 7: prescaler_long = sourceFrequency / 1024; break;
+                    default: prescaler_long = 0; break;
+                }
+                OverTime = Math.Round((((raw[13] << 8) + raw[14]) / prescaler_long) * 1000) / 1000;
+                //return true;
+            }
+            //return false;
         }
         public CountsReply() { }
         public override CommandCode Id {
             get { return CommandCode.RTC_ReceiveResults; }
         }
+        #region IUpdateDevice Members
+        public void UpdateDevice(IDevice device) {
+            device.Detectors = new uint[] {COA, COB, COC};
+        }
+        public void UpdateDevice() {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

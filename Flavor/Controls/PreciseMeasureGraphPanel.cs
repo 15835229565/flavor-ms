@@ -36,7 +36,7 @@ namespace Flavor.Controls {
                 label16.Visible = true;
             }
         }
-        public override void performStep(int[] counts) {
+        public override void performStep(uint[] counts) {
             base.performStep(counts);
             refreshGraphicsOnPreciseStep();
         }

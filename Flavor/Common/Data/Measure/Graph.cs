@@ -171,10 +171,10 @@ namespace Flavor.Common.Data.Measure {
         
         // TODO: move to MeasureGraph (but is used on diff)
         // TODO: divide into 2 events: counts & graph update!
-        public delegate void GraphEventHandler(int[] counts, params int[] recreate);
+        public delegate void GraphEventHandler(uint[] counts, params int[] recreate);
         //internal delegate void GraphEventHandler(IEnumerable<int> recreate);
         public event GraphEventHandler NewGraphData;
-        void OnNewGraphData(int[] counts, params int[] recreate) {
+        void OnNewGraphData(uint[] counts, params int[] recreate) {
             //lock here?
             if (NewGraphData != null)
                 NewGraphData(counts, recreate);
@@ -314,7 +314,7 @@ namespace Flavor.Common.Data.Measure {
             }
 
             // scan mode
-            public void updateGraphDuringScanMeasure(ushort pnt, params int[] ys) {
+            public void updateGraphDuringScanMeasure(ushort pnt, params uint[] ys) {
                 int count = ys.Length;
                 if (count != Collectors.Count)
                     throw new ArgumentOutOfRangeException("ys");
@@ -326,7 +326,7 @@ namespace Flavor.Common.Data.Measure {
             }
 
             // precise mode
-            public void updateGraphDuringPreciseMeasure(ushort pnt, PreciseEditorData curped, params int[] ys) {
+            public void updateGraphDuringPreciseMeasure(ushort pnt, PreciseEditorData curped, params uint[] ys) {
                 LastPoint = pnt;
                 CurrentPeak = curped;
                 OnNewGraphData(ys);

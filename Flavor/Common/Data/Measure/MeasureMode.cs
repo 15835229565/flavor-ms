@@ -61,7 +61,7 @@ namespace Flavor.Common.Data.Measure {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
         }
-        public bool onUpdateCounts(int[] counts) {
+        public bool onUpdateCounts(uint[] counts) {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
             saveData(counts);
@@ -94,7 +94,7 @@ namespace Flavor.Common.Data.Measure {
         }
         // TODO: move to Commander!
         // internal usage only
-        abstract protected void saveData(int[] counts);
+        abstract protected void saveData(uint[] counts);
         abstract protected bool onNextStep();
         abstract protected bool toContinue();
         public virtual bool Start() {
@@ -122,7 +122,7 @@ namespace Flavor.Common.Data.Measure {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
             }
-            protected override void saveData(int[] counts) { }
+            protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(pointValue);
                 ++pointValue;
@@ -210,7 +210,7 @@ namespace Flavor.Common.Data.Measure {
                     smpiSumMax += senseModePoints[i].Iterations; ;
                 }
             }
-            protected override void saveData(int[] counts) {
+            protected override void saveData(uint[] counts) {
                 PreciseEditorData peak = senseModePoints[senseModePeak];
                 // be careful!
                 senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += counts[peak.Collector - 1];

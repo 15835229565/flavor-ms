@@ -7,12 +7,12 @@ namespace Flavor.Common {
         event EventHandler VacuumStateChanged;
         event EventHandler TurboPumpStatusChanged;
         event TurboPumpAlertEventHandler TurboPumpAlert;
-        event EventHandler<EventArgs<int[]>> CountsUpdated;
+        event EventHandler<EventArgs<uint[]>> CountsUpdated;
         [Obsolete]
         void RelaysState(byte value);
         void OperationReady(bool on);
         void OperationBlock(bool on);
         void UpdateStatus(params ValueType[] data);
-        int[] Detectors { get; set; }
+        uint[] Detectors { get; set; }
     }
 }

@@ -276,7 +276,83 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
 
     //class GetScanVoltageRequest { }
-    
+
+    class SendMeasureRequest: UserRequest {
+        readonly uint ms;
+        public SendMeasureRequest(uint ms) {
+            this.ms = ms;
+        }
+        public override IList<byte> Data {
+            get { 
+                byte[] MeasurePeriod = BitConverter.GetBytes(calcRTCticks());
+                return AlexProtocol.collectData(Id, calcRTCprescaler(), MeasurePeriod[1], MeasurePeriod[0]);
+            }
+        }
+        const int min_ms_div1 = 0;
+        const int min_ms_div2 = 2000;
+        const int min_ms_div8 = 4000;
+        const int min_ms_div16 = 16000;
+        const int min_ms_div64 = 32000;
+        const int min_ms_div256 = 127996;
+        const int min_ms_div1024 = 511981;
+        const int max_ms_div1024 = 2047925;
+        byte calcRTCprescaler() {
+            byte prescaler; //Предделитель
+            if ((ms >= min_ms_div1) && (ms < min_ms_div2)) {
+                prescaler = 1;
+            } else if ((ms >= min_ms_div2) && (ms < min_ms_div8)) {
+                prescaler = 2;
+            } else if ((ms >= min_ms_div8) && (ms < min_ms_div16)) {
+                prescaler = 3;
+            } else if ((ms >= min_ms_div16) && (ms < min_ms_div64)) {
+                prescaler = 4;
+            } else if ((ms >= min_ms_div64) && (ms < min_ms_div256)) {
+                prescaler = 5;
+            } else if ((ms >= min_ms_div256) && (ms < min_ms_div1024)) {
+                prescaler = 6;
+            } else if ((ms >= min_ms_div1024) && (ms < max_ms_div1024)) {
+                prescaler = 7;
+            } else {
+                return 0;
+            }
+            return prescaler;
+        }
+        ushort calcRTCprescaler_long() {
+            //ФУНКЦИЯ: Вычисляет, сохраняет и возвращает предделитель.
+            ushort prescaler_long; //Предделитель в реальном коэффициенте деления (см. prescaler цифры в скобках)
+            if ((ms >= min_ms_div1) && (ms < min_ms_div2)) {
+                prescaler_long = 1;
+            } else if ((ms >= min_ms_div2) && (ms < min_ms_div8)) {
+                prescaler_long = 2;
+            } else if ((ms >= min_ms_div8) && (ms < min_ms_div16)) {
+                prescaler_long = 8;
+            } else if ((ms >= min_ms_div16) && (ms < min_ms_div64)) {
+                prescaler_long = 16;
+            } else if ((ms >= min_ms_div64) && (ms < min_ms_div256)) {
+                prescaler_long = 64;
+            } else if ((ms >= min_ms_div256) && (ms < min_ms_div1024)) {
+                prescaler_long = 256;
+            } else if ((ms >= min_ms_div1024) && (ms < max_ms_div1024)) {
+                prescaler_long = 1024;
+            } else {
+                return 0;
+            }
+            return prescaler_long;
+        }
+        const double sourceFrequency = 32.768;//кГц - опорная частота таймера
+        ushort calcRTCticks() {
+            //ФУНКЦИЯ: Вычисляет количество тиков в соответствии с временем и предделителем. Возвращает количество тиков
+            ushort ticks;
+            if ((ms < 50) || (calcRTCprescaler() == 0)) {
+                return ushort.MaxValue;
+            }
+            ticks = Convert.ToUInt16(Math.Round(Convert.ToDouble(ms) * (sourceFrequency / calcRTCprescaler_long())));
+            return ticks;
+        }
+        public override CommandCode Id {
+            get { return CommandCode.RTC_StartMeasure; }
+        }
+    }
     class CountsRequest: UserRequest {
         public override IList<byte> Data {
             get { return AlexProtocol.collectData(Id); }

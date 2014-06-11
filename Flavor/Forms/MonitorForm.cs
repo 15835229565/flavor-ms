@@ -121,10 +121,10 @@ namespace Flavor.Forms
         }
 
         // temporary?
-        void InvokeRefreshGraph(int[] counts, params int[] recreate) {
+        void InvokeRefreshGraph(uint[] counts, params int[] recreate) {
             Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
         }
-        void refreshGraph(int[] counts, params int[] recreate) {
+        void refreshGraph(uint[] counts, params int[] recreate) {
             if (recreate.Length != 0) {
                 if (time == -1) {
                     CreateGraph();
@@ -135,7 +135,7 @@ namespace Flavor.Forms
             }
             refreshGraphicsOnMeasureStep(counts);
         }
-        void refreshGraphicsOnMeasureStep(int[] counts) {
+        void refreshGraphicsOnMeasureStep(uint[] counts) {
             MeasureGraphPanel panel = Panel as MeasureGraphPanel;
             panel.performStep(counts);
         }

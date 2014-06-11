@@ -70,14 +70,14 @@ namespace Flavor.Forms {
             OnMeasureCancelRequested();
         }
 
-        void InvokeRefreshGraph(int[] counts, params int[] recreate) {
+        void InvokeRefreshGraph(uint[] counts, params int[] recreate) {
             Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
         }
-        void refreshGraph(int[] counts, params int[] recreate) {
+        void refreshGraph(uint[] counts, params int[] recreate) {
             // TODO: use recreate to refresh only affected collectors
             refreshGraphicsOnMeasureStep(counts);
         }
-        void refreshGraphicsOnMeasureStep(int[] counts) {
+        void refreshGraphicsOnMeasureStep(uint[] counts) {
             (Panel as MeasureGraphPanel).performStep(counts);
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();

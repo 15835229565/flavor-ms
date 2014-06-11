@@ -51,7 +51,7 @@ namespace Flavor.Controls {
 
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
         }
-        public virtual void performStep(int[] counts) {
+        public virtual void performStep(uint[] counts) {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
                 if (scanProgressBar.Value == scanProgressBar.Maximum) {
                     // if already full line - reinit

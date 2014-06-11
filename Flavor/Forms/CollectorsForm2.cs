@@ -313,15 +313,15 @@ namespace Flavor.Forms {
             GraphForm_OnDiffOnPoint(0, null, null);
         }
 
-        void InvokeRefreshGraph(int[] counts, params int[] recreate) {
+        void InvokeRefreshGraph(uint[] counts, params int[] recreate) {
             if (InvokeRequired) {
                 // TODO: NullPointerException here..
                 Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
                 return;
             }
-            refreshGraph(recreate);
+            refreshGraph(counts, recreate);
         }
-        void refreshGraph(int[] counts, params int[] recreate) {
+        void refreshGraph(uint[] counts, params int[] recreate) {
             if (recreate.Length != 0) {
                 CreateGraph();
                 return;

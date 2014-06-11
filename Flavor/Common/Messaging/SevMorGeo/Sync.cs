@@ -135,10 +135,10 @@ namespace Flavor.Common.Messaging.SevMorGeo {
         }
     }
     class updateCounts: SyncReply, IUpdateDevice, IUpdateGraph {
-        int Detector1;
-        int Detector2;
+        readonly uint Detector1;
+        readonly uint Detector2;
 
-        public updateCounts(int value1, int value2) {
+        public updateCounts(uint value1, uint value2) {
             Detector1 = value1;
             Detector2 = value2;
         }
@@ -148,7 +148,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             throw new System.NotImplementedException();
         }
         public void UpdateDevice() {
-            Device.Detectors = new int[] { Detector1, Detector2 };
+            Device.Detectors = new uint[] { Detector1, Detector2 };
         }
         #endregion
         public override CommandCode Id {

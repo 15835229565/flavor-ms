@@ -41,9 +41,9 @@ namespace Flavor.Common {
         }
         public event EventHandler TurboPumpStatusChanged;
         public event TurboPumpAlertEventHandler TurboPumpAlert;
-        public event EventHandler<EventArgs<int[]>> CountsUpdated;
+        public event EventHandler<EventArgs<uint[]>> CountsUpdated;
         protected void OnCountsUpdated() {
-            CountsUpdated.Raise(this, new EventArgs<int[]>(Detectors));
+            CountsUpdated.Raise(this, new EventArgs<uint[]>(Detectors));
         }
 
         public void RelaysState(byte value) {
@@ -74,9 +74,9 @@ namespace Flavor.Common {
             } catch (InvalidCastException) {
             };
         }
-        int[] detectors = new int[3];
-        public int[] Detectors {
-            get { return (int[])detectors.Clone(); }
+        uint[] detectors = new uint[3];
+        public uint[] Detectors {
+            get { return (uint[])detectors.Clone(); }
             set {
                 if (value == null || value.Length != detectors.Length)
                     return;
