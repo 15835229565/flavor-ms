@@ -44,11 +44,6 @@ namespace Flavor.Common.Settings {
 
         public CommonOptions() {
             // defaults
-            iVoltage = 1911;
-            //hCurrent = 0;
-            eCurrent = 79;
-            fV1 = 2730;
-            fV2 = 2730;
             befTime = 100;
             fTime = 100;
             bTime = 400;

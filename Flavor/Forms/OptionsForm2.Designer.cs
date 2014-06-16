@@ -17,7 +17,10 @@
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label1;
+            System.Windows.Forms.Label label7;
+            System.Windows.Forms.Label label8;
             this.params_groupBox = new System.Windows.Forms.GroupBox();
+            this.d3VoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.adjustSettingsCheckBox = new System.Windows.Forms.CheckBox();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.fV1NumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -32,7 +35,8 @@
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.d3VoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.kNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.expTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             loadFileButton = new System.Windows.Forms.Button();
             saveFileButton = new System.Windows.Forms.Button();
             label33 = new System.Windows.Forms.Label();
@@ -43,7 +47,10 @@
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
             this.params_groupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.d3VoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
@@ -51,7 +58,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.d2VoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.d1VoltageNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.d3VoltageNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // loadFileButton
@@ -103,30 +111,60 @@
             resources.ApplyResources(label2, "label2");
             label2.Name = "label2";
             // 
+            // label1
+            // 
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
+            // 
             // params_groupBox
             // 
+            this.params_groupBox.Controls.Add(this.expTimeNumericUpDown);
+            this.params_groupBox.Controls.Add(label8);
+            this.params_groupBox.Controls.Add(label7);
+            this.params_groupBox.Controls.Add(this.kNumericUpDown);
             this.params_groupBox.Controls.Add(this.d3VoltageNumericUpDown);
             this.params_groupBox.Controls.Add(label1);
             this.params_groupBox.Controls.Add(this.adjustSettingsCheckBox);
             this.params_groupBox.Controls.Add(loadFileButton);
             this.params_groupBox.Controls.Add(saveFileButton);
+            this.params_groupBox.Controls.Add(this.CPNumericUpDown);
+            this.params_groupBox.Controls.Add(label5);
             this.params_groupBox.Controls.Add(this.fV2NumericUpDown);
             this.params_groupBox.Controls.Add(this.fV1NumericUpDown);
             this.params_groupBox.Controls.Add(this.eCurrentNumericUpDown);
-            this.params_groupBox.Controls.Add(this.CPNumericUpDown);
             this.params_groupBox.Controls.Add(this.iVoltageNumericUpDown);
             this.params_groupBox.Controls.Add(this.d2VoltageNumericUpDown);
             this.params_groupBox.Controls.Add(this.d1VoltageNumericUpDown);
             this.params_groupBox.Controls.Add(label33);
             this.params_groupBox.Controls.Add(label32);
             this.params_groupBox.Controls.Add(label6);
-            this.params_groupBox.Controls.Add(label5);
             this.params_groupBox.Controls.Add(label4);
             this.params_groupBox.Controls.Add(label3);
             this.params_groupBox.Controls.Add(label2);
             resources.ApplyResources(this.params_groupBox, "params_groupBox");
             this.params_groupBox.Name = "params_groupBox";
             this.params_groupBox.TabStop = false;
+            // 
+            // d3VoltageNumericUpDown
+            // 
+            resources.ApplyResources(this.d3VoltageNumericUpDown, "d3VoltageNumericUpDown");
+            this.d3VoltageNumericUpDown.Maximum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.d3VoltageNumericUpDown.Minimum = new decimal(new int[] {
+            2200,
+            0,
+            0,
+            0});
+            this.d3VoltageNumericUpDown.Name = "d3VoltageNumericUpDown";
+            this.d3VoltageNumericUpDown.ReadOnly = true;
+            this.d3VoltageNumericUpDown.Value = new decimal(new int[] {
+            2700,
+            0,
+            0,
+            0});
             // 
             // adjustSettingsCheckBox
             // 
@@ -328,31 +366,37 @@
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
             resources.ApplyResources(this.saveCommonDataFileDialog, "saveCommonDataFileDialog");
             // 
-            // label1
+            // kNumericUpDown
             // 
-            resources.ApplyResources(label1, "label1");
-            label1.Name = "label1";
+            this.kNumericUpDown.DecimalPlaces = 3;
+            this.kNumericUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            resources.ApplyResources(this.kNumericUpDown, "kNumericUpDown");
+            this.kNumericUpDown.Name = "kNumericUpDown";
+            this.kNumericUpDown.ReadOnly = true;
             // 
-            // d3VoltageNumericUpDown
+            // label7
             // 
-            resources.ApplyResources(this.d3VoltageNumericUpDown, "d3VoltageNumericUpDown");
-            this.d3VoltageNumericUpDown.Maximum = new decimal(new int[] {
-            3000,
+            resources.ApplyResources(label7, "label7");
+            label7.Name = "label7";
+            // 
+            // label8
+            // 
+            resources.ApplyResources(label8, "label8");
+            label8.Name = "label8";
+            // 
+            // expTimeNumericUpDown
+            // 
+            this.expTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
             0,
             0,
             0});
-            this.d3VoltageNumericUpDown.Minimum = new decimal(new int[] {
-            2200,
-            0,
-            0,
-            0});
-            this.d3VoltageNumericUpDown.Name = "d3VoltageNumericUpDown";
-            this.d3VoltageNumericUpDown.ReadOnly = true;
-            this.d3VoltageNumericUpDown.Value = new decimal(new int[] {
-            2700,
-            0,
-            0,
-            0});
+            resources.ApplyResources(this.expTimeNumericUpDown, "expTimeNumericUpDown");
+            this.expTimeNumericUpDown.Name = "expTimeNumericUpDown";
             // 
             // OptionsForm2
             // 
@@ -372,6 +416,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.d3VoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).EndInit();
@@ -379,19 +424,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.d2VoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.d1VoltageNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.d3VoltageNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
         #endregion
 
-        protected System.Windows.Forms.NumericUpDown fV1NumericUpDown;
-        protected System.Windows.Forms.NumericUpDown CPNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown d2VoltageNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown d1VoltageNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown fV2NumericUpDown;
         protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
         protected System.Windows.Forms.Button cancel_butt;
@@ -400,7 +440,15 @@
         protected System.Windows.Forms.GroupBox params_groupBox;
         private System.Windows.Forms.CheckBox adjustSettingsCheckBox;
         protected System.Windows.Forms.CheckBox rareModeCheckBox;
-        protected System.Windows.Forms.NumericUpDown d3VoltageNumericUpDown;
         private System.Windows.Forms.NumericUpDown eCurrentNumericUpDown;
+        private System.Windows.Forms.NumericUpDown expTimeNumericUpDown;
+        private System.Windows.Forms.NumericUpDown d1VoltageNumericUpDown;
+        private System.Windows.Forms.NumericUpDown fV1NumericUpDown;
+        private System.Windows.Forms.NumericUpDown CPNumericUpDown;
+        private System.Windows.Forms.NumericUpDown iVoltageNumericUpDown;
+        private System.Windows.Forms.NumericUpDown d2VoltageNumericUpDown;
+        private System.Windows.Forms.NumericUpDown fV2NumericUpDown;
+        private System.Windows.Forms.NumericUpDown d3VoltageNumericUpDown;
+        private System.Windows.Forms.NumericUpDown kNumericUpDown;
     }
 }

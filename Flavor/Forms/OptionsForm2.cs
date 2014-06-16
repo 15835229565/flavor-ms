@@ -14,17 +14,18 @@ namespace Flavor.Forms {
 
         void loadCommonData(CommonOptions co) {
             // TODO: remove hard-coded numbers here (use constants in Config)
-            //setupNumericUpDown(expTimeNumericUpDown, 10, 10000, co.eTimeReal);
+            setupNumericUpDown(expTimeNumericUpDown, 50, 10000, co.eTimeReal);
             //setupNumericUpDown(idleTimeNumericUpDown, 10, 100, co.iTimeReal);
 
-            setupNumericUpDown(d1VoltageNumericUpDown, 2200, 3000, 2700);
-            setupNumericUpDown(d2VoltageNumericUpDown, 2200, 3000, 2700);
-            setupNumericUpDown(d3VoltageNumericUpDown, 2200, 3000, 2700);
-            //setupNumericUpDown(CPNumericUpDown, 10, 12, co.CPReal, CommonOptions.CPConvert, CommonOptions.CPConvert);
-            setupNumericUpDown(iVoltageNumericUpDown, 50, 100, 80);
-            setupNumericUpDown(eCurrentNumericUpDown, 1, 20, 1);
-            setupNumericUpDown(fV1NumericUpDown, 50, 150, 100);
-            setupNumericUpDown(fV2NumericUpDown, 50, 150, 100);
+            setupNumericUpDown(d1VoltageNumericUpDown, 2200, 3000, co.d1VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
+            setupNumericUpDown(d2VoltageNumericUpDown, 2200, 3000, co.d2VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
+            setupNumericUpDown(d3VoltageNumericUpDown, 2200, 3000, co.d3VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
+            setupNumericUpDown(CPNumericUpDown, (decimal)0.01, (decimal)0.09, co.C);
+            setupNumericUpDown(kNumericUpDown, (decimal)0.6, (decimal)0.9, co.K);
+            setupNumericUpDown(iVoltageNumericUpDown, 50, 100, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);
+            setupNumericUpDown(eCurrentNumericUpDown, 1, 20, co.eCurrentReal, CommonOptions.eCurrentConvert, CommonOptions.eCurrentConvert);
+            setupNumericUpDown(fV1NumericUpDown, 50, 150, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
+            setupNumericUpDown(fV2NumericUpDown, 50, 150, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
         }
         void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
             updown.Minimum = min;
@@ -76,12 +77,15 @@ namespace Flavor.Forms {
         }
 
         void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e) {
-            CPNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            fV1NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            fV2NumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            d1VoltageNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            d2VoltageNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
-            d3VoltageNumericUpDown.ReadOnly = !adjustSettingsCheckBox.Checked;
+            // TODO: enumerate collection and modify only proper controls
+            bool ro = !adjustSettingsCheckBox.Checked;
+            CPNumericUpDown.ReadOnly = ro;
+            kNumericUpDown.ReadOnly = ro;
+            fV1NumericUpDown.ReadOnly = ro;
+            fV2NumericUpDown.ReadOnly = ro;
+            d1VoltageNumericUpDown.ReadOnly = ro;
+            d2VoltageNumericUpDown.ReadOnly = ro;
+            d3VoltageNumericUpDown.ReadOnly = ro;
         }
         void InvokeSetVisibility(ProgramStates state) {
             this.Invoke(new Action(() => {
@@ -130,7 +134,11 @@ namespace Flavor.Forms {
                     iVoltageNumericUpDown.Value,
                     eCurrentNumericUpDown.Value,
                     fV1NumericUpDown.Value,
-                    fV2NumericUpDown.Value};
+                    fV2NumericUpDown.Value,
+                    CPNumericUpDown.Value,
+                    kNumericUpDown.Value,
+                    expTimeNumericUpDown.Value,
+                };
             }
             base.OnFormClosing(args);
         }

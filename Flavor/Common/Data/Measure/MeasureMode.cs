@@ -59,7 +59,8 @@ namespace Flavor.Common.Data.Measure {
         public bool CancelRequested { private get; set; }
         MeasureMode(ushort befTime, ushort eTime) {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
-            this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
+            //this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
+            this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal);
         }
         public bool onUpdateCounts(uint[] counts) {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied

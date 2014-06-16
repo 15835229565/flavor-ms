@@ -1,5 +1,18 @@
-﻿namespace Flavor.Common.Settings {
+﻿using System;
+namespace Flavor.Common.Settings {
     class AlmazovCommonData {
+        public AlmazovCommonData() {
+            // defaults
+            iVoltageReal = 80;
+            eCurrentReal = 1;
+            fV1Real = 100;
+            fV2Real = 100;
+            d1VReal = 2700;
+            d2VReal = 2700;
+            d3VReal = 2700;
+            K = 0.73;
+            C = 1.0 / 21.0;
+        }
         public ushort d1V { get; set; }
         public double d1VReal {
             get { return dVConvert(d1V); }
@@ -74,23 +87,25 @@
             return x < 4096 ? x : (ushort)4095;
         }
         // scan voltage modification law
-        public static uint scanVoltage(ushort step) {
-            //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            step &= 0xFFF;
-            uint res = (uint)(step << 2);
+        public uint scanVoltageNew(ushort step) {
+            if (step > Config.MAX_STEP) step = Config.MAX_STEP;
+            uint res = (uint)(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
+            res <<= 2;
+            //step &= 0xFFF;
+            //uint res = (uint)(step << 2);
             return res;
         }
-        public static uint parentScanVoltage(ushort step) {
+        public double K { get; set; }
+        public uint parentScanVoltage(ushort step) {
             //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            double k = 0.73;
-            double voltage = scanVoltage(step) * k;
+            double voltage = scanVoltageNew(step) * K;
             uint res = (uint)voltage;
             return res;
         }
-        public static uint capVoltage(ushort step) {
+        public double C { get; set; }
+        public uint capVoltage(ushort step) {
             //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            double k = 1.0 / 21.0;
-            double voltage = scanVoltage(step) * k;
+            double voltage = scanVoltageNew(step) * C;
             uint res = (uint)voltage;
             return res;
         }

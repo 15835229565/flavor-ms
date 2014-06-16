@@ -378,7 +378,7 @@ namespace Flavor.Forms {
                     var args = a as OptionsForm2.ClosingEventArgs;
                     var ps = args.Parameters;
                     if (ps != null) {
-                        Config.temp_saveGO((double)ps[0], (double)ps[1], (double)ps[2], (double)ps[3], (double)ps[4], (double)ps[5], (double)ps[6]);
+                        Config.temp_saveGO((double)ps[0], (double)ps[1], (double)ps[2], (double)ps[3], (double)ps[4], (double)ps[5], (double)ps[6], (double)ps[7], (double)ps[8], (double)ps[9]);
                         //Config.saveGlobalCommonOptions(
                         //    (ushort)ps[0],
                         //    (ushort)ps[1],

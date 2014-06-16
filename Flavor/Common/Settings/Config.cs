@@ -37,8 +37,8 @@ namespace Flavor.Common.Settings {
         static byte sendTry = 1;
 
         public const ushort MIN_STEP = 0;
-        //public const ushort MAX_STEP = 1056;
-        public const ushort MAX_STEP = 4095;
+        public const ushort MAX_STEP = 1056;
+        //public const ushort MAX_STEP = 4095;
         static ushort startPoint = MIN_STEP;
         static ushort endPoint = MAX_STEP;
 
@@ -199,7 +199,7 @@ namespace Flavor.Common.Settings {
             mainConfigWriter.savePreciseData(peds, false);
             mainConfigWriter.write();
         }
-        public static void temp_saveGO(double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2) {
+        public static void temp_saveGO(double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2, double c, double k, double expT) {
             commonOpts.iVoltageReal = iV;
             commonOpts.eCurrentReal = eC;
             commonOpts.fV1Real = fv1;
@@ -207,6 +207,11 @@ namespace Flavor.Common.Settings {
             commonOpts.d1VReal = d1v;
             commonOpts.d2VReal = d2v;
             commonOpts.d3VReal = d3v;
+            commonOpts.C = c;
+            commonOpts.K = k;
+            commonOpts.eTimeReal = (ushort)expT;
+            mainConfigWriter.saveCommonOptions(commonOpts);
+            mainConfigWriter.write();
         }
         //public static void saveGlobalCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
         //    commonOpts.eTimeReal = eT;

@@ -20,7 +20,6 @@ namespace Flavor.Forms {
             setupNumericUpDown(iVoltageNumericUpDown, 20, 150, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);
             setupNumericUpDown(CPNumericUpDown, 10, 12, co.CPReal, CommonOptions.CPConvert, CommonOptions.CPConvert);
             setupNumericUpDown(eCurrentNumericUpDown, 0, 10, co.eCurrentReal, CommonOptions.eCurrentConvert, CommonOptions.eCurrentConvert);
-            //setupNumericUpDown(hCurrentNumericUpDown, 0, 1, co.hCurrentReal, CommonOptions.hCurrentConvert, CommonOptions.hCurrentConvert);
             setupNumericUpDown(fV1NumericUpDown, 20, 150, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
             setupNumericUpDown(fV2NumericUpDown, 20, 150, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
         }

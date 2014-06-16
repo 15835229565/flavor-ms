@@ -72,9 +72,10 @@ namespace Flavor.Common.Messaging.Almazov {
 
         public override void SetMeasureStep(ushort step) {
             // TODO: proper data from config
-            toSend.Enqueue(new ParentScanVoltageSetRequest(AlmazovCommonData.parentScanVoltage(step)));
-            toSend.Enqueue(new MainScanVoltageSetRequest(AlmazovCommonData.scanVoltage(step)));
-            toSend.Enqueue(new CapacitorVoltageSetRequest(AlmazovCommonData.capVoltage(step)));
+            var co = Config.CommonOptions;
+            toSend.Enqueue(new ParentScanVoltageSetRequest(co.parentScanVoltage(step)));
+            toSend.Enqueue(new MainScanVoltageSetRequest(co.scanVoltageNew(step)));
+            toSend.Enqueue(new CapacitorVoltageSetRequest(co.capVoltage(step)));
         }
         [Obsolete]
         protected override UserRequest<CommandCode> MeasureStep(ushort step) {
@@ -93,7 +94,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 OnOperationBlock(false);
                 //toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
                 //SetSettings();
-            }, AutoSend<GetD1VoltageRequest>/*fake request to workaround SPI misfunction*/);
+            }, AutoSend<GetD1VoltageRequest>/*fake request to workaround SPI misfunction (BUT sends a lot!)*/);
             Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
             Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
             //sync error
@@ -125,6 +126,7 @@ namespace Flavor.Common.Messaging.Almazov {
 
             Add<GetD1VoltageReply>(AutoSend<GetD2VoltageRequest>);
             Add<GetD2VoltageReply>(AutoSend<GetD3VoltageRequest>);
+            //Add<GetD3VoltageReply>(AutoSend<GetEmissionCurrentRequest>);
             Add<GetD3VoltageReply>(AutoSend<GetIonizationVoltageRequest>);
             Add<GetIonizationVoltageReply>(AutoSend<GetEmissionCurrentRequest>);
             Add<GetEmissionCurrentReply>(AutoSend<GetF1VoltageRequest>);

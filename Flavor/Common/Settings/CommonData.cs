@@ -1,5 +1,13 @@
 ﻿namespace Flavor.Common.Settings {
     abstract class CommonData {
+        public CommonData() {
+            // defaults
+            iVoltage = 1911;
+            //hCurrent = 0;
+            eCurrent = 79;
+            fV1 = 2730;
+            fV2 = 2730;
+        }
         public ushort hCurrent { get; set; }
         public double hCurrentReal {
             get { return hCurrentConvert(hCurrent); }
