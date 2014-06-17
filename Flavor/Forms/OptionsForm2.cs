@@ -27,19 +27,22 @@ namespace Flavor.Forms {
             setupNumericUpDown(fV1NumericUpDown, 50, 150, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
             setupNumericUpDown(fV2NumericUpDown, 50, 150, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
         }
-        void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
+        protected void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, decimal value) {
             updown.Minimum = min;
             updown.Maximum = max;
-            decimal temp = (decimal)value;
-            if (temp < updown.Minimum)
-                temp = updown.Minimum;
-            else if (temp > updown.Maximum)
-                temp = updown.Maximum;
-            updown.Value = temp;
+            if (value < updown.Minimum)
+                value = updown.Minimum;
+            else if (value > updown.Maximum)
+                value = updown.Maximum;
+            updown.Value = value;
         }
-        delegate ushort ConvertTo(double value);
-        delegate double ConvertFro(ushort value);
-        void setupNumericUpDown(NumericUpDown updown, double min, double max, double value, ConvertTo conv1, ConvertFro conv2) {
+        void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, double value) {
+            setupNumericUpDown(updown, min, max, (decimal)value);
+        }
+        void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, ushort value) {
+            setupNumericUpDown(updown, min, max, (decimal)value);
+        }
+        void setupNumericUpDown(NumericUpDown updown, double min, double max, double value, Converter<double, ushort> conv1, Converter<ushort, double> conv2) {
             setupNumericUpDown(updown, (decimal)conv2(conv1(min)), (decimal)conv2(conv1(max)), value);
         }
 

@@ -126,7 +126,6 @@ namespace Flavor.Common.Messaging.Almazov {
 
             Add<GetD1VoltageReply>(AutoSend<GetD2VoltageRequest>);
             Add<GetD2VoltageReply>(AutoSend<GetD3VoltageRequest>);
-            //Add<GetD3VoltageReply>(AutoSend<GetEmissionCurrentRequest>);
             Add<GetD3VoltageReply>(AutoSend<GetIonizationVoltageRequest>);
             Add<GetIonizationVoltageReply>(AutoSend<GetEmissionCurrentRequest>);
             Add<GetEmissionCurrentReply>(AutoSend<GetF1VoltageRequest>);
@@ -137,6 +136,7 @@ namespace Flavor.Common.Messaging.Almazov {
 
             Add<ScanVoltageSetReply>();
             // no idle time!
+            // TODO: use cached command in case of same time
             Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(new SendMeasureRequest(t2))));
 
             Add<SendMeasureReply>();

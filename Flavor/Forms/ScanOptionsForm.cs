@@ -8,36 +8,24 @@ namespace Flavor.Forms {
             : base() {
             InitializeComponent();
             this.scan_groupBox.Text = string.Format("Интервал сканирования ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
-            this.endScanNumericUpDown.Minimum = Config.MIN_STEP;
-            this.endScanNumericUpDown.Maximum = Config.MAX_STEP;
-            this.startScanNumericUpDown.Minimum = Config.MIN_STEP;
-            this.startScanNumericUpDown.Maximum = Config.MAX_STEP;
-            loadStartEndData();
-        }
-
-        void loadStartEndData() {
-            startScanNumericUpDown.Value = Config.sPoint >= Config.MIN_STEP ? Config.sPoint : Config.MIN_STEP;
-            endScanNumericUpDown.Value = Config.ePoint <= Config.MAX_STEP ? Config.ePoint : Config.MAX_STEP;
+            setupNumericUpDown(startScanNumericUpDown, Config.MIN_STEP, Config.MAX_STEP, Config.sPoint);
+            setupNumericUpDown(endScanNumericUpDown, Config.MIN_STEP, Config.MAX_STEP, Config.ePoint);
         }
 
         protected override void ok_butt_Click(object sender, EventArgs e) {
-            if (startScanNumericUpDown.Value > endScanNumericUpDown.Value) {
-                startScanNumericUpDown.BackColor = Color.Red;
-                endScanNumericUpDown.BackColor = Color.Red;
-                return;
-            }
-            Config.saveGlobalScanOptions((ushort)startScanNumericUpDown.Value, (ushort)endScanNumericUpDown.Value);
-            base.ok_butt_Click(sender, e);
+            checkAndSave(base.ok_butt_Click, sender, e);
         }
-
         protected override void applyButton_Click(object sender, EventArgs e) {
+            checkAndSave(base.applyButton_Click, sender, e);
+        }
+        void checkAndSave(EventHandler action, object sender, EventArgs e) {
             if (startScanNumericUpDown.Value > endScanNumericUpDown.Value) {
                 startScanNumericUpDown.BackColor = Color.Red;
                 endScanNumericUpDown.BackColor = Color.Red;
                 return;
             }
             Config.saveGlobalScanOptions((ushort)startScanNumericUpDown.Value, (ushort)endScanNumericUpDown.Value);
-            base.applyButton_Click(sender, e);
+            action(sender, e);
         }
     }
 }
