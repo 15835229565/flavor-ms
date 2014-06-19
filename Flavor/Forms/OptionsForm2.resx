@@ -189,7 +189,7 @@
     <value>25</value>
   </data>
   <data name="label33.Text" xml:space="preserve">
-    <value>Фокусирующее напр. (2) (50-150 В)</value>
+    <value>Фокусирующее напр. (2) (50-100 В)</value>
   </data>
   <data name="&gt;&gt;label33.Name" xml:space="preserve">
     <value>label33</value>
@@ -219,7 +219,7 @@
     <value>24</value>
   </data>
   <data name="label32.Text" xml:space="preserve">
-    <value>Фокусирующее напр. (1) (50-150 В)</value>
+    <value>Фокусирующее напр. (1) (50-100 В)</value>
   </data>
   <data name="&gt;&gt;label32.Name" xml:space="preserve">
     <value>label32</value>
@@ -249,7 +249,7 @@
     <value>10</value>
   </data>
   <data name="label6.Text" xml:space="preserve">
-    <value>Ток эмиссии (1-20 мкА)</value>
+    <value>Ток эмиссии (0-20 мкА)</value>
   </data>
   <data name="&gt;&gt;label6.Name" xml:space="preserve">
     <value>label6</value>
@@ -417,29 +417,38 @@
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="expTimeNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>195, 253</value>
+  <metadata name="label7.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="expTimeNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>60, 20</value>
+  <data name="label7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
-  <data name="expTimeNumericUpDown.TabIndex" type="System.Int32, mscorlib">
-    <value>41</value>
+  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 229</value>
   </data>
-  <data name="expTimeNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
+  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>177, 13</value>
   </data>
-  <data name="&gt;&gt;expTimeNumericUpDown.Name" xml:space="preserve">
-    <value>expTimeNumericUpDown</value>
+  <data name="label7.TabIndex" type="System.Int32, mscorlib">
+    <value>39</value>
   </data>
-  <data name="&gt;&gt;expTimeNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="label7.Text" xml:space="preserve">
+    <value>Коэффициент деления (источник)</value>
   </data>
-  <data name="&gt;&gt;expTimeNumericUpDown.Parent" xml:space="preserve">
+  <data name="&gt;&gt;label7.Name" xml:space="preserve">
+    <value>label7</value>
+  </data>
+  <data name="&gt;&gt;label7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
     <value>params_groupBox</value>
   </data>
-  <data name="&gt;&gt;expTimeNumericUpDown.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -474,38 +483,29 @@
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <metadata name="label7.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="expTimeNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>195, 253</value>
   </data>
-  <data name="label7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="expTimeNumericUpDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 20</value>
   </data>
-  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 229</value>
+  <data name="expTimeNumericUpDown.TabIndex" type="System.Int32, mscorlib">
+    <value>41</value>
   </data>
-  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 13</value>
+  <data name="expTimeNumericUpDown.TextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+    <value>Right</value>
   </data>
-  <data name="label7.TabIndex" type="System.Int32, mscorlib">
-    <value>39</value>
+  <data name="&gt;&gt;expTimeNumericUpDown.Name" xml:space="preserve">
+    <value>expTimeNumericUpDown</value>
   </data>
-  <data name="label7.Text" xml:space="preserve">
-    <value>Коэффициент деления (источник)</value>
+  <data name="&gt;&gt;expTimeNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label7.Name" xml:space="preserve">
-    <value>label7</value>
-  </data>
-  <data name="&gt;&gt;label7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
+  <data name="&gt;&gt;expTimeNumericUpDown.Parent" xml:space="preserve">
     <value>params_groupBox</value>
   </data>
-  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;expTimeNumericUpDown.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="kNumericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>195, 227</value>

@@ -130,7 +130,7 @@ namespace Flavor.Forms {
                         zgc.GraphPane.YAxis.Title.FontSpec.Size = 12;
                         zgc.Dock = DockStyle.Fill;
 
-                        zgc.Tag = i + 1;
+                        zgc.Tag = (byte)(i + 1);
                         graphs[i] = zgc;
                     }
                     tabPage.UseVisualStyleBackColor = true;

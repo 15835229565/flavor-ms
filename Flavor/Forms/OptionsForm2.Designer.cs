@@ -20,12 +20,14 @@
             System.Windows.Forms.Label label7;
             System.Windows.Forms.Label label8;
             this.params_groupBox = new System.Windows.Forms.GroupBox();
+            this.expTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.kNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.d3VoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.adjustSettingsCheckBox = new System.Windows.Forms.CheckBox();
+            this.CPNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.fV2NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.fV1NumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.eCurrentNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.CPNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.iVoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.d2VoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.d1VoltageNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -35,8 +37,6 @@
             this.rareModeCheckBox = new System.Windows.Forms.CheckBox();
             this.openCommonDataFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveCommonDataFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.kNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.expTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             loadFileButton = new System.Windows.Forms.Button();
             saveFileButton = new System.Windows.Forms.Button();
             label33 = new System.Windows.Forms.Label();
@@ -50,16 +50,16 @@
             label7 = new System.Windows.Forms.Label();
             label8 = new System.Windows.Forms.Label();
             this.params_groupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.d3VoltageNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.d2VoltageNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.d1VoltageNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.kNumericUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // loadFileButton
@@ -116,6 +116,16 @@
             resources.ApplyResources(label1, "label1");
             label1.Name = "label1";
             // 
+            // label7
+            // 
+            resources.ApplyResources(label7, "label7");
+            label7.Name = "label7";
+            // 
+            // label8
+            // 
+            resources.ApplyResources(label8, "label8");
+            label8.Name = "label8";
+            // 
             // params_groupBox
             // 
             this.params_groupBox.Controls.Add(this.expTimeNumericUpDown);
@@ -145,6 +155,28 @@
             this.params_groupBox.Name = "params_groupBox";
             this.params_groupBox.TabStop = false;
             // 
+            // expTimeNumericUpDown
+            // 
+            this.expTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            resources.ApplyResources(this.expTimeNumericUpDown, "expTimeNumericUpDown");
+            this.expTimeNumericUpDown.Name = "expTimeNumericUpDown";
+            // 
+            // kNumericUpDown
+            // 
+            this.kNumericUpDown.DecimalPlaces = 3;
+            this.kNumericUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            resources.ApplyResources(this.kNumericUpDown, "kNumericUpDown");
+            this.kNumericUpDown.Name = "kNumericUpDown";
+            this.kNumericUpDown.ReadOnly = true;
+            // 
             // d3VoltageNumericUpDown
             // 
             resources.ApplyResources(this.d3VoltageNumericUpDown, "d3VoltageNumericUpDown");
@@ -172,6 +204,18 @@
             this.adjustSettingsCheckBox.Name = "adjustSettingsCheckBox";
             this.adjustSettingsCheckBox.UseVisualStyleBackColor = true;
             this.adjustSettingsCheckBox.CheckedChanged += new System.EventHandler(this.adjustSettingsCheckBox_CheckedChanged);
+            // 
+            // CPNumericUpDown
+            // 
+            this.CPNumericUpDown.DecimalPlaces = 3;
+            this.CPNumericUpDown.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            resources.ApplyResources(this.CPNumericUpDown, "CPNumericUpDown");
+            this.CPNumericUpDown.Name = "CPNumericUpDown";
+            this.CPNumericUpDown.ReadOnly = true;
             // 
             // fV2NumericUpDown
             // 
@@ -241,29 +285,12 @@
             0,
             0,
             0});
-            this.eCurrentNumericUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.eCurrentNumericUpDown.Name = "eCurrentNumericUpDown";
             this.eCurrentNumericUpDown.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            // 
-            // CPNumericUpDown
-            // 
-            this.CPNumericUpDown.DecimalPlaces = 3;
-            this.CPNumericUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            resources.ApplyResources(this.CPNumericUpDown, "CPNumericUpDown");
-            this.CPNumericUpDown.Name = "CPNumericUpDown";
-            this.CPNumericUpDown.ReadOnly = true;
             // 
             // iVoltageNumericUpDown
             // 
@@ -366,38 +393,6 @@
             this.saveCommonDataFileDialog.DefaultExt = "cdf";
             resources.ApplyResources(this.saveCommonDataFileDialog, "saveCommonDataFileDialog");
             // 
-            // kNumericUpDown
-            // 
-            this.kNumericUpDown.DecimalPlaces = 3;
-            this.kNumericUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
-            resources.ApplyResources(this.kNumericUpDown, "kNumericUpDown");
-            this.kNumericUpDown.Name = "kNumericUpDown";
-            this.kNumericUpDown.ReadOnly = true;
-            // 
-            // label7
-            // 
-            resources.ApplyResources(label7, "label7");
-            label7.Name = "label7";
-            // 
-            // label8
-            // 
-            resources.ApplyResources(label8, "label8");
-            label8.Name = "label8";
-            // 
-            // expTimeNumericUpDown
-            // 
-            this.expTimeNumericUpDown.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-            resources.ApplyResources(this.expTimeNumericUpDown, "expTimeNumericUpDown");
-            this.expTimeNumericUpDown.Name = "expTimeNumericUpDown";
-            // 
             // OptionsForm2
             // 
             this.AcceptButton = this.ok_butt;
@@ -416,16 +411,16 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.d3VoltageNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.d2VoltageNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.d1VoltageNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.kNumericUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

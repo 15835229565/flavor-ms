@@ -885,7 +885,7 @@ namespace Flavor.Common.Settings {
             private const string EXPOSITURE_TIME_CONFIG_TAG = "exptime";
             private const string TRANSITION_TIME_CONFIG_TAG = "meastime";
             private const string IONIZATION_VOLTAGE_CONFIG_TAG = "ivoltage";
-            private const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "cp";
+            const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "cp";
             private const string EMISSION_CURRENT_CONFIG_TAG = "ecurrent";
             private const string HEAT_CURRENT_CONFIG_TAG = "hcurrent";
             private const string FOCUS_VOLTAGE1_CONFIG_TAG = "focus1";
@@ -1557,30 +1557,55 @@ namespace Flavor.Common.Settings {
                 #endregion
             }
             [Obsolete]
-            private abstract class CurrentTagHolder: TagHolder {
-                private const char COUNTS_SEPARATOR = ' ';
-                private const string CHECK_PEAK_NUMBER_TAG = "region";
+            abstract class CurrentTagHolder: TagHolder {
+                const char COUNTS_SEPARATOR = ' ';
+                const string CHECK_PEAK_NUMBER_TAG = "region";
+                const string SOURCE_VOLTAGE_COEFF_CONFIG_TAG = "k";
+                new const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "c";
+                const string DETECTOR_VOLTAGE_TAG = "dv";
+                const string NUMBER_ATTRIBUTE = "n";
+                const string COUNT_ATTRIBUTE = "count";
                 public const string CONFIG_VERSION = "1.3";
                 #region Current Readers
                 public abstract class Reader: CurrentTagHolder {
                     public CommonOptions loadCommonOptions() {
                         XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         try {
-                            ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
+                            ushort eT, iT, iV, eC, hC, fV1, fV2, CP;
+                            double c, k;
                             eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
-                            iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
+                            //iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
                             iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
-                            CP = ushort.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+                            
+                            c = double.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+                            k = double.Parse(commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+                            
                             eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
-                            hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
+                            //hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
                             fV1 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText);
                             fV2 = ushort.Parse(commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText);
+
+                            ushort[] dVs = new ushort[3];
+                            foreach (XmlNode node in commonNode.SelectNodes(DETECTOR_VOLTAGE_TAG)) {
+                                var numberAttribute = node.Attributes[NUMBER_ATTRIBUTE];
+                                int n = int.Parse(numberAttribute.Value);
+                                ushort value = ushort.Parse(node.InnerText);
+                                dVs[n - 1] = value;
+                            }
+
                             {
                                 CommonOptions opts = new CommonOptions();
                                 opts.eTime = eT;
-                                opts.iTime = iT;
+                                //opts.iTime = iT;
                                 opts.iVoltage = iV;
-                                opts.CP = CP;
+                                //opts.CP = CP;
+                                opts.C = c;
+                                opts.K = k;
+
+                                opts.d1V = dVs[0];
+                                opts.d2V = dVs[1];
+                                opts.d3V = dVs[2];
+
                                 opts.eCurrent = eC;
                                 //opts.hCurrent = hC;
                                 opts.fV1 = fV1;
@@ -1605,7 +1630,7 @@ namespace Flavor.Common.Settings {
                         for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string peak, iter, width, col;
                             try {
-                                XmlNode regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
+                                var regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
                                 peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
                                 col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
                                 iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
@@ -1654,8 +1679,6 @@ namespace Flavor.Common.Settings {
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             // TODO: proper data!
                             return new double[]{ col1Coeff, col2Coeff, 1 };
-                            //graph.DisplayedRows1.Coeff = col1Coeff;
-                            //graph.DisplayedRows2.Coeff = col2Coeff;
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
                         } catch (FormatException) {
@@ -1773,15 +1796,15 @@ namespace Flavor.Common.Settings {
                     }
                 }
                 public class LibraryReader: ILibraryReader {
-                    private const string LIBRARY_TAG = "library";
-                    private const string SPECTRUM_TAG = "spectrum";
-                    private const string ID_ATTRIBUTE = "id";
-                    private const string MASS_ATTRIBUTE = "mass";
-                    private const string PEAK_TAG = "peak";
-                    private const string VALUE_ATTRIBUTE = "value";
-                    private const string CALIBRATION_TIME_ATTRIBUTE = "ct";
-                    private readonly XmlTextReader reader;
-                    private System.Collections.Hashtable table;
+                    const string LIBRARY_TAG = "library";
+                    const string SPECTRUM_TAG = "spectrum";
+                    const string ID_ATTRIBUTE = "id";
+                    const string MASS_ATTRIBUTE = "mass";
+                    const string PEAK_TAG = "peak";
+                    const string VALUE_ATTRIBUTE = "value";
+                    const string CALIBRATION_TIME_ATTRIBUTE = "ct";
+                    readonly XmlTextReader reader;
+                    System.Collections.Hashtable table;
                     public LibraryReader(string filename) {
                         reader = new XmlTextReader(filename);
                     }
@@ -1839,7 +1862,7 @@ namespace Flavor.Common.Settings {
                     #endregion
                 }
                 public class SpectrumReader: ComplexReader, ISpectrumReader {
-                    private bool hint;
+                    bool hint;
                     #region ISpectrumReader Members
                     public bool Hint {
                         get {
@@ -1897,7 +1920,7 @@ namespace Flavor.Common.Settings {
                         }
                     }
                     #endregion
-                    private bool OpenSpecterFile(out Graph graph) {
+                    bool OpenSpecterFile(out Graph graph) {
                         PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
                         CommonOptions commonOpts;
                         Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
@@ -1914,7 +1937,7 @@ namespace Flavor.Common.Settings {
                                 return false;
                         }
                     }
-                    private bool OpenPreciseSpecterFile(out Graph graph) {
+                    bool OpenPreciseSpecterFile(out Graph graph) {
                         Graph.Displaying res = spectrumType();
                         PreciseSpectrum peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
@@ -1942,14 +1965,14 @@ namespace Flavor.Common.Settings {
                         }
                         return result;
                     }
-                    private Graph.Displaying spectrumType() {
+                    Graph.Displaying spectrumType() {
                         XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
                         return (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER) ? Graph.Displaying.Diff : Graph.Displaying.Measured;
                     }
-                    private DateTime loadTimeStamp() {
+                    DateTime loadTimeStamp() {
                         return DateTime.Parse(getHeaderAttributeText(TIME_SPECTRUM_ATTRIBUTE), DateTimeFormatInfo.InvariantInfo);
                     }
-                    private short loadShift() {
+                    short loadShift() {
                         return short.Parse(getHeaderAttributeText(SHIFT_SPECTRUM_ATTRIBUTE));
                     }
                     protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
@@ -1998,15 +2021,68 @@ namespace Flavor.Common.Settings {
                         opts.fV2Real = fv2;
                         saveCommonOptions(opts);
                     }
-                    private void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
+                    void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
                         commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = opts.eTime.ToString();
-                        commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
+                        //commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
-                        commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.CP.ToString();
+
+                        commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.C.ToString();
+                        commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.K.ToString();
+
                         commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
                         //commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = opts.fV1.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = opts.fV2.ToString();
+
+                        var nodes = commonNode.SelectNodes(DETECTOR_VOLTAGE_TAG);
+                        {
+                            bool missed = true;
+                            foreach (XmlNode node in nodes) {
+                                if (node.Attributes[NUMBER_ATTRIBUTE].Value == "1") {
+                                    node.InnerText = opts.d1V.ToString();
+                                    missed = false;
+                                    break;
+                                }
+                            }
+                            if (missed) {
+                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                elem.SetAttribute(NUMBER_ATTRIBUTE, "1");
+                                elem.InnerText = opts.d1V.ToString();
+                                commonNode.AppendChild(elem);
+                            }
+                        }
+                        {
+                            bool missed = true;
+                            foreach (XmlNode node in nodes) {
+                                if (node.Attributes[NUMBER_ATTRIBUTE].Value == "2") {
+                                    node.InnerText = opts.d2V.ToString();
+                                    missed = false;
+                                    break;
+                                }
+                            }
+                            if (missed) {
+                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                elem.SetAttribute(NUMBER_ATTRIBUTE, "2");
+                                elem.InnerText = opts.d2V.ToString();
+                                commonNode.AppendChild(elem);
+                            }
+                        }
+                        {
+                            bool missed = true;
+                            foreach (XmlNode node in nodes) {
+                                if (node.Attributes[NUMBER_ATTRIBUTE].Value == "3") {
+                                    node.InnerText = opts.d3V.ToString();
+                                    missed = false;
+                                    break;
+                                }
+                            }
+                            if (missed) {
+                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                elem.SetAttribute(NUMBER_ATTRIBUTE, "3");
+                                elem.InnerText = opts.d3V.ToString();
+                                commonNode.AppendChild(elem);
+                            }
+                        }
                         /*commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();
                         commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
                         commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
@@ -2015,7 +2091,7 @@ namespace Flavor.Common.Settings {
                     public void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum) {
                         clearOldValues();
                         foreach (var ped in peds) {
-                            XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
+                            var regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
                             regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
                             regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
                             regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText = ped.Width.ToString();
@@ -2102,31 +2178,31 @@ namespace Flavor.Common.Settings {
                         base.write();
                     }
                     #endregion
-                    private void saveConnectOptions() {
+                    void saveConnectOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
                         fillInnerText(prefix, PORT_CONFIG_TAG, Port);
                         fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
                         fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
                     }
-                    private void saveScanOptions() {
+                    void saveScanOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                         fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
                         fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
                     }
-                    private void saveCommonOptions() {
+                    void saveCommonOptions() {
                         saveCommonOptions(commonOpts);
                     }
-                    private void saveDelaysOptions() {
+                    void saveDelaysOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
                         fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
                         fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
                         fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
-                    private void saveMassCoeffs() {
+                    void saveMassCoeffs() {
                         saveScalingCoeffs(Graph.Instance.Collectors[0].Coeff, Graph.Instance.Collectors[1].Coeff);
                     }
-                    private void saveCheckOptions() {
+                    void saveCheckOptions() {
                         //checkpeak & iterations
                         string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
                         if (xmlData.SelectSingleNode(prefix) == null) {
@@ -2149,7 +2225,7 @@ namespace Flavor.Common.Settings {
 
                         fillInnerText(prefix, BACKGROUND_CYCLES_NUMBER_TAG, BackgroundCycles);
                     }
-                    private void SavePreciseOptions() {
+                    void SavePreciseOptions() {
                         savePreciseData(preciseData, false);
                     }
                     protected override void clearOldValues() {

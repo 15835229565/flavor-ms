@@ -50,6 +50,8 @@ namespace Flavor.Controls {
             }
 
             scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+        
+            // TODO: use collectors count to display proper data!
         }
         public virtual void performStep(uint[] counts) {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
@@ -61,10 +63,11 @@ namespace Flavor.Controls {
                 scanProgressBar.PerformStep();
             }
             stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
+            
             scanRealTimeLabel.Text = CommonOptions.scanVoltageReal(Graph.Instance.LastPoint).ToString("f1");
-            //int[] detectors = Device.Detectors;
             detector1CountsLabel.Text = counts[0].ToString();
             detector2CountsLabel.Text = counts[1].ToString();
+            // TODO: 3rd detector counts
         }
 
         protected sealed override void disableControls() {

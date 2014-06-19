@@ -469,12 +469,13 @@ namespace Flavor.Forms {
         }
 
         void Commander_OnError(string msg) {
-            MessageBox.Show(this, msg);
+            // TODO: thread-safe invoke
+			MessageBox.Show(this, msg);
         }
         void overview_button_Click(object sender, EventArgs e) {
             commander.Scan();
             // temporarily commented
-            //ChildFormInit(CollectorsForm, false);
+            ChildFormInit(CollectorsForm, false);
         }
         void sensmeasure_button_Click(object sender, EventArgs e) {
             if (commander.Sense()) {

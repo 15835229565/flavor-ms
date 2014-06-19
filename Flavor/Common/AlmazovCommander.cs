@@ -86,7 +86,7 @@ namespace Flavor.Common {
 
         public override void Scan() {
             if (pState == ProgramStates.Ready) {
-                //Graph.Instance.Reset();
+                Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
                 //CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
                 CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, device.Detectors);
@@ -113,9 +113,9 @@ namespace Flavor.Common {
             setProgramState(state);
 
             MeasureCancelRequested = false;
-            //SendSettings();
+            SendSettings();
             // temporarily mandatory start
-            CurrentMeasureMode.Start();
+            //CurrentMeasureMode.Start();
         }
         void CurrentMeasureMode_Disable(object sender, EventArgs e) {
             /*if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {

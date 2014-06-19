@@ -1,15 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- SevMorGeo, Almazov -->
-<control version="1.3" device="SevMorGeo">
-  <connect proto="ModBus">
-    <port>COM1</port>
-    <baudrate>38400</baudrate>
+<control version="1.3" device="Almazov">
+  <!-- ModBus, Radist-2 -->
+  <connect proto="Radist-2">
+    <port>COM2</port>
+    <baudrate>128000</baudrate>
     <try>4</try>
   </connect>
   <!-- count is info only -->
-  <collectors count="2">
+  <collectors count="3">
     <coeff n="1">78729.4921875</coeff>
     <coeff n="2">16848.6328125</coeff>
+    <coeff n="3">1</coeff>
   </collectors>
   <!-- max-min are info only -->
   <overview min="400" max="1056">
@@ -276,8 +278,11 @@
     </region>
   </sense>
   <common>
-    <focus1>2729</focus1>
-    <focus2>2812</focus2>
+    <fv n="1">2729</fv>
+    <fv n="2">2812</fv>
+    <dv n="1">0</dv>
+    <dv n="2">0</dv>
+    <dv n="3">0</dv>
     <exptime>200</exptime>
     <meastime>10</meastime>
     <ivoltage>2184</ivoltage>
