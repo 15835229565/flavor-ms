@@ -324,18 +324,24 @@ namespace Flavor.Common.Settings {
                 throw new ArgumentOutOfRangeException();
             }
             if (hint) {
-                PointPairListPlus pl12 = new PointPairListPlus();
-                PointPairListPlus pl22 = new PointPairListPlus();
+                PointPairListPlus[] points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                for (int i = 0; i < points.Length; ++i) {
+                    points[i] = new PointPairListPlus();
+                }
                 CommonOptions commonOpts;
-                if (reader.openSpectrumFile(pl12, pl22, out commonOpts) == Graph.Displaying.Measured) {
+                if (reader.openSpectrumFile(out commonOpts, points) == Graph.Displaying.Measured) {
                     // TODO: check commonOpts for equality?
-
+                    if (points.Length != graph.Collectors.Count)
+                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     // coeff counting
                     double coeff = 1.0;
                     if (collectorNumber.HasValue) {
                         // TODO: proper rows for variable number
-                        PointPairListPlus PL = (collectorNumber.Value == 1) ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
-                        PointPairListPlus pl = (collectorNumber.Value == 1) ? pl12 : pl22;
+                        PointPairListPlus PL = graph.Collectors[collectorNumber.Value - 1][0].Step;
+                        PointPairListPlus pl = points[collectorNumber.Value - 1];
+                        
+                        //PointPairListPlus PL = (collectorNumber.Value == 1) ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
+                        //PointPairListPlus pl = (collectorNumber.Value == 1) ? pl12 : pl22;
                         if (step != 0) {
                             for (int i = 0; i < PL.Count; ++i) {
                                 if (step == PL[i].X) {
@@ -349,9 +355,14 @@ namespace Flavor.Common.Settings {
                         }
                     }
                     try {
-                        PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
-                        PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
-                        graph.updateGraphAfterScanDiff(diff1, diff2);
+                        PointPairListPlus[] diffs = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                        for (int i = 0; i < diffs.Length; ++i) {
+                            diffs[i] = PointPairListDiff(graph.Collectors[i][0].Step, points[i], coeff);
+                        }
+                        //PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
+                        //PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
+                        //graph.updateGraphAfterScanDiff(diff1, diff2);
+                        graph.updateGraphAfterScanDiff(diffs);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                     }
@@ -845,90 +856,90 @@ namespace Flavor.Common.Settings {
         }
         #endregion
         #region XML configs
-        private interface IScalingCoeffsReader: IAnyReader {
+        interface IScalingCoeffsReader: IAnyReader {
             double[] loadScalingCoeffs();
         }
-        private interface ISpectrumReader: ICommonOptionsReader, IPreciseDataReader {
+        interface ISpectrumReader: ICommonOptionsReader, IPreciseDataReader {
             bool readSpectrum(out Graph graph);
             bool Hint { get; set; }
-            Graph.Displaying openSpectrumFile(PointPairListPlus pl12, PointPairListPlus pl22, out CommonOptions commonOpts);
+            Graph.Displaying openSpectrumFile(out CommonOptions commonOpts, params PointPairListPlus[] points);
             bool openPreciseSpectrumFile(PreciseSpectrum peds);
         }
-        private interface IMainConfig: ICommonOptionsReader, IPreciseDataReader, IScalingCoeffsReader {
+        interface IMainConfig: ICommonOptionsReader, IPreciseDataReader, IScalingCoeffsReader {
             void read();
             XmlDocument XML { get; }
         }
-        private interface ILibraryReader: IAnyReader {
+        interface ILibraryReader: IAnyReader {
             void readOnce(List<string> ids, List<string> loadedMasses);
             System.Collections.Hashtable Masses(string id);
         }
-        private interface IScalingCoeffsWriter: IAnyWriter {
+        interface IScalingCoeffsWriter: IAnyWriter {
             void saveScalingCoeffs(double coeff1, double coeff2);
         }
-        private interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift, IScalingCoeffsWriter {
+        interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift, IScalingCoeffsWriter {
             void saveScanOptions(Graph graph);
         }
-        private interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter, IScalingCoeffsWriter { }
-        private abstract class TagHolder {
+        interface IMainConfigWriter: ICommonOptionsWriter, IPreciseDataWriter, IScalingCoeffsWriter { }
+        abstract class TagHolder {
             #region Tags
-            private const string ROOT_CONFIG_TAG = "control";
-            private const string VERSION_ATTRIBUTE = "version";
+            const string ROOT_CONFIG_TAG = "control";
+            const string VERSION_ATTRIBUTE = "version";
 
-            private const string HEADER_CONFIG_TAG = "header";
+            const string HEADER_CONFIG_TAG = "header";
 
-            private const string CONNECT_CONFIG_TAG = "connect";
-            private const string PORT_CONFIG_TAG = "port";
-            private const string BAUDRATE_CONFIG_TAG = "baudrate";
-            private const string TRY_NUMBER_CONFIG_TAG = "try";
+            const string CONNECT_CONFIG_TAG = "connect";
+            const string PORT_CONFIG_TAG = "port";
+            const string BAUDRATE_CONFIG_TAG = "baudrate";
+            const string TRY_NUMBER_CONFIG_TAG = "try";
 
-            private const string COMMON_CONFIG_TAG = "common";
-            private const string EXPOSITURE_TIME_CONFIG_TAG = "exptime";
-            private const string TRANSITION_TIME_CONFIG_TAG = "meastime";
-            private const string IONIZATION_VOLTAGE_CONFIG_TAG = "ivoltage";
+            const string COMMON_CONFIG_TAG = "common";
+            const string EXPOSITURE_TIME_CONFIG_TAG = "exptime";
+            const string TRANSITION_TIME_CONFIG_TAG = "meastime";
+            const string IONIZATION_VOLTAGE_CONFIG_TAG = "ivoltage";
             const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "cp";
-            private const string EMISSION_CURRENT_CONFIG_TAG = "ecurrent";
-            private const string HEAT_CURRENT_CONFIG_TAG = "hcurrent";
-            private const string FOCUS_VOLTAGE1_CONFIG_TAG = "focus1";
-            private const string FOCUS_VOLTAGE2_CONFIG_TAG = "focus2";
+            const string EMISSION_CURRENT_CONFIG_TAG = "ecurrent";
+            const string HEAT_CURRENT_CONFIG_TAG = "hcurrent";
+            const string FOCUS_VOLTAGE1_CONFIG_TAG = "focus1";
+            const string FOCUS_VOLTAGE2_CONFIG_TAG = "focus2";
 
-            private const string DELAY_BEFORE_MEASURE_CONFIG_TAG = "before";
-            private const string EQUAL_DELAYS_CONFIG_TAG = "equal";
-            private const string DELAY_FORWARD_MEASURE_CONFIG_TAG = "forward";
-            private const string DELAY_BACKWARD_MEASURE_CONFIG_TAG = "back";
+            const string DELAY_BEFORE_MEASURE_CONFIG_TAG = "before";
+            const string EQUAL_DELAYS_CONFIG_TAG = "equal";
+            const string DELAY_FORWARD_MEASURE_CONFIG_TAG = "forward";
+            const string DELAY_BACKWARD_MEASURE_CONFIG_TAG = "back";
 
-            private const string POINT_CONFIG_TAG = "p";
+            const string POINT_CONFIG_TAG = "p";
 
-            private const string OVERVIEW_CONFIG_TAG = "overview";
-            private const string START_SCAN_CONFIG_TAG = "start";
-            private const string END_SCAN_CONFIG_TAG = "end";
-            private const string COL1_CONFIG_TAG = "collector1";
-            private const string COL2_CONFIG_TAG = "collector2";
+            const string OVERVIEW_CONFIG_TAG = "overview";
+            const string START_SCAN_CONFIG_TAG = "start";
+            const string END_SCAN_CONFIG_TAG = "end";
+            const string COL1_CONFIG_TAG = "collector1";
+            const string COL2_CONFIG_TAG = "collector2";
 
-            private const string SENSE_CONFIG_TAG = "sense";
-            private const string PEAK_TAGS_FORMAT = "region{0}";
-            private const string PEAK_NUMBER_CONFIG_TAG = "peak";
-            private const string PEAK_COL_NUMBER_CONFIG_TAG = "col";
-            private const string PEAK_WIDTH_CONFIG_TAG = "width";
-            private const string PEAK_ITER_NUMBER_CONFIG_TAG = "iteration";
-            private const string PEAK_PRECISION_CONFIG_TAG = "error";
-            private const string PEAK_COMMENT_CONFIG_TAG = "comment";
-            private const string PEAK_USE_CONFIG_TAG = "use";
+            const string SENSE_CONFIG_TAG = "sense";
+            const string PEAK_TAGS_FORMAT = "region{0}";
+            const string PEAK_NUMBER_CONFIG_TAG = "peak";
+            const string PEAK_COL_NUMBER_CONFIG_TAG = "col";
+            const string PEAK_WIDTH_CONFIG_TAG = "width";
+            const string PEAK_ITER_NUMBER_CONFIG_TAG = "iteration";
+            const string PEAK_PRECISION_CONFIG_TAG = "error";
+            const string PEAK_COMMENT_CONFIG_TAG = "comment";
+            const string PEAK_USE_CONFIG_TAG = "use";
 
-            private const string PEAK_COUNT_SUM_CONFIG_TAG = "sum";
+            const string PEAK_COUNT_SUM_CONFIG_TAG = "sum";
 
-            private const string CHECK_CONFIG_TAG = "check";
-            private const string CHECK_ITER_NUMBER_CONFIG_TAG = "iterations";
-            private const string CHECK_TIME_LIMIT_CONFIG_TAG = "limit";
-            private const string CHECK_MAX_SHIFT_CONFIG_TAG = "allowed";
+            const string CHECK_CONFIG_TAG = "check";
+            const string CHECK_ITER_NUMBER_CONFIG_TAG = "iterations";
+            const string CHECK_TIME_LIMIT_CONFIG_TAG = "limit";
+            const string CHECK_MAX_SHIFT_CONFIG_TAG = "allowed";
 
-            private const string BACKGROUND_CYCLES_NUMBER_TAG = "cycles";
+            const string BACKGROUND_CYCLES_NUMBER_TAG = "cycles";
 
-            private const string INTERFACE_CONFIG_TAG = "interface";
-            private const string C1_CONFIG_TAG = "coeff1";
-            private const string C2_CONFIG_TAG = "coeff2";
+            const string INTERFACE_CONFIG_TAG = "interface";
+            const string C1_CONFIG_TAG = "coeff1";
+            const string C2_CONFIG_TAG = "coeff2";
 
-            private const string TIME_SPECTRUM_ATTRIBUTE = "time";
-            private const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
+            const string TIME_SPECTRUM_ATTRIBUTE = "time";
+            const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
             #endregion
             #region Spectra headers
             private const string PRECISE_OPTIONS_HEADER = "Precise options";
@@ -941,15 +952,15 @@ namespace Flavor.Common.Settings {
             private const string CONFIG_FILE_READ_ERROR = "Ошибка чтения конфигурационного файла";
             private const string LIBRARY_FILE_READ_ERROR = "Ошибка чтения файла библиотеки спектров";
             #endregion
-            private string filename;
-            private XmlDocument xmlData;
+            string filename;
+            XmlDocument xmlData;
             protected void initialize(string filename, XmlDocument doc) {
                 this.filename = filename;
                 this.xmlData = doc;
             }
-            private abstract class Version1_2TagHolder: TagHolder {
-                private const char COUNTS_SEPARATOR = ' ';
-                private const string CHECK_PEAK_NUMBER_TAG = "region";
+            abstract class Version1_2TagHolder: TagHolder {
+                const char COUNTS_SEPARATOR = ' ';
+                const string CHECK_PEAK_NUMBER_TAG = "region";
                 public const string CONFIG_VERSION = "1.2";
                 #region Version1_2 Readers
                 public abstract class Reader: Version1_2TagHolder {
@@ -1258,7 +1269,9 @@ namespace Flavor.Common.Settings {
 
                         throw resultException;
                     }
-                    public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
+                    public Graph.Displaying openSpectrumFile(out CommonOptions commonOpts, params PointPairListPlus[] points) {
+                        var pl1 = points[0];
+                        var pl2 = points[1];
                         try {
                             string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                             ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
@@ -1286,24 +1299,27 @@ namespace Flavor.Common.Settings {
                         }
                     }
                     #endregion
-                    private bool OpenSpecterFile(out Graph graph) {
-                        PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
+                    bool OpenSpecterFile(out Graph graph) {
+                        PointPairListPlus[] points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                        for (int i = 0; i < points.Length; ++i) {
+                            points[i] = new PointPairListPlus();
+                        }
                         CommonOptions commonOpts;
-                        Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
+                        Graph.Displaying result = openSpectrumFile(out commonOpts, points);
 
                         graph = new Graph(commonOpts, loadScalingCoeffs());
                         switch (result) {
                             case Graph.Displaying.Measured:
-                                graph.updateGraphAfterScanLoad(loadTimeStamp(), pl1, pl2);
+                                graph.updateGraphAfterScanLoad(loadTimeStamp(), points);
                                 return true;
                             case Graph.Displaying.Diff:
-                                graph.updateGraphAfterScanDiff(false, pl1, pl2);
+                                graph.updateGraphAfterScanDiff(false, points);
                                 return true;
                             default:
                                 return false;
                         }
                     }
-                    private bool OpenPreciseSpecterFile(out Graph graph) {
+                    bool OpenPreciseSpecterFile(out Graph graph) {
                         Graph.Displaying res = spectrumType();
                         PreciseSpectrum peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
@@ -1331,14 +1347,14 @@ namespace Flavor.Common.Settings {
                         }
                         return result;
                     }
-                    private Graph.Displaying spectrumType() {
+                    Graph.Displaying spectrumType() {
                         XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
                         return (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER) ? Graph.Displaying.Diff : Graph.Displaying.Measured;
                     }
-                    private DateTime loadTimeStamp() {
+                    DateTime loadTimeStamp() {
                         return DateTime.Parse(getHeaderAttributeText(TIME_SPECTRUM_ATTRIBUTE), DateTimeFormatInfo.InvariantInfo);
                     }
-                    private short loadShift() {
+                    short loadShift() {
                         return short.Parse(getHeaderAttributeText(SHIFT_SPECTRUM_ATTRIBUTE));
                     }
                     protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
@@ -1556,13 +1572,13 @@ namespace Flavor.Common.Settings {
                 }
                 #endregion
             }
-            [Obsolete]
             abstract class CurrentTagHolder: TagHolder {
                 const char COUNTS_SEPARATOR = ' ';
                 const string CHECK_PEAK_NUMBER_TAG = "region";
                 const string SOURCE_VOLTAGE_COEFF_CONFIG_TAG = "k";
                 new const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "c";
                 const string DETECTOR_VOLTAGE_TAG = "dv";
+                const string COL_CONFIG_TAG = "collector";
                 const string NUMBER_ATTRIBUTE = "n";
                 const string COUNT_ATTRIBUTE = "count";
                 public const string CONFIG_VERSION = "1.3";
@@ -1892,13 +1908,19 @@ namespace Flavor.Common.Settings {
 
                         throw resultException;
                     }
-                    public Graph.Displaying openSpectrumFile(PointPairListPlus pl1, PointPairListPlus pl2, out CommonOptions commonOpts) {
+                    public Graph.Displaying openSpectrumFile(out CommonOptions commonOpts, params PointPairListPlus[] points) {
+                        //var pl1 = points[0];
+                        //var pl2 = points[1];
                         try {
                             string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                             ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
                             ushort end = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, END_SCAN_CONFIG_TAG)).InnerText);
-                            pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
-                            pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
+                            foreach (XmlNode node in xmlData.SelectNodes(combine(prefix, COL_CONFIG_TAG))) {
+                                int i = int.Parse(node.Attributes[NUMBER_ATTRIBUTE].Value) - 1;
+                                points[i].AddRange(readPeaks(node, start, end));
+                            }
+                            //pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
+                            //pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
                         } catch (FormatException) {
@@ -1906,8 +1928,11 @@ namespace Flavor.Common.Settings {
                         }
                         commonOpts = loadCommonOptions();
 
-                        pl1.Sort(ZedGraph.SortType.XValues);
-                        pl2.Sort(ZedGraph.SortType.XValues);
+                        foreach (var list in points) {
+                            list.Sort(ZedGraph.SortType.XValues);
+                        }
+                        //pl1.Sort(ZedGraph.SortType.XValues);
+                        //pl2.Sort(ZedGraph.SortType.XValues);
                         return spectrumType();
                     }
                     public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
@@ -1921,17 +1946,22 @@ namespace Flavor.Common.Settings {
                     }
                     #endregion
                     bool OpenSpecterFile(out Graph graph) {
-                        PointPairListPlus pl1 = new PointPairListPlus(), pl2 = new PointPairListPlus();
+                        PointPairListPlus[] points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                        for (int i = 0; i < points.Length; ++i) {
+                            points[i] = new PointPairListPlus();
+                        }
                         CommonOptions commonOpts;
-                        Graph.Displaying result = openSpectrumFile(pl1, pl2, out commonOpts);
+                        Graph.Displaying result = openSpectrumFile(out commonOpts, points);
 
                         graph = new Graph(commonOpts, loadScalingCoeffs());
                         switch (result) {
                             case Graph.Displaying.Measured:
-                                graph.updateGraphAfterScanLoad(loadTimeStamp(), pl1, pl2);
+                            // TODO: fix not loading timestamp here    
+                            //graph.updateGraphAfterScanLoad(loadTimeStamp(), points);
+                                graph.updateGraphAfterScanLoad(points);
                                 return true;
                             case Graph.Displaying.Diff:
-                                graph.updateGraphAfterScanDiff(false, pl1, pl2);
+                                graph.updateGraphAfterScanDiff(false, points);
                                 return true;
                             default:
                                 return false;
@@ -2009,6 +2039,7 @@ namespace Flavor.Common.Settings {
                         XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         saveCommonOptions(commonNode, opts);
                     }
+                    [Obsolete]
                     public void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
                         CommonOptions opts = new CommonOptions();
                         opts.eTimeReal = eT;
@@ -2025,6 +2056,13 @@ namespace Flavor.Common.Settings {
                         commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = opts.eTime.ToString();
                         //commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
+
+                        var temp = commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG);
+                        if (temp == null)
+                            commonNode.AppendChild(xmlData.CreateElement(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG));
+                        temp = commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG);
+                        if (temp == null)
+                            commonNode.AppendChild(xmlData.CreateElement(SOURCE_VOLTAGE_COEFF_CONFIG_TAG));
 
                         commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.C.ToString();
                         commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.K.ToString();
@@ -2141,18 +2179,29 @@ namespace Flavor.Common.Settings {
                         XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
                         PointPairListPlus ppl1 = graph.Displayed1Steps[0];
                         PointPairListPlus ppl2 = graph.Displayed2Steps[0];
+                        var steps = graph.Collectors[0][0].Step;
+                        temp.InnerText = steps[0].X.ToString();
                         // TODO: check for data mismatch?
-                        temp.InnerText = ppl1[0].X.ToString();
+                        //temp.InnerText = ppl1[0].X.ToString();
                         scanNode.AppendChild(temp);
                         temp = xmlData.CreateElement(END_SCAN_CONFIG_TAG);
                         // TODO: check for data mismatch?
-                        temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
+                        temp.InnerText = steps[steps.Count - 1].X.ToString();
+                        //temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
                         scanNode.AppendChild(temp);
 
-                        XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
-                        savePointRows(ppl1, colNode);
-                        colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
-                        savePointRows(ppl2, colNode);
+                        for (int i = 0; i < graph.Collectors.Count; ++i) {
+                            var collector = graph.Collectors[i];
+                            var colNode = scanNode.AppendChild(xmlData.CreateElement(COL_CONFIG_TAG));
+                            var numberAttribute = xmlData.CreateAttribute(NUMBER_ATTRIBUTE);
+                            numberAttribute.Value = (i + 1).ToString();
+                            colNode.Attributes.Append(numberAttribute);
+                            savePointRows(collector[0].Step, colNode);
+                        }
+                        //XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
+                        //savePointRows(ppl1, colNode);
+                        //colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
+                        //savePointRows(ppl2, colNode);
                     }
                     public void setTimeStamp(DateTime dt) {
                         XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
@@ -2380,14 +2429,15 @@ namespace Flavor.Common.Settings {
 
                 return rootNode;
             }
+            // TODO: move to proper version!
             private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
                 XmlNode commonNode = conf.CreateElement(COMMON_CONFIG_TAG);
                 commonNode.AppendChild(conf.CreateElement(EXPOSITURE_TIME_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(TRANSITION_TIME_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(IONIZATION_VOLTAGE_CONFIG_TAG));
-                commonNode.AppendChild(conf.CreateElement(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG));
+                //commonNode.AppendChild(conf.CreateElement(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(EMISSION_CURRENT_CONFIG_TAG));
-                commonNode.AppendChild(conf.CreateElement(HEAT_CURRENT_CONFIG_TAG));
+                //commonNode.AppendChild(conf.CreateElement(HEAT_CURRENT_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(FOCUS_VOLTAGE1_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(FOCUS_VOLTAGE2_CONFIG_TAG));
 

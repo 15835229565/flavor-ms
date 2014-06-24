@@ -5,7 +5,7 @@ using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
-    internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {
+    internal partial class LoadedCollectorsForm: CollectorsForm2, ILoaded {
         private string displayedFileName;
         private string DisplayedFileName {
             get { return System.IO.Path.GetFileName(displayedFileName); }
@@ -34,7 +34,7 @@ namespace Flavor.Forms {
             } else {
                 ushort minX = (ushort)graph.Displayed1Steps[0][0].X;
                 ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
-                setXScaleLimits(minX, maxX, minX, maxX);
+                setXScaleLimits(minX, maxX);
             }
         }
         protected sealed override void updateOnModification() {

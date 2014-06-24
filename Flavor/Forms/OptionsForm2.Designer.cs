@@ -167,12 +167,12 @@
             // 
             // kNumericUpDown
             // 
-            this.kNumericUpDown.DecimalPlaces = 3;
+            this.kNumericUpDown.DecimalPlaces = 5;
             this.kNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
             0,
-            196608});
+            327680});
             resources.ApplyResources(this.kNumericUpDown, "kNumericUpDown");
             this.kNumericUpDown.Name = "kNumericUpDown";
             this.kNumericUpDown.ReadOnly = true;
@@ -207,12 +207,12 @@
             // 
             // CPNumericUpDown
             // 
-            this.CPNumericUpDown.DecimalPlaces = 3;
+            this.CPNumericUpDown.DecimalPlaces = 5;
             this.CPNumericUpDown.Increment = new decimal(new int[] {
             1,
             0,
             0,
-            196608});
+            327680});
             resources.ApplyResources(this.CPNumericUpDown, "CPNumericUpDown");
             this.CPNumericUpDown.Name = "CPNumericUpDown";
             this.CPNumericUpDown.ReadOnly = true;
