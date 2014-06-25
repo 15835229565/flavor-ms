@@ -98,14 +98,14 @@ namespace Flavor.Common.Settings {
         public double K { get; set; }
         public uint parentScanVoltage(ushort step) {
             //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            double voltage = scanVoltageNew(step) * K;
+            double voltage = K * (double)scanVoltageNew(step);
             uint res = (uint)voltage;
             return res;
         }
         public double C { get; set; }
         public uint capVoltage(ushort step) {
             //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            double voltage = scanVoltageNew(step) * C;
+            double voltage = C * (double)scanVoltageNew(step) * 7.5; // 200V power supply
             uint res = (uint)voltage;
             return res;
         }

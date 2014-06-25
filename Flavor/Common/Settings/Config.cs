@@ -63,14 +63,14 @@ namespace Flavor.Common.Settings {
             set { reperPeakIndex = value - 1; }
         }
 
-        private static PreciseEditorData reperPeak = null;
-        internal static PreciseEditorData CustomCheckerPeak {
+        static PreciseEditorData reperPeak = null;
+        public static PreciseEditorData CustomCheckerPeak {
             get {
                 return reperPeak == null ? null :
                     new PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(), reperPeak.Width, 0, "checker peak");
             }
         }
-        internal static PreciseEditorData CheckerPeak {
+        public static PreciseEditorData CheckerPeak {
             get {
                 if (reperPeakIndex == -1)
                     return CustomCheckerPeak;
@@ -80,10 +80,10 @@ namespace Flavor.Common.Settings {
                 return new PreciseEditorData(preciseData[index], countMaxIteration());
             }
         }
-        private static ushort countMaxIteration() {
+        static ushort countMaxIteration() {
             return countMaxIteration(preciseData.getUsed());
         }
-        private static ushort countMaxIteration(List<PreciseEditorData> pedl) {
+        static ushort countMaxIteration(List<PreciseEditorData> pedl) {
             ushort maxIteration = 0;
             foreach (PreciseEditorData ped in pedl) {
                 maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
@@ -91,7 +91,7 @@ namespace Flavor.Common.Settings {
             return maxIteration;
         }
 
-        internal static List<PreciseEditorData> PreciseDataWithChecker {
+        public static List<PreciseEditorData> PreciseDataWithChecker {
             get {
                 List<PreciseEditorData> res = preciseData.getUsed();
                 if (res.Count == 0) {
@@ -116,75 +116,71 @@ namespace Flavor.Common.Settings {
                 return res;
             }
         }
-        private static int iterations = 0;
-        internal static int Iterations {
+        static int iterations = 0;
+        public static int Iterations {
             get { return iterations; }
         }
-        private static int timeLimit = 0;
-        internal static int TimeLimit {
+        static int timeLimit = 0;
+        public static int TimeLimit {
             get { return timeLimit; }
         }
-        private static ushort allowedShift = 0;
-        internal static ushort AllowedShift {
+        static ushort allowedShift = 0;
+        public static ushort AllowedShift {
             get { return allowedShift; }
         }
 
-        internal static string Port {
+        public static string Port {
             get { return SerialPort; }
             set { SerialPort = value; }
         }
-        internal static uint BaudRate {
+        public static uint BaudRate {
             get { return SerialBaudRate; }
             set { SerialBaudRate = value; }
         }
 
-        internal static byte Try {
+        public static byte Try {
             get { return sendTry; }
         }
 
-        internal static ushort sPoint {
+        public static ushort sPoint {
             get { return startPoint; }
             set { startPoint = value; }
         }
-        internal static ushort ePoint {
+        public static ushort ePoint {
             get { return endPoint; }
             set { endPoint = value; }
         }
-        // Automatic property
-        internal static byte BackgroundCycles {
-            get;
-            set;
-        }
+        public static byte BackgroundCycles { get; set; }
 
-        internal static void getInitialDirectory() {
+        public static void getInitialDirectory() {
             mainConfigName = System.IO.Path.Combine(INITIAL_DIR, CONFIG_NAME);
             logName = System.IO.Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
             libraryName = System.IO.Path.Combine(INITIAL_DIR, LIBRARY_NAME);
         }
         #region Global Config I/O
-        internal static void loadGlobalConfig() {
+        public static void loadGlobalConfig() {
             mainConfig = TagHolder.getMainConfig(mainConfigName);
             mainConfig.read();
             mainConfigWriter = TagHolder.getMainConfigWriter(mainConfigName, mainConfig.XML);
         }
-        internal static void saveGlobalScanOptions(ushort sPointReal, ushort ePointReal) {
+        public static void saveGlobalScanOptions(ushort sPointReal, ushort ePointReal) {
             Config.sPoint = sPointReal;//!!!
             Config.ePoint = ePointReal;//!!!
             mainConfigWriter.write();
         }
-        internal static void saveGlobalDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
+        public static void saveGlobalDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
             commonOpts.befTimeReal = befTimeReal;
             commonOpts.fTimeReal = fTimeReal;
             commonOpts.bTimeReal = bTimeReal;
             commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalConnectOptions(string port, uint baudrate) {
+        public static void saveGlobalConnectOptions(string port, uint baudrate) {
             Config.Port = port;
             Config.BaudRate = baudrate;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, PreciseEditorData peak, int index, byte backgroundCount) {
+        public static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, PreciseEditorData peak, int index, byte backgroundCount) {
             iterations = iter;
             timeLimit = timeLim;
             allowedShift = shift;
@@ -193,7 +189,7 @@ namespace Flavor.Common.Settings {
             BackgroundCycles = backgroundCount;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalPreciseOptions(PreciseSpectrum peds) {
+        public static void saveGlobalPreciseOptions(PreciseSpectrum peds) {
             // be very careful: variable reference is changed!
             preciseData = peds;
             mainConfigWriter.savePreciseData(peds, false);
@@ -225,12 +221,12 @@ namespace Flavor.Common.Settings {
         //    mainConfigWriter.saveCommonOptions(commonOpts);
         //    mainConfigWriter.write();
         //}
-        internal static void saveGlobalConfig() {
+        public static void saveGlobalConfig() {
             mainConfigWriter.write();
         }
         public const string ID_PREFIX_TEMPORARY = "id_";
         public const char COMMENT_DELIMITER_TEMPORARY = '_';
-        internal static double[,] LoadLibrary(List<PreciseEditorData> peds) {
+        public static double[,] LoadLibrary(List<PreciseEditorData> peds) {
             int rank = peds.Count;
             ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
             
