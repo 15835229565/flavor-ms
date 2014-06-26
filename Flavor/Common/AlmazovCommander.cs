@@ -136,6 +136,10 @@ namespace Flavor.Common {
         }
         void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
             realizer.SetMeasureStep(e.Step);
+            // TODO: move to realizer ctor as extra action on measure step
+            if (notRareModeRequested) {
+                realizer.CheckStepVoltages();
+            }
         }
     }
 }

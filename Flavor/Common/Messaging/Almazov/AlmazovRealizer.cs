@@ -137,10 +137,14 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<ScanVoltageSetReply>();
             // no idle time!
             // TODO: use cached command in case of same time
-            Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(new SendMeasureRequest(t2))));
+            Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(SendMeasureRequest.Form(t2))));
 
             Add<SendMeasureReply>();
             Add<CountsReply>(updateDevice, p => OnMeasureDone());
+        }
+        // TODO: move to realizer ctor as extra action on measure step
+        public void CheckStepVoltages() {
+            //toSend.Enqueue(new ParentScanVoltageGetRequest());
         }
     }
 }

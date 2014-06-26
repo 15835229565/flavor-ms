@@ -278,8 +278,12 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     //class GetScanVoltageRequest { }
 
     class SendMeasureRequest: UserRequest {
+        static SendMeasureRequest cachedRequest = null;
+        public static SendMeasureRequest Form(uint ms) {
+            return (cachedRequest == null || cachedRequest.ms != ms) ? (cachedRequest = new SendMeasureRequest(ms)) : cachedRequest;
+        }
         readonly uint ms;
-        public SendMeasureRequest(uint ms) {
+        SendMeasureRequest(uint ms) {
             this.ms = ms;
         }
         public override IList<byte> Data {
