@@ -7,8 +7,7 @@ namespace Flavor.Controls {
     partial class MeasureGraphPanel: GraphPanel/*, IMeasured*/ {
         public event EventHandler MeasureCancelRequested;
         protected virtual void OnMeasureCancelRequested() {
-            if (MeasureCancelRequested != null)
-                MeasureCancelRequested(this, EventArgs.Empty);
+            MeasureCancelRequested.Raise(this, EventArgs.Empty);
         }
         public MeasureGraphPanel() {
             InitializeComponent();
@@ -64,7 +63,9 @@ namespace Flavor.Controls {
             }
             stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
             
+            // TODO: proper voltage!
             scanRealTimeLabel.Text = CommonOptions.scanVoltageReal(Graph.Instance.LastPoint).ToString("f1");
+            
             detector1CountsLabel.Text = counts[0].ToString();
             detector2CountsLabel.Text = counts[1].ToString();
             // TODO: 3rd detector counts
