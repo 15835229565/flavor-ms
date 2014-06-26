@@ -124,6 +124,7 @@ namespace Flavor.Controls {
             // 
             // MeasureGraphPanel
             // 
+            resources.ApplyResources(this, "$this");
             this.Controls.Add(this.peakWidthLabel);
             this.Controls.Add(this.label41);
             this.Controls.Add(this.peakCenterLabel);

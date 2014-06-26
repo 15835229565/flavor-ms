@@ -11,13 +11,14 @@ namespace Flavor.Controls {
         }
         public MeasureGraphPanel() {
             InitializeComponent();
+            // TODO: populate array of detectors labels. Move from ctor!
+            //int count = base.Graph.Collectors.Count;
         }
         public int ProgressMaximum { get; set; }
         void cancelScanButton_Click(object sender, EventArgs e) {
             cancelScanButton.Enabled = false;
             OnMeasureCancelRequested();
         }
-
         protected sealed override void prepareControls() {
             // put here code that only changes data source and refreshes
             //Elements are not visible until first real information is ready
@@ -63,12 +64,11 @@ namespace Flavor.Controls {
             }
             stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
             
-            // TODO: proper voltage!
-            scanRealTimeLabel.Text = CommonOptions.scanVoltageReal(Graph.Instance.LastPoint).ToString("f1");
+            scanRealTimeLabel.Text = base.Graph.CommonOptions.scanVoltageNew(Graph.Instance.LastPoint).ToString("f1");
             
             detector1CountsLabel.Text = counts[0].ToString();
             detector2CountsLabel.Text = counts[1].ToString();
-            // TODO: 3rd detector counts
+            // TODO: 3rd detector counts (and variable collectors number)
         }
 
         protected sealed override void disableControls() {

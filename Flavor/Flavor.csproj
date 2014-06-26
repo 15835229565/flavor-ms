@@ -361,6 +361,10 @@
       <DependentUpon>PreciseEditorLabelRowPlus.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PreciseMeasureGraphPanel.resx">
+      <DependentUpon>PreciseMeasureGraphPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
