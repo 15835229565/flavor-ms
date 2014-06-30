@@ -365,7 +365,9 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #region IUpdateDevice Members
         public void UpdateDevice(IDevice device) {
-            device.Detectors = new uint[] {COA, COB, COC};
+            // temporarily changed order
+            device.Detectors = new uint[] { COA, COC, COB };
+            //device.Detectors = new uint[] { COA, COB, COC };
         }
         public void UpdateDevice() {
             throw new NotImplementedException();

@@ -252,7 +252,16 @@ namespace Flavor.Common {
             if (temp != null)
                 temp(pState);
         }
-        abstract public void Scan();
+        //TODO: hooks
+        public virtual void Scan() {
+            /*if (pState == ProgramStates.Ready) {
+                Graph.Instance.Reset();
+                CurrentMeasureMode = new MeasureMode.Scan();
+                CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
+                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, device.Detectors);
+                initMeasure(ProgramStates.Measure);
+            }*/
+        }
         abstract public bool Sense();
         public bool SomePointsUsed {
             get {
@@ -263,6 +272,9 @@ namespace Flavor.Common {
             }
         }
         abstract public bool? Monitor();
+        void initMeasure(ProgramStates state) {
+            // TODO: 
+        }
         protected void Disable() {
             MeasureCancelRequested = false;
             // TODO: lock here (request from ui may cause synchro errors)

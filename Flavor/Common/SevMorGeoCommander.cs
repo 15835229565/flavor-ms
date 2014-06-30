@@ -123,6 +123,7 @@ namespace Flavor.Common {
         }
 
         public override void Scan() {
+            // TODO: move partially up
             if (pState == ProgramStates.Ready) {
                 Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
@@ -132,6 +133,7 @@ namespace Flavor.Common {
             }
         }
         public override bool Sense() {
+            // TODO: move partially up
             if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.Instance.Reset();
@@ -161,6 +163,7 @@ namespace Flavor.Common {
         List<long> backgroundResult;
         bool doBackgroundPremeasure;
         public override bool? Monitor() {
+            // TODO: move partially up
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
             if (pState == ProgramStates.Ready) {
@@ -292,6 +295,7 @@ namespace Flavor.Common {
         }
 
         void initMeasure(ProgramStates state) {
+            // TODO: move partially up
             OnLog(pState.ToString());
             if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
                 //error. something in operation

@@ -85,6 +85,7 @@ namespace Flavor.Common {
         }
 
         public override void Scan() {
+            // TODO: move partially up
             if (pState == ProgramStates.Ready) {
                 Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
@@ -94,12 +95,34 @@ namespace Flavor.Common {
             }
         }
         public override bool Sense() {
-            throw new NotImplementedException();
+            // TODO: move partially up
+            if (pState == ProgramStates.Ready) {
+                if (SomePointsUsed) {
+                    Graph.Instance.Reset();
+                    {
+                        var temp = new MeasureMode.Precise();
+                        temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile(e.Shift);
+                        CurrentMeasureMode = temp;
+                    }
+                    CurrentMeasureMode.SuccessfulExit += (s, e) => {
+                        var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
+                        Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
+                    };
+                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, device.Detectors);
+                    initMeasure(ProgramStates.Measure);
+                    return true;
+                } else {
+                    OnLog("No points for precise mode measure.");
+                    return false;
+                }
+            }
+            return false;
         }
         public override bool? Monitor() {
             throw new NotImplementedException();
         }
         void initMeasure(ProgramStates state) {
+            // TODO: move partially up
             OnLog(pState.ToString());
             if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
                 //error. something in operation

@@ -430,7 +430,7 @@ namespace Flavor.Forms {
             if (graph.isPreciseSpectrum) {
                 long peakSum = -1;
 
-                var collector = graph.Collectors[(int)sender.Tag - 1];
+                var collector = graph.Collectors[(byte)sender.Tag - 1];
                 string comment = null;
                 try {
                     Graph.pListScaled row = null;

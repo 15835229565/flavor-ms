@@ -78,7 +78,8 @@ namespace Flavor.Forms {
             refreshGraphicsOnMeasureStep(counts);
         }
         void refreshGraphicsOnMeasureStep(uint[] counts) {
-            (Panel as MeasureGraphPanel).performStep(counts);
+            if (counts != null)
+                (Panel as MeasureGraphPanel).performStep(counts);
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();
         }
