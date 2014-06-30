@@ -88,7 +88,7 @@ namespace Flavor.Common {
             if (pState == ProgramStates.Ready) {
                 Graph.Instance.Reset();
                 CurrentMeasureMode = new MeasureMode.Scan();
-                //CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
+                CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
                 CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringScanMeasure(p, device.Detectors);
                 initMeasure(ProgramStates.Measure);
             }

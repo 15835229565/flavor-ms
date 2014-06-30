@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
 using Flavor.Common.Data.Measure;
 
 namespace Flavor.Common.Settings {
@@ -870,7 +871,7 @@ namespace Flavor.Common.Settings {
             System.Collections.Hashtable Masses(string id);
         }
         interface IScalingCoeffsWriter: IAnyWriter {
-            void saveScalingCoeffs(double coeff1, double coeff2);
+            void saveScalingCoeffs(params double[] coeffs);
         }
         interface ISpectrumWriter: ICommonOptionsWriter, IPreciseDataWriter, ITimeStamp, IShift, IScalingCoeffsWriter {
             void saveScanOptions(Graph graph);
@@ -1441,11 +1442,11 @@ namespace Flavor.Common.Settings {
                 public class CommonOptionsWriter: Writer, ICommonOptionsWriter { }
                 public class PreciseDataWriter: Writer, IPreciseDataWriter { }
                 public abstract class ComplexWriter: Writer, IScalingCoeffsWriter {
-                    public void saveScalingCoeffs(double coeff1, double coeff2) {
+                    public void saveScalingCoeffs(params double[] coeffs) {
                         clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
                         string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                        fillInnerText(prefix, C1_CONFIG_TAG, coeff1.ToString("R", CultureInfo.InvariantCulture));
-                        fillInnerText(prefix, C2_CONFIG_TAG, coeff2.ToString("R", CultureInfo.InvariantCulture));
+                        fillInnerText(prefix, C1_CONFIG_TAG, coeffs[0].ToString("R", CultureInfo.InvariantCulture));
+                        fillInnerText(prefix, C2_CONFIG_TAG, coeffs[1].ToString("R", CultureInfo.InvariantCulture));
                     }
                 }
                 public class SpectrumWriter: ComplexWriter, ISpectrumWriter {
@@ -1503,31 +1504,31 @@ namespace Flavor.Common.Settings {
                         base.write();
                     }
                     #endregion
-                    private void saveConnectOptions() {
+                    void saveConnectOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
                         fillInnerText(prefix, PORT_CONFIG_TAG, Port);
                         fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
                         fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
                     }
-                    private void saveScanOptions() {
+                    void saveScanOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                         fillInnerText(prefix, START_SCAN_CONFIG_TAG, sPoint);
                         fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
                     }
-                    private void saveCommonOptions() {
+                    void saveCommonOptions() {
                         saveCommonOptions(commonOpts);
                     }
-                    private void saveDelaysOptions() {
+                    void saveDelaysOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
                         fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
                         fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
                         fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
-                    private void saveMassCoeffs() {
-                        saveScalingCoeffs(Graph.Instance.Collectors[0].Coeff, Graph.Instance.Collectors[1].Coeff);
+                    void saveMassCoeffs() {
+                        saveScalingCoeffs(Graph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
                     }
-                    private void saveCheckOptions() {
+                    void saveCheckOptions() {
                         //checkpeak & iterations
                         string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
                         if (xmlData.SelectSingleNode(prefix) == null) {
@@ -1550,7 +1551,7 @@ namespace Flavor.Common.Settings {
 
                         fillInnerText(prefix, BACKGROUND_CYCLES_NUMBER_TAG, BackgroundCycles);
                     }
-                    private void SavePreciseOptions() {
+                    void SavePreciseOptions() {
                         savePreciseData(preciseData, false);
                     }
                     protected override void clearOldValues() {
@@ -1575,6 +1576,7 @@ namespace Flavor.Common.Settings {
                 new const string CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG = "c";
                 const string DETECTOR_VOLTAGE_TAG = "dv";
                 const string COL_CONFIG_TAG = "collector";
+                const string COL_COEFF_CONFIG_TAG = "coeff";
                 const string NUMBER_ATTRIBUTE = "n";
                 const string COUNT_ATTRIBUTE = "count";
                 public const string CONFIG_VERSION = "1.3";
@@ -1687,10 +1689,19 @@ namespace Flavor.Common.Settings {
                         // TODO: class-dependent messages
                         try {
                             XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
-                            double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            // TODO: proper data!
-                            return new double[]{ col1Coeff, col2Coeff, 1 };
+
+                            double[] coeffs = { 2770 * 28, 896.5 * 18, 1 };
+                            foreach (XmlNode node in interfaceNode.SelectNodes(COL_COEFF_CONFIG_TAG)) {
+                                var numberAttribute = node.Attributes[NUMBER_ATTRIBUTE];
+                                int n = int.Parse(numberAttribute.Value);
+                                double value = double.Parse(node.InnerText);
+                                coeffs[n - 1] = value;
+                            }
+
+                            //double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            //double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            //return new double[]{ col1Coeff, col2Coeff, 1 };
+                            return coeffs;
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
                         } catch (FormatException) {
@@ -2150,11 +2161,62 @@ namespace Flavor.Common.Settings {
                 public class CommonOptionsWriter: Writer, ICommonOptionsWriter { }
                 public class PreciseDataWriter: Writer, IPreciseDataWriter { }
                 public abstract class ComplexWriter: Writer, IScalingCoeffsWriter {
-                    public void saveScalingCoeffs(double coeff1, double coeff2) {
+                    public void saveScalingCoeffs(params double[] coeffs) {
                         clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
                         string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                        fillInnerText(prefix, C1_CONFIG_TAG, coeff1.ToString("R", CultureInfo.InvariantCulture));
-                        fillInnerText(prefix, C2_CONFIG_TAG, coeff2.ToString("R", CultureInfo.InvariantCulture));
+                        //fillInnerText(prefix, C1_CONFIG_TAG, coeff1.ToString("R", CultureInfo.InvariantCulture));
+                        //fillInnerText(prefix, C2_CONFIG_TAG, coeff2.ToString("R", CultureInfo.InvariantCulture));
+
+                        var interfaceNode = xmlData.SelectSingleNode(prefix);
+                        var nodes = interfaceNode.SelectNodes(COL_COEFF_CONFIG_TAG);
+                        {
+                            bool missed = true;
+                            foreach (XmlNode node in nodes) {
+                                if (node.Attributes[NUMBER_ATTRIBUTE].Value == "1") {
+                                    node.InnerText = coeffs[0].ToString("R", CultureInfo.InvariantCulture);
+                                    missed = false;
+                                    break;
+                                }
+                            }
+                            if (missed) {
+                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                elem.SetAttribute(NUMBER_ATTRIBUTE, "1");
+                                elem.InnerText = coeffs[0].ToString("R", CultureInfo.InvariantCulture);
+                                interfaceNode.AppendChild(elem);
+                            }
+                        }
+                        {
+                            bool missed = true;
+                            foreach (XmlNode node in nodes) {
+                                if (node.Attributes[NUMBER_ATTRIBUTE].Value == "2") {
+                                    node.InnerText = coeffs[1].ToString("R", CultureInfo.InvariantCulture);
+                                    missed = false;
+                                    break;
+                                }
+                            }
+                            if (missed) {
+                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                elem.SetAttribute(NUMBER_ATTRIBUTE, "2");
+                                elem.InnerText = coeffs[1].ToString("R", CultureInfo.InvariantCulture);
+                                interfaceNode.AppendChild(elem);
+                            }
+                        }
+                        {
+                            bool missed = true;
+                            foreach (XmlNode node in nodes) {
+                                if (node.Attributes[NUMBER_ATTRIBUTE].Value == "3") {
+                                    node.InnerText = coeffs[2].ToString("R", CultureInfo.InvariantCulture);
+                                    missed = false;
+                                    break;
+                                }
+                            }
+                            if (missed) {
+                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                elem.SetAttribute(NUMBER_ATTRIBUTE, "3");
+                                elem.InnerText = coeffs[2].ToString("R", CultureInfo.InvariantCulture);
+                                interfaceNode.AppendChild(elem);
+                            }
+                        }
                     }
                 }
                 public class SpectrumWriter: ComplexWriter, ISpectrumWriter {
@@ -2245,7 +2307,7 @@ namespace Flavor.Common.Settings {
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
                     void saveMassCoeffs() {
-                        saveScalingCoeffs(Graph.Instance.Collectors[0].Coeff, Graph.Instance.Collectors[1].Coeff);
+                        saveScalingCoeffs(Graph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
                     }
                     void saveCheckOptions() {
                         //checkpeak & iterations
@@ -2312,7 +2374,7 @@ namespace Flavor.Common.Settings {
                     createCommonOptsStub(doc, rootNode);
                     writer.saveCommonOptions(graph.CommonOptions);
                 }
-                writer.saveScalingCoeffs(graph.Collectors[0].Coeff, graph.Collectors[1].Coeff);
+                writer.saveScalingCoeffs(graph.Collectors.ConvertAll(col => col.Coeff).ToArray());
                 return writer;
             }
             public static ICommonOptionsReader getCommonOptionsReader(string confName) {
