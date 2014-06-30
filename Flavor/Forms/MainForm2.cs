@@ -469,8 +469,8 @@ namespace Flavor.Forms {
         }
 
         void Commander_OnError(string msg) {
-            // TODO: thread-safe invoke
-			MessageBox.Show(this, msg);
+            BeginInvoke(new Action(() => MessageBox.Show(this, msg)));
+            //MessageBox.Show(this, msg);
         }
         void overview_button_Click(object sender, EventArgs e) {
             commander.Scan();

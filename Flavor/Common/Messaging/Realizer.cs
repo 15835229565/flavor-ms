@@ -66,6 +66,7 @@ namespace Flavor.Common.Messaging {
         }
         protected void AutoSend<T1>(ServicePacket<T> p)
             where T1: UserRequest<T>, new() {
+            // TODO: autosend cached requests (as they are simple and not configurable)
             toSend.Enqueue(new T1());
         }
         protected abstract void PopulateDictionary(PackageDictionary<T> d);

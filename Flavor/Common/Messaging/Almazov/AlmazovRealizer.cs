@@ -94,7 +94,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 OnOperationBlock(false);
                 //toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
                 //SetSettings();
-            }, AutoSend<GetD1VoltageRequest>/*fake request to workaround SPI misfunction (BUT sends a lot!)*/);
+            }, AutoSend<GetHeaterVoltageRequest>/*fake request to workaround SPI misfunction (last in queue)*/);
             Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
             Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
             //sync error

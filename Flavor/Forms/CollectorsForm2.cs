@@ -265,10 +265,10 @@ namespace Flavor.Forms {
                     break;
                 case Graph.pListScaled.DisplayValue.Voltage:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
-                    myPane.XAxis.Scale.Min = graph.CommonOptions.scanVoltageNew(minX[zgcIndex]);
-                    myPane.XAxis.Scale.Max = graph.CommonOptions.scanVoltageNew(maxX[zgcIndex]);
-                    //myPane.XAxis.Scale.Min = CommonOptions.scanVoltageReal(minX[zgcIndex]);
-                    //myPane.XAxis.Scale.Max = CommonOptions.scanVoltageReal(maxX[zgcIndex]);
+                    //myPane.XAxis.Scale.Min = graph.CommonOptions.scanVoltageNew(minX[zgcIndex]);
+                    //myPane.XAxis.Scale.Max = graph.CommonOptions.scanVoltageNew(maxX[zgcIndex]);
+                    myPane.XAxis.Scale.Min = Flavor.Common.Settings.CommonOptions.scanVoltageReal(minX[zgcIndex]);
+                    myPane.XAxis.Scale.Max = Flavor.Common.Settings.CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
