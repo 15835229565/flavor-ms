@@ -2179,7 +2179,7 @@ namespace Flavor.Common.Settings {
                                 }
                             }
                             if (missed) {
-                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                var elem = xmlData.CreateElement(COL_COEFF_CONFIG_TAG);
                                 elem.SetAttribute(NUMBER_ATTRIBUTE, "1");
                                 elem.InnerText = coeffs[0].ToString("R", CultureInfo.InvariantCulture);
                                 interfaceNode.AppendChild(elem);
@@ -2195,7 +2195,7 @@ namespace Flavor.Common.Settings {
                                 }
                             }
                             if (missed) {
-                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                var elem = xmlData.CreateElement(COL_COEFF_CONFIG_TAG);
                                 elem.SetAttribute(NUMBER_ATTRIBUTE, "2");
                                 elem.InnerText = coeffs[1].ToString("R", CultureInfo.InvariantCulture);
                                 interfaceNode.AppendChild(elem);
@@ -2211,7 +2211,7 @@ namespace Flavor.Common.Settings {
                                 }
                             }
                             if (missed) {
-                                var elem = xmlData.CreateElement(DETECTOR_VOLTAGE_TAG);
+                                var elem = xmlData.CreateElement(COL_COEFF_CONFIG_TAG);
                                 elem.SetAttribute(NUMBER_ATTRIBUTE, "3");
                                 elem.InnerText = coeffs[2].ToString("R", CultureInfo.InvariantCulture);
                                 interfaceNode.AppendChild(elem);
