@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Text;
+using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Common {
     #region TreeNodes
@@ -119,7 +118,10 @@ namespace Flavor.Common {
     static class Utility {
         #region Textbox charset limitations
         public static void oneDigitTextbox_TextChanged(object sender, KeyPressEventArgs e) {
-            genericProcessKeyPress(sender, e, ch => (ch == '1' || ch == '2'));
+            // <= 9 collectors!
+            char max = '0';
+            max += (char)Config.COLLECTOR_COEFFS.Length;
+            genericProcessKeyPress(sender, e, ch => (ch >= '1' && ch <= max));
         }
         public static void integralTextbox_TextChanged(object sender, KeyPressEventArgs e) {
             genericProcessKeyPress(sender, e, ch => Char.IsNumber(ch));
