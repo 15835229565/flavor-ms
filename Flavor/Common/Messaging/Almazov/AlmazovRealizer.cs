@@ -44,7 +44,8 @@ namespace Flavor.Common.Messaging.Almazov {
         [Obsolete]
         protected override UserRequest<CommandCode> OperationOnOff(bool on) {
             // workaround for detecting Relay1 change
-            return new Valve1Request(on);
+            //return new Valve1Request(on);
+            throw new NotImplementedException();
         }
 
         public override void SetSettings() {
@@ -136,7 +137,6 @@ namespace Flavor.Common.Messaging.Almazov {
 
             Add<ScanVoltageSetReply>();
             // no idle time!
-            // TODO: use cached command in case of same time
             Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(SendMeasureRequest.Form(t2))));
 
             Add<SendMeasureReply>();

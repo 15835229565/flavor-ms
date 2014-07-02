@@ -38,7 +38,7 @@ namespace Flavor.Common.Settings {
         static byte sendTry = 1;
 
         public const ushort MIN_STEP = 0;
-        public const ushort MAX_STEP = 1056;
+        public const ushort MAX_STEP = 2112;
         //public const ushort MAX_STEP = 4095;
         static ushort startPoint = MIN_STEP;
         static ushort endPoint = MAX_STEP;

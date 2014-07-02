@@ -88,9 +88,11 @@ namespace Flavor.Common.Settings {
         }
         // scan voltage modification law
         public uint scanVoltageNew(ushort step) {
-            if (step > Config.MAX_STEP) step = Config.MAX_STEP;
-            uint res = (uint)(4095 * Math.Pow(((double)527 / (double)528), 1056 - step));
-            res <<= 2;
+            ushort max = Config.MAX_STEP;
+            if (step > max)
+                step = max;
+            uint res = (uint)(8191 * Math.Pow(((double)(max/2 - 1) / (double)(max/2)), max - step));
+            res <<= 1;
             //step &= 0xFFF;
             //uint res = (uint)(step << 2);
             return res;

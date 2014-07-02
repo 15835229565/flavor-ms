@@ -62,10 +62,10 @@ namespace Flavor.Common {
                 var temp = State;
                 SwitchState(temp, DeviceStates.Turbo, (bool)(data[0]));
                 // workaround for detecting Relay1 change
-                var temp2 = temp;
+                //var temp2 = temp;
                 temp = SwitchState(temp, DeviceStates.SEMV1, (bool)(data[1]));
-                if (temp2 != temp)
-                    OnVacuumStateChanged((bool)(data[1]));
+                //if (temp2 != temp)
+                //    OnVacuumStateChanged((bool)(data[1]));
 
                 temp = SwitchState(temp, DeviceStates.Relay2, (bool)(data[2]));
                 temp = SwitchState(temp, DeviceStates.Relay3, (bool)(data[3]));
