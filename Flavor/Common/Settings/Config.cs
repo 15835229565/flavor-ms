@@ -1590,9 +1590,9 @@ namespace Flavor.Common.Settings {
                             eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
                             //iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
                             iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
-                            
-                            c = double.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
-                            k = double.Parse(commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText);
+
+                            c = double.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
+                            k = double.Parse(commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             
                             eC = ushort.Parse(commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText);
                             //hC = ushort.Parse(commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText);
@@ -1694,7 +1694,7 @@ namespace Flavor.Common.Settings {
                             foreach (XmlNode node in interfaceNode.SelectNodes(COL_COEFF_CONFIG_TAG)) {
                                 var numberAttribute = node.Attributes[NUMBER_ATTRIBUTE];
                                 int n = int.Parse(numberAttribute.Value);
-                                double value = double.Parse(node.InnerText);
+                                double value = double.Parse(node.InnerText, CultureInfo.InvariantCulture);
                                 coeffs[n - 1] = value;
                             }
 
@@ -2023,7 +2023,7 @@ namespace Flavor.Common.Settings {
                             foreach (string str in parts) {
                                 // locale?
                                 //! double for non-integral counts (after subtraction with renormalization on point/peak)
-                                tempPntLst.Add(peakStart, double.Parse(str));
+                                tempPntLst.Add(peakStart, double.Parse(str, CultureInfo.InvariantCulture));
                                 ++peakStart;
                             }
                         } catch (FormatException) {
@@ -2071,8 +2071,8 @@ namespace Flavor.Common.Settings {
                         if (temp == null)
                             commonNode.AppendChild(xmlData.CreateElement(SOURCE_VOLTAGE_COEFF_CONFIG_TAG));
 
-                        commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.C.ToString();
-                        commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.K.ToString();
+                        commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.C.ToString("R", CultureInfo.InvariantCulture);
+                        commonNode.SelectSingleNode(SOURCE_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.K.ToString("R", CultureInfo.InvariantCulture);
 
                         commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
                         //commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
@@ -2140,7 +2140,7 @@ namespace Flavor.Common.Settings {
                             regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
                             regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
                             regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText = ped.Width.ToString();
-                            regionNode.SelectSingleNode(PEAK_PRECISION_CONFIG_TAG).InnerText = ped.Precision.ToString();
+                            regionNode.SelectSingleNode(PEAK_PRECISION_CONFIG_TAG).InnerText = ped.Precision.ToString("R", CultureInfo.InvariantCulture);
                             regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText = ped.Collector.ToString();
                             regionNode.SelectSingleNode(PEAK_COMMENT_CONFIG_TAG).InnerText = ped.Comment;
                             regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText = ped.Use.ToString();
@@ -2235,16 +2235,16 @@ namespace Flavor.Common.Settings {
                     public void saveScanOptions(Graph graph) {
                         XmlNode scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
                         XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
-                        PointPairListPlus ppl1 = graph.Displayed1Steps[0];
-                        PointPairListPlus ppl2 = graph.Displayed2Steps[0];
+                        //PointPairListPlus ppl1 = graph.Displayed1Steps[0];
+                        //PointPairListPlus ppl2 = graph.Displayed2Steps[0];
                         var steps = graph.Collectors[0][0].Step;
-                        temp.InnerText = steps[0].X.ToString();
+                        temp.InnerText = steps[0].X.ToString();// actually integral type
                         // TODO: check for data mismatch?
                         //temp.InnerText = ppl1[0].X.ToString();
                         scanNode.AppendChild(temp);
                         temp = xmlData.CreateElement(END_SCAN_CONFIG_TAG);
                         // TODO: check for data mismatch?
-                        temp.InnerText = steps[steps.Count - 1].X.ToString();
+                        temp.InnerText = steps[steps.Count - 1].X.ToString();// actually integral type
                         //temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
                         scanNode.AppendChild(temp);
 
