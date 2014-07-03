@@ -57,10 +57,9 @@ namespace Flavor.Common.Data.Measure {
         readonly SingleMeasureEventArgs generalMeasureEventArgs;
 
         public bool CancelRequested { private get; set; }
-        MeasureMode(ushort befTime, ushort eTime) {
+        MeasureMode(ushort befTime, ushort iTime, ushort eTime) {
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
-            //this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTime, Config.CommonOptions.eTime);
-            this.generalMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal);
+            this.generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
         }
         public bool onUpdateCounts(uint[] counts) {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
@@ -119,7 +118,7 @@ namespace Flavor.Common.Data.Measure {
             readonly ushort ePoint;
 
             public Scan()
-                : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
+                : base(Config.CommonOptions.befTime, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
             }
@@ -185,9 +184,9 @@ namespace Flavor.Common.Data.Measure {
             public Precise()
                 : this(Config.PreciseData.getUsed(), 0) { }
             Precise(List<PreciseEditorData> peaks, short? shift)
-                : base(Config.CommonOptions.befTime, Config.CommonOptions.eTime) {
-                forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTime, Config.CommonOptions.eTime);
-                backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTime, Config.CommonOptions.eTime);
+                : base(Config.CommonOptions.befTime, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
+                forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTime, Config.CommonOptions.eTimeReal);
+                backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTime, Config.CommonOptions.eTimeReal);
 
                 this.shift = shift;
                 senseModePoints = peaks;
@@ -257,6 +256,7 @@ namespace Flavor.Common.Data.Measure {
                     }
                     for (int i = 0; i < senseModePoints.Count; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
                     {
+                        // TODO: remove finished peaks from temp work list instead of search
                         ++senseModePeak;
                         if (senseModePeak >= senseModePoints.Count) senseModePeak = 0;
                         if (senseModePeakIteration[senseModePeak] > 0) break;
