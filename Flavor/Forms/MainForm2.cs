@@ -507,9 +507,10 @@ namespace Flavor.Forms {
             commander.MeasureCancelled += InvokeCancelScan;
             commander.ErrorOccured += Commander_OnError;
 
-            if (form == CollectorsForm)
-                MonitorForm.Hide();
-            else
+            if (form == CollectorsForm) {
+                if (monitorForm != null)
+                    MonitorForm.Hide();
+            } else
                 CollectorsForm.Hide();
         }
         void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
