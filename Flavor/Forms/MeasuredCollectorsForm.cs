@@ -45,8 +45,8 @@ namespace Flavor.Forms {
 
             specterSavingEnabled = false;
 
-            g.ResetPointListsWithEvent();
             g.NewGraphData += InvokeRefreshGraph;
+            g.ResetPointListsWithEvent();
             
             Show();
             Activate();

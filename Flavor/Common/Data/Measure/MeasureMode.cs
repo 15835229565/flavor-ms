@@ -204,10 +204,11 @@ namespace Flavor.Common.Data.Measure {
                 senseModeCounts = new long[senseModePoints.Count][];
                 for (int i = 0; i < senseModePeakIterationMax.Length; ++i) {
                     int dimension = 2 * senseModePoints[i].Width + 1;
-                    stepPoints += dimension;
                     senseModeCounts[i] = new long[dimension];
-                    senseModePeakIterationMax[i] = senseModePoints[i].Iterations;
-                    smpiSumMax += senseModePoints[i].Iterations; ;
+                    ushort iterations = senseModePoints[i].Iterations;
+                    senseModePeakIterationMax[i] = iterations;
+                    smpiSumMax += iterations; ;
+                    stepPoints += dimension * iterations;
                 }
             }
             protected override void saveData(uint[] counts) {

@@ -23,7 +23,7 @@ namespace Flavor.Controls {
             stepNumberLabel.Visible = true;
             label35.Visible = true;
             label36.Visible = true;
-
+            // TODO: modify to display any collector counts!
             if (g.CurrentPeak.Collector == 1) {
                 detector1CountsLabel.Visible = true;
                 label15.Visible = true;
