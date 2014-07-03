@@ -463,13 +463,13 @@
     <value>6, 255</value>
   </data>
   <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>174, 13</value>
+    <value>168, 13</value>
   </data>
   <data name="label8.TabIndex" type="System.Int32, mscorlib">
     <value>40</value>
   </data>
   <data name="label8.Text" xml:space="preserve">
-    <value>Время экспозиции (10-10000 мс)</value>
+    <value>Время экспозиции (1-10000 мс)</value>
   </data>
   <data name="&gt;&gt;label8.Name" xml:space="preserve">
     <value>label8</value>

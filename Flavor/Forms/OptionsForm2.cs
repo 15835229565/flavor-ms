@@ -14,7 +14,7 @@ namespace Flavor.Forms {
 
         void loadCommonData(CommonOptions co) {
             // TODO: remove hard-coded numbers here (use constants in Config)
-            setupNumericUpDown(expTimeNumericUpDown, 50, 10000, co.eTimeReal);
+            setupNumericUpDown(expTimeNumericUpDown, 1, 10000, co.eTimeReal);
             //setupNumericUpDown(idleTimeNumericUpDown, 10, 100, co.iTimeReal);
 
             setupNumericUpDown(d1VoltageNumericUpDown, 2200, 3000, co.d1VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);

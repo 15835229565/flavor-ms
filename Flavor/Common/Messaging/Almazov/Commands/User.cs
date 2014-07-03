@@ -347,7 +347,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         ushort calcRTCticks() {
             //ФУНКЦИЯ: Вычисляет количество тиков в соответствии с временем и предделителем. Возвращает количество тиков
             ushort ticks;
-            if ((ms < 50) || (calcRTCprescaler() == 0)) {
+            if ((ms < min_ms_div1) || (calcRTCprescaler() == 0)) {
                 return ushort.MaxValue;
             }
             ticks = Convert.ToUInt16(Math.Round(Convert.ToDouble(ms) * (sourceFrequency / calcRTCprescaler_long())));
