@@ -118,7 +118,7 @@ namespace Flavor.Common.Data.Measure {
             readonly ushort ePoint;
 
             public Scan()
-                : base(Config.CommonOptions.befTime, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
+                : base(Config.CommonOptions.befTimeReal, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
                 sPoint = Config.sPoint;
                 ePoint = Config.ePoint;
             }
@@ -184,9 +184,9 @@ namespace Flavor.Common.Data.Measure {
             public Precise()
                 : this(Config.PreciseData.getUsed(), 0) { }
             Precise(List<PreciseEditorData> peaks, short? shift)
-                : base(Config.CommonOptions.befTime, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
-                forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTime, Config.CommonOptions.eTimeReal);
-                backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTime, Config.CommonOptions.eTimeReal);
+                : base(Config.CommonOptions.befTimeReal, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
+                forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTimeReal, Config.CommonOptions.eTimeReal);
+                backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTimeReal, Config.CommonOptions.eTimeReal);
 
                 this.shift = shift;
                 senseModePoints = peaks;
