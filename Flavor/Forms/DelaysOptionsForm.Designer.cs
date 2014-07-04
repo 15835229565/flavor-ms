@@ -59,19 +59,9 @@
             // 
             // beforeTimeNumericUpDown
             // 
-            this.beforeTimeNumericUpDown.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
             resources.ApplyResources(this.beforeTimeNumericUpDown, "beforeTimeNumericUpDown");
             this.beforeTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
-            0,
-            0,
-            0});
-            this.beforeTimeNumericUpDown.Minimum = new decimal(new int[] {
-            10,
             0,
             0,
             0});
@@ -91,19 +81,9 @@
             // 
             // forwardTimeNumericUpDown
             // 
-            this.forwardTimeNumericUpDown.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
             resources.ApplyResources(this.forwardTimeNumericUpDown, "forwardTimeNumericUpDown");
             this.forwardTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
-            0,
-            0,
-            0});
-            this.forwardTimeNumericUpDown.Minimum = new decimal(new int[] {
-            10,
             0,
             0,
             0});
@@ -116,19 +96,9 @@
             // 
             // backwardTimeNumericUpDown
             // 
-            this.backwardTimeNumericUpDown.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
             resources.ApplyResources(this.backwardTimeNumericUpDown, "backwardTimeNumericUpDown");
             this.backwardTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
-            0,
-            0,
-            0});
-            this.backwardTimeNumericUpDown.Minimum = new decimal(new int[] {
-            10,
             0,
             0,
             0});
