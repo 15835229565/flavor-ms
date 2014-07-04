@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using CommonOptions = Flavor.Common.Settings.CommonOptions;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Flavor.Common.Data.Measure {
     class Collector: List<Graph.pListScaled> {
@@ -14,14 +14,15 @@ namespace Flavor.Common.Data.Measure {
                     pl.RecomputeMassRow();
             }
         }
-
-        public Collector(double coeff) {
+        readonly Converter<ushort, double> point2mass;
+        public Collector(double coeff, Converter<ushort, double> point2mass) {
             this.coeff = coeff;
+            this.point2mass = point2mass;
             // data row for scan (has no PED reference)
             Add(new Graph.pListScaled(this));
         }
         public double pointToMass(ushort pnt) {
-            return coeff / CommonOptions.scanVoltageReal(pnt);
+            return coeff / point2mass(pnt);
         }
         public new void Clear() {
             base.Clear();

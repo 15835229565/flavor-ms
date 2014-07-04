@@ -12,7 +12,7 @@ namespace Flavor.Common.Data.Measure {
             if (coeffs.Length == 0)
                 throw new ArgumentOutOfRangeException("coeffs");
             foreach (double coeff in coeffs)
-                Add(new Collector(coeff));
+                Add(new Collector(coeff, cd.scanVoltageRealNew));
         }
         public int[] RecomputeMassRows(double[] coeffs) {
             if (this.Count != coeffs.Length)

@@ -97,6 +97,9 @@ namespace Flavor.Common.Settings {
             //uint res = (uint)(step << 2);
             return res;
         }
+        public double scanVoltageRealNew(ushort step) {
+            return (scanVoltageNew(step) * 1500.0) / 16384;
+        }
         public double K { get; set; }
         public uint parentScanVoltage(ushort step) {
             //if (step > Config.MAX_STEP) step = Config.MAX_STEP;
