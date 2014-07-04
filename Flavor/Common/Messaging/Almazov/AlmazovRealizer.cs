@@ -2,6 +2,7 @@
 using Flavor.Common.Messaging.Almazov.Commands;
 using Config = Flavor.Common.Settings.Config;
 using Flavor.Common.Settings;
+using System.Timers;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
@@ -137,7 +138,15 @@ namespace Flavor.Common.Messaging.Almazov {
 
             Add<ScanVoltageSetReply>();
             // no idle time!
-            Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => toSend.Enqueue(SendMeasureRequest.Form(t2))));
+            Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => {
+                // temporary solution for delayed measure request;
+                Timer delayed = new Timer(t1);
+                delayed.AutoReset = false;
+                var request = SendMeasureRequest.Form(t2);
+                delayed.Elapsed += new ElapsedEventHandler((o, args) => toSend.Enqueue(request));
+                delayed.Start();
+                //toSend.Enqueue(SendMeasureRequest.Form(t2));
+            }));
 
             Add<SendMeasureReply>();
             Add<CountsReply>(updateDevice, p => OnMeasureDone());

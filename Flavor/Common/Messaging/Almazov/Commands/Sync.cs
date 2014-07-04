@@ -225,7 +225,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
     class GetEmissionCurrentReply: IonSourceGetReply {
         public GetEmissionCurrentReply(ushort voltage)
-            : base(1, voltage) { }
+            : base(1, voltage) {
+        }
         public GetEmissionCurrentReply()
             : base(1) { }
     }
