@@ -14,7 +14,7 @@
     <coeff n="3">1</coeff>
   </collectors>
   <!-- max-min are info only -->
-  <overview min="400" max="1056">
+  <overview min="0" max="2112">
     <start>400</start>
     <end>1056</end>
   </overview>
@@ -286,6 +286,8 @@
     <exptime>200</exptime>
     <meastime>10</meastime>
     <ivoltage>2184</ivoltage>
+    <c>0.048</c>
+    <k>0.73</k>
     <cp>3751</cp>
     <ecurrent>327</ecurrent>
     <hcurrent>0</hcurrent>

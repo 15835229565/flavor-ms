@@ -430,7 +430,7 @@
         protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
         protected System.Windows.Forms.Button cancel_butt;
-        protected System.Windows.Forms.Button applyButton;
+        private System.Windows.Forms.Button applyButton;
         protected System.Windows.Forms.Button ok_butt;
         protected System.Windows.Forms.GroupBox params_groupBox;
         private System.Windows.Forms.CheckBox adjustSettingsCheckBox;

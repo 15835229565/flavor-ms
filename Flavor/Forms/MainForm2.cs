@@ -363,16 +363,23 @@ namespace Flavor.Forms {
             where T: OptionsForm2, new() {
             if (oForm == null) {
                 oForm = new T();
+                Action<bool, bool> tempMethod = (enabled, canApply) => { };
+                ProgramEventHandler method = state => {
+                    bool enabled = (state != ProgramStates.Measure ||
+                        state != ProgramStates.BackgroundMeasureReady ||
+                        state != ProgramStates.WaitBackgroundMeasure);
+                    bool canApply = (state == ProgramStates.Ready
+                        // || state == ProgramStates.WaitHighVoltage
+                        );
+                    tempMethod(enabled, canApply);
+                };
                 oForm.Load += (s, a) => {
                     var args = a as OptionsForm2.LoadEventArgs;
-                    commander.ProgramStateChanged += args.Method;
-                    var state = commander.pState;
-                    args.Enabled = (state == ProgramStates.Ready ||
-                        state == ProgramStates.WaitHighVoltage ||
-                        state == ProgramStates.Measure ||
-                        state == ProgramStates.BackgroundMeasureReady ||
-                        state == ProgramStates.WaitBackgroundMeasure);
+                    tempMethod += args.Method;
+                    commander.ProgramStateChanged += method;
+                    method(commander.pState);
                     args.NotRareModeRequested = commander.notRareModeRequested;
+                    args.CommonOptions = Config.CommonOptions;
                 };
                 oForm.FormClosing += (s, a) => {
                     var args = a as OptionsForm2.ClosingEventArgs;
@@ -389,7 +396,8 @@ namespace Flavor.Forms {
                         //    (double)ps[6],
                         //    (double)ps[7]);
                     }
-                    commander.ProgramStateChanged -= args.Method;
+                    commander.ProgramStateChanged -= method;
+                    tempMethod -= args.Method;
                     switch (oForm.DialogResult) {
                         case DialogResult.Yes:
                             commander.SendSettings();

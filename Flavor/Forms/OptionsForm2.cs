@@ -2,9 +2,6 @@
 using System.Windows.Forms;
 using Config = Flavor.Common.Settings.Config;
 using CommonOptions = Flavor.Common.Settings.CommonOptions;
-// really here?
-using ProgramStates = Flavor.Common.ProgramStates;
-using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
 namespace Flavor.Forms {
     partial class OptionsForm2: Form {
@@ -90,38 +87,31 @@ namespace Flavor.Forms {
             d2VoltageNumericUpDown.ReadOnly = ro;
             d3VoltageNumericUpDown.ReadOnly = ro;
         }
-        void InvokeSetVisibility(ProgramStates state) {
-            this.Invoke(new Action(() => {
+        void InvokeSetVisibility(bool enabled, bool canApply) {
+            Invoke(new Action(() => {
                 // TODO: avoid bringing to front..
-                this.Visible = state != ProgramStates.Measure ||
-                    state != ProgramStates.BackgroundMeasureReady ||
-                    state != ProgramStates.WaitBackgroundMeasure;
+                this.Visible = enabled;
+                applyButton.Enabled = canApply;
+                applyButton.Visible = canApply;
             }));
         }
         public class LoadEventArgs: EventArgs {
-            public bool Enabled { get; set; }
             public bool NotRareModeRequested { get; set; }
-            public ProgramEventHandler Method { get; set; }
+            public Action<bool, bool> Method { get; set; }
+            public CommonOptions CommonOptions { get; set; }
         }
         protected override void OnLoad(EventArgs e) {
             var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs();
             args.Method += InvokeSetVisibility;
             base.OnLoad(args);
             rareModeCheckBox.Checked = args.NotRareModeRequested;
-            if (args.Enabled) {
-                applyButton.Enabled = true;
-                applyButton.Visible = true;
-            } else {
-                applyButton.Enabled = false;
-                applyButton.Visible = false;
-            }
-            CommonOptions co = Config.CommonOptions;
+            var co = args.CommonOptions;
             if (co != null)
-                loadCommonData(Config.CommonOptions);
+                loadCommonData(co);
         }
         public class ClosingEventArgs: FormClosingEventArgs {
             public bool NotRareModeRequested { get; set; }
-            public ProgramEventHandler Method { get; set; }
+            public Action<bool, bool> Method { get; set; }
             public decimal[] Parameters { get; set; }
             public ClosingEventArgs(FormClosingEventArgs args)
                 : base(args.CloseReason, args.Cancel) { }

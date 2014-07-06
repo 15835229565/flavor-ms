@@ -46,10 +46,6 @@ namespace Flavor.Forms {
             // 
             resources.ApplyResources(this.cancel_butt, "cancel_butt");
             // 
-            // applyButton
-            // 
-            resources.ApplyResources(this.applyButton, "applyButton");
-            // 
             // ok_butt
             // 
             resources.ApplyResources(this.ok_butt, "ok_butt");
@@ -129,7 +125,6 @@ namespace Flavor.Forms {
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
             this.Controls.SetChildIndex(this.cancel_butt, 0);
-            this.Controls.SetChildIndex(this.applyButton, 0);
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
             this.preciseEditorGroupBox.ResumeLayout(false);

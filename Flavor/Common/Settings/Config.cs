@@ -1697,10 +1697,6 @@ namespace Flavor.Common.Settings {
                                 double value = double.Parse(node.InnerText, CultureInfo.InvariantCulture);
                                 coeffs[n - 1] = value;
                             }
-
-                            //double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            //double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            //return new double[]{ col1Coeff, col2Coeff, 1 };
                             return coeffs;
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
@@ -1731,15 +1727,16 @@ namespace Flavor.Common.Settings {
                             //use hard-coded defaults
                         }
                         try {
-                            Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
-                        } catch (ConfigLoadException) {
-                            //cle.visualise();
-                            //use hard-coded defaults
-                        }
-                        try {
                             commonOpts = loadCommonOptions();
                         } catch (ConfigLoadException cle) {
                             cle.visualise();
+                            //use hard-coded defaults
+                        }
+                        try {
+                            // init Graph.Instance after CommonOptions!
+                            Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
+                        } catch (ConfigLoadException) {
+                            //cle.visualise();
                             //use hard-coded defaults
                         }
                         try {

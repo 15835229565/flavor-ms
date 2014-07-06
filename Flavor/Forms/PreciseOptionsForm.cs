@@ -4,9 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
 using Config = Flavor.Common.Settings.Config;
-// really here?
-using ProgramStates = Flavor.Common.ProgramStates;
-using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
 
 using PreciseSpectrum = Flavor.Common.Data.Measure.PreciseSpectrum;
 using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
@@ -15,56 +12,29 @@ using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
     internal partial class PreciseOptionsForm: OptionsForm2 {
-        private PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
-        private PreciseSpectrum data = new PreciseSpectrum();
+        PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
+        PreciseSpectrum data = new PreciseSpectrum();
 
         public PreciseOptionsForm()
             : base() {
             InitializeComponent();
         }
 
-        private void InvokeEnableForm(ProgramStates state) {
-            if (this.InvokeRequired) {
-                ProgramEventHandler InvokeDelegate = EnableForm;
-                this.Invoke(InvokeDelegate, state);
-            } else {
-                EnableForm(state);
-            }
+        void InvokeEnableForm(bool enabled, bool canApply) {
+            Invoke(new Action(() => setControls(enabled, canApply)));
         }
 
-        private void EnableForm(ProgramStates state) {
-            switch (state) {
-                case ProgramStates.Start:
-                case ProgramStates.WaitInit:
-                case ProgramStates.Init:
-                case ProgramStates.WaitShutdown:
-                case ProgramStates.Shutdown:
-                    setControls(true, false);
-                    break;
-                case ProgramStates.WaitHighVoltage:
-                case ProgramStates.Ready:
-                    setControls(true, true);
-                    break;
-                case ProgramStates.BackgroundMeasureReady:
-                case ProgramStates.WaitBackgroundMeasure:
-                case ProgramStates.Measure:
-                    setControls(false, false);
-                    break;
-            }
-        }
         protected virtual void setControls(bool enabled, bool canApply) {
             this.preciseEditorGroupBox.Enabled = enabled;
             this.params_groupBox.Enabled = enabled;
             this.savePreciseEditorToFileButton.Enabled = enabled;
             this.loadPreciseEditorFromFileButton.Enabled = enabled;
             this.clearButton.Enabled = enabled;
-            this.applyButton.Enabled = enabled && canApply;
-            this.applyButton.Visible = canApply || !enabled;
             this.ok_butt.Enabled = enabled;
             this.rareModeCheckBox.Enabled = enabled;
         }
 
-        private void loadPreciseEditorData(List<PreciseEditorData> ped) {
+        void loadPreciseEditorData(List<PreciseEditorData> ped) {
             if (ped != null) {
                 clearPreciseEditorData();
                 foreach (PreciseEditorData p in ped) {
@@ -106,7 +76,7 @@ namespace Flavor.Forms {
             }
         }
 
-        private void savePreciseEditorToFileButton_Click(object sender, EventArgs e) {
+        void savePreciseEditorToFileButton_Click(object sender, EventArgs e) {
             if (checkTextBoxes()) {
                 if (savePreciseEditorToFileDialog.ShowDialog() == DialogResult.OK) {
                     Config.savePreciseOptions(data, savePreciseEditorToFileDialog.FileName, false);
@@ -114,7 +84,7 @@ namespace Flavor.Forms {
             }
         }
 
-        private void loadPreciseEditorFromFileButton_Click(object sender, EventArgs e) {
+        void loadPreciseEditorFromFileButton_Click(object sender, EventArgs e) {
             if (loadPreciseEditorFromFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
                     loadPreciseEditorData(Config.loadPreciseOptions(loadPreciseEditorFromFileDialog.FileName));
@@ -124,15 +94,15 @@ namespace Flavor.Forms {
             }
         }
 
-        private void clearButton_Click(object sender, EventArgs e) {
+        void clearButton_Click(object sender, EventArgs e) {
             clearPreciseEditorData();
         }
 
-        private void Graph_OnPointAdded(bool notNull) {
+        void Graph_OnPointAdded(bool notNull) {
             insertPointButton.Enabled = notNull;
         }
 
-        private void insertPointButton_Click(object sender, EventArgs e) {
+        void insertPointButton_Click(object sender, EventArgs e) {
             if (Graph.PointToAdd != null) {
                 PlacePointForm ppForm = new PlacePointForm(Graph.PointToAdd);
                 if (ppForm.ShowDialog() == DialogResult.OK) {
@@ -144,7 +114,7 @@ namespace Flavor.Forms {
             }
         }
 
-        private void clearPreciseEditorData() {
+        void clearPreciseEditorData() {
             for (int i = 0; i < Config.PEAK_NUMBER; ++i)
                 PErows[i].Clear();
         }
