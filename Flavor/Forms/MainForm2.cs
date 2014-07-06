@@ -478,11 +478,9 @@ namespace Flavor.Forms {
 
         void Commander_OnError(string msg) {
             BeginInvoke(new Action(() => MessageBox.Show(this, msg)));
-            //MessageBox.Show(this, msg);
         }
         void overview_button_Click(object sender, EventArgs e) {
             commander.Scan();
-            // temporarily commented
             ChildFormInit(CollectorsForm, false);
         }
         void sensmeasure_button_Click(object sender, EventArgs e) {
