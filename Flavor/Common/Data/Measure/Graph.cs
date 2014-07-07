@@ -434,7 +434,7 @@ namespace Flavor.Common.Data.Measure {
         }
         #region Graph scaling to mass coeffs
         public bool setScalingCoeff(byte col, ushort pnt, double mass) {
-            double value = mass * CommonOptions.scanVoltageReal(pnt);
+            double value = mass * Config.CommonOptions.scanVoltageRealNew(pnt);
             bool result = Collectors.RecomputeMassRows(col, value);
             if (result && axisMode == pListScaled.DisplayValue.Mass) {
                 OnNewGraphData(null, col);
