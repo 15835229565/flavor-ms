@@ -430,7 +430,6 @@
         protected System.Windows.Forms.OpenFileDialog openCommonDataFileDialog;
         protected System.Windows.Forms.SaveFileDialog saveCommonDataFileDialog;
         protected System.Windows.Forms.Button cancel_butt;
-        private System.Windows.Forms.Button applyButton;
         protected System.Windows.Forms.Button ok_butt;
         protected System.Windows.Forms.GroupBox params_groupBox;
         private System.Windows.Forms.CheckBox adjustSettingsCheckBox;
@@ -445,5 +444,6 @@
         private System.Windows.Forms.NumericUpDown fV2NumericUpDown;
         private System.Windows.Forms.NumericUpDown d3VoltageNumericUpDown;
         private System.Windows.Forms.NumericUpDown kNumericUpDown;
+        protected System.Windows.Forms.Button applyButton;
     }
 }

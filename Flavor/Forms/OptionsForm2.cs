@@ -90,7 +90,9 @@ namespace Flavor.Forms {
         void InvokeSetVisibility(bool enabled, bool canApply) {
             Invoke(new Action(() => {
                 // TODO: avoid bringing to front..
-                this.Visible = enabled;
+                Visible = enabled;
+                params_groupBox.Enabled = enabled;
+                rareModeCheckBox.Enabled = enabled;
                 applyButton.Enabled = canApply;
                 applyButton.Visible = canApply;
             }));

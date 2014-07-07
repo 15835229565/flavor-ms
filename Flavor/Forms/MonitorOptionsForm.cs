@@ -8,7 +8,7 @@ using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
-    internal partial class MonitorOptionsForm: PreciseOptionsForm {
+    partial class MonitorOptionsForm: PreciseOptionsForm {
         public MonitorOptionsForm() {
             InitializeComponent();
         }
@@ -27,11 +27,11 @@ namespace Flavor.Forms {
                                     (byte)backroundMeasureCycleCountNumericUpDown.Value);
         }
 
-        private void Graph_OnPointAdded(bool notNull) {
+        void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
         }
 
-        private void checkPeakInsertButton_Click(object sender, EventArgs e) {
+        void checkPeakInsertButton_Click(object sender, EventArgs e) {
             if (Graph.PointToAdd != null) {
                 checkPeakPreciseEditorRowMinus.setValues(Graph.PointToAdd);
             } else {

@@ -11,7 +11,7 @@ using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
-    internal partial class PreciseOptionsForm: OptionsForm2 {
+    partial class PreciseOptionsForm: OptionsForm2 {
         PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
         PreciseSpectrum data = new PreciseSpectrum();
 
@@ -25,13 +25,10 @@ namespace Flavor.Forms {
         }
 
         protected virtual void setControls(bool enabled, bool canApply) {
-            this.preciseEditorGroupBox.Enabled = enabled;
-            this.params_groupBox.Enabled = enabled;
-            this.savePreciseEditorToFileButton.Enabled = enabled;
-            this.loadPreciseEditorFromFileButton.Enabled = enabled;
-            this.clearButton.Enabled = enabled;
-            this.ok_butt.Enabled = enabled;
-            this.rareModeCheckBox.Enabled = enabled;
+            preciseEditorGroupBox.Enabled = enabled;
+            savePreciseEditorToFileButton.Enabled = enabled;
+            loadPreciseEditorFromFileButton.Enabled = enabled;
+            clearButton.Enabled = enabled;
         }
 
         void loadPreciseEditorData(List<PreciseEditorData> ped) {

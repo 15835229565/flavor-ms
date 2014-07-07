@@ -117,78 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;fV1NumericUpDown.Name" xml:space="preserve">
-    <value>fV1NumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.Name" xml:space="preserve">
-    <value>CPNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.Name" xml:space="preserve">
-    <value>iVoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d2VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d1VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>16</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.Name" xml:space="preserve">
-    <value>fV2NumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
   <metadata name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>207, 17</value>
   </metadata>
@@ -209,21 +137,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;cancel_butt.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="applyButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>432, 374</value>
-  </data>
-  <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
-    <value>applyButton</value>
-  </data>
-  <data name="&gt;&gt;applyButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;applyButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="ok_butt.Location" type="System.Drawing.Point, System.Drawing">
@@ -239,7 +152,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ok_butt.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="params_groupBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>432, 12</value>
@@ -254,31 +167,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;params_groupBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d3VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Name" xml:space="preserve">
-    <value>kNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="rareModeCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>432, 351</value>
@@ -293,6 +182,21 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;rareModeCheckBox.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="applyButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>431, 374</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
+    <value>applyButton</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
   <metadata name="PElabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -438,7 +342,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;preciseEditorGroupBox.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <metadata name="savePreciseEditorToFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>399, 17</value>

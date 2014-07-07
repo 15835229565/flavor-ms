@@ -38,7 +38,6 @@ namespace Flavor.Forms {
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.formToolTip = new System.Windows.Forms.ToolTip(this.components);
             PElabelRow = new Flavor.Controls.PreciseEditorLabelRowPlus();
-            this.params_groupBox.SuspendLayout();
             this.preciseEditorGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,6 +56,10 @@ namespace Flavor.Forms {
             // rareModeCheckBox
             // 
             resources.ApplyResources(this.rareModeCheckBox, "rareModeCheckBox");
+            // 
+            // applyButton
+            // 
+            resources.ApplyResources(this.applyButton, "applyButton");
             // 
             // PElabelRow
             // 
@@ -120,13 +123,12 @@ namespace Flavor.Forms {
             this.MinimizeBox = true;
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
+            this.Controls.SetChildIndex(this.applyButton, 0);
             this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
             this.Controls.SetChildIndex(this.preciseEditorGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
             this.Controls.SetChildIndex(this.cancel_butt, 0);
-            this.params_groupBox.ResumeLayout(false);
-            this.params_groupBox.PerformLayout();
             this.preciseEditorGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
