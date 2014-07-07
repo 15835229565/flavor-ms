@@ -971,7 +971,7 @@ namespace Flavor.Forms {
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
                     var args = ee as Almazov.InletControlForm.ClosingEventArgs;
                     if (args.UseCapillary) {
-                        // TODO: actually use
+                        (commander as Flavor.Common.AlmazovCommander).SendInletSettings(true);
                     } else {
                         var ps = args.Parameters;
                         if (ps == null)

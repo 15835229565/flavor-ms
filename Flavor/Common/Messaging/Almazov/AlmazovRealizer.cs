@@ -159,10 +159,9 @@ namespace Flavor.Common.Messaging.Almazov {
         }
         public void SendInletSettings(bool useCapillary, params ushort[] ps) {
             if (useCapillary) {
-                // TODO:
-                //toSend.Enqueue(new MicroPumpRequest(true));
-                //toSend.Enqueue(new Valve2Request(true));
-                //toSend.Enqueue(new Valve3Request(true));
+                toSend.Enqueue(new MicroPumpRequest(true));
+                toSend.Enqueue(new Valve2Request(true));
+                toSend.Enqueue(new Valve3Request(true));
             } else {
                 toSend.Enqueue(new MicroPumpRequest(true));
                 toSend.Enqueue(new Valve2Request(false));
