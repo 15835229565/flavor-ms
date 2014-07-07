@@ -968,20 +968,21 @@ namespace Flavor.Forms {
             form.FormClosing += (s, ee) => {
                 if (form.DialogResult != DialogResult.OK)
                     return;
-                if (e is Almazov.InletControlForm.ClosingEventArgs) {
-                    var args = e as Almazov.InletControlForm.ClosingEventArgs;
+                if (ee is Almazov.InletControlForm.ClosingEventArgs) {
+                    var args = ee as Almazov.InletControlForm.ClosingEventArgs;
                     if (args.UseCapillary) {
                         // TODO: actually use
                     } else {
                         var ps = args.Parameters;
                         if (ps == null)
                             return;
-                        ushort voltage = (ushort)(ps[0] * 3000 / 4096);
-                        ushort temperature = (ushort)(ps[1] * 500 / 4096);
+                        ushort voltage = (ushort)(ps[0] / 3000 * 4096);
+                        ushort temperature = (ushort)(ps[1] / 500 * 4096);
                         (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
                     }
                 } 
             };
+            form.ShowDialog();
         }
     }
 }
