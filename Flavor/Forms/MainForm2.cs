@@ -383,6 +383,8 @@ namespace Flavor.Forms {
                 };
                 oForm.FormClosing += (s, a) => {
                     var args = a as OptionsForm2.ClosingEventArgs;
+                    commander.ProgramStateChanged -= method;
+                    tempMethod -= args.Method;
                     var ps = args.Parameters;
                     if (ps != null) {
                         Config.temp_saveGO((double)ps[0], (double)ps[1], (double)ps[2], (double)ps[3], (double)ps[4], (double)ps[5], (double)ps[6], (double)ps[7], (double)ps[8], (double)ps[9]);
@@ -396,8 +398,6 @@ namespace Flavor.Forms {
                         //    (double)ps[6],
                         //    (double)ps[7]);
                     }
-                    commander.ProgramStateChanged -= method;
-                    tempMethod -= args.Method;
                     switch (oForm.DialogResult) {
                         case DialogResult.Yes:
                             commander.SendSettings();
@@ -860,6 +860,10 @@ namespace Flavor.Forms {
             initSys_butt.Enabled = init;
             shutSys_butt.Enabled = shutdown;
             unblock_butt.Enabled = block;
+
+            //test
+            inletToolStripButton.Enabled = scan;
+            
             overview_button.Enabled = scan;
             sensmeasure_button.Enabled = precise;
             monitorToolStripButton.Enabled = monitor;
@@ -957,6 +961,27 @@ namespace Flavor.Forms {
                     continue;
                 childForm.Close();
             }
+        }
+        // temporary solution
+        void inletToolStripButton_Click(object sender, EventArgs e) {
+            var form = new Almazov.InletControlForm();
+            form.FormClosing += (s, ee) => {
+                if (form.DialogResult != DialogResult.OK)
+                    return;
+                if (e is Almazov.InletControlForm.ClosingEventArgs) {
+                    var args = e as Almazov.InletControlForm.ClosingEventArgs;
+                    if (args.UseCapillary) {
+                        // TODO: actually use
+                    } else {
+                        var ps = args.Parameters;
+                        if (ps == null)
+                            return;
+                        ushort voltage = (ushort)(ps[0] * 3000 / 4096);
+                        ushort temperature = (ushort)(ps[1] * 500 / 4096);
+                        (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
+                    }
+                } 
+            };
         }
     }
 }

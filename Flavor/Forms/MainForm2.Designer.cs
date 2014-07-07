@@ -67,6 +67,7 @@ namespace Flavor.Forms {
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.inletToolStripButton = new System.Windows.Forms.ToolStripButton();
             menuStrip = new System.Windows.Forms.MenuStrip();
             fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -360,7 +361,8 @@ namespace Flavor.Forms {
             this.unblock_butt,
             this.monitorToolStripButton,
             this.sensmeasure_button,
-            this.overview_button});
+            this.overview_button,
+            this.inletToolStripButton});
             this.controlToolStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             resources.ApplyResources(this.controlToolStrip, "controlToolStrip");
             this.controlToolStrip.Name = "controlToolStrip";
@@ -409,6 +411,14 @@ namespace Flavor.Forms {
             // 
             this.openSpecterFileDialog.InitialDirectory = ".";
             // 
+            // inletToolStripButton
+            // 
+            this.inletToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.inletToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            resources.ApplyResources(this.inletToolStripButton, "inletToolStripButton");
+            this.inletToolStripButton.Name = "inletToolStripButton";
+            this.inletToolStripButton.Click += new System.EventHandler(this.inletToolStripButton_Click);
+            // 
             // MainForm2
             // 
             resources.ApplyResources(this, "$this");
@@ -456,6 +466,7 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStrip controlToolStrip;
         private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
         private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton inletToolStripButton;
     }
 }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Flavor.Common.Messaging.Almazov.Commands;
-using Config = Flavor.Common.Settings.Config;
 using Flavor.Common.Settings;
 using System.Timers;
 
@@ -60,9 +59,6 @@ namespace Flavor.Common.Messaging.Almazov {
             // now is turned off
             //toSend.Enqueue(new SetD2VoltageRequest(co.d2V));
             toSend.Enqueue(new SetD3VoltageRequest(co.d3V));
-            // not here, manual operations
-            //toSend.Enqueue(new SetInletVoltageRequest(0));
-            //toSend.Enqueue(new SetHeaterVoltageRequest(0));
             // and check
             toSend.Enqueue(new GetD1VoltageRequest());
         }
@@ -121,8 +117,10 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             });
             Add<Valve1Reply>(updateDevice);
+            
             Add<Valve2Reply>(updateDevice);
             Add<Valve3Reply>(updateDevice);
+            Add<MicroPumpReply>(updateDevice);
 
             Add<IonSourceSetReply>();
             Add<DetectorSetReply>();
@@ -139,7 +137,6 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<GetHeaterVoltageReply>(p => OnMeasurePreconfigured());
 
             Add<ScanVoltageSetReply>();
-            // no idle time!
             Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => {
                 // temporary solution for delayed measure request;
                 if (t1 > 0) {
@@ -159,6 +156,21 @@ namespace Flavor.Common.Messaging.Almazov {
         // TODO: move to realizer ctor as extra action on measure step
         public void CheckStepVoltages() {
             //toSend.Enqueue(new ParentScanVoltageGetRequest());
+        }
+        public void SendInletSettings(bool useCapillary, params ushort[] ps) {
+            if (useCapillary) {
+                // TODO:
+                //toSend.Enqueue(new MicroPumpRequest(true));
+                //toSend.Enqueue(new Valve2Request(true));
+                //toSend.Enqueue(new Valve3Request(true));
+            } else {
+                toSend.Enqueue(new MicroPumpRequest(true));
+                toSend.Enqueue(new Valve2Request(false));
+                toSend.Enqueue(new Valve3Request(false));
+                toSend.Enqueue(new SetInletVoltageRequest(ps[0]));
+                toSend.Enqueue(new SetHeaterVoltageRequest(ps[1]));
+                toSend.Enqueue(new GetInletVoltageRequest());
+            }
         }
     }
 }

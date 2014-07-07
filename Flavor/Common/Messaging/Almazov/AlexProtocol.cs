@@ -181,8 +181,10 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             }));
             add(CommandCode.SEMV1, eq(3), sync(raw => new Valve1Reply(raw[1])));
+
             add(CommandCode.SEMV2, eq(3), sync(raw => new Valve2Reply(raw[1])));
             add(CommandCode.SEMV3, eq(3), sync(raw => new Valve3Reply(raw[1])));
+            add(CommandCode.SPUMP, eq(3), sync(raw => new MicroPumpReply(raw[1])));
 
             add(CommandCode.SPI_PSIS_SetVoltage, eq(2), sync(raw => new IonSourceSetReply()));
             add(CommandCode.SPI_DPS_SetVoltage, eq(2), sync(raw => new DetectorSetReply()));

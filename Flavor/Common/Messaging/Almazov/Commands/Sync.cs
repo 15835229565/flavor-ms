@@ -11,7 +11,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             this.incTIC = incTIC;
             this.incMS = incMS;
         }
-        public CPUStatusReply() : this(0, 0) { }
+        public CPUStatusReply()
+            : this(0, 0) { }
         [Flags]
         enum Incident_PC : byte {
             LOCKisLost = 0x01,       //МК принимал пакет, но в последний байт пакета не затвор
@@ -32,6 +33,37 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         public override CommandCode Id {
             get { return CommandCode.CPU_Status; }
+        }
+    }
+    class TICStatusReply: SyncReply, ITIC, IUpdateDevice {
+        public string Request { get { return "?V902\r"; } }
+        readonly bool turbo, relay1, relay2, relay3;
+        readonly int alert;
+        public TICStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
+            this.turbo = turbo;
+            this.relay1 = relay1;
+            this.relay2 = relay2;
+            this.relay3 = relay3;
+            this.alert = alert;
+        }
+        public TICStatusReply() : this(false, false, false, false, 0) { }
+        public override CommandCode Id {
+            get { return CommandCode.TIC_Retransmit; }
+        }
+        public void UpdateDevice(IDevice device) {
+            device.UpdateStatus(turbo, relay1, relay2, relay3, alert);
+        }
+        public void UpdateDevice() {
+            throw new NotImplementedException();
+        }
+        public override bool Equals(object other) {
+            // BAD: asymmetric
+            if (base.Equals(other))
+                return (other as ITIC).Request.Equals(this.Request);
+            return false;
+        }
+        public override int GetHashCode() {
+            return base.GetHashCode() + 17 * Request.GetHashCode();
         }
     }
     class HighVoltagePermittedStatusReply: SyncReply, IUpdateDevice {
@@ -90,40 +122,9 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public OperationBlockOffReply()
             : base(false) { }
     }
-    class TICStatusReply: SyncReply, ITIC, IUpdateDevice {
-        public string Request { get { return "?V902\r"; } }
-        readonly bool turbo, relay1, relay2, relay3;
-        readonly int alert;
-        public TICStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
-            this.turbo = turbo;
-            this.relay1 = relay1;
-            this.relay2 = relay2;
-            this.relay3 = relay3;
-            this.alert = alert;
-        }
-        public TICStatusReply(): this(false, false, false, false, 0) { }
-        public override CommandCode Id {
-            get { return CommandCode.TIC_Retransmit; }
-        }
-        public void UpdateDevice(IDevice device) {
-            device.UpdateStatus(turbo, relay1, relay2, relay3, alert);
-        }
-        public void UpdateDevice() {
-            throw new NotImplementedException();
-        }
-        public override bool Equals(object other) {
-            // BAD: asymmetric
-            if (base.Equals(other))
-                return (other as ITIC).Request.Equals(this.Request);
-            return false;
-        }
-        public override int GetHashCode() {
-            return base.GetHashCode() + 17 * Request.GetHashCode();
-        }
-    }
-    abstract class ValveReply: SyncReply, IUpdateDevice {
+    abstract class FlagReply: SyncReply, IUpdateDevice {
         readonly bool? on;
-        protected ValveReply(byte b) {
+        protected FlagReply(byte b) {
             switch (b) {
                 case 0:
                     on = false;
@@ -143,7 +144,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         abstract public void UpdateDevice(IDevice device);
         #endregion
     }
-    class Valve1Reply: ValveReply {
+    class Valve1Reply: FlagReply {
         public Valve1Reply(byte b)
             : base(b) { }
         public Valve1Reply()
@@ -159,7 +160,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #endregion
     }
-    class Valve2Reply: ValveReply {
+    class Valve2Reply: FlagReply {
         public Valve2Reply(byte b)
             : base(b) { }
         public Valve2Reply()
@@ -169,13 +170,13 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #region IUpdateDevice Members
         public override void UpdateDevice(IDevice device) {
-            // TODO: check Valve1 is turned on/off according to Relay1
+            // TODO:
             //if (on.HasValue)
             //    device.UpdateStatus();
         }
         #endregion
     }
-    class Valve3Reply: ValveReply {
+    class Valve3Reply: FlagReply {
         public Valve3Reply(byte b)
             : base(b) { }
         public Valve3Reply()
@@ -185,7 +186,23 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #region IUpdateDevice Members
         public override void UpdateDevice(IDevice device) {
-            // TODO: check Valve1 is turned on/off according to Relay1
+            // TODO:
+            //if (on.HasValue)
+            //    device.UpdateStatus();
+        }
+        #endregion
+    }
+    class MicroPumpReply: FlagReply {
+        public MicroPumpReply(byte b)
+            : base(b) { }
+        public MicroPumpReply()
+            : this(byte.MaxValue) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPUMP; }
+        }
+        #region IUpdateDevice Members
+        public override void UpdateDevice(IDevice device) {
+            // TODO:
             //if (on.HasValue)
             //    device.UpdateStatus();
         }

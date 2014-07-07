@@ -72,5 +72,8 @@ namespace Flavor.Common {
         protected override void ExtraActionOnMeasureStep() {
             realizer.CheckStepVoltages();
         }
+        public void SendInletSettings(bool useCapillary, params ushort[] ps) {
+            realizer.SendInletSettings(useCapillary, ps);
+        }
     }
 }

@@ -12,31 +12,6 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return AlexProtocol.collectData(Id); }
         }
     }
-    class HighVoltagePermittedStatusRequest: UserRequest {
-        public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id); }
-        }
-        public override CommandCode Id {
-            get { return CommandCode.HVE; }
-        }
-    }
-    class OperationBlockRequest: UserRequest {
-        readonly bool? on;
-        public OperationBlockRequest(bool? on) {
-            this.on = on;
-        }
-        public override IList<byte> Data {
-            get {
-                if (on.HasValue) {
-                    ;
-                }
-                return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue);
-            }
-        }
-        public override CommandCode Id {
-            get { return CommandCode.PRGE; }
-        }
-    }
     class TICStatusRequest: UserRequest, ITIC {
         public string Request { get { return "?V902\r"; } }
         public override IList<byte> Data {
@@ -55,35 +30,57 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             return base.GetHashCode() + 17 * Request.GetHashCode();
         }
     }
-    
-    abstract class ValveRequest: UserRequest {
+    class HighVoltagePermittedStatusRequest: UserRequest {
+        public override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id); }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.HVE; }
+        }
+    }
+    abstract class FlagRequest: UserRequest {
         readonly bool? on;
-        protected ValveRequest(bool? on) {
+        protected FlagRequest(bool? on) {
             this.on = on;
         }
         public override IList<byte> Data {
             get { return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
         }
- }
-    class Valve1Request: ValveRequest {
+    }
+    class OperationBlockRequest: FlagRequest {
+        public OperationBlockRequest(bool? on)
+            : base(on) { }
+        public override CommandCode Id {
+            get { return CommandCode.PRGE; }
+        }
+    }
+    
+    class Valve1Request: FlagRequest {
         public Valve1Request(bool? on)
             : base(on) { }
         public override CommandCode Id {
             get { return CommandCode.SEMV1; }
         }
     }
-    class Valve2Request: ValveRequest {
+    class Valve2Request: FlagRequest {
         public Valve2Request(bool? on)
             : base(on) { }
         public override CommandCode Id {
             get { return CommandCode.SEMV2; }
         }
     }
-    class Valve3Request: ValveRequest {
+    class Valve3Request: FlagRequest {
         public Valve3Request(bool? on)
             : base(on) { }
         public override CommandCode Id {
             get { return CommandCode.SEMV3; }
+        }
+    }
+    class MicroPumpRequest: FlagRequest {
+        public MicroPumpRequest(bool? on)
+            : base(on) { }
+        public override CommandCode Id {
+            get { return CommandCode.SPUMP; }
         }
     }
 
