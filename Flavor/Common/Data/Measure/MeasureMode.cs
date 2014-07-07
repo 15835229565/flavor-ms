@@ -157,9 +157,7 @@ namespace Flavor.Common.Data.Measure {
             }
             public event EventHandler<SaveResultsEventArgs> SaveResults;
             protected virtual void OnSaveResults(short? shift) {
-                // TODO: lock here?
-                if (SaveResults != null)
-                    SaveResults(this, new SaveResultsEventArgs(shift));
+                SaveResults.Raise(this, new SaveResultsEventArgs(shift));
                 // senseModeCounts here?
             }
             List<PreciseEditorData> senseModePoints;

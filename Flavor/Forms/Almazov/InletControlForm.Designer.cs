@@ -40,22 +40,22 @@
             // capillaryRadioButton
             // 
             this.capillaryRadioButton.AutoSize = true;
+            this.capillaryRadioButton.Checked = true;
             this.capillaryRadioButton.Location = new System.Drawing.Point(12, 12);
             this.capillaryRadioButton.Name = "capillaryRadioButton";
             this.capillaryRadioButton.Size = new System.Drawing.Size(74, 17);
             this.capillaryRadioButton.TabIndex = 0;
+            this.capillaryRadioButton.TabStop = true;
             this.capillaryRadioButton.Text = "Капилляр";
             this.capillaryRadioButton.UseVisualStyleBackColor = true;
             // 
             // inletRadioButton
             // 
             this.inletRadioButton.AutoSize = true;
-            this.inletRadioButton.Checked = true;
             this.inletRadioButton.Location = new System.Drawing.Point(12, 35);
             this.inletRadioButton.Name = "inletRadioButton";
             this.inletRadioButton.Size = new System.Drawing.Size(85, 17);
             this.inletRadioButton.TabIndex = 1;
-            this.inletRadioButton.TabStop = true;
             this.inletRadioButton.Text = "Натекатель";
             this.inletRadioButton.UseVisualStyleBackColor = true;
             // 

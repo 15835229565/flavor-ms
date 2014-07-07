@@ -298,16 +298,14 @@ namespace Flavor.Common {
             if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
                     Graph.Instance.Reset();
-                    {
-                        var temp = new MeasureMode.Precise();
-                        temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile(e.Shift);
-                        CurrentMeasureMode = temp;
-                    }
-                    CurrentMeasureMode.SuccessfulExit += (s, e) => {
+                    var temp = new MeasureMode.Precise();
+                    temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile(e.Shift);
+                    temp.SuccessfulExit += (s, e) => {
                         var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
                         Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                     };
-                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
+                    temp.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
+                    CurrentMeasureMode = temp;
                     initMeasure(ProgramStates.Measure);
                     return true;
                 } else {
@@ -363,9 +361,13 @@ namespace Flavor.Common {
                     short? startShiftValue = 0;
                     var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
                     temp.SaveResults += (s, e) => Config.autoSaveMonitorSpectrumFile(e.Shift);
+                    temp.Finalize += (s, e) => Config.finalizeMonitorFile();
+                    temp.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
+                    temp.SuccessfulExit += (s, e) => {
+                        var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
+                        Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
+                    };
                     CurrentMeasureMode = temp;
-                    CurrentMeasureMode.Finalize += (s, e) => Config.finalizeMonitorFile();
-                    CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
 
                     if (doBackgroundPremeasure) {
                         initMeasure(ProgramStates.WaitBackgroundMeasure);
