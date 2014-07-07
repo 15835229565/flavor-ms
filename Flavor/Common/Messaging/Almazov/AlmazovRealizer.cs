@@ -121,6 +121,8 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             });
             Add<Valve1Reply>(updateDevice);
+            Add<Valve2Reply>(updateDevice);
+            Add<Valve3Reply>(updateDevice);
 
             Add<IonSourceSetReply>();
             Add<DetectorSetReply>();

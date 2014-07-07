@@ -180,22 +180,9 @@ namespace Flavor.Common.Messaging.Almazov {
                     return null;
                 }
             }));
-            add(CommandCode.SEMV1, eq(3), sync(raw => {
-                // TODO: move into command ctor
-                bool? res;
-                switch (raw[1]) {
-                    case 0:
-                        res = false;
-                        break;
-                    case 1:
-                        res = true;
-                        break;
-                    default:
-                        res = null;
-                        break;
-                }
-                return new Valve1Reply(res);
-            }));
+            add(CommandCode.SEMV1, eq(3), sync(raw => new Valve1Reply(raw[1])));
+            add(CommandCode.SEMV2, eq(3), sync(raw => new Valve2Reply(raw[1])));
+            add(CommandCode.SEMV3, eq(3), sync(raw => new Valve3Reply(raw[1])));
 
             add(CommandCode.SPI_PSIS_SetVoltage, eq(2), sync(raw => new IonSourceSetReply()));
             add(CommandCode.SPI_DPS_SetVoltage, eq(2), sync(raw => new DetectorSetReply()));

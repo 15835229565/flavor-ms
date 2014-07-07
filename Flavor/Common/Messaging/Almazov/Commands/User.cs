@@ -55,18 +55,38 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             return base.GetHashCode() + 17 * Request.GetHashCode();
         }
     }
-    class Valve1Request: UserRequest {
+    
+    abstract class ValveRequest: UserRequest {
         readonly bool? on;
-        public Valve1Request(bool? on) {
+        protected ValveRequest(bool? on) {
             this.on = on;
         }
         public override IList<byte> Data {
             get { return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
         }
+ }
+    class Valve1Request: ValveRequest {
+        public Valve1Request(bool? on)
+            : base(on) { }
         public override CommandCode Id {
             get { return CommandCode.SEMV1; }
         }
     }
+    class Valve2Request: ValveRequest {
+        public Valve2Request(bool? on)
+            : base(on) { }
+        public override CommandCode Id {
+            get { return CommandCode.SEMV2; }
+        }
+    }
+    class Valve3Request: ValveRequest {
+        public Valve3Request(bool? on)
+            : base(on) { }
+        public override CommandCode Id {
+            get { return CommandCode.SEMV3; }
+        }
+    }
+
     abstract class DACADCRequest: UserRequest {
         readonly protected byte channel;
         protected DACADCRequest(byte channel) {

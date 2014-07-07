@@ -121,23 +121,73 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             return base.GetHashCode() + 17 * Request.GetHashCode();
         }
     }
-    class Valve1Reply: SyncReply, IUpdateDevice {
+    abstract class ValveReply: SyncReply, IUpdateDevice {
         readonly bool? on;
-        public Valve1Reply(bool? on) {
-            this.on = on;
+        protected ValveReply(byte b) {
+            switch (b) {
+                case 0:
+                    on = false;
+                    break;
+                case 1:
+                    on = true;
+                    break;
+                default:
+                    on = null;
+                    break;
+            }
         }
-        public Valve1Reply(): this(null) { }
+        #region IUpdateDevice Members
+        public void UpdateDevice() {
+            throw new NotImplementedException();
+        }
+        abstract public void UpdateDevice(IDevice device);
+        #endregion
+    }
+    class Valve1Reply: ValveReply {
+        public Valve1Reply(byte b)
+            : base(b) { }
+        public Valve1Reply()
+            : this(byte.MaxValue) { }
         public override CommandCode Id {
             get { return CommandCode.SEMV1; }
         }
         #region IUpdateDevice Members
-        public void UpdateDevice(IDevice device) {
+        public override void UpdateDevice(IDevice device) {
             // TODO: check Valve1 is turned on/off according to Relay1
             //if (on.HasValue)
             //    device.UpdateStatus();
         }
-        public void UpdateDevice() {
-            throw new NotImplementedException();
+        #endregion
+    }
+    class Valve2Reply: ValveReply {
+        public Valve2Reply(byte b)
+            : base(b) { }
+        public Valve2Reply()
+            : this(byte.MaxValue) { }
+        public override CommandCode Id {
+            get { return CommandCode.SEMV2; }
+        }
+        #region IUpdateDevice Members
+        public override void UpdateDevice(IDevice device) {
+            // TODO: check Valve1 is turned on/off according to Relay1
+            //if (on.HasValue)
+            //    device.UpdateStatus();
+        }
+        #endregion
+    }
+    class Valve3Reply: ValveReply {
+        public Valve3Reply(byte b)
+            : base(b) { }
+        public Valve3Reply()
+            : this(byte.MaxValue) { }
+        public override CommandCode Id {
+            get { return CommandCode.SEMV3; }
+        }
+        #region IUpdateDevice Members
+        public override void UpdateDevice(IDevice device) {
+            // TODO: check Valve1 is turned on/off according to Relay1
+            //if (on.HasValue)
+            //    device.UpdateStatus();
         }
         #endregion
     }
