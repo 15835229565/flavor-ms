@@ -5,38 +5,31 @@ using System.Text.RegularExpressions;
 
 namespace Flavor.Common.Data.Measure {
     class PreciseEditorData: IComparable<PreciseEditorData> {
-        public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
-            pointNumber = pn;
-            step = st;
-            collector = co;
-            iterations = it;
-            width = wi;
-            precision = pr;
+        PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr) {
+            pNumber = pn;
+            Step = st;
+            Collector = co;
+            Iterations = it;
+            Width = wi;
+            Precision = pr;
         }
         public PreciseEditorData(byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
             : this(pn, st, co, it, wi, pr) {
-            comment = comm;
+            Comment = comm;
         }
         public PreciseEditorData(bool useit, byte pn, ushort st, byte co, ushort it, ushort wi, float pr, string comm)
             : this(pn, st, co, it, wi, pr, comm) {
-            usethis = useit;
+            Use = useit;
         }
         public PreciseEditorData(PreciseEditorData other)
-            : this(other.usethis, other.pointNumber, other.step, other.collector, other.iterations, other.width, other.precision, other.comment) {
+            : this(other.Use, other.pNumber, other.Step, other.Collector, other.Iterations, other.Width, other.Precision, other.Comment) {
             associatedPoints = other.associatedPoints == null ? null : new PointPairListPlus(other.associatedPoints, this, null);
         }
-        // use for generate checker peak
-        public PreciseEditorData(PreciseEditorData other, ushort iterations)
-            : this(other.usethis, other.pointNumber, other.step, other.collector, iterations, other.width, other.precision, other.comment) {
+        public static PreciseEditorData GetCheckerPeak(PreciseEditorData peak, ushort iterations) {
+            var res = new PreciseEditorData(peak);
+            res.Iterations = iterations;
+            return res;
         }
-        bool usethis = true;
-        byte pointNumber;
-        ushort step;
-        byte collector;
-        ushort iterations;
-        ushort width;
-        float precision;
-        string comment = "";
         PointPairListPlus associatedPoints = null;
         public PointPairListPlus AssociatedPoints {
             get { return associatedPoints; }
@@ -53,43 +46,19 @@ namespace Flavor.Common.Data.Measure {
                 associatedPoints = new PointPairListPlus(value, this, null);
             }
         }
-        public bool Use {
-            get { return usethis; }
-            //set { usethis = value; }
-        }
-        public byte pNumber {
-            get { return pointNumber; }
-            //set { pointNumber = value; }
-        }
-        public ushort Step {
-            get { return step; }
-            //set { step = value; }
-        }
-        public byte Collector {
-            get { return collector; }
-            //set { collector = value; }
-        }
-        public ushort Iterations {
-            get { return iterations; }
-            //set { iterations = value; }
-        }
-        public ushort Width {
-            get { return width; }
-            //set { width = value; }
-        }
-        public float Precision {
-            get { return precision; }
-            //set { precision = value; }
-        }
-        public string Comment {
-            get { return comment; }
-            //set { comment = value; }
-        }
+        public bool Use { get; private set; }
+        public byte pNumber { get; private set; }
+        public ushort Step { get; private set; }
+        public byte Collector { get; private set; }
+        public ushort Iterations { get; private set; }
+        public ushort Width { get; private set; }
+        public float Precision { get; private set; }
+        public string Comment { get; private set; }
         public override bool Equals(object other) {
             if (other is PreciseEditorData) {
                 PreciseEditorData o = other as PreciseEditorData;
-                return (this.pointNumber == o.pointNumber) && (this.collector == o.collector) && (this.step == o.step) &&
-                       (this.iterations == o.iterations) && (this.width == o.width) && (this.comment == o.comment);
+                return (this.pNumber == o.pNumber) && (this.Collector == o.Collector) && (this.Step == o.Step) &&
+                       (this.Iterations == o.Iterations) && (this.Width == o.Width) && (this.Comment == o.Comment);
             }
             return false;
         }
@@ -105,22 +74,22 @@ namespace Flavor.Common.Data.Measure {
         public override string ToString() {
             return (new StringBuilder())
                 .Append(START)
-                .Append(pointNumber)
+                .Append(pNumber)
                 .Append(DELIMITER)
-                .Append(usethis)
+                .Append(Use)
                 .Append(DELIMITER)
-                .Append(step)
+                .Append(Step)
                 .Append(DELIMITER)
-                .Append(collector)
+                .Append(Collector)
                 .Append(DELIMITER)
-                .Append(iterations)
+                .Append(Iterations)
                 .Append(DELIMITER)
-                .Append(width)
+                .Append(Width)
                 .Append(DELIMITER)
-                .Append(precision)
+                .Append(Precision)
                 .Append(DELIMITER)
                 //? multi-line comments, empty comments ?
-                .Append(comment.Replace("&", "&amp;").Replace(START, START_SUBST).Replace(END, END_SUBST))
+                .Append(Comment.Replace("&", "&amp;").Replace(START, START_SUBST).Replace(END, END_SUBST))
                 .Append(END).ToString();
         }
         public static List<PreciseEditorData> fromString(string str) {
@@ -168,12 +137,12 @@ namespace Flavor.Common.Data.Measure {
         }
         #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
         public readonly static Predicate<PreciseEditorData> PeakIsUsed =
-            ped => ped != null && ped.usethis;
+            ped => ped != null && ped.Use;
         public readonly static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue =
             (ped1, ped2) => genericCompare(ped1, ped2, ped => ped == null, () => {
-                if (ped1.step != ped2.step)
-                    return ped1.step - ped2.step;
-                return ped2.pointNumber - ped1.pointNumber;
+                if (ped1.Step != ped2.Step)
+                    return ped1.Step - ped2.Step;
+                return ped2.pNumber - ped1.pNumber;
             });
         static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, Generator<int> comparison) {
             // stub for any comparison
@@ -192,15 +161,15 @@ namespace Flavor.Common.Data.Measure {
         public int CompareTo(PreciseEditorData other) {
             if (other == null)
                 return 1;
-            if (collector != other.collector)
-                return collector - other.collector;
-            if (step != other.step)
-                return step - other.step;
-            if (width != other.width)
-                return other.width - width;
-            if (iterations != other.iterations)
-                return other.iterations - iterations;
-            return other.pointNumber - pointNumber;
+            if (Collector != other.Collector)
+                return Collector - other.Collector;
+            if (Step != other.Step)
+                return Step - other.Step;
+            if (Width != other.Width)
+                return other.Width - Width;
+            if (Iterations != other.Iterations)
+                return other.Iterations - Iterations;
+            return other.pNumber - pNumber;
         }
         #endregion
     }

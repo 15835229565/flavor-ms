@@ -7,6 +7,7 @@ namespace Flavor.Forms {
     public partial class DelaysOptionsForm: Form {
         public DelaysOptionsForm() {
             InitializeComponent();
+            // TODO: move to OnLoad
             beforeTimeNumericUpDown.Value = Config.CommonOptions.befTimeReal;
             forwardTimeNumericUpDown.Value = Config.CommonOptions.fTimeReal;
             backwardTimeNumericUpDown.Value = Config.CommonOptions.bTimeReal;

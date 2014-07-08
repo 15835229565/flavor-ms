@@ -78,7 +78,7 @@ namespace Flavor.Common.Settings {
                 int index = preciseData.FindIndex(peak => peak.pNumber == reperPeakIndex);
                 if (index == -1)
                     return null;
-                return new PreciseEditorData(preciseData[index], countMaxIteration());
+                return PreciseEditorData.GetCheckerPeak(preciseData[index], countMaxIteration());
             }
         }
         static ushort countMaxIteration() {
@@ -107,7 +107,7 @@ namespace Flavor.Common.Settings {
                         res.Add(CheckerPeak);
                     } else {
                         // peak is also measured. error can be caused by this line (copying)
-                        res[index] = new PreciseEditorData(res[index], countMaxIteration(res));
+                        res[index] = PreciseEditorData.GetCheckerPeak(res[index], countMaxIteration(res));
                     }
                     return res;
                 }
