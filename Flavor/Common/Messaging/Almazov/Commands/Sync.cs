@@ -52,7 +52,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return CommandCode.TIC_Retransmit; }
         }
         public void UpdateDevice(IDevice device) {
-            device.UpdateStatus(turbo, relay1, relay2, relay3, alert);
+            device.UpdateVacuumStatus(turbo, relay1, relay2, relay3, alert);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();
@@ -83,7 +83,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return CommandCode.TIC_GetStatus; }
         }
         public void UpdateDevice(IDevice device) {
-            device.UpdateStatus(turbo, relay1, relay2, relay3, alert);
+            device.UpdateVacuumStatus(turbo, relay1, relay2, relay3, alert);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();
@@ -232,10 +232,17 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         #endregion
     }
 
-    class AllVoltagesReply: SyncReply {
-        // TODO: actual data
+    class AllVoltagesReply: SyncReply, IUpdateDevice {
+        public AllVoltagesReply(IList<byte> data) {
+        }
         public override CommandCode Id {
             get { return CommandCode.SPI_GetAllVoltages; }
+        }
+        public void UpdateDevice(IDevice device) {
+            //device.UpdateStatus();
+        }
+        public void UpdateDevice() {
+            throw new NotImplementedException();
         }
     }
     

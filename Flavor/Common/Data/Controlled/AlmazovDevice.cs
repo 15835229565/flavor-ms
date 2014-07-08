@@ -33,11 +33,15 @@ namespace Flavor.Common {
         protected void OnDeviceStateChanged(byte state) {
             DeviceStateChanged.Raise(this, new EventArgs<byte>(state));
         }
+        // TODO: use!
         public event EventHandler DeviceStatusChanged;
-        // workaround for detecting Relay1 change
+        protected void OnDeviceStatusChanged() {
+            DeviceStatusChanged.Raise(this, EventArgs.Empty);
+        }
+        // TODO: use!
         public event EventHandler VacuumStateChanged;
-        protected void OnVacuumStateChanged(bool on) {
-            VacuumStateChanged.Raise(this, new EventArgs<bool>(on));
+        protected void OnVacuumStateChanged() {
+            VacuumStateChanged.Raise(this, EventArgs.Empty);
         }
         public event EventHandler TurboPumpStatusChanged;
         public event TurboPumpAlertEventHandler TurboPumpAlert;
@@ -58,19 +62,22 @@ namespace Flavor.Common {
         }
 
         public void UpdateStatus(params ValueType[] data) {
+            OnDeviceStatusChanged();
+        }
+        public void UpdateVacuumStatus(params ValueType[] data) {
             try {
                 var temp = State;
+                var temp2 = temp;
                 SwitchState(temp, DeviceStates.Turbo, (bool)(data[0]));
-                // workaround for detecting Relay1 change
-                //var temp2 = temp;
                 temp = SwitchState(temp, DeviceStates.SEMV1, (bool)(data[1]));
-                //if (temp2 != temp)
-                //    OnVacuumStateChanged((bool)(data[1]));
 
                 temp = SwitchState(temp, DeviceStates.Relay2, (bool)(data[2]));
                 temp = SwitchState(temp, DeviceStates.Relay3, (bool)(data[3]));
                 temp = SwitchState(temp, DeviceStates.Alert, (int)(data[4]) != 0);
                 State = temp;
+                if (temp2 != temp)
+                    // TODO: proper data!
+                    OnVacuumStateChanged();
             } catch (InvalidCastException) {
             };
         }

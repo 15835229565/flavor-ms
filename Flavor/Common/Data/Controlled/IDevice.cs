@@ -13,6 +13,7 @@ namespace Flavor.Common {
         void OperationReady(bool on);
         void OperationBlock(bool on);
         void UpdateStatus(params ValueType[] data);
+        void UpdateVacuumStatus(params ValueType[] data);
         uint[] Detectors { get; set; }
     }
 }

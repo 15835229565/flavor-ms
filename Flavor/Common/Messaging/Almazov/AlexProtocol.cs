@@ -214,14 +214,15 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.SPI_PSIS_SetVoltage, eq(2), sync(raw => new IonSourceSetReply()));
             add(CommandCode.SPI_DPS_SetVoltage, eq(2), sync(raw => new DetectorSetReply()));
             add(CommandCode.SPI_PSInl_SetVoltage, eq(2), sync(raw => new InletSetReply()));
-            add(CommandCode.SPI_PSIS_GetVoltage, eq(4), sync(raw => 
-                IonSourceGetReply.Parse(trim(raw))));
+            add(CommandCode.SPI_PSIS_GetVoltage, eq(4), sync(raw => IonSourceGetReply.Parse(trim(raw))));
             add(CommandCode.SPI_DPS_GetVoltage, eq(4), sync(raw => DetectorGetReply.Parse(trim(raw))));
             add(CommandCode.SPI_PSInl_GetVoltage, eq(4), sync(raw => InletGetReply.Parse(trim(raw))));
 
             add(CommandCode.SPI_Scan_SetVoltage, eq(2), sync(raw => new ScanVoltageSetReply()));
             add(CommandCode.SPI_CP_SetVoltage, eq(2), sync(raw => new CapacitorVoltageSetReply()));
 
+            add(CommandCode.SPI_GetAllVoltages, eq(28), sync(raw => new AllVoltagesReply(trim(raw))));
+            
             add(CommandCode.RTC_StartMeasure, eq(3), sync(raw => new SendMeasureReply(raw[1])));
             add(CommandCode.RTC_ReceiveResults, eq(18), sync(raw => new CountsReply(trim(raw))));
 
