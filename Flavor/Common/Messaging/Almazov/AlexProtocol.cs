@@ -224,6 +224,7 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.SPI_GetAllVoltages, eq(28), sync(raw => new AllVoltagesReply(trim(raw))));
             
             add(CommandCode.RTC_StartMeasure, eq(3), sync(raw => new SendMeasureReply(raw[1])));
+            add(CommandCode.RTC_DelayedStart, eq(3), sync(raw => new DelayedMeasureReply(raw[1])));
             add(CommandCode.RTC_ReceiveResults, eq(18), sync(raw => new CountsReply(trim(raw))));
 
             // BAD temporary solution

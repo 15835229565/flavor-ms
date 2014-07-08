@@ -10,8 +10,8 @@ namespace Flavor.Common.Messaging.Almazov {
         AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Generator<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
                 attempts,
-                new StatusRequestGenerator(//new TICStatusRequest(),
-                    new VacuumStatusRequest(),
+                new StatusRequestGenerator(new TICStatusRequest(),
+                    //new VacuumStatusRequest(),
                     new CPUStatusRequest(),
                     new HighVoltagePermittedStatusRequest(),
                     new OperationBlockRequest(null)),
@@ -164,6 +164,7 @@ namespace Flavor.Common.Messaging.Almazov {
             }));
 
             Add<SendMeasureReply>();
+            Add<DelayedMeasureReply>();
             Add<CountsReply>(updateDevice, p => OnMeasureDone());
         }
         // TODO: move to realizer ctor as extra action on measure step

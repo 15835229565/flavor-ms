@@ -450,10 +450,21 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
 
     class SendMeasureReply: SyncReply {
-        public SendMeasureReply(byte status) { }
+        public SendMeasureReply(byte status) {
+            // TODO: check
+        }
         public SendMeasureReply() { }
         public override CommandCode Id {
             get { return CommandCode.RTC_StartMeasure; }
+        }
+    }
+    class DelayedMeasureReply: SyncReply {
+        public DelayedMeasureReply(byte status) {
+            // 1 - ok, 0 - wrong time, 2 - already counting or waiting
+        }
+        public DelayedMeasureReply() { }
+        public override CommandCode Id {
+            get { return CommandCode.RTC_DelayedStart; }
         }
     }
 

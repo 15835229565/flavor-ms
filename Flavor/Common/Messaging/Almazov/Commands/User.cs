@@ -186,12 +186,16 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         readonly uint voltage;
         protected PreciseVoltageSetRequest(byte channel, uint voltage)
             : base((byte)(channel + 24)) {
-            voltage &= 0x3FFF;
             this.voltage = voltage;
+        }
+        public static byte[] VoltageBytes(uint voltage) {
+            voltage &= 0x3FFF;
+            //TODO: check IsLittleEndian in BitConverter
+            return BitConverter.GetBytes(voltage << 2);
         }
         protected sealed override object[] Parameters {
             get {
-                byte[] bytes = BitConverter.GetBytes(voltage << 2);
+                byte[] bytes = VoltageBytes(voltage);
                 return Params(channel, bytes[1], bytes[0]);
             }
         }
@@ -389,6 +393,31 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return CommandCode.RTC_StartMeasure; }
         }
     }
+    class DelayedMeasureRequest: UserRequest {
+        readonly uint eT, iT, sV, psV, cV;
+        public DelayedMeasureRequest(uint eT, uint iT, uint sV, uint psV, uint cV) {
+            this.eT = eT;
+            this.iT = iT;
+            this.sV = sV;
+            this.psV = psV;
+            this.cV = cV;
+        }
+        protected override object[] Parameters {
+            get {
+                byte[] scan = PreciseVoltageSetRequest.VoltageBytes(sV);
+                byte[] parentScan = PreciseVoltageSetRequest.VoltageBytes(psV);
+                byte[] capacitor = PreciseVoltageSetRequest.VoltageBytes(cV);
+                byte[] delay = BitConverter.GetBytes(iT);
+                byte[] exposition = BitConverter.GetBytes(eT);
+                //TODO: check IsLittleEndian in BitConverter
+                return Params(scan[1], scan[0], parentScan[1], parentScan[0], capacitor[1], capacitor[0], delay[0], delay[1], exposition[0], exposition[1]);
+            }
+        }
+        public override CommandCode Id {
+            get { return CommandCode.RTC_DelayedStart; }
+        }
+    }
+    
     class CountsRequest: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.RTC_ReceiveResults; }
