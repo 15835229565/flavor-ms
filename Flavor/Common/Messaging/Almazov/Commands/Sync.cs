@@ -46,7 +46,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             this.relay3 = relay3;
             this.alert = alert;
         }
-        public TICStatusReply() : this(false, false, false, false, 0) { }
+        public TICStatusReply()
+            : this(false, false, false, false, 0) { }
         public override CommandCode Id {
             get { return CommandCode.TIC_Retransmit; }
         }
@@ -64,6 +65,28 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         public override int GetHashCode() {
             return base.GetHashCode() + 17 * Request.GetHashCode();
+        }
+    }
+    class VacuumStatusReply: SyncReply, IUpdateDevice {
+        readonly bool turbo, relay1, relay2, relay3;
+        readonly int alert;
+        public VacuumStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
+            this.turbo = turbo;
+            this.relay1 = relay1;
+            this.relay2 = relay2;
+            this.relay3 = relay3;
+            this.alert = alert;
+        }
+        public VacuumStatusReply()
+            : this(false, false, false, false, 0) { }
+        public override CommandCode Id {
+            get { return CommandCode.TIC_GetStatus; }
+        }
+        public void UpdateDevice(IDevice device) {
+            device.UpdateStatus(turbo, relay1, relay2, relay3, alert);
+        }
+        public void UpdateDevice() {
+            throw new NotImplementedException();
         }
     }
     class HighVoltagePermittedStatusReply: SyncReply, IUpdateDevice {
@@ -208,6 +231,14 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
         #endregion
     }
+
+    class AllVoltagesReply: SyncReply {
+        // TODO: actual data
+        public override CommandCode Id {
+            get { return CommandCode.SPI_GetAllVoltages; }
+        }
+    }
+    
     class IonSourceSetReply: SyncReply {
         public override CommandCode Id {
             get { return CommandCode.SPI_PSIS_SetVoltage; }

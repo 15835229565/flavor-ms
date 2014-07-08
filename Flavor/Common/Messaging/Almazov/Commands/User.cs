@@ -1,21 +1,30 @@
 ﻿using System.Collections.Generic;
 using CommandCode = Flavor.Common.Messaging.Almazov.CommandCode;
-using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.Almazov.CommandCode>;
 using System;
 
 namespace Flavor.Common.Messaging.Almazov.Commands {
+    abstract class UserRequest: Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.Almazov.CommandCode> {
+        public sealed override IList<byte> Data {
+            get { return AlexProtocol.collectData(Id, Parameters); }
+        }
+        protected object[] Params(params object[] ps) {
+            return ps;
+        }
+        readonly object[] empty = new object[0];
+        protected virtual object[] Parameters {
+            get { return empty; }
+        }
+    }
+    
     class CPUStatusRequest: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.CPU_Status; }
         }
-        public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id); }
-        }
     }
     class TICStatusRequest: UserRequest, ITIC {
         public string Request { get { return "?V902\r"; } }
-        public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id, Request); }
+        protected override object[] Parameters {
+            get { return Params(Request); }
         }
         public override CommandCode Id {
             get { return CommandCode.TIC_Retransmit; }
@@ -30,10 +39,12 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             return base.GetHashCode() + 17 * Request.GetHashCode();
         }
     }
-    class HighVoltagePermittedStatusRequest: UserRequest {
-        public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id); }
+    class VacuumStatusRequest: UserRequest {
+        public override CommandCode Id {
+            get { return CommandCode.TIC_GetStatus; }
         }
+    }
+    class HighVoltagePermittedStatusRequest: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.HVE; }
         }
@@ -43,8 +54,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         protected FlagRequest(bool? on) {
             this.on = on;
         }
-        public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id, on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
+        protected sealed override object[] Parameters {
+            get { return Params(on.HasValue ? (byte)(on.Value ? 1 : 0) : byte.MaxValue); }
         }
     }
     class OperationBlockRequest: FlagRequest {
@@ -84,6 +95,12 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
     }
 
+    class AllVoltagesRequest: UserRequest {
+        public override CommandCode Id {
+            get { return CommandCode.SPI_GetAllVoltages; }
+        }
+    }
+    
     abstract class DACADCRequest: UserRequest {
         readonly protected byte channel;
         protected DACADCRequest(byte channel) {
@@ -97,14 +114,14 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             voltage &= 0xFFF;
             this.voltage = voltage;
         }
-        public override IList<byte> Data {
+        protected sealed override object[] Parameters {
             get {
                 byte first = channel;
                 --first;
                 first <<= 4;
                 first += (byte)(voltage >> 8);
                 byte second = (byte)(voltage & 0xFF);
-                return AlexProtocol.collectData(Id, first, second);
+                return Params(first, second);
             }
         }
     }
@@ -135,9 +152,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         protected DetectorSetRequest(byte channel, ushort voltage)
             : base(channel, voltage) { }
         public override CommandCode Id {
-            get {
-                return CommandCode.SPI_DPS_SetVoltage;
-            }
+            get { return CommandCode.SPI_DPS_SetVoltage; }
         }
     }
     class SetD1VoltageRequest: DetectorSetRequest {
@@ -174,10 +189,10 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             voltage &= 0x3FFF;
             this.voltage = voltage;
         }
-        public override IList<byte> Data {
+        protected sealed override object[] Parameters {
             get {
                 byte[] bytes = BitConverter.GetBytes(voltage << 2);
-                return AlexProtocol.collectData(Id, channel, bytes[1], bytes[0]);
+                return Params(channel, bytes[1], bytes[0]);
             }
         }
     }
@@ -209,12 +224,12 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         const byte CHANNEL_STEP = 4;
         protected GetADCRequest(byte channel)
             : base(channel) { }
-        public override IList<byte> Data {
+        protected sealed override object[] Parameters {
             get {
                 byte first = channel;
                 first *= CHANNEL_STEP;
                 first += HBYTE;
-                return AlexProtocol.collectData(Id, first, LBYTE_DoubleRange);
+                return Params(first, LBYTE_DoubleRange);
             }
         }
         // what to do with reply?
@@ -303,10 +318,10 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         SendMeasureRequest(uint ms) {
             this.ms = ms;
         }
-        public override IList<byte> Data {
-            get { 
+        protected sealed override object[] Parameters {
+            get {
                 byte[] MeasurePeriod = BitConverter.GetBytes(calcRTCticks());
-                return AlexProtocol.collectData(Id, calcRTCprescaler(), MeasurePeriod[1], MeasurePeriod[0]);
+                return Params(calcRTCprescaler(), MeasurePeriod[1], MeasurePeriod[0]);
             }
         }
         const int min_ms_div1 = 0;
@@ -375,9 +390,6 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         }
     }
     class CountsRequest: UserRequest {
-        public override IList<byte> Data {
-            get { return AlexProtocol.collectData(Id); }
-        }
         public override CommandCode Id {
             get { return CommandCode.RTC_ReceiveResults; }
         }

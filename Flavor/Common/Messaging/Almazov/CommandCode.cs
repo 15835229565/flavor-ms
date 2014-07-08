@@ -10,22 +10,25 @@
         RTC_StartMeasure = 30,
         RTC_StopMeasure = 31,
         RTC_ReceiveResults = 32,
+        RTC_DelayedStart = 33,
 
         TIC_Retransmit = 50,
-        TIC_SetGauges = 51,
+        TIC_GetStatus = 51,
         TIC_GetMem = 53,
 
         SPI_PSIS_SetVoltage = 40,
-        SPI_PSIS_GetVoltage = 60,
         SPI_DPS_SetVoltage = 41,
-        SPI_DPS_GetVoltage = 61,
-        SPI_PSInl_SetVoltage = 44,
-        SPI_PSInl_GetVoltage = 63,
         SPI_Scan_SetVoltage = 42,
-        SPI_Scan_GetVoltage = 62,
         SPI_CP_SetVoltage = 43,
-        // TODO: prove it is right!
-        //SPI_CP_GetVoltage = 62,
+        SPI_PSInl_SetVoltage = 44,
+
+        SPI_PSIS_GetVoltage = 60,
+        SPI_DPS_GetVoltage = 61,
+        SPI_Scan_GetVoltage = 62,
+        SPI_PSInl_GetVoltage = 63,
+        
+        SPI_GetAllVoltages = 64,
+
         HVE = 71,
         PRGE = 72,
         EDCD = 73,
@@ -35,13 +38,5 @@
         SPUMP = 77,
         
         Service_Message = 0,
-        //Sync_Error = 255,
-
-        //LAM_Event = 254,
-
-        //LAM_CriticalError = 252,
-        // TODO: why not processed?
-        // TODO: check length
-        //LAM_InternalError = 253,
     }
 }

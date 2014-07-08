@@ -180,6 +180,31 @@ namespace Flavor.Common.Messaging.Almazov {
                     return null;
                 }
             }));
+            add(CommandCode.TIC_GetStatus, moreeq(21), sync(raw => {
+                Regex expression = new Regex(@"^([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+$");
+                Match match;
+                var command = Encoding.ASCII.GetString(trim(raw).ToArray());
+                match = expression.Match(command);
+                if (match.Success) {
+                    GroupCollection groups = match.Groups;
+                    var turbo = groups[1].Value == "4";
+                    var relay1 = groups[2].Value == "4";
+                    var relay2 = groups[3].Value == "4";
+                    var relay3 = groups[4].Value == "4";
+                    int alert;
+                    try {
+                        alert = int.Parse(groups[5].Value);
+                    } catch (FormatException) {
+                        //error. wrong alert format.
+                        alert = 0;
+                    }
+                    return new VacuumStatusReply(turbo, relay1, relay2, relay3, alert);
+                } else {
+                    OnErrorCommand(raw, "Wrong TIC status");
+                    return null;
+                }
+            }));
+
             add(CommandCode.SEMV1, eq(3), sync(raw => new Valve1Reply(raw[1])));
 
             add(CommandCode.SEMV2, eq(3), sync(raw => new Valve2Reply(raw[1])));
