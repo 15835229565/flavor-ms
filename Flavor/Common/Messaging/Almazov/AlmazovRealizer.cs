@@ -133,6 +133,8 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<Valve3Reply>(updateDevice);
             Add<MicroPumpReply>(updateDevice);
 
+            Add<AllVoltagesReply>(updateDevice);
+            
             Add<IonSourceSetReply>();
             Add<DetectorSetReply>();
             Add<InletSetReply>();

@@ -233,13 +233,30 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
     }
 
     class AllVoltagesReply: SyncReply, IUpdateDevice {
+        readonly ushort eI, iV, fV1, fV2, d1V, d2V, d3V, cVp, cVm, sV, psV, inV, hT;
+        //readonly byte flags;
         public AllVoltagesReply(IList<byte> data) {
+            eI = ADCGetReply.Voltage(data[0], data[1]);
+            iV = ADCGetReply.Voltage(data[2], data[3]);
+            fV1 = ADCGetReply.Voltage(data[4], data[5]);
+            fV2 = ADCGetReply.Voltage(data[6], data[7]);
+            d1V = ADCGetReply.Voltage(data[8], data[9]);
+            d2V = ADCGetReply.Voltage(data[10], data[11]);
+            d3V = ADCGetReply.Voltage(data[12], data[13]);
+            cVp = ADCGetReply.Voltage(data[14], data[15]);
+            cVm = ADCGetReply.Voltage(data[16], data[17]);
+            sV = ADCGetReply.Voltage(data[18], data[19]);
+            psV = ADCGetReply.Voltage(data[20], data[21]);
+            inV = ADCGetReply.Voltage(data[22], data[23]);
+            hT = ADCGetReply.Voltage(data[24], data[25]);
+            //flags = data[26];
         }
+        public AllVoltagesReply() { }
         public override CommandCode Id {
             get { return CommandCode.SPI_GetAllVoltages; }
         }
         public void UpdateDevice(IDevice device) {
-            //device.UpdateStatus();
+            device.UpdateStatus(eI, iV, fV1, fV2, d1V, d2V, d3V, cVp, cVm, sV, psV, inV, hT/*, flags*/);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();
@@ -285,14 +302,19 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
                 return (other as IChannel).Channel == this.Channel;
             return false;
         }
-        protected static void Parse(IList<byte> data, out byte channel, out ushort voltage) {
-            voltage = data[0];
-            voltage &= 0xF;
-            voltage <<= 8;
-            voltage += data[1];
-            channel = data[0];
+        protected static byte Parse(IList<byte> data, out ushort voltage) {
+            voltage = Voltage(data[0], data[1]);
+            byte channel = data[0];
             channel >>= 4;
             ++channel;
+            return channel;
+        }
+        public static ushort Voltage(byte b1, byte b2) {
+            ushort voltage = b1;
+            voltage &= 0xF;
+            voltage <<= 8;
+            voltage += b2;
+            return voltage;
         }
         public override int GetHashCode() {
             return base.GetHashCode() + 19 * Channel.GetHashCode();
@@ -309,8 +331,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             : base(channel, 0) { }
         public static IonSourceGetReply Parse(IList<byte> data) {
             ushort voltage;
-            byte channel;
-            ADCGetReply.Parse(data, out channel, out voltage);
+            byte channel = ADCGetReply.Parse(data, out voltage);
             switch (channel) {
                 case 1:
                     return new GetEmissionCurrentReply(voltage);
@@ -360,8 +381,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             : base(channel, 0) { }
         public static DetectorGetReply Parse(IList<byte> data) {
             ushort voltage;
-            byte channel;
-            ADCGetReply.Parse(data, out channel, out voltage);
+            byte channel = ADCGetReply.Parse(data, out voltage);
             switch (channel) {
                 case 1:
                     return new GetD1VoltageReply(voltage);
@@ -402,8 +422,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             : base(channel, 0) { }
         public static InletGetReply Parse(IList<byte> data) {
             ushort voltage;
-            byte channel;
-            ADCGetReply.Parse(data, out channel, out voltage);
+            byte channel = ADCGetReply.Parse(data, out voltage);
             switch (channel) {
                 case 1:
                     return new GetInletVoltageReply(voltage);
