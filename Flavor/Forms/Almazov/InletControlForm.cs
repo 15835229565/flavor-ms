@@ -37,8 +37,8 @@ namespace Flavor.Forms.Almazov {
         }
         void inletRadioButton_CheckedChanged(object sender, EventArgs e) {
             // mandatory off
-            inletGroupBox.Enabled = false;
-            //inletGroupBox.Enabled = inletRadioButton.Checked;
+            //inletGroupBox.Enabled = false;
+            inletGroupBox.Enabled = inletRadioButton.Checked;
         }
     }
 }
