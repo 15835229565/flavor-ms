@@ -58,6 +58,7 @@
             this.inletRadioButton.TabIndex = 1;
             this.inletRadioButton.Text = "Натекатель";
             this.inletRadioButton.UseVisualStyleBackColor = true;
+            this.inletRadioButton.CheckedChanged += new System.EventHandler(this.inletRadioButton_CheckedChanged);
             // 
             // inletGroupBox
             // 

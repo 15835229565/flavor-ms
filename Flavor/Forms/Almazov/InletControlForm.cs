@@ -15,7 +15,7 @@ namespace Flavor.Forms.Almazov {
             Close();
         }
         protected override void OnLoad(EventArgs e) {
-            // TODO:
+            inletRadioButton_CheckedChanged(this, e);
             base.OnLoad(e);
         }
         public class ClosingEventArgs: FormClosingEventArgs {
@@ -34,6 +34,11 @@ namespace Flavor.Forms.Almazov {
                 }
             }
             base.OnFormClosing(args);
+        }
+        void inletRadioButton_CheckedChanged(object sender, EventArgs e) {
+            // mandatory off
+            inletGroupBox.Enabled = false;
+            //inletGroupBox.Enabled = inletRadioButton.Checked;
         }
     }
 }
