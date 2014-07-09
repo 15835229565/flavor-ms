@@ -11,12 +11,12 @@ namespace Flavor.Forms {
 
         void loadCommonData(CommonOptions co) {
             // TODO: remove hard-coded numbers here (use constants in Config)
-            setupNumericUpDown(expTimeNumericUpDown, 1, 10000, co.eTimeReal);
+            setupNumericUpDown(expTimeNumericUpDown, 1, uint.MaxValue, co.eTimeReal);
             //setupNumericUpDown(idleTimeNumericUpDown, 10, 100, co.iTimeReal);
 
-            setupNumericUpDown(d1VoltageNumericUpDown, 2200, 3000, co.d1VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
-            setupNumericUpDown(d2VoltageNumericUpDown, 2200, 3000, co.d2VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
-            setupNumericUpDown(d3VoltageNumericUpDown, 2200, 3000, co.d3VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
+            setupNumericUpDown(d1VoltageNumericUpDown, 0, 3000, co.d1VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
+            setupNumericUpDown(d2VoltageNumericUpDown, 0, 3000, co.d2VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
+            setupNumericUpDown(d3VoltageNumericUpDown, 0, 3000, co.d3VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
             setupNumericUpDown(CPNumericUpDown, (decimal)0.01, (decimal)0.09, co.C);
             setupNumericUpDown(kNumericUpDown, (decimal)0.6, (decimal)0.9, co.K);
             setupNumericUpDown(iVoltageNumericUpDown, 50, 100, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);

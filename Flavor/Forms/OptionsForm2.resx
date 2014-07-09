@@ -333,13 +333,13 @@
     <value>6, 47</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 13</value>
+    <value>141, 13</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
-    <value>Напряжение Д2 (2200-3000 В)</value>
+    <value>Напряжение Д2 (0-3000 В)</value>
   </data>
   <data name="&gt;&gt;label3.Name" xml:space="preserve">
     <value>label3</value>
@@ -363,13 +363,13 @@
     <value>6, 21</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 13</value>
+    <value>141, 13</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Напряжение Д1 (2200-3000 В)</value>
+    <value>Напряжение Д1 (0-3000 В)</value>
   </data>
   <data name="&gt;&gt;label2.Name" xml:space="preserve">
     <value>label2</value>
@@ -397,13 +397,13 @@
     <value>6, 73</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 13</value>
+    <value>141, 13</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>36</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Напряжение Д3 (2200-3000 В)</value>
+    <value>Напряжение Д3 (0-3000 В)</value>
   </data>
   <data name="&gt;&gt;label1.Name" xml:space="preserve">
     <value>label1</value>
