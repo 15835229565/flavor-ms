@@ -12,10 +12,10 @@ namespace Flavor.Common.Messaging.Almazov {
                 attempts,
                 new StatusRequestGenerator(//new TICStatusRequest(),
                     new VacuumStatusRequest(),
-                    //new AllVoltagesRequest(),
+                    new AllVoltagesRequest(),
                     //new CPUStatusRequest(),
-                    new HighVoltagePermittedStatusRequest()//,
-                    //new OperationBlockRequest(null)
+                    new HighVoltagePermittedStatusRequest(),
+                    new OperationBlockRequest(null)
                     ),
                 interval)) { }
         AlmazovRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
