@@ -158,36 +158,36 @@ namespace Flavor.Forms {
             unblock_butt.Tag = false;
         }
         #region Status TreeView population
-        private TreeNodePlus rootNode;
+        TreeNodePlus rootNode;
 
-        private TreeNodeLeaf systemStateValueTreeNode;
-        private TreeNodeLeaf vacuumStateValueTreeNode;
-        private TreeNodeLeaf forPumpOnValueTreeNode;
-        private TreeNodeLeaf turboPumpOnValueTreeNode;
-        private TreeNodeLeaf forVacuumValueTreeNode;
-        private TreeNodeLeaf highVacuumValueTreeNode;
-        private TreeNodeLeaf hardwareBlockValueTreeNode;
-        private TreeNodeLeaf vGate1ValueTreeNode;
-        private TreeNodeLeaf vGate2ValueTreeNode;
+        TreeNodeLeaf systemStateValueTreeNode;
+        TreeNodeLeaf vacuumStateValueTreeNode;
+        TreeNodeLeaf forPumpOnValueTreeNode;
+        TreeNodeLeaf turboPumpOnValueTreeNode;
+        TreeNodeLeaf forVacuumValueTreeNode;
+        TreeNodeLeaf highVacuumValueTreeNode;
+        TreeNodeLeaf hardwareBlockValueTreeNode;
+        TreeNodeLeaf vGate1ValueTreeNode;
+        TreeNodeLeaf vGate2ValueTreeNode;
 
-        private TreeNodeLeaf f1VoltageValueTreeNode;
-        private TreeNodeLeaf f2VoltageValueTreeNode;
-        private TreeNodeLeaf scanVoltageValueTreeNode;
-        private TreeNodeLeaf iVoltageValueTreeNode;
-        private TreeNodeLeaf eCurrentValueTreeNode;
-        private TreeNodeLeaf condPlusValueTreeNode;
-        private TreeNodeLeaf condMinusValueTreeNode;
-        private TreeNodeLeaf detectorVoltageValueTreeNode;
-        private TreeNodeLeaf hCurrentValueTreeNode;
+        TreeNodeLeaf f1VoltageValueTreeNode;
+        TreeNodeLeaf f2VoltageValueTreeNode;
+        TreeNodeLeaf scanVoltageValueTreeNode;
+        TreeNodeLeaf iVoltageValueTreeNode;
+        TreeNodeLeaf eCurrentValueTreeNode;
+        TreeNodeLeaf condPlusValueTreeNode;
+        TreeNodeLeaf condMinusValueTreeNode;
+        TreeNodeLeaf detectorVoltageValueTreeNode;
+        TreeNodeLeaf hCurrentValueTreeNode;
 
-        private TreeNodeLeaf turboSpeedValueTreeNode;
-        private TreeNodeLeaf turboCurrentValueTreeNode;
-        private TreeNodeLeaf pumpTemperatureValueTreeNode;
-        private TreeNodeLeaf driveTemperatureValueTreeNode;
-        private TreeNodeLeaf pwmValueTreeNode;
-        private TreeNodeLeaf operationTimeValueTreeNode;
+        TreeNodeLeaf turboSpeedValueTreeNode;
+        TreeNodeLeaf turboCurrentValueTreeNode;
+        TreeNodeLeaf pumpTemperatureValueTreeNode;
+        TreeNodeLeaf driveTemperatureValueTreeNode;
+        TreeNodeLeaf pwmValueTreeNode;
+        TreeNodeLeaf operationTimeValueTreeNode;
 
-        private void populateStatusTreeView() {
+        void populateStatusTreeView() {
             TreeNodePlus infoNode;
 
             TreeNodePair systemStateTextTreeNode;

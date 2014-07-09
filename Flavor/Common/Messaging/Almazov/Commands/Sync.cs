@@ -73,6 +73,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public VacuumStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
             this.turbo = turbo;
             this.relay1 = relay1;
+            if (relay1 == false)
+                Console.WriteLine(relay1);
             this.relay2 = relay2;
             this.relay3 = relay3;
             this.alert = alert;
@@ -234,7 +236,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
 
     class AllVoltagesReply: SyncReply, IUpdateDevice {
         readonly ushort eI, iV, fV1, fV2, d1V, d2V, d3V, cVp, cVm, sV, psV, inV, hT;
-        //readonly byte flags;
+        readonly byte flags;
         public AllVoltagesReply(IList<byte> data) {
             eI = ADCGetReply.Voltage(data[0], data[1]);
             iV = ADCGetReply.Voltage(data[2], data[3]);
@@ -249,7 +251,7 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             psV = ADCGetReply.Voltage(data[20], data[21]);
             inV = ADCGetReply.Voltage(data[22], data[23]);
             hT = ADCGetReply.Voltage(data[24], data[25]);
-            //flags = data[26];
+            flags = data[26];
         }
         public AllVoltagesReply() { }
         public override CommandCode Id {

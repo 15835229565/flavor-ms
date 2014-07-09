@@ -10,11 +10,13 @@ namespace Flavor.Common.Messaging.Almazov {
         AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Generator<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
                 attempts,
-                new StatusRequestGenerator(new TICStatusRequest(),
-                    //new VacuumStatusRequest(),
-                    new CPUStatusRequest(),
-                    new HighVoltagePermittedStatusRequest(),
-                    new OperationBlockRequest(null)),
+                new StatusRequestGenerator(//new TICStatusRequest(),
+                    new VacuumStatusRequest(),
+                    //new AllVoltagesRequest(),
+                    //new CPUStatusRequest(),
+                    new HighVoltagePermittedStatusRequest()//,
+                    //new OperationBlockRequest(null)
+                    ),
                 interval)) { }
         AlmazovRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
             : base(protocol, queue) { }

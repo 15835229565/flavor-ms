@@ -5,7 +5,7 @@ using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Common {
     #region TreeNodes
-    class TreeNodePlus: System.Windows.Forms.TreeNode {
+    class TreeNodePlus: TreeNode {
         public enum States {
             Ok,
             Warning,

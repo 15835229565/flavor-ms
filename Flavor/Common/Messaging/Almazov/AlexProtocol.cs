@@ -221,7 +221,7 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.SPI_Scan_SetVoltage, eq(2), sync(raw => new ScanVoltageSetReply()));
             add(CommandCode.SPI_CP_SetVoltage, eq(2), sync(raw => new CapacitorVoltageSetReply()));
 
-            add(CommandCode.SPI_GetAllVoltages, eq(28), sync(raw => new AllVoltagesReply(trim(raw))));
+            add(CommandCode.SPI_GetAllVoltages, eq(29), sync(raw => new AllVoltagesReply(trim(raw))));
             
             add(CommandCode.RTC_StartMeasure, eq(3), sync(raw => new SendMeasureReply(raw[1])));
             add(CommandCode.RTC_DelayedStart, eq(3), sync(raw => new DelayedMeasureReply(raw[1])));
