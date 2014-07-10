@@ -83,22 +83,36 @@ namespace Flavor.Common {
             temp = SwitchState(State, DeviceStates.PRGE, PRGE);
             State = temp;
 
-            OnDeviceStatusChanged(50.0 * (ushort)data[0] / 4096,//eI
-                100.0 * (ushort)data[1] / 4096,//iV
-                100.0 * (ushort)data[2] / 4096,//fV1
-                100.0 * (ushort)data[3] / 4096,//fV2
-                5000.0 * (ushort)data[4] / 4096,//d1V
-                5000.0 * (ushort)data[5] / 4096,//d2V
-                5000.0 * (ushort)data[6] / 4096,//d3V
-                5000.0 * (ushort)data[7] / 4096,//cVp ?!!!
-                5000.0 * (ushort)data[8] / 4096,//cVm ?!!!
-                5000.0 * (ushort)data[9] / 4096,//sV
-                5000.0 * (ushort)data[10] / 4096,//psV
-                1.25 * (ushort)data[11],//inV
-                500.0 * (ushort)data[12] / 4096,//hT
-                SEMV2,
-                SEMV3,
-                SPUMP);
+            bool isFake = true;
+            for (int i = 0; i < 13; ++i) {
+                if ((ushort)data[i] != ushort.MaxValue) {
+                    isFake = false;
+                    break;
+                }
+            }
+            if (isFake) {
+                OnDeviceStatusChanged(SEMV2,
+                    SEMV3,
+                    SPUMP);
+            } else {
+                OnDeviceStatusChanged(SEMV2,
+                    SEMV3,
+                    SPUMP,
+                    50.0 * (ushort)data[0] / 4096,//eI
+                    100.0 * (ushort)data[1] / 4096,//iV
+                    100.0 * (ushort)data[2] / 4096,//fV1
+                    100.0 * (ushort)data[3] / 4096,//fV2
+                    5000.0 * (ushort)data[4] / 4096,//d1V
+                    5000.0 * (ushort)data[5] / 4096,//d2V
+                    5000.0 * (ushort)data[6] / 4096,//d3V
+                    5000.0 * (ushort)data[7] / 4096,//cVp ?!!!
+                    5000.0 * (ushort)data[8] / 4096,//cVm ?!!!
+                    5000.0 * (ushort)data[9] / 4096,//sV
+                    5000.0 * (ushort)data[10] / 4096,//psV
+                    1.25 * (ushort)data[11],//inV
+                    500.0 * (ushort)data[12] / 4096//hT
+                );
+            }
         }
         bool CheckBit(byte flags, int number) {
             int mask = 0x1 << --number;

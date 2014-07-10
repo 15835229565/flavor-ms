@@ -685,7 +685,7 @@ namespace Flavor.Forms {
                 statusTreeView.BeginUpdate();
                 var data = e.Value;
                 // micro-pump actually
-                if ((bool)(data[15])) {
+                if ((bool)(data[2])) {
                     forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
                     forPumpOnValueTreeNode.Text = ON_TEXT;
                 } else {
@@ -693,7 +693,7 @@ namespace Flavor.Forms {
                     forPumpOnValueTreeNode.Text = OFF_TEXT;
                 }
                 // SEMV2 actually
-                if ((bool)data[13]) {
+                if ((bool)data[0]) {
                     vGate1ValueTreeNode.State = TreeNodePlus.States.Ok;
                     vGate1ValueTreeNode.Text = OPENED_TEXT;
                 } else {
@@ -701,29 +701,48 @@ namespace Flavor.Forms {
                     vGate1ValueTreeNode.Text = CLOSED_TEXT;
                 }
                 // SEMV3 actually
-                if ((bool)data[14]) {
+                if ((bool)data[1]) {
                     vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
                     vGate2ValueTreeNode.Text = OPENED_TEXT;
                 } else {
                     vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
                     vGate2ValueTreeNode.Text = CLOSED_TEXT;
                 }
-                f1VoltageValueTreeNode.Text = ((double)data[2]).ToString("f2");
-                f2VoltageValueTreeNode.Text = ((double)data[3]).ToString("f2");
-                iVoltageValueTreeNode.Text = ((double)data[1]).ToString("f2");
-                // d1V actually
-                detectorVoltageValueTreeNode.Text = ((double)data[4]).ToString("f1");
-                //detectorVoltageValueTreeNode.Text = ((double)data[5]).ToString("f1");
-                //detectorVoltageValueTreeNode.Text = ((double)data[6]).ToString("f1");
-                condPlusValueTreeNode.Text = ((double)data[7]).ToString("f2");
-                condMinusValueTreeNode.Text = ((double)data[8]).ToString("f2");
-                scanVoltageValueTreeNode.Text = ((double)data[9]).ToString("f1");
-                //scanVoltageValueTreeNode.Text = ((double)data[10]).ToString("f1");
-                eCurrentValueTreeNode.Text = ((double)data[0]).ToString("f3");
-                // heat temperature atually
-                hCurrentValueTreeNode.Text = ((double)data[12]).ToString("f3");
-                // inlet voltage atually
-                turboSpeedValueTreeNode.Text = ((double)data[11]).ToString("f0");
+                if (data.Length == 16) {
+                    f1VoltageValueTreeNode.Text = ((double)data[5]).ToString("f2");
+                    f2VoltageValueTreeNode.Text = ((double)data[6]).ToString("f2");
+                    iVoltageValueTreeNode.Text = ((double)data[4]).ToString("f2");
+                    // d1V actually
+                    detectorVoltageValueTreeNode.Text = ((double)data[7]).ToString("f1");
+                    //detectorVoltageValueTreeNode.Text = ((double)data[8]).ToString("f1");
+                    //detectorVoltageValueTreeNode.Text = ((double)data[9]).ToString("f1");
+                    condPlusValueTreeNode.Text = ((double)data[10]).ToString("f2");
+                    condMinusValueTreeNode.Text = ((double)data[11]).ToString("f2");
+                    scanVoltageValueTreeNode.Text = ((double)data[12]).ToString("f1");
+                    //scanVoltageValueTreeNode.Text = ((double)data[13]).ToString("f1");
+                    eCurrentValueTreeNode.Text = ((double)data[3]).ToString("f3");
+                    // heat temperature atually
+                    hCurrentValueTreeNode.Text = ((double)data[15]).ToString("f3");
+                    // inlet voltage atually
+                    turboSpeedValueTreeNode.Text = ((double)data[14]).ToString("f0");
+                } else {
+                    f1VoltageValueTreeNode.Text = "---";
+                    f2VoltageValueTreeNode.Text = "---";
+                    iVoltageValueTreeNode.Text = "---";
+                    // d1V actually
+                    detectorVoltageValueTreeNode.Text = "---";
+                    //detectorVoltageValueTreeNode.Text = "---";
+                    //detectorVoltageValueTreeNode.Text = "---";
+                    condPlusValueTreeNode.Text = "---";
+                    condMinusValueTreeNode.Text = "---";
+                    scanVoltageValueTreeNode.Text = "---";
+                    //scanVoltageValueTreeNode.Text = "---";
+                    eCurrentValueTreeNode.Text = "---";
+                    // heat temperature atually
+                    hCurrentValueTreeNode.Text = "---";
+                    // inlet voltage atually
+                    turboSpeedValueTreeNode.Text = "---";
+                }
 
                 statusTreeView.EndUpdate();
                 parameterPanel.ResumeLayout();
