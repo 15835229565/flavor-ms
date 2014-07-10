@@ -173,20 +173,28 @@ namespace Flavor.Common.Messaging.Almazov {
         public void CheckStepVoltages() {
             //toSend.Enqueue(new ParentScanVoltageGetRequest());
         }
-        public void SendInletSettings(bool useCapillary, params ushort[] ps) {
-            if (useCapillary) {
-                toSend.Enqueue(new MicroPumpRequest(true));
-                toSend.Enqueue(new SetInletVoltageRequest(0));
-                toSend.Enqueue(new SetHeaterVoltageRequest(0));
-                toSend.Enqueue(new Valve3Request(true));
-                toSend.Enqueue(new Valve2Request(true));
+        public void SendInletSettings(bool? useCapillary, params ushort[] ps) {
+            if (useCapillary.HasValue) {
+                if (useCapillary.Value) {
+                    toSend.Enqueue(new MicroPumpRequest(true));
+                    toSend.Enqueue(new SetInletVoltageRequest(0));
+                    toSend.Enqueue(new SetHeaterVoltageRequest(0));
+                    toSend.Enqueue(new Valve3Request(true));
+                    toSend.Enqueue(new Valve2Request(true));
+                } else {
+                    toSend.Enqueue(new MicroPumpRequest(true));
+                    toSend.Enqueue(new Valve2Request(false));
+                    toSend.Enqueue(new Valve3Request(false));
+                    toSend.Enqueue(new SetInletVoltageRequest(ps[0]));
+                    toSend.Enqueue(new SetHeaterVoltageRequest(ps[1]));
+                    toSend.Enqueue(new GetInletVoltageRequest());
+                }
             } else {
-                toSend.Enqueue(new MicroPumpRequest(true));
                 toSend.Enqueue(new Valve2Request(false));
                 toSend.Enqueue(new Valve3Request(false));
-                toSend.Enqueue(new SetInletVoltageRequest(ps[0]));
-                toSend.Enqueue(new SetHeaterVoltageRequest(ps[1]));
-                toSend.Enqueue(new GetInletVoltageRequest());
+                toSend.Enqueue(new SetInletVoltageRequest(0));
+                toSend.Enqueue(new SetHeaterVoltageRequest(0));
+                toSend.Enqueue(new MicroPumpRequest(false));
             }
         }
     }

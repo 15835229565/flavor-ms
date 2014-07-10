@@ -970,17 +970,19 @@ namespace Flavor.Forms {
                     return;
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
                     var args = ee as Almazov.InletControlForm.ClosingEventArgs;
-                    if (args.UseCapillary) {
-                        (commander as Flavor.Common.AlmazovCommander).SendInletSettings(true);
-                    } else {
-                        var ps = args.Parameters;
-                        if (ps == null)
-                            return;
-                        ushort voltage = (ushort)(ps[0] / 3000 * 4096);
-                        if (voltage > 4095) voltage = 4095;
-                        ushort temperature = (ushort)(ps[1] / 500 * 4096);
-                        if (temperature > 4095) temperature = 4095;
-                        (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
+                    if (args.UseCapillary.HasValue) {
+                        if (args.UseCapillary.Value) {
+                            (commander as Flavor.Common.AlmazovCommander).SendInletSettings(true);
+                        } else {
+                            var ps = args.Parameters;
+                            if (ps == null)
+                                return;
+                            ushort voltage = (ushort)(ps[0] / 3000 * 4096);
+                            if (voltage > 4095) voltage = 4095;
+                            ushort temperature = (ushort)(ps[1] / 500 * 4096);
+                            if (temperature > 4095) temperature = 4095;
+                            (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
+                        }
                     }
                 } 
             };

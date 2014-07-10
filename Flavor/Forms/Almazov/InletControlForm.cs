@@ -19,7 +19,7 @@ namespace Flavor.Forms.Almazov {
             base.OnLoad(e);
         }
         public class ClosingEventArgs: FormClosingEventArgs {
-            public bool UseCapillary { get; set; }
+            public bool? UseCapillary { get; set; }
             public decimal[] Parameters { get; set; }
             public ClosingEventArgs(FormClosingEventArgs args)
                 : base(args.CloseReason, args.Cancel) { }
@@ -27,11 +27,16 @@ namespace Flavor.Forms.Almazov {
         protected override void OnFormClosing(FormClosingEventArgs e) {
             var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
             if (DialogResult == DialogResult.OK) {
-                bool useCapillary = capillaryRadioButton.Checked;
-                args.UseCapillary = useCapillary;
-                if (!useCapillary) {
+                bool? useCapillary;
+                if (closeInletRadioButton.Checked) {
+                    useCapillary = null;
+                } else if (capillaryRadioButton.Checked) {
+                    useCapillary = true;
+                } else {
+                    useCapillary = false;
                     args.Parameters = new decimal[] { voltageТumericUpDown.Value, temperatureNumericUpDown.Value };
                 }
+                args.UseCapillary = useCapillary;
             }
             base.OnFormClosing(args);
         }
