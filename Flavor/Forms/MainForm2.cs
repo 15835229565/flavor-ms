@@ -310,6 +310,7 @@ namespace Flavor.Forms {
                 // BAD!
                 device.DeviceStateChanged += RefreshDeviceStateAsync;
                 device.DeviceStatusChanged += RefreshDeviceStatusAsync;
+                device.VacuumStateChanged += RefreshVacuumStateAsync;
             }
             RefreshDeviceState();
             RefreshVacuumState();
@@ -331,6 +332,8 @@ namespace Flavor.Forms {
                 Device.OnTurboPumpAlert -= InvokeProcessTurboPumpAlert;
             } else {
                 device.DeviceStateChanged -= RefreshDeviceStateAsync;
+                device.DeviceStatusChanged -= RefreshDeviceStatusAsync;
+                device.VacuumStateChanged -= RefreshVacuumStateAsync;
             }
 
             commander.ProgramStateChanged -= InvokeRefreshButtons;
@@ -546,8 +549,46 @@ namespace Flavor.Forms {
         }
 
         void RefreshDeviceStateAsync(object sender, EventArgs<byte> e) {
-            // TODO:!
-            //BeginInvoke();
+            BeginInvoke(new Action(() => {
+                parameterPanel.SuspendLayout();
+                statusTreeView.BeginUpdate();
+                byte state = e.Value;
+                if (state > 64) {
+                    systemStateValueTreeNode.Text = "Ошибка";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Error;
+                } else if (state > 32) {
+                    systemStateValueTreeNode.Text = "Готова к измерению";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
+                } else if (state > 16) {
+                    systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
+                } else if (state > 1) {
+                    systemStateValueTreeNode.Text = "Инициализация вакуума";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                } else if (state == 1) {
+                    systemStateValueTreeNode.Text = "Инициализация";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                } else {
+                    systemStateValueTreeNode.Text = "Запуск";
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                }
+                state >>= 1;
+                if ((state & 0x1) == 1) {
+                    // SEMV1 on
+                } else {
+                    // SEMV1 off
+                }
+                state >>= 1;
+                if ((state & 0x1) == 1) {
+                    turboPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
+                    turboPumpOnValueTreeNode.Text = ON_TEXT;
+                } else {
+                    turboPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
+                    turboPumpOnValueTreeNode.Text = OFF_TEXT;
+                }
+                statusTreeView.EndUpdate();
+                parameterPanel.ResumeLayout();
+            }));
         }
         // TODO: Device state as method parameter (avoid thread run)
         void InvokeRefreshDeviceState() {
@@ -747,6 +788,10 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
+        void RefreshVacuumStateAsync(object sender, EventArgs<ValueType[]> e) {
+            // TODO:!
+            //BeginInvoke();
+        }
         // TODO: vacuum state as method parameter (avoid thread run)
         void InvokeRefreshVacuumState() {
             BeginInvoke(new DeviceEventHandler(RefreshVacuumState));

@@ -39,9 +39,9 @@ namespace Flavor.Common {
             DeviceStatusChanged.Raise(this, new EventArgs<ValueType[]>(data));
         }
         // TODO: use!
-        public event EventHandler VacuumStateChanged;
-        protected void OnVacuumStateChanged() {
-            VacuumStateChanged.Raise(this, EventArgs.Empty);
+        public event EventHandler<EventArgs<ValueType[]>> VacuumStateChanged;
+        protected void OnVacuumStateChanged(params ValueType[] data) {
+            VacuumStateChanged.Raise(this, new EventArgs<ValueType[]>(data));
         }
         public event EventHandler TurboPumpStatusChanged;
         public event TurboPumpAlertEventHandler TurboPumpAlert;
