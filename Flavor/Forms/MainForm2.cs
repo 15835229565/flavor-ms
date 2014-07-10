@@ -306,14 +306,15 @@ namespace Flavor.Forms {
                 Device.OnTurboPumpStatusChanged += InvokeRefreshTurboPumpStatus;
                 Device.OnTurboPumpAlert += InvokeProcessTurboPumpAlert;
                 Device.Init();
+
+                RefreshDeviceState();
+                RefreshVacuumState();
             } else {
                 // BAD!
                 device.DeviceStateChanged += RefreshDeviceStateAsync;
                 device.DeviceStatusChanged += RefreshDeviceStatusAsync;
                 device.VacuumStateChanged += RefreshVacuumStateAsync;
             }
-            RefreshDeviceState();
-            RefreshVacuumState();
 
             commander.ProgramStateChanged += InvokeRefreshButtons;
         }
