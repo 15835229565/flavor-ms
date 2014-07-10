@@ -309,6 +309,7 @@ namespace Flavor.Forms {
             } else {
                 // BAD!
                 device.DeviceStateChanged += RefreshDeviceStateAsync;
+                device.DeviceStatusChanged += RefreshDeviceStatusAsync;
             }
             RefreshDeviceState();
             RefreshVacuumState();
@@ -637,6 +638,56 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
+        void RefreshDeviceStatusAsync(object sender, EventArgs<ValueType[]> e) {
+            BeginInvoke(new Action(() => {
+                parameterPanel.SuspendLayout();
+                statusTreeView.BeginUpdate();
+                var data = e.Value;
+                // micro-pump actually
+                if ((bool)data[16]) {
+                    forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
+                    forPumpOnValueTreeNode.Text = ON_TEXT;
+                } else {
+                    forPumpOnValueTreeNode.State = TreeNodePlus.States.Error;
+                    forPumpOnValueTreeNode.Text = OFF_TEXT;
+                }
+                // SEMV2 actually
+                if ((bool)data[14]) {
+                    vGate1ValueTreeNode.State = TreeNodePlus.States.Ok;
+                    vGate1ValueTreeNode.Text = OPENED_TEXT;
+                } else {
+                    vGate1ValueTreeNode.State = TreeNodePlus.States.Warning;
+                    vGate1ValueTreeNode.Text = CLOSED_TEXT;
+                }
+                // SEMV3 actually
+                if ((bool)data[15]) {
+                    vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
+                    vGate2ValueTreeNode.Text = OPENED_TEXT;
+                } else {
+                    vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
+                    vGate2ValueTreeNode.Text = CLOSED_TEXT;
+                }
+                f1VoltageValueTreeNode.Text = ((double)data[2]).ToString("f2");
+                f2VoltageValueTreeNode.Text = ((double)data[3]).ToString("f2");
+                iVoltageValueTreeNode.Text = ((double)data[1]).ToString("f2");
+                // d1V actually
+                detectorVoltageValueTreeNode.Text = ((double)data[4]).ToString("f1");
+                //detectorVoltageValueTreeNode.Text = ((double)data[5]).ToString("f1");
+                //detectorVoltageValueTreeNode.Text = ((double)data[6]).ToString("f1");
+                condPlusValueTreeNode.Text = ((double)data[7]).ToString("f2");
+                condMinusValueTreeNode.Text = ((double)data[8]).ToString("f2");
+                scanVoltageValueTreeNode.Text = ((double)data[9]).ToString("f1");
+                //scanVoltageValueTreeNode.Text = ((double)data[10]).ToString("f1");
+                eCurrentValueTreeNode.Text = ((double)data[0]).ToString("f3");
+                // heat temperature atually
+                hCurrentValueTreeNode.Text = ((double)data[12]).ToString("f3");
+                // inlet voltage atually
+                turboSpeedValueTreeNode.Text = ((double)data[11]).ToString("f0");
+
+                statusTreeView.EndUpdate();
+                parameterPanel.ResumeLayout();
+            }));
+        }
         // TODO: Device status as method parameter (avoid thread run)
         void InvokeRefreshDeviceStatus() {
             BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));

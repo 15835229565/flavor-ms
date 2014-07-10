@@ -258,7 +258,8 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
             get { return CommandCode.SPI_GetAllVoltages; }
         }
         public void UpdateDevice(IDevice device) {
-            device.UpdateStatus(eI, iV, fV1, fV2, d1V, d2V, d3V, cVp, cVm, sV, psV, inV, hT/*, flags*/);
+            // TODO: check for max values (receiving when high voltage is off)
+            device.UpdateStatus(eI, iV, fV1, fV2, d1V, d2V, d3V, cVp, cVm, sV, psV, inV, hT, flags);
         }
         public void UpdateDevice() {
             throw new NotImplementedException();

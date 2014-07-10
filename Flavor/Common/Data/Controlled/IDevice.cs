@@ -3,7 +3,7 @@
 namespace Flavor.Common {
     interface IDevice {
         event EventHandler<EventArgs<byte>> DeviceStateChanged;
-        event EventHandler DeviceStatusChanged;
+        event EventHandler<EventArgs<ValueType[]>> DeviceStatusChanged;
         event EventHandler VacuumStateChanged;
         event EventHandler TurboPumpStatusChanged;
         event TurboPumpAlertEventHandler TurboPumpAlert;

@@ -34,9 +34,9 @@ namespace Flavor.Common {
             DeviceStateChanged.Raise(this, new EventArgs<byte>(state));
         }
         // TODO: use!
-        public event EventHandler DeviceStatusChanged;
-        protected void OnDeviceStatusChanged() {
-            DeviceStatusChanged.Raise(this, EventArgs.Empty);
+        public event EventHandler<EventArgs<ValueType[]>> DeviceStatusChanged;
+        protected void OnDeviceStatusChanged(params ValueType[] data) {
+            DeviceStatusChanged.Raise(this, new EventArgs<ValueType[]>(data));
         }
         // TODO: use!
         public event EventHandler VacuumStateChanged;
@@ -62,22 +62,63 @@ namespace Flavor.Common {
         }
 
         public void UpdateStatus(params ValueType[] data) {
-            OnDeviceStatusChanged();
+            byte flags = (byte)data[13];
+            bool HVEport = CheckBit(flags, 8);
+            bool HVE = CheckBit(flags, 7);
+            bool PRGE = CheckBit(flags, 6);
+            bool EDCD = CheckBit(flags, 5);
+            bool SEMV1 = CheckBit(flags, 4);
+            bool SEMV2 = CheckBit(flags, 3);
+            bool SEMV3 = CheckBit(flags, 2);
+            bool SPUMP = CheckBit(flags, 1);
+
+            var temp = State;
+            var temp2 = temp;
+            temp = SwitchState(temp, DeviceStates.SEMV1, SEMV1);
+            if (temp2 != temp) {
+                // TODO: proper data!
+                OnVacuumStateChanged();
+            }
+            temp = SwitchState(State, DeviceStates.HVE, HVE);
+            temp = SwitchState(State, DeviceStates.PRGE, PRGE);
+            State = temp;
+
+            OnDeviceStatusChanged(50.0 * (ushort)data[0] / 4096,//eI
+                100.0 * (ushort)data[1] / 4096,//iV
+                100.0 * (ushort)data[2] / 4096,//fV1
+                100.0 * (ushort)data[3] / 4096,//fV2
+                5000.0 * (ushort)data[4] / 4096,//d1V
+                5000.0 * (ushort)data[5] / 4096,//d2V
+                5000.0 * (ushort)data[6] / 4096,//d3V
+                5000.0 * (ushort)data[7] / 4096,//cVp ?!!!
+                5000.0 * (ushort)data[8] / 4096,//cVm ?!!!
+                5000.0 * (ushort)data[9] / 4096,//sV
+                5000.0 * (ushort)data[10] / 4096,//psV
+                1.25 * (ushort)data[11],//inV
+                500.0 * (ushort)data[12] / 4096,//hT
+                SEMV2,
+                SEMV3,
+                SPUMP);
+        }
+        bool CheckBit(byte flags, int number) {
+            int mask = 0x1 << --number;
+            return (flags & mask) == mask;
         }
         public void UpdateVacuumStatus(params ValueType[] data) {
             try {
                 var temp = State;
                 var temp2 = temp;
-                SwitchState(temp, DeviceStates.Turbo, (bool)(data[0]));
+                temp = SwitchState(temp, DeviceStates.Turbo, (bool)(data[0]));
                 temp = SwitchState(temp, DeviceStates.SEMV1, (bool)(data[1]));
 
                 temp = SwitchState(temp, DeviceStates.Relay2, (bool)(data[2]));
                 temp = SwitchState(temp, DeviceStates.Relay3, (bool)(data[3]));
                 temp = SwitchState(temp, DeviceStates.Alert, (int)(data[4]) != 0);
                 State = temp;
-                if (temp2 != temp)
+                if (temp2 != temp) {
                     // TODO: proper data!
                     OnVacuumStateChanged();
+                }
             } catch (InvalidCastException) {
             };
         }
