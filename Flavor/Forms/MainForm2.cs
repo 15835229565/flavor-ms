@@ -644,7 +644,7 @@ namespace Flavor.Forms {
                 statusTreeView.BeginUpdate();
                 var data = e.Value;
                 // micro-pump actually
-                if ((bool)data[16]) {
+                if ((bool)(data[15])) {
                     forPumpOnValueTreeNode.State = TreeNodePlus.States.Ok;
                     forPumpOnValueTreeNode.Text = ON_TEXT;
                 } else {
@@ -652,7 +652,7 @@ namespace Flavor.Forms {
                     forPumpOnValueTreeNode.Text = OFF_TEXT;
                 }
                 // SEMV2 actually
-                if ((bool)data[14]) {
+                if ((bool)data[13]) {
                     vGate1ValueTreeNode.State = TreeNodePlus.States.Ok;
                     vGate1ValueTreeNode.Text = OPENED_TEXT;
                 } else {
@@ -660,7 +660,7 @@ namespace Flavor.Forms {
                     vGate1ValueTreeNode.Text = CLOSED_TEXT;
                 }
                 // SEMV3 actually
-                if ((bool)data[15]) {
+                if ((bool)data[14]) {
                     vGate2ValueTreeNode.State = TreeNodePlus.States.Warning;
                     vGate2ValueTreeNode.Text = OPENED_TEXT;
                 } else {
@@ -1034,6 +1034,8 @@ namespace Flavor.Forms {
                             if (temperature > 4095) temperature = 4095;
                             (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
                         }
+                    } else {
+                        (commander as Flavor.Common.AlmazovCommander).SendInletSettings(null);
                     }
                 } 
             };
