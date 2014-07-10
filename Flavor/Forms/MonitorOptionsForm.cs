@@ -40,14 +40,14 @@ namespace Flavor.Forms {
         }
 
         protected sealed override void OnLoad(EventArgs e) {
-            iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            iterationsNumericUpDown.Value = (decimal)Config.Iterations;
-            timeLimitNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-            timeLimitNumericUpDown.Value = (decimal)Config.TimeLimit;
-            allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
-            checkPeakNumberNumericUpDown.Maximum = (decimal)Config.PEAK_NUMBER;
-            checkPeakNumberNumericUpDown.Value = (decimal)Config.CheckerPeakIndex;
-            backroundMeasureCycleCountNumericUpDown.Value = (decimal)Config.BackgroundCycles;
+            iterationsNumericUpDown.Maximum = int.MaxValue;
+            iterationsNumericUpDown.Value = Config.Iterations;
+            timeLimitNumericUpDown.Maximum = int.MaxValue;
+            timeLimitNumericUpDown.Value = Config.TimeLimit;
+            allowedShiftNumericUpDown.Value = Config.AllowedShift;
+            checkPeakNumberNumericUpDown.Maximum = Config.PEAK_NUMBER;
+            checkPeakNumberNumericUpDown.Value = Config.CheckerPeakIndex;
+            backroundMeasureCycleCountNumericUpDown.Value = Config.BackgroundCycles;
 
             PreciseEditorData peak = Config.CustomCheckerPeak;
             if (peak != null)

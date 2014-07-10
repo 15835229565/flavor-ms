@@ -95,10 +95,15 @@ namespace Flavor.Common.Messaging.Almazov {
             //async
             Add<RTCMeasureEndLAM>(AutoSend<CountsRequest>);
             Add<SPIConfDoneLAM>(updateDevice, p => {
-                OnOperationBlock(false);
-                //toSend.Enqueue(new sendSVoltage(0));//Set ScanVoltage to low limit
-                //SetSettings();
-            }, AutoSend<GetHeaterVoltageRequest>/*fake request to workaround SPI misfunction (last in queue)*/);
+                OnOperationBlock(false);//maybe duplicates event after update device
+                AutoSend<GetHeaterVoltageRequest>(p);//fake request to workaround SPI misfunction (last in queue)
+                SetSettings();
+                //set ScanVoltage to minimal limit
+                //toSend.Enqueue(new ParentScanVoltageSetRequest(0));
+                //toSend.Enqueue(new MainScanVoltageSetRequest(0));
+                //toSend.Enqueue(new CapacitorVoltageSetRequest(0));
+                SetMeasureStep(0);//set ScanVoltage to low limit
+            });
             Add<HVEnabledLAM>(updateDevice, p => OnSystemReady());
             Add<HVDisabledLAM>(updateDevice, p => OnSystemDown(true));
             //sync error
