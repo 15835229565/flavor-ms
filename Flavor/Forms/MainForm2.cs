@@ -1241,7 +1241,7 @@ namespace Flavor.Forms {
                                 return;
                             ushort voltage = (ushort)(ps[0] / 3000 * 4096);
                             if (voltage > 4095) voltage = 4095;
-                            ushort temperature = (ushort)(ps[1] / 500 * 4096);
+                            ushort temperature = (ushort)((ps[1] + 273) / 500 * 4096);
                             if (temperature > 4095) temperature = 4095;
                             (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
                         }

@@ -10,6 +10,8 @@
             label15.Visible = true;
             detector2CountsLabel.Visible = true;
             label16.Visible = true;
+            detector3CountsLabel.Visible = true;
+            label0.Visible = true;
 
             scanRealTimeLabel.Visible = true;
             stepNumberLabel.Visible = true;

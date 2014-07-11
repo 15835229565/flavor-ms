@@ -237,7 +237,7 @@ namespace Flavor.Forms {
             RefreshGraph(true);
         }
         protected void RefreshGraph(bool recreate) {
-            if (recreate)
+            if (recreate && graphs != null)
                 foreach (var zedgraphcontrol in graphs) {
                     if (zedgraphcontrol != null)
                         zedgraphcontrol.Refresh();

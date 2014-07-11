@@ -106,8 +106,8 @@ namespace Flavor.Common {
                     5000.0 * (ushort)data[4] / 4096,//d1V
                     5000.0 * (ushort)data[5] / 4096,//d2V
                     5000.0 * (ushort)data[6] / 4096,//d3V
-                    5000.0 * (ushort)data[7] / 4096,//cVp ?!!!
-                    5000.0 * (ushort)data[8] / 4096,//cVm ?!!!
+                    500.0 * (ushort)data[7] / 4096,//cVp ?!!!
+                    500.0 * (ushort)data[8] / 4096,//cVm ?!!!
                     5000.0 * (ushort)data[9] / 4096,//sV
                     5000.0 * (ushort)data[10] / 4096,//psV
                     1.25 * (ushort)data[11],//inV

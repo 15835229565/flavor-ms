@@ -1,6 +1,5 @@
 using System.Windows.Forms;
 using Graph = Flavor.Common.Data.Measure.Graph;
-using CommonOptions = Flavor.Common.Settings.CommonOptions;
 
 namespace Flavor.Controls {
     public partial class GraphPanel: Panel {
@@ -21,16 +20,17 @@ namespace Flavor.Controls {
         internal void Enable() {
             if (graph == null)
                 return;
-            CommonOptions commonOpts = graph.CommonOptions;
+            var commonOpts = graph.CommonOptions;
             if (commonOpts == null)
                 return;
 
             SuspendLayout();
 
             etime_label.Text = commonOpts.eTimeReal.ToString();
-            itime_label.Text = commonOpts.iTimeReal.ToString();
+            //itime_label.Text = commonOpts.iTimeReal.ToString();
             iVolt_label.Text = commonOpts.iVoltageReal.ToString("f3");
-            cp_label.Text = commonOpts.CPReal.ToString("f3");
+            //cp_label.Text = commonOpts.CPReal.ToString("f3");
+            cp_label.Text = commonOpts.C.ToString("f5");
             emCurLabel.Text = commonOpts.eCurrentReal.ToString("f3");
             //heatCurLabel.Text = commonOpts.hCurrentReal.ToString("f3");
             f1_label.Text = commonOpts.fV1Real.ToString("f3");
@@ -43,6 +43,7 @@ namespace Flavor.Controls {
             PerformLayout();
         }
         protected virtual void prepareControls() {
+            //TODO: move up
             firstStepLabel.Visible = false;
             startScanTextLabel.Visible = false;
             lastStepLabel.Visible = false;
@@ -53,6 +54,7 @@ namespace Flavor.Controls {
             setScanBounds((ushort)((graph.Displayed1Steps[0])[0].X), (ushort)((graph.Displayed1Steps[0])[graph.Displayed1Steps[0].Count - 1].X));
         }
         protected void setScanBounds(ushort start, ushort end) {
+            //TODO: move up
             startScanTextLabel.Visible = true;
             label18.Visible = true;
 

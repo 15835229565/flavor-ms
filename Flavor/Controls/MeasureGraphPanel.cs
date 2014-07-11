@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
-using Graph = Flavor.Common.Data.Measure.Graph;
-using CommonOptions = Flavor.Common.Settings.CommonOptions;
+using MeasureGraph = Flavor.Common.Data.Measure.Graph.MeasureGraph;
 
 namespace Flavor.Controls {
     partial class MeasureGraphPanel: GraphPanel/*, IMeasured*/ {
@@ -9,10 +8,11 @@ namespace Flavor.Controls {
         protected virtual void OnMeasureCancelRequested() {
             MeasureCancelRequested.Raise(this, EventArgs.Empty);
         }
+        //readonly int count;
         public MeasureGraphPanel() {
             InitializeComponent();
             // TODO: populate array of detectors labels. Move from ctor!
-            //int count = base.Graph.Collectors.Count;
+            //count = base.Graph.Collectors.Count;
         }
         public int ProgressMaximum { get; set; }
         void cancelScanButton_Click(object sender, EventArgs e) {
@@ -31,6 +31,8 @@ namespace Flavor.Controls {
             label15.Visible = false;
             detector2CountsLabel.Visible = false;
             label16.Visible = false;
+            detector3CountsLabel.Visible = false;
+            label0.Visible = false;
             scanRealTimeLabel.Visible = false;
             stepNumberLabel.Visible = false;
             label35.Visible = false;
@@ -62,14 +64,18 @@ namespace Flavor.Controls {
                 }
                 scanProgressBar.PerformStep();
             }
-            stepNumberLabel.Text = Graph.Instance.LastPoint.ToString();
+            // pnt as method parameter!
+            var graph = Graph as MeasureGraph;
+            ushort pnt = graph.LastPoint;
+            stepNumberLabel.Text = pnt.ToString();
             
-            scanRealTimeLabel.Text = base.Graph.CommonOptions.scanVoltageNew(Graph.Instance.LastPoint).ToString("f1");
+            scanRealTimeLabel.Text = graph.CommonOptions.scanVoltageRealNew(pnt).ToString("f1");
 
             if (counts != null) {
                 detector1CountsLabel.Text = counts[0].ToString();
                 detector2CountsLabel.Text = counts[1].ToString();
-                // TODO: 3rd detector counts (and variable collectors number)
+                detector3CountsLabel.Text = counts[2].ToString();
+                // TODO: variable collectors number
             }
         }
 

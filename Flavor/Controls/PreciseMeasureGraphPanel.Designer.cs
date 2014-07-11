@@ -32,6 +32,8 @@
             this.Controls.SetChildIndex(this.detector1CountsLabel, 0);
             this.Controls.SetChildIndex(this.label16, 0);
             this.Controls.SetChildIndex(this.detector2CountsLabel, 0);
+            this.Controls.SetChildIndex(this.label0, 0);
+            this.Controls.SetChildIndex(this.detector3CountsLabel, 0);
             this.Controls.SetChildIndex(this.label35, 0);
             this.Controls.SetChildIndex(this.scanRealTimeLabel, 0);
             this.Controls.SetChildIndex(this.label36, 0);
