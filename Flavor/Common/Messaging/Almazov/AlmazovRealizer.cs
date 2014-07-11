@@ -66,7 +66,7 @@ namespace Flavor.Common.Messaging.Almazov {
             //toSend.Enqueue(new SetD2VoltageRequest(co.d2V));
             toSend.Enqueue(new SetD3VoltageRequest(co.d3V));
             // and check
-            toSend.Enqueue(new GetD1VoltageRequest());
+            //toSend.Enqueue(new GetD1VoltageRequest());
         }
         [Obsolete]
         protected override UserRequest<CommandCode> Settings() {

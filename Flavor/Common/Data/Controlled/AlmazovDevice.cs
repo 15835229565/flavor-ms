@@ -11,10 +11,10 @@ namespace Flavor.Common {
             Init = 1,
             SEMV1 = 2,
             Turbo = 4,
-            Relay2 = 8,
-            HVE = 16,
-            PRGE = 32,
-            Relay3 = 64,
+            Relay3 = 8,
+            Relay2 = 16,
+            HVE = 32,
+            PRGE = 64,
             Alert = 128
         }
         DeviceStates state = DeviceStates.None;
@@ -85,7 +85,7 @@ namespace Flavor.Common {
 
             bool isFake = true;
             for (int i = 0; i < 13; ++i) {
-                if ((ushort)data[i] != ushort.MaxValue) {
+                if ((ushort)data[i] != 0xFFF) {
                     isFake = false;
                     break;
                 }

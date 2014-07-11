@@ -554,13 +554,13 @@ namespace Flavor.Forms {
                 parameterPanel.SuspendLayout();
                 statusTreeView.BeginUpdate();
                 byte state = e.Value;
-                if (state > 64) {
+                if (state > 128) {
                     systemStateValueTreeNode.Text = "Ошибка";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
-                } else if (state > 32) {
+                } else if (state > 64) {
                     systemStateValueTreeNode.Text = "Готова к измерению";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
-                } else if (state > 16) {
+                } else if (state > 32) {
                     systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                 } else if (state > 1) {
