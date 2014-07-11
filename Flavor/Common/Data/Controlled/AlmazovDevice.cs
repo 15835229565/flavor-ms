@@ -93,11 +93,12 @@ namespace Flavor.Common {
             if (isFake) {
                 OnDeviceStatusChanged(SEMV2,
                     SEMV3,
-                    SPUMP);
+                    SPUMP && PRGE//actual state
+                    );
             } else {
                 OnDeviceStatusChanged(SEMV2,
                     SEMV3,
-                    SPUMP,
+                    SPUMP && PRGE,//actual state
                     50.0 * (ushort)data[0] / 4096,//eI
                     100.0 * (ushort)data[1] / 4096,//iV
                     100.0 * (ushort)data[2] / 4096,//fV1
