@@ -63,8 +63,8 @@ namespace Flavor.Common {
 
         public void UpdateStatus(params ValueType[] data) {
             byte flags = (byte)data[13];
-            bool HVEport = CheckBit(flags, 8);
-            bool HVE = CheckBit(flags, 7);
+            bool HVEport = !CheckBit(flags, 8);
+            bool HVE = !CheckBit(flags, 7);
             bool PRGE = CheckBit(flags, 6);
             bool EDCD = CheckBit(flags, 5);
             bool SEMV1 = CheckBit(flags, 4);
@@ -79,8 +79,8 @@ namespace Flavor.Common {
                 // TODO: proper data!
                 OnVacuumStateChanged();
             }
-            temp = SwitchState(State, DeviceStates.HVE, HVE);
-            temp = SwitchState(State, DeviceStates.PRGE, PRGE);
+            temp = SwitchState(temp, DeviceStates.HVE, HVE);
+            temp = SwitchState(temp, DeviceStates.PRGE, PRGE);
             State = temp;
 
             bool isFake = true;

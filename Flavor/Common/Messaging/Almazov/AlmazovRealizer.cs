@@ -12,10 +12,10 @@ namespace Flavor.Common.Messaging.Almazov {
                 attempts,
                 new StatusRequestGenerator(//new TICStatusRequest(),
                     new VacuumStatusRequest(),
-                    new AllVoltagesRequest(),
+                    new AllVoltagesRequest()//,
                     //new CPUStatusRequest(),
-                    new HighVoltagePermittedStatusRequest(),
-                    new OperationBlockRequest(null)
+                    //new HighVoltagePermittedStatusRequest()//,
+                    //new OperationBlockRequest(null)
                     ),
                 interval)) { }
         AlmazovRealizer(IAsyncProtocol<CommandCode> protocol, MessageQueueWithAutomatedStatusChecks<CommandCode> queue)
@@ -67,6 +67,7 @@ namespace Flavor.Common.Messaging.Almazov {
             toSend.Enqueue(new SetD3VoltageRequest(co.d3V));
             // and check
             //toSend.Enqueue(new GetD1VoltageRequest());
+            toSend.Enqueue(new GetHeaterVoltageRequest());//fake request to workaround SPI misfunction or start measure (last in queue)
         }
         [Obsolete]
         protected override UserRequest<CommandCode> Settings() {
@@ -96,8 +97,8 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<RTCMeasureEndLAM>(AutoSend<CountsRequest>);
             Add<SPIConfDoneLAM>(updateDevice, p => {
                 OnOperationBlock(false);//maybe duplicates event after update device
-                AutoSend<GetHeaterVoltageRequest>(p);//fake request to workaround SPI misfunction (last in queue)
                 SetSettings();
+                //AutoSend<GetHeaterVoltageRequest>(p);//fake request to workaround SPI misfunction (last in queue)
                 //set ScanVoltage to minimal limit
                 //toSend.Enqueue(new ParentScanVoltageSetRequest(0));
                 //toSend.Enqueue(new MainScanVoltageSetRequest(0));

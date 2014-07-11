@@ -261,8 +261,9 @@ namespace Flavor.Common.Messaging.Almazov {
                     case 20:
                     case 21:
                     case 22:
-                    case 23:
                         return LAMEvent.Parse(code);
+                    case 23:
+                        return LAMEvent.Parse(code, raw[2]);
                     case 30:
                     case 31:
                         return new LAMCriticalError(code);
