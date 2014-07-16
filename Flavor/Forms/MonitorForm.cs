@@ -40,9 +40,10 @@ namespace Flavor.Forms
         List<PointPairListPlusWithMaxCapacity> normalizedList = null;
 
         public MonitorForm() {
-            InitializeComponent();
+            // Init panel before ApplyResources
             Panel = new PreciseMeasureGraphPanel();
             Panel.Graph = Graph.Instance;
+            InitializeComponent();
         }
 
         protected override sealed void CreateGraph() {

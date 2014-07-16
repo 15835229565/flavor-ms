@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Flavor.Controls;
 
 namespace Flavor.Forms {
-    internal partial class GraphForm: Form {
+    partial class GraphForm: Form {
         protected const int HORIZ_GRAPH_INDENT = 12;
         protected const int VERT_GRAPH_INDENT = 12;
         protected readonly Color[] rowsColors = 
@@ -15,7 +15,7 @@ namespace Flavor.Forms {
             Color.Lime, Color.SaddleBrown, Color.Maroon, Color.DeepSkyBlue, Color.DimGray,};
         protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
-        private GraphPanel panel;
+        GraphPanel panel;
         protected GraphPanel Panel {
             get {
 				return panel;
@@ -59,18 +59,18 @@ namespace Flavor.Forms {
             WindowState = FormWindowState.Maximized;
             base.OnActivated(e);
         }
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+        void saveToolStripMenuItem_Click(object sender, EventArgs e) {
             saveData();
         }
-        private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
+        void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
 			Close();
         }
-        private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
+        void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
             Panel.Visible = Panel.Enabled && measurePanelToolStripMenuItem.Checked;
             SetSize();
         }
 
-        private void toggleMeasurePanel(object sender, EventArgs e) {
+        void toggleMeasurePanel(object sender, EventArgs e) {
             measurePanelToolStripMenuItem.Visible = Panel.Enabled;
             measurePanelToolStripMenuItem_CheckedChanged(sender, e);
         }

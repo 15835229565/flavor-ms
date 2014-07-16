@@ -79,8 +79,9 @@ namespace Flavor.Forms {
         protected CollectorsForm2()
             : base() {
             // do not use! for designer only!
-            InitializeComponent();
+            // Init panel before ApplyResources
             Panel = new GraphPanel();
+            InitializeComponent();
         }
         protected CollectorsForm2(Graph graph, bool hint)
             : base() {

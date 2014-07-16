@@ -13,15 +13,17 @@ namespace Flavor.Forms {
         [Obsolete]
         protected LoadedCollectorsForm(): base() {
             // do not use! for designer only!
-            InitializeComponent();
+            // Init panel before ApplyResources
             Panel = new GraphPanel();
+            InitializeComponent();
         }
         public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
             : base(graph, hint) {
-            InitializeComponent();
-            // TODO: different for precise & scan
+            // Init panel before ApplyResources
             Panel = new GraphPanel();
             Panel.Graph = graph;
+            InitializeComponent();
+            // TODO: different for precise & scan
             Panel.Enable();
 
             displayedFileName = fileName;

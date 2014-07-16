@@ -15,6 +15,8 @@ namespace Flavor.Forms {
         }
         public MeasuredCollectorsForm()
             : base(Graph.Instance, false) {
+            // Init panel before ApplyResources
+            // strangely is inited on measure init
             InitializeComponent();
         }
 
