@@ -310,7 +310,7 @@ namespace Flavor.Common.Data.Measure {
             public void ResetPointListsWithEvent() {
                 Reset();
                 // TODO: All collectors
-                OnNewGraphData(null, 1, 2);
+                OnNewGraphData(null, 1, 2, 3);
             }
 
             // scan mode
@@ -348,7 +348,7 @@ namespace Flavor.Common.Data.Measure {
                     }
                 }
                 // TODO: only affected collectors
-                OnNewGraphData(null, 1, 2);
+                OnNewGraphData(null, 1, 2, 3);
             }
 
             public void setDateTimeAndShift(DateTime dt, short? shift) {
@@ -418,7 +418,7 @@ namespace Flavor.Common.Data.Measure {
             //lock here?
             if (newData)
                 // TODO: All collectors
-                OnNewGraphData(null, 1, 2);
+                OnNewGraphData(null, 1, 2, 3);
         }
         public void updateGraphAfterPreciseDiff(List<PreciseEditorData> peds) {
             ResetPointLists();
@@ -430,7 +430,7 @@ namespace Flavor.Common.Data.Measure {
             //lock here?
             if (newData)
                 // TODO: only affected collectors
-                OnNewGraphData(null, 1, 2);
+                OnNewGraphData(null, 1, 2, 3);
         }
         #region Graph scaling to mass coeffs
         public bool setScalingCoeff(byte col, ushort pnt, double mass) {
