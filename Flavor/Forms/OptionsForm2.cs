@@ -58,15 +58,36 @@ namespace Flavor.Forms {
             this.Close();
         }
 
-        protected void saveFileButton_Click(object sender, EventArgs e) {
+        public class SaveFileButtonClickEventArgs: EventArgs {
+            public string FileName { get; private set; }
+            public decimal[] Parameters { get; private set; }
+            public SaveFileButtonClickEventArgs(string filename, params decimal[] parameters) {
+                FileName = filename;
+                Parameters = parameters;
+            }
+        }
+        public event EventHandler<SaveFileButtonClickEventArgs> SaveFileButtonClick;
+        void OnSaveFileButtonClick(string filename, params decimal[] parameters)        {
+            var args = new SaveFileButtonClickEventArgs(filename, parameters);
+            SaveFileButtonClick.Raise(this, args);
+        }
+        void saveFileButton_Click(object sender, EventArgs e) {
             if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
-                //Config.saveCommonOptions(saveCommonDataFileDialog.FileName, (ushort)expTimeNumericUpDown.Value, (ushort)idleTimeNumericUpDown.Value,
-                //                         (double)iVoltageNumericUpDown.Value, (double)CPNumericUpDown.Value, (double)eCurrentNumericUpDown.Value, (double)hCurrentNumericUpDown.Value,
-                //                         (double)fV1NumericUpDown.Value, (double)fV2NumericUpDown.Value);
+                OnSaveFileButtonClick(saveCommonDataFileDialog.FileName,
+                d1VoltageNumericUpDown.Value,
+                d2VoltageNumericUpDown.Value,
+                d3VoltageNumericUpDown.Value,
+                iVoltageNumericUpDown.Value,
+                eCurrentNumericUpDown.Value,
+                fV1NumericUpDown.Value,
+                fV2NumericUpDown.Value,
+                CPNumericUpDown.Value,
+                kNumericUpDown.Value,
+                expTimeNumericUpDown.Value);
             }
         }
 
-        protected void loadFileButton_Click(object sender, EventArgs e) {
+        void loadFileButton_Click(object sender, EventArgs e) {
             if (openCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
                     loadCommonData(Config.loadCommonOptions(openCommonDataFileDialog.FileName));

@@ -3,20 +3,13 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using ZedGraph;
-using Flavor.Common;
 
-namespace Flavor.Controls
-{
+namespace Flavor.Controls {
     public partial class ZedGraphControlMonitor: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
-            private ContextMenuStrip menuStrip;
-            public ContextMenuStrip MenuStrip {
-                get {
-                    return menuStrip;
-                }
-            }
+            public ContextMenuStrip MenuStrip { get; private set; }
             public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip) {
-                this.menuStrip = menuStrip;
+                MenuStrip = menuStrip;
             }
         }
         public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;
@@ -24,22 +17,21 @@ namespace Flavor.Controls
             ContextMenuBuilder.Raise(this, e);
         }
         
-        private const string LOG_ITEM_TEXT = "Логарифмическая шкала";
+        const string LOG_ITEM_TEXT = "Логарифмическая шкала";
         public ZedGraphControlMonitor()
             : base() {
             InitializeComponent();
             base.ContextMenuBuilder += ZedGraphControlMonitor_ContextMenuBuilder;
         }
-
-        private void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
-            ToolStripMenuItem item = new ToolStripMenuItem();
+        void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
+            var item = new ToolStripMenuItem();
             item.Text = LOG_ITEM_TEXT;
             item.Checked = (GraphPane.YAxis.Type == AxisType.Log);
             item.CheckOnClick = true;
-            item.CheckedChanged += new System.EventHandler((s, e) => {
+            item.CheckedChanged += (s, e) => {
                 GraphPane.YAxis.Type = (s as ToolStripMenuItem).Checked ? AxisType.Log : AxisType.Linear;
                 this.Refresh();
-            });
+            };
 
             menuStrip.Items.Add(item);
 

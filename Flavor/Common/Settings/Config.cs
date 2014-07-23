@@ -540,6 +540,23 @@ namespace Flavor.Common.Settings {
             writer.saveCommonOptions(eT, iT, iV, cp, eC, hC, fv1, fv2);
             writer.write();
         }
+        public static void temp_saveCO(string filename, double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2, double c, double k, double expT)
+        {
+            ICommonOptionsWriter writer = TagHolder.getCommonOptionsWriter(filename);
+            var co = new CommonOptions();
+            co.iVoltageReal = iV;
+            co.eCurrentReal = eC;
+            co.fV1Real = fv1;
+            co.fV2Real = fv2;
+            co.d1VReal = d1v;
+            co.d2VReal = d2v;
+            co.d3VReal = d3v;
+            co.C = c;
+            co.K = k;
+            co.eTimeReal = (ushort)expT;
+            writer.saveCommonOptions(co);
+            writer.write();
+        }
         #endregion
         #region Error messages on loading different configs
         internal class ConfigLoadException: System.Exception {

@@ -521,6 +521,13 @@ namespace Flavor.Forms {
                     args.NotRareModeRequested = commander.notRareModeRequested;
                     args.CommonOptions = Config.CommonOptions;
                 };
+                oForm.SaveFileButtonClick += (s, a) => {
+                    var ps = a.Parameters;
+                    if (ps.Length == 0)
+                        return;
+                    Config.temp_saveCO(a.FileName, (double)ps[0], (double)ps[1], (double)ps[2], (double)ps[3], (double)ps[4], (double)ps[5], (double)ps[6], (double)ps[7], (double)ps[8], (double)ps[9]);
+                    // TODO: unsubscribe
+                };
                 oForm.FormClosing += (s, a) => {
                     var args = a as OptionsForm2.ClosingEventArgs;
                     commander.ProgramStateChanged -= method;
