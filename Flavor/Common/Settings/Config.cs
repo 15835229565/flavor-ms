@@ -672,44 +672,45 @@ namespace Flavor.Common.Settings {
         }
         #endregion
         #region Additive configs
-        private interface IMonitorWriter: IAnyWriter, IShift {
+        interface IMonitorWriter: IAnyWriter, IShift {
             void setSolvedResult(double[] solution);
             void finalize();
         }
-        private abstract class MonitorSaveMaintainer {
-            private abstract class CurrentMonitorSaveMaintainer: MonitorSaveMaintainer {
-                private const string VERSION_NUMBER = "1.0";
+        abstract class MonitorSaveMaintainer {
+            abstract class CurrentMonitorSaveMaintainer: MonitorSaveMaintainer {
+                const string VERSION_NUMBER = "1.0";
 
-                private const string LINE_TERMINATOR = "\r\n";
+                const string LINE_TERMINATOR = "\r\n";
 
-                private const char HEADER_FOOTER_FIRST_SYMBOL = '#';
-                private const char HEADER_FOOTER_DELIMITER = ' ';
-                private const string HEADER_TITLE = "monitor";
-                private const string HEADER_VERSION = "version";
-                private const string HEADER_COMMON_OPTIONS = "common";
-                private const string HEADER_PRECISE_OPTIONS = "precise";
-                private const string HEADER_START_TIME = "start";
-                private const string FOOTER_TITLE = "end";
-                private const string FOOTER_REASON = "reason";
-                private const string FOOTER_REASON_FINISH = "finish";
-                private const string FOOTER_REASON_DATE_CHANGE = "next";
-                private const string FOOTER_LINK = "link";
+                const char HEADER_FOOTER_FIRST_SYMBOL = '#';
+                const char HEADER_FOOTER_DELIMITER = ' ';
+                const string HEADER_TITLE = "monitor";
+                const string HEADER_VERSION = "version";
+                const string HEADER_COMMON_OPTIONS = "common";
+                const string HEADER_PRECISE_OPTIONS = "precise";
+                const string HEADER_START_TIME = "start";
+                const string FOOTER_TITLE = "end";
+                const string FOOTER_REASON = "reason";
+                const string FOOTER_REASON_FINISH = "finish";
+                const string FOOTER_REASON_DATE_CHANGE = "next";
+                const string FOOTER_LINK = "link";
 
-                private const char DATA_DELIMITER = '|';
-                private const string NO_SHIFT_PLACEHOLDER = "-";
+                //const char DATA_DELIMITER = '|';
+                const char DATA_DELIMITER = '\t';
+                const string NO_SHIFT_PLACEHOLDER = "-";
 
-                private const string RESOLVED_APPENDIX = "r";
+                const string RESOLVED_APPENDIX = "r";
 
                 public class Writer: CurrentMonitorSaveMaintainer, IMonitorWriter {
-                    private readonly DateTime initialDT;
-                    private readonly string filename;
-                    private readonly CommonOptions opts;
-                    private readonly List<PreciseEditorData> precData;
-                    private readonly string header;
-                    private readonly StreamWriter sw;
-                    private readonly StreamWriter swResolved;
-                    private static Writer instance = null;
-                    private double[] solution = null;
+                    readonly DateTime initialDT;
+                    readonly string filename;
+                    readonly CommonOptions opts;
+                    readonly List<PreciseEditorData> precData;
+                    readonly string header;
+                    readonly StreamWriter sw;
+                    readonly StreamWriter swResolved;
+                    static Writer instance = null;
+                    double[] solution = null;
                     public static IMonitorWriter getInstance(DateTime dt, Graph graph) {
                         if (instance == null) {
                             instance = new Writer(dt, graph);
@@ -728,10 +729,10 @@ namespace Flavor.Common.Settings {
                             return instance != null;
                         }
                     }
-                    private DateTime currentDT;
+                    DateTime currentDT;
                     //private Graph graph;
-                    private short? shift = null;
-                    private Writer(DateTime dt, Graph graph) {
+                    short? shift = null;
+                    Writer(DateTime dt, Graph graph) {
                         initialDT = dt;
                         // TODO: copy!
                         //this.graph = graph;
@@ -742,14 +743,14 @@ namespace Flavor.Common.Settings {
                         header = generateHeader();
                         initFile(dt, out filename, out sw, out swResolved);
                     }
-                    private Writer(Writer other, DateTime dt) {
+                    Writer(Writer other, DateTime dt) {
                         this.initialDT = dt;
                         this.opts = other.opts;
                         this.precData = other.precData;
                         header = other.header;
                         initFile(dt, out filename, out sw, out swResolved);
                     }
-                    private void initFile(DateTime dt, out string filename, out StreamWriter sw, out StreamWriter swResolved) {
+                    void initFile(DateTime dt, out string filename, out StreamWriter sw, out StreamWriter swResolved) {
                         filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
                         sw = new StreamWriter(filename, true);
                         sw.WriteLine(header);
@@ -759,7 +760,7 @@ namespace Flavor.Common.Settings {
                         swResolved.WriteLine(header);
                         swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
                     }
-                    private string generateHeader() {
+                    string generateHeader() {
                         StringBuilder sb = (new StringBuilder(header))
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_TITLE)
@@ -781,7 +782,7 @@ namespace Flavor.Common.Settings {
                         }
                         return sb.ToString();
                     }
-                    private void finalize(string nextFilename) {
+                    void finalize(string nextFilename) {
                         StringBuilder sb = (new StringBuilder())
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(FOOTER_TITLE);
