@@ -643,13 +643,20 @@ namespace Flavor.Forms {
             if (result.HasValue) {
                 if (result == true) {
                     ChildFormInit(MonitorForm, true);
+                    // init on measure start
                     monitorToolStripButton.Tag = 1;
                 } else {
-                    // TODO: check case of background premeasure is done
-                    int i = (int)monitorToolStripButton.Tag;
+                    var tag = monitorToolStripButton.Tag;
+                    if (tag == null) {
+                        // init after background premeasure
+                        monitorToolStripButton.Tag = 1;
+                        monitorToolStripButton.Text = LabelTextGen;
+                        return;
+                    }
+                    int i = (int)tag;
                     ++i;
                     monitorToolStripButton.Tag = i;
-                    monitorToolStripButton.Text = "Метка №" + (int)monitorToolStripButton.Tag;
+                    monitorToolStripButton.Text = LabelTextGen;
                 }
             } else {
                 monitorToolStripButton.Tag = null;
@@ -1082,9 +1089,20 @@ namespace Flavor.Forms {
             }
             RefreshButtons(state);
         }
+        string LabelTextGen {
+            get {
+                string LABEL_TEXT = "Метка №";
+                return LABEL_TEXT + (int)monitorToolStripButton.Tag;
+            }
+        }
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
         void RefreshButtons(ProgramStates state) {
+            string MONITOR_BUTTON_TEXT = "Режим мониторинга";
+            string BACKGROUND_TEXT = "Измерение фона";
+            string START_MONITOR = "Начать мониторинг";
+            string HBLOCK_ON = "Включить блокировку";
+            string HBLOCK_OFF = "Снять блокировку";
             switch (state) {
                 case ProgramStates.Start:
                     bool connected = (bool)connectToolStripButton.Tag;
@@ -1094,39 +1112,43 @@ namespace Flavor.Forms {
                     setButtons(false, false, true, false, false, false, false, true);
                     break;
                 case ProgramStates.WaitHighVoltage:
-                    unblock_butt.Text = "Снять блокировку";
+                    unblock_butt.Text = HBLOCK_OFF;
                     unblock_butt.ForeColor = Color.Green;
                     setButtons(false, false, true, true, false, false, false, true);
                     break;
                 case ProgramStates.Ready:
-                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.Text = HBLOCK_ON;
                     unblock_butt.ForeColor = Color.Red;
                     bool canDoPrecise = commander.SomePointsUsed;
                     setButtons(false, false, true, true, true, canDoPrecise, canDoPrecise, true);
-                    monitorToolStripButton.Text = "Режим мониторинга";
+                    monitorToolStripButton.Text = MONITOR_BUTTON_TEXT;
                     break;
                 case ProgramStates.WaitBackgroundMeasure:
-                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.Text = HBLOCK_ON;
                     unblock_butt.ForeColor = Color.Red;
                     setButtons(false, false, true, true, false, false, false, false);
-                    monitorToolStripButton.Text = "Измерение фона";
+                    monitorToolStripButton.Text = BACKGROUND_TEXT;
+                    // undo init
+                    monitorToolStripButton.Tag = null;
                     break;
                 case ProgramStates.BackgroundMeasureReady:
-                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.Text = HBLOCK_ON;
                     unblock_butt.ForeColor = Color.Red;
                     setButtons(false, false, true, true, false, false, true, false);
-                    monitorToolStripButton.Text = "Начать мониторинг";
+                    monitorToolStripButton.Text = START_MONITOR;
+                    // undo init
+                    monitorToolStripButton.Tag = null;
                     break;
                 case ProgramStates.Measure:
-                    unblock_butt.Text = "Включить блокировку";
+                    unblock_butt.Text = HBLOCK_ON;
                     unblock_butt.ForeColor = Color.Red;
                     // BAD!
                     if (commander.CurrentMeasureMode is Flavor.Common.Data.Measure.MeasureMode.Precise.Monitor) {
                         setButtons(false, false, true, true, false, false, true, false);
-                        monitorToolStripButton.Text = "Метка №" + (int)monitorToolStripButton.Tag;
+                        monitorToolStripButton.Text = LabelTextGen;
                     } else {
                         setButtons(false, false, true, true, false, false, false, false);
-                        monitorToolStripButton.Text = "Режим мониторинга";
+                        monitorToolStripButton.Text = MONITOR_BUTTON_TEXT;
                     }
                     break;
                 case ProgramStates.WaitInit:
