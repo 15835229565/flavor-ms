@@ -44,10 +44,7 @@ namespace Flavor.Common.Data.Measure {
 
         readonly object locker = new object();
 
-        private bool operating = false;
-        public bool isOperating {
-            get { return operating; }
-        }
+        public bool isOperating { get; private set; }
 
         ushort pointValue = 0;
 
@@ -58,6 +55,7 @@ namespace Flavor.Common.Data.Measure {
 
         public bool CancelRequested { private get; set; }
         MeasureMode(ushort befTime, ushort iTime, ushort eTime) {
+            isOperating = false;
             this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             this.generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
         }
@@ -88,7 +86,7 @@ namespace Flavor.Common.Data.Measure {
         }
         void stop() {
             OnFinalize();
-            operating = false;
+            isOperating = false;
             OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
             OnDisable();
         }
@@ -100,7 +98,7 @@ namespace Flavor.Common.Data.Measure {
         public virtual bool Start() {
             //first measure point with increased idle time
             customMeasureEventArgs = firstMeasureEventArgs;
-            operating = true;
+            isOperating = true;
             return true;
         }
         // external usage only

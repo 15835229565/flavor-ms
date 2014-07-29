@@ -489,7 +489,7 @@ namespace Flavor.Common.Settings {
 
             return dt;
         }
-        internal static void autoSaveMonitorSpectrumFile(short? shift) {
+        internal static void autoSaveMonitorSpectrumFile(short? shift, int? labelNumber) {
             DateTime dt = System.DateTime.Now;
             //DateTime dt = autoSavePreciseSpectrumFile(shift);
             IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
@@ -498,10 +498,13 @@ namespace Flavor.Common.Settings {
                 AutoSaveSolvedSpectra(writer);
             }
             // TODO: separate resolved file write-out
-            writer.write();
+            if (labelNumber.HasValue)
+                writer.write(labelNumber.Value);
+            else
+                writer.write();
         }
-        private static double[] savedSolution = null;
-        private static void AutoSaveSolvedSpectra(IMonitorWriter writer) {
+        static double[] savedSolution = null;
+        static void AutoSaveSolvedSpectra(IMonitorWriter writer) {
             if (savedSolution == null) {
                 // error
             }
@@ -646,28 +649,28 @@ namespace Flavor.Common.Settings {
         }
         #endregion
         #region Common config interfaces
-        private interface ITimeStamp {
+        interface ITimeStamp {
             void setTimeStamp(DateTime dt);
         }
-        private interface IShift {
+        interface IShift {
             void setShift(short? shift);
         }
-        private interface IAnyConfig {}
-        private interface IAnyReader: IAnyConfig {}
-        private interface IAnyWriter: IAnyConfig {
-            void write();
+        interface IAnyConfig {}
+        interface IAnyReader: IAnyConfig {}
+        interface IAnyWriter: IAnyConfig {
+            void write(params object[] data);
         }
-        private interface ICommonOptionsReader: IAnyReader {
+        interface ICommonOptionsReader: IAnyReader {
             CommonOptions loadCommonOptions();
         }
-        private interface IPreciseDataReader: IAnyReader {
+        interface IPreciseDataReader: IAnyReader {
             List<PreciseEditorData> loadPreciseData();
         }
-        private interface ICommonOptionsWriter: IAnyWriter {
+        interface ICommonOptionsWriter: IAnyWriter {
             void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2);
             void saveCommonOptions(CommonOptions opts);
         }
-        private interface IPreciseDataWriter: IAnyWriter {
+        interface IPreciseDataWriter: IAnyWriter {
             void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum);
         }
         #endregion
@@ -689,6 +692,7 @@ namespace Flavor.Common.Settings {
                 const string HEADER_COMMON_OPTIONS = "common";
                 const string HEADER_PRECISE_OPTIONS = "precise";
                 const string HEADER_START_TIME = "start";
+                const string LABEL = "label";
                 const string FOOTER_TITLE = "end";
                 const string FOOTER_REASON = "reason";
                 const string FOOTER_REASON_FINISH = "finish";
@@ -730,7 +734,6 @@ namespace Flavor.Common.Settings {
                         }
                     }
                     DateTime currentDT;
-                    //private Graph graph;
                     short? shift = null;
                     Writer(DateTime dt, Graph graph) {
                         initialDT = dt;
@@ -810,7 +813,13 @@ namespace Flavor.Common.Settings {
                         swResolved.Close();
                     }
                     #region IAnyWriter Members
-                    public void write() {
+                    public void write(params object[] data) {
+                        // special label write-out
+                        if (data.Length != 0) {
+                            string label = LABEL + (int)data[0];
+                            sw.WriteLine(label);
+                            swResolved.WriteLine(label);
+                        }
                         StringBuilder sb = (new StringBuilder())
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
@@ -1399,7 +1408,7 @@ namespace Flavor.Common.Settings {
                 #endregion
                 #region Version1_2 Writers
                 public abstract class Writer: Version1_2TagHolder {
-                    public virtual void write() {
+                    public virtual void write(params object[] data) {
                         xmlData.Save(filename);
                     }
                     public void saveCommonOptions(CommonOptions opts) {
@@ -1511,7 +1520,7 @@ namespace Flavor.Common.Settings {
                 }
                 public class MainConfigWriter: ComplexWriter, IMainConfigWriter {
                     #region IAnyWriter Members
-                    public override void write() {
+                    public override void write(params object[] data) {
                         saveConnectOptions();
                         saveScanOptions();
                         saveCommonOptions();
@@ -2054,7 +2063,7 @@ namespace Flavor.Common.Settings {
                 #endregion
                 #region Current Writers
                 public abstract class Writer: CurrentTagHolder {
-                    public virtual void write() {
+                    public virtual void write(params object[] data) {
                         xmlData.Save(filename);
                     }
                     public void saveCommonOptions(CommonOptions opts) {
@@ -2289,7 +2298,7 @@ namespace Flavor.Common.Settings {
                 }
                 public class MainConfigWriter: ComplexWriter, IMainConfigWriter {
                     #region IAnyWriter Members
-                    public override void write() {
+                    public override void write(params object[] data) {
                         saveConnectOptions();
                         saveScanOptions();
                         saveCommonOptions();

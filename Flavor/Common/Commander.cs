@@ -329,75 +329,86 @@ namespace Flavor.Common {
         List<long> backgroundResult;
         bool doBackgroundPremeasure;
         // TODO: protected
-        public bool? Monitor() {
+        public bool? Monitor(params object[] data) {
             // TODO: move partially up
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
-            if (pState == ProgramStates.Ready) {
-                if (SomePointsUsed) {
-                    //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
-                    Graph.Instance.ResetForMonitor();
+            
+            int? n = null;// label number
+            switch (pState) {
+                case ProgramStates.Ready:
+                    if (SomePointsUsed) {
+                        //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
+                        Graph.Instance.ResetForMonitor();
 
-                    #warning matrix is formed too early
-                    // TODO: move matrix formation to manual operator actions
-                    // TODO: parallelize matrix formation, flag on completion
-                    // TODO: duplicates
-                    var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
-                    if (peaksForMatrix.Count > 0) {
-                        // To comply with other processing order (and saved information)
-                        peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                        matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
-                        // What do with empty matrix?
-                        if (matrix != null)
-                            matrix.Init();
-                        else {
-                            OnLog("Error in peak data format or duplicate substance.");
-                            return null;
+                        #warning matrix is formed too early
+                        // TODO: move matrix formation to manual operator actions
+                        // TODO: parallelize matrix formation, flag on completion
+                        // TODO: duplicates
+                        var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+                        if (peaksForMatrix.Count > 0) {
+                            // To comply with other processing order (and saved information)
+                            peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                            matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
+                            // What do with empty matrix?
+                            if (matrix != null)
+                                matrix.Init();
+                            else {
+                                OnLog("Error in peak data format or duplicate substance.");
+                                return null;
+                            }
+                        } else
+                            matrix = null;
+
+                        // TODO: feed measure mode with start shift value (really?)
+                        short? startShiftValue = 0;
+                        var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
+                        temp.SaveResults += (s, e) => { 
+                            Config.autoSaveMonitorSpectrumFile(e.Shift, n);
+                            if (n.HasValue)
+                                n = null;    
+                        };
+                        temp.Finalize += (s, e) => Config.finalizeMonitorFile();
+                        temp.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
+                        temp.SuccessfulExit += (s, e) => {
+                            var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
+                            Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
+                        };
+                        CurrentMeasureMode = temp;
+
+                        if (doBackgroundPremeasure) {
+                            initMeasure(ProgramStates.WaitBackgroundMeasure);
+                            background = new FixedSizeQueue<List<long>>(backgroundCycles);
+                            // or maybe Enumerator realization: one item, always recounting (accumulate values)..
+                            Graph.Instance.NewGraphData += NewBackgroundMeasureReady;
+                        } else {
+                            initMeasure(ProgramStates.Measure);
+                            Graph.Instance.NewGraphData += NewMonitorMeasureReady;
                         }
-                    } else
-                        matrix = null;
-
-                    // TODO: feed measure mode with start shift value (really?)
-                    short? startShiftValue = 0;
-                    var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
-                    temp.SaveResults += (s, e) => Config.autoSaveMonitorSpectrumFile(e.Shift);
-                    temp.Finalize += (s, e) => Config.finalizeMonitorFile();
-                    temp.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
-                    temp.SuccessfulExit += (s, e) => {
-                        var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
-                        Graph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
-                    };
-                    CurrentMeasureMode = temp;
-
-                    if (doBackgroundPremeasure) {
-                        initMeasure(ProgramStates.WaitBackgroundMeasure);
-                        background = new FixedSizeQueue<List<long>>(backgroundCycles);
-                        // or maybe Enumerator realization: one item, always recounting (accumulate values)..
-                        Graph.Instance.NewGraphData += NewBackgroundMeasureReady;
+                        return true;
                     } else {
-                        initMeasure(ProgramStates.Measure);
-                        Graph.Instance.NewGraphData += NewMonitorMeasureReady;
+                        OnLog("No points for monitor mode measure.");
+                        return null;
                     }
-                    return true;
-                } else {
-                    OnLog("No points for monitor mode measure.");
+                case ProgramStates.BackgroundMeasureReady:
+                    Graph.Instance.NewGraphData -= NewBackgroundMeasureReady;
+
+                    backgroundResult = background.Aggregate(Summarize);
+                    for (int i = 0; i < backgroundResult.Count; ++i) {
+                        // TODO: check integral operation behaviour here
+                        backgroundResult[i] /= backgroundCycles;
+                    }
+
+                    setProgramStateWithoutUndo(ProgramStates.Measure);
+                    Graph.Instance.NewGraphData += NewMonitorMeasureReady;
+                    return false;
+                case ProgramStates.Measure:
+                    // set label
+                    n = (int)data[0];
+                    return false;
+                default:
+                    // wrong state, strange!
                     return null;
-                }
-            } else if (pState == ProgramStates.BackgroundMeasureReady) {
-                Graph.Instance.NewGraphData -= NewBackgroundMeasureReady;
-
-                backgroundResult = background.Aggregate(Summarize);
-                for (int i = 0; i < backgroundResult.Count; ++i) {
-                    // TODO: check integral operation behaviour here
-                    backgroundResult[i] /= backgroundCycles;
-                }
-
-                setProgramStateWithoutUndo(ProgramStates.Measure);
-                Graph.Instance.NewGraphData += NewMonitorMeasureReady;
-                return false;
-            } else {
-                // wrong state, strange!
-                return null;
             }
         }
         void NewBackgroundMeasureReady(uint[] counts, params int[] recreate) {

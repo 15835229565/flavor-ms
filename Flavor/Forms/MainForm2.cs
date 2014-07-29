@@ -639,12 +639,20 @@ namespace Flavor.Forms {
         }
         void monitorToolStripButton_Click(object sender, EventArgs e) {
             // lock PreciseData for modification
-            bool? result = commander.Monitor();
+            bool? result = monitorToolStripButton.Tag == null ? commander.Monitor() : commander.Monitor(monitorToolStripButton.Tag);
             if (result.HasValue) {
                 if (result == true) {
                     ChildFormInit(MonitorForm, true);
+                    monitorToolStripButton.Tag = 1;
+                } else {
+                    // TODO: check case of background premeasure is done
+                    int i = (int)monitorToolStripButton.Tag;
+                    ++i;
+                    monitorToolStripButton.Tag = i;
+                    monitorToolStripButton.Text = "Метка №" + (int)monitorToolStripButton.Tag;
                 }
             } else {
+                monitorToolStripButton.Tag = null;
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1067,7 +1075,6 @@ namespace Flavor.Forms {
             parameterPanel.ResumeLayout();
         }
 
-        // TODO: program state as method parameter (avoid thread run)
         void InvokeRefreshButtons(ProgramStates state) {
             if (this.InvokeRequired) {
                 this.BeginInvoke(new ProgramEventHandler(RefreshButtons), state);
@@ -1111,10 +1118,16 @@ namespace Flavor.Forms {
                     monitorToolStripButton.Text = "Начать мониторинг";
                     break;
                 case ProgramStates.Measure:
-                    setButtons(false, false, true, true, false, false, false, false);
                     unblock_butt.Text = "Включить блокировку";
                     unblock_butt.ForeColor = Color.Red;
-                    monitorToolStripButton.Text = "Режим мониторинга";
+                    // BAD!
+                    if (commander.CurrentMeasureMode is Flavor.Common.Data.Measure.MeasureMode.Precise.Monitor) {
+                        setButtons(false, false, true, true, false, false, true, false);
+                        monitorToolStripButton.Text = "Метка №" + (int)monitorToolStripButton.Tag;
+                    } else {
+                        setButtons(false, false, true, true, false, false, false, false);
+                        monitorToolStripButton.Text = "Режим мониторинга";
+                    }
                     break;
                 case ProgramStates.WaitInit:
                 case ProgramStates.WaitShutdown:
@@ -1136,6 +1149,8 @@ namespace Flavor.Forms {
             overview_button.Enabled = scan;
             sensmeasure_button.Enabled = precise;
             monitorToolStripButton.Enabled = monitor;
+            if (!monitor)
+                monitorToolStripButton.Tag = null;
 
             connectToolStripMenuItem.Enabled = connect;
             measureToolStripMenuItem.Enabled = measureOptions;

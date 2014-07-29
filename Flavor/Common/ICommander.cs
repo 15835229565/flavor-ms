@@ -34,6 +34,6 @@
         event ProgramEventHandler MeasureCancelled;
         void Scan();
         bool Sense();
-        bool? Monitor();
+        bool? Monitor(params object[] data);
     }
 }
