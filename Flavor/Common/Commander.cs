@@ -329,12 +329,13 @@ namespace Flavor.Common {
         List<long> backgroundResult;
         bool doBackgroundPremeasure;
         // TODO: protected
+        int? LabelNumber { get; set; }
         public bool? Monitor(params object[] data) {
             // TODO: move partially up
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
             
-            int? n = null;// label number
+            //int? n = null;// label number
             switch (pState) {
                 case ProgramStates.Ready:
                     if (SomePointsUsed) {
@@ -363,10 +364,10 @@ namespace Flavor.Common {
                         // TODO: feed measure mode with start shift value (really?)
                         short? startShiftValue = 0;
                         var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
-                        temp.SaveResults += (s, e) => { 
-                            Config.autoSaveMonitorSpectrumFile(e.Shift, n);
-                            if (n.HasValue)
-                                n = null;    
+                        temp.SaveResults += (s, e) => {
+                            Config.autoSaveMonitorSpectrumFile(e.Shift, LabelNumber);
+                            if (LabelNumber.HasValue)
+                                LabelNumber = null;    
                         };
                         temp.Finalize += (s, e) => Config.finalizeMonitorFile();
                         temp.GraphUpdateDelegate = (p, peak) => Graph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
@@ -391,6 +392,9 @@ namespace Flavor.Common {
                         return null;
                     }
                 case ProgramStates.BackgroundMeasureReady:
+                    // set background end label
+                    LabelNumber = 0;
+
                     Graph.Instance.NewGraphData -= NewBackgroundMeasureReady;
 
                     backgroundResult = background.Aggregate(Summarize);
@@ -404,7 +408,7 @@ namespace Flavor.Common {
                     return false;
                 case ProgramStates.Measure:
                     // set label
-                    n = (int)data[0];
+                    LabelNumber = (int)data[0];
                     return false;
                 default:
                     // wrong state, strange!

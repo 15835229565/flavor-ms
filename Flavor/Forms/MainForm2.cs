@@ -639,34 +639,43 @@ namespace Flavor.Forms {
         }
         void monitorToolStripButton_Click(object sender, EventArgs e) {
             // lock PreciseData for modification
-            bool? result = monitorToolStripButton.Tag == null ? commander.Monitor() : commander.Monitor(monitorToolStripButton.Tag);
+            var tag = monitorToolStripButton.Tag;
+            bool? result;
+            if (tag == null) {
+                monitorToolStripButton.Tag = 1;
+                monitorToolStripButton.Text = LabelTextGen;
+                result = commander.Monitor();
+            } else {
+                int i = (int)tag;
+                ++i;
+                monitorToolStripButton.Tag = i;
+                monitorToolStripButton.Text = LabelTextGen;
+                result = commander.Monitor(tag);
+            }
+            //bool? result = tag == null ? commander.Monitor() : commander.Monitor(tag);
             if (result.HasValue) {
                 if (result == true) {
                     ChildFormInit(MonitorForm, true);
-                    // init on measure start
-                    monitorToolStripButton.Tag = 1;
-                } else {
-                    var tag = monitorToolStripButton.Tag;
-                    if (tag == null) {
-                        // init after background premeasure
-                        monitorToolStripButton.Tag = 1;
-                        monitorToolStripButton.Text = LabelTextGen;
-                        return;
-                    }
-                    int i = (int)tag;
-                    ++i;
-                    monitorToolStripButton.Tag = i;
-                    monitorToolStripButton.Text = LabelTextGen;
                 }
+                //else {
+                //    if (tag == null) {
+                //        // init after background premeasure
+                //        monitorToolStripButton.Tag = 1;
+                //        monitorToolStripButton.Text = LabelTextGen;
+                //        return;
+                //    }
+                //}
             } else {
                 monitorToolStripButton.Tag = null;
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         void ChildFormInit(IMeasured form, bool isPrecise) {
-            overview_button.Enabled = false;
-            sensmeasure_button.Enabled = false;
-            monitorToolStripButton.Enabled = false;
+            // disabled
+            
+            //overview_button.Enabled = false;
+            //sensmeasure_button.Enabled = false;
+            //monitorToolStripButton.Enabled = false;
 
             form.MeasureCancelRequested += ChildForm_MeasureCancelRequested;
             // order is important here!
@@ -1092,7 +1101,8 @@ namespace Flavor.Forms {
         string LabelTextGen {
             get {
                 string LABEL_TEXT = "Метка №";
-                return LABEL_TEXT + (int)monitorToolStripButton.Tag;
+                var tag = monitorToolStripButton.Tag;
+                return tag == null ? LABEL_TEXT : LABEL_TEXT + (int)tag;
             }
         }
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
@@ -1122,6 +1132,8 @@ namespace Flavor.Forms {
                     bool canDoPrecise = commander.SomePointsUsed;
                     setButtons(false, false, true, true, true, canDoPrecise, canDoPrecise, true);
                     monitorToolStripButton.Text = MONITOR_BUTTON_TEXT;
+                    // undo init
+                    monitorToolStripButton.Tag = null;
                     break;
                 case ProgramStates.WaitBackgroundMeasure:
                     unblock_butt.Text = HBLOCK_ON;

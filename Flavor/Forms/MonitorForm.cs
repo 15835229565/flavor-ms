@@ -24,7 +24,7 @@ namespace Flavor.Forms
 
         double time = -1;
         class PointPairListPlusWithMaxCapacity: PointPairListPlus {
-            const int MAX_CAPACITY = 1000;
+            const int MAX_CAPACITY = int.MaxValue;
             public PointPairListPlusWithMaxCapacity() : base() { }
             public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
             public new void Add(PointPair pp) {
