@@ -26,7 +26,7 @@ namespace Flavor.Forms {
             this.stepTextBox.Text = step.ToString();
             this.Text += " " + col.ToString();
             // move this reference up
-            if (graph != Graph.Instance)
+            if (graph != Graph.MeasureGraph.Instance)
                 this.Text += " (только для текущего спектра)";
         }
 
@@ -46,7 +46,7 @@ namespace Flavor.Forms {
                 massTextBox.BackColor = Color.Red;
                 return;
             }
-            bool result = graph == Graph.Instance ? Config.setScalingCoeff(myCol, myStep, mass) : graph.setScalingCoeff(myCol, myStep, mass);
+            bool result = graph == Graph.MeasureGraph.Instance ? Config.setScalingCoeff(myCol, myStep, mass) : graph.setScalingCoeff(myCol, myStep, mass);
             this.DialogResult = result ? DialogResult.Yes : DialogResult.No;
             this.Close();
         }

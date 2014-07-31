@@ -1,31 +1,19 @@
 ﻿namespace Flavor.Common.Data.Measure {
     class PointPairListPlus: ZedGraph.PointPairList {
-        PreciseEditorData myPED;
-        Graph.pListScaled myPLS;
-
-        public PreciseEditorData PEDreference {
-            get { return myPED; }
-            set { myPED = value; }
-        }
-        public Graph.pListScaled PLSreference {
-            get { return myPLS; }
-            set { myPLS = value; }
-        }
+        public PreciseEditorData PEDreference { get; set; }
+        public Graph.pListScaled PLSreference { get; set; }
 
         public PointPairListPlus()
-            : base() {
-            myPED = null;
-            myPLS = null;
-        }
+            : base() { }
         public PointPairListPlus(PreciseEditorData ped, Graph.pListScaled pls)
             : base() {
-            myPED = ped;
-            myPLS = pls;
+            PEDreference = ped;
+            PLSreference = pls;
         }
         public PointPairListPlus(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls)
             : base(other) {
-            myPED = ped;
-            myPLS = pls;
+            PEDreference = ped;
+            PLSreference = pls;
         }
     }
 }

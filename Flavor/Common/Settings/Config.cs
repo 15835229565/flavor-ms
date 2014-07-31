@@ -459,7 +459,7 @@ namespace Flavor.Common.Settings {
         #endregion
         #endregion
         #region Automatic Actions
-        private static string genAutoSaveFilename(string extension, DateTime now) {
+        static string genAutoSaveFilename(string extension, DateTime now) {
             string dirname;
             dirname = System.IO.Path.Combine(INITIAL_DIR, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
             if (!System.IO.Directory.Exists(@dirname)) {
@@ -468,31 +468,32 @@ namespace Flavor.Common.Settings {
             return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
         internal static void autoSaveSpectrumFile() {
-            DateTime dt = System.DateTime.Now;
-            Graph.Instance.setDateTimeAndShift(dt, short.MaxValue);
+            var g = Graph.MeasureGraph.Instance;
+            DateTime dt = g.DateTime;
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
 
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
+            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, g);
             writer.setTimeStamp(dt);
             writer.write();
         }
-        internal static DateTime autoSavePreciseSpectrumFile(short? shift) {
-            DateTime dt = System.DateTime.Now;
-            Graph.Instance.setDateTimeAndShift(dt, shift);
+        internal static void autoSavePreciseSpectrumFile() {
+            var g = Graph.MeasureGraph.Instance;
+            DateTime dt = g.DateTime;
+            short? shift = g.Shift;
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
 
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, Graph.Instance);
+            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, g);
             writer.setTimeStamp(dt);
             writer.setShift(shift);
-            writer.savePreciseData(Graph.Instance.PreciseData, false);
+            writer.savePreciseData(g.PreciseData, false);
             writer.write();
-
-            return dt;
         }
-        internal static void autoSaveMonitorSpectrumFile(short? shift, int? labelNumber) {
-            DateTime dt = System.DateTime.Now;
-            //DateTime dt = autoSavePreciseSpectrumFile(shift);
-            IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, Graph.Instance);
+        internal static void autoSaveMonitorSpectrumFile(int? labelNumber) {
+            var g = Graph.MeasureGraph.Instance;
+            DateTime dt = g.DateTime;
+            short? shift = g.Shift;
+            //autoSavePreciseSpectrumFile(shift);
+            IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, g);
             writer.setShift(shift);
             if (savedSolution != null) {
                 AutoSaveSolvedSpectra(writer);
@@ -514,14 +515,14 @@ namespace Flavor.Common.Settings {
         internal static void AutoSaveSolvedSpectra(double[] solution) {
             // TODO: simplify
             if (MonitorSaveMaintainer.InstanceExists)
-                MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).setSolvedResult(solution);
+                MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.MeasureGraph.Instance).setSolvedResult(solution);
             else
                 savedSolution = solution;
         }
         internal static void finalizeMonitorFile() {
             // TODO: simplify
-            if (MonitorSaveMaintainer.InstanceExists) 
-                MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.Instance).finalize();
+            if (MonitorSaveMaintainer.InstanceExists)
+                MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.MeasureGraph.Instance).finalize();
         }
         #endregion
         #endregion
@@ -598,7 +599,7 @@ namespace Flavor.Common.Settings {
         #endregion
         #region Graph scaling to mass coeffs
         internal static bool setScalingCoeff(byte col, ushort pnt, double mass) {
-            if (Graph.Instance.setScalingCoeff(col, pnt, mass)) {
+            if (Graph.MeasureGraph.Instance.setScalingCoeff(col, pnt, mass)) {
                 mainConfigWriter.write();
                 return true;
             }
@@ -1109,7 +1110,7 @@ namespace Flavor.Common.Settings {
                             //use hard-coded defaults
                         }
                         try {
-                            Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
+                            Graph.MeasureGraph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
                         } catch (ConfigLoadException) {
                             //cle.visualise();
                             //use hard-coded defaults
@@ -1241,7 +1242,7 @@ namespace Flavor.Common.Settings {
                                                     //error!!! all peaks must have calibration for solving matrix
                                                 } else try {
                                                         //actual calibration for current exposition time                                                    
-                                                        double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
+                                                        double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.MeasureGraph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
                                                         //check for integral value
                                                         Int32.Parse(currentMass);
                                                         result.Add(currentMass, calibrationCoeff);
@@ -1553,7 +1554,7 @@ namespace Flavor.Common.Settings {
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
                     void saveMassCoeffs() {
-                        saveScalingCoeffs(Graph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
+                        saveScalingCoeffs(Graph.MeasureGraph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
                     }
                     void saveCheckOptions() {
                         //checkpeak & iterations
@@ -1761,7 +1762,7 @@ namespace Flavor.Common.Settings {
                         }
                         try {
                             // init Graph.Instance after CommonOptions!
-                            Graph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
+                            Graph.MeasureGraph.Instance.Collectors.RecomputeMassRows(loadScalingCoeffs());
                         } catch (ConfigLoadException) {
                             //cle.visualise();
                             //use hard-coded defaults
@@ -1887,7 +1888,7 @@ namespace Flavor.Common.Settings {
                                                     //error!!! all peaks must have calibration for solving matrix
                                                 } else try {
                                                     //actual calibration for current exposition time                                                    
-                                                    double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
+                                                        double calibrationCoeff = Double.Parse(calibrationCoeffString) * Graph.MeasureGraph.Instance.CommonOptions.eTimeReal / Int32.Parse(ctString);
                                                     //check for integral value
                                                     Int32.Parse(currentMass);
                                                     result.Add(currentMass, calibrationCoeff);
@@ -2331,7 +2332,7 @@ namespace Flavor.Common.Settings {
                         fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
                     }
                     void saveMassCoeffs() {
-                        saveScalingCoeffs(Graph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
+                        saveScalingCoeffs(Graph.MeasureGraph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
                     }
                     void saveCheckOptions() {
                         //checkpeak & iterations

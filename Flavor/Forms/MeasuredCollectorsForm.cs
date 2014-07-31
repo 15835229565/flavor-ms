@@ -14,7 +14,7 @@ namespace Flavor.Forms {
                 MeasureCancelRequested(this, EventArgs.Empty);
         }
         public MeasuredCollectorsForm()
-            : base(Graph.Instance, false) {
+            : base(Graph.MeasureGraph.Instance, false) {
             // Init panel before ApplyResources
             // strangely is inited on measure init
             InitializeComponent();
@@ -37,7 +37,7 @@ namespace Flavor.Forms {
                 setXScaleLimits();
             }
             panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
-            Graph.MeasureGraph g = Graph.Instance;
+            Graph.MeasureGraph g = Graph.MeasureGraph.Instance;
             panel.Graph = g;
             panel.ProgressMaximum = progressMaximum;
 
@@ -56,7 +56,7 @@ namespace Flavor.Forms {
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
-            Graph.Instance.NewGraphData -= InvokeRefreshGraph;
+            Graph.MeasureGraph.Instance.NewGraphData -= InvokeRefreshGraph;
         }
 
         #endregion
@@ -72,16 +72,16 @@ namespace Flavor.Forms {
             OnMeasureCancelRequested();
         }
 
-        void InvokeRefreshGraph(uint[] counts, params int[] recreate) {
-            Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
+        void InvokeRefreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
+            Invoke(new Action(() => refreshGraph(pnt, counts, recreate)));
         }
-        void refreshGraph(uint[] counts, params int[] recreate) {
+        void refreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
             // TODO: use recreate to refresh only affected collectors
-            refreshGraphicsOnMeasureStep(counts);
+            refreshGraphicsOnMeasureStep(pnt, counts);
         }
-        void refreshGraphicsOnMeasureStep(uint[] counts) {
+        void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
             if (counts != null)
-                (Panel as MeasureGraphPanel).performStep(counts);
+                (Panel as MeasureGraphPanel).performStep(pnt, counts);
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();
         }

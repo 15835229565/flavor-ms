@@ -147,16 +147,10 @@ namespace Flavor.Common.Data.Measure {
             }
         }
         public class Precise: MeasureMode {
-            public class SaveResultsEventArgs: EventArgs {
-                public short? Shift { get; private set; }
-                public SaveResultsEventArgs(short? shift) {
-                    Shift = shift;
-                }
-            }
-            public event EventHandler<SaveResultsEventArgs> SaveResults;
-            protected virtual void OnSaveResults(short? shift) {
-                SaveResults.Raise(this, new SaveResultsEventArgs(shift));
-                // senseModeCounts here?
+            public event EventHandler SaveResults;
+            protected virtual void OnSaveResults() {
+                SaveResults.Raise(this, EventArgs.Empty);
+                // send data here?
             }
             List<PreciseEditorData> senseModePoints;
             long[][] senseModeCounts;
@@ -225,7 +219,7 @@ namespace Flavor.Common.Data.Measure {
             protected override void OnSuccessfulExit(EventArgs args) {
                 // order is important here: points are saved from graph..
                 base.OnSuccessfulExit(new SuccessfulExitEventArgs(senseModeCounts, senseModePoints, shift));
-                OnSaveResults(shift);
+                OnSaveResults();
             }
 
             protected override bool onNextStep() {
@@ -350,7 +344,7 @@ namespace Flavor.Common.Data.Measure {
                 long[] prevIteration = null;
 
                 public Monitor(short? initialShift, ushort allowedShift, int timeLimit)
-                    : base(Graph.Instance.PreciseData.getUsed(), initialShift) {
+                    : base(Graph.MeasureGraph.Instance.PreciseData.getUsed(), initialShift) {
                     // TODO: getWithId()
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);

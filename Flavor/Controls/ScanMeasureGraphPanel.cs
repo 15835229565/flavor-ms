@@ -18,8 +18,8 @@
             label35.Visible = true;
             label36.Visible = true;
         }
-        public override void performStep(uint[] counts) {
-            base.performStep(counts);
+        public override void performStep(ushort pnt, uint[] counts) {
+            base.performStep(pnt, counts);
             refreshGraphicsOnScanStep();
         }
     }

@@ -43,33 +43,50 @@ namespace Flavor.Controls {
             cancelScanButton.Visible = true;
 
             scanProgressBar.Value = 0;
-            scanProgressBar.Maximum = ProgressMaximum;
-            if (scanProgressBar.Maximum == 0) {
+            scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+            if (ProgressMaximum == 0) {
+                // complicated limit
+                scanProgressBar.Maximum = 0;
                 scanProgressBar.Style = ProgressBarStyle.Marquee;
+            } else if (ProgressMaximum < 0) {
+                // time limit (minutes)
+                scanProgressBar.Maximum = -ProgressMaximum * 60;
+                current = DateTime.Now;
             } else {
+                // steps limit
+                scanProgressBar.Maximum = ProgressMaximum;
                 scanProgressBar.Style = ProgressBarStyle.Blocks;
                 scanProgressBar.Step = 1;
             }
-
-            scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
         
             // TODO: use collectors count to display proper data!
         }
-        public virtual void performStep(uint[] counts) {
+        DateTime current;
+        public virtual void performStep(ushort pnt, uint[] counts) {
             if (scanProgressBar.Style != ProgressBarStyle.Marquee) {
-                if (scanProgressBar.Value == scanProgressBar.Maximum) {
-                    // if already full line - reinit
-                    scanProgressBar.Value = 0;
-                    scanProgressBar.Maximum = ProgressMaximum;
+                if (ProgressMaximum > 0) {
+                    if (scanProgressBar.Value >= scanProgressBar.Maximum) {
+                        // if already full line - reinit
+                        scanProgressBar.Value = 0;
+                        scanProgressBar.Maximum = ProgressMaximum;
+                    }
+                } else {
+                    // time limit
+                    var now = DateTime.Now;
+                    int step = (int)((now - current).TotalSeconds);
+                    if (step > 0) {
+                        current = now;
+                        scanProgressBar.Step = step;
+                    }
                 }
                 scanProgressBar.PerformStep();
             }
             // pnt as method parameter!
-            var graph = Graph as MeasureGraph;
-            ushort pnt = graph.LastPoint;
+            //var graph = Graph as MeasureGraph;
+            //ushort pnt = graph.LastPoint;
             stepNumberLabel.Text = pnt.ToString();
             
-            scanRealTimeLabel.Text = graph.CommonOptions.scanVoltageRealNew(pnt).ToString("f1");
+            //scanRealTimeLabel.Text = graph.CommonOptions.scanVoltageRealNew(pnt).ToString("f1");
 
             if (counts != null) {
                 detector1CountsLabel.Text = counts[0].ToString();

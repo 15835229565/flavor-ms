@@ -8,25 +8,21 @@ using Graph = Flavor.Common.Data.Measure.Graph;
 using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 
-namespace Flavor.Forms
-{
+namespace Flavor.Forms {
     partial class MonitorForm: GraphForm, IMeasured {
-        public event EventHandler MeasureCancelRequested;
-        protected virtual void OnMeasureCancelRequested() {
-            if (MeasureCancelRequested != null)
-                MeasureCancelRequested(this, EventArgs.Empty);
-        }
         const string FORM_TITLE = "Режим мониторинга";
         const string X_AXIS_TITLE = "Итерации";
         const string Y_AXIS_RELATIVE = " (отн.)";
         const string NORM_ITEM_TEXT = "Нормировать";
         const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
-        double time = -1;
+        long iteration = -1;
         class PointPairListPlusWithMaxCapacity: PointPairListPlus {
             const int MAX_CAPACITY = int.MaxValue;
-            public PointPairListPlusWithMaxCapacity() : base() { }
-            public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
+            public PointPairListPlusWithMaxCapacity()
+                : base() { }
+            public PointPairListPlusWithMaxCapacity(PointPairListPlus other)
+                : base(other, other.PEDreference, other.PLSreference) { }
             public new void Add(PointPair pp) {
                 base.Add(pp);
                 if (base.Count > MAX_CAPACITY) {
@@ -34,15 +30,15 @@ namespace Flavor.Forms
                 }
             }
         }
-        List<PointPairListPlusWithMaxCapacity> list;
+        List<PointPairListPlus> list;
         int rowsCount;
         List<long> sums;
-        List<PointPairListPlusWithMaxCapacity> normalizedList = null;
+        List<PointPairListPlus> normalizedList = null;
 
         public MonitorForm() {
             // Init panel before ApplyResources
             Panel = new PreciseMeasureGraphPanel();
-            Panel.Graph = Graph.Instance;
+            Panel.Graph = Graph.MeasureGraph.Instance;
             InitializeComponent();
         }
 
@@ -51,13 +47,17 @@ namespace Flavor.Forms
         }
 
         protected override sealed void RefreshGraph() {
+            var g = Graph.MeasureGraph.Instance;
             //BAD: every time
             // TODO: use getUsed()
-            List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+            List<PreciseEditorData> pspec = g.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             if (pspec.Count != rowsCount)
                 // very bad!
                 throw new NullReferenceException("Count mismatch");
-            
+
+            // TODO: use to form extra data row
+            DateTime dt = g.DateTime;
+
             int j = 0;
             long sum = 0;
             for (int i = 0; i < rowsCount; ++i) {
@@ -67,9 +67,9 @@ namespace Flavor.Forms
                     (ped.AssociatedPoints.PLSreference == null ? 0 :
                     ped.AssociatedPoints.PLSreference.PeakSum);
                 sum += peakSum;
-                list[j].Add(new PointPair(time, peakSum));
+                list[j].Add(new PointPair(iteration, peakSum));
                 if (normalizedList != null) {
-                    normalizedList[j].Add(new PointPair(time, peakSum));
+                    normalizedList[j].Add(new PointPair(iteration, peakSum));
                 }
                 ++j;
             }
@@ -96,7 +96,7 @@ namespace Flavor.Forms
             graph.Size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (2 * VERT_GRAPH_INDENT)));
         }
 
-        void ZedGraphRebirth(List<PointPairListPlusWithMaxCapacity> dataPoints, string title) {
+        void ZedGraphRebirth(List<PointPairListPlus> dataPoints, string title) {
             GraphPane myPane = graph.GraphPane;
             
             myPane.Title.Text = title;
@@ -121,33 +121,45 @@ namespace Flavor.Forms
             graph.AxisChange();
         }
 
-        // temporary?
-        void InvokeRefreshGraph(uint[] counts, params int[] recreate) {
-            Invoke(new Graph.GraphEventHandler(refreshGraph), counts, recreate);
-        }
-        void refreshGraph(uint[] counts, params int[] recreate) {
-            if (recreate.Length != 0) {
-                if (time == -1) {
-                    CreateGraph();
-                } else {
-                    RefreshGraph();
-                    time += 1;
+        void InvokeRefreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
+            BeginInvoke(new Action(() => {
+                if (recreate.Length != 0) {
+                    if (iteration == -1) {
+                        CreateGraph();
+                    } else {
+                        RefreshGraph();
+                        iteration += 1;
+                    }
                 }
-            }
-            refreshGraphicsOnMeasureStep(counts);
+                refreshGraphicsOnMeasureStep(pnt, counts);
+            }));
         }
-        void refreshGraphicsOnMeasureStep(uint[] counts) {
-            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
-            panel.performStep(counts);
+        void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
+            var panel = Panel as MeasureGraphPanel;
+            panel.performStep(pnt, counts);
         }
         #region IMeasured Members
+        public event EventHandler MeasureCancelRequested;
+        protected virtual void OnMeasureCancelRequested() {
+            MeasureCancelRequested.Raise(this, EventArgs.Empty);
+        }
         //parameters here are obsolete?
         public void initMeasure(int progressMaximum, bool isPrecise) {
-            list = new List<PointPairListPlusWithMaxCapacity>();
+            var panel = Panel as MeasureGraphPanel;
+            panel.ProgressMaximum = progressMaximum;
+            if (progressMaximum > 0) {
+                // only iterations limit
+            } else if (progressMaximum < 0) {
+                // time limit or combined
+            } else {
+                // no limit
+            }
+            
+            list = new List<PointPairListPlus>();
             sums = new List<long>();
             //!!
             // TODO: use extension method getUsed()
-            List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+            var pspec = Graph.MeasureGraph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i) {
                 //!!!!!! try to prevent nulls in PLS
@@ -155,29 +167,28 @@ namespace Flavor.Forms
                 pspec[i].AssociatedPoints = temp;
                 list.Add(temp);
             }
-            time = 0;
+            iteration = 0;
             if (normalizedList == null) {
                 CreateGraph();
             } else {
-                normalizedList = new List<PointPairListPlusWithMaxCapacity>();
-                foreach (PointPairListPlus ppl in list) {
-                    normalizedList.Add(new PointPairListPlusWithMaxCapacity(ppl, ppl.PEDreference, null));
+                normalizedList = new List<PointPairListPlus>();
+                foreach (var ppl in list) {
+                    normalizedList.Add(new PointPairListPlusWithMaxCapacity(ppl));
                 }
                 ZedGraphRebirth(normalizedList, FORM_TITLE);
             }
 
-            (Panel as MeasureGraphPanel).MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
-            // temporary?
-            Graph.Instance.NewGraphData += InvokeRefreshGraph;
+            panel.MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
+
+            Graph.MeasureGraph.Instance.NewGraphData += InvokeRefreshGraph;
             Panel.Enable();
             Show();
             Activate();
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
-            // temporary?
-            Graph.Instance.NewGraphData -= InvokeRefreshGraph;
-            time = -1;
+            Graph.MeasureGraph.Instance.NewGraphData -= InvokeRefreshGraph;
+            iteration = -1;
         }
         #endregion
         void MonitorForm_MeasureCancelRequested(object sender, EventArgs e) {
@@ -187,8 +198,8 @@ namespace Flavor.Forms
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
             if (sender is ZedGraphControlMonitor) {
-                ToolStripItemCollection items = args.MenuStrip.Items;
-                ToolStripMenuItem item = new ToolStripMenuItem();
+                var items = args.MenuStrip.Items;
+                var item = new ToolStripMenuItem();
                 item.Text = NORM_ITEM_TEXT;
                 item.Checked = (normalizedList != null);
                 item.CheckOnClick = true;
@@ -198,6 +209,8 @@ namespace Flavor.Forms
             }
         }
         void NormItemCheckStateChanged(object sender, EventArgs e) {
+            // Sometimes exceptions are caught inside here
+            
             // TODO: modify graph title
             if (normalizedList != null) {
                 normalizedList = null;
@@ -205,9 +218,10 @@ namespace Flavor.Forms
                 graph.Refresh();
                 return;
             }
-            normalizedList = new List<PointPairListPlusWithMaxCapacity>();
-            foreach (PointPairListPlus ppl in list) {
-                var temp = new PointPairListPlusWithMaxCapacity(ppl, ppl.PEDreference, null);//???references
+            normalizedList = new List<PointPairListPlus>();
+            foreach (var ppl in list) {
+                // TODO: check that data is copied in ctor
+                var temp = new PointPairListPlusWithMaxCapacity(ppl);
                 for (int i = 0; i < sums.Count; ++i) {
                     temp[i].Y /= sums[i];
                 }

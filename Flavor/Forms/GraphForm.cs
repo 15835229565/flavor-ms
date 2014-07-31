@@ -15,6 +15,7 @@ namespace Flavor.Forms {
             Color.Lime, Color.SaddleBrown, Color.Maroon, Color.DeepSkyBlue, Color.DimGray,};
         protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
+        // TODO: use generic, where T: GraphPanel
         GraphPanel panel;
         protected GraphPanel Panel {
             get {

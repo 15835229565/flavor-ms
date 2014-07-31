@@ -48,8 +48,8 @@ namespace Flavor.Controls {
                 label0.Visible = true;
             }
         }
-        public override void performStep(uint[] counts) {
-            base.performStep(counts);
+        public override void performStep(ushort pnt, uint[] counts) {
+            base.performStep(pnt, counts);
             refreshGraphicsOnPreciseStep();
         }
     }
