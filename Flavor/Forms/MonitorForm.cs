@@ -18,6 +18,7 @@ namespace Flavor.Forms {
 
         long iteration = -1;
         class PointPairListPlusWithMaxCapacity: PointPairListPlus {
+            // TODO: mix with ZedGraph.RollingPointPairList
             const int MAX_CAPACITY = int.MaxValue;
             public PointPairListPlusWithMaxCapacity()
                 : base() { }
@@ -40,20 +41,26 @@ namespace Flavor.Forms {
                 this.xChooser = xChooser;
                 this.yChooser = yChooser;
             }
-            public new double X {
+            public override double X {
                 get {
                     int index = xChooser();
                     if (index == -1)
                         return base.X;
                     return xs[index];
                 }
+                set {
+                    base.X = value;
+                }
             }
-            public new double Y {
+            public override double Y {
                 get {
                     int index = yChooser();
                     if (index == -1)
                         return base.Y;
                     return ys[index];
+                }
+                set {
+                    base.Y = value;
                 }
             }
         }
@@ -61,7 +68,6 @@ namespace Flavor.Forms {
         List<PointPairListPlusWithMaxCapacity> list;
         int rowsCount;
         List<long> sums;
-        //List<PointPairListPlus> normalizedList = null;
         bool showNormalized = false;
 
         public MonitorForm() {
@@ -86,17 +92,16 @@ namespace Flavor.Forms {
             var g = Graph.MeasureGraph.Instance;
             //BAD: every time
             // TODO: use getUsed()
-            List<PreciseEditorData> pspec = g.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+            var pspec = g.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
             if (pspec.Count != rowsCount)
                 // very bad!
                 throw new NullReferenceException("Count mismatch");
 
             // TODO: use to form extra data row
-            DateTime dt = g.DateTime;
+            var dt = g.DateTime;
 
-            //int j = 0;
             long sum = 0;
-            PointPairList temp = new PointPairList();
+            var temp = new PointPairList();
             for (int i = 0; i < rowsCount; ++i) {
                 PreciseEditorData ped = pspec[i];
                 // TODO: exceptions here, problem with backward lines also here?
@@ -106,11 +111,6 @@ namespace Flavor.Forms {
                 sum += peakSum;
                 var pp = new PointPair(iteration, peakSum);
                 temp.Add(pp);
-                //list[i].Add(pp);
-                //if (normalizedList != null) {
-                //    normalizedList[i].Add(new PointPair(iteration, peakSum));
-                //}
-                //++j;
             }
             sums.Add(sum);
             for (int i = 0; i < rowsCount; ++i) {
@@ -119,13 +119,7 @@ namespace Flavor.Forms {
                 var pp2 = new PointPairSpecial(pp, new double[] { }, XScale, new double[] { pp.Y / sum }, YScale);
                 list[i].Add(pp2);
             }
-            //if (normalizedList != null) {
-            //    int index = sums.Count - 1;
-            //    foreach (PointPairList ppl in normalizedList) {
-            //        ppl[index].Y /= sum;
-            //    }
-            //}
-            graph.GraphPane.XAxis.Scale.Min = (list[0][0] as PointPairSpecial).X;
+            graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
             graph.AxisChange();
             graph.Refresh();
         }
@@ -142,15 +136,15 @@ namespace Flavor.Forms {
         }
 
         void ZedGraphRebirth(string title, int xMax) {
-            GraphPane myPane = graph.GraphPane;
-            
+            var myPane = graph.GraphPane;
+
             myPane.Title.Text = title;
             myPane.YAxis.Title.Text = !showNormalized ? Y_AXIS_TITLE : Y_AXIS_TITLE + Y_AXIS_RELATIVE;
             myPane.XAxis.Title.Text = X_AXIS_TITLE;
             myPane.CurveList.Clear();
 
             for (int i = 0; i < list.Count; ++i) {
-                LineItem temp = myPane.AddCurve("My Curve", list[i], rowsColors[i % rowsColors.Length], SymbolType.None);
+                var temp = myPane.AddCurve("My Curve", list[i], rowsColors[i % rowsColors.Length], SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
 
@@ -229,10 +223,6 @@ namespace Flavor.Forms {
             if (!showNormalized) {
                 CreateGraph();
             } else {
-                //normalizedList = new List<PointPairListPlus>();
-                //foreach (var ppl in list) {
-                //    normalizedList.Add(new PointPairListPlusWithMaxCapacity(ppl));
-                //}
                 ZedGraphRebirth(FORM_TITLE, progressMaximum);
             }
 
@@ -275,7 +265,6 @@ namespace Flavor.Forms {
         void NormItemCheckStateChanged(object sender, EventArgs e) {
             // TODO: modify graph title
             if (showNormalized) {
-                //normalizedList = null;
                 showNormalized = false;
                 // TODO:
                 CreateGraph();
@@ -283,21 +272,12 @@ namespace Flavor.Forms {
                 return;
             }
             showNormalized = true;
-            //normalizedList = new List<PointPairListPlus>();
-            //foreach (var ppl in list) {
-            //    // TODO: check that data is copied in ctor
-            //    var temp = new PointPairListPlusWithMaxCapacity(ppl);
-            //    for (int i = 0; i < sums.Count; ++i) {
-            //        temp[i].Y /= sums[i];
-            //    }
-            //    normalizedList.Add(temp);
-            //}
             ZedGraphRebirth(FORM_TITLE, 0);
             graph.Refresh();
         }
 
         string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
-            var pp = curve[iPt] as PointPairSpecial;
+            var pp = curve[iPt];
             string tooltipData = !showNormalized ?
                                  string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y) :
                                  string.Format(POINT_TOOLTIP_FORMAT, pp.X, 0/*(curve.Points as PointPairListPlus).PEDreference.AssociatedPoints[iPt].Y*/);//smth strange

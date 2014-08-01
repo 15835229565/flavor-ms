@@ -21,6 +21,7 @@ namespace Flavor.Controls {
         public ZedGraphControlMonitor()
             : base() {
             InitializeComponent();
+            GraphPane.IsFontsScaled = false;
             base.ContextMenuBuilder += ZedGraphControlMonitor_ContextMenuBuilder;
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {

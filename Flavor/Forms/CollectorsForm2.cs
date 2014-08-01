@@ -87,7 +87,7 @@ namespace Flavor.Forms {
             : base() {
             InitializeComponent();
 
-            ToolStripItemCollection items = this.MainMenuStrip.Items;
+            var items = this.MainMenuStrip.Items;
             (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
 
             this.graph = graph;
@@ -331,7 +331,7 @@ namespace Flavor.Forms {
         }
 
         void ZedGraphControlPlus_ContextMenuBuilder(object sender, ZedGraphControlPlus.ContextMenuBuilderEventArgs args) {
-            ToolStripItemCollection items = args.MenuStrip.Items;
+            var items = args.MenuStrip.Items;
             ToolStripItem item = new ToolStripSeparator();
             items.Add(item);
 

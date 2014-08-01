@@ -9,7 +9,7 @@ using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 namespace Flavor.Controls {
     partial class ZedGraphControlPlus: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
-            private ContextMenuStrip menuStrip;
+            ContextMenuStrip menuStrip;
             public ContextMenuStrip MenuStrip {
                 get {
                     return menuStrip;
@@ -41,6 +41,7 @@ namespace Flavor.Controls {
         public ZedGraphControlPlus()
             : base() {
             InitializeComponent();
+            GraphPane.IsFontsScaled = false;
             base.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
         }
 
