@@ -236,7 +236,7 @@ namespace Flavor.Common.Data.Measure {
                 //lock here?
                 if (NewGraphData != null)
                     NewGraphData(pnt, counts, recreate);
-                OnGraphDataModified(recreate);
+                //OnGraphDataModified(recreate);
             }
 
             public PreciseEditorData CurrentPeak { get; private set; }

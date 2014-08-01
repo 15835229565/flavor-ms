@@ -89,38 +89,39 @@ namespace Flavor.Forms {
             return showNormalized ? 0 : -1;
         }
         protected override sealed void RefreshGraph() {
-            var g = Graph.MeasureGraph.Instance;
-            //BAD: every time
-            // TODO: use getUsed()
-            var pspec = g.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
-            if (pspec.Count != rowsCount)
-                // very bad!
-                throw new NullReferenceException("Count mismatch");
+            if (iteration > -1) {
+                var g = Graph.MeasureGraph.Instance;
+                //BAD: every time
+                // TODO: use getUsed()
+                var pspec = g.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+                if (pspec.Count != rowsCount)
+                    // very bad!
+                    throw new NullReferenceException("Count mismatch");
 
-            // TODO: use to form extra data row
-            var dt = g.DateTime;
+                // TODO: use to form extra data row
+                var dt = g.DateTime;
 
-            long sum = 0;
-            var temp = new PointPairList();
-            for (int i = 0; i < rowsCount; ++i) {
-                PreciseEditorData ped = pspec[i];
-                // TODO: exceptions here, problem with backward lines also here?
-                long peakSum = ped.AssociatedPoints == null ? 0 :
-                    (ped.AssociatedPoints.PLSreference == null ? 0 :
-                    ped.AssociatedPoints.PLSreference.PeakSum);
-                sum += peakSum;
-                var pp = new PointPair(iteration, peakSum);
-                temp.Add(pp);
+                long sum = 0;
+                var temp = new PointPairList();
+                for (int i = 0; i < rowsCount; ++i) {
+                    var ped = pspec[i];
+                    long peakSum = ped.AssociatedPoints == null ? 0 :
+                        (ped.AssociatedPoints.PLSreference == null ? 0 :
+                        ped.AssociatedPoints.PLSreference.PeakSum);
+                    sum += peakSum;
+                    var pp = new PointPair(iteration, peakSum);
+                    temp.Add(pp);
+                }
+                sums.Add(sum);
+                for (int i = 0; i < rowsCount; ++i) {
+                    var pp = temp[i];
+                    // TODO: use datetime for extra X
+                    var pp2 = new PointPairSpecial(pp, new double[] { }, XScale, new double[] { pp.Y / sum }, YScale);
+                    list[i].Add(pp2);
+                }
+                graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
+                graph.AxisChange();
             }
-            sums.Add(sum);
-            for (int i = 0; i < rowsCount; ++i) {
-                var pp = temp[i];
-                // TODO: use datetime for extra X
-                var pp2 = new PointPairSpecial(pp, new double[] { }, XScale, new double[] { pp.Y / sum }, YScale);
-                list[i].Add(pp2);
-            }
-            graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
-            graph.AxisChange();
             graph.Refresh();
         }
 
@@ -141,12 +142,16 @@ namespace Flavor.Forms {
             myPane.Title.Text = title;
             myPane.YAxis.Title.Text = !showNormalized ? Y_AXIS_TITLE : Y_AXIS_TITLE + Y_AXIS_RELATIVE;
             myPane.XAxis.Title.Text = X_AXIS_TITLE;
+            // TODO: clear only on init, not on rescaling
             myPane.CurveList.Clear();
 
             for (int i = 0; i < list.Count; ++i) {
-                var temp = myPane.AddCurve("My Curve", list[i], rowsColors[i % rowsColors.Length], SymbolType.None);
+                var l = list[i];
+                string comment = l.PEDreference.Comment;
+                var temp = myPane.AddCurve(comment, l, rowsColors[i % rowsColors.Length], SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
+            graph.Refresh();
 
             myPane.Legend.IsVisible = false;
             myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
@@ -220,11 +225,11 @@ namespace Flavor.Forms {
                 list.Add(temp);
             }
             iteration = 0;
-            if (!showNormalized) {
-                CreateGraph();
-            } else {
+            //if (!showNormalized) {
+            //    CreateGraph();
+            //} else {
                 ZedGraphRebirth(FORM_TITLE, progressMaximum);
-            }
+            //}
 
             var panel = Panel as MeasureGraphPanel;
             panel.MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
@@ -277,11 +282,15 @@ namespace Flavor.Forms {
         }
 
         string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
+            // curve contains simple PointPairs
             var pp = curve[iPt];
-            string tooltipData = !showNormalized ?
-                                 string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y) :
-                                 string.Format(POINT_TOOLTIP_FORMAT, pp.X, 0/*(curve.Points as PointPairListPlus).PEDreference.AssociatedPoints[iPt].Y*/);//smth strange
+            string tooltipData;
+            tooltipData = string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y);
+            //tooltipData = !showNormalized ?
+            //                     string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y) :
+            //                     string.Format(POINT_TOOLTIP_FORMAT, pp.X, 0/*(curve.Points as PointPairListPlus).PEDreference.AssociatedPoints[iPt].Y*/);//smth strange
             string comment = (curve.Points as PointPairListPlus).PEDreference.Comment;
+            var test = curve.Points as PointPairListPlusWithMaxCapacity;
             if (comment != null && comment != "") {
                 tooltipData += "\n";
                 tooltipData += comment;
