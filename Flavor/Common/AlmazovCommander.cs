@@ -52,8 +52,7 @@ namespace Flavor.Common {
             };
             realizer.FirstStatus += onTheFlyAction;*/
         }
-        protected override IRealizer GetRealizer(PortLevel port, Generator<bool> notRare) {
-            //return realizer = new AlmazovRealizer(port, Config.Try, () => notRare() ? 100 : 10000);
+        protected override IRealizer GetRealizer(PortLevel port, Func<bool> notRare) {
             return realizer = new AlmazovRealizer(port, Config.Try, () => notRare() ? 500 : 10000);
         }
         public override void Bind(IMSControl view) {

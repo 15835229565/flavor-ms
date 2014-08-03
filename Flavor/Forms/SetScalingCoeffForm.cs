@@ -1,43 +1,42 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Graph = Flavor.Common.Data.Measure.Graph;
-using Config = Flavor.Common.Settings.Config;
 // remove this reference
 using Utility = Flavor.Common.Utility;
 
 namespace Flavor.Forms {
     partial class SetScalingCoeffForm: Form {
-        byte myCol = 0;
-        ushort myStep = 0;
-        Graph graph;
+        readonly byte _col = 0;
+        readonly ushort _step = 0;
+        readonly bool _isLoaded;
+        readonly Func<byte, ushort, double, bool> _setScalingCoeff;
         public SetScalingCoeffForm()
             : base() {
             InitializeComponent();
             // TODO: better solution, make new CustomTextBoxClass or extension method
-            this.massTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
+            massTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
         }
 
-        public SetScalingCoeffForm(ushort step, byte col, Graph graph)
+        public SetScalingCoeffForm(ushort step, byte col, bool isLoaded, Func<byte, ushort, double, bool> setScalingCoeff)
             : this() {
-            myCol = col;
-            myStep = step;
-            this.graph = graph;
-            this.stepTextBox.Text = step.ToString();
-            this.Text += " " + col.ToString();
-            // move this reference up
-            if (graph != Graph.MeasureGraph.Instance)
-                this.Text += " (только для текущего спектра)";
+            _col = col;
+            _step = step;
+            _isLoaded = isLoaded;
+            stepTextBox.Text = step.ToString();
+            Text += " " + col.ToString();
+            if (isLoaded)
+                Text += " (только для текущего спектра)";
+            _setScalingCoeff = setScalingCoeff;
         }
 
-        protected void okButton_Click(object sender, EventArgs e) {
+        void okButton_Click(object sender, EventArgs e) {
             double mass;
             try {
                 mass = Convert.ToDouble(massTextBox.Text);
-            } catch (System.FormatException) {
+            } catch (FormatException) {
                 massTextBox.BackColor = Color.Red;
                 return;
-            } catch (System.OverflowException) {
+            } catch (OverflowException) {
                 massTextBox.BackColor = Color.Red;
                 return;
             }
@@ -46,13 +45,12 @@ namespace Flavor.Forms {
                 massTextBox.BackColor = Color.Red;
                 return;
             }
-            bool result = graph == Graph.MeasureGraph.Instance ? Config.setScalingCoeff(myCol, myStep, mass) : graph.setScalingCoeff(myCol, myStep, mass);
-            this.DialogResult = result ? DialogResult.Yes : DialogResult.No;
-            this.Close();
+            DialogResult = _setScalingCoeff(_col, _step, mass) ? DialogResult.Yes : DialogResult.No;
+            Close();
         }
 
-        protected void cancelButton_Click(object sender, EventArgs e) {
-            this.Close();
+        void cancelButton_Click(object sender, EventArgs e) {
+            Close();
         }
     }
 }

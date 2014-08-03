@@ -81,9 +81,6 @@ namespace Flavor.Controls {
                 }
                 scanProgressBar.PerformStep();
             }
-            // pnt as method parameter!
-            //var graph = Graph as MeasureGraph;
-            //ushort pnt = graph.LastPoint;
             stepNumberLabel.Text = pnt.ToString();
             
             //scanRealTimeLabel.Text = graph.CommonOptions.scanVoltageRealNew(pnt).ToString("f1");

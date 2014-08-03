@@ -4,12 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
 using ZedGraph;
-using Graph = Flavor.Common.Data.Measure.Graph;
-using Collector = Flavor.Common.Data.Measure.Collector;
-using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
-
+using Flavor.Common.Data.Measure;
 using CommonOptions = Flavor.Common.Settings.CommonOptions;
-using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 // be careful with Config data. use constants only!
 using Config = Flavor.Common.Settings.Config;
 
@@ -29,7 +25,7 @@ namespace Flavor.Forms {
         string col2Text;
         string modeText;
 
-        Graph graph;
+        readonly Graph graph;
         bool modified = false;
 
         protected bool Modified {
@@ -86,17 +82,15 @@ namespace Flavor.Forms {
             : base() {
             InitializeComponent();
 
-            collect1_graph.GraphPane.Legend.IsVisible = false;
-            collect2_graph.GraphPane.Legend.IsVisible = false;
             collect1_graph.ScrollMaxX = maxX[0];
             collect1_graph.ScrollMinX = minX[0];
             collect2_graph.ScrollMaxX = maxX[1];
             collect2_graph.ScrollMinX = minX[1];
 
-            graphs = new ZedGraphControlPlus[] { collect1_graph, collect2_graph };
+            graphs = new[] { collect1_graph, collect2_graph };
 
-            ToolStripItemCollection items = this.MainMenuStrip.Items;
-            (items[items.IndexOfKey("FileMenu")] as ToolStripMenuItem).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
+            var items = MainMenuStrip.Items;
+            ((ToolStripMenuItem)items["FileMenu"]).DropDownItems.Add(distractFromCurrentToolStripMenuItem);
 
             this.graph = graph;
             
@@ -116,15 +110,15 @@ namespace Flavor.Forms {
         }
 
         void InvokeAxisModeChange() {
-            if (this.InvokeRequired) {
-                this.Invoke(new Graph.AxisModeEventHandler(CreateGraph));
+            if (InvokeRequired) {
+                Invoke(new Action(CreateGraph));
                 return;
             }
             CreateGraph();
         }
         void InvokeGraphModified(Graph.Displaying mode) {
-            if (this.InvokeRequired) {
-                this.Invoke(new Graph.DisplayModeEventHandler(GraphModified), mode);
+            if (InvokeRequired) {
+                Invoke(new Action(() => GraphModified(mode)));
                 return;
             }
             GraphModified(mode);
@@ -185,7 +179,7 @@ namespace Flavor.Forms {
         }
         protected void setXScaleLimits(List<PreciseEditorData> peds) {
             ushort[] maxX = { Config.MIN_STEP, Config.MIN_STEP }, minX = { Config.MAX_STEP, Config.MAX_STEP };
-            foreach (PreciseEditorData ped in peds) {
+            foreach (var ped in peds) {
                 int col = ped.Collector - 1;
                 ushort lowBound = (ushort)(ped.Step - ped.Width);
                 ushort upBound = (ushort)(ped.Step + ped.Width);
@@ -214,7 +208,7 @@ namespace Flavor.Forms {
         }
 
         protected void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string title) {
-            GraphPane myPane = graphs[zgcIndex].GraphPane;
+            var myPane = graphs[zgcIndex].GraphPane;
             
             myPane.Title.Text = title;
             myPane.YAxis.Title.Text = Y_AXIS_TITLE;
@@ -233,7 +227,7 @@ namespace Flavor.Forms {
                 case Graph.pListScaled.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
                     //limits inverted due to point-to-mass law
-                    Collector col = zgcIndex == 0 ? graph.Collectors[0] : graph.Collectors[1];
+                    var col = zgcIndex == 0 ? graph.Collectors[0] : graph.Collectors[1];
                     myPane.XAxis.Scale.Min = col.pointToMass(maxX[zgcIndex]);
                     myPane.XAxis.Scale.Max = col.pointToMass(minX[zgcIndex]);
                     break;
@@ -246,22 +240,17 @@ namespace Flavor.Forms {
                 for (int i = 1; i < dataPoints.Count; ++i) {
                     if (savingDisabled && dataPoints[i].Step.Count > 0)
                         savingDisabled = false;
-                    LineItem temp = myPane.AddCurve(dataPoints[i].PeakSum.ToString(), dataPoints[i].Points(graph.AxisDisplayMode), rowsColors[i % rowsColors.Length], SymbolType.None);
+                    var temp = myPane.AddCurve(dataPoints[i].PeakSum.ToString(), dataPoints[i].Points(graph.AxisDisplayMode), rowsColors[i % rowsColors.Length], SymbolType.None);
                     temp.Symbol.Fill = new Fill(Color.White);
                 }
             } else {
                 if (savingDisabled && dataPoints[0].Step.Count > 0)
                     savingDisabled = false;
-                LineItem temp = myPane.AddCurve("My Curve", dataPoints[0].Points(graph.AxisDisplayMode), Color.Blue, SymbolType.None);
+                var temp = myPane.AddCurve("My Curve", dataPoints[0].Points(graph.AxisDisplayMode), Color.Blue, SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
             specterSavingEnabled = !savingDisabled;
-            myPane.Legend.IsVisible = false;
             
-            // Fill the axis background with a color gradient
-            myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
-            // Fill the pane background with a color gradient
-            myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             // Y-scale needs to be computed more properly!
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 10000;
@@ -290,12 +279,11 @@ namespace Flavor.Forms {
         }
 
         void ZedGraphControlPlus_ContextMenuBuilder(object sender, ZedGraphControlPlus.ContextMenuBuilderEventArgs args) {
-            ToolStripItemCollection items = args.MenuStrip.Items;
-            ToolStripItem item = new ToolStripSeparator();
-            items.Add(item);
+            var items = args.MenuStrip.Items;
+            items.Add(new ToolStripSeparator());
 
             {
-                PointPairListPlus ppl = args.Row;
+                var ppl = args.Row;
                 Graph.pListScaled pls;
                 int index = args.Index;
                 if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
@@ -305,44 +293,39 @@ namespace Flavor.Forms {
 
                     ushort step = (ushort)pls.Step[index].X;
 
-                    item = new ToolStripMenuItem();
-                    item.Text = "Добавить точку в редактор";
+                    var item = new ToolStripMenuItem("Добавить точку в редактор");
                     item.Click += (s, e) => {
                         // TODO: raise event here and move code below to mainForm
                         new AddPointForm(step, isFirst).ShowDialog();
                     };
                     items.Add(item);
 
-                    item = new ToolStripMenuItem();
-                    item.Text = "Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2");
+                    item = new ToolStripMenuItem ("Коэффициент коллектора" + (isFirstCollector ? " 1" : " 2"));
                     item.Click += (s, e) => {
-                        if (new SetScalingCoeffForm(step, isFirst, graph).ShowDialog() == DialogResult.Yes)
+                        if (new SetScalingCoeffForm(step, isFirst, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
                             Modified = true;
                     };
                     items.Add(item);
                     {
-                        PreciseEditorData ped = pls.PEDreference;
+                        var ped = pls.PEDreference;
 
-                        item = new ToolStripMenuItem();
-                        item.Text = "Вычесть из текущего с перенормировкой на точку";
+                        item = new ToolStripMenuItem("Вычесть из текущего с перенормировкой на точку");
                         item.Click += (s, e) => GraphForm_OnDiffOnPoint(step, isFirst, ped);
                         items.Add(item);
 
                         if (ped != null) {
-                            item = new ToolStripMenuItem();
-                            item.Text = "Вычесть из текущего с перенормировкой на интеграл пика";
+                            item = new ToolStripMenuItem("Вычесть из текущего с перенормировкой на интеграл пика");
                             item.Click += (s, e) => GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped);
                             items.Add(item);
                         }
                     }
-                    item = new ToolStripSeparator();
-                    items.Add(item);
+                    items.Add(new ToolStripSeparator());
                 }
             }
 
-            ToolStripMenuItem stepViewItem = new ToolStripMenuItem();
-            ToolStripMenuItem voltageViewItem = new ToolStripMenuItem();
-            ToolStripMenuItem massViewItem = new ToolStripMenuItem();
+            var stepViewItem = new ToolStripMenuItem("Ступени") { CheckOnClick = true };
+            var voltageViewItem = new ToolStripMenuItem("Напряжение") { CheckOnClick = true };
+            var massViewItem = new ToolStripMenuItem("Масса") { CheckOnClick = true };
 
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
@@ -356,22 +339,11 @@ namespace Flavor.Forms {
                     break;
             }
 
-            stepViewItem.Text = "Ступени";
-            stepViewItem.CheckOnClick = true;
             stepViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
-
-            voltageViewItem.Text = "Напряжение";
-            voltageViewItem.CheckOnClick = true;
             voltageViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
-
-            massViewItem.Text = "Масса";
-            massViewItem.CheckOnClick = true;
             massViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
 
-            item = new ToolStripMenuItem("", null, stepViewItem, voltageViewItem, massViewItem);
-            item.Text = "Выбрать шкалу";
-
-            items.Add(item);
+            items.Add(new ToolStripMenuItem("Выбрать шкалу", null, stepViewItem, voltageViewItem, massViewItem));
         }
 
         string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {

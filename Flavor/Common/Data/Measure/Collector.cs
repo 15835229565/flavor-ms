@@ -14,15 +14,18 @@ namespace Flavor.Common.Data.Measure {
                     pl.RecomputeMassRow();
             }
         }
-        readonly Converter<ushort, double> point2mass;
-        public Collector(double coeff, Converter<ushort, double> point2mass) {
+        readonly Converter<ushort, double> _step2voltage;
+        public Collector(double coeff, Converter<ushort, double> step2voltage) {
             this.coeff = coeff;
-            this.point2mass = point2mass;
+            _step2voltage = step2voltage;
             // data row for scan (has no PED reference)
             Add(new Graph.pListScaled(this));
         }
+        public double pointToVoltage(ushort pnt) {
+            return _step2voltage(pnt);
+        }
         public double pointToMass(ushort pnt) {
-            return coeff / point2mass(pnt);
+            return coeff / _step2voltage(pnt);
         }
         public new void Clear() {
             base.Clear();

@@ -15,7 +15,7 @@ namespace Flavor.Common.Data.Measure {
                 Add(new Collector(coeff, cd.scanVoltageRealNew));
         }
         public int[] RecomputeMassRows(double[] coeffs) {
-            if (this.Count != coeffs.Length)
+            if (Count != coeffs.Length)
                 throw new ArgumentOutOfRangeException("coeffs");
             var result = new List<int>(coeffs.Length);
             for (int i = 0; i < coeffs.Length; ++i) {
@@ -31,7 +31,7 @@ namespace Flavor.Common.Data.Measure {
         }
         public bool RecomputeMassRows(byte collectorNumber, double coeff) {
             //natural-based index
-            if (collectorNumber > this.Count || collectorNumber < 1)
+            if (collectorNumber > Count || collectorNumber < 1)
                 throw new ArgumentOutOfRangeException("collectorNumber");
             var collector = this[--collectorNumber];
             if (collector.Coeff == coeff)

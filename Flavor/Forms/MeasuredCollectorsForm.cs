@@ -1,8 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Graph = Flavor.Common.Data.Measure.Graph;
-using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using Flavor.Common.Data.Measure;
 // be careful with Config data. use constants only!
 using Config = Flavor.Common.Settings.Config;
 
@@ -25,19 +24,18 @@ namespace Flavor.Forms {
         public void initMeasure(int progressMaximum, bool isPrecise) {
             // TODO: different types of panel
             PreciseSpectrumDisplayed = isPrecise;
-            
+
+            var g = Graph.MeasureGraph.Instance;
             MeasureGraphPanel panel;
             if (isPrecise) {
                 panel = new PreciseMeasureGraphPanel();
                 // search temporary here
-                // TODO: use extension method getUsed()
-                setXScaleLimits(Config.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
+                setXScaleLimits(g.PreciseData.getUsed());
             } else {
                 panel = new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
                 setXScaleLimits();
             }
             panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
-            Graph.MeasureGraph g = Graph.MeasureGraph.Instance;
             panel.Graph = g;
             panel.ProgressMaximum = progressMaximum;
 
@@ -68,7 +66,7 @@ namespace Flavor.Forms {
 
         void MeasuredCollectorsForm_MeasureCancelRequested(object sender, EventArgs e) {
             // do something local
-            (Panel as MeasureGraphPanel).MeasureCancelRequested -= MeasuredCollectorsForm_MeasureCancelRequested;
+            ((MeasureGraphPanel)Panel).MeasureCancelRequested -= MeasuredCollectorsForm_MeasureCancelRequested;
             OnMeasureCancelRequested();
         }
 
@@ -81,7 +79,7 @@ namespace Flavor.Forms {
         }
         void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
             if (counts != null)
-                (Panel as MeasureGraphPanel).performStep(pnt, counts);
+                ((MeasureGraphPanel)Panel).performStep(pnt, counts);
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();
         }

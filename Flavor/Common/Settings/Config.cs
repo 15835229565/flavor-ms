@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using System.Linq;
 using Flavor.Common.Data.Measure;
 
 namespace Flavor.Common.Settings {
@@ -30,28 +29,20 @@ namespace Flavor.Common.Settings {
         #endregion
         public const string DIFF_FILE_SUFFIX = "~diff";
         #region Dialog filters
-        internal static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
-        internal static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
+        public static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
+        public static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
         #endregion
-        static string SerialPort = "COM2";
-        static uint SerialBaudRate = 128000;
-        static byte sendTry = 1;
 
         public const ushort MIN_STEP = 0;
         public const ushort MAX_STEP = 2112;
         //public const ushort MAX_STEP = 4095;
-        static ushort startPoint = MIN_STEP;
-        static ushort endPoint = MAX_STEP;
 
         //public static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18 };
         public static readonly double[] COLLECTOR_COEFFS = { 2770 * 28, 896.5 * 18, 1 };
         
         public const int PEAK_NUMBER = 20;
 
-        static CommonOptions commonOpts;
-        public static CommonOptions CommonOptions {
-            get { return commonOpts; }
-        }
+        public static CommonOptions CommonOptions { get; private set; }
 
         static PreciseSpectrum preciseData = new PreciseSpectrum();
         public static PreciseSpectrum PreciseData {
@@ -117,46 +108,22 @@ namespace Flavor.Common.Settings {
                 return res;
             }
         }
-        static int iterations = 0;
-        public static int Iterations {
-            get { return iterations; }
-        }
-        static int timeLimit = 0;
-        public static int TimeLimit {
-            get { return timeLimit; }
-        }
-        static ushort allowedShift = 0;
-        public static ushort AllowedShift {
-            get { return allowedShift; }
-        }
+        public static int Iterations { get; private set; }
+        public static int TimeLimit { get; private set; }
+        public static ushort AllowedShift { get; private set; }
 
-        public static string Port {
-            get { return SerialPort; }
-            set { SerialPort = value; }
-        }
-        public static uint BaudRate {
-            get { return SerialBaudRate; }
-            set { SerialBaudRate = value; }
-        }
+        public static string Port { get; private set; }
+        public static int BaudRate { get; private set; }
+        public static byte Try { get; private set; }
 
-        public static byte Try {
-            get { return sendTry; }
-        }
-
-        public static ushort sPoint {
-            get { return startPoint; }
-            set { startPoint = value; }
-        }
-        public static ushort ePoint {
-            get { return endPoint; }
-            set { endPoint = value; }
-        }
-        public static byte BackgroundCycles { get; set; }
+        public static ushort sPoint { get; private set; }
+        public static ushort ePoint { get; private set; }
+        public static byte BackgroundCycles { get; private set; }
 
         public static void getInitialDirectory() {
-            mainConfigName = System.IO.Path.Combine(INITIAL_DIR, CONFIG_NAME);
-            logName = System.IO.Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
-            libraryName = System.IO.Path.Combine(INITIAL_DIR, LIBRARY_NAME);
+            mainConfigName = Path.Combine(INITIAL_DIR, CONFIG_NAME);
+            logName = Path.Combine(INITIAL_DIR, CRASH_LOG_NAME);
+            libraryName = Path.Combine(INITIAL_DIR, LIBRARY_NAME);
         }
         #region Global Config I/O
         public static void loadGlobalConfig() {
@@ -165,26 +132,26 @@ namespace Flavor.Common.Settings {
             mainConfigWriter = TagHolder.getMainConfigWriter(mainConfigName, mainConfig.XML);
         }
         public static void saveGlobalScanOptions(ushort sPointReal, ushort ePointReal) {
-            Config.sPoint = sPointReal;//!!!
-            Config.ePoint = ePointReal;//!!!
+            sPoint = sPointReal;//!!!
+            ePoint = ePointReal;//!!!
             mainConfigWriter.write();
         }
         public static void saveGlobalDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
-            commonOpts.befTimeReal = befTimeReal;
-            commonOpts.fTimeReal = fTimeReal;
-            commonOpts.bTimeReal = bTimeReal;
-            commonOpts.ForwardTimeEqualsBeforeTime = forwardAsBefore;
+            CommonOptions.befTimeReal = befTimeReal;
+            CommonOptions.fTimeReal = fTimeReal;
+            CommonOptions.bTimeReal = bTimeReal;
+            CommonOptions.ForwardTimeEqualsBeforeTime = forwardAsBefore;
             mainConfigWriter.write();
         }
-        public static void saveGlobalConnectOptions(string port, uint baudrate) {
-            Config.Port = port;
-            Config.BaudRate = baudrate;
+        public static void saveGlobalConnectOptions(string port, int baudrate) {
+            Port = port;
+            BaudRate = baudrate;
             mainConfigWriter.write();
         }
         public static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, PreciseEditorData peak, int index, byte backgroundCount) {
-            iterations = iter;
-            timeLimit = timeLim;
-            allowedShift = shift;
+            Iterations = iter;
+            TimeLimit = timeLim;
+            AllowedShift = shift;
             reperPeak = peak;
             CheckerPeakIndex = index;
             BackgroundCycles = backgroundCount;
@@ -197,17 +164,17 @@ namespace Flavor.Common.Settings {
             mainConfigWriter.write();
         }
         public static void temp_saveGO(double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2, double c, double k, double expT) {
-            commonOpts.iVoltageReal = iV;
-            commonOpts.eCurrentReal = eC;
-            commonOpts.fV1Real = fv1;
-            commonOpts.fV2Real = fv2;
-            commonOpts.d1VReal = d1v;
-            commonOpts.d2VReal = d2v;
-            commonOpts.d3VReal = d3v;
-            commonOpts.C = c;
-            commonOpts.K = k;
-            commonOpts.eTimeReal = (ushort)expT;
-            mainConfigWriter.saveCommonOptions(commonOpts);
+            CommonOptions.iVoltageReal = iV;
+            CommonOptions.eCurrentReal = eC;
+            CommonOptions.fV1Real = fv1;
+            CommonOptions.fV2Real = fv2;
+            CommonOptions.d1VReal = d1v;
+            CommonOptions.d2VReal = d2v;
+            CommonOptions.d3VReal = d3v;
+            CommonOptions.C = c;
+            CommonOptions.K = k;
+            CommonOptions.eTimeReal = (ushort)expT;
+            mainConfigWriter.saveCommonOptions(CommonOptions);
             mainConfigWriter.write();
         }
         //public static void saveGlobalCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
@@ -467,7 +434,7 @@ namespace Flavor.Common.Settings {
             }
             return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
-        internal static void autoSaveSpectrumFile() {
+        public static void autoSaveSpectrumFile() {
             var g = Graph.MeasureGraph.Instance;
             DateTime dt = g.DateTime;
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
@@ -476,7 +443,7 @@ namespace Flavor.Common.Settings {
             writer.setTimeStamp(dt);
             writer.write();
         }
-        internal static void autoSavePreciseSpectrumFile() {
+        public static void autoSavePreciseSpectrumFile() {
             var g = Graph.MeasureGraph.Instance;
             DateTime dt = g.DateTime;
             short? shift = g.Shift;
@@ -488,7 +455,7 @@ namespace Flavor.Common.Settings {
             writer.savePreciseData(g.PreciseData, false);
             writer.write();
         }
-        internal static void autoSaveMonitorSpectrumFile(int? labelNumber) {
+        public static void autoSaveMonitorSpectrumFile(int? labelNumber) {
             var g = Graph.MeasureGraph.Instance;
             DateTime dt = g.DateTime;
             short? shift = g.Shift;
@@ -512,14 +479,14 @@ namespace Flavor.Common.Settings {
             writer.setSolvedResult(savedSolution);
             savedSolution = null;
         }
-        internal static void AutoSaveSolvedSpectra(double[] solution) {
+        public static void AutoSaveSolvedSpectra(double[] solution) {
             // TODO: simplify
             if (MonitorSaveMaintainer.InstanceExists)
                 MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.MeasureGraph.Instance).setSolvedResult(solution);
             else
                 savedSolution = solution;
         }
-        internal static void finalizeMonitorFile() {
+        public static void finalizeMonitorFile() {
             // TODO: simplify
             if (MonitorSaveMaintainer.InstanceExists)
                 MonitorSaveMaintainer.getMonitorWriter(DateTime.MinValue, Graph.MeasureGraph.Instance).finalize();
@@ -598,12 +565,9 @@ namespace Flavor.Common.Settings {
         }
         #endregion
         #region Graph scaling to mass coeffs
-        internal static bool setScalingCoeff(byte col, ushort pnt, double mass) {
-            if (Graph.MeasureGraph.Instance.setScalingCoeff(col, pnt, mass)) {
-                mainConfigWriter.write();
-                return true;
-            }
-            return false;
+        public static bool setScalingCoeff(byte col, ushort pnt, double mass) {
+            mainConfigWriter.write();
+            return true;
         }
         #endregion
         #region Logging routines
@@ -1094,9 +1058,9 @@ namespace Flavor.Common.Settings {
                         string prefix;
                         try {
                             prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                            SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                            SerialBaudRate = uint.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
-                            sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
+                            Port = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
+                            BaudRate = int.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                            Try = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             (new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename)).visualise();
                             //use hard-coded defaults
@@ -1116,7 +1080,7 @@ namespace Flavor.Common.Settings {
                             //use hard-coded defaults
                         }
                         try {
-                            commonOpts = loadCommonOptions();
+                            CommonOptions = loadCommonOptions();
                         } catch (ConfigLoadException cle) {
                             cle.visualise();
                             //use hard-coded defaults
@@ -1145,17 +1109,17 @@ namespace Flavor.Common.Settings {
                             //use hard-coded defaults (null checker peak)
                         }
                         try {
-                            iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
+                            Iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (infinite iterations)
                         }
                         try {
-                            timeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
+                            TimeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (no time limit)
                         }
                         try {
-                            allowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
+                            AllowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (zero shift allowed)
                         }
@@ -1198,15 +1162,15 @@ namespace Flavor.Common.Settings {
                     }
                 }
                 public class LibraryReader: ILibraryReader {
-                    private const string LIBRARY_TAG = "library";
-                    private const string SPECTRUM_TAG = "spectrum";
-                    private const string ID_ATTRIBUTE = "id";
-                    private const string MASS_ATTRIBUTE = "mass";
-                    private const string PEAK_TAG = "peak";
-                    private const string VALUE_ATTRIBUTE = "value";
-                    private const string CALIBRATION_TIME_ATTRIBUTE = "ct";
-                    private readonly XmlTextReader reader;
-                    private System.Collections.Hashtable table;
+                    const string LIBRARY_TAG = "library";
+                    const string SPECTRUM_TAG = "spectrum";
+                    const string ID_ATTRIBUTE = "id";
+                    const string MASS_ATTRIBUTE = "mass";
+                    const string PEAK_TAG = "peak";
+                    const string VALUE_ATTRIBUTE = "value";
+                    const string CALIBRATION_TIME_ATTRIBUTE = "ct";
+                    readonly XmlTextReader reader;
+                    System.Collections.Hashtable table;
                     public LibraryReader(string filename) {
                         reader = new XmlTextReader(filename);
                     }
@@ -1264,7 +1228,7 @@ namespace Flavor.Common.Settings {
                     #endregion
                 }
                 public class SpectrumReader: ComplexReader, ISpectrumReader {
-                    private bool hint;
+                    bool hint;
                     #region ISpectrumReader Members
                     public bool Hint {
                         get {
@@ -1428,7 +1392,7 @@ namespace Flavor.Common.Settings {
                         opts.fV2Real = fv2;
                         saveCommonOptions(opts);
                     }
-                    private void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
+                    void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
                         commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = opts.eTime.ToString();
                         commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
@@ -1536,7 +1500,7 @@ namespace Flavor.Common.Settings {
                         string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
                         fillInnerText(prefix, PORT_CONFIG_TAG, Port);
                         fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
-                        fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
+                        fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, Try);
                     }
                     void saveScanOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
@@ -1544,14 +1508,14 @@ namespace Flavor.Common.Settings {
                         fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
                     }
                     void saveCommonOptions() {
-                        saveCommonOptions(commonOpts);
+                        saveCommonOptions(CommonOptions);
                     }
                     void saveDelaysOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
-                        fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
-                        fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
-                        fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
-                        fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
+                        fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, CommonOptions.befTime);
+                        fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, CommonOptions.ForwardTimeEqualsBeforeTime);
+                        fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, CommonOptions.fTime);
+                        fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, CommonOptions.bTime);
                     }
                     void saveMassCoeffs() {
                         saveScalingCoeffs(Graph.MeasureGraph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
@@ -1572,9 +1536,9 @@ namespace Flavor.Common.Settings {
                             clearInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
                             clearInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
                         }
-                        fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, iterations);
-                        fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
-                        fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
+                        fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, Iterations);
+                        fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, TimeLimit);
+                        fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, AllowedShift);
                         fillInnerText(prefix, CHECK_PEAK_NUMBER_TAG, CheckerPeakIndex);
 
                         fillInnerText(prefix, BACKGROUND_CYCLES_NUMBER_TAG, BackgroundCycles);
@@ -1739,9 +1703,9 @@ namespace Flavor.Common.Settings {
                         string prefix;
                         try {
                             prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
-                            SerialPort = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
-                            SerialBaudRate = uint.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
-                            sendTry = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
+                            Port = (xmlData.SelectSingleNode(combine(prefix, PORT_CONFIG_TAG)).InnerText);
+                            BaudRate = int.Parse(xmlData.SelectSingleNode(combine(prefix, BAUDRATE_CONFIG_TAG)).InnerText);
+                            Try = byte.Parse(xmlData.SelectSingleNode(combine(prefix, TRY_NUMBER_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             (new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename)).visualise();
                             //use hard-coded defaults
@@ -1755,7 +1719,7 @@ namespace Flavor.Common.Settings {
                             //use hard-coded defaults
                         }
                         try {
-                            commonOpts = loadCommonOptions();
+                            CommonOptions = loadCommonOptions();
                         } catch (ConfigLoadException cle) {
                             cle.visualise();
                             //use hard-coded defaults
@@ -1791,17 +1755,17 @@ namespace Flavor.Common.Settings {
                             //use hard-coded defaults (null checker peak)
                         }
                         try {
-                            iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
+                            Iterations = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_ITER_NUMBER_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (infinite iterations)
                         }
                         try {
-                            timeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
+                            TimeLimit = int.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_TIME_LIMIT_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (no time limit)
                         }
                         try {
-                            allowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
+                            AllowedShift = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, CHECK_MAX_SHIFT_CONFIG_TAG)).InnerText);
                         } catch (NullReferenceException) {
                             //use hard-coded defaults (zero shift allowed)
                         }
@@ -2314,7 +2278,7 @@ namespace Flavor.Common.Settings {
                         string prefix = combine(ROOT_CONFIG_TAG, CONNECT_CONFIG_TAG);
                         fillInnerText(prefix, PORT_CONFIG_TAG, Port);
                         fillInnerText(prefix, BAUDRATE_CONFIG_TAG, BaudRate);
-                        fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, sendTry);
+                        fillInnerText(prefix, TRY_NUMBER_CONFIG_TAG, Try);
                     }
                     void saveScanOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
@@ -2322,14 +2286,14 @@ namespace Flavor.Common.Settings {
                         fillInnerText(prefix, END_SCAN_CONFIG_TAG, ePoint);
                     }
                     void saveCommonOptions() {
-                        saveCommonOptions(commonOpts);
+                        saveCommonOptions(CommonOptions);
                     }
                     void saveDelaysOptions() {
                         string prefix = combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG);
-                        fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, commonOpts.befTime);
-                        fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, commonOpts.ForwardTimeEqualsBeforeTime);
-                        fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, commonOpts.fTime);
-                        fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, commonOpts.bTime);
+                        fillInnerText(prefix, DELAY_BEFORE_MEASURE_CONFIG_TAG, CommonOptions.befTime);
+                        fillInnerText(prefix, EQUAL_DELAYS_CONFIG_TAG, CommonOptions.ForwardTimeEqualsBeforeTime);
+                        fillInnerText(prefix, DELAY_FORWARD_MEASURE_CONFIG_TAG, CommonOptions.fTime);
+                        fillInnerText(prefix, DELAY_BACKWARD_MEASURE_CONFIG_TAG, CommonOptions.bTime);
                     }
                     void saveMassCoeffs() {
                         saveScalingCoeffs(Graph.MeasureGraph.Instance.Collectors.ConvertAll(col => col.Coeff).ToArray());
@@ -2350,9 +2314,9 @@ namespace Flavor.Common.Settings {
                             clearInnerText(prefix, PEAK_COL_NUMBER_CONFIG_TAG);
                             clearInnerText(prefix, PEAK_WIDTH_CONFIG_TAG);
                         }
-                        fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, iterations);
-                        fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, timeLimit);
-                        fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, allowedShift);
+                        fillInnerText(prefix, CHECK_ITER_NUMBER_CONFIG_TAG, Iterations);
+                        fillInnerText(prefix, CHECK_TIME_LIMIT_CONFIG_TAG, TimeLimit);
+                        fillInnerText(prefix, CHECK_MAX_SHIFT_CONFIG_TAG, AllowedShift);
                         fillInnerText(prefix, CHECK_PEAK_NUMBER_TAG, CheckerPeakIndex);
 
                         fillInnerText(prefix, BACKGROUND_CYCLES_NUMBER_TAG, BackgroundCycles);
@@ -2440,7 +2404,7 @@ namespace Flavor.Common.Settings {
             }
             #endregion
             #region Private Service Methods
-            private static RETURN_INTERFACE findCorrespondingReaderVersion<RETURN_INTERFACE, CURRENT_TYPE, TYPE0>(string filename, string errorMessage)
+            static RETURN_INTERFACE findCorrespondingReaderVersion<RETURN_INTERFACE, CURRENT_TYPE, TYPE0>(string filename, string errorMessage)
                 where RETURN_INTERFACE: IAnyReader
                 where CURRENT_TYPE: TagHolder, RETURN_INTERFACE, new()
                 where TYPE0: TagHolder, RETURN_INTERFACE, new() {
@@ -2468,20 +2432,20 @@ namespace Flavor.Common.Settings {
                         throw new ConfigLoadException("Unknown version", errorMessage, filename);
                 }
             }
-            private static RETURN_INTERFACE getInitializedConfig<RETURN_INTERFACE, TYPE>(string filename, XmlDocument doc)                
+            static RETURN_INTERFACE getInitializedConfig<RETURN_INTERFACE, TYPE>(string filename, XmlDocument doc)                
                 where RETURN_INTERFACE: IAnyConfig
                 where TYPE: TagHolder, RETURN_INTERFACE, new() {
                 RETURN_INTERFACE config = new TYPE();
                 (config as TagHolder).initialize(filename, doc);
                 return config;
             }
-            private static string combine(params string[] args) {
+            static string combine(params string[] args) {
                 return string.Join("/", args);
             }
-            private void clearInnerText(string prefix, string nodeName) {
+            void clearInnerText(string prefix, string nodeName) {
                 fillInnerText(prefix, nodeName, "");
             }
-            private void fillInnerText(string prefix, string nodeName, object value) {
+            void fillInnerText(string prefix, string nodeName, object value) {
                 string fullName = combine(prefix, nodeName);
                 try {
                     xmlData.SelectSingleNode(fullName).InnerText = value.ToString();
@@ -2490,14 +2454,14 @@ namespace Flavor.Common.Settings {
                     xmlData.SelectSingleNode(fullName).InnerText = value.ToString();
                 }
             }
-            private string getHeaderAttributeText(string tag) {
+            string getHeaderAttributeText(string tag) {
                 XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
                 XmlAttributeCollection attrs = headerNode.Attributes;
                 XmlNode attr = attrs.GetNamedItem(tag);
                 return attr.InnerText;
             }
             // static below!
-            private static XmlNode createRootStub(XmlDocument conf, string header) {
+            static XmlNode createRootStub(XmlDocument conf, string header) {
                 conf.AppendChild(conf.CreateXmlDeclaration("1.0", "utf-8", ""));
                 XmlElement rootNode = conf.CreateElement(ROOT_CONFIG_TAG);
                 conf.AppendChild(rootNode);
@@ -2513,7 +2477,7 @@ namespace Flavor.Common.Settings {
                 return rootNode;
             }
             // TODO: move to proper version!
-            private static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
+            static XmlNode createCommonOptsStub(XmlDocument conf, XmlNode mountPoint) {
                 XmlNode commonNode = conf.CreateElement(COMMON_CONFIG_TAG);
                 commonNode.AppendChild(conf.CreateElement(EXPOSITURE_TIME_CONFIG_TAG));
                 commonNode.AppendChild(conf.CreateElement(TRANSITION_TIME_CONFIG_TAG));
@@ -2531,7 +2495,7 @@ namespace Flavor.Common.Settings {
                 mountPoint.AppendChild(commonNode);
                 return commonNode;
             }
-            private static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint) {
+            static XmlNode createPEDStub(XmlDocument pedConf, XmlNode mountPoint) {
                 XmlNode senseNode = pedConf.CreateElement(SENSE_CONFIG_TAG);
 
                 for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {

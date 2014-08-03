@@ -4,10 +4,7 @@ using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
 using System.Collections.Generic;
-using Graph = Flavor.Common.Data.Measure.Graph;
-using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
-// remove by using GetUsed() extension method
-using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using Flavor.Common.Data.Measure;
 
 namespace Flavor.Forms {
     partial class MonitorForm: GraphForm, IMeasured {
@@ -28,16 +25,16 @@ namespace Flavor.Forms {
             public PointPairListPlusWithMaxCapacity(PointPairListPlus other)
                 : base(other, other.PEDreference, other.PLSreference) { }
             public new void Add(PointPair pp) {
-                if (base.Count == MAX_CAPACITY) {
-                    base.RemoveAt(0);
+                if (Count == MAX_CAPACITY) {
+                    RemoveAt(0);
                 }
                 base.Add(pp);
             }
         }
         class PointPairSpecial: PointPair {
             readonly double[] xs, ys;
-            readonly Generator<int> xChooser, yChooser;
-            public PointPairSpecial(PointPair pp, double[] extraXs, Generator<int> xChooser, double[] extraYs, Generator<int> yChooser)
+            readonly Func<int> xChooser, yChooser;
+            public PointPairSpecial(PointPair pp, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser)
                 : base(pp) {
                 xs = extraXs;
                 ys = extraYs;
@@ -45,10 +42,10 @@ namespace Flavor.Forms {
                 this.yChooser = yChooser;
             }
             PointPairSpecial(PointPairSpecial other) {
-                this.xs = other.xs.Clone() as double[];
-                this.ys = other.ys.Clone() as double[];
-                this.xChooser = other.xChooser.Clone() as Generator<int>;
-                this.yChooser = other.yChooser.Clone() as Generator<int>;
+                this.xs = (double[])other.xs.Clone();
+                this.ys = (double[])other.ys.Clone();
+                this.xChooser = (Func<int>)other.xChooser.Clone();
+                this.yChooser = (Func<int>)other.yChooser.Clone();
             }
             public override double X {
                 get {
@@ -86,8 +83,7 @@ namespace Flavor.Forms {
 
         public MonitorForm() {
             // Init panel before ApplyResources
-            Panel = new PreciseMeasureGraphPanel();
-            Panel.Graph = Graph.MeasureGraph.Instance;
+            Panel = new PreciseMeasureGraphPanel { Graph = Graph.MeasureGraph.Instance };
             InitializeComponent();
         }
         [Obsolete]
@@ -117,7 +113,7 @@ namespace Flavor.Forms {
                 sums.Add(sum);
                 for (int i = 0; i < rowsCount; ++i) {
                     var pp = temp[i];
-                    var pp2 = new PointPairSpecial(pp, new double[] { time }, XScale, new double[] { pp.Y / sum }, YScale);
+                    var pp2 = new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum }, YScale);
                     list[i].Add(pp2);
                 }
                 graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
@@ -152,9 +148,6 @@ namespace Flavor.Forms {
                 temp.Symbol.Fill = new Fill(Color.White);
             }
 
-            myPane.Legend.IsVisible = false;
-            myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
-            myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             var yScale = myPane.YAxis.Scale;
             yScale.Min = 0;
             yScale.Max = 10000;
@@ -189,7 +182,7 @@ namespace Flavor.Forms {
             BeginInvoke(new Action(() => refreshGraphicsOnMeasureStep(pnt, counts)));
         }
         void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
-            var panel = Panel as MeasureGraphPanel;
+            var panel = (MeasureGraphPanel)Panel;
             panel.performStep(pnt, counts);
         }
         #region IMeasured Members
@@ -200,8 +193,8 @@ namespace Flavor.Forms {
         public void initMeasure(int progressMaximum, bool isPrecise) {
             list = new List<PointPairListPlusWithMaxCapacity>();
             sums = new List<long>();
-            // TODO: use extension method getUsed()
-            var pspec = Graph.MeasureGraph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+            var g = Graph.MeasureGraph.Instance;
+            var pspec = g.PreciseData.getUsed();
             rowsCount = pspec.Count;
             for (int i = 0; i < rowsCount; ++i) {
                 var temp = new PointPairListPlusWithMaxCapacity();
@@ -211,10 +204,9 @@ namespace Flavor.Forms {
             
             iteration = 0;
 
-            var panel = Panel as MeasureGraphPanel;
+            var panel = (MeasureGraphPanel)Panel;
             panel.MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
 
-            var g = Graph.MeasureGraph.Instance;
             g.GraphDataModified += NewIterationAsync;
             g.NewGraphData += InvokeRefreshGraph;
             panel.ProgressMaximum = progressMaximum;
@@ -248,50 +240,48 @@ namespace Flavor.Forms {
         #endregion
         void MonitorForm_MeasureCancelRequested(object sender, EventArgs e) {
             // do something local
-            (Panel as MeasureGraphPanel).MeasureCancelRequested -= MonitorForm_MeasureCancelRequested;
+            ((MeasureGraphPanel)Panel).MeasureCancelRequested -= MonitorForm_MeasureCancelRequested;
             OnMeasureCancelRequested();
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
             if (sender is ZedGraphControlMonitor) {
                 var items = args.MenuStrip.Items;
-                
-                var item = new ToolStripMenuItem();
-                item.Text = NORM_ITEM_TEXT;
-                item.Checked = showNormalized;
-                item.CheckOnClick = true;
+
+                var item = new ToolStripMenuItem(NORM_ITEM_TEXT) {
+                    Checked = showNormalized,
+                    CheckOnClick = true
+                };
                 item.CheckedChanged += (s, e) => {
                     // check lambdas behaviour
                     showNormalized = !showNormalized;
                     graph.GraphPane.YAxis.Title.Text = showNormalized ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
                     graph.AxisChange();
                     graph.Refresh();
-                    //graph.Invalidate();
                 };
                 items.Add(item);
 
-                item = new ToolStripMenuItem();
-                item.Text = TIME_ITEM_TEXT;
-                item.Checked = useTimeScale;
-                item.CheckOnClick = true;
+                item = new ToolStripMenuItem(TIME_ITEM_TEXT) {
+                    Checked = useTimeScale,
+                    CheckOnClick = true
+                };
                 item.CheckedChanged += (s, e) => {
                     // check lambdas behaviour
                     useTimeScale = !useTimeScale;
                     graph.GraphPane.XAxis.Title.Text = useTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
                     graph.AxisChange();
                     graph.Refresh();
-                    //graph.Invalidate();
                 };
                 items.Add(item);
             }
         }
 
         string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
-            var pp = curve[iPt] as PointPairSpecial;
+            var pp = (PointPairSpecial)curve[iPt];
             if (pp == null)
                 return "";
             string tooltipData;
             tooltipData = string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y);
-            string comment = (curve.Points as PointPairListPlus).PEDreference.Comment;
+            string comment = ((PointPairListPlus)curve.Points).PEDreference.Comment;
             if (comment != null && comment != "") {
                 tooltipData += "\n";
                 tooltipData += comment;

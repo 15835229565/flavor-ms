@@ -41,18 +41,24 @@ namespace Flavor.Controls {
         public ZedGraphControlPlus()
             : base() {
             InitializeComponent();
-            GraphPane.IsFontsScaled = false;
+            var pane = GraphPane;
+            pane.IsFontsScaled = false;
+            pane.Legend.IsVisible = false;
+            // Fill the axis background with a color gradient
+            pane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
+            // Fill the pane background with a color gradient
+            pane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             base.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
         }
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
             if (sender != this)
                 return;
-            GraphPane pane = MasterPane.FindChartRect(mousePt);
+            var pane = MasterPane.FindChartRect(mousePt);
             CurveItem nearestCurve;
             int pointIndex;
             if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex))
-                OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, nearestCurve.Points as PointPairListPlus, pointIndex));
+                OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, (PointPairListPlus)nearestCurve.Points, pointIndex));
             else
                 OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, null, -1));
         }

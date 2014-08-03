@@ -26,9 +26,7 @@ namespace Flavor.Common.Data.Measure {
             associatedPoints = other.associatedPoints == null ? null : new PointPairListPlus(other.associatedPoints, this, null);
         }
         public static PreciseEditorData GetCheckerPeak(PreciseEditorData peak, ushort iterations) {
-            var res = new PreciseEditorData(peak);
-            res.Iterations = iterations;
-            return res;
+            return new PreciseEditorData(peak) { Iterations = iterations };
         }
         PointPairListPlus associatedPoints = null;
         public PointPairListPlus AssociatedPoints {
@@ -56,7 +54,7 @@ namespace Flavor.Common.Data.Measure {
         public string Comment { get; private set; }
         public override bool Equals(object other) {
             if (other is PreciseEditorData) {
-                PreciseEditorData o = other as PreciseEditorData;
+                var o = (PreciseEditorData)other;
                 return (this.pNumber == o.pNumber) && (this.Collector == o.Collector) && (this.Step == o.Step) &&
                        (this.Iterations == o.Iterations) && (this.Width == o.Width) && (this.Comment == o.Comment);
             }
@@ -94,7 +92,7 @@ namespace Flavor.Common.Data.Measure {
         }
         public static List<PreciseEditorData> fromString(string str) {
             //better pattern = @"{(\d+)\s+(True|False)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s*?(.*?)}";
-            Match match = new Regex((new StringBuilder())
+            var match = new Regex((new StringBuilder())
                 .Append(START)
                 .Append(@"(\d+)")
                 .Append(DELIMITER)
@@ -113,7 +111,7 @@ namespace Flavor.Common.Data.Measure {
                 .Append(@"(.*?)")
                 .Append(END)
                 .ToString()).Match(str);
-            List<PreciseEditorData> res = new List<PreciseEditorData>();
+            var res = new List<PreciseEditorData>();
             GroupCollection groups;
             while (match.Success) {
                 groups = match.Groups;
@@ -135,7 +133,7 @@ namespace Flavor.Common.Data.Measure {
             }
             return res;
         }
-        #region Custom comparison and predicate for sorting and finding Utility.PreciseEditorData objects in List
+        #region Custom comparison and predicate for sorting and finding PreciseEditorData objects in List
         public readonly static Predicate<PreciseEditorData> PeakIsUsed =
             ped => ped != null && ped.Use;
         public readonly static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue =
@@ -144,7 +142,7 @@ namespace Flavor.Common.Data.Measure {
                     return ped1.Step - ped2.Step;
                 return ped2.pNumber - ped1.pNumber;
             });
-        static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, Generator<int> comparison) {
+        static int genericCompare(PreciseEditorData ped1, PreciseEditorData ped2, Predicate<PreciseEditorData> predicate, Func<int> comparison) {
             // stub for any comparison
             if (predicate(ped1)) {
                 if (predicate(ped2))

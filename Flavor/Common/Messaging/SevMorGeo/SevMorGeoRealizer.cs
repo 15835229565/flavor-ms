@@ -2,9 +2,9 @@
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     class SevMorGeoRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
-        public SevMorGeoRealizer(PortLevel port, byte attempts, Generator<int> factor, Generator<double> interval)
+        public SevMorGeoRealizer(PortLevel port, byte attempts, Func<int> factor, Func<double> interval)
             : this(new ModBus(port), attempts, factor, interval) { }
-        SevMorGeoRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Generator<int> factor, Generator<double> interval)
+        SevMorGeoRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Func<int> factor, Func<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
                 attempts,
                 new StatusRequestGenerator(new requestStatus(), new getTurboPumpStatus(), factor),
@@ -15,7 +15,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             int i = 0;
             int f;
             readonly UserRequest<CommandCode> statusCheck, vacuumCheck;
-            readonly Generator<int> factor;
+            readonly Func<int> factor;
             public UserRequest<CommandCode> Next {
                 get {
                     UserRequest<CommandCode> res;
@@ -31,7 +31,7 @@ namespace Flavor.Common.Messaging.SevMorGeo {
             public void Reset() {
                 f = factor();
             }
-            public StatusRequestGenerator(UserRequest<CommandCode> statusCheck, UserRequest<CommandCode> vacuumCheck, Generator<int> factor) {
+            public StatusRequestGenerator(UserRequest<CommandCode> statusCheck, UserRequest<CommandCode> vacuumCheck, Func<int> factor) {
                 this.factor = factor;
                 this.statusCheck = statusCheck;
                 this.vacuumCheck = vacuumCheck;

@@ -81,7 +81,7 @@ namespace Flavor.Common {
 
             hBlock = true;
         }
-        protected abstract IRealizer GetRealizer(PortLevel port, Generator<bool> notRare);
+        protected abstract IRealizer GetRealizer(PortLevel port, Func<bool> notRare);
         bool notRare() {
             if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
                 return notRareModeRequested;
@@ -183,7 +183,7 @@ namespace Flavor.Common {
             //e.Handler = this.RareModeChanged;
         }
         protected virtual PortLevel.PortStates Connect() {
-            PortLevel.PortStates res = port.Open(Config.Port, (int)Config.BaudRate);
+            PortLevel.PortStates res = port.Open(Config.Port, Config.BaudRate);
             switch (res) {
                 case PortLevel.PortStates.Opening:
                     realizer.Undo += undoProgramState;
@@ -226,7 +226,7 @@ namespace Flavor.Common {
             if (DeviceIsConnected) {
                 Disconnect();
                 if (!DeviceIsConnected)
-                    port.Open(Config.Port, (int)Config.BaudRate);
+                    port.Open(Config.Port, Config.BaudRate);
             }
         }
         public string[] AvailablePorts {

@@ -3,11 +3,7 @@ using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Controls {
     public partial class GraphPanel: Panel {
-        Graph graph = null;
-        internal Graph Graph {
-            get { return graph; }
-            set { graph = value; }
-        }
+        internal Graph Graph { get; set; }
 
         public new bool Enabled {
             get { return base.Enabled; }
@@ -17,10 +13,10 @@ namespace Flavor.Controls {
         public GraphPanel() {
             InitializeComponent();
         }
-        internal void Enable() {
-            if (graph == null)
+        public void Enable() {
+            if (Graph == null)
                 return;
-            var commonOpts = graph.CommonOptions;
+            var commonOpts = Graph.CommonOptions;
             if (commonOpts == null)
                 return;
 
@@ -37,7 +33,7 @@ namespace Flavor.Controls {
             f2_label.Text = commonOpts.fV2Real.ToString("f3");
 
             prepareControls();
-            this.Enabled = true;
+            Enabled = true;
 
             ResumeLayout(false);
             PerformLayout();
@@ -48,10 +44,12 @@ namespace Flavor.Controls {
             startScanTextLabel.Visible = false;
             lastStepLabel.Visible = false;
             label18.Visible = false;
-            if (graph.isPreciseSpectrum)
+            if (Graph.isPreciseSpectrum)
                 return;
             // TODO: can be null on empty spectrum..
-            setScanBounds((ushort)((graph.Displayed1Steps[0])[0].X), (ushort)((graph.Displayed1Steps[0])[graph.Displayed1Steps[0].Count - 1].X));
+            var data = Graph.Collectors[0][0].Step;
+            //var data = Graph.Displayed1Steps[0];
+            setScanBounds(((ushort)data[0].X), (ushort)data[data.Count - 1].X);
         }
         protected void setScanBounds(ushort start, ushort end) {
             //TODO: move up
@@ -64,8 +62,8 @@ namespace Flavor.Controls {
             lastStepLabel.Visible = true;
         }
             
-        internal void Disable() {
-            this.Enabled = false;
+        public void Disable() {
+            Enabled = false;
             disableControls();
         }
         protected virtual void disableControls() {}

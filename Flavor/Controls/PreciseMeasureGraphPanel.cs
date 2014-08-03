@@ -9,7 +9,7 @@ namespace Flavor.Controls {
         }
         void refreshGraphicsOnPreciseStep() {
             // TODO: peak as method parameter
-            var peak = (Graph as Graph.MeasureGraph).CurrentPeak;
+            var peak = ((Graph.MeasureGraph)Graph).CurrentPeak;
             label37.Visible = true;
             peakNumberLabel.Text = (peak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;

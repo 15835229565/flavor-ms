@@ -21,17 +21,22 @@ namespace Flavor.Controls {
         public ZedGraphControlMonitor()
             : base() {
             InitializeComponent();
-            GraphPane.IsFontsScaled = false;
+            var pane = GraphPane;
+            pane.IsFontsScaled = false;
+            pane.Legend.IsVisible = false;
+            pane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
+            pane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             base.ContextMenuBuilder += ZedGraphControlMonitor_ContextMenuBuilder;
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
-            var item = new ToolStripMenuItem();
-            item.Text = LOG_ITEM_TEXT;
-            item.Checked = (GraphPane.YAxis.Type == AxisType.Log);
-            item.CheckOnClick = true;
+            var yAxis = GraphPane.YAxis;
+            var item = new ToolStripMenuItem(LOG_ITEM_TEXT) {
+                Checked = yAxis.Type == AxisType.Log,
+                CheckOnClick = true
+            };
             item.CheckedChanged += (s, e) => {
-                GraphPane.YAxis.Type = (s as ToolStripMenuItem).Checked ? AxisType.Log : AxisType.Linear;
-                this.Refresh();
+                yAxis.Type = ((ToolStripMenuItem)s).Checked ? AxisType.Log : AxisType.Linear;
+                Refresh();
             };
 
             menuStrip.Items.Add(item);

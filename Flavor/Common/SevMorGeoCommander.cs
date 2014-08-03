@@ -71,7 +71,7 @@ namespace Flavor.Common {
             };
             realizer.FirstStatus += onTheFlyAction;
         }
-        protected override IRealizer GetRealizer(PortLevel port, Generator<bool> notRare) {
+        protected override IRealizer GetRealizer(PortLevel port, Func<bool> notRare) {
             return realizer = new SevMorGeoRealizer(port, Config.Try, () => notRare() ? 5 : 3, () => notRare() ? 500 : 10000);
         }
         

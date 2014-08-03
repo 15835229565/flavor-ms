@@ -14,6 +14,7 @@ namespace Flavor.Common.Data.Measure {
             Diff
         }
         // TODO: move to view, not data (Utility)
+        // TODO: unify with PointPairSpecial from MonitorForm
         public class pListScaled {
             public enum DisplayValue {
                 Step = 0,
@@ -25,7 +26,7 @@ namespace Flavor.Common.Data.Measure {
                 get { return myPED; }
             }
 
-            PointPairListPlus[] points = new PointPairListPlus[3];
+            readonly PointPairListPlus[] points = new PointPairListPlus[3];
             public PointPairListPlus Step {
                 get { return points[(int)DisplayValue.Step]; }
             }
@@ -50,7 +51,7 @@ namespace Flavor.Common.Data.Measure {
             public void Add(ushort pnt, long count) {
                 peakSum += count;
                 points[(int)DisplayValue.Step].Add(pnt, count);
-                points[(int)DisplayValue.Voltage].Add(CommonOptions.scanVoltageReal(pnt), count, pnt);
+                points[(int)DisplayValue.Voltage].Add(collector.pointToVoltage(pnt), count, pnt);
                 points[(int)DisplayValue.Mass].Add(collector.pointToMass(pnt), count, pnt);
             }
             void SetRows(pListScaled pl) {
@@ -61,8 +62,8 @@ namespace Flavor.Common.Data.Measure {
             }
             public void SetRows(PointPairListPlus dataPoints) {
                 long sum = 0;
-                foreach (PointPair pp in dataPoints)
-                    sum += (long)(pp.Y);
+                foreach (var pp in dataPoints)
+                    sum += (long)pp.Y;
                 SetRows(dataPoints, sum);
             }
             // Be careful with sumCounts!
@@ -75,10 +76,10 @@ namespace Flavor.Common.Data.Measure {
                 }
 
                 points[(int)DisplayValue.Voltage] = new PointPairListPlus(dataPoints, null, this);
-                points[(int)DisplayValue.Voltage].ForEach((pp) => { setZ(pp); zToVoltage(pp); });
+                points[(int)DisplayValue.Voltage].ForEach(pp => ToVoltage(pp));
 
                 points[(int)DisplayValue.Mass] = new PointPairListPlus(dataPoints, null, this);
-                points[(int)DisplayValue.Mass].ForEach((pp) => { setZ(pp); zToMass(pp); });
+                points[(int)DisplayValue.Mass].ForEach(pp => { setZ(pp); ToMass(pp); });
 
                 peakSum = sumCounts;
             }
@@ -89,7 +90,7 @@ namespace Flavor.Common.Data.Measure {
                 peakSum = 0;
             }
             public void RecomputeMassRow() {
-                points[(int)DisplayValue.Mass].ForEach(zToMass);
+                points[(int)DisplayValue.Mass].ForEach(ToMass);
             }
             public pListScaled(Collector col) {
                 collector = col;
@@ -97,11 +98,6 @@ namespace Flavor.Common.Data.Measure {
                 points[(int)DisplayValue.Step] = new PointPairListPlus(null, this);
                 points[(int)DisplayValue.Voltage] = new PointPairListPlus(null, this);
                 points[(int)DisplayValue.Mass] = new PointPairListPlus(null, this);
-            }
-            public pListScaled(pListScaled other) {
-                collector = other.collector;
-                myPED = other.PEDreference;//?
-                SetRows(other);
             }
             public pListScaled(Collector col, PointPairListPlus dataPoints) {
                 collector = col;
@@ -112,10 +108,11 @@ namespace Flavor.Common.Data.Measure {
             void setZ(PointPair pp) {
                 pp.Z = pp.X;
             }
-            void zToVoltage(PointPair pp) {
-                pp.X = CommonOptions.scanVoltageReal((ushort)pp.Z);
+            void ToVoltage(PointPair pp) {
+                setZ(pp);
+                pp.X = collector.pointToVoltage((ushort)pp.Z);
             }
-            void zToMass(PointPair pp) {
+            void ToMass(PointPair pp) {
                 pp.X = collector.pointToMass((ushort)pp.Z);
             }
         }
@@ -171,9 +168,9 @@ namespace Flavor.Common.Data.Measure {
 
         //TODO: move to view, not data
         List<PointPairListPlus> getPointPairs(int col, bool useAxisMode) {
-            List<PointPairListPlus> temp = new List<PointPairListPlus>();
-            pListScaled.DisplayValue am = useAxisMode ? axisMode : pListScaled.DisplayValue.Step;
-            foreach (pListScaled pLS in Collectors[col - 1]) {
+            var temp = new List<PointPairListPlus>();
+            var am = useAxisMode ? axisMode : pListScaled.DisplayValue.Step;
+            foreach (var pLS in Collectors[col - 1]) {
                 temp.Add(pLS.Points(am));
             }
             return temp;
@@ -305,6 +302,13 @@ namespace Flavor.Common.Data.Measure {
                 dateTime = dt;
                 Shift = shift;
             }
+            public override bool setScalingCoeff(byte col, ushort pnt, double mass) {
+                if (base.setScalingCoeff(col, pnt, mass)) {
+                    Config.setScalingCoeff(col, pnt, mass);
+                    return true;
+                }
+                return false;
+            }
         }
         #region peak to add (static)
         static PreciseEditorData peakToAdd = null;
@@ -383,7 +387,7 @@ namespace Flavor.Common.Data.Measure {
                 OnGraphDataModified(1, 2, 3);
         }
         #region Graph scaling to mass coeffs
-        public bool setScalingCoeff(byte col, ushort pnt, double mass) {
+        public virtual bool setScalingCoeff(byte col, ushort pnt, double mass) {
             // this graph CommonOptions used
             double value = mass * CommonOptions.scanVoltageRealNew(pnt);
             bool result = Collectors.RecomputeMassRows(col, value);

@@ -5,9 +5,9 @@ using System.Timers;
 
 namespace Flavor.Common.Messaging.Almazov {
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
-        public AlmazovRealizer(PortLevel port, byte attempts, Generator<double> interval)
+        public AlmazovRealizer(PortLevel port, byte attempts, Func<double> interval)
             : this(new AlexProtocol(port), attempts, interval) { }
-        AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Generator<double> interval)
+        AlmazovRealizer(ISyncAsyncProtocol<CommandCode> protocol, byte attempts, Func<double> interval)
             : this(protocol, new MessageQueueWithAutomatedStatusChecks<CommandCode>(protocol,
                 attempts,
                 new StatusRequestGenerator(//new TICStatusRequest(),
@@ -49,8 +49,6 @@ namespace Flavor.Common.Messaging.Almazov {
 
         [Obsolete]
         protected override UserRequest<CommandCode> OperationOnOff(bool on) {
-            // workaround for detecting Relay1 change
-            //return new Valve1Request(on);
             throw new NotImplementedException();
         }
 
@@ -161,8 +159,7 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => {
                 // temporary solution for delayed measure request;
                 if (t1 > 0) {
-                    Timer delayed = new Timer(t1);
-                    delayed.AutoReset = false;
+                    var delayed = new Timer(t1){ AutoReset = false };
                     var request = SendMeasureRequest.Form(t2);
                     delayed.Elapsed += new ElapsedEventHandler((o, args) => toSend.Enqueue(request));
                     delayed.Start();
