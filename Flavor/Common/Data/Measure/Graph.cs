@@ -71,18 +71,6 @@ namespace Flavor.Common.Data.Measure {
             return temp;
         }
         [Obsolete]
-        public List<PointPairListPlus> Displayed1 {
-            get {
-                return getPointPairs(1, true);
-            }
-        }
-        [Obsolete]
-        public List<PointPairListPlus> Displayed2 {
-            get {
-                return getPointPairs(2, true);
-            }
-        }
-        [Obsolete]
         public List<PointPairListPlus> Displayed1Steps {
             get {
                 return getPointPairs(1, false);
@@ -95,40 +83,28 @@ namespace Flavor.Common.Data.Measure {
             }
         }
         
-        public virtual bool isPreciseSpectrum {
-            get {
-                if (PreciseData != null)
-                    return true;
-                return false;
-            }
-        }
+        public virtual bool isPreciseSpectrum { get { return PreciseData != null; } }
 
         public class MeasureGraph: Graph {
             static MeasureGraph instance = null;
             public static MeasureGraph Instance {
                 get {
                     if (instance == null) {
-                        instance = new MeasureGraph(Config.CommonOptions, Config.COLLECTOR_COEFFS);
-                        instance.DisplayingMode = Displaying.Measured;
-                        instance.PreciseData = Config.PreciseData;
+                        instance = new MeasureGraph(Config.CommonOptions, Config.COLLECTOR_COEFFS) {
+                            DisplayingMode = Displaying.Measured,
+                            PreciseData = Config.PreciseData
+                        };
                     }
                     return instance;
                 }
             }
-            public override bool isPreciseSpectrum {
-                get {
-                    if (Collectors.Any(c => c.Count > 1))
-                        return true;
-                    return false;
-                }
-            }
+            public override bool isPreciseSpectrum { get { return Collectors.Any(c => c.Count > 1); } }
             public delegate void GraphEventHandler(ushort pnt, uint[] counts, params int[] recreate);
             public event GraphEventHandler NewGraphData;
             protected virtual void OnNewGraphData(ushort pnt, uint[] counts, params int[] recreate) {
                 //lock here?
                 if (NewGraphData != null)
                     NewGraphData(pnt, counts, recreate);
-                //OnGraphDataModified(recreate);
             }
 
             public PreciseEditorData CurrentPeak { get; private set; }
@@ -150,8 +126,7 @@ namespace Flavor.Common.Data.Measure {
             }
             public void ResetPointListsWithEvent() {
                 Reset();
-                // TODO: All collectors
-                OnGraphDataModified(1, 2, 3);
+                OnGraphDataModified(_all);
             }
 
             // scan mode
@@ -174,9 +149,9 @@ namespace Flavor.Common.Data.Measure {
             }
             public void updateGraphAfterPreciseMeasure(long[][] senseModeCounts, List<PreciseEditorData> peds, short? shift) {
                 for (int i = 0; i < peds.Count; ++i) {
-                    PreciseEditorData ped = peds[i];
+                    var ped = peds[i];
                     if (ped.Use) {
-                        PointPairListPlus temp = new PointPairListPlus();
+                        var temp = new PointPairListPlus();
                         {
                             long[] countRow = senseModeCounts[i];
                             // really need? ped.Step += shift;
@@ -189,8 +164,8 @@ namespace Flavor.Common.Data.Measure {
                     }
                 }
                 setDateTimeAndShift(DateTime.Now, shift);
-                // TODO: only affected collectors
-                OnGraphDataModified(1, 2, 3);
+                // TODO: only affected collectors!
+                OnGraphDataModified(_all);
             }
 
             void setDateTimeAndShift(DateTime dt, short? shift) {
@@ -222,9 +197,15 @@ namespace Flavor.Common.Data.Measure {
         public delegate void PointAddedDelegate(bool notNull);
         public static event PointAddedDelegate OnPointAdded;
         #endregion
-        
+
+        protected readonly int[] _all;
         public Graph(CommonOptions commonOpts, params double[] coeffs) {
             Collectors = new Spectrum(commonOpts, coeffs);
+            int length = coeffs.Length;
+            _all = new int[length];
+            for (int i = 0; i < length; ++i) {
+                _all[i] = i + 1;
+            }
         }
 
         void ResetPointLists() {
@@ -240,12 +221,12 @@ namespace Flavor.Common.Data.Measure {
             }
         }
         public void updateGraphAfterScanLoad(DateTime dt, params PointPairListPlus[] plists) {
-            this.dateTime = dt;
+            dateTime = dt;
             updateGraphAfterScanLoad(plists);
         }
         public void updateGraphAfterPreciseLoad(List<PreciseEditorData> peds) {
             PreciseData = peds;
-            foreach (PreciseEditorData ped in peds) {
+            foreach (var ped in peds) {
                 if (ped == null || ped.AssociatedPoints == null || ped.AssociatedPoints.Count == 0)
                     continue;
                 // TODO: check if skipping of empty data rows can lead to program misbehaviour
@@ -266,8 +247,7 @@ namespace Flavor.Common.Data.Measure {
             DisplayingMode = Displaying.Diff;
             //lock here?
             if (newData)
-                // TODO: All collectors
-                OnGraphDataModified(1, 2, 3);
+                OnGraphDataModified(_all);
         }
         public void updateGraphAfterPreciseDiff(List<PreciseEditorData> peds) {
             ResetPointLists();
@@ -278,8 +258,8 @@ namespace Flavor.Common.Data.Measure {
             DisplayingMode = Displaying.Diff;
             //lock here?
             if (newData)
-                // TODO: only affected collectors
-                OnGraphDataModified(1, 2, 3);
+                // TODO: only affected collectors!
+                OnGraphDataModified(_all);
         }
         #region Graph scaling to mass coeffs
         public virtual bool setScalingCoeff(byte col, ushort pnt, double mass) {
