@@ -3,8 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Flavor.Controls;
 using ZedGraph;
+using Flavor.Controls;
 using Flavor.Common.Data.Measure;
 // be careful with Config data. use constants only!
 using Config = Flavor.Common.Settings.Config;
@@ -203,7 +203,7 @@ namespace Flavor.Forms {
                 minX[i] = Config.MAX_STEP;
                 maxX[i] = Config.MIN_STEP;
             }
-            foreach (PreciseEditorData ped in peds) {
+            foreach (var ped in peds) {
                 int col = ped.Collector - 1;
                 if (col > count) {
                     // error! wrong collectors number
@@ -253,18 +253,18 @@ namespace Flavor.Forms {
                 var xAxis = myPane.XAxis;
                 var scale = xAxis.Scale;
                 switch (graph.AxisDisplayMode) {
-                    case Graph.pListScaled.DisplayValue.Step:
+                    case ScalableDataList.DisplayValue.Step:
                         xAxis.Title.Text = X_AXIS_TITLE_STEP;
                         scale.Min = minX[zgcIndex];
                         scale.Max = maxX[zgcIndex];
                         break;
-                    case Graph.pListScaled.DisplayValue.Voltage:
+                    case ScalableDataList.DisplayValue.Voltage:
                         xAxis.Title.Text = X_AXIS_TITLE_VOLT;
                         var co = graph.CommonOptions;
                         scale.Min = co.scanVoltageRealNew(minX[zgcIndex]);
                         scale.Max = co.scanVoltageRealNew(maxX[zgcIndex]);
                         break;
-                    case Graph.pListScaled.DisplayValue.Mass:
+                    case ScalableDataList.DisplayValue.Mass:
                         xAxis.Title.Text = X_AXIS_TITLE_MASS;
                         //limits inverted due to point-to-mass law
                         var col = graph.Collectors[zgcIndex];
@@ -327,23 +327,22 @@ namespace Flavor.Forms {
 
             {
                 var ppl = args.Row;
-                Graph.pListScaled pls;
                 int index = args.Index;
-                if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
+                if (ppl != null && index > 0 && index < ppl.Count && ppl.PLSreference != null) {
                     byte collectorNumber = (byte)((ZedGraphControlPlus)sender).Tag;
 
-                    ushort step = (ushort)pls.Step[index].X;
+                    ushort step = (ushort)ppl.PLSreference.Step[index].X;
 
                     items.Add(new ToolStripMenuItem("Добавить точку в редактор", null,
                         (s, e) => new AddPointForm(step, collectorNumber).ShowDialog(MdiParent)));
 
                     items.Add(new ToolStripMenuItem("Коэффициент коллектора " + collectorNumber, null,
                         (s, e) => {
-                            if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
+                            if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog(MdiParent) == DialogResult.Yes)
                                 Modified = true;
                         }));
                     {
-                        var ped = pls.PEDreference;
+                        var ped = ppl.PEDreference;
                         items.Add(new ToolStripMenuItem("Вычесть из текущего с перенормировкой на точку", null,
                             (s, e) => GraphForm_OnDiffOnPoint(step, collectorNumber, ped)));
                         if (ped != null) {
@@ -355,18 +354,18 @@ namespace Flavor.Forms {
                 }
             }
 
-            var stepViewItem = new ToolStripMenuItem("Ступени", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step);
-            var voltageViewItem = new ToolStripMenuItem("Напряжение", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage);
-            var massViewItem = new ToolStripMenuItem("Масса", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass);
+            var stepViewItem = new ToolStripMenuItem("Ступени", null, (s, e) => graph.AxisDisplayMode = ScalableDataList.DisplayValue.Step);
+            var voltageViewItem = new ToolStripMenuItem("Напряжение", null, (s, e) => graph.AxisDisplayMode = ScalableDataList.DisplayValue.Voltage);
+            var massViewItem = new ToolStripMenuItem("Масса", null, (s, e) => graph.AxisDisplayMode = ScalableDataList.DisplayValue.Mass);
 
             switch (graph.AxisDisplayMode) {
-                case Graph.pListScaled.DisplayValue.Step:
+                case ScalableDataList.DisplayValue.Step:
                     stepViewItem.Checked = true;
                     break;
-                case Graph.pListScaled.DisplayValue.Voltage:
+                case ScalableDataList.DisplayValue.Voltage:
                     voltageViewItem.Checked = true;
                     break;
-                case Graph.pListScaled.DisplayValue.Mass:
+                case ScalableDataList.DisplayValue.Mass:
                     massViewItem.Checked = true;
                     break;
             }
@@ -376,45 +375,33 @@ namespace Flavor.Forms {
 
         string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
             string tooltipData = "";
-            PointPair pp = curve[iPt];
+            var pp = curve[iPt];
             switch (graph.AxisDisplayMode) {
-                case Graph.pListScaled.DisplayValue.Step:
+                case ScalableDataList.DisplayValue.Step:
                     tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
                     break;
-                case Graph.pListScaled.DisplayValue.Voltage:
+                case ScalableDataList.DisplayValue.Voltage:
                     tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
-                case Graph.pListScaled.DisplayValue.Mass:
+                case ScalableDataList.DisplayValue.Mass:
                     tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
             }
             if (graph.isPreciseSpectrum) {
-                long peakSum = -1;
-
-                var collector = graph.Collectors[(byte)sender.Tag - 1];
+                long? peakSum = null;
                 string comment = null;
+
+                var points = (PointPairListPlus)(curve.Points);
                 try {
-                    Graph.pListScaled row = null;
-                    switch (graph.AxisDisplayMode) {
-                        case Graph.pListScaled.DisplayValue.Step:
-                            row = collector.First(pls => curve.Points.Equals(pls.Step));
-                            break;
-                        case Graph.pListScaled.DisplayValue.Voltage:
-                            row = collector.First(pls => curve.Points.Equals(pls.Voltage));
-                            break;
-                        case Graph.pListScaled.DisplayValue.Mass:
-                            row = collector.First(pls => curve.Points.Equals(pls.Mass));
-                            break;
-                    }
-                    peakSum = row.PeakSum;
-                    comment = row.PEDreference.Comment;
-                } catch (InvalidOperationException) {
-                    // strangely no match
-                } catch (NullReferenceException) {
-                    // strangely null PEDreference
-                }
-                if (peakSum != -1) {
-                    tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);
+                    peakSum = points.PLSreference.PeakSum;
+                } catch { }
+                try {
+                    comment = points.PEDreference.Comment;
+                } catch { }
+
+                //var collector = graph.Collectors[(byte)sender.Tag - 1];
+                if (peakSum != null) {
+                    tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum.Value);
                     if (comment != null)
                         tooltipData += string.Format("\n{0}", comment);
                 } else

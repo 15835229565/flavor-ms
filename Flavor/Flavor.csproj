@@ -90,6 +90,7 @@
     <Compile Include="Common\Data\Measure\PointPairListPlus.cs" />
     <Compile Include="Common\Data\Measure\PreciseEditorData.cs" />
     <Compile Include="Common\Data\Measure\PreciseSpectrum.cs" />
+    <Compile Include="Common\Data\Measure\ScalableDataList.cs" />
     <Compile Include="Common\Data\Measure\Service.cs" />
     <Compile Include="Common\Data\Measure\Spectrum.cs" />
     <Compile Include="Common\Messaging\Almazov\AlmazovRealizer.cs" />

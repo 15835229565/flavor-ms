@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Flavor.Common.Data.Measure {
-    class Collector: List<Graph.pListScaled> {
+    class Collector: List<ScalableDataList> {
         double coeff;
         public double Coeff {
             get { return coeff; }
@@ -19,7 +19,7 @@ namespace Flavor.Common.Data.Measure {
             this.coeff = coeff;
             _step2voltage = step2voltage;
             // data row for scan (has no PED reference)
-            Add(new Graph.pListScaled(this));
+            Add(new ScalableDataList(this));
         }
         public double pointToVoltage(ushort pnt) {
             return _step2voltage(pnt);
@@ -30,10 +30,10 @@ namespace Flavor.Common.Data.Measure {
         public new void Clear() {
             base.Clear();
             // data row for scan (has no PED reference)
-            Add(new Graph.pListScaled(this));
+            Add(new ScalableDataList(this));
         }
         public void Add(PointPairListPlus ppl) {
-            Add(new Graph.pListScaled(this, ppl));
+            Add(new ScalableDataList(this, ppl));
         }
     }
 }

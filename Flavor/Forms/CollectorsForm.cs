@@ -214,17 +214,17 @@ namespace Flavor.Forms {
             myPane.YAxis.Title.Text = Y_AXIS_TITLE;
             
             switch (graph.AxisDisplayMode) {
-                case Graph.pListScaled.DisplayValue.Step:
+                case ScalableDataList.DisplayValue.Step:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_STEP;
                     myPane.XAxis.Scale.Min = minX[zgcIndex];
                     myPane.XAxis.Scale.Max = maxX[zgcIndex];
                     break;
-                case Graph.pListScaled.DisplayValue.Voltage:
+                case ScalableDataList.DisplayValue.Voltage:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_VOLT;
                     myPane.XAxis.Scale.Min = CommonOptions.scanVoltageReal(minX[zgcIndex]);
                     myPane.XAxis.Scale.Max = CommonOptions.scanVoltageReal(maxX[zgcIndex]);
                     break;
-                case Graph.pListScaled.DisplayValue.Mass:
+                case ScalableDataList.DisplayValue.Mass:
                     myPane.XAxis.Title.Text = X_AXIS_TITLE_MASS;
                     //limits inverted due to point-to-mass law
                     var col = zgcIndex == 0 ? graph.Collectors[0] : graph.Collectors[1];
@@ -284,25 +284,24 @@ namespace Flavor.Forms {
 
             {
                 var ppl = args.Row;
-                Graph.pListScaled pls;
                 int index = args.Index;
-                if (ppl != null && index > 0 && index < ppl.Count && (pls = ppl.PLSreference) != null) {
+                if (ppl != null && index > 0 && index < ppl.Count && ppl.PLSreference != null) {
                     // TODO: collector number here
                     bool isFirstCollector = sender == collect1_graph;
                     byte isFirst = isFirstCollector ? (byte)1 : (byte)2;
 
-                    ushort step = (ushort)pls.Step[index].X;
+                    ushort step = (ushort)ppl.PLSreference.Step[index].X;
 
                     items.Add(new ToolStripMenuItem("Добавить точку в редактор", null,
                         (s, e) => new AddPointForm(step, isFirst).ShowDialog(MdiParent)));
 
                     items.Add(new ToolStripMenuItem("Коэффициент коллектора " + (isFirstCollector ? " 1" : " 2"), null,
                         (s, e) => {
-                            if (new SetScalingCoeffForm(step, isFirst, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
+                            if (new SetScalingCoeffForm(step, isFirst, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog(MdiParent) == DialogResult.Yes)
                                 Modified = true;
                         }));
                     {
-                        var ped = pls.PEDreference;
+                        var ped = ppl.PEDreference;
 
                         items.Add(new ToolStripMenuItem("Вычесть из текущего с перенормировкой на точку", null,
                             (s, e) => GraphForm_OnDiffOnPoint(step, isFirst, ped)));
@@ -315,18 +314,18 @@ namespace Flavor.Forms {
                 }
             }
 
-            var stepViewItem = new ToolStripMenuItem("Ступени", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step);
-            var voltageViewItem = new ToolStripMenuItem("Напряжение", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage);
-            var massViewItem = new ToolStripMenuItem("Масса", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass);
+            var stepViewItem = new ToolStripMenuItem("Ступени", null, (s, e) => graph.AxisDisplayMode = ScalableDataList.DisplayValue.Step);
+            var voltageViewItem = new ToolStripMenuItem("Напряжение", null, (s, e) => graph.AxisDisplayMode = ScalableDataList.DisplayValue.Voltage);
+            var massViewItem = new ToolStripMenuItem("Масса", null, (s, e) => graph.AxisDisplayMode = ScalableDataList.DisplayValue.Mass);
 
             switch (graph.AxisDisplayMode) {
-                case Graph.pListScaled.DisplayValue.Step:
+                case ScalableDataList.DisplayValue.Step:
                     stepViewItem.Checked = true;
                     break;
-                case Graph.pListScaled.DisplayValue.Voltage:
+                case ScalableDataList.DisplayValue.Voltage:
                     voltageViewItem.Checked = true;
                     break;
-                case Graph.pListScaled.DisplayValue.Mass:
+                case ScalableDataList.DisplayValue.Mass:
                     massViewItem.Checked = true;
                     break;
             }
@@ -336,38 +335,32 @@ namespace Flavor.Forms {
 
         string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
             string tooltipData = "";
-            PointPair pp = curve[iPt];
+            var pp = curve[iPt];
             switch (graph.AxisDisplayMode) {
-                case Graph.pListScaled.DisplayValue.Step:
+                case ScalableDataList.DisplayValue.Step:
                 tooltipData = string.Format("ступень={0:G},счеты={1:F0}", pp.X, pp.Y);
                     break;
-                case Graph.pListScaled.DisplayValue.Voltage:
+                case ScalableDataList.DisplayValue.Voltage:
                 tooltipData = string.Format("напряжение={0:####.#},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
-                case Graph.pListScaled.DisplayValue.Mass:
+                case ScalableDataList.DisplayValue.Mass:
                 tooltipData = string.Format("масса={0:###.##},ступень={1:G},счеты={2:F0}", pp.X, pp.Z, pp.Y);
                     break;
             }
             if (graph.isPreciseSpectrum) {
-                long peakSum = -1;
-                int curveIndex1 = graph.Displayed1.IndexOf((PointPairListPlus)(curve.Points));
-                int curveIndex2 = graph.Displayed2.IndexOf((PointPairListPlus)(curve.Points));
+                long? peakSum = null;
                 string comment = null;
-                if (-1 != curveIndex1) {
-                    var row = graph.Collectors[0][curveIndex1];
-                    peakSum = row.PeakSum;
-                    try {
-                        comment = row.PEDreference.Comment;
-                    } catch { }
-                } else if (-1 != curveIndex2) {
-                    var row = graph.Collectors[1][curveIndex2];
-                    peakSum = row.PeakSum;
-                    try {
-                        comment = row.PEDreference.Comment;
-                    } catch { }
-                }
-                if (peakSum != -1) {
-                    tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum);
+                
+                var points = (PointPairListPlus)(curve.Points);
+                try {
+                    peakSum = points.PLSreference.PeakSum;
+                } catch { }
+                try {
+                    comment = points.PEDreference.Comment;
+                } catch { }
+
+                if (peakSum != null) {
+                    tooltipData += string.Format("\nИнтеграл пика: {0:G}", peakSum.Value);
                     if (comment != null)
                         tooltipData += string.Format("\n{0}", comment);
                 } else
