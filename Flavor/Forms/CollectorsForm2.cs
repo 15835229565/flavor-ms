@@ -334,39 +334,30 @@ namespace Flavor.Forms {
 
                     ushort step = (ushort)pls.Step[index].X;
 
-                    var item = new ToolStripMenuItem("Добавить точку в редактор");
-                    item.Click += (s, e) => {
-                        // TODO: raise event here and move code below to mainForm
-                        new AddPointForm(step, collectorNumber).ShowDialog();
-                    };
-                    items.Add(item);
+                    items.Add(new ToolStripMenuItem("Добавить точку в редактор", null,
+                        (s, e) => new AddPointForm(step, collectorNumber).ShowDialog(MdiParent)));
 
-                    item = new ToolStripMenuItem("Коэффициент коллектора " + collectorNumber);
-                    item.Click += (s, e) => {
-                        if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
-                            Modified = true;
-                    };
-                    items.Add(item);
+                    items.Add(new ToolStripMenuItem("Коэффициент коллектора " + collectorNumber, null,
+                        (s, e) => {
+                            if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
+                                Modified = true;
+                        }));
                     {
                         var ped = pls.PEDreference;
-
-                        item = new ToolStripMenuItem("Вычесть из текущего с перенормировкой на точку");
-                        item.Click += (s, e) => GraphForm_OnDiffOnPoint(step, collectorNumber, ped);
-                        items.Add(item);
-
+                        items.Add(new ToolStripMenuItem("Вычесть из текущего с перенормировкой на точку", null,
+                            (s, e) => GraphForm_OnDiffOnPoint(step, collectorNumber, ped)));
                         if (ped != null) {
-                            item = new ToolStripMenuItem("Вычесть из текущего с перенормировкой на интеграл пика");
-                            item.Click += (s, e) => GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped);
-                            items.Add(item);
+                            items.Add(new ToolStripMenuItem("Вычесть из текущего с перенормировкой на интеграл пика", null,
+                                (s, e) => GraphForm_OnDiffOnPoint(ushort.MaxValue, null, ped)));
                         }
                     }
                     items.Add(new ToolStripSeparator());
                 }
             }
 
-            var stepViewItem = new ToolStripMenuItem("Ступени") { CheckOnClick = true };
-            var voltageViewItem = new ToolStripMenuItem("Напряжение") { CheckOnClick = true };
-            var massViewItem = new ToolStripMenuItem("Масса") { CheckOnClick = true };
+            var stepViewItem = new ToolStripMenuItem("Ступени", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step);
+            var voltageViewItem = new ToolStripMenuItem("Напряжение", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage);
+            var massViewItem = new ToolStripMenuItem("Масса", null, (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass);
 
             switch (graph.AxisDisplayMode) {
                 case Graph.pListScaled.DisplayValue.Step:
@@ -379,10 +370,6 @@ namespace Flavor.Forms {
                     massViewItem.Checked = true;
                     break;
             }
-
-            stepViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Step;
-            voltageViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Voltage;
-            massViewItem.CheckedChanged += (s, e) => graph.AxisDisplayMode = Graph.pListScaled.DisplayValue.Mass;
 
             items.Add(new ToolStripMenuItem("Выбрать шкалу", null, stepViewItem, voltageViewItem, massViewItem));
         }

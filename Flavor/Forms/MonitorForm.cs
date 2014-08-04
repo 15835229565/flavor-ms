@@ -13,10 +13,10 @@ namespace Flavor.Forms {
         const string X_AXIS_TIME_TITLE = "Время, мин.";
         const string Y_AXIS_RELATIVE = " (отн.)";
         const string NORM_ITEM_TEXT = "Нормировать";
+        const string PEAK_NORM_ITEM_TEXT = "Нормировать на пик № ";
         const string TIME_ITEM_TEXT = "Шкала времени";
         const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
-        long iteration = -1;
         class PointPairListPlusWithMaxCapacity: PointPairListPlus {
             // TODO: mix with ZedGraph.RollingPointPairList
             const int MAX_CAPACITY = int.MaxValue;
@@ -31,7 +31,13 @@ namespace Flavor.Forms {
                 base.Add(pp);
             }
         }
-        class PointPairSpecial: PointPair {
+        interface ISpecial {
+            double X { get; set; }
+            double Y { get; set; }
+            double[] Xs { get; }
+            double[] Ys { get; }
+        }
+        class PointPairSpecial: PointPair, ISpecial {
             readonly double[] xs, ys;
             readonly Func<int> xChooser, yChooser;
             public PointPairSpecial(PointPair pp, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser)
@@ -42,10 +48,10 @@ namespace Flavor.Forms {
                 this.yChooser = yChooser;
             }
             PointPairSpecial(PointPairSpecial other) {
-                this.xs = (double[])other.xs.Clone();
-                this.ys = (double[])other.ys.Clone();
-                this.xChooser = (Func<int>)other.xChooser.Clone();
-                this.yChooser = (Func<int>)other.yChooser.Clone();
+                xs = (double[])other.xs.Clone();
+                ys = (double[])other.ys.Clone();
+                xChooser = (Func<int>)other.xChooser.Clone();
+                yChooser = (Func<int>)other.yChooser.Clone();
             }
             public override double X {
                 get {
@@ -55,7 +61,11 @@ namespace Flavor.Forms {
                     return xs[index];
                 }
                 set {
-                    base.X = value;
+                    int index = xChooser();
+                    if (index == -1)
+                        base.X = value;
+                    else
+                        xs[index] = value;
                 }
             }
             public override double Y {
@@ -66,19 +76,67 @@ namespace Flavor.Forms {
                     return ys[index];
                 }
                 set {
-                    base.Y = value;
+                    int index = yChooser();
+                    if (index == -1)
+                        base.Y = value;
+                    else
+                        ys[index] = value;
                 }
             }
             public override PointPair Clone() {
                 return new PointPairSpecial(this);
             }
+
+            #region ISpecial Members
+            double ISpecial.X {
+                get { return base.X; }
+                set { base.X = value; }
+            }
+            double ISpecial.Y {
+                get { return base.Y; }
+                set { base.Y = value; }
+            }
+            double[] ISpecial.Xs { get { return xs; } }
+            double[] ISpecial.Ys { get { return ys; } }
+            #endregion
         }
-        
+
+        long iteration = -1;
         List<PointPairListPlusWithMaxCapacity> list;
         List<long> sums;
         int rowsCount;
-        bool showNormalized = false;
-        bool useTimeScale = false;
+        int normPeakNumber = -1;
+        enum YAxisState {
+            None = 0,
+            Normalized = 1,
+            PeakNormalized
+        }
+        YAxisState _showNormalized = YAxisState.None;
+        YAxisState ShowNormalized {
+            get { return _showNormalized; }
+            set {
+                if (_showNormalized != value) {
+                    _showNormalized = value;
+                    graph.GraphPane.YAxis.Title.Text = value != YAxisState.None ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
+                    // TODO: extract method
+                    graph.AxisChange();
+                    graph.Refresh();
+                }
+            }
+        }
+        bool _useTimeScale = false;
+        bool UseTimeScale {
+            get { return _useTimeScale; }
+            set {
+                if (_useTimeScale != value) {
+                    _useTimeScale = value;
+                    graph.GraphPane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
+                    // TODO: extract method
+                    graph.AxisChange();
+                    graph.Refresh();
+                }
+            }
+        }
         DateTime start = DateTime.MaxValue;
 
         public MonitorForm() {
@@ -92,10 +150,17 @@ namespace Flavor.Forms {
         }
 
         int XScale() {
-            return useTimeScale ? 0 : -1;
+            return UseTimeScale ? 0 : -1;
         }
         int YScale() {
-            return showNormalized ? 0 : -1;
+            switch (ShowNormalized) {
+                case YAxisState.Normalized:
+                    return 0;
+                case YAxisState.PeakNormalized:
+                    return 1;
+                default:
+                    return -1;
+            }
         }
         protected override sealed void RefreshGraph() {
             if (iteration > -1) {
@@ -111,12 +176,16 @@ namespace Flavor.Forms {
                     temp.Add(pp);
                 }
                 sums.Add(sum);
+                // TODO: proper normalization on selected peak
+                double normalization = sum;
+
                 for (int i = 0; i < rowsCount; ++i) {
                     var pp = temp[i];
-                    var pp2 = new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum }, YScale);
+                    var pp2 = new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum, pp.Y / normalization }, YScale);
                     list[i].Add(pp2);
                 }
                 graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
+                // TODO: extract method?
                 graph.AxisChange();
             }
             graph.Refresh();
@@ -137,8 +206,8 @@ namespace Flavor.Forms {
             var myPane = graph.GraphPane;
 
             myPane.Title.Text = title;
-            myPane.YAxis.Title.Text = showNormalized ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
-            myPane.XAxis.Title.Text = useTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
+            myPane.YAxis.Title.Text = ShowNormalized != YAxisState.None ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
+            myPane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
             myPane.CurveList.Clear();
 
             for (int i = 0; i < list.Count; ++i) {
@@ -169,6 +238,7 @@ namespace Flavor.Forms {
                 xScale.Max = -xMax;
                 xScale.MaxAuto = false;
             }
+            // TODO: extract method?
             graph.AxisChange();
         }
 
@@ -214,13 +284,13 @@ namespace Flavor.Forms {
 
             if (progressMaximum > 0) {
                 // only iterations limit
-                useTimeScale = false;
+                UseTimeScale = false;
             } else if (progressMaximum < 0) {
                 // time limit or combined
-                useTimeScale = true;
+                UseTimeScale = true;
             } else {
                 // no limit
-                useTimeScale = false;
+                UseTimeScale = false;
             }
             ZedGraphRebirth(FORM_TITLE, progressMaximum);
             
@@ -246,32 +316,36 @@ namespace Flavor.Forms {
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
             if (sender is ZedGraphControlMonitor) {
                 var items = args.MenuStrip.Items;
+                items.Add(new ToolStripSeparator());
 
-                var item = new ToolStripMenuItem(NORM_ITEM_TEXT) {
-                    Checked = showNormalized,
-                    CheckOnClick = true
-                };
-                item.CheckedChanged += (s, e) => {
-                    // check lambdas behaviour
-                    showNormalized = !showNormalized;
-                    graph.GraphPane.YAxis.Title.Text = showNormalized ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
-                    graph.AxisChange();
-                    graph.Refresh();
-                };
-                items.Add(item);
+                var defaultViewItem = new ToolStripMenuItem("Счёты", null,
+                    (s, e) => ShowNormalized = YAxisState.None);
+                var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
+                    (s, e) => ShowNormalized = YAxisState.Normalized);
+                var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (normPeakNumber != -1 ? normPeakNumber.ToString() : ""), null,
+                    (s, e) => {
+                        // TODO: show dialog to select peak number
+                        ShowNormalized = YAxisState.PeakNormalized;
+                        // TODO: recalculate if number changed 
+                    });
 
-                item = new ToolStripMenuItem(TIME_ITEM_TEXT) {
-                    Checked = useTimeScale,
-                    CheckOnClick = true
-                };
-                item.CheckedChanged += (s, e) => {
-                    // check lambdas behaviour
-                    useTimeScale = !useTimeScale;
-                    graph.GraphPane.XAxis.Title.Text = useTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
-                    graph.AxisChange();
-                    graph.Refresh();
-                };
-                items.Add(item);
+                switch (ShowNormalized) {
+                    case YAxisState.None:
+                        defaultViewItem.Checked = true;
+                        break;
+                    case YAxisState.Normalized:
+                        normViewItem.Checked = true;
+                        break;
+                    case YAxisState.PeakNormalized:
+                        peakNormViewItem.Checked = true;
+                        break;
+                }
+
+                items.Add(new ToolStripMenuItem("Выбрать Y-шкалу", null, defaultViewItem, normViewItem, peakNormViewItem));
+
+                items.Add(new ToolStripMenuItem(TIME_ITEM_TEXT, null, (s, e) => {
+                    UseTimeScale = ((ToolStripMenuItem)s).Checked;
+                }) { Checked = UseTimeScale, CheckOnClick = true });
             }
         }
 
@@ -279,8 +353,7 @@ namespace Flavor.Forms {
             var pp = (PointPairSpecial)curve[iPt];
             if (pp == null)
                 return "";
-            string tooltipData;
-            tooltipData = string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y);
+            string tooltipData = string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y);
             string comment = ((PointPairListPlus)curve.Points).PEDreference.Comment;
             if (comment != null && comment != "") {
                 tooltipData += "\n";
