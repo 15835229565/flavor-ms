@@ -38,7 +38,7 @@ namespace Flavor.Common.Data.Measure {
                 }
                 if (value.PEDreference == null) {
                     associatedPoints = value;
-                    associatedPoints.PEDreference = this;
+                    value.PEDreference = this;
                     return;
                 }
                 associatedPoints = new PointPairListPlus(value, this, null);

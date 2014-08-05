@@ -75,6 +75,7 @@ namespace Flavor.Forms {
         }
         void refreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
             // TODO: use recreate to refresh only affected collectors
+            base.RefreshGraph();
             refreshGraphicsOnMeasureStep(pnt, counts);
         }
         void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
@@ -38,16 +39,20 @@ namespace Flavor.Forms {
             double[] Ys { get; }
         }
         class PointPairSpecial: PointPair, ISpecial {
+            double _x, _y;
             readonly double[] xs, ys;
             readonly Func<int> xChooser, yChooser;
-            public PointPairSpecial(PointPair pp, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser)
-                : base(pp) {
+            public PointPairSpecial(PointPair pp, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser) {
+                _x = pp.X;
+                _y = pp.Y;
                 xs = extraXs;
                 ys = extraYs;
                 this.xChooser = xChooser;
                 this.yChooser = yChooser;
             }
             PointPairSpecial(PointPairSpecial other) {
+                _x = other._x;
+                _y = other._y;
                 xs = (double[])other.xs.Clone();
                 ys = (double[])other.ys.Clone();
                 xChooser = (Func<int>)other.xChooser.Clone();
@@ -55,30 +60,30 @@ namespace Flavor.Forms {
             }
             public override double X {
                 get {
-                    int index = xChooser();
+                    int index = xChooser == null ? -1 : xChooser();
                     if (index == -1)
-                        return base.X;
+                        return _x;
                     return xs[index];
                 }
                 set {
-                    int index = xChooser();
+                    int index = xChooser == null ? -1 : xChooser();
                     if (index == -1)
-                        base.X = value;
+                        _x = value;
                     else
                         xs[index] = value;
                 }
             }
             public override double Y {
                 get {
-                    int index = yChooser();
+                    int index = yChooser == null ? -1 : yChooser();
                     if (index == -1)
-                        return base.Y;
+                        return _y;
                     return ys[index];
                 }
                 set {
-                    int index = yChooser();
+                    int index = yChooser == null ? -1 : yChooser();
                     if (index == -1)
-                        base.Y = value;
+                        _y = value;
                     else
                         ys[index] = value;
                 }
@@ -89,12 +94,12 @@ namespace Flavor.Forms {
 
             #region ISpecial Members
             double ISpecial.X {
-                get { return base.X; }
-                set { base.X = value; }
+                get { return _x; }
+                set { _x = value; }
             }
             double ISpecial.Y {
-                get { return base.Y; }
-                set { base.Y = value; }
+                get { return _y; }
+                set { _y = value; }
             }
             double[] ISpecial.Xs { get { return xs; } }
             double[] ISpecial.Ys { get { return ys; } }
@@ -104,7 +109,8 @@ namespace Flavor.Forms {
         long iteration = -1;
         List<PointPairListPlusWithMaxCapacity> list;
         List<long> sums;
-        int rowsCount;
+        List<PreciseEditorData> pspec;
+        //int rowsCount;
         int normPeakNumber = -1;
         enum YAxisState {
             None = 0,
@@ -165,12 +171,14 @@ namespace Flavor.Forms {
         protected override sealed void RefreshGraph() {
             if (iteration > -1) {
                 double time = (Graph.MeasureGraph.Instance.DateTime - start).TotalMinutes;
+                int rowsCount = pspec.Count;
 
                 long sum = 0;
                 var temp = new PointPairList();
                 for (int i = 0; i < rowsCount; ++i) {
-                    var pls = list[i].PLSreference;
-                    long peakSum = pls == null ? 0 : pls.PeakSum;
+                    long peakSum = 0;
+                    foreach (var p in pspec[i].AssociatedPoints)
+                        peakSum += (long)p.Y;
                     sum += peakSum;
                     var pp = new PointPair(iteration, peakSum);
                     temp.Add(pp);
@@ -242,7 +250,7 @@ namespace Flavor.Forms {
             graph.AxisChange();
         }
 
-        void NewIterationAsync(object sender, EventArgs e) {
+        void NewIterationAsync(object sender, EventArgs<int[]> e) {
             BeginInvoke(new Action(() => {
                 RefreshGraph();
                 ++iteration;
@@ -264,11 +272,10 @@ namespace Flavor.Forms {
             list = new List<PointPairListPlusWithMaxCapacity>();
             sums = new List<long>();
             var g = Graph.MeasureGraph.Instance;
-            var pspec = g.PreciseData.getUsed();
-            rowsCount = pspec.Count;
-            for (int i = 0; i < rowsCount; ++i) {
+            pspec = g.PreciseData.getUsed();
+            for (int i = 0; i < pspec.Count; ++i) {
                 var temp = new PointPairListPlusWithMaxCapacity();
-                pspec[i].AssociatedPoints = temp;
+                temp.PEDreference = pspec[i];
                 list.Add(temp);
             }
             
