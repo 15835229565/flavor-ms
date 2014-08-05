@@ -334,11 +334,11 @@ namespace Flavor.Forms {
                     ushort step = (ushort)ppl.PLSreference.Step[index].X;
 
                     items.Add(new ToolStripMenuItem("Добавить точку в редактор", null,
-                        (s, e) => new AddPointForm(step, collectorNumber).ShowDialog(MdiParent)));
+                        (s, e) => new AddPointForm(step, collectorNumber).ShowDialog()));
 
                     items.Add(new ToolStripMenuItem("Коэффициент коллектора " + collectorNumber, null,
                         (s, e) => {
-                            if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog(MdiParent) == DialogResult.Yes)
+                            if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
                                 Modified = true;
                         }));
                     {

@@ -48,9 +48,5 @@ namespace Flavor.Forms {
             DialogResult = _setScalingCoeff(_col, _step, mass) ? DialogResult.Yes : DialogResult.No;
             Close();
         }
-
-        void cancelButton_Click(object sender, EventArgs e) {
-            Close();
-        }
     }
 }

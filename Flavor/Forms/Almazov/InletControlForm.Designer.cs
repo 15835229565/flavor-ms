@@ -187,7 +187,12 @@
             this.Controls.Add(this.inletGroupBox);
             this.Controls.Add(this.inletRadioButton);
             this.Controls.Add(this.capillaryRadioButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "InletControlForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Система ввода";
             this.inletGroupBox.ResumeLayout(false);
             this.inletGroupBox.PerformLayout();

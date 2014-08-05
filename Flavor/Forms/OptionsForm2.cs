@@ -44,18 +44,18 @@ namespace Flavor.Forms {
         }
 
         protected void cancel_butt_Click(object sender, EventArgs e) {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         protected virtual void ok_butt_Click(object sender, EventArgs e) {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         protected virtual void applyButton_Click(object sender, EventArgs e) {
-            this.DialogResult = DialogResult.Yes;
-            this.Close();
+            DialogResult = DialogResult.Yes;
+            Close();
         }
 
         public class SaveFileButtonClickEventArgs: EventArgs {
@@ -124,7 +124,7 @@ namespace Flavor.Forms {
             public CommonOptions CommonOptions { get; set; }
         }
         protected override void OnLoad(EventArgs e) {
-            var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs();
+            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs();
             args.Method += InvokeSetVisibility;
             base.OnLoad(args);
             rareModeCheckBox.Checked = args.NotRareModeRequested;
@@ -140,11 +140,11 @@ namespace Flavor.Forms {
                 : base(args.CloseReason, args.Cancel) { }
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
-            args.NotRareModeRequested = rareModeCheckBox.Checked;
+            var args = e is ClosingEventArgs ? (ClosingEventArgs)e  : new ClosingEventArgs(e);
             args.Method += InvokeSetVisibility;
             if (DialogResult == DialogResult.OK || DialogResult == DialogResult.Yes) {
-                args.Parameters = new decimal[] { d1VoltageNumericUpDown.Value,
+                args.NotRareModeRequested = rareModeCheckBox.Checked;
+                args.Parameters = new[] { d1VoltageNumericUpDown.Value,
                     d2VoltageNumericUpDown.Value,
                     d3VoltageNumericUpDown.Value,
                     iVoltageNumericUpDown.Value,

@@ -1,5 +1,5 @@
 ﻿namespace Flavor.Forms {
-    partial class SetScalingCoeffForm {
+    partial class SetNormalizationPeakForm {
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -8,7 +8,7 @@
         /// </summary>
         private void InitializeComponent() {
             System.Windows.Forms.Label stepLabel;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetScalingCoeffForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetNormalizationPeakForm));
             System.Windows.Forms.Label massLabel;
             System.Windows.Forms.Button okButton;
             System.Windows.Forms.Button cancelButton;
@@ -32,10 +32,10 @@
             // 
             // okButton
             // 
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(okButton, "okButton");
             okButton.Name = "okButton";
             okButton.UseVisualStyleBackColor = true;
-            okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
             // cancelButton
             // 
@@ -55,7 +55,7 @@
             resources.ApplyResources(this.massTextBox, "massTextBox");
             this.massTextBox.Name = "massTextBox";
             // 
-            // SetScalingCoeffForm
+            // SetNormalizationPeakForm
             // 
             this.AcceptButton = okButton;
             resources.ApplyResources(this, "$this");
@@ -69,7 +69,7 @@
             this.Controls.Add(okButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.Name = "SetScalingCoeffForm";
+            this.Name = "SetNormalizationPeakForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.ResumeLayout(false);

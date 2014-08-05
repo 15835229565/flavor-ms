@@ -11,10 +11,6 @@ namespace Flavor.Forms {
             serialPortComboBox.Items.AddRange(ports);
         }
 
-        void cancel_butt_Click(object sender, EventArgs e) {
-            Close();
-        }
-
         void ok_butt_Click(object sender, EventArgs e) {
             Config.saveGlobalConnectOptions(serialPortComboBox.Text, int.Parse(baudrateComboBox.Text));
             Close();

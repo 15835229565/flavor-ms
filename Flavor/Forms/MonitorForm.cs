@@ -13,10 +13,15 @@ namespace Flavor.Forms {
         const string X_AXIS_TITLE = "Итерации";
         const string X_AXIS_TIME_TITLE = "Время, мин.";
         const string Y_AXIS_RELATIVE = " (отн.)";
+        const string Y_SCALE_ITEM_TEXT = "Выбрать Y-шкалу";
+        const string COUNTS_ITEM_TEXT = "Счёты";
         const string NORM_ITEM_TEXT = "Нормировать";
         const string PEAK_NORM_ITEM_TEXT = "Нормировать на пик № ";
         const string TIME_ITEM_TEXT = "Шкала времени";
-        const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
+        const string ITERATION_TOOLTIP_FORMAT = "итерация={0:G}, ";
+        const string TIME_TOOLTIP_FORMAT = "время={0:F1}, ";
+        const string POINT_TOOLTIP_FORMAT = "счеты={1:F0}";
+        const string NORMALIZED_POINT_TOOLTIP_FORMAT = "{1:G}";
 
         class PointPairListPlusWithMaxCapacity: PointPairListPlus {
             // TODO: mix with ZedGraph.RollingPointPairList
@@ -110,8 +115,16 @@ namespace Flavor.Forms {
         List<PointPairListPlusWithMaxCapacity> list;
         List<long> sums;
         List<PreciseEditorData> pspec;
-        //int rowsCount;
-        int normPeakNumber = -1;
+        int _normPeakNumber = -1;
+        int NormPeakNumber {
+            get { return _normPeakNumber; }
+            set {
+                if (_normPeakNumber != value) {
+                    _normPeakNumber = value;
+                    // TODO: recount data
+                }
+            }
+        }
         enum YAxisState {
             None = 0,
             Normalized = 1,
@@ -152,7 +165,7 @@ namespace Flavor.Forms {
         }
         [Obsolete]
         protected override sealed void CreateGraph() {
-            ZedGraphRebirth(FORM_TITLE, 0);
+            throw new NotSupportedException();
         }
 
         int XScale() {
@@ -174,6 +187,7 @@ namespace Flavor.Forms {
                 int rowsCount = pspec.Count;
 
                 long sum = 0;
+                double normalization = 0;
                 var temp = new PointPairList();
                 for (int i = 0; i < rowsCount; ++i) {
                     long peakSum = 0;
@@ -181,15 +195,15 @@ namespace Flavor.Forms {
                         peakSum += (long)p.Y;
                     sum += peakSum;
                     var pp = new PointPair(iteration, peakSum);
+                    if (i == NormPeakNumber)
+                        normalization = peakSum;
                     temp.Add(pp);
                 }
                 sums.Add(sum);
-                // TODO: proper normalization on selected peak
-                double normalization = sum;
 
                 for (int i = 0; i < rowsCount; ++i) {
                     var pp = temp[i];
-                    var pp2 = new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum, pp.Y / normalization }, YScale);
+                    var pp2 = new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum, NormPeakNumber != -1 ? pp.Y / normalization : 0 }, YScale);
                     list[i].Add(pp2);
                 }
                 graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
@@ -197,10 +211,6 @@ namespace Flavor.Forms {
                 graph.AxisChange();
             }
             graph.Refresh();
-        }
-
-        protected override bool saveData() {
-            return base.saveData();
         }
 
         protected override sealed void SetSize() {
@@ -241,7 +251,7 @@ namespace Flavor.Forms {
                 xScale.MaxAuto = false;
             } else {
                 // time
-                // TODO: change scale to time
+                UseTimeScale = true;
                 xScale.Min = 0;
                 xScale.Max = -xMax;
                 xScale.MaxAuto = false;
@@ -325,15 +335,19 @@ namespace Flavor.Forms {
                 var items = args.MenuStrip.Items;
                 items.Add(new ToolStripSeparator());
 
-                var defaultViewItem = new ToolStripMenuItem("Счёты", null,
+                var defaultViewItem = new ToolStripMenuItem(COUNTS_ITEM_TEXT, null,
                     (s, e) => ShowNormalized = YAxisState.None);
                 var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
                     (s, e) => ShowNormalized = YAxisState.Normalized);
-                var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (normPeakNumber != -1 ? normPeakNumber.ToString() : ""), null,
+                var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (NormPeakNumber != -1 ? NormPeakNumber.ToString() : ""), null,
                     (s, e) => {
-                        // TODO: show dialog to select peak number
-                        ShowNormalized = YAxisState.PeakNormalized;
-                        // TODO: recalculate if number changed 
+                        var form = new SetNormalizationPeakForm();
+                        form.Load += (ss, ee) => { };
+                        form.FormClosing += (ss, ee) => { };
+                        if (form.ShowDialog() == DialogResult.OK) {
+                            //NormPeakNumber = ;
+                            ShowNormalized = YAxisState.PeakNormalized;
+                        }
                     });
 
                 switch (ShowNormalized) {
@@ -348,7 +362,7 @@ namespace Flavor.Forms {
                         break;
                 }
 
-                items.Add(new ToolStripMenuItem("Выбрать Y-шкалу", null, defaultViewItem, normViewItem, peakNormViewItem));
+                items.Add(new ToolStripMenuItem(Y_SCALE_ITEM_TEXT, null, defaultViewItem, normViewItem, peakNormViewItem));
 
                 items.Add(new ToolStripMenuItem(TIME_ITEM_TEXT, null, (s, e) => {
                     UseTimeScale = ((ToolStripMenuItem)s).Checked;
@@ -360,7 +374,8 @@ namespace Flavor.Forms {
             var pp = (PointPairSpecial)curve[iPt];
             if (pp == null)
                 return "";
-            string tooltipData = string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y);
+            string tooltipData = string.Format((UseTimeScale ? TIME_TOOLTIP_FORMAT : ITERATION_TOOLTIP_FORMAT) +
+                (ShowNormalized == YAxisState.None ? POINT_TOOLTIP_FORMAT : NORMALIZED_POINT_TOOLTIP_FORMAT), pp.X, pp.Y);
             string comment = ((PointPairListPlus)curve.Points).PEDreference.Comment;
             if (comment != null && comment != "") {
                 tooltipData += "\n";

@@ -293,11 +293,11 @@ namespace Flavor.Forms {
                     ushort step = (ushort)ppl.PLSreference.Step[index].X;
 
                     items.Add(new ToolStripMenuItem("Добавить точку в редактор", null,
-                        (s, e) => new AddPointForm(step, isFirst).ShowDialog(MdiParent)));
+                        (s, e) => new AddPointForm(step, isFirst).ShowDialog()));
 
                     items.Add(new ToolStripMenuItem("Коэффициент коллектора " + (isFirstCollector ? " 1" : " 2"), null,
                         (s, e) => {
-                            if (new SetScalingCoeffForm(step, isFirst, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog(MdiParent) == DialogResult.Yes)
+                            if (new SetScalingCoeffForm(step, isFirst, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
                                 Modified = true;
                         }));
                     {

@@ -5,15 +5,15 @@ using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
-    internal partial class AddPointForm: Form {
-        internal AddPointForm()
+    partial class AddPointForm: Form {
+        protected AddPointForm()
             : base() {
             InitializeComponent();
         }
-        internal AddPointForm(ushort step, byte col)
+        public AddPointForm(ushort step, byte col)
             : this() {
-            this.oneRow.StepText = step.ToString();
-            this.oneRow.ColText = col.ToString();
+            oneRow.StepText = step.ToString();
+            oneRow.ColText = col.ToString();
         }
 
         protected void okButton_Click(object sender, EventArgs e) {
@@ -21,14 +21,9 @@ namespace Flavor.Forms {
                 Graph.PointToAdd = new PreciseEditorData((byte)0, Convert.ToUInt16(oneRow.StepText),
                                        Convert.ToByte(oneRow.ColText), Convert.ToUInt16(oneRow.LapsText),
                                        Convert.ToUInt16(oneRow.WidthText), (float)0, oneRow.CommentText);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
-        }
-
-        protected void cancelButton_Click(object sender, EventArgs e) {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
         }
     }
 }

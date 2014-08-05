@@ -5,7 +5,7 @@ using Flavor.Common;
 using Flavor.Common.Settings;
 
 namespace Flavor {
-    internal static class Program {
+    static class Program {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -32,7 +32,7 @@ namespace Flavor {
             //var commander = new SevMorGeoCommader();
             ConsoleWriter.Subscribe(commander);
 
-            MainForm2 MSControl = new MainForm2(commander);
+            var MSControl = new MainForm2(commander);
             MSControl.Load += onLoad;
             MSControl.WindowState = FormWindowState.Maximized;
 

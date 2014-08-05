@@ -18,11 +18,6 @@ namespace Flavor.Forms {
             forwardTimeNumericUpDown.ReadOnly = forwardAsBeforeCheckBox.Checked;
         }
 
-        void cancel_butt_Click(object sender, EventArgs e) {
-            DialogResult = DialogResult.Cancel;
-            Close();
-        }
-
         void ok_butt_Click(object sender, EventArgs e) {
             Config.saveGlobalDelaysOptions(forwardAsBeforeCheckBox.Checked, (ushort)beforeTimeNumericUpDown.Value,
                                      (ushort)forwardTimeNumericUpDown.Value, (ushort)backwardTimeNumericUpDown.Value);

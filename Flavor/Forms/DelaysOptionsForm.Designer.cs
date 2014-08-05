@@ -44,6 +44,7 @@
             // 
             // ok_butt
             // 
+            ok_butt.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(ok_butt, "ok_butt");
             ok_butt.Name = "ok_butt";
             ok_butt.UseVisualStyleBackColor = true;
@@ -55,7 +56,6 @@
             resources.ApplyResources(cancel_butt, "cancel_butt");
             cancel_butt.Name = "cancel_butt";
             cancel_butt.UseVisualStyleBackColor = true;
-            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
             // beforeTimeNumericUpDown
             // 

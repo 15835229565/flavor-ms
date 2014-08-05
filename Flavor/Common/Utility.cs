@@ -128,7 +128,7 @@ namespace Flavor.Common {
         }
         public static void positiveNumericTextbox_TextChanged(object sender, KeyPressEventArgs e) {
             //!!! decimal separator here !!!
-            genericProcessKeyPress(sender, e, ch => (Char.IsNumber(ch) || (ch == '.' && !(sender as TextBox).Text.Contains("."))));
+            genericProcessKeyPress(sender, e, ch => (Char.IsNumber(ch) || (ch == '.' && !((TextBox)sender).Text.Contains("."))));
         }
         static void genericProcessKeyPress(object sender, KeyPressEventArgs e, Predicate<char> isAllowed){
             if (!(sender is TextBox))
