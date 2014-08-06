@@ -10,18 +10,20 @@ namespace Flavor.Forms {
             : base() {
             InitializeComponent();
             // TODO: better solution, make new CustomTextBoxClass or extension method
-            massTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
+            coeffTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
         }
 
         public class LoadEventArgs: EventArgs {
             public int NormPeakNumber { get; set; }
+            public string[] PeakList { get; set; }
             public double Coeff { get; set; }
         }
         protected override void OnLoad(EventArgs e) {
             var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs();
             base.OnLoad(args);
-            int n = args.NormPeakNumber;
-            double coeff = args.Coeff;
+            peakComboBox.Items.AddRange(args.PeakList);
+            peakComboBox.SelectedIndex = args.NormPeakNumber;
+            //double coeff = args.Coeff;
         }
         public class ClosingEventArgs: FormClosingEventArgs {
             public int NormPeakNumber { get; set; }
@@ -32,7 +34,7 @@ namespace Flavor.Forms {
         protected override void OnFormClosing(FormClosingEventArgs e) {
             var args = e is ClosingEventArgs ? (ClosingEventArgs)e : new ClosingEventArgs(e);
             if (DialogResult == DialogResult.OK) {
-                //args.NormPeakNumber = ;
+                args.NormPeakNumber = peakComboBox.SelectedIndex;
                 //args.Coeff = ;
             }
             base.OnFormClosing(args);

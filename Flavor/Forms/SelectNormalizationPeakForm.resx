@@ -117,67 +117,70 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="stepLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="peakLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="stepLabel.AutoSize" type="System.Boolean, mscorlib">
+  <data name="peakLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="stepLabel.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="peakLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 9</value>
   </data>
-  <data name="stepLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>60, 13</value>
+  <data name="peakLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 13</value>
   </data>
-  <data name="stepLabel.TabIndex" type="System.Int32, mscorlib">
+  <data name="peakLabel.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="stepLabel.Text" xml:space="preserve">
-    <value>Ступенька</value>
+  <data name="peakLabel.Text" xml:space="preserve">
+    <value>Пик для нормировки</value>
   </data>
-  <data name="&gt;&gt;stepLabel.Name" xml:space="preserve">
-    <value>stepLabel</value>
+  <data name="&gt;&gt;peakLabel.Name" xml:space="preserve">
+    <value>peakLabel</value>
   </data>
-  <data name="&gt;&gt;stepLabel.Type" xml:space="preserve">
+  <data name="&gt;&gt;peakLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;stepLabel.Parent" xml:space="preserve">
+  <data name="&gt;&gt;peakLabel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;stepLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;peakLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
-  <metadata name="massLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="coeffLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <data name="massLabel.AutoSize" type="System.Boolean, mscorlib">
+  <data name="coeffLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="massLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>115, 9</value>
+  <data name="coeffLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>239, 9</value>
   </data>
-  <data name="massLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>40, 13</value>
+  <data name="coeffLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>77, 13</value>
   </data>
-  <data name="massLabel.TabIndex" type="System.Int32, mscorlib">
+  <data name="coeffLabel.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="massLabel.Text" xml:space="preserve">
-    <value>Масса</value>
+  <data name="coeffLabel.Text" xml:space="preserve">
+    <value>Коэффициент</value>
   </data>
-  <data name="&gt;&gt;massLabel.Name" xml:space="preserve">
-    <value>massLabel</value>
+  <data name="coeffLabel.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
-  <data name="&gt;&gt;massLabel.Type" xml:space="preserve">
+  <data name="&gt;&gt;coeffLabel.Name" xml:space="preserve">
+    <value>coeffLabel</value>
+  </data>
+  <data name="&gt;&gt;coeffLabel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;massLabel.Parent" xml:space="preserve">
+  <data name="&gt;&gt;coeffLabel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;massLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;coeffLabel.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <metadata name="okButton.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -233,47 +236,53 @@
   <data name="&gt;&gt;cancelButton.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="stepTextBox.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="coeffTextBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>242, 28</value>
+  </data>
+  <data name="coeffTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>100, 20</value>
+  </data>
+  <data name="coeffTextBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="coeffTextBox.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;coeffTextBox.Name" xml:space="preserve">
+    <value>coeffTextBox</value>
+  </data>
+  <data name="&gt;&gt;coeffTextBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;coeffTextBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;coeffTextBox.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="peakComboBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 28</value>
   </data>
-  <data name="stepTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 20</value>
+  <data name="peakComboBox.MaxDropDownItems" type="System.Int32, mscorlib">
+    <value>20</value>
   </data>
-  <data name="stepTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+  <data name="peakComboBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 21</value>
   </data>
-  <data name="&gt;&gt;stepTextBox.Name" xml:space="preserve">
-    <value>stepTextBox</value>
+  <data name="peakComboBox.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
   </data>
-  <data name="&gt;&gt;stepTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;peakComboBox.Name" xml:space="preserve">
+    <value>peakComboBox</value>
   </data>
-  <data name="&gt;&gt;stepTextBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;peakComboBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;peakComboBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;stepTextBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="massTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>118, 28</value>
-  </data>
-  <data name="massTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 20</value>
-  </data>
-  <data name="massTextBox.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;massTextBox.Name" xml:space="preserve">
-    <value>massTextBox</value>
-  </data>
-  <data name="&gt;&gt;massTextBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;massTextBox.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;massTextBox.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;peakComboBox.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -289,7 +298,7 @@
     <value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Установка коэффициента</value>
+    <value>Выбор пика для нормировки</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>SetNormalizationPeakForm</value>

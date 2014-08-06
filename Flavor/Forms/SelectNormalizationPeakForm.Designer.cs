@@ -7,28 +7,28 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.Windows.Forms.Label stepLabel;
+            System.Windows.Forms.Label peakLabel;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetNormalizationPeakForm));
-            System.Windows.Forms.Label massLabel;
+            System.Windows.Forms.Label coeffLabel;
             System.Windows.Forms.Button okButton;
             System.Windows.Forms.Button cancelButton;
-            this.stepTextBox = new System.Windows.Forms.TextBox();
-            this.massTextBox = new System.Windows.Forms.TextBox();
-            stepLabel = new System.Windows.Forms.Label();
-            massLabel = new System.Windows.Forms.Label();
+            this.coeffTextBox = new System.Windows.Forms.TextBox();
+            this.peakComboBox = new System.Windows.Forms.ComboBox();
+            peakLabel = new System.Windows.Forms.Label();
+            coeffLabel = new System.Windows.Forms.Label();
             okButton = new System.Windows.Forms.Button();
             cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // stepLabel
+            // peakLabel
             // 
-            resources.ApplyResources(stepLabel, "stepLabel");
-            stepLabel.Name = "stepLabel";
+            resources.ApplyResources(peakLabel, "peakLabel");
+            peakLabel.Name = "peakLabel";
             // 
-            // massLabel
+            // coeffLabel
             // 
-            resources.ApplyResources(massLabel, "massLabel");
-            massLabel.Name = "massLabel";
+            resources.ApplyResources(coeffLabel, "coeffLabel");
+            coeffLabel.Name = "coeffLabel";
             // 
             // okButton
             // 
@@ -44,16 +44,15 @@
             cancelButton.Name = "cancelButton";
             cancelButton.UseVisualStyleBackColor = true;
             // 
-            // stepTextBox
+            // coeffTextBox
             // 
-            resources.ApplyResources(this.stepTextBox, "stepTextBox");
-            this.stepTextBox.Name = "stepTextBox";
-            this.stepTextBox.ReadOnly = true;
+            resources.ApplyResources(this.coeffTextBox, "coeffTextBox");
+            this.coeffTextBox.Name = "coeffTextBox";
             // 
-            // massTextBox
+            // peakComboBox
             // 
-            resources.ApplyResources(this.massTextBox, "massTextBox");
-            this.massTextBox.Name = "massTextBox";
+            resources.ApplyResources(this.peakComboBox, "peakComboBox");
+            this.peakComboBox.Name = "peakComboBox";
             // 
             // SetNormalizationPeakForm
             // 
@@ -61,10 +60,10 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = cancelButton;
-            this.Controls.Add(massLabel);
-            this.Controls.Add(stepLabel);
-            this.Controls.Add(this.massTextBox);
-            this.Controls.Add(this.stepTextBox);
+            this.Controls.Add(this.peakComboBox);
+            this.Controls.Add(coeffLabel);
+            this.Controls.Add(peakLabel);
+            this.Controls.Add(this.coeffTextBox);
             this.Controls.Add(cancelButton);
             this.Controls.Add(okButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -79,7 +78,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox stepTextBox;
-        private System.Windows.Forms.TextBox massTextBox;
+        private System.Windows.Forms.TextBox coeffTextBox;
+        private System.Windows.Forms.ComboBox peakComboBox;
     }
 }

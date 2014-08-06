@@ -121,7 +121,21 @@ namespace Flavor.Forms {
             set {
                 if (_normPeakNumber != value) {
                     _normPeakNumber = value;
-                    // TODO: recount data
+                    RecountNormalization();
+                }
+            }
+        }
+        void RecountNormalization() {
+            if (NormPeakNumber == -1 || pspec.Count <= 1)
+                return;
+
+            double normalization;
+            var l = list[NormPeakNumber];
+            for (int i = 0; i < l.Count; ++i) {
+                normalization = ((ISpecial)l[i]).Y;
+                foreach (var row in list) {
+                    var p = (ISpecial)row[i];
+                    p.Ys[2] = p.Y / normalization;
                 }
             }
         }
@@ -193,18 +207,25 @@ namespace Flavor.Forms {
                     long peakSum = 0;
                     foreach (var p in pspec[i].AssociatedPoints)
                         peakSum += (long)p.Y;
-                    sum += peakSum;
                     var pp = new PointPair(iteration, peakSum);
-                    if (i == NormPeakNumber)
-                        normalization = peakSum;
                     temp.Add(pp);
+                    if (rowsCount > 1) {
+                        // no normalization when displaying 1 row
+                        sum += peakSum;
+                        if (i == NormPeakNumber)
+                            // TODO: implement averaging
+                            normalization = peakSum;
+                    }
                 }
+                // remove (no need)
                 sums.Add(sum);
 
                 for (int i = 0; i < rowsCount; ++i) {
                     var pp = temp[i];
-                    var pp2 = new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum, NormPeakNumber != -1 ? pp.Y / normalization : 0 }, YScale);
-                    list[i].Add(pp2);
+                    list[i].Add(rowsCount > 1 ?
+                        new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum, NormPeakNumber != -1 ? pp.Y / normalization : 0 }, YScale) :
+                        // no normalization when displaying 1 row
+                        new PointPairSpecial(pp, new[] { time }, XScale, new double[] { }, YScale));
                 }
                 graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
                 // TODO: extract method?
@@ -334,36 +355,46 @@ namespace Flavor.Forms {
             if (sender is ZedGraphControlMonitor) {
                 var items = args.MenuStrip.Items;
                 items.Add(new ToolStripSeparator());
+                if (pspec.Count > 1) {
+                    // no normalization when displaying 1 row
+                    var defaultViewItem = new ToolStripMenuItem(COUNTS_ITEM_TEXT, null,
+                        (s, e) => ShowNormalized = YAxisState.None);
+                    var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
+                        (s, e) => ShowNormalized = YAxisState.Normalized);
+                    var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (NormPeakNumber != -1 ? NormPeakNumber.ToString() : ""), null,
+                        (s, e) => {
+                            var form = new SetNormalizationPeakForm();
+                            form.Load += (ss, ee) => {
+                                var eee = ((SetNormalizationPeakForm.LoadEventArgs)ee);
+                                eee.NormPeakNumber = NormPeakNumber;
+                                eee.PeakList = pspec.ConvertAll(ped => { return ped.pNumber.ToString() + ped.Comment; }).ToArray();
+                            };
+                            form.FormClosing += (ss, ee) => {
+                                var result = ((SetNormalizationPeakForm)ss).DialogResult;
+                                if (result == DialogResult.OK) {
+                                    var eee = (SetNormalizationPeakForm.ClosingEventArgs)ee;
+                                    NormPeakNumber = eee.NormPeakNumber;
+                                }
+                            };
+                            if (form.ShowDialog() == DialogResult.OK) {
+                                ShowNormalized = YAxisState.PeakNormalized;
+                            }
+                        });
 
-                var defaultViewItem = new ToolStripMenuItem(COUNTS_ITEM_TEXT, null,
-                    (s, e) => ShowNormalized = YAxisState.None);
-                var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
-                    (s, e) => ShowNormalized = YAxisState.Normalized);
-                var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (NormPeakNumber != -1 ? NormPeakNumber.ToString() : ""), null,
-                    (s, e) => {
-                        var form = new SetNormalizationPeakForm();
-                        form.Load += (ss, ee) => { };
-                        form.FormClosing += (ss, ee) => { };
-                        if (form.ShowDialog() == DialogResult.OK) {
-                            //NormPeakNumber = ;
-                            ShowNormalized = YAxisState.PeakNormalized;
-                        }
-                    });
+                    switch (ShowNormalized) {
+                        case YAxisState.None:
+                            defaultViewItem.Checked = true;
+                            break;
+                        case YAxisState.Normalized:
+                            normViewItem.Checked = true;
+                            break;
+                        case YAxisState.PeakNormalized:
+                            peakNormViewItem.Checked = true;
+                            break;
+                    }
 
-                switch (ShowNormalized) {
-                    case YAxisState.None:
-                        defaultViewItem.Checked = true;
-                        break;
-                    case YAxisState.Normalized:
-                        normViewItem.Checked = true;
-                        break;
-                    case YAxisState.PeakNormalized:
-                        peakNormViewItem.Checked = true;
-                        break;
+                    items.Add(new ToolStripMenuItem(Y_SCALE_ITEM_TEXT, null, defaultViewItem, normViewItem, peakNormViewItem));
                 }
-
-                items.Add(new ToolStripMenuItem(Y_SCALE_ITEM_TEXT, null, defaultViewItem, normViewItem, peakNormViewItem));
-
                 items.Add(new ToolStripMenuItem(TIME_ITEM_TEXT, null, (s, e) => {
                     UseTimeScale = ((ToolStripMenuItem)s).Checked;
                 }) { Checked = UseTimeScale, CheckOnClick = true });

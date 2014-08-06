@@ -83,9 +83,6 @@ namespace Flavor.Common {
                 }
             }
         }
-        new TreeNodeCollection Nodes {
-            get { return base.Nodes; }
-        }
         void setForeColor() {
             switch (State) {
                 case States.Ok:
@@ -105,9 +102,6 @@ namespace Flavor.Common {
         }
     }
     class TreeNodePair: TreeNodePlus {
-        new TreeNodeCollection Nodes {
-            get { return base.Nodes; }
-        }
         public TreeNodePair(string text, TreeNodeLeaf valueNode)
             : base() {
             Text = text;
@@ -128,11 +122,9 @@ namespace Flavor.Common {
         }
         public static void positiveNumericTextbox_TextChanged(object sender, KeyPressEventArgs e) {
             //!!! decimal separator here !!!
-            genericProcessKeyPress(sender, e, ch => (Char.IsNumber(ch) || (ch == '.' && !((TextBox)sender).Text.Contains("."))));
+            genericProcessKeyPress(sender, e, ch => (Char.IsNumber(ch) || (ch == '.' && sender is TextBox && !((TextBox)sender).Text.Contains("."))));
         }
         static void genericProcessKeyPress(object sender, KeyPressEventArgs e, Predicate<char> isAllowed){
-            if (!(sender is TextBox))
-                return;
             char ch = e.KeyChar;
             if (Char.IsControl(ch))
                 return;
