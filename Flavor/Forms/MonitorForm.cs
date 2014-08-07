@@ -124,6 +124,7 @@ namespace Flavor.Forms {
         }
 
         long iteration = -1;
+        readonly object _locker = new object();
         List<PointPairListPlusWithMaxCapacity> list;
         List<PreciseEditorData> pspec;
         int _normPeakNumber = -1;
@@ -132,21 +133,27 @@ namespace Flavor.Forms {
             set {
                 if (_normPeakNumber != value) {
                     _normPeakNumber = value;
-                    RecountNormalization();
+                    RecountNormalization(value);
                 }
             }
         }
-        void RecountNormalization() {
-            // TODO: lock here
-            if (NormPeakNumber == -1 || pspec.Count <= 1)
+        void RecountNormalization(int n) {
+            if (n == -1 || pspec.Count <= 1)
                 return;
 
+            var l = list[n];
+            int count;
+            lock (_locker) {
+                count = l.Count - 1;
+                // TODO: form here latest averaging data. lock may start earlier.
+            }
+            //old data is recounting here. any new data (if appeared) will use already new peak number
             double normalization;
-            var l = list[NormPeakNumber];
-            for (int i = 0; i < l.Count; ++i) {
+            for (int i = count; i >= 0; --i) {
                 normalization = ((ISpecial)l[i]).Y;
                 foreach (var row in list) {
                     var p = (ISpecial)row[i];
+                    // TODO: implement averaging
                     p.Ys[1] = p.Y / normalization;
                 }
             }
@@ -191,7 +198,7 @@ namespace Flavor.Forms {
         }
         [Obsolete]
         protected override sealed void CreateGraph() {
-            ZedGraphRebirth(FORM_TITLE, 0);
+            //ZedGraphRebirth(FORM_TITLE, 0);
             //throw new NotSupportedException();
         }
 
@@ -213,29 +220,37 @@ namespace Flavor.Forms {
                 double time = (Graph.MeasureGraph.Instance.DateTime - start).TotalMinutes;
                 int rowsCount = pspec.Count;
 
-                var temp = new PointPairList();
-                long sum = 0;
-                for (int i = 0; i < rowsCount; ++i) {
+                if (rowsCount <= 1) {
+                    // no normalization when displaying 1 row
                     long peakSum = 0;
-                    foreach (var p in pspec[i].AssociatedPoints)
+                    // TODO: move PeakSum counting to PointPairListPlus
+                    foreach (var p in pspec[0].AssociatedPoints)
                         peakSum += (long)p.Y;
-                    var pp = new PointPair(iteration, peakSum);
-                    temp.Add(pp);
-                    if (rowsCount > 1) {
-                        // no normalization when displaying 1 row
+                    list[0].Add(new PointPairSpecial(iteration, peakSum, new[] { time }, XScale, null, null));
+                } else {
+                    var temp = new PointPairList();
+                    long sum = 0;
+                    for (int i = 0; i < rowsCount; ++i) {
+                        long peakSum = 0;
+                        // TODO: move PeakSum counting to PointPairListPlus
+                        foreach (var p in pspec[i].AssociatedPoints)
+                            peakSum += (long)p.Y;
+                        var pp = new PointPair(iteration, peakSum);
+                        temp.Add(pp);
                         sum += peakSum;
                     }
-                }
 
-                // TODO: lock here
-                int normPeakNumber = NormPeakNumber;
-                for (int i = 0; i < rowsCount; ++i) {
-                    var pp = temp[i];
-                    list[i].Add(rowsCount > 1 ?
-                        // TODO: implement averaging
-                        new PointPairSpecial(pp.X, pp.Y, new[] { time }, XScale, new[] { pp.Y / sum, normPeakNumber != -1 ? pp.Y / temp[normPeakNumber].Y : 0 }, YScale) :
-                        // no normalization when displaying 1 row
-                        new PointPairSpecial(pp.X, pp.Y, new[] { time }, XScale, null, null));
+                    lock (_locker) {
+                        int normPeakNumber = NormPeakNumber;
+                        double normalization = temp[normPeakNumber].Y;
+                        for (int i = 0; i < rowsCount; ++i) {
+                            var pp = temp[i];
+                            double x = pp.X;
+                            double y = pp.Y;
+                            // TODO: implement averaging
+                            list[i].Add(new PointPairSpecial(x, y, new[] { time }, XScale, new[] { y / sum, normPeakNumber != -1 ? y / normalization : 0 }, YScale));
+                        }
+                    }
                 }
                 graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
                 // TODO: extract method?
@@ -289,6 +304,7 @@ namespace Flavor.Forms {
             }
             // TODO: extract method?
             graph.AxisChange();
+            graph.Refresh();
         }
 
         void NewIterationAsync(object sender, EventArgs<int[]> e) {
