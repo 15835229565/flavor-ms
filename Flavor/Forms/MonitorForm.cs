@@ -44,20 +44,16 @@ namespace Flavor.Forms {
             double[] Ys { get; }
         }
         class PointPairSpecial: PointPair, ISpecial {
-            double _x, _y;
             readonly double[] xs, ys;
             readonly Func<int> xChooser, yChooser;
-            public PointPairSpecial(PointPair pp, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser) {
-                _x = pp.X;
-                _y = pp.Y;
+            public PointPairSpecial(double x, double y, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser)
+                : base(x, y) {
                 xs = extraXs;
                 ys = extraYs;
                 this.xChooser = xChooser;
                 this.yChooser = yChooser;
             }
             PointPairSpecial(PointPairSpecial other) {
-                _x = other._x;
-                _y = other._y;
                 xs = (double[])other.xs.Clone();
                 ys = (double[])other.ys.Clone();
                 xChooser = (Func<int>)other.xChooser.Clone();
@@ -65,32 +61,48 @@ namespace Flavor.Forms {
             }
             public override double X {
                 get {
-                    int index = xChooser == null ? -1 : xChooser();
-                    if (index == -1)
-                        return _x;
-                    return xs[index];
+                    if (xChooser == null)
+                        return base.X;
+                    else {
+                        int index = xChooser();
+                        if (index == -1)
+                            return base.X;
+                        return xs[index];
+                    }
                 }
                 set {
-                    int index = xChooser == null ? -1 : xChooser();
-                    if (index == -1)
-                        _x = value;
-                    else
-                        xs[index] = value;
+                    if (xChooser == null)
+                        base.X = value;
+                    else {
+                        int index = xChooser();
+                        if (index == -1)
+                            base.X = value;
+                        else
+                            xs[index] = value;
+                    }
                 }
             }
             public override double Y {
                 get {
-                    int index = yChooser == null ? -1 : yChooser();
-                    if (index == -1)
-                        return _y;
-                    return ys[index];
+                    if (yChooser == null)
+                        return base.Y;
+                    else {
+                        int index = yChooser();
+                        if (index == -1)
+                            return base.Y;
+                        return ys[index];
+                    }
                 }
                 set {
-                    int index = yChooser == null ? -1 : yChooser();
-                    if (index == -1)
-                        _y = value;
-                    else
-                        ys[index] = value;
+                    if (yChooser == null)
+                        base.Y = value;
+                    else {
+                        int index = yChooser();
+                        if (index == -1)
+                            base.Y = value;
+                        else
+                            ys[index] = value;
+                    }
                 }
             }
             public override PointPair Clone() {
@@ -99,12 +111,12 @@ namespace Flavor.Forms {
 
             #region ISpecial Members
             double ISpecial.X {
-                get { return _x; }
-                set { _x = value; }
+                get { return base.X; }
+                set { base.X = value; }
             }
             double ISpecial.Y {
-                get { return _y; }
-                set { _y = value; }
+                get { return base.Y; }
+                set { base.Y = value; }
             }
             double[] ISpecial.Xs { get { return xs; } }
             double[] ISpecial.Ys { get { return ys; } }
@@ -113,7 +125,6 @@ namespace Flavor.Forms {
 
         long iteration = -1;
         List<PointPairListPlusWithMaxCapacity> list;
-        List<long> sums;
         List<PreciseEditorData> pspec;
         int _normPeakNumber = -1;
         int NormPeakNumber {
@@ -126,6 +137,7 @@ namespace Flavor.Forms {
             }
         }
         void RecountNormalization() {
+            // TODO: lock here
             if (NormPeakNumber == -1 || pspec.Count <= 1)
                 return;
 
@@ -135,7 +147,7 @@ namespace Flavor.Forms {
                 normalization = ((ISpecial)l[i]).Y;
                 foreach (var row in list) {
                     var p = (ISpecial)row[i];
-                    p.Ys[2] = p.Y / normalization;
+                    p.Ys[1] = p.Y / normalization;
                 }
             }
         }
@@ -179,7 +191,8 @@ namespace Flavor.Forms {
         }
         [Obsolete]
         protected override sealed void CreateGraph() {
-            throw new NotSupportedException();
+            ZedGraphRebirth(FORM_TITLE, 0);
+            //throw new NotSupportedException();
         }
 
         int XScale() {
@@ -200,9 +213,8 @@ namespace Flavor.Forms {
                 double time = (Graph.MeasureGraph.Instance.DateTime - start).TotalMinutes;
                 int rowsCount = pspec.Count;
 
-                long sum = 0;
-                double normalization = 0;
                 var temp = new PointPairList();
+                long sum = 0;
                 for (int i = 0; i < rowsCount; ++i) {
                     long peakSum = 0;
                     foreach (var p in pspec[i].AssociatedPoints)
@@ -212,20 +224,18 @@ namespace Flavor.Forms {
                     if (rowsCount > 1) {
                         // no normalization when displaying 1 row
                         sum += peakSum;
-                        if (i == NormPeakNumber)
-                            // TODO: implement averaging
-                            normalization = peakSum;
                     }
                 }
-                // remove (no need)
-                sums.Add(sum);
 
+                // TODO: lock here
+                int normPeakNumber = NormPeakNumber;
                 for (int i = 0; i < rowsCount; ++i) {
                     var pp = temp[i];
                     list[i].Add(rowsCount > 1 ?
-                        new PointPairSpecial(pp, new[] { time }, XScale, new[] { pp.Y / sum, NormPeakNumber != -1 ? pp.Y / normalization : 0 }, YScale) :
+                        // TODO: implement averaging
+                        new PointPairSpecial(pp.X, pp.Y, new[] { time }, XScale, new[] { pp.Y / sum, normPeakNumber != -1 ? pp.Y / temp[normPeakNumber].Y : 0 }, YScale) :
                         // no normalization when displaying 1 row
-                        new PointPairSpecial(pp, new[] { time }, XScale, new double[] { }, YScale));
+                        new PointPairSpecial(pp.X, pp.Y, new[] { time }, XScale, null, null));
                 }
                 graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
                 // TODO: extract method?
@@ -301,7 +311,6 @@ namespace Flavor.Forms {
         }
         public void initMeasure(int progressMaximum, bool isPrecise) {
             list = new List<PointPairListPlusWithMaxCapacity>();
-            sums = new List<long>();
             var g = Graph.MeasureGraph.Instance;
             pspec = g.PreciseData.getUsed();
             for (int i = 0; i < pspec.Count; ++i) {
