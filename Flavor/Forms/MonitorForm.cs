@@ -149,6 +149,7 @@ namespace Flavor.Forms {
             }
             //old data is recounting here. any new data (if appeared) will use already new peak number
             double normalization;
+            // may be problem if list rolls during operation
             for (int i = count; i >= 0; --i) {
                 normalization = ((ISpecial)l[i]).Y;
                 foreach (var row in list) {
@@ -377,53 +378,52 @@ namespace Flavor.Forms {
             OnMeasureCancelRequested();
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
-            if (sender is ZedGraphControlMonitor) {
-                var items = args.MenuStrip.Items;
-                items.Add(new ToolStripSeparator());
-                if (pspec.Count > 1) {
-                    // no normalization when displaying 1 row
-                    var defaultViewItem = new ToolStripMenuItem(COUNTS_ITEM_TEXT, null,
-                        (s, e) => ShowNormalized = YAxisState.None);
-                    var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
-                        (s, e) => ShowNormalized = YAxisState.Normalized);
-                    var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (NormPeakNumber != -1 ? NormPeakNumber.ToString() : ""), null,
-                        (s, e) => {
-                            var form = new SetNormalizationPeakForm();
-                            form.Load += (ss, ee) => {
-                                var eee = ((SetNormalizationPeakForm.LoadEventArgs)ee);
-                                eee.NormPeakNumber = NormPeakNumber;
-                                eee.PeakList = pspec.ConvertAll(ped => { return ped.pNumber.ToString() + ped.Comment; }).ToArray();
-                            };
-                            form.FormClosing += (ss, ee) => {
-                                var result = ((SetNormalizationPeakForm)ss).DialogResult;
-                                if (result == DialogResult.OK) {
-                                    var eee = (SetNormalizationPeakForm.ClosingEventArgs)ee;
-                                    NormPeakNumber = eee.NormPeakNumber;
-                                }
-                            };
-                            if (form.ShowDialog() == DialogResult.OK) {
-                                ShowNormalized = YAxisState.PeakNormalized;
+            var items = args.MenuStrip.Items;
+            items.Add(new ToolStripSeparator());
+            if (pspec.Count > 1) {
+                // no normalization when displaying 1 row
+                var defaultViewItem = new ToolStripMenuItem(COUNTS_ITEM_TEXT, null,
+                    (s, e) => ShowNormalized = YAxisState.None);
+                var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
+                    (s, e) => ShowNormalized = YAxisState.Normalized);
+                int n = NormPeakNumber;
+                var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (n != -1 ? pspec[n].pNumber.ToString() : ""), null,
+                    (s, e) => {
+                        var form = new SetNormalizationPeakForm();
+                        form.Load += (ss, ee) => {
+                            var eee = ((SetNormalizationPeakForm.LoadEventArgs)ee);
+                            eee.NormPeakNumber = n;
+                            eee.PeakList = pspec.ConvertAll(ped => { return ped.pNumber.ToString() + " " + ped.Comment; }).ToArray();
+                        };
+                        form.FormClosing += (ss, ee) => {
+                            var result = ((SetNormalizationPeakForm)ss).DialogResult;
+                            if (result == DialogResult.OK) {
+                                var eee = (SetNormalizationPeakForm.ClosingEventArgs)ee;
+                                NormPeakNumber = eee.NormPeakNumber;
                             }
-                        });
+                        };
+                        if (form.ShowDialog() == DialogResult.OK) {
+                            ShowNormalized = YAxisState.PeakNormalized;
+                        }
+                    });
 
-                    switch (ShowNormalized) {
-                        case YAxisState.None:
-                            defaultViewItem.Checked = true;
-                            break;
-                        case YAxisState.Normalized:
-                            normViewItem.Checked = true;
-                            break;
-                        case YAxisState.PeakNormalized:
-                            peakNormViewItem.Checked = true;
-                            break;
-                    }
-
-                    items.Add(new ToolStripMenuItem(Y_SCALE_ITEM_TEXT, null, defaultViewItem, normViewItem, peakNormViewItem));
+                switch (ShowNormalized) {
+                    case YAxisState.None:
+                        defaultViewItem.Checked = true;
+                        break;
+                    case YAxisState.Normalized:
+                        normViewItem.Checked = true;
+                        break;
+                    case YAxisState.PeakNormalized:
+                        peakNormViewItem.Checked = true;
+                        break;
                 }
-                items.Add(new ToolStripMenuItem(TIME_ITEM_TEXT, null, (s, e) => {
-                    UseTimeScale = ((ToolStripMenuItem)s).Checked;
-                }) { Checked = UseTimeScale, CheckOnClick = true });
+
+                items.Add(new ToolStripMenuItem(Y_SCALE_ITEM_TEXT, null, defaultViewItem, normViewItem, peakNormViewItem));
             }
+            items.Add(new ToolStripMenuItem(TIME_ITEM_TEXT, null, (s, e) => {
+                UseTimeScale = ((ToolStripMenuItem)s).Checked;
+            }) { Checked = UseTimeScale, CheckOnClick = true });
         }
 
         string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
