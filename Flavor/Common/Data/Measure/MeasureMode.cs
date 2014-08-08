@@ -4,7 +4,7 @@ using System.Timers;
 using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Common.Data.Measure {
-    // TODO: remove dependencies from Commander, Config
+    // TODO: remove dependencies from Config
     abstract class MeasureMode {
         public class NoListenersException: Exception { }
         public class VoltageStepEventArgs: EventArgs {
@@ -56,23 +56,20 @@ namespace Flavor.Common.Data.Measure {
         public bool CancelRequested { private get; set; }
         MeasureMode(ushort befTime, ushort iTime, ushort eTime) {
             isOperating = false;
-            this.firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
-            this.generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
+            firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
+            generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
         }
         public bool onUpdateCounts(uint[] counts) {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
             saveData(counts);
-            if (toContinue())
-            {
+            if (toContinue()) {
                 // TODO:!
-                if (CancelRequested)
-                {
+                if (CancelRequested) {
                     stop();
                     return true;
                 }
-                if (!onNextStep())
-                {
+                if (!onNextStep()) {
                     // TODO: cannot perform step!
                     OnDisable();
                     return false;
@@ -115,10 +112,10 @@ namespace Flavor.Common.Data.Measure {
             readonly ushort sPoint;
             readonly ushort ePoint;
 
-            public Scan()
-                : base(Config.CommonOptions.befTimeReal, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
-                sPoint = Config.sPoint;
-                ePoint = Config.ePoint;
+            public Scan(ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint)
+                : base(befTime, iTime, eTime) {
+                this.sPoint = sPoint;
+                this.ePoint = ePoint;
             }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
@@ -171,10 +168,11 @@ namespace Flavor.Common.Data.Measure {
             readonly SingleMeasureEventArgs forwardMeasureEventArgs;
             readonly SingleMeasureEventArgs backwardMeasureEventArgs;
 
-            public Precise()
-                : this(Config.PreciseData.getUsed(), 0) { }
+            public Precise(List<PreciseEditorData> peaks)
+                : this(peaks, 0) { }
             Precise(List<PreciseEditorData> peaks, short? shift)
                 : base(Config.CommonOptions.befTimeReal, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
+                // TODO: move references to Config up
                 forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTimeReal, Config.CommonOptions.eTimeReal);
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTimeReal, Config.CommonOptions.eTimeReal);
 
@@ -202,9 +200,9 @@ namespace Flavor.Common.Data.Measure {
                 }
             }
             protected override void saveData(uint[] counts) {
-                PreciseEditorData peak = senseModePoints[senseModePeak];
+                var peak = SenseModePeak;
                 // be careful!
-                senseModeCounts[senseModePeak][(pointValue - 1) - peak.Step + peak.Width] += counts[peak.Collector - 1];
+                senseModeCounts[senseModePeak][pointValue - 1 - peak.Step + peak.Width] += counts[peak.Collector - 1];
             }
             public class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }
@@ -232,7 +230,7 @@ namespace Flavor.Common.Data.Measure {
                 return true;
             }
             protected override bool toContinue() {
-                PreciseEditorData peak = senseModePoints[senseModePeak];
+                var peak = SenseModePeak;
                 if ((pointValue > (peak.Step + peak.Width))) {
                     if (!isSpectrumValid(peak)) {
                         // check spectrum validity after any iteration over checker peak
@@ -252,8 +250,15 @@ namespace Flavor.Common.Data.Measure {
                         if (senseModePeak >= senseModePoints.Count) senseModePeak = 0;
                         if (senseModePeakIteration[senseModePeak] > 0) break;
                     }
-                    ushort nextPoint = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
-                    customMeasureEventArgs = (pointValue > nextPoint) ? backwardMeasureEventArgs : forwardMeasureEventArgs;
+                    peak = SenseModePeak;
+                    ushort nextPoint = (ushort)(peak.Step - peak.Width);
+                    int diff = pointValue - nextPoint;
+                    if (diff <= 2 && diff >= 0) {
+                        // special case when next step is close to current
+                        customMeasureEventArgs = null;
+                    } else {
+                        customMeasureEventArgs = diff > 0 ? backwardMeasureEventArgs : forwardMeasureEventArgs;
+                    }
                     pointValue = nextPoint;
                 }
                 return true;
@@ -275,8 +280,9 @@ namespace Flavor.Common.Data.Measure {
             bool init(bool initCounts) {
                 smpiSum = smpiSumMax;
                 senseModePeak = 0;
-                senseModePeakIteration = senseModePeakIterationMax.Clone() as ushort[];
-                pointValue = (ushort)(senseModePoints[senseModePeak].Step - senseModePoints[senseModePeak].Width);
+                senseModePeakIteration = (ushort[])senseModePeakIterationMax.Clone();
+                var peak = SenseModePeak;
+                pointValue = (ushort)(peak.Step - peak.Width);
                 if (initCounts) {
                     for (int i = 0; i < senseModeCounts.GetLength(0); ++i) {
                         senseModeCounts[i] = new long[senseModeCounts[i].Length];

@@ -285,10 +285,12 @@ namespace Flavor.Common {
         // TODO: protected
         public void Scan() {
             if (pState == ProgramStates.Ready) {
-                Graph.MeasureGraph.Instance.Reset();
-                CurrentMeasureMode = new MeasureMode.Scan();
+                var g = Graph.MeasureGraph.Instance;
+                g.Reset();
+                var co = g.CommonOptions;
+                CurrentMeasureMode = new MeasureMode.Scan(co.befTimeReal, co.iTimeReal, co.eTimeReal, Config.sPoint, Config.ePoint);
                 CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
-                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => Graph.MeasureGraph.Instance.updateGraphDuringScanMeasure(p, Counts);
+                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringScanMeasure(p, Counts);
                 initMeasure(ProgramStates.Measure);
             }
         }
@@ -297,14 +299,15 @@ namespace Flavor.Common {
         public bool Sense() {
             if (pState == ProgramStates.Ready) {
                 if (SomePointsUsed) {
-                    Graph.MeasureGraph.Instance.Reset();
-                    var temp = new MeasureMode.Precise();
+                    var g = Graph.MeasureGraph.Instance;
+                    g.Reset();
+                    var temp = new MeasureMode.Precise(Config.PreciseData.getUsed());
                     temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile();
                     temp.SuccessfulExit += (s, e) => {
                         var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
-                        Graph.MeasureGraph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
+                        g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                     };
-                    temp.GraphUpdateDelegate = (p, peak) => Graph.MeasureGraph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
+                    temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
                     CurrentMeasureMode = temp;
                     initMeasure(ProgramStates.Measure);
                     return true;
@@ -334,19 +337,20 @@ namespace Flavor.Common {
             // TODO: move partially up
             byte backgroundCycles = Config.BackgroundCycles;
             doBackgroundPremeasure = Config.BackgroundCycles != 0;
-            
-            //int? n = null;// label number
+
+            Graph.MeasureGraph g;
             switch (pState) {
                 case ProgramStates.Ready:
                     if (SomePointsUsed) {
                         //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
-                        Graph.MeasureGraph.Instance.ResetForMonitor();
+                        g = Graph.MeasureGraph.Instance;
+                        g.ResetForMonitor();
 
                         #warning matrix is formed too early
                         // TODO: move matrix formation to manual operator actions
                         // TODO: parallelize matrix formation, flag on completion
                         // TODO: duplicates
-                        var peaksForMatrix = Graph.MeasureGraph.Instance.PreciseData.getUsed().getWithId();
+                        var peaksForMatrix = g.PreciseData.getUsed().getWithId();
                         if (peaksForMatrix.Count > 0) {
                             // To comply with other processing order (and saved information)
                             peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
@@ -372,8 +376,8 @@ namespace Flavor.Common {
                         temp.Finalize += (s, e) => Config.finalizeMonitorFile();
                         temp.GraphUpdateDelegate = (p, peak) => Graph.MeasureGraph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
                         temp.SuccessfulExit += (s, e) => {
-                            var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
-                            Graph.MeasureGraph.Instance.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
+                            var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
+                            g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                         };
                         CurrentMeasureMode = temp;
 
@@ -381,10 +385,10 @@ namespace Flavor.Common {
                             initMeasure(ProgramStates.WaitBackgroundMeasure);
                             background = new FixedSizeQueue<List<long>>(backgroundCycles);
                             // or maybe Enumerator realization: one item, always recounting (accumulate values)..
-                            Graph.MeasureGraph.Instance.GraphDataModified += NewBackgroundMeasureReady;
+                            g.GraphDataModified += NewBackgroundMeasureReady;
                         } else {
                             initMeasure(ProgramStates.Measure);
-                            Graph.MeasureGraph.Instance.GraphDataModified += NewMonitorMeasureReady;
+                            g.GraphDataModified += NewMonitorMeasureReady;
                         }
                         return true;
                     } else {
@@ -395,7 +399,8 @@ namespace Flavor.Common {
                     // set background end label
                     LabelNumber = 0;
 
-                    Graph.MeasureGraph.Instance.GraphDataModified -= NewBackgroundMeasureReady;
+                    g = Graph.MeasureGraph.Instance;
+                    g.GraphDataModified -= NewBackgroundMeasureReady;
 
                     backgroundResult = background.Aggregate(Summarize);
                     for (int i = 0; i < backgroundResult.Count; ++i) {
@@ -404,7 +409,7 @@ namespace Flavor.Common {
                     }
 
                     setProgramStateWithoutUndo(ProgramStates.Measure);
-                    Graph.MeasureGraph.Instance.GraphDataModified += NewMonitorMeasureReady;
+                    g.GraphDataModified += NewMonitorMeasureReady;
                     return false;
                 case ProgramStates.Measure:
                     // set label
@@ -416,13 +421,13 @@ namespace Flavor.Common {
             }
         }
         void NewBackgroundMeasureReady(object sender, EventArgs<int[]> e) {
-            List<long> currentMeasure = new List<long>();
+            var currentMeasure = new List<long>();
             // ! temporary solution
             var peaksForMatrix = Graph.MeasureGraph.Instance.PreciseData.getUsed().getWithId();
             if (peaksForMatrix.Count > 0) {
                 // To comply with other processing order (and saved information)
                 peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                foreach (PreciseEditorData ped in peaksForMatrix) {
+                foreach (var ped in peaksForMatrix) {
                     //!!!!! null PLSreference! race condition?
                     currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
                 }
@@ -434,13 +439,13 @@ namespace Flavor.Common {
             }
         }
         void NewMonitorMeasureReady(object sender, EventArgs<int[]> e) {
-            List<long> currentMeasure = new List<long>();
+            var currentMeasure = new List<long>();
             // ! temporary solution
             var peaksForMatrix = Graph.MeasureGraph.Instance.PreciseData.getUsed().getWithId();
             if (peaksForMatrix.Count > 0) {
                 // To comply with other processing order (and saved information)
                 peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                foreach (PreciseEditorData ped in peaksForMatrix) {
+                foreach (var ped in peaksForMatrix) {
                     currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
                 }
             }
