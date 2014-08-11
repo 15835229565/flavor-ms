@@ -19,7 +19,7 @@ namespace Flavor.Forms {
         const string PEAK_NORM_ITEM_TEXT = "Нормировать на пик № ";
         const string TIME_ITEM_TEXT = "Шкала времени";
         const string ITERATION_TOOLTIP_FORMAT = "итерация={0:G}, ";
-        const string TIME_TOOLTIP_FORMAT = "время={0:F1}, ";
+        const string TIME_TOOLTIP_FORMAT = "время={0:F2}, ";
         const string POINT_TOOLTIP_FORMAT = "счеты={1:F0}";
         const string NORMALIZED_POINT_TOOLTIP_FORMAT = "{1:G}";
 

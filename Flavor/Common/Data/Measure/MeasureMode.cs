@@ -303,7 +303,7 @@ namespace Flavor.Common.Data.Measure {
                     readonly Timer timer;
                     bool timerElapsed = false;
                     public MeasureStopper(int counterLimit, int timeLimit) {
-                        counter = counterLimit == 0 ? -1 : counterLimit;
+                        counter = counterLimit == 0 ? -timeLimit : counterLimit;
                         if (timeLimit > 0) {
                             timer = new Timer();
                             // time in minutes
@@ -318,7 +318,7 @@ namespace Flavor.Common.Data.Measure {
                         timer.Elapsed -= timer_Elapsed;
                     }
                     public void next() {
-                        if (counter == -1) {
+                        if (counter < 0) {
                             // produce infinite loop
                             return;
                         }
@@ -328,8 +328,8 @@ namespace Flavor.Common.Data.Measure {
                         return timerElapsed || counter == 0;
                     }
                     public int estimatedTurns() {
-                        // estimated operation duration
-                        return counter;
+                        // estimated operation duration in iterations or time limit in minutes (negative)
+                        return timerElapsed ? 0 : counter;
                     }
 
                     public void startTimer() {
@@ -434,9 +434,11 @@ namespace Flavor.Common.Data.Measure {
                 }
                 public override int StepsCount {
                     get {
+                        // actually is used only on measure mode start..
                         int stopperTurns = stopper.estimatedTurns();
-                        if (stopperTurns <= 0) {
-                            return 0;
+                        if (stopperTurns < 0) {
+                            // minutes
+                            return stopperTurns;
                         }
                         return base.StepsCount * stopperTurns;
                     }
