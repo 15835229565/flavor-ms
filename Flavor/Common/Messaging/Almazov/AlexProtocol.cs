@@ -23,7 +23,7 @@ namespace Flavor.Common.Messaging.Almazov {
         }
 
         public static IList<byte> collectData(CommandCode functCode, params object[] values) {
-            List<byte> data = new List<byte>();
+            var data = new List<byte>();
             data.Add((byte)functCode);
             foreach (object o in values) {
                 if (o is byte)
@@ -157,7 +157,7 @@ namespace Flavor.Common.Messaging.Almazov {
             add(CommandCode.HVE, eq(4), sync(raw => new HighVoltagePermittedStatusReply(raw[2] == 0 ? true : false)));
             add(CommandCode.PRGE, eq(3), sync(raw => OperationBlockReply.Parse(raw[1])));
             add(CommandCode.TIC_Retransmit, moreeq(28), sync(raw => {
-                Regex expression = new Regex(@"^=V902 ([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+\r$");
+                var expression = new Regex(@"^=V902 ([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+\r$");
                 Match match;
                 var command = Encoding.ASCII.GetString(trim(raw).ToArray());
                 match = expression.Match(command);
@@ -181,7 +181,7 @@ namespace Flavor.Common.Messaging.Almazov {
                 }
             }));
             add(CommandCode.TIC_GetStatus, moreeq(21), sync(raw => {
-                Regex expression = new Regex(@"^([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+$");
+                var expression = new Regex(@"^([0-7]);[0-7];[0-9]+;[0-9]+;[0-9]+;([0-4]);([0-4]);([0-4]);([0-9]+);[0-9]+$");
                 Match match;
                 var command = Encoding.ASCII.GetString(trim(raw).ToArray());
                 match = expression.Match(command);

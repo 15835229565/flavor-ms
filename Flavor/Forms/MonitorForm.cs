@@ -53,7 +53,8 @@ namespace Flavor.Forms {
                 this.xChooser = xChooser;
                 this.yChooser = yChooser;
             }
-            PointPairSpecial(PointPairSpecial other) {
+            PointPairSpecial(PointPairSpecial other)
+                : base(other) {
                 xs = (double[])other.xs.Clone();
                 ys = (double[])other.ys.Clone();
                 xChooser = (Func<int>)other.xChooser.Clone();
@@ -243,13 +244,14 @@ namespace Flavor.Forms {
 
                     lock (_locker) {
                         int normPeakNumber = NormPeakNumber;
-                        double normalization = temp[normPeakNumber].Y;
+                        double normalization = normPeakNumber == -1 ? 1 : temp[normPeakNumber].Y;
                         for (int i = 0; i < rowsCount; ++i) {
                             var pp = temp[i];
                             double x = pp.X;
                             double y = pp.Y;
                             // TODO: implement averaging
-                            list[i].Add(new PointPairSpecial(x, y, new[] { time }, XScale, new[] { y / sum, normPeakNumber != -1 ? y / normalization : 0 }, YScale));
+                            var pp2 = new PointPairSpecial(x, y, new[] { time }, XScale, new[] { y / sum, normPeakNumber != -1 ? y / normalization : 0 }, YScale);
+                            list[i].Add(pp2);
                         }
                     }
                 }
