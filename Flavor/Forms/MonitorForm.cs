@@ -54,7 +54,7 @@ namespace Flavor.Forms {
                 this.yChooser = yChooser;
             }
             PointPairSpecial(PointPairSpecial other)
-                : base(other) {
+                : base(((ISpecial)other).X, ((ISpecial)other).Y) {
                 xs = (double[])other.xs.Clone();
                 ys = (double[])other.ys.Clone();
                 xChooser = (Func<int>)other.xChooser.Clone();
@@ -255,7 +255,7 @@ namespace Flavor.Forms {
                         }
                     }
                 }
-                graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
+                //graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
                 // TODO: extract method?
                 graph.AxisChange();
             }
