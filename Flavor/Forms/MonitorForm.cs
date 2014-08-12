@@ -184,7 +184,12 @@ namespace Flavor.Forms {
             set {
                 if (_useTimeScale != value) {
                     _useTimeScale = value;
-                    graph.GraphPane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
+                    var pane = graph.GraphPane;
+                    pane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
+                    pane.GraphObjList.Clear();
+                    foreach (var pp in labels) {
+                        AddLabel(pp.X, (int)pp.Y);
+                    }
                     // TODO: extract method
                     graph.AxisChange();
                     graph.Refresh();
@@ -197,6 +202,32 @@ namespace Flavor.Forms {
             // Init panel before ApplyResources
             Panel = new PreciseMeasureGraphPanel { Graph = Graph.MeasureGraph.Instance };
             InitializeComponent();
+        }
+        readonly List<PointPairSpecial> labels = new List<PointPairSpecial>();
+        public void AddLabel(int n) {
+            double time = (DateTime.Now - start).TotalMinutes;
+            var pp = new PointPairSpecial(iteration + 0.5, n, new[] { time }, XScale, null, null);
+            labels.Add(pp);
+            AddLabel(pp.X, n);
+            graph.Refresh();
+        }
+        void AddLabel(double x, int n) {
+            var pane = graph.GraphPane;
+            var scale = pane.YAxis.Scale;
+
+            var line = new LineObj(x, scale.Min, x, scale.Max);
+            var l = line.Line;
+            l.Style = System.Drawing.Drawing2D.DashStyle.Dash;
+            l.Color = Color.Red;
+            l.Width = 2;
+            pane.GraphObjList.Add(line);
+            
+            // TODO: check text displaying
+            var text = new TextObj(n.ToString(), x, scale.Max - 0.1 * (scale.Max - scale.Min));
+            var fontSpec = text.FontSpec;
+            fontSpec.Border.IsVisible = true;
+            fontSpec.FontColor = Color.Red;
+            pane.GraphObjList.Add(text);
         }
         [Obsolete]
         protected override sealed void CreateGraph() {
@@ -266,7 +297,7 @@ namespace Flavor.Forms {
             if (graph == null)
                 return;
             graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
-            graph.Size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (2 * VERT_GRAPH_INDENT)));
+            graph.Size = new Size(ClientSize.Width - 2 * HORIZ_GRAPH_INDENT - (Panel.Visible ? Panel.Width : 0), ClientSize.Height - 2 * VERT_GRAPH_INDENT);
         }
 
         void ZedGraphRebirth(string title, int xMax) {
@@ -440,6 +471,16 @@ namespace Flavor.Forms {
                 tooltipData += comment;
             }
             return tooltipData;
+        }
+
+        void graph_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState) {
+            if (sender != graph)
+                return;
+            // TODO: check actually zoom is changed
+            graph.GraphPane.GraphObjList.Clear();
+            foreach (var pp in labels) {
+                AddLabel(pp.X, (int)pp.Y);
+            }
         }
     }
 }

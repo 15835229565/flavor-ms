@@ -647,10 +647,11 @@ namespace Flavor.Forms {
                 result = commander.Monitor();
             } else {
                 int i = (int)tag;
+                result = commander.Monitor(tag);
+                MonitorForm.AddLabel(i);
                 ++i;
                 monitorToolStripButton.Tag = i;
                 monitorToolStripButton.Text = LabelTextGen;
-                result = commander.Monitor(tag);
             }
             //bool? result = tag == null ? commander.Monitor() : commander.Monitor(tag);
             if (result.HasValue) {
