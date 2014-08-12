@@ -55,10 +55,10 @@ namespace Flavor.Forms {
             }
             PointPairSpecial(PointPairSpecial other)
                 : base(((ISpecial)other).X, ((ISpecial)other).Y) {
-                xs = (double[])other.xs.Clone();
-                ys = (double[])other.ys.Clone();
-                xChooser = (Func<int>)other.xChooser.Clone();
-                yChooser = (Func<int>)other.yChooser.Clone();
+                xs = other.xs == null ? null : (double[])other.xs.Clone();
+                ys = other.ys == null ? null : (double[])other.ys.Clone();
+                xChooser = other.xChooser;
+                yChooser = other.yChooser;
             }
             public override double X {
                 get {
@@ -253,7 +253,7 @@ namespace Flavor.Forms {
                 double time = (Graph.MeasureGraph.Instance.DateTime - start).TotalMinutes;
                 int rowsCount = pspec.Count;
 
-                if (rowsCount <= 1) {
+                if (rowsCount == 1) {
                     // no normalization when displaying 1 row
                     long peakSum = 0;
                     // TODO: move PeakSum counting to PointPairListPlus
@@ -363,9 +363,9 @@ namespace Flavor.Forms {
             list = new List<PointPairListPlusWithMaxCapacity>();
             var g = Graph.MeasureGraph.Instance;
             pspec = g.PreciseData.getUsed();
-            for (int i = 0; i < pspec.Count; ++i) {
+            foreach (var ped in pspec) {
                 var temp = new PointPairListPlusWithMaxCapacity();
-                temp.PEDreference = pspec[i];
+                temp.PEDreference = ped;
                 list.Add(temp);
             }
             
