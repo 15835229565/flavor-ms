@@ -212,7 +212,7 @@ namespace Flavor.Forms {
         readonly List<PointPairSpecial> labels = new List<PointPairSpecial>();
         public void AddLabel(int n) {
             double time = (DateTime.Now - start).TotalMinutes;
-            var pp = new PointPairSpecial(iteration + 0.5, n, new[] { time }, XScale, null, null);
+            var pp = new PointPairSpecial(iteration - 0.5, n, new[] { time }, XScale, null, null);
             labels.Add(pp);
             AddLabel(pp.X, n);
             graph.Refresh();
