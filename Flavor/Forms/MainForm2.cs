@@ -658,14 +658,10 @@ namespace Flavor.Forms {
                 if (result == true) {
                     ChildFormInit(MonitorForm, true);
                 }
-                //else {
-                //    if (tag == null) {
-                //        // init after background premeasure
-                //        monitorToolStripButton.Tag = 1;
-                //        monitorToolStripButton.Text = LabelTextGen;
-                //        return;
-                //    }
-                //}
+                else {
+                    if (tag == null)
+                        MonitorForm.AddLabel(0);
+                }
             } else {
                 monitorToolStripButton.Tag = null;
                 MessageBox.Show(this, MONITOR_MODE_START_FAILURE_MESSAGE, MODE_START_FAILURE_CAPTION, MessageBoxButtons.OK, MessageBoxIcon.Error);

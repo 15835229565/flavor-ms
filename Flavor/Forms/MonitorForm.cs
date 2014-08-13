@@ -186,10 +186,10 @@ namespace Flavor.Forms {
                     _useTimeScale = value;
                     var pane = graph.GraphPane;
                     pane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
-                    pane.GraphObjList.Clear();
-                    foreach (var pp in labels) {
-                        AddLabel(pp.X, (int)pp.Y);
-                    }
+                    //pane.GraphObjList.Clear();
+                    //foreach (var pp in labels) {
+                    //    AddLabel(pp.X, (int)pp.Y);
+                    //}
                     // TODO: extract method
                     graph.AxisChange();
                     graph.Refresh();
@@ -202,6 +202,12 @@ namespace Flavor.Forms {
             // Init panel before ApplyResources
             Panel = new PreciseMeasureGraphPanel { Graph = Graph.MeasureGraph.Instance };
             InitializeComponent();
+            graph.GraphPane.AxisChangeEvent += p => {
+                p.GraphObjList.Clear();
+                foreach (var pp in labels) {
+                    AddLabel(pp.X, (int)pp.Y);
+                }
+            };
         }
         readonly List<PointPairSpecial> labels = new List<PointPairSpecial>();
         public void AddLabel(int n) {
@@ -213,21 +219,23 @@ namespace Flavor.Forms {
         }
         void AddLabel(double x, int n) {
             var pane = graph.GraphPane;
-            var scale = pane.YAxis.Scale;
+            var yScale = pane.YAxis.Scale;
+            double yMin = yScale.Min;
+            double yMax = yScale.Max;
 
-            var line = new LineObj(x, scale.Min, x, scale.Max);
-            var l = line.Line;
-            l.Style = System.Drawing.Drawing2D.DashStyle.Dash;
-            l.Color = Color.Red;
-            l.Width = 2;
+            var line = new LineObj(x, yMin, x, yMax);
+            line.Line.Style = System.Drawing.Drawing2D.DashStyle.Dash;
+            line.IsClippedToChartRect = true;
             pane.GraphObjList.Add(line);
             
-            // TODO: check text displaying
-            var text = new TextObj(n.ToString(), x, scale.Max - 0.1 * (scale.Max - scale.Min));
-            var fontSpec = text.FontSpec;
-            fontSpec.Border.IsVisible = true;
-            fontSpec.FontColor = Color.Red;
-            pane.GraphObjList.Add(text);
+            if (n != 0) {
+                // TODO: how to set position in screen points?
+                var text = new TextObj(n.ToString(), x, yMax - 0.02 * (yMax - yMin));
+                text.IsClippedToChartRect = true;
+                var fontSpec = text.FontSpec;
+                fontSpec.Border.IsVisible = true;
+                pane.GraphObjList.Add(text);
+            }
         }
         [Obsolete]
         protected override sealed void CreateGraph() {
@@ -301,25 +309,25 @@ namespace Flavor.Forms {
         }
 
         void ZedGraphRebirth(string title, int xMax) {
-            var myPane = graph.GraphPane;
+            var pane = graph.GraphPane;
 
-            myPane.Title.Text = title;
-            myPane.YAxis.Title.Text = ShowNormalized != YAxisState.None ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
-            myPane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
-            myPane.CurveList.Clear();
+            pane.Title.Text = title;
+            pane.YAxis.Title.Text = ShowNormalized != YAxisState.None ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
+            pane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
+            pane.CurveList.Clear();
 
             for (int i = 0; i < list.Count; ++i) {
                 var l = list[i];
                 string comment = l.PEDreference.Comment;
-                var temp = myPane.AddCurve(comment, l, rowsColors[i % rowsColors.Length], SymbolType.None);
+                var temp = pane.AddCurve(comment, l, rowsColors[i % rowsColors.Length], SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
 
-            var yScale = myPane.YAxis.Scale;
+            var yScale = pane.YAxis.Scale;
             yScale.Min = 0;
             yScale.Max = 10000;
             yScale.MaxAuto = true;
-            var xScale = myPane.XAxis.Scale;
+            var xScale = pane.XAxis.Scale;
             if (xMax == 0) {
                 xScale.Min = 0;
                 xScale.Max = 10000;
@@ -360,6 +368,7 @@ namespace Flavor.Forms {
             MeasureCancelRequested.Raise(this, EventArgs.Empty);
         }
         public void initMeasure(int progressMaximum, bool isPrecise) {
+            labels.Clear();
             list = new List<PointPairListPlusWithMaxCapacity>();
             var g = Graph.MeasureGraph.Instance;
             pspec = g.PreciseData.getUsed();
@@ -471,16 +480,6 @@ namespace Flavor.Forms {
                 tooltipData += comment;
             }
             return tooltipData;
-        }
-
-        void graph_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState) {
-            if (sender != graph)
-                return;
-            // TODO: check actually zoom is changed
-            graph.GraphPane.GraphObjList.Clear();
-            foreach (var pp in labels) {
-                AddLabel(pp.X, (int)pp.Y);
-            }
         }
     }
 }
