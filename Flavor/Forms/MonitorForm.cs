@@ -186,10 +186,6 @@ namespace Flavor.Forms {
                     _useTimeScale = value;
                     var pane = graph.GraphPane;
                     pane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
-                    //pane.GraphObjList.Clear();
-                    //foreach (var pp in labels) {
-                    //    AddLabel(pp.X, (int)pp.Y);
-                    //}
                     // TODO: extract method
                     graph.AxisChange();
                     graph.Refresh();
@@ -202,12 +198,7 @@ namespace Flavor.Forms {
             // Init panel before ApplyResources
             Panel = new PreciseMeasureGraphPanel { Graph = Graph.MeasureGraph.Instance };
             InitializeComponent();
-            graph.GraphPane.AxisChangeEvent += p => {
-                p.GraphObjList.Clear();
-                foreach (var pp in labels) {
-                    AddLabel(pp.X, (int)pp.Y);
-                }
-            };
+            graph.GraphPane.AxisChangeEvent += p => RefreshLabels();
         }
         readonly List<PointPairSpecial> labels = new List<PointPairSpecial>();
         public void AddLabel(int n) {
@@ -235,6 +226,12 @@ namespace Flavor.Forms {
                 var fontSpec = text.FontSpec;
                 fontSpec.Border.IsVisible = true;
                 pane.GraphObjList.Add(text);
+            }
+        }
+        void RefreshLabels() {
+            graph.GraphPane.GraphObjList.Clear();
+            foreach (var pp in labels) {
+                AddLabel(pp.X, (int)pp.Y);
             }
         }
         [Obsolete]
@@ -480,6 +477,12 @@ namespace Flavor.Forms {
                 tooltipData += comment;
             }
             return tooltipData;
+        }
+        void graph_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState) {
+            if (sender != graph)
+                return;
+            // TODO: not for every event
+            RefreshLabels();
         }
     }
 }
