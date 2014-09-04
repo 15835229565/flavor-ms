@@ -77,7 +77,7 @@ namespace Flavor.Common.Settings {
         }
         static ushort countMaxIteration(List<PreciseEditorData> pedl) {
             ushort maxIteration = 0;
-            foreach (PreciseEditorData ped in pedl) {
+            foreach (var ped in pedl) {
                 maxIteration = maxIteration < ped.Iterations ? ped.Iterations : maxIteration;
             }
             return maxIteration;
@@ -85,7 +85,7 @@ namespace Flavor.Common.Settings {
 
         public static List<PreciseEditorData> PreciseDataWithChecker {
             get {
-                List<PreciseEditorData> res = preciseData.getUsed();
+                var res = preciseData.getUsed();
                 if (res.Count == 0) {
                     return null;
                 }
@@ -194,18 +194,20 @@ namespace Flavor.Common.Settings {
         }
         public const string ID_PREFIX_TEMPORARY = "id_";
         public const char COMMENT_DELIMITER_TEMPORARY = '_';
+        // #1 - id, #3 - mass, #4 - comment (can contain next info o2/co2)
+        // and/or use id+mass pair
+        public static readonly Regex expression = new Regex(@"^id_([\w-[_]]+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
         public static double[,] LoadLibrary(List<PreciseEditorData> peds) {
             int rank = peds.Count;
-            ILibraryReader lib = TagHolder.getLibraryReader(libraryName);
+            var lib = TagHolder.getLibraryReader(libraryName);
             
-            Regex expression = new Regex(@"^id_([\w-[_]]+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
             Match match;
-            List<string> ids = new List<string>(peds.Count);
-            List<string> masses = new List<string>(peds.Count);
+            var ids = new List<string>(rank);
+            var masses = new List<string>(rank);
             foreach (var ped in peds) {
                 match = expression.Match(ped.Comment);
                 if (match.Success) {
-                    GroupCollection groups = match.Groups;
+                    var groups = match.Groups;
                     try {
                         var id = groups[1].Value;
                         if (ids.Contains(id)) {
@@ -257,18 +259,18 @@ namespace Flavor.Common.Settings {
         #endregion
         #region Spectra I/O
         #region Manual Actions
-        internal static bool openSpectrumFile(string filename, bool hint, out Graph graph) {
+        public static bool openSpectrumFile(string filename, bool hint, out Graph graph) {
             return TagHolder.getSpectrumReader(filename, hint).readSpectrum(out graph);
         }
-        internal static void saveSpectrumFile(string filename, Graph graph) {
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, graph);
+        public static void saveSpectrumFile(string filename, Graph graph) {
+            var writer = TagHolder.getSpectrumWriter(filename, graph);
             DateTime dt = graph.DateTime;
             if (dt != DateTime.MaxValue)
                 writer.setTimeStamp(dt);
             writer.write();
         }
-        internal static void savePreciseSpectrumFile(string filename, Graph graph) {
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, graph);
+        public static void savePreciseSpectrumFile(string filename, Graph graph) {
+            var writer = TagHolder.getSpectrumWriter(filename, graph);
             writer.savePreciseData(graph.PreciseData, false);
             DateTime dt = graph.DateTime;
             if (dt != DateTime.MaxValue)
@@ -277,9 +279,9 @@ namespace Flavor.Common.Settings {
             writer.write();
         }
         #region Spectra Distraction
-        internal static void distractSpectra(string what, ushort step, byte? collectorNumber, PreciseEditorData pedReference, Graph graph) {
+        public static void distractSpectra(string what, ushort step, byte? collectorNumber, PreciseEditorData pedReference, Graph graph) {
             bool hint = !graph.isPreciseSpectrum;
-            ISpectrumReader reader = TagHolder.getSpectrumReader(what, hint);
+            var reader = TagHolder.getSpectrumReader(what, hint);
             if (reader.Hint != hint) {
                 throw new ConfigLoadException("Несовпадение типов спектров", "Ошибка при вычитании спектров", what);
             }
@@ -288,7 +290,7 @@ namespace Flavor.Common.Settings {
                 throw new ArgumentOutOfRangeException();
             }
             if (hint) {
-                PointPairListPlus[] points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                var points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
                 for (int i = 0; i < points.Length; ++i) {
                     points[i] = new PointPairListPlus();
                 }
@@ -301,16 +303,14 @@ namespace Flavor.Common.Settings {
                     double coeff = 1.0;
                     if (collectorNumber.HasValue) {
                         // TODO: proper rows for variable number
-                        PointPairListPlus PL = graph.Collectors[collectorNumber.Value - 1][0].Step;
-                        PointPairListPlus pl = points[collectorNumber.Value - 1];
+                        var PL = graph.Collectors[collectorNumber.Value - 1][0].Step;
+                        var pl = points[collectorNumber.Value - 1];
                         
-                        //PointPairListPlus PL = (collectorNumber.Value == 1) ? graph.Displayed1Steps[0] : graph.Displayed2Steps[0];
-                        //PointPairListPlus pl = (collectorNumber.Value == 1) ? pl12 : pl22;
                         if (step != 0) {
                             for (int i = 0; i < PL.Count; ++i) {
                                 if (step == PL[i].X) {
                                     if (step != pl[i].X)
-                                        throw new System.ArgumentException();
+                                        throw new ArgumentException();
                                     if ((pl[i].Y != 0) && (PL[i].Y != 0))
                                         coeff = PL[i].Y / pl[i].Y;
                                     break;
@@ -319,13 +319,10 @@ namespace Flavor.Common.Settings {
                         }
                     }
                     try {
-                        PointPairListPlus[] diffs = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                        var diffs = new PointPairListPlus[COLLECTOR_COEFFS.Length];
                         for (int i = 0; i < diffs.Length; ++i) {
                             diffs[i] = PointPairListDiff(graph.Collectors[i][0].Step, points[i], coeff);
                         }
-                        //PointPairListPlus diff1 = PointPairListDiff(graph.Displayed1Steps[0], pl12, coeff);
-                        //PointPairListPlus diff2 = PointPairListDiff(graph.Displayed2Steps[0], pl22, coeff);
-                        //graph.updateGraphAfterScanDiff(diff1, diff2);
                         graph.updateGraphAfterScanDiff(diffs);
                     } catch (System.ArgumentException) {
                         throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
@@ -336,52 +333,52 @@ namespace Flavor.Common.Settings {
                 }
                 return;
             }
-            PreciseSpectrum peds = new PreciseSpectrum();
+            var peds = new PreciseSpectrum();
             if (reader.openPreciseSpectrumFile(peds)) {
                 var temp = new List<PreciseEditorData>(graph.PreciseData);
                 temp.Sort();
                 try {
                     temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
                     graph.updateGraphAfterPreciseDiff(temp);
-                } catch (System.ArgumentException) {
+                } catch (ArgumentException) {
                     throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
                 }
             }
         }
-        private static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff) {
+        static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff) {
             if (from.Count != what.Count)
                 throw new System.ArgumentOutOfRangeException();
 
-            PointPairListPlus res = new PointPairListPlus(from, null, null);
+            var res = new PointPairListPlus(from, null, null);
             for (int i = 0; i < res.Count; ++i) {
                 if (res[i].X != what[i].X)
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
                 res[i].Y -= what[i].Y * coeff;
             }
             return res;
         }
-        private static PreciseEditorData PreciseEditorDataDiff(PreciseEditorData target, PreciseEditorData what, double coeff) {
+        static PreciseEditorData PreciseEditorDataDiff(PreciseEditorData target, PreciseEditorData what, double coeff) {
             if (target.CompareTo(what) != 0)
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) ^ (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             if (target.AssociatedPoints != null && what.AssociatedPoints != null && target.AssociatedPoints.Count != what.AssociatedPoints.Count)
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) && (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
                 return new PreciseEditorData(target);
             if (target.AssociatedPoints.Count != 2 * target.Width + 1)
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             var res = new PreciseEditorData(target);
             for (int i = 0; i < res.AssociatedPoints.Count; ++i) {
                 if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
                 res.AssociatedPoints[i].Y -= what.AssociatedPoints[i].Y * coeff;
             }
             return res;
         }
-        private static List<PreciseEditorData> PreciseEditorDataListDiff(List<PreciseEditorData> from, List<PreciseEditorData> what, ushort step, PreciseEditorData pedReference) {
+        static List<PreciseEditorData> PreciseEditorDataListDiff(List<PreciseEditorData> from, List<PreciseEditorData> what, ushort step, PreciseEditorData pedReference) {
             if (from.Count != what.Count)
-                throw new System.ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
 
             // coeff counting
             double coeff = 1.0;
@@ -389,13 +386,13 @@ namespace Flavor.Common.Settings {
                 int fromIndex = from.IndexOf(pedReference);
                 int whatIndex = what.IndexOf(pedReference);
                 if ((fromIndex == -1) || (whatIndex == -1))
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
                 if (System.Math.Abs(from[fromIndex].Step - step) > from[fromIndex].Width)
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException();
                 if (from[fromIndex].AssociatedPoints.Count != what[whatIndex].AssociatedPoints.Count)
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
                 if (from[fromIndex].AssociatedPoints.Count != 2 * from[fromIndex].Width + 1)
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
 
                 if ((step != ushort.MaxValue)) {
                     //diff on point
@@ -408,7 +405,7 @@ namespace Flavor.Common.Settings {
                     double sumFrom = from[fromIndex].AssociatedPoints.PLSreference.PeakSum;
                     if (sumFrom != 0) {
                         double sumWhat = 0;
-                        foreach (ZedGraph.PointPair pp in what[whatIndex].AssociatedPoints) {
+                        foreach (var pp in what[whatIndex].AssociatedPoints) {
                             sumWhat += pp.Y;
                         }
                         if (sumWhat != 0)
@@ -428,18 +425,18 @@ namespace Flavor.Common.Settings {
         #region Automatic Actions
         static string genAutoSaveFilename(string extension, DateTime now) {
             string dirname;
-            dirname = System.IO.Path.Combine(INITIAL_DIR, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
-            if (!System.IO.Directory.Exists(@dirname)) {
-                System.IO.Directory.CreateDirectory(@dirname);
+            dirname = Path.Combine(INITIAL_DIR, string.Format("{0}-{1}-{2}", now.Year, now.Month, now.Day));
+            if (!Directory.Exists(@dirname)) {
+                Directory.CreateDirectory(@dirname);
             }
-            return System.IO.Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
+            return Path.Combine(dirname, string.Format("{0}-{1}-{2}-{3}.", now.Hour, now.Minute, now.Second, now.Millisecond) + extension);
         }
         public static void autoSaveSpectrumFile() {
             var g = Graph.MeasureGraph.Instance;
             DateTime dt = g.DateTime;
             string filename = genAutoSaveFilename(SPECTRUM_EXT, dt);
 
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, g);
+            var writer = TagHolder.getSpectrumWriter(filename, g);
             writer.setTimeStamp(dt);
             writer.write();
         }
@@ -449,7 +446,7 @@ namespace Flavor.Common.Settings {
             short? shift = g.Shift;
             string filename = genAutoSaveFilename(PRECISE_SPECTRUM_EXT, dt);
 
-            ISpectrumWriter writer = TagHolder.getSpectrumWriter(filename, g);
+            var writer = TagHolder.getSpectrumWriter(filename, g);
             writer.setTimeStamp(dt);
             writer.setShift(shift);
             writer.savePreciseData(g.PreciseData, false);
@@ -460,7 +457,7 @@ namespace Flavor.Common.Settings {
             DateTime dt = g.DateTime;
             short? shift = g.Shift;
             //autoSavePreciseSpectrumFile(shift);
-            IMonitorWriter writer = MonitorSaveMaintainer.getMonitorWriter(dt, g);
+            var writer = MonitorSaveMaintainer.getMonitorWriter(dt, g);
             writer.setShift(shift);
             if (savedSolution != null) {
                 AutoSaveSolvedSpectra(writer);
@@ -494,26 +491,25 @@ namespace Flavor.Common.Settings {
         #endregion
         #endregion
         #region Config I/O
-        internal static List<PreciseEditorData> loadPreciseOptions(string pedConfName) {
+        public static List<PreciseEditorData> loadPreciseOptions(string pedConfName) {
             return TagHolder.getPreciseDataReader(pedConfName).loadPreciseData();
         }
-        internal static void savePreciseOptions(List<PreciseEditorData> peds, string pedConfName, bool savePeakSum) {
-            IPreciseDataWriter writer = TagHolder.getPreciseDataWriter(pedConfName);
+        public static void savePreciseOptions(List<PreciseEditorData> peds, string pedConfName, bool savePeakSum) {
+            var writer = TagHolder.getPreciseDataWriter(pedConfName);
             writer.savePreciseData(peds, savePeakSum);
             writer.write();
         }
 
-        internal static CommonOptions loadCommonOptions(string cdConfName) {
+        public static CommonOptions loadCommonOptions(string cdConfName) {
             return TagHolder.getCommonOptionsReader(cdConfName).loadCommonOptions();
         }
-        internal static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
-            ICommonOptionsWriter writer = TagHolder.getCommonOptionsWriter(filename);
+        public static void saveCommonOptions(string filename, ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
+            var writer = TagHolder.getCommonOptionsWriter(filename);
             writer.saveCommonOptions(eT, iT, iV, cp, eC, hC, fv1, fv2);
             writer.write();
         }
-        public static void temp_saveCO(string filename, double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2, double c, double k, double expT)
-        {
-            ICommonOptionsWriter writer = TagHolder.getCommonOptionsWriter(filename);
+        public static void temp_saveCO(string filename, double d1v, double d2v, double d3v, double iV, double eC, double fv1, double fv2, double c, double k, double expT) {
+            var writer = TagHolder.getCommonOptionsWriter(filename);
             var co = new CommonOptions();
             co.iVoltageReal = iV;
             co.eCurrentReal = eC;
@@ -530,63 +526,62 @@ namespace Flavor.Common.Settings {
         }
         #endregion
         #region Error messages on loading different configs
-        internal class ConfigLoadException: System.Exception {
-            internal ConfigLoadException(string message, string filestring, string confname)
+        public class ConfigLoadException: Exception {
+            public ConfigLoadException(string message, string filestring, string confname)
                 : base(message) {
-                this.Data["FS"] = filestring;
-                this.Data["CN"] = confname;
+                Data["FS"] = filestring;
+                Data["CN"] = confname;
             }
-            internal void visualise() {
-                if (!(this.Data["CN"].Equals(mainConfigName)))
-                    System.Windows.Forms.MessageBox.Show(this.Message, this.Data["FS"] as string);
+            public void visualise() {
+                // TODO: move messageboxes up!
+                if (!(Data["CN"].Equals(mainConfigName)))
+                    System.Windows.Forms.MessageBox.Show(Message, (string)(Data["FS"]));
                 else
-                    System.Windows.Forms.MessageBox.Show(this.Message, "Ошибка чтения конфигурационного файла");
+                    System.Windows.Forms.MessageBox.Show(Message, "Ошибка чтения конфигурационного файла");
             }
         }
-        private class wrongFormatOnLoadPrecise: wrongFormatOnLoad {
-            internal wrongFormatOnLoadPrecise(string configName)
+        class wrongFormatOnLoadPrecise: wrongFormatOnLoad {
+            public wrongFormatOnLoadPrecise(string configName)
                 : base(configName, "Ошибка чтения файла прецизионных точек") { }
         }
-        private class wrongFormatOnLoad: ConfigLoadException {
-            internal wrongFormatOnLoad(string configName, string errorFile)
+        class wrongFormatOnLoad: ConfigLoadException {
+            public wrongFormatOnLoad(string configName, string errorFile)
                 : base("Неверный формат данных", errorFile, configName) { }
         }
-        private class structureErrorOnLoad: ConfigLoadException {
-            internal structureErrorOnLoad(string configName, string errorFile)
+        class structureErrorOnLoad: ConfigLoadException {
+            public structureErrorOnLoad(string configName, string errorFile)
                 : base("Ошибка структуры файла", errorFile, configName) { }
         }
-        private class structureErrorOnLoadCommonData: structureErrorOnLoad {
-            internal structureErrorOnLoadCommonData(string configName)
+        class structureErrorOnLoadCommonData: structureErrorOnLoad {
+            public structureErrorOnLoadCommonData(string configName)
                 : base(configName, "Ошибка чтения файла общих настроек") { }
         }
-        private class structureErrorOnLoadPrecise: structureErrorOnLoad {
-            internal structureErrorOnLoadPrecise(string configName)
+        class structureErrorOnLoadPrecise: structureErrorOnLoad {
+            public structureErrorOnLoadPrecise(string configName)
                 : base(configName, "Ошибка чтения файла прецизионных точек") { }
         }
         #endregion
         #region Graph scaling to mass coeffs
-        public static bool setScalingCoeff(byte col, ushort pnt, double mass) {
+        public static void setScalingCoeff(byte col, ushort pnt, double mass) {
+            // TODO: use params or remove them
             mainConfigWriter.write();
-            return true;
         }
         #endregion
         #region Logging routines
-        private static System.IO.StreamWriter openLog() {
+        static StreamWriter openLog() {
             try {
-                System.IO.StreamWriter errorLog;
-                errorLog = new System.IO.StreamWriter(@logName, true);
-                errorLog.AutoFlush = true;
-                return errorLog;
+                return new StreamWriter(@logName, true){ AutoFlush = true };
             } catch (Exception e) {
+                // TODO: move messagebox up
                 System.Windows.Forms.MessageBox.Show(e.Message, "Ошибка при открытии файла отказов");
                 return null;
             }
         }
-        private static string genMessage(string data, DateTime moment) {
+        static string genMessage(string data, DateTime moment) {
             return string.Format("{0}-{1}-{2}|", moment.Year, moment.Month, moment.Day) +
                 string.Format("{0}.{1}.{2}.{3}: ", moment.Hour, moment.Minute, moment.Second, moment.Millisecond) + data;
         }
-        private static void log(System.IO.StreamWriter errorLog, string msg) {
+        static void log(StreamWriter errorLog, string msg) {
             DateTime now = System.DateTime.Now;
             try {
                 errorLog.WriteLine(genMessage(msg, now));
@@ -595,19 +590,21 @@ namespace Flavor.Common.Settings {
                 string message = "Error log write failure ";
                 string cause = "(" + msg + ") -- " + Error.Message;
                 ConsoleWriter.WriteLine(message + cause);
+                // TODO: move messagebox up
                 System.Windows.Forms.MessageBox.Show(cause, message);
             } finally {
                 errorLog.Close();
             }
         }
-        internal static void logCrash(string command) {
-            System.IO.StreamWriter errorLog;
+        // TODO: remove duplicate
+        public static void logCrash(string command) {
+            StreamWriter errorLog;
             if ((errorLog = openLog()) == null)
                 return;
             log(errorLog, command);
         }
-        internal static void logTurboPumpAlert(string message) {
-            System.IO.StreamWriter errorLog;
+        public static void logTurboPumpAlert(string message) {
+            StreamWriter errorLog;
             if ((errorLog = openLog()) == null)
                 return;
             log(errorLog, message);
@@ -712,9 +709,9 @@ namespace Flavor.Common.Settings {
                         initFile(dt, out filename, out sw, out swResolved);
                     }
                     Writer(Writer other, DateTime dt) {
-                        this.initialDT = dt;
-                        this.opts = other.opts;
-                        this.precData = other.precData;
+                        initialDT = dt;
+                        opts = other.opts;
+                        precData = other.precData;
                         header = other.header;
                         initFile(dt, out filename, out sw, out swResolved);
                     }
@@ -729,7 +726,7 @@ namespace Flavor.Common.Settings {
                         swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
                     }
                     string generateHeader() {
-                        StringBuilder sb = (new StringBuilder(header))
+                        var sb = (new StringBuilder(header))
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_TITLE)
                             .Append(HEADER_FOOTER_DELIMITER)
@@ -751,7 +748,7 @@ namespace Flavor.Common.Settings {
                         return sb.ToString();
                     }
                     void finalize(string nextFilename) {
-                        StringBuilder sb = (new StringBuilder())
+                        var sb = (new StringBuilder())
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(FOOTER_TITLE);
                         if (nextFilename == null) {
@@ -785,7 +782,7 @@ namespace Flavor.Common.Settings {
                             sw.WriteLine(label);
                             swResolved.WriteLine(label);
                         }
-                        StringBuilder sb = (new StringBuilder())
+                        var sb = (new StringBuilder())
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
                             .Append(shift == null ? NO_SHIFT_PLACEHOLDER : shift.ToString());
@@ -931,21 +928,21 @@ namespace Flavor.Common.Settings {
             const string SHIFT_SPECTRUM_ATTRIBUTE = "shift";
             #endregion
             #region Spectra headers
-            private const string PRECISE_OPTIONS_HEADER = "Precise options";
-            private const string COMMON_OPTIONS_HEADER = "Common options";
-            private const string MEASURED_SPECTRUM_HEADER = "Measure";
-            private const string DIFF_SPECTRUM_HEADER = "Diff";
+            const string PRECISE_OPTIONS_HEADER = "Precise options";
+            const string COMMON_OPTIONS_HEADER = "Common options";
+            const string MEASURED_SPECTRUM_HEADER = "Measure";
+            const string DIFF_SPECTRUM_HEADER = "Diff";
             #endregion
             #region Error Messages
-            private const string CONFIG_FILE_STRUCTURE_ERROR = "Ошибка структуры конфигурационного файла";
-            private const string CONFIG_FILE_READ_ERROR = "Ошибка чтения конфигурационного файла";
-            private const string LIBRARY_FILE_READ_ERROR = "Ошибка чтения файла библиотеки спектров";
+            const string CONFIG_FILE_STRUCTURE_ERROR = "Ошибка структуры конфигурационного файла";
+            const string CONFIG_FILE_READ_ERROR = "Ошибка чтения конфигурационного файла";
+            const string LIBRARY_FILE_READ_ERROR = "Ошибка чтения файла библиотеки спектров";
             #endregion
             string filename;
             XmlDocument xmlData;
             protected void initialize(string filename, XmlDocument doc) {
                 this.filename = filename;
-                this.xmlData = doc;
+                xmlData = doc;
             }
             abstract class Version1_2TagHolder: TagHolder {
                 const char COUNTS_SEPARATOR = ' ';
@@ -954,7 +951,7 @@ namespace Flavor.Common.Settings {
                 #region Version1_2 Readers
                 public abstract class Reader: Version1_2TagHolder {
                     public CommonOptions loadCommonOptions() {
-                        XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
+                        var commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         try {
                             ushort eT, iT, iV, CP, eC, hC, fV1, fV2;
                             eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
@@ -995,7 +992,7 @@ namespace Flavor.Common.Settings {
                         for (int i = 1; i <= Config.PEAK_NUMBER; ++i) {
                             string peak, iter, width, col;
                             try {
-                                XmlNode regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
+                                var regionNode = xmlData.SelectSingleNode(combine(prefix, string.Format(PEAK_TAGS_FORMAT, i)));
                                 peak = regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText;
                                 col = regionNode.SelectSingleNode(PEAK_COL_NUMBER_CONFIG_TAG).InnerText;
                                 iter = regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText;
@@ -1012,7 +1009,7 @@ namespace Flavor.Common.Settings {
                                         bool use = bool.Parse(regionNode.SelectSingleNode(PEAK_USE_CONFIG_TAG).InnerText);
                                         ushort peakStep = ushort.Parse(peak);
                                         ushort peakWidth = ushort.Parse(width);
-                                       var temp = new PreciseEditorData(use, (byte)(i - 1), peakStep,
+                                        var temp = new PreciseEditorData(use, (byte)(i - 1), peakStep,
                                                                             byte.Parse(col), ushort.Parse(iter),
                                                                             ushort.Parse(width), (float)0, comment);
                                         peakStep -= peakWidth;
@@ -1039,12 +1036,10 @@ namespace Flavor.Common.Settings {
                     public double[] loadScalingCoeffs() {
                         // TODO: class-dependent messages
                         try {
-                            XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
+                            var interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
                             double col1Coeff = double.Parse(interfaceNode.SelectSingleNode(C1_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
                             double col2Coeff = double.Parse(interfaceNode.SelectSingleNode(C2_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
-                            return new double[] { col1Coeff, col2Coeff };
-                            //graph.DisplayedRows1.Coeff = col1Coeff;
-                            //graph.DisplayedRows2.Coeff = col2Coeff;
+                            return new[] { col1Coeff, col2Coeff };
                         } catch (NullReferenceException) {
                             throw new ConfigLoadException(CONFIG_FILE_STRUCTURE_ERROR, CONFIG_FILE_READ_ERROR, filename);
                         } catch (FormatException) {
@@ -1180,7 +1175,7 @@ namespace Flavor.Common.Settings {
                             reader.ResetState();
                         reader.ReadToFollowing(LIBRARY_TAG);
                         reader.GetAttribute(VERSION_ATTRIBUTE);
-                        System.Collections.Hashtable table = new System.Collections.Hashtable(ids.Count);
+                        var table = new System.Collections.Hashtable(ids.Count);
                         if (reader.ReadToDescendant(SPECTRUM_TAG)) {
                             do {
                                 string id = reader.GetAttribute(ID_ATTRIBUTE);
@@ -1190,7 +1185,7 @@ namespace Flavor.Common.Settings {
                                     if (loadedMasses[index] == "") {
                                         //error! mass should be stated explicitly!
                                     }
-                                    System.Collections.Hashtable result = new System.Collections.Hashtable();
+                                    var result = new System.Collections.Hashtable();
                                     if (reader.ReadToDescendant(PEAK_TAG)) {
                                         // TODO: use proper calibration data later in library
                                         string calibrationCoeffString;
@@ -1289,7 +1284,7 @@ namespace Flavor.Common.Settings {
                     }
                     #endregion
                     bool OpenSpecterFile(out Graph graph) {
-                        PointPairListPlus[] points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                        var points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
                         for (int i = 0; i < points.Length; ++i) {
                             points[i] = new PointPairListPlus();
                         }
@@ -1310,7 +1305,7 @@ namespace Flavor.Common.Settings {
                     }
                     bool OpenPreciseSpecterFile(out Graph graph) {
                         Graph.Displaying res = spectrumType();
-                        PreciseSpectrum peds = new PreciseSpectrum();
+                        var peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
                             graph = new Graph(peds.CommonOptions, loadScalingCoeffs());
@@ -1337,7 +1332,7 @@ namespace Flavor.Common.Settings {
                         return result;
                     }
                     Graph.Displaying spectrumType() {
-                        XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                        var headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
                         return (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER) ? Graph.Displaying.Diff : Graph.Displaying.Measured;
                     }
                     DateTime loadTimeStamp() {
@@ -1347,9 +1342,9 @@ namespace Flavor.Common.Settings {
                         return short.Parse(getHeaderAttributeText(SHIFT_SPECTRUM_ATTRIBUTE));
                     }
                     protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
-                        PointPairListPlus tempPntLst = new PointPairListPlus();
+                        var tempPntLst = new PointPairListPlus();
                         try {
-                            XmlNode temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
+                            var temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
                             if (temp == null)
                                 return null;
                             string text = temp.InnerText;
@@ -1377,11 +1372,11 @@ namespace Flavor.Common.Settings {
                         xmlData.Save(filename);
                     }
                     public void saveCommonOptions(CommonOptions opts) {
-                        XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
+                        var commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         saveCommonOptions(commonNode, opts);
                     }
                     public void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
-                        CommonOptions opts = new CommonOptions();
+                        var opts = new CommonOptions();
                         opts.eTimeReal = eT;
                         opts.iTimeReal = iT;
                         opts.iVoltageReal = iV;
@@ -1409,7 +1404,7 @@ namespace Flavor.Common.Settings {
                     public void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum) {
                         clearOldValues();
                         foreach (var ped in peds) {
-                            XmlNode regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
+                            var regionNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, SENSE_CONFIG_TAG, string.Format(PEAK_TAGS_FORMAT, ped.pNumber + 1)));
                             regionNode.SelectSingleNode(PEAK_NUMBER_CONFIG_TAG).InnerText = ped.Step.ToString();
                             regionNode.SelectSingleNode(PEAK_ITER_NUMBER_CONFIG_TAG).InnerText = ped.Iterations.ToString();
                             regionNode.SelectSingleNode(PEAK_WIDTH_CONFIG_TAG).InnerText = ped.Width.ToString();
@@ -1445,20 +1440,20 @@ namespace Flavor.Common.Settings {
                     protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
                         if (row.Count == 0)
                             return;
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
                         foreach (ZedGraph.PointPair pp in row) {
                             sb.Append(pp.Y);
                             sb.Append(COUNTS_SEPARATOR);
                         }
-                        XmlNode temp = xmlData.CreateElement(POINT_CONFIG_TAG); ;
+                        var temp = xmlData.CreateElement(POINT_CONFIG_TAG); ;
                         temp.InnerText = sb.ToString(0, sb.Length - 1);
                         node.AppendChild(temp);
                     }
                     public void saveScanOptions(Graph graph) {
-                        XmlNode scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
-                        XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
-                        PointPairListPlus ppl1 = graph.Displayed1Steps[0];
-                        PointPairListPlus ppl2 = graph.Displayed2Steps[0];
+                        var scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
+                        var temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
+                        var ppl1 = graph.Displayed1Steps[0];
+                        var ppl2 = graph.Displayed2Steps[0];
                         // TODO: check for data mismatch?
                         temp.InnerText = ppl1[0].X.ToString();
                         scanNode.AppendChild(temp);
@@ -1467,18 +1462,18 @@ namespace Flavor.Common.Settings {
                         temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
                         scanNode.AppendChild(temp);
 
-                        XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
+                        var colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
                         savePointRows(ppl1, colNode);
                         colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
                         savePointRows(ppl2, colNode);
                     }
                     public void setTimeStamp(DateTime dt) {
-                        XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
+                        var attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
                         attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
                         xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
                     public void setShift(short? shift) {
-                        XmlAttribute attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
+                        var attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
                         attr.Value = shift == null ? "0" : shift.ToString();
                         xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
@@ -1524,7 +1519,7 @@ namespace Flavor.Common.Settings {
                         //checkpeak & iterations
                         string prefix = combine(ROOT_CONFIG_TAG, CHECK_CONFIG_TAG);
                         if (xmlData.SelectSingleNode(prefix) == null) {
-                            XmlNode checkRegion = xmlData.CreateElement(CHECK_CONFIG_TAG);
+                            var checkRegion = xmlData.CreateElement(CHECK_CONFIG_TAG);
                             xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(checkRegion);
                         }
                         if (reperPeak != null) {
