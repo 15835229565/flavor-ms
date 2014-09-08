@@ -10,6 +10,11 @@ namespace Flavor.Controls {
         void refreshGraphicsOnPreciseStep() {
             // TODO: peak as method parameter
             var peak = ((Graph.MeasureGraph)Graph).CurrentPeak;
+
+            if (peak.IsCarbonDioxide()) {
+            } else if (peak.IsOxygen()) {
+            }
+            
             label37.Visible = true;
             peakNumberLabel.Text = (peak.pNumber + 1).ToString();
             peakNumberLabel.Visible = true;

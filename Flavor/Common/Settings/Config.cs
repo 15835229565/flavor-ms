@@ -73,7 +73,7 @@ namespace Flavor.Common.Settings {
             }
         }
         static ushort countMaxIteration() {
-            return countMaxIteration(preciseData.getUsed());
+            return countMaxIteration(preciseData.GetUsed());
         }
         static ushort countMaxIteration(List<PreciseEditorData> pedl) {
             ushort maxIteration = 0;
@@ -85,7 +85,7 @@ namespace Flavor.Common.Settings {
 
         public static List<PreciseEditorData> PreciseDataWithChecker {
             get {
-                var res = preciseData.getUsed();
+                var res = preciseData.GetUsed();
                 if (res.Count == 0) {
                     return null;
                 }
@@ -195,7 +195,6 @@ namespace Flavor.Common.Settings {
         public const string ID_PREFIX_TEMPORARY = "id_";
         public const char COMMENT_DELIMITER_TEMPORARY = '_';
         // #1 - id, #3 - mass, #4 - comment (can contain next info o2/co2)
-        // and/or use id+mass pair
         public static readonly Regex expression = new Regex(@"^id_([\w-[_]]+)(_([1-9]\d*?)(_.*?){0,1}){0,1}$");
         public static double[,] LoadLibrary(List<PreciseEditorData> peds) {
             int rank = peds.Count;

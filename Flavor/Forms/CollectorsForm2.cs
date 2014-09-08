@@ -11,8 +11,8 @@ using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Forms {
     partial class CollectorsForm2: GraphForm {
-        readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
-        readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
+        //readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
+        //readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
         readonly string DIFF_TITLE = Resources.CollectorsForm_DiffTitle;
         readonly string PREC_TITLE = Resources.CollectorsForm_PreciseTitle;
         readonly string SCAN_TITLE = Resources.CollectorsForm_ScanTitle;
@@ -21,8 +21,8 @@ namespace Flavor.Forms {
         readonly string X_AXIS_TITLE_MASS = Resources.CollectorsForm_XAxisTitleMass;
         readonly string X_AXIS_TITLE_VOLT = Resources.CollectorsForm_XAxisTitleVoltage;
 
-        string col1Text;
-        string col2Text;
+        //string col1Text;
+        //string col2Text;
         string modeText;
 
         readonly Graph graph;
@@ -104,10 +104,11 @@ namespace Flavor.Forms {
             SuspendLayout();
             int i = 0;
             foreach (var collector in graph.Collectors) {
-                //if (collector.TrueForAll(pls => pls.isEmpty)) {
-                //    graphs[i] = null;
-                //    continue;
-                //}
+                if (DisableTabPage(collector)) {
+                    graphs[i] = null;
+                    ++i;
+                    continue;
+                }
                 var tabPage = new TabPage(prefix + i + modeText) { UseVisualStyleBackColor = true };
                 tabPage.SuspendLayout();
                 tabControl.Controls.Add(tabPage);
@@ -138,13 +139,17 @@ namespace Flavor.Forms {
             graph.OnAxisModeChanged += InvokeAxisModeChange;
             graph.OnDisplayModeChanged += InvokeGraphModified;
         }
+        // TODO: abstract
+        protected virtual bool DisableTabPage(Collector collector) {
+            return false;
+        }
 
         [Obsolete]
         void setTitles() {
             modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
             string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
-            col1Text = prefix + COL1_TITLE + modeText;
-            col2Text = prefix + COL2_TITLE + modeText;
+            //col1Text = prefix + COL1_TITLE + modeText;
+            //col2Text = prefix + COL2_TITLE + modeText;
         }
 
         void InvokeAxisModeChange() {
@@ -252,25 +257,30 @@ namespace Flavor.Forms {
             {
                 var xAxis = myPane.XAxis;
                 var scale = xAxis.Scale;
+                ushort min = minX[zgcIndex];
+                ushort max = maxX[zgcIndex];
                 switch (graph.AxisDisplayMode) {
                     case ScalableDataList.DisplayValue.Step:
                         xAxis.Title.Text = X_AXIS_TITLE_STEP;
-                        scale.Min = minX[zgcIndex];
-                        scale.Max = maxX[zgcIndex];
+                        scale.Min = min;
+                        scale.Max = max;
                         break;
                     case ScalableDataList.DisplayValue.Voltage:
                         xAxis.Title.Text = X_AXIS_TITLE_VOLT;
                         var co = graph.CommonOptions;
-                        scale.Min = co.scanVoltageRealNew(minX[zgcIndex]);
-                        scale.Max = co.scanVoltageRealNew(maxX[zgcIndex]);
+                        scale.Min = co.scanVoltageRealNew(min);
+                        scale.Max = co.scanVoltageRealNew(max);
                         break;
                     case ScalableDataList.DisplayValue.Mass:
                         xAxis.Title.Text = X_AXIS_TITLE_MASS;
                         //limits inverted due to point-to-mass law
                         var col = graph.Collectors[zgcIndex];
-                        scale.Min = col.pointToMass(maxX[zgcIndex]);
-                        scale.Max = col.pointToMass(minX[zgcIndex]);
+                        scale.Min = col.pointToMass(max);
+                        scale.Max = col.pointToMass(min);
                         break;
+                }
+                if (min == max) {
+                    //TODO: autoscale
                 }
             }
 

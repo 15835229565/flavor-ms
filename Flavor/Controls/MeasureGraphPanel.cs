@@ -43,7 +43,7 @@ namespace Flavor.Controls {
             cancelScanButton.Visible = true;
 
             scanProgressBar.Value = 0;
-            scanProgressBar.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+            scanProgressBar.Cursor = Cursors.WaitCursor;
             if (ProgressMaximum == 0) {
                 // complicated limit
                 scanProgressBar.Maximum = 0;
@@ -95,7 +95,7 @@ namespace Flavor.Controls {
 
         protected sealed override void disableControls() {
             // what about other controls?
-            scanProgressBar.Cursor = System.Windows.Forms.Cursors.Default;
+            scanProgressBar.Cursor = Cursors.Default;
             cancelScanButton.Visible = false;
         }
     }

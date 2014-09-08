@@ -9,8 +9,7 @@ namespace Flavor.Forms {
     partial class MeasuredCollectorsForm: CollectorsForm2, IMeasured {
         public event EventHandler MeasureCancelRequested;
         protected virtual void OnMeasureCancelRequested() {
-            if (MeasureCancelRequested != null)
-                MeasureCancelRequested(this, EventArgs.Empty);
+            MeasureCancelRequested.Raise(this, EventArgs.Empty);
         }
         public MeasuredCollectorsForm()
             : base(Graph.MeasureGraph.Instance, false) {
@@ -30,7 +29,7 @@ namespace Flavor.Forms {
             if (isPrecise) {
                 panel = new PreciseMeasureGraphPanel();
                 // search temporary here
-                setXScaleLimits(g.PreciseData.getUsed());
+                setXScaleLimits(g.PreciseData.GetUsed());
             } else {
                 panel = new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
                 setXScaleLimits();

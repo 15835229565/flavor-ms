@@ -301,10 +301,10 @@ namespace Flavor.Common {
                 if (SomePointsUsed) {
                     var g = Graph.MeasureGraph.Instance;
                     g.Reset();
-                    var temp = new MeasureMode.Precise(Config.PreciseData.getUsed());
+                    var temp = new MeasureMode.Precise(Config.PreciseData.GetUsed());
                     temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile();
                     temp.SuccessfulExit += (s, e) => {
-                        var ee = e as MeasureMode.Precise.SuccessfulExitEventArgs;
+                        var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
                         g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                     };
                     temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
@@ -320,14 +320,16 @@ namespace Flavor.Common {
         }
         public bool SomePointsUsed {
             get {
-                if (Config.PreciseData.Count > 0)
-                    foreach (PreciseEditorData ped in Config.PreciseData)
+                var preciseData = Config.PreciseData;
+                if (preciseData.Count > 0)
+                    foreach (var ped in preciseData)
                         if (ped.Use) return true;
                 return false;
             }
         }
         // TODO: use simple arrays
         FixedSizeQueue<List<long>> background;
+        List<PreciseEditorData> peaksForMatrix;
         Matrix matrix;
         List<long> backgroundResult;
         bool doBackgroundPremeasure;
@@ -336,7 +338,7 @@ namespace Flavor.Common {
         public bool? Monitor(params object[] data) {
             // TODO: move partially up
             byte backgroundCycles = Config.BackgroundCycles;
-            doBackgroundPremeasure = Config.BackgroundCycles != 0;
+            doBackgroundPremeasure = backgroundCycles != 0;
 
             Graph.MeasureGraph g;
             switch (pState) {
@@ -350,7 +352,7 @@ namespace Flavor.Common {
                         // TODO: move matrix formation to manual operator actions
                         // TODO: parallelize matrix formation, flag on completion
                         // TODO: duplicates
-                        var peaksForMatrix = g.PreciseData.getUsed().getWithId();
+                        peaksForMatrix = g.PreciseData.GetUsed().GetWithId();
                         if (peaksForMatrix.Count > 0) {
                             // To comply with other processing order (and saved information)
                             peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
@@ -422,15 +424,9 @@ namespace Flavor.Common {
         }
         void NewBackgroundMeasureReady(object sender, EventArgs<int[]> e) {
             var currentMeasure = new List<long>();
-            // ! temporary solution
-            var peaksForMatrix = Graph.MeasureGraph.Instance.PreciseData.getUsed().getWithId();
-            if (peaksForMatrix.Count > 0) {
-                // To comply with other processing order (and saved information)
-                peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                foreach (var ped in peaksForMatrix) {
-                    //!!!!! null PLSreference! race condition?
-                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-                }
+            foreach (var ped in peaksForMatrix) {
+                //!!!!! null PLSreference! race condition?
+                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             }
             //maybe null if background premeasure is false!
             background.Enqueue(currentMeasure);
@@ -440,14 +436,8 @@ namespace Flavor.Common {
         }
         void NewMonitorMeasureReady(object sender, EventArgs<int[]> e) {
             var currentMeasure = new List<long>();
-            // ! temporary solution
-            var peaksForMatrix = Graph.MeasureGraph.Instance.PreciseData.getUsed().getWithId();
-            if (peaksForMatrix.Count > 0) {
-                // To comply with other processing order (and saved information)
-                peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                foreach (var ped in peaksForMatrix) {
-                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-                }
+            foreach (var ped in peaksForMatrix) {
+                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             }
             if (doBackgroundPremeasure) {
                 if (currentMeasure.Count != backgroundResult.Count) {

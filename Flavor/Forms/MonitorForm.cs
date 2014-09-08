@@ -368,7 +368,7 @@ namespace Flavor.Forms {
             labels.Clear();
             list = new List<PointPairListPlusWithMaxCapacity>();
             var g = Graph.MeasureGraph.Instance;
-            pspec = g.PreciseData.getUsed();
+            pspec = g.PreciseData.GetUsed();
             foreach (var ped in pspec) {
                 var temp = new PointPairListPlusWithMaxCapacity();
                 temp.PEDreference = ped;

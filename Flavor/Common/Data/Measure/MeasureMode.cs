@@ -350,7 +350,7 @@ namespace Flavor.Common.Data.Measure {
                 long[] prevIteration = null;
 
                 public Monitor(short? initialShift, ushort allowedShift, int timeLimit)
-                    : base(Graph.MeasureGraph.Instance.PreciseData.getUsed(), initialShift) {
+                    : base(Graph.MeasureGraph.Instance.PreciseData.GetUsed(), initialShift) {
                     // TODO: getWithId()
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(Config.Iterations, timeLimit);

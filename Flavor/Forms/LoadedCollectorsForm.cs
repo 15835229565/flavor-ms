@@ -29,15 +29,18 @@ namespace Flavor.Forms {
 
             if (PreciseSpectrumDisplayed) {
                 // search temporary here
-                setXScaleLimits(graph.PreciseData.getUsed());
+                setXScaleLimits(graph.PreciseData.GetUsed());
             } else {
                 var data = graph.Collectors[0][0].Step;
                 ushort minX = (ushort)data[0].X;
                 ushort maxX = (ushort)(minX - 1 + data.Count);
-                //ushort minX = (ushort)graph.Displayed1Steps[0][0].X;
-                //ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
                 setXScaleLimits(minX, maxX);
             }
+        }
+        protected override bool DisableTabPage(Collector collector) {
+            if (PreciseSpectrumDisplayed)
+                return collector.TrueForAll(pls => pls.isEmpty);
+            return base.DisableTabPage(collector);
         }
         protected sealed override void updateOnModification() {
             Text = DisplayedFileName + (Modified ? "*" : "");
