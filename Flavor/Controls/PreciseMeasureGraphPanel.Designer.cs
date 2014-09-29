@@ -23,7 +23,20 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseMeasureGraphPanel));
+            this.ratioLabel = new System.Windows.Forms.Label();
+            this.ratioTextLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            // 
+            // ratioLabel
+            // 
+            resources.ApplyResources(this.ratioLabel, "ratioLabel");
+            this.ratioLabel.Name = "ratioLabel";
+            // 
+            // ratioTextLabel
+            // 
+            resources.ApplyResources(this.ratioTextLabel, "ratioTextLabel");
+            this.ratioTextLabel.Name = "ratioTextLabel";
             // 
             // PreciseMeasureGraphPanel
             // 
@@ -44,10 +57,14 @@
             this.Controls.SetChildIndex(this.peakCenterLabel, 0);
             this.Controls.SetChildIndex(this.label41, 0);
             this.Controls.SetChildIndex(this.peakWidthLabel, 0);
+            this.Controls.Add(this.ratioLabel);
+            this.Controls.Add(this.ratioTextLabel);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
+        private System.Windows.Forms.Label ratioLabel;
+        private System.Windows.Forms.Label ratioTextLabel;
 
         #endregion
     }

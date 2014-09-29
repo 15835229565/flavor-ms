@@ -7,12 +7,29 @@ namespace Flavor.Controls {
         public PreciseMeasureGraphPanel() {
             InitializeComponent();
         }
+        long? carbonDioxideCounts = null;
+        long? oxygenCounts = null;
+
         void refreshGraphicsOnPreciseStep() {
             // TODO: peak as method parameter
             var peak = ((Graph.MeasureGraph)Graph).CurrentPeak;
 
+            // TODO: move logic up
             if (peak.IsCarbonDioxide()) {
+                // TODO: simplify
+                if (peak.AssociatedPoints != null && peak.AssociatedPoints.PLSreference != null) {
+                    carbonDioxideCounts = peak.AssociatedPoints.PLSreference.PeakSum;
+                }
             } else if (peak.IsOxygen()) {
+                if (peak.AssociatedPoints != null && peak.AssociatedPoints.PLSreference != null) {
+                    oxygenCounts = peak.AssociatedPoints.PLSreference.PeakSum;
+                }
+            }
+            if (carbonDioxideCounts != null && oxygenCounts != null && oxygenCounts != 0) {
+                double ratio = (double)carbonDioxideCounts / (double)oxygenCounts;
+                ratioTextLabel.Visible = true;
+                ratioLabel.Visible = true;
+                ratioLabel.Text = ratio.ToString();
             }
             
             label37.Visible = true;

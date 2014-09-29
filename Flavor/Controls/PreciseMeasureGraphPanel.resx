@@ -117,49 +117,102 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="detector1CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="detector1CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>263, 54</value>
-  </metadata>
-  <metadata name="detector2CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="detector2CountsLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>104, 54</value>
-  </metadata>
-  <metadata name="label15.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label15.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 54</value>
-  </metadata>
-  <metadata name="label16.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label16.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>1142, 17</value>
-  </metadata>
-  <metadata name="scanRealTimeLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="scanRealTimeLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>996, 17</value>
-  </metadata>
-  <metadata name="stepNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="stepNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>858, 17</value>
-  </metadata>
-  <metadata name="label37.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label37.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>771, 17</value>
-  </metadata>
-  <metadata name="label35.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label35.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>684, 17</value>
-  </metadata>
-  <metadata name="label36.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label36.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>597, 17</value>
-  </metadata>
-  <metadata name="peakNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="peakNumberLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>456, 17</value>
-  </metadata>
-  <metadata name="peakWidthLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="peakWidthLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>325, 17</value>
-  </metadata>
-  <metadata name="label39.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label39.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>238, 17</value>
-  </metadata>
-  <metadata name="label41.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label41.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>151, 17</value>
-  </metadata>
-  <metadata name="peakCenterLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="peakCenterLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>
-  </metadata>
-  <metadata name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="$this.TrayLargeIcon" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
+  <data name="ratioLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 592</value>
+  </data>
+  <data name="ratioLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="ratioLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>54</value>
+  </data>
+  <data name="ratioLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="ratioLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 556</value>
+  </data>
+  <data name="ratioTextLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 569</value>
+  </data>
+  <data name="ratioTextLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 13</value>
+  </data>
+  <data name="ratioTextLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>54</value>
+  </data>
+  <data name="ratioTextLabel.Text" xml:space="preserve">
+    <value>co2/o2</value>
+  </data>
+  <data name="ratioTextLabel.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="ratioTextLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 556</value>
+  </data>
+  <data name="&gt;&gt;ratioLabel.Name" xml:space="preserve">
+    <value>ratioTextLabel</value>
+  </data>
+  <data name="&gt;&gt;ratioLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ratioLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ratioTextLabel.Name" xml:space="preserve">
+    <value>ratioTextLabel</value>
+  </data>
+  <data name="&gt;&gt;ratioTextLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ratioTextLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
