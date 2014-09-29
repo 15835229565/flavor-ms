@@ -29,7 +29,7 @@ namespace Flavor.Controls {
                 double ratio = (double)carbonDioxideCounts / (double)oxygenCounts;
                 ratioTextLabel.Visible = true;
                 ratioLabel.Visible = true;
-                ratioLabel.Text = ratio.ToString();
+                ratioLabel.Text = ratio.ToString("F2");
             }
             
             label37.Visible = true;
