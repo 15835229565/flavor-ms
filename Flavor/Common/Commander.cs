@@ -320,11 +320,7 @@ namespace Flavor.Common {
         }
         public bool SomePointsUsed {
             get {
-                var preciseData = Config.PreciseData;
-                if (preciseData.Count > 0)
-                    foreach (var ped in preciseData)
-                        if (ped.Use) return true;
-                return false;
+                return Config.PreciseData.Exists(ped => ped.Use);
             }
         }
         // TODO: use simple arrays
@@ -376,7 +372,7 @@ namespace Flavor.Common {
                                 LabelNumber = null;    
                         };
                         temp.Finalize += (s, e) => Config.finalizeMonitorFile();
-                        temp.GraphUpdateDelegate = (p, peak) => Graph.MeasureGraph.Instance.updateGraphDuringPreciseMeasure(p, peak, Counts);
+                        temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
                         temp.SuccessfulExit += (s, e) => {
                             var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
                             g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);

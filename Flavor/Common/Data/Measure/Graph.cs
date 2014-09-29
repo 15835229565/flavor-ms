@@ -245,7 +245,6 @@ namespace Flavor.Common.Data.Measure {
         public void updateGraphAfterScanDiff(bool newData, params PointPairListPlus[] plists) {
             updateGraphAfterScanLoad(DateTime.MaxValue, plists);
             DisplayingMode = Displaying.Diff;
-            //lock here?
             if (newData)
                 OnGraphDataModified(_all);
         }
@@ -256,7 +255,6 @@ namespace Flavor.Common.Data.Measure {
         public void updateGraphAfterPreciseDiff(List<PreciseEditorData> peds, bool newData) {
             updateGraphAfterPreciseLoad(peds, DateTime.MaxValue, short.MaxValue);
             DisplayingMode = Displaying.Diff;
-            //lock here?
             if (newData)
                 // TODO: only affected collectors!
                 OnGraphDataModified(_all);
