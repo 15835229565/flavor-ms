@@ -30,6 +30,7 @@ namespace Flavor.Controls {
                 ratioTextLabel.Visible = true;
                 ratioLabel.Visible = true;
                 ratioLabel.Text = ratio.ToString("F2");
+                ratioLabel.ForeColor = ratio > 1 ? System.Drawing.Color.Red : System.Drawing.Color.Green;
             }
             
             label37.Visible = true;
@@ -69,6 +70,13 @@ namespace Flavor.Controls {
                 detector3CountsLabel.Visible = true;
                 label0.Visible = true;
             }
+        }
+        protected override void prepareControls() {
+            carbonDioxideCounts = null;
+            oxygenCounts = null;
+            ratioTextLabel.Visible = false;
+            ratioLabel.Visible = false;
+            base.prepareControls();
         }
         public override void performStep(ushort pnt, uint[] counts) {
             base.performStep(pnt, counts);

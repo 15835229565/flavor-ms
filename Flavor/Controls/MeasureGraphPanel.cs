@@ -19,7 +19,7 @@ namespace Flavor.Controls {
             cancelScanButton.Enabled = false;
             OnMeasureCancelRequested();
         }
-        protected sealed override void prepareControls() {
+        protected override void prepareControls() {
             // put here code that only changes data source and refreshes
             //Elements are not visible until first real information is ready
             peakNumberLabel.Visible = false;
