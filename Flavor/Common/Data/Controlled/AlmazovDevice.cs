@@ -17,13 +17,13 @@ namespace Flavor.Common {
             PRGE = 64,
             Alert = 128
         }
-        DeviceStates state = DeviceStates.None;
+        DeviceStates _state = DeviceStates.None;
         DeviceStates State {
-            get { return state; }
+            get { return _state; }
             set {
-                if (value != state) {
-                    state = value;
-                    OnDeviceStateChanged((byte)state);
+                if (value != _state) {
+                    _state = value;
+                    OnDeviceStateChanged((byte)value);
                 }
             }
         }

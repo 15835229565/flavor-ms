@@ -93,6 +93,7 @@
     <Compile Include="Common\Data\Measure\ScalableDataList.cs" />
     <Compile Include="Common\Data\Measure\Service.cs" />
     <Compile Include="Common\Data\Measure\Spectrum.cs" />
+    <Compile Include="Common\Data\PanelPresentationAttribute.cs" />
     <Compile Include="Common\Messaging\Almazov\AlmazovRealizer.cs" />
     <Compile Include="Common\Messaging\Almazov\Commands\Async.cs" />
     <Compile Include="Common\Messaging\Almazov\Commands\Async.Error.cs" />
