@@ -70,7 +70,7 @@ namespace Flavor.Common.Data.Measure {
         const string START_SUBST = "&start;";
         const string END_SUBST = "&end;";
         public override string ToString() {
-            return (new StringBuilder())
+            return new StringBuilder()
                 .Append(START)
                 .Append(pNumber)
                 .Append(DELIMITER)
@@ -92,7 +92,7 @@ namespace Flavor.Common.Data.Measure {
         }
         public static List<PreciseEditorData> fromString(string str) {
             //better pattern = @"{(\d+)\s+(True|False)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s*?(.*?)}";
-            var match = new Regex((new StringBuilder())
+            var match = new Regex(new StringBuilder()
                 .Append(START)
                 .Append(@"(\d+)")
                 .Append(DELIMITER)
@@ -133,9 +133,7 @@ namespace Flavor.Common.Data.Measure {
             }
             return res;
         }
-        #region Custom comparison and predicate for sorting and finding PreciseEditorData objects in List
-        public readonly static Predicate<PreciseEditorData> PeakIsUsed =
-            ped => ped != null && ped.Use;
+        #region Custom comparison for sorting PreciseEditorData objects in List
         public readonly static Comparison<PreciseEditorData> ComparePreciseEditorDataByPeakValue =
             (ped1, ped2) => genericCompare(ped1, ped2, ped => ped == null, () => {
                 if (ped1.Step != ped2.Step)

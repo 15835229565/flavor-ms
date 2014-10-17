@@ -61,11 +61,12 @@ namespace Flavor.Common.Settings {
             return (double)(scanVoltage(step) * 5 * 600) / 4096;
         }
 
+        // TODO: move to format-specific place (serializer)
         const string DELIMITER = " ";
         const string START = "{";
         const string END = "}";
         public override string ToString() {
-            return (new StringBuilder())
+            return new StringBuilder()
                 .Append(START)
                 .Append(eTime)
                 .Append(DELIMITER)

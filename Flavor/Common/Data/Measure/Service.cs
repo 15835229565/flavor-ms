@@ -16,10 +16,10 @@ namespace Flavor.Common.Data.Measure {
         }
         
         public static List<PreciseEditorData> GetUsed(this List<PreciseEditorData> peds) {
-            return peds.FindAll(PreciseEditorData.PeakIsUsed);
+            return peds.FindAll(ped => ped != null && ped.Use);
         }
         public static List<PreciseEditorData> GetWithId(this List<PreciseEditorData> peds) {
-            return peds.FindAll(x => x.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY));
+            return peds.FindAll(ped => ped != null && ped.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY));
         }
     }
 }

@@ -660,7 +660,6 @@ namespace Flavor.Common.Settings {
                 const string FOOTER_REASON_DATE_CHANGE = "next";
                 const string FOOTER_LINK = "link";
 
-                //const char DATA_DELIMITER = '|';
                 const char DATA_DELIMITER = '\t';
                 const string NO_SHIFT_PLACEHOLDER = "-";
 
@@ -669,7 +668,7 @@ namespace Flavor.Common.Settings {
                 public class Writer: CurrentMonitorSaveMaintainer, IMonitorWriter {
                     readonly DateTime initialDT;
                     readonly string filename;
-                    readonly CommonOptions opts;
+                    readonly string optsString;
                     readonly List<PreciseEditorData> precData;
                     readonly string header;
                     readonly StreamWriter sw;
@@ -680,9 +679,8 @@ namespace Flavor.Common.Settings {
                         if (instance == null) {
                             instance = new Writer(dt, graph);
                         } else if (instance.initialDT.Date < dt.Date) {
-                            Writer old = instance;
+                            var old = instance;
                             instance = new Writer(instance, dt);
-                            //instance.graph = graph;
                             old.finalize(instance.filename);
                         }
                         instance.currentDT = dt;
@@ -698,34 +696,38 @@ namespace Flavor.Common.Settings {
                     short? shift = null;
                     Writer(DateTime dt, Graph graph) {
                         initialDT = dt;
-                        // TODO: copy!
-                        //this.graph = graph;
-                        opts = graph.CommonOptions;
-                        precData = new List<PreciseEditorData>(graph.PreciseData);
-                        //!!!
+                        optsString = graph.CommonOptions.ToString();
+                        precData = graph.PreciseData.GetUsed();
                         precData.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
                         header = generateHeader();
                         initFile(dt, out filename, out sw, out swResolved);
                     }
                     Writer(Writer other, DateTime dt) {
                         initialDT = dt;
-                        opts = other.opts;
+                        optsString = other.optsString;
                         precData = other.precData;
                         header = other.header;
                         initFile(dt, out filename, out sw, out swResolved);
                     }
                     void initFile(DateTime dt, out string filename, out StreamWriter sw, out StreamWriter swResolved) {
                         filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
+                        string start = string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT);
                         sw = new StreamWriter(filename, true);
                         sw.WriteLine(header);
-                        sw.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
+                        sw.WriteLine(start);
+                        //sw.WriteLine(ExtraHeader(false));
 
-                        swResolved = new StreamWriter(filename + RESOLVED_APPENDIX, true);
+                        if (precData.GetWithId().Count == 0) {
+                            swResolved = null;
+                            return;
+                        }
+                        swResolved = new StreamWriter(filename + RESOLVED_APPENDIX);
                         swResolved.WriteLine(header);
-                        swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
+                        swResolved.WriteLine(start);
+                        //swResolved.WriteLine(ExtraHeader(true));
                     }
                     string generateHeader() {
-                        var sb = (new StringBuilder(header))
+                        var sb = new StringBuilder(header)
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_TITLE)
                             .Append(HEADER_FOOTER_DELIMITER)
@@ -736,7 +738,7 @@ namespace Flavor.Common.Settings {
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_COMMON_OPTIONS)
                             .Append(HEADER_FOOTER_DELIMITER)
-                            .Append(opts)
+                            .Append(optsString)
                             .Append(LINE_TERMINATOR)
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
                             .Append(HEADER_PRECISE_OPTIONS)
@@ -746,21 +748,30 @@ namespace Flavor.Common.Settings {
                         }
                         return sb.ToString();
                     }
+                    string ExtraHeader(bool resolved) {
+                        var sb = new StringBuilder()
+                            .Append("time")
+                            .Append(DATA_DELIMITER)
+                            .Append("shift");
+                        foreach (var ped in resolved ? precData.GetWithId() : precData) {
+                            sb
+                                .Append(DATA_DELIMITER)
+                                .Append(ped.Comment);
+                        }
+                        return sb.ToString();
+                    }
                     void finalize(string nextFilename) {
-                        var sb = (new StringBuilder())
+                        var sb = new StringBuilder()
                             .Append(HEADER_FOOTER_FIRST_SYMBOL)
-                            .Append(FOOTER_TITLE);
+                            .Append(FOOTER_TITLE)
+                            .Append(HEADER_FOOTER_DELIMITER)
+                            .Append(FOOTER_REASON)
+                            .Append(HEADER_FOOTER_DELIMITER);
                         if (nextFilename == null) {
                             sb
-                                .Append(HEADER_FOOTER_DELIMITER)
-                                .Append(FOOTER_REASON)
-                                .Append(HEADER_FOOTER_DELIMITER)
                                 .Append(FOOTER_REASON_FINISH);
                         } else {
                             sb
-                                .Append(HEADER_FOOTER_DELIMITER)
-                                .Append(FOOTER_REASON)
-                                .Append(HEADER_FOOTER_DELIMITER)
                                 .Append(FOOTER_REASON_DATE_CHANGE)
                                 .Append(HEADER_FOOTER_DELIMITER)
                                 .Append(FOOTER_LINK)
@@ -770,6 +781,8 @@ namespace Flavor.Common.Settings {
                         sw.WriteLine(sb);
                         sw.Close();
 
+                        if (swResolved == null)
+                            return;
                         swResolved.WriteLine(sb + (nextFilename == null ? "" : RESOLVED_APPENDIX));
                         swResolved.Close();
                     }
@@ -781,12 +794,12 @@ namespace Flavor.Common.Settings {
                             sw.WriteLine(label);
                             swResolved.WriteLine(label);
                         }
-                        var sb = (new StringBuilder())
+                        var sb = new StringBuilder()
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
                             .Append(shift == null ? NO_SHIFT_PLACEHOLDER : shift.ToString());
                         
-                        if (solution != null) {
+                        if (solution != null && swResolved != null) {
                             swResolved.Write(sb);
                             foreach (double d in solution) {
                                 swResolved.Write(DATA_DELIMITER);
@@ -796,11 +809,9 @@ namespace Flavor.Common.Settings {
                         }
                         
                         foreach (var ped in precData) {
-                            if (ped.Use) {
-                                sb
-                                    .Append(DATA_DELIMITER)
-                                    .Append(ped.AssociatedPoints.PLSreference.PeakSum);
-                            }
+                            sb
+                                .Append(DATA_DELIMITER)
+                                .Append(ped.AssociatedPoints.PLSreference.PeakSum);
                         }
                         sw.WriteLine(sb);
                         sw.Flush();
