@@ -656,7 +656,7 @@ namespace Flavor.Common {
                 private const string FOOTER_REASON_DATE_CHANGE = "next";
                 private const string FOOTER_LINK = "link";
 
-                private const char DATA_DELIMITER = '|';
+                private const char DATA_DELIMITER = '\t';
                 private const string NO_SHIFT_PLACEHOLDER = "-";
 
                 private const string RESOLVED_APPENDIX = "r";
@@ -715,10 +715,26 @@ namespace Flavor.Common {
                         sw = new StreamWriter(filename, true);
                         sw.WriteLine(header);
                         sw.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
+                        sw.WriteLine(ExtraHeader(false));
 
                         swResolved = new StreamWriter(filename + RESOLVED_APPENDIX, true);
                         swResolved.WriteLine(header);
                         swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
+                        sw.WriteLine(ExtraHeader(true));
+                    }
+                    string ExtraHeader(bool resolved) {
+                        var sb = new StringBuilder()
+                            .Append("time")
+                            .Append(DATA_DELIMITER)
+                            .Append("shift");
+                        foreach (var ped in precData) {
+                            if (ped.Use && (resolved ? ped.Comment.StartsWith(ID_PREFIX_TEMPORARY) : true)) {
+                                sb
+                                    .Append(DATA_DELIMITER)
+                                    .Append(ped.Comment);
+                            }
+                        }
+                        return sb.ToString();
                     }
                     private string generateHeader() {
                         StringBuilder sb = (new StringBuilder(header))
