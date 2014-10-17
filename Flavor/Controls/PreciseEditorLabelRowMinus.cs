@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Config = Flavor.Common.Settings.Config;
+using Flavor.Common;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorLabelRowMinus: UserControl {

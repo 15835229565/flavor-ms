@@ -1,49 +1,42 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Flavor.Common.Data.Measure;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using Graph = Flavor.Common.Graph;
 
 namespace Flavor.Forms {
-    partial class LoadedCollectorsForm: CollectorsForm2, ILoaded {
-        string displayedFileName;
-        string DisplayedFileName {
+    internal partial class LoadedCollectorsForm: CollectorsForm, ILoaded {
+        private string displayedFileName;
+        private string DisplayedFileName {
             get { return System.IO.Path.GetFileName(displayedFileName); }
         }
-        [Obsolete]
         protected LoadedCollectorsForm(): base() {
             // do not use! for designer only!
-            // Init panel before ApplyResources
-            Panel = new GraphPanel();
             InitializeComponent();
+            Panel.Enable();
         }
         public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
             : base(graph, hint) {
-            // Init panel before ApplyResources
-            Panel = new GraphPanel { Graph = graph };
             InitializeComponent();
-            // TODO: different for precise & scan
-            Panel.Enable();
-
             displayedFileName = fileName;
-            Text = DisplayedFileName;
+            this.Text = DisplayedFileName;
+
+            Panel.Enable();
 
             if (PreciseSpectrumDisplayed) {
                 // search temporary here
-                setXScaleLimits(graph.PreciseData.GetUsed());
+                // TODO: use extension method getUsed()
+                setXScaleLimits(graph.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
             } else {
-                var data = graph.Collectors[0][0].Step;
-                ushort minX = (ushort)data[0].X;
-                ushort maxX = (ushort)(minX - 1 + data.Count);
-                setXScaleLimits(minX, maxX);
+                ushort minX = (ushort)graph.Displayed1Steps[0][0].X;
+                ushort maxX = (ushort)(minX - 1 + graph.Displayed1Steps[0].Count);
+                setXScaleLimits(minX, maxX, minX, maxX);
             }
         }
-        protected override bool DisableTabPage(Collector collector) {
-            if (PreciseSpectrumDisplayed)
-                return collector.TrueForAll(pls => pls.isEmpty);
-            return base.DisableTabPage(collector);
-        }
         protected sealed override void updateOnModification() {
-            Text = DisplayedFileName + (Modified ? "*" : "");
+            this.Text = DisplayedFileName + (Modified ? "*" : "");
             base.updateOnModification();
         }
         protected sealed override bool saveData() {
@@ -51,7 +44,7 @@ namespace Flavor.Forms {
             bool res = base.saveData();
             if (res) {
                 displayedFileName = saveSpecterFileDialog.FileName;
-                Text = DisplayedFileName;
+                this.Text = DisplayedFileName;
             }
             return res;
 		}
@@ -59,7 +52,7 @@ namespace Flavor.Forms {
         protected override void OnFormClosing(FormClosingEventArgs e) {
             if (Modified) {
                 Activate();
-                switch (MessageBox.Show(MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel)) {
+                switch (MessageBox.Show(this.MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel)) {
                     case DialogResult.Yes:
                         if (!saveData()) {
                             e.Cancel = true;

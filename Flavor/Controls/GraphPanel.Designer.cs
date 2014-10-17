@@ -169,10 +169,10 @@ namespace Flavor.Controls {
             // 
             // GraphPanel
             // 
-            resources.ApplyResources(this, "$this");
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Controls.Add(groupBox1);
+            resources.ApplyResources(this, "$this");
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             this.ResumeLayout(false);

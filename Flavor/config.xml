@@ -1,25 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- SevMorGeo, Almazov -->
-<control version="1.3" device="Almazov">
-  <!-- ModBus, Radist-2 -->
-  <connect proto="Radist-2">
-    <port>COM2</port>
-    <baudrate>128000</baudrate>
+<control version="1.2">
+  <connect>
+    <port>COM1</port>
+    <baudrate>38400</baudrate>
     <try>4</try>
   </connect>
-  <!-- count is info only -->
-  <collectors count="3">
-    <coeff n="1">78729.4921875</coeff>
-    <coeff n="2">16848.6328125</coeff>
-    <coeff n="3">1</coeff>
-  </collectors>
-  <!-- max-min are info only -->
-  <overview min="0" max="2112">
+  <overview>
     <start>400</start>
     <end>1056</end>
   </overview>
-  <sense count="20">
-    <region n="1">
+  <sense>
+    <region1>
       <peak>537</peak>
       <iteration>1</iteration>
       <width>4</width>
@@ -27,8 +18,8 @@
       <col>2</col>
       <comment>метан-15-сервисный</comment>
       <use>True</use>
-    </region>
-    <region n="2">
+    </region1>
+    <region2>
       <peak>
       </peak>
       <iteration>
@@ -43,8 +34,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="3">
+    </region2>
+    <region3>
       <peak>847</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -52,8 +43,8 @@
       <col>1</col>
       <comment>id_PROPANE_39</comment>
       <use>True</use>
-    </region>
-    <region n="4">
+    </region3>
+    <region4>
       <peak>
       </peak>
       <iteration>
@@ -68,8 +59,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="5">
+    </region4>
+    <region5>
       <peak>985</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -77,8 +68,8 @@
       <col>1</col>
       <comment>id_ETHANE_30</comment>
       <use>True</use>
-    </region>
-    <region n="6">
+    </region5>
+    <region6>
       <peak>952</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -86,8 +77,8 @@
       <col>1</col>
       <comment>id_OXYGEN_32</comment>
       <use>True</use>
-    </region>
-    <region n="7">
+    </region6>
+    <region7>
       <peak>808</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -95,8 +86,8 @@
       <col>1</col>
       <comment>id_ISOBUTANE_42</comment>
       <use>True</use>
-    </region>
-    <region n="8">
+    </region7>
+    <region8>
       <peak>639</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -104,8 +95,8 @@
       <col>1</col>
       <comment>id_BUTANE_58</comment>
       <use>True</use>
-    </region>
-    <region n="9">
+    </region8>
+    <region9>
       <peak>
       </peak>
       <iteration>
@@ -120,8 +111,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="10">
+    </region9>
+    <region10>
       <peak>
       </peak>
       <iteration>
@@ -136,8 +127,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="11">
+    </region10>
+    <region11>
       <peak>574</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -145,8 +136,8 @@
       <col>2</col>
       <comment>id_NITROGEN_14</comment>
       <use>True</use>
-    </region>
-    <region n="12">
+    </region11>
+    <region12>
       <peak>
       </peak>
       <iteration>
@@ -161,8 +152,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="13">
+    </region12>
+    <region13>
       <peak>
       </peak>
       <iteration>
@@ -177,8 +168,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="14">
+    </region13>
+    <region14>
       <peak>784</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -186,8 +177,8 @@
       <col>1</col>
       <comment>id_CO2_44</comment>
       <use>True</use>
-    </region>
-    <region n="15">
+    </region14>
+    <region15>
       <peak>
       </peak>
       <iteration>
@@ -202,8 +193,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="16">
+    </region15>
+    <region16>
       <peak>
       </peak>
       <iteration>
@@ -218,8 +209,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="17">
+    </region16>
+    <region17>
       <peak>
       </peak>
       <iteration>
@@ -234,8 +225,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="18">
+    </region17>
+    <region18>
       <peak>
       </peak>
       <iteration>
@@ -250,8 +241,8 @@
       </comment>
       <use>
       </use>
-    </region>
-    <region n="19">
+    </region18>
+    <region19>
       <peak>538</peak>
       <iteration>1</iteration>
       <width>3</width>
@@ -259,8 +250,8 @@
       <col>2</col>
       <comment>id_METHANE_15</comment>
       <use>True</use>
-    </region>
-    <region n="20">
+    </region19>
+    <region20>
       <peak>
       </peak>
       <iteration>
@@ -275,19 +266,14 @@
       </comment>
       <use>
       </use>
-    </region>
+    </region20>
   </sense>
   <common>
-    <fv n="1">2729</fv>
-    <fv n="2">2812</fv>
-    <dv n="1">0</dv>
-    <dv n="2">0</dv>
-    <dv n="3">0</dv>
+    <focus1>2729</focus1>
+    <focus2>2812</focus2>
     <exptime>200</exptime>
     <meastime>10</meastime>
     <ivoltage>2184</ivoltage>
-    <c>0.048</c>
-    <k>0.73</k>
     <cp>3751</cp>
     <ecurrent>327</ecurrent>
     <hcurrent>0</hcurrent>
@@ -296,6 +282,10 @@
     <forward>200</forward>
     <back>1000</back>
   </common>
+  <interface>
+    <coeff1>78729.4921875</coeff1>
+    <coeff2>16848.6328125</coeff2>
+  </interface>
   <check>
     <peak>
     </peak>

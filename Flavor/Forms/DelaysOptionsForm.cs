@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Windows.Forms;
-// TODO: move up
-using Config = Flavor.Common.Settings.Config;
+using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
-    public partial class DelaysOptionsForm: Form {
-        public DelaysOptionsForm() {
+    internal partial class DelaysOptionsForm: Form {
+        internal DelaysOptionsForm() {
             InitializeComponent();
-            // TODO: move to OnLoad
             beforeTimeNumericUpDown.Value = Config.CommonOptions.befTimeReal;
             forwardTimeNumericUpDown.Value = Config.CommonOptions.fTimeReal;
             backwardTimeNumericUpDown.Value = Config.CommonOptions.bTimeReal;
             forwardAsBeforeCheckBox.Checked = Config.CommonOptions.ForwardTimeEqualsBeforeTime;
         }
 
-        void forwardAsBeforeCheckBox_CheckedChanged(object sender, EventArgs e) {
+        private void forwardAsBeforeCheckBox_CheckedChanged(object sender, EventArgs e) {
             forwardTimeNumericUpDown.ReadOnly = forwardAsBeforeCheckBox.Checked;
         }
 
-        void ok_butt_Click(object sender, EventArgs e) {
+        private void cancel_butt_Click(object sender, EventArgs e) {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+        private void ok_butt_Click(object sender, EventArgs e) {
             Config.saveGlobalDelaysOptions(forwardAsBeforeCheckBox.Checked, (ushort)beforeTimeNumericUpDown.Value,
                                      (ushort)forwardTimeNumericUpDown.Value, (ushort)backwardTimeNumericUpDown.Value);
-            DialogResult = DialogResult.OK;
-            Close();
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

@@ -22,8 +22,6 @@ namespace Flavor.Controls {
             this.detector1CountsLabel = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.detector2CountsLabel = new System.Windows.Forms.Label();
-            this.label0 = new System.Windows.Forms.Label();
-            this.detector3CountsLabel = new System.Windows.Forms.Label();
             this.scanProgressBar = new System.Windows.Forms.ProgressBar();
             this.cancelScanButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -112,18 +110,6 @@ namespace Flavor.Controls {
             resources.ApplyResources(this.detector2CountsLabel, "detector2CountsLabel");
             this.detector2CountsLabel.Name = "detector2CountsLabel";
             // 
-            // label0
-            // 
-            resources.ApplyResources(this.label0, "label0");
-            this.label0.Name = "label0";
-            // 
-            // detector3CountsLabel
-            // 
-            this.detector3CountsLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.detector3CountsLabel.ForeColor = System.Drawing.Color.Green;
-            resources.ApplyResources(this.detector3CountsLabel, "detector3CountsLabel");
-            this.detector3CountsLabel.Name = "detector3CountsLabel";
-            // 
             // scanProgressBar
             // 
             resources.ApplyResources(this.scanProgressBar, "scanProgressBar");
@@ -138,7 +124,6 @@ namespace Flavor.Controls {
             // 
             // MeasureGraphPanel
             // 
-            resources.ApplyResources(this, "$this");
             this.Controls.Add(this.peakWidthLabel);
             this.Controls.Add(this.label41);
             this.Controls.Add(this.peakCenterLabel);
@@ -151,8 +136,6 @@ namespace Flavor.Controls {
             this.Controls.Add(this.label35);
             this.Controls.Add(this.scanProgressBar);
             this.Controls.Add(this.cancelScanButton);
-            this.Controls.Add(this.detector3CountsLabel);
-            this.Controls.Add(this.label0);
             this.Controls.Add(this.detector2CountsLabel);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.detector1CountsLabel);
@@ -168,10 +151,8 @@ namespace Flavor.Controls {
         private System.Windows.Forms.Button cancelScanButton;
         protected System.Windows.Forms.Label detector1CountsLabel;
         protected System.Windows.Forms.Label detector2CountsLabel;
-        protected System.Windows.Forms.Label detector3CountsLabel;
         protected System.Windows.Forms.Label label15;
         protected System.Windows.Forms.Label label16;
-        protected System.Windows.Forms.Label label0;
         protected System.Windows.Forms.Label scanRealTimeLabel;
         protected System.Windows.Forms.Label stepNumberLabel;
         protected System.Windows.Forms.Label label37;

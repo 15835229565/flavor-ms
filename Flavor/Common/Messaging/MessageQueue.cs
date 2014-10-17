@@ -1,74 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using UserRequest = Flavor.Common.Commands.UserRequest;
+using SyncReply = Flavor.Common.Commands.SyncReply;
 using System.Collections;
 
 namespace Flavor.Common.Messaging {
-    class MessageQueue<T>: ILog
-        where T: struct, IConvertible, IComparable {
-        byte Try = 0;
+    class MessageQueue {
+        private byte Try = 0;
+        private bool statusToSend = false;
+        private bool turboToSend = false;
 
-        Queue<UserRequest<T>> queue = new Queue<UserRequest<T>>();
-        // TODO: configurable time interval
-        readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
+        private Queue<UserRequest> ToSend = new Queue<UserRequest>();
+        private System.Timers.Timer SendTimer;
+        private System.Timers.ElapsedEventHandler elapsed;
 
-        object syncObj = null;
-        object SyncRoot {
+        private object syncObj = null;
+        private object SyncRoot {
             get {
-                return syncObj == null ? (syncObj = (queue as ICollection).SyncRoot) : syncObj; 
+                return syncObj == null ? (syncObj = (ToSend as ICollection).SyncRoot) : syncObj; 
             }
         }
-        public event EventHandler Undo;
-        protected virtual void OnUndo() {
-            Undo.Raise(this, EventArgs.Empty);
+
+        internal MessageQueue()
+            : base() {
+            elapsed = new System.Timers.ElapsedEventHandler(SendTime_Elapsed);
+            SendTimer = new System.Timers.Timer(1000);
+            SendTimer.Enabled = false;
         }
-        public event EventHandler<EventArgs<UserRequest<T>>> NotAnsweringTo;
-        protected virtual void OnNotAnsweringTo(UserRequest<T> packet) {
-            NotAnsweringTo.Raise(this, new EventArgs<UserRequest<T>>(packet));
-        }
-        public event EventHandler<CommandReceivedEventArgs<T, Sync<T>>> CommandApproved;
-        protected virtual void OnCommandApproved(byte code, Sync<T> command) {
-            CommandApproved.Raise(this, new CommandReceivedEventArgs<T,Sync<T>>(code, command));
-        }
-        readonly ISyncProtocol<T> protocol;
-        readonly IEqualityComparer<Sync<T>> comparer;
-        readonly byte attempts;
-        public MessageQueue(ISyncProtocol<T> protocol, byte attempts)
-            : this(protocol, EqualityComparer<Sync<T>>.Default, attempts) { }
-        public MessageQueue(ISyncProtocol<T> protocol, IEqualityComparer<Sync<T>> comparer, byte attempts) {
-            this.attempts = attempts;
-            this.protocol = protocol;
-            protocol.SyncCommandReceived += (s, e) => {
-                var command = e.Command;
-                if (null != Peek(command))
-                    OnCommandApproved(e.Code, command);
-            };
-            protocol.SyncErrorReceived += (s, e) => { 
-                Dequeue();
-                OnCommandApproved(e.Code, e.Command);
-            };
-            ConsoleWriter.Subscribe(protocol);
-            this.comparer = comparer;
-            sendTimer.Enabled = false;
-        }
-        public void Clear() {
+        internal void Clear() {
             lock (SyncRoot) {
-                lock (sendTimer) {
-                    if (sendTimer.Enabled) {
+                lock (SendTimer) {
+                    if (SendTimer.Enabled) {
                         StopSending();
                     }
                 }
-                queue.Clear();
+                statusToSend = false;
+                turboToSend = false;
+                ToSend.Clear();
             }
         }
-        public void Enqueue(UserRequest<T> command)
+        internal void AddToSend(UserRequest Command)//Enqueue
         {
             lock (SyncRoot) {
-                queue.Enqueue(command);
+                if (Command is UserRequest.requestStatus) {
+                    if (statusToSend) {
+                        return;
+                    }
+                    statusToSend = true;
+                } else if (Command is UserRequest.getTurboPumpStatus) {
+                    if (turboToSend) {
+                        return;
+                    }
+                    turboToSend = true;
+                }
+
+                ToSend.Enqueue(Command);
                 trySend();
             }
         }
-        UserRequest<T> Dequeue() {
-            UserRequest<T> packet = null;
+        internal UserRequest Dequeue() {
+            UserRequest packet = null;
             lock (SyncRoot) {
                 dequeueToSendInsideLock(ref packet);
                 StopSending();
@@ -76,11 +68,11 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        UserRequest<T> Peek(Sync<T> command) {
-            UserRequest<T> packet = null;
+        internal UserRequest Peek(SyncReply command) {
+            UserRequest packet = null;
             lock (SyncRoot) {
-                if (queue.Count == 0) {
-                    OnLog(string.Format("Received {0}. While waiting for nothing.", command));
+                if (ToSend.Count == 0) {
+                    ConsoleWriter.WriteLine("Received {0}. While waiting for nothing.", command);
                     return null;
                 }
                 peekToSendInsideLock(ref packet);
@@ -88,8 +80,8 @@ namespace Flavor.Common.Messaging {
                     dequeueToSendInsideLock(ref packet);
                     return null;
                 }
-                if (!comparer.Equals(command, packet)) {
-                    OnLog(string.Format("Received {0}. While waiting for {1}.", command, packet));
+                if (packet.Id != ((SyncReply)command).Id) {
+                    ConsoleWriter.WriteLine("Received {0}. While waiting for {1}.", command, packet);
                     return null;
                 }
                 StopSending();
@@ -99,77 +91,92 @@ namespace Flavor.Common.Messaging {
             trySend();
             return packet;
         }
-        protected bool Contains(UserRequest<T> item) {
-            return queue.Contains(item);
+
+        protected void addStatusRequest() {
+            lock (SyncRoot) {
+                if (!statusToSend) {
+                    ToSend.Enqueue(new UserRequest.requestStatus());
+                    statusToSend = true;
+                    trySend();
+                }
+            }
         }
-        void StartSending() {
-            lock (sendTimer) {
-                if (sendTimer.Enabled || Try != 0) {
-                    OnLog("Error. SendTimer already started.");
+        protected void addTurboPumpStatusRequest() {
+            lock (SyncRoot) {
+                if (!turboToSend) {
+                    ToSend.Enqueue(new UserRequest.getTurboPumpStatus());
+                    turboToSend = true;
+                }
+                trySend();
+            }
+        }
+
+        private void StartSending() {
+            lock (SendTimer) {
+                if (SendTimer.Enabled || Try != 0) {
+                    ConsoleWriter.WriteLine("Error. SendTimer already started.");
                     return;
                 }
                 Try = 1;
-                sendTimer.Elapsed += SendTime_Elapsed;
-                sendTimer.Enabled = true;
+                SendTimer.Elapsed += elapsed;
+                SendTimer.Enabled = true;
             }
         }
-        void StopSending() {
-            lock (sendTimer) {
-                if (!sendTimer.Enabled || Try == 0) {
-                    OnLog("Error. SendTimer already stopped.");
+        private void StopSending() {
+            lock (SendTimer) {
+                if (!SendTimer.Enabled || Try == 0) {
+                    ConsoleWriter.WriteLine("Error. SendTimer already stopped.");
                     return;
                 }
-                sendTimer.Elapsed -= SendTime_Elapsed;
-                sendTimer.Enabled = false;
+                SendTimer.Elapsed -= elapsed;
+                SendTimer.Enabled = false;
                 Try = 0;
             }
         }
 
-        void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+        private void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
             lock (SyncRoot) {
-                lock (sendTimer) {
+                lock (SendTimer) {
                     ++Try;
-                    if (Try <= attempts) {
+                    if (Try <= Config.Try) {
                         Send();
                         return;
                     }
                     StopSending();
                 }
-                UserRequest<T> packet = null;
-                if (queue.Count == 0)
-                    OnLog("Error. Packet queue is empty but sending counter is not zero.");
+                UserRequest packet = null;
+                if (ToSend.Count == 0)
+                    ConsoleWriter.WriteLine("Error. Packet queue is empty but sending counter is not zero.");
                 else {
                     if (dequeueToSendInsideLock(ref packet)) {
                         if (packet == null)
-                            OnLog("Error. In message queue null found.");
+                            ConsoleWriter.WriteLine("Error. In message queue null found.");
                     }
                 }
-                if (packet != null) {
-                    OnNotAnsweringTo(packet);
-                    OnLog(string.Format("Device not answering to {0}", packet.Id));
-                }
-                OnUndo();
-                trySend();
+                if (packet != null)
+                    ConsoleWriter.WriteLine("Device not answering to {0}", packet.Id);
+
+                Commander.setProgramStateWithoutUndo(Commander.pStatePrev);
             }
         }
 
-        void trySend() {
-            lock (sendTimer) {
-                if (!sendTimer.Enabled) {
+        private void trySend() {
+            lock (SendTimer) {
+                if (!SendTimer.Enabled) {
                     Send();
                 }
             }
         }
-        void Send() {
+        private void Send() {
             lock (SyncRoot) {
-                while (queue.Count > 0) {
-                    UserRequest<T> packet = null;
+                while (ToSend.Count > 0) {
+                    UserRequest packet = null;
                     peekToSendInsideLock(ref packet);
                     if (packet != null) {
                         if (0 == Try) {
                             StartSending();
                         }
-                        protocol.Send(packet.Data);
+                        packet.Send();
                         break;
                     }
                     if (dequeueToSendInsideLock(ref packet))
@@ -179,38 +186,40 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        bool dequeueToSendInsideLock(ref UserRequest<T> packet) {
+        private bool dequeueToSendInsideLock(ref UserRequest packet) {
             try {
-                packet = queue.Dequeue();
+                packet = ToSend.Dequeue();
+                if (packet is UserRequest.requestStatus) {
+                    statusToSend = false;
+                } else if (packet is UserRequest.getTurboPumpStatus) {
+                    turboToSend = false;
+                }
                 return true;
             } catch (InvalidOperationException) {
-                OnLog("Error. Dequeue failed though someting must be in queue.");
+                ConsoleWriter.WriteLine("Error. Dequeue failed though someting must be in queue.");
             }
             try {
-                queue.Clear();
+                ToSend.Clear();
+                statusToSend = false;
+                turboToSend = false;
                 return false;
             } catch (InvalidOperationException) {
-                OnLog("Error. Cannot clear message queue.");
+                ConsoleWriter.WriteLine("Error. Cannot clear message queue.");
             }
-            OnLog("Message queue recreation.");
-            queue = new Queue<UserRequest<T>>();
+            ConsoleWriter.WriteLine("Message queue recreation.");
+            ToSend = new Queue<UserRequest>();
+            statusToSend = false;
+            turboToSend = false;
             return false;
         }
-        void peekToSendInsideLock(ref UserRequest<T> packet) {
+        private void peekToSendInsideLock(ref UserRequest packet) {
             try {
-                packet = queue.Peek();
+                packet = ToSend.Peek();
                 if (packet == null)
-                    OnLog("Error. In message queue null found.");
+                    ConsoleWriter.WriteLine("Error. In message queue null found.");
             } catch (InvalidOperationException) {
-                OnLog("Error. Peek failed though someting must be in queue.");
+                ConsoleWriter.WriteLine("Error. Peek failed though someting must be in queue.");
             }
         }
-        #region ILog Members
-        public event MessageHandler Log;
-        protected virtual void OnLog(string message) {
-            if (Log != null)
-                Log(message);
-        }
-        #endregion
     }
 }

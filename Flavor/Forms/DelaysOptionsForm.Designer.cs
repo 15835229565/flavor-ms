@@ -44,7 +44,6 @@
             // 
             // ok_butt
             // 
-            ok_butt.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(ok_butt, "ok_butt");
             ok_butt.Name = "ok_butt";
             ok_butt.UseVisualStyleBackColor = true;
@@ -56,12 +55,23 @@
             resources.ApplyResources(cancel_butt, "cancel_butt");
             cancel_butt.Name = "cancel_butt";
             cancel_butt.UseVisualStyleBackColor = true;
+            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
             // beforeTimeNumericUpDown
             // 
+            this.beforeTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             resources.ApplyResources(this.beforeTimeNumericUpDown, "beforeTimeNumericUpDown");
             this.beforeTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
+            0,
+            0,
+            0});
+            this.beforeTimeNumericUpDown.Minimum = new decimal(new int[] {
+            10,
             0,
             0,
             0});
@@ -81,9 +91,19 @@
             // 
             // forwardTimeNumericUpDown
             // 
+            this.forwardTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             resources.ApplyResources(this.forwardTimeNumericUpDown, "forwardTimeNumericUpDown");
             this.forwardTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
+            0,
+            0,
+            0});
+            this.forwardTimeNumericUpDown.Minimum = new decimal(new int[] {
+            10,
             0,
             0,
             0});
@@ -96,9 +116,19 @@
             // 
             // backwardTimeNumericUpDown
             // 
+            this.backwardTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             resources.ApplyResources(this.backwardTimeNumericUpDown, "backwardTimeNumericUpDown");
             this.backwardTimeNumericUpDown.Maximum = new decimal(new int[] {
             10000,
+            0,
+            0,
+            0});
+            this.backwardTimeNumericUpDown.Minimum = new decimal(new int[] {
+            10,
             0,
             0,
             0});

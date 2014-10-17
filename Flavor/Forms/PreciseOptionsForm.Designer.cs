@@ -38,12 +38,25 @@ namespace Flavor.Forms {
             this.loadPreciseEditorFromFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.formToolTip = new System.Windows.Forms.ToolTip(this.components);
             PElabelRow = new Flavor.Controls.PreciseEditorLabelRowPlus();
+            ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
+            this.params_groupBox.SuspendLayout();
             this.preciseEditorGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // cancel_butt
             // 
             resources.ApplyResources(this.cancel_butt, "cancel_butt");
+            // 
+            // applyButton
+            // 
+            resources.ApplyResources(this.applyButton, "applyButton");
             // 
             // ok_butt
             // 
@@ -52,14 +65,18 @@ namespace Flavor.Forms {
             // params_groupBox
             // 
             resources.ApplyResources(this.params_groupBox, "params_groupBox");
+            this.params_groupBox.Controls.SetChildIndex(this.expTimeNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.idleTimeNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.iVoltageNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.CPNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.eCurrentNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.hCurrentNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.fV1NumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.fV2NumericUpDown, 0);
             // 
             // rareModeCheckBox
             // 
             resources.ApplyResources(this.rareModeCheckBox, "rareModeCheckBox");
-            // 
-            // applyButton
-            // 
-            resources.ApplyResources(this.applyButton, "applyButton");
             // 
             // PElabelRow
             // 
@@ -123,12 +140,22 @@ namespace Flavor.Forms {
             this.MinimizeBox = true;
             this.Name = "PreciseOptionsForm";
             this.ShowIcon = false;
-            this.Controls.SetChildIndex(this.applyButton, 0);
-            this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
             this.Controls.SetChildIndex(this.preciseEditorGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
             this.Controls.SetChildIndex(this.cancel_butt, 0);
+            this.Controls.SetChildIndex(this.applyButton, 0);
+            this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
+            this.params_groupBox.ResumeLayout(false);
+            this.params_groupBox.PerformLayout();
             this.preciseEditorGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

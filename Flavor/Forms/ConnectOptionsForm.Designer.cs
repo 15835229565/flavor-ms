@@ -44,6 +44,7 @@
             resources.ApplyResources(cancel_butt, "cancel_butt");
             cancel_butt.Name = "cancel_butt";
             cancel_butt.UseVisualStyleBackColor = true;
+            cancel_butt.Click += new System.EventHandler(this.cancel_butt_Click);
             // 
             // serialPortComboBox
             // 

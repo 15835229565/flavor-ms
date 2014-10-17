@@ -2,8 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Utility = Flavor.Common.Utility;
-using Config = Flavor.Common.Settings.Config;
-using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using Config = Flavor.Common.Config;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 
 namespace Flavor.Controls {
     public partial class PreciseEditorRowMinus: UserControl {

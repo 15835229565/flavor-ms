@@ -117,17 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="label17.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label17.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 91</value>
-  </metadata>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="label17.GenerateMember" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label17.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 54</value>
+  </data>
   <data name="label17.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label17.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 248</value>
   </data>
@@ -152,12 +152,12 @@
   <data name="&gt;&gt;label17.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
-  <metadata name="label19.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label19.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <metadata name="label19.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label19.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 91</value>
-  </metadata>
+  </data>
   <data name="label19.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -185,12 +185,12 @@
   <data name="&gt;&gt;label19.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
-  <metadata name="label20.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label20.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <metadata name="label20.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label20.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 165</value>
-  </metadata>
+  </data>
   <data name="label20.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -218,12 +218,12 @@
   <data name="&gt;&gt;label20.ZOrder" xml:space="preserve">
     <value>14</value>
   </data>
-  <metadata name="label21.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label21.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <metadata name="label21.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label21.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 202</value>
-  </metadata>
+  </data>
   <data name="label21.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -251,12 +251,12 @@
   <data name="&gt;&gt;label21.ZOrder" xml:space="preserve">
     <value>15</value>
   </data>
-  <metadata name="label22.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="label22.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="label22.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 276</value>
-  </metadata>
+  </data>
+  <data name="label22.GenerateMember" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="label22.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -284,12 +284,12 @@
   <data name="&gt;&gt;label22.ZOrder" xml:space="preserve">
     <value>16</value>
   </data>
-  <metadata name="label23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label23.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <metadata name="label23.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label23.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 313</value>
-  </metadata>
+  </data>
   <data name="label23.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -317,12 +317,12 @@
   <data name="&gt;&gt;label23.ZOrder" xml:space="preserve">
     <value>17</value>
   </data>
-  <metadata name="label24.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label24.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <metadata name="label24.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label24.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 350</value>
-  </metadata>
+  </data>
   <data name="label24.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -350,12 +350,12 @@
   <data name="&gt;&gt;label24.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
-  <metadata name="label25.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label25.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <metadata name="label25.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="label25.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 461</value>
-  </metadata>
+  </data>
   <data name="label25.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -383,15 +383,15 @@
   <data name="&gt;&gt;label25.ZOrder" xml:space="preserve">
     <value>19</value>
   </data>
-  <metadata name="groupBox1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="groupBox1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="groupBox1.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 535</value>
-  </metadata>
-  <metadata name="f2_label.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 461</value>
-  </metadata>
+  </data>
+  <data name="groupBox1.GenerateMember" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="f2_label.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 535</value>
+  </data>
   <data name="f2_label.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -416,9 +416,9 @@
   <data name="&gt;&gt;f2_label.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="f1_label.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="f1_label.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 572</value>
-  </metadata>
+  </data>
   <data name="f1_label.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -443,9 +443,9 @@
   <data name="&gt;&gt;f1_label.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <metadata name="heatCurLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="heatCurLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 609</value>
-  </metadata>
+  </data>
   <data name="heatCurLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -470,9 +470,9 @@
   <data name="&gt;&gt;heatCurLabel.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <metadata name="emCurLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="emCurLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 683</value>
-  </metadata>
+  </data>
   <data name="emCurLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -497,9 +497,9 @@
   <data name="&gt;&gt;emCurLabel.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <metadata name="cp_label.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="cp_label.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 720</value>
-  </metadata>
+  </data>
   <data name="cp_label.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -524,9 +524,9 @@
   <data name="&gt;&gt;cp_label.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <metadata name="iVolt_label.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="iVolt_label.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 757</value>
-  </metadata>
+  </data>
   <data name="iVolt_label.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -551,9 +551,9 @@
   <data name="&gt;&gt;iVolt_label.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <metadata name="itime_label.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="itime_label.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 646</value>
-  </metadata>
+  </data>
   <data name="itime_label.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -578,9 +578,9 @@
   <data name="&gt;&gt;itime_label.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <metadata name="etime_label.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="etime_label.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 424</value>
-  </metadata>
+  </data>
   <data name="etime_label.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -605,9 +605,9 @@
   <data name="&gt;&gt;etime_label.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <metadata name="lastStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="lastStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 387</value>
-  </metadata>
+  </data>
   <data name="lastStepLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -632,9 +632,9 @@
   <data name="&gt;&gt;lastStepLabel.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
-  <metadata name="firstStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="firstStepLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 239</value>
-  </metadata>
+  </data>
   <data name="firstStepLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -659,9 +659,9 @@
   <data name="&gt;&gt;firstStepLabel.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <metadata name="startScanTextLabel.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 165</value>
-  </metadata>
+  <data name="startScanTextLabel.TrayLocation" type="System.Drawing.Point, System.Drawing">
+    <value>17, 128</value>
+  </data>
   <data name="startScanTextLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -689,9 +689,9 @@
   <data name="&gt;&gt;startScanTextLabel.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <metadata name="label18.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="label18.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>6, 53</value>
-  </metadata>
+  </data>
   <data name="label18.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -743,14 +743,11 @@
   <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <metadata name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </data>
+  <data name="$this.TrayLargeIcon" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
-  <data name="$this.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
   </data>
   <data name="$this.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>

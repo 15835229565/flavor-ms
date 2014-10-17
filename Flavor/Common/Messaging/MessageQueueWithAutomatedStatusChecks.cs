@@ -1,38 +1,83 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Flavor.Common.Messaging {
-    class MessageQueueWithAutomatedStatusChecks<T>: MessageQueue<T>
-        where T: struct, IConvertible, IComparable {
-        readonly System.Timers.Timer statusCheckTimer = new System.Timers.Timer();
+    class MessageQueueWithAutomatedStatusChecks: MessageQueue {
+        private System.Timers.Timer DeviceStatusCheckTimer;
+        private System.Timers.Timer TurboPumpCheckTimer;
 
-        readonly object locker = new object();
+        private System.Timers.ElapsedEventHandler statusElapsed;
+        private System.Timers.ElapsedEventHandler turboElapsed;
 
-        public void Start() {
-            statusCheckTimer.Interval = interval();
-            statusCheckTimer.Start();
-        }
-        public void Stop() {
-            statusCheckTimer.Stop();
-            requestSequence.Reset();
+        private object locker = new object();
+
+        private bool isRareMode = false;
+        internal bool IsRareMode {
+            get { return isRareMode; }
+            set {
+                lock (locker) {
+                    if (value != isRareMode) {
+                        isRareMode = value;
+                        stopTimers();
+                        toggleRareMode();
+                    }
+                }
+            }
         }
 
-        readonly IStatusRequestGenerator<T> requestSequence;
-        readonly Func<double> interval;
-        public MessageQueueWithAutomatedStatusChecks(ISyncProtocol<T> protocol, byte attempts, IStatusRequestGenerator<T> requestSequence, Func<double> interval)
-            : this(protocol, attempts, requestSequence, interval, EqualityComparer<Sync<T>>.Default) { }
-        public MessageQueueWithAutomatedStatusChecks(ISyncProtocol<T> protocol, byte attempts, IStatusRequestGenerator<T> requestSequence, Func<double> interval, IEqualityComparer<Sync<T>> comparer)
-            : base(protocol, comparer, attempts) {
-            this.requestSequence = requestSequence;
-            this.interval = interval;
-            statusCheckTimer.Elapsed += StatusCheckTime_Elapsed;
+        private void stopTimers() {
+            if (operating) {
+                DeviceStatusCheckTimer.Enabled = false;
+                TurboPumpCheckTimer.Enabled = false;
+            }
         }
-        void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
-            var request = requestSequence.Next;
-            // to prevent queue overflow
-            if (Contains(request))
-                return;
-            Enqueue(request);
+        private void toggleRareMode() {
+            // TODO: move this hard-coded defaults to Config
+            double deviceCheckInterval = isRareMode ? 10000 : 500;
+            double turboCheckInterval = isRareMode ? 20000 : 2000;
+
+            DeviceStatusCheckTimer = new System.Timers.Timer(deviceCheckInterval);
+            TurboPumpCheckTimer = new System.Timers.Timer(turboCheckInterval);
+
+            toggleOperation();
+
+            DeviceStatusCheckTimer.Elapsed += statusElapsed;
+            TurboPumpCheckTimer.Elapsed += turboElapsed;
+        }
+
+        private bool operating = false;
+        internal bool IsOperating {
+            get { return operating; }
+            set {
+                lock (locker) {
+                    if (value != operating) {
+                        operating = value;
+                        toggleOperation();
+                    }
+                }
+            }
+        }
+        private void toggleOperation() {
+            DeviceStatusCheckTimer.Enabled = operating;
+            TurboPumpCheckTimer.Enabled = operating;
+        }
+
+        internal MessageQueueWithAutomatedStatusChecks()
+            : base() {
+            statusElapsed = new System.Timers.ElapsedEventHandler(StatusCheckTime_Elapsed);
+            turboElapsed = new System.Timers.ElapsedEventHandler(TurboPumpCheckTime_Elapsed);
+
+            lock (locker) {
+                toggleRareMode();
+            }
+        }
+
+        private void StatusCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            addStatusRequest();
+        }
+        private void TurboPumpCheckTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+            addTurboPumpStatusRequest();
         }
     }
 }

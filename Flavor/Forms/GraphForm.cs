@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Flavor.Controls;
 
 namespace Flavor.Forms {
-    partial class GraphForm: Form {
+    internal partial class GraphForm: Form {
         protected const int HORIZ_GRAPH_INDENT = 12;
         protected const int VERT_GRAPH_INDENT = 12;
         protected readonly Color[] rowsColors = 
@@ -15,31 +16,38 @@ namespace Flavor.Forms {
             Color.Lime, Color.SaddleBrown, Color.Maroon, Color.DeepSkyBlue, Color.DimGray,};
         protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
-        // TODO: use generic, where T: GraphPanel
-        GraphPanel panel;
+        private GraphPanel panel = null;
         protected GraphPanel Panel {
             get {
+                if (panel == null)
+                    initPanel();
 				return panel;
-            }
-            set {
-                if (panel == value)
-                    return;
-                if (panel != null) {
-                    panel.EnabledChanged -= toggleMeasurePanel;
-                    Controls.Remove(panel);
-                }
-                
-                panel = value;
-                Controls.Add(panel);
-                panel.Width = 280;
-                panel.Dock = System.Windows.Forms.DockStyle.Right;
-                panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
-                panel.EnabledChanged += toggleMeasurePanel;
             }
         }
 
-        internal protected GraphForm()
-            : base() {
+        protected void initPanel() {
+            if (panel != null) {
+                panel.EnabledChanged -= toggleMeasurePanel;
+                this.Controls.Remove(panel);
+            }
+            panel = newPanel();
+            // 
+            // panel
+            // 
+            panel.BackColor = System.Drawing.SystemColors.Control;
+            panel.Dock = System.Windows.Forms.DockStyle.Right;
+            panel.Location = new System.Drawing.Point(493, 24);
+            panel.Size = new System.Drawing.Size(280, 667);
+            panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
+            panel.EnabledChanged += toggleMeasurePanel;
+
+            this.Controls.Add(panel);
+        }
+        protected virtual GraphPanel newPanel() {
+            return null;
+        }
+        
+        internal protected GraphForm() {
             InitializeComponent();
         }
         protected sealed override void OnShown(EventArgs e) {
@@ -60,18 +68,18 @@ namespace Flavor.Forms {
             WindowState = FormWindowState.Maximized;
             base.OnActivated(e);
         }
-        void saveToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e) {
             saveData();
         }
-        void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
+        private void closeSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
 			Close();
         }
-        void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
+        private void measurePanelToolStripMenuItem_CheckedChanged(object sender, EventArgs e) {
             Panel.Visible = Panel.Enabled && measurePanelToolStripMenuItem.Checked;
             SetSize();
         }
 
-        void toggleMeasurePanel(object sender, EventArgs e) {
+        private void toggleMeasurePanel(object sender, EventArgs e) {
             measurePanelToolStripMenuItem.Visible = Panel.Enabled;
             measurePanelToolStripMenuItem_CheckedChanged(sender, e);
         }

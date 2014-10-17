@@ -1,59 +1,57 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Flavor.Common.Data.Measure;
+using Graph = Flavor.Common.Graph;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 // be careful with Config data. use constants only!
-using Config = Flavor.Common.Settings.Config;
+using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
-    partial class MeasuredCollectorsForm: CollectorsForm2, IMeasured {
-        public event EventHandler MeasureCancelRequested;
-        protected virtual void OnMeasureCancelRequested() {
-            MeasureCancelRequested.Raise(this, EventArgs.Empty);
-        }
-        public MeasuredCollectorsForm()
-            : base(Graph.MeasureGraph.Instance, false) {
-            // Init panel before ApplyResources
-            // strangely is inited on measure init
+    internal partial class MeasuredCollectorsForm: CollectorsForm, IMeasured {
+        internal MeasuredCollectorsForm()
+            : base(Graph.Instance, false) {
             InitializeComponent();
         }
+        protected sealed override GraphPanel getPanel() {
+            if (PreciseSpectrumDisplayed)
+                return new PreciseMeasureGraphPanel();
+            return new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
+		}
 
         #region IMeasured Members
 
-        public void initMeasure(int progressMaximum, bool isPrecise) {
+        public void initMeasure(bool isPrecise) {
             // TODO: different types of panel
+            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             PreciseSpectrumDisplayed = isPrecise;
-
-            var g = Graph.MeasureGraph.Instance;
-            MeasureGraphPanel panel;
-            if (isPrecise) {
-                panel = new PreciseMeasureGraphPanel();
+            initPanel();
+            Show();
+            Activate();
+        }
+        public void prepareControlsOnMeasureStart() {
+            // not so good..
+            if (PreciseSpectrumDisplayed)
                 // search temporary here
-                setXScaleLimits(g.PreciseData.GetUsed());
-            } else {
-                panel = new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
+                // TODO: use extension method getUsed()
+                setXScaleLimits(Config.PreciseData.FindAll(PreciseEditorData.PeakIsUsed));
+            else
                 setXScaleLimits();
-            }
-            panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
-            panel.Graph = g;
-            panel.ProgressMaximum = progressMaximum;
 
-            Panel = panel;
             Panel.Enable();
             // TODO: and set it visible together with menu item set checked!
 
             specterSavingEnabled = false;
-
-            g.NewGraphData += InvokeRefreshGraph;
-            g.ResetPointListsWithEvent();
-            
-            Show();
-            Activate();
+            Graph.ResetPointListsWithEvent();
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
             specterSavingEnabled = true;
-            Graph.MeasureGraph.Instance.NewGraphData -= InvokeRefreshGraph;
+            Graph.Instance.OnNewGraphData -= InvokeRefreshGraph;
         }
 
         #endregion
@@ -63,23 +61,23 @@ namespace Flavor.Forms {
 			return base.saveData();        
 		}
 
-        void MeasuredCollectorsForm_MeasureCancelRequested(object sender, EventArgs e) {
-            // do something local
-            ((MeasureGraphPanel)Panel).MeasureCancelRequested -= MeasuredCollectorsForm_MeasureCancelRequested;
-            OnMeasureCancelRequested();
+        private void InvokeRefreshGraph(Graph.Recreate recreate) {
+            if (this.InvokeRequired) {
+                // TODO: NullPointerException here..
+                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
+                return;
+            }
+            refreshGraph(recreate);
         }
-
-        void InvokeRefreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
-            Invoke(new Action(() => refreshGraph(pnt, counts, recreate)));
+        private void refreshGraph(Graph.Recreate recreate) {
+            // not trivial value..
+            if (recreate == Graph.Recreate.Both)
+                return;
+            refreshGraphicsOnMeasureStep();
         }
-        void refreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
-            // TODO: use recreate to refresh only affected collectors
-            base.RefreshGraph();
-            refreshGraphicsOnMeasureStep(pnt, counts);
-        }
-        void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
-            if (counts != null)
-                ((MeasureGraphPanel)Panel).performStep(pnt, counts);
+        private void refreshGraphicsOnMeasureStep() {
+            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
+            panel.performStep();
             if (!PreciseSpectrumDisplayed)
                 yAxisChange();
         }

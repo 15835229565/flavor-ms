@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using Flavor.Forms;
-using Flavor.Common;
-using Flavor.Common.Settings;
 
 namespace Flavor {
-    static class Program {
+    internal static class Program {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -19,25 +17,8 @@ namespace Flavor {
             //suppress russian language user interface
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru-RU");
 
-            // TODO: load config to use proper Commander and set proper form parameters
-            Config.getInitialDirectory();
-            EventHandler onLoad = null;
-            try {
-                Config.loadGlobalConfig();
-            } catch (Config.ConfigLoadException cle) {
-                onLoad = (s, e) => cle.visualise();
-            }
-
-            var commander = new AlmazovCommander();
-            //var commander = new SevMorGeoCommader();
-            ConsoleWriter.Subscribe(commander);
-
-            var MSControl = new MainForm2(commander);
-            MSControl.Load += onLoad;
+            mainForm MSControl = new mainForm();
             MSControl.WindowState = FormWindowState.Maximized;
-
-            commander.Bind(MSControl);
-
             Application.Run(MSControl);
         }
     }

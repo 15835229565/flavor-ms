@@ -8,8 +8,8 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
             System.Windows.Forms.Label backgroundMeasureCycleCountLabel;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
             System.Windows.Forms.Label label2;
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
@@ -28,6 +28,14 @@ namespace Flavor.Forms {
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).BeginInit();
             this.params_groupBox.SuspendLayout();
             this.monitorOptionsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).BeginInit();
@@ -36,10 +44,14 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
             this.SuspendLayout();
-            // 
-            // rareModeCheckBox
-            // 
-            resources.ApplyResources(this.rareModeCheckBox, "rareModeCheckBox");
+            this.params_groupBox.Controls.SetChildIndex(this.expTimeNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.idleTimeNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.iVoltageNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.CPNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.eCurrentNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.hCurrentNumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.fV1NumericUpDown, 0);
+            this.params_groupBox.Controls.SetChildIndex(this.fV2NumericUpDown, 0);
             // 
             // backgroundMeasureCycleCountLabel
             // 
@@ -144,11 +156,20 @@ namespace Flavor.Forms {
             resources.ApplyResources(this, "$this");
             this.Controls.Add(this.monitorOptionsGroupBox);
             this.Name = "MonitorOptionsForm";
-            this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
             this.Controls.SetChildIndex(this.monitorOptionsGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
             this.Controls.SetChildIndex(this.cancel_butt, 0);
+            this.Controls.SetChildIndex(this.applyButton, 0);
+            this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.fV1NumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hCurrentNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.eCurrentNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.iVoltageNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.idleTimeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.expTimeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fV2NumericUpDown)).EndInit();
             this.params_groupBox.ResumeLayout(false);
             this.params_groupBox.PerformLayout();
             this.monitorOptionsGroupBox.ResumeLayout(false);

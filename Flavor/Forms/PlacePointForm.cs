@@ -1,28 +1,28 @@
 ﻿using System;
-using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 
 namespace Flavor.Forms {
-    partial class PlacePointForm: AddPointForm {
-        int pNum = -1;
-        public int PointNumber {
+    internal partial class PlacePointForm: AddPointForm {
+        private int pNum = -1;
+        internal int PointNumber {
             get { return pNum; }
         }
-        PlacePointForm()
+        internal PlacePointForm()
             : base() {
             InitializeComponent();
             for (int i = 1; i <= 20; ++i)
-                pNumComboBox.Items.Add(i.ToString());
+                this.pNumComboBox.Items.Add(i.ToString());
         }
-        public PlacePointForm(PreciseEditorData ped)
+        internal PlacePointForm(PreciseEditorData ped)
             : this() {
             oneRow.setValues(ped);
         }
 
-        void pNumComboBox_SelectedIndexChanged(object sender, EventArgs e) {
+        private void pNumComboBox_SelectedIndexChanged(object sender, EventArgs e) {
             pNum = pNumComboBox.SelectedIndex;
-            okButton.Enabled = true;
+            this.okButton.Enabled = true;
         }
-        new void okButton_Click(object sender, EventArgs e) {
+        private new void okButton_Click(object sender, EventArgs e) {
             pNum = pNumComboBox.SelectedIndex;
             base.okButton_Click(sender, e);
         }

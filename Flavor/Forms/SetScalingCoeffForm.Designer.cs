@@ -43,6 +43,7 @@
             resources.ApplyResources(cancelButton, "cancelButton");
             cancelButton.Name = "cancelButton";
             cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // stepTextBox
             // 

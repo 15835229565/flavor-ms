@@ -1,9 +1,15 @@
+using System;
 using System.Windows.Forms;
-using Graph = Flavor.Common.Data.Measure.Graph;
+using Flavor.Common;
+using Flavor.Forms;
 
 namespace Flavor.Controls {
     public partial class GraphPanel: Panel {
-        internal Graph Graph { get; set; }
+        private Graph graph = null;
+        internal Graph Graph {
+            get { return graph; }
+            set { graph = value; }
+        }
 
         public new bool Enabled {
             get { return base.Enabled; }
@@ -13,46 +19,41 @@ namespace Flavor.Controls {
         public GraphPanel() {
             InitializeComponent();
         }
-        public void Enable() {
-            if (Graph == null)
+        internal void Enable() {
+            if (graph == null)
                 return;
-            var commonOpts = Graph.CommonOptions;
+            CommonOptions commonOpts = graph.CommonOptions;
             if (commonOpts == null)
                 return;
 
             SuspendLayout();
 
             etime_label.Text = commonOpts.eTimeReal.ToString();
-            //itime_label.Text = commonOpts.iTimeReal.ToString();
+            itime_label.Text = commonOpts.iTimeReal.ToString();
             iVolt_label.Text = commonOpts.iVoltageReal.ToString("f3");
-            //cp_label.Text = commonOpts.CPReal.ToString("f3");
-            cp_label.Text = commonOpts.C.ToString("f5");
+            cp_label.Text = commonOpts.CPReal.ToString("f3");
             emCurLabel.Text = commonOpts.eCurrentReal.ToString("f3");
-            //heatCurLabel.Text = commonOpts.hCurrentReal.ToString("f3");
+            heatCurLabel.Text = commonOpts.hCurrentReal.ToString("f3");
             f1_label.Text = commonOpts.fV1Real.ToString("f3");
             f2_label.Text = commonOpts.fV2Real.ToString("f3");
 
             prepareControls();
-            Enabled = true;
+            this.Enabled = true;
 
             ResumeLayout(false);
             PerformLayout();
         }
         protected virtual void prepareControls() {
-            //TODO: move up
             firstStepLabel.Visible = false;
             startScanTextLabel.Visible = false;
             lastStepLabel.Visible = false;
             label18.Visible = false;
-            if (Graph.isPreciseSpectrum)
+            if (graph.isPreciseSpectrum)
                 return;
             // TODO: can be null on empty spectrum..
-            var data = Graph.Collectors[0][0].Step;
-            //var data = Graph.Displayed1Steps[0];
-            setScanBounds(((ushort)data[0].X), (ushort)data[data.Count - 1].X);
+            setScanBounds((ushort)((graph.Displayed1Steps[0])[0].X), (ushort)((graph.Displayed1Steps[0])[graph.Displayed1Steps[0].Count - 1].X));
         }
         protected void setScanBounds(ushort start, ushort end) {
-            //TODO: move up
             startScanTextLabel.Visible = true;
             label18.Visible = true;
 
@@ -62,8 +63,8 @@ namespace Flavor.Controls {
             lastStepLabel.Visible = true;
         }
             
-        public void Disable() {
-            Enabled = false;
+        internal void Disable() {
+            this.Enabled = false;
             disableControls();
         }
         protected virtual void disableControls() {}

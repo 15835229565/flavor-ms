@@ -5,7 +5,7 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{535B18E6-1D63-4BA6-A3DD-BC986502133B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Flavor</RootNamespace>
     <AssemblyName>Flavor</AssemblyName>
@@ -22,6 +22,7 @@
     <GenerateManifests>false</GenerateManifests>
     <TargetZone>LocalIntranet</TargetZone>
     <SignManifests>false</SignManifests>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <PublishUrl>D:\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -35,7 +36,6 @@
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.1.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -82,69 +82,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\AlmazovCommander.cs" />
-    <Compile Include="Common\Data\Controlled\AlmazovDevice.cs" />
+    <Compile Include="Common\Commands\Async\Async.cs" />
+    <Compile Include="Common\Commands\Async\Async.Error.cs" />
+    <Compile Include="Common\Commands\Interfaces\Interfaces.cs" />
+    <Compile Include="Common\Commands\Sync\Sync.Error.cs" />
+    <Compile Include="Common\Commands\Sync\Sync.cs" />
+    <Compile Include="Common\Commands\UI\UI.cs" />
     <Compile Include="Common\Commander.cs" />
-    <Compile Include="Common\Data\Controlled\IDevice.cs" />
-    <Compile Include="Common\Data\Measure\Collector.cs" />
-    <Compile Include="Common\Data\Measure\PointPairListPlus.cs" />
-    <Compile Include="Common\Data\Measure\PreciseEditorData.cs" />
-    <Compile Include="Common\Data\Measure\PreciseSpectrum.cs" />
-    <Compile Include="Common\Data\Measure\ScalableDataList.cs" />
-    <Compile Include="Common\Data\Measure\Service.cs" />
-    <Compile Include="Common\Data\Measure\Spectrum.cs" />
-    <Compile Include="Common\Data\PanelPresentationAttribute.cs" />
-    <Compile Include="Common\Messaging\Almazov\AlmazovRealizer.cs" />
-    <Compile Include="Common\Messaging\Almazov\Commands\Async.cs" />
-    <Compile Include="Common\Messaging\Almazov\Commands\Async.Error.cs" />
-    <Compile Include="Common\Messaging\Almazov\CommandCode.cs" />
-    <Compile Include="Common\Messaging\Almazov\Commands\Interfaces.cs" />
-    <Compile Include="Common\Messaging\Almazov\Commands\Sync.cs" />
-    <Compile Include="Common\Messaging\Almazov\Commands\Sync.Error.cs" />
-    <Compile Include="Common\Messaging\Almazov\Commands\User.cs" />
-    <Compile Include="Common\Messaging\ByteDispatcher.cs" />
-    <Compile Include="Common\Messaging\CheckableProtocol.cs" />
-    <Compile Include="Common\Messaging\CommandDictionary.cs" />
-    <Compile Include="Common\Messaging\CommandRecord.cs" />
-    <Compile Include="Common\Messaging\IRealizer.cs" />
-    <Compile Include="Common\Messaging\IStatusRequestGenerator.cs" />
-    <Compile Include="Common\Messaging\PackageDictionary.cs" />
-    <Compile Include="Common\Messaging\PackageRecord.cs" />
-    <Compile Include="Common\Messaging\Protocol.cs" />
-    <Compile Include="Common\Messaging\Realizer.cs" />
-    <Compile Include="Common\Messaging\RealizerWithAutomatedStatusChecks.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\Async.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\Async.Error.cs" />
-    <Compile Include="Common\Messaging\Interfaces.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\CommandCode.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\SevMorGeoRealizer.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\Sync.Error.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\Sync.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\UI.cs" />
-    <Compile Include="Common\Settings\AlmazovCommonData.cs" />
-    <Compile Include="Common\Settings\CommonData.cs" />
-    <Compile Include="Common\Settings\CommonOptions.cs" />
-    <Compile Include="Common\Settings\Config.cs" />
+    <Compile Include="Common\Config.cs" />
     <Compile Include="Common\ConsoleWriter.cs" />
-    <Compile Include="Common\SevMorGeoCommander.cs" />
-    <Compile Include="Common\ICommander.cs" />
-    <Compile Include="Common\Messaging\Almazov\AlexProtocol.cs" />
-    <Compile Include="Common\Messaging\ByteArrayEventArgs.cs" />
-    <Compile Include="Common\Messaging\CommandReceivedEventArgs.cs" />
-    <Compile Include="Common\Messaging\ErrorCommandEventArgs.cs" />
-    <Compile Include="Common\Messaging\IByteDispatcher.cs" />
-    <Compile Include="Common\Messaging\IProtocol.cs" />
-    <Compile Include="Common\Messaging\ServicePackets.cs" />
-    <Compile Include="Common\Messaging\SevMorGeo\ModBus.cs" />
-    <Compile Include="Common\Data\Controlled\Device.cs" />
-    <Compile Include="Common\Data\Measure\Graph.cs" />
+    <Compile Include="Common\Device.cs" />
+    <Compile Include="Common\Graph.cs" />
     <Compile Include="Common\Library\Matrix.cs" />
-    <Compile Include="Common\Data\Measure\MeasureMode.cs" />
+    <Compile Include="Common\MeasureMode.cs" />
     <Compile Include="Common\Messaging\MessageQueueWithAutomatedStatusChecks.cs" />
     <Compile Include="Common\Messaging\MessageQueue.cs" />
-    <Compile Include="Common\Messaging\SyncAsyncCheckableProtocol.cs" />
-    <Compile Include="Common\Messaging\SyncCheckableProtocol.cs" />
-    <Compile Include="Common\PortLevel.cs" />
+    <Compile Include="Common\ModBus.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Controls\PreciseMeasureGraphPanel.cs">
       <SubType>Component</SubType>
@@ -229,35 +182,17 @@
     <Compile Include="Forms\AddPointForm.Designer.cs">
       <DependentUpon>AddPointForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Almazov\InletControlForm.cs">
+    <Compile Include="Forms\CollectorsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Almazov\InletControlForm.Designer.cs">
-      <DependentUpon>InletControlForm.cs</DependentUpon>
+    <Compile Include="Forms\CollectorsForm.Designer.cs">
+      <DependentUpon>CollectorsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ConnectOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ConnectOptionsForm.Designer.cs">
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\CollectorsForm2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\CollectorsForm2.Designer.cs">
-      <DependentUpon>CollectorsForm2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SelectNormalizationPeakForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\SelectNormalizationPeakForm.Designer.cs">
-      <DependentUpon>SelectNormalizationPeakForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MainForm2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MainForm2.Designer.cs">
-      <DependentUpon>MainForm2.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ILoaded.cs" />
     <Compile Include="Forms\IMeasured.cs" />
@@ -272,6 +207,12 @@
     </Compile>
     <Compile Include="Forms\MeasuredCollectorsForm.Designer.cs">
       <DependentUpon>MeasuredCollectorsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MonitorBackgroundForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MonitorBackgroundForm.Designer.cs">
+      <DependentUpon>MonitorBackgroundForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\MonitorForm.cs">
       <SubType>Form</SubType>
@@ -305,6 +246,12 @@
     <Compile Include="Forms\SetScalingCoeffForm.Designer.cs">
       <DependentUpon>SetScalingCoeffForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\OptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\OptionsForm.Designer.cs">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\DelaysOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -317,19 +264,18 @@
     <Compile Include="Forms\GraphForm.Designer.cs">
       <DependentUpon>GraphForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\mainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\mainForm.Designer.cs">
+      <DependentUpon>mainForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\PlacePointForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ScanOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\OptionsForm2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\OptionsForm2.Designer.cs">
-      <DependentUpon>OptionsForm2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IMSControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Controls\GraphPanel.resx">
@@ -350,10 +296,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PreciseEditorLabelRowPlus.ru.resx">
       <DependentUpon>PreciseEditorLabelRowPlus.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PreciseMeasureGraphPanel.resx">
-      <DependentUpon>PreciseMeasureGraphPanel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Resources.resx">
@@ -404,24 +346,16 @@
       <DependentUpon>AddPointForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Almazov\InletControlForm.resx">
-      <DependentUpon>InletControlForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\CollectorsForm.resx">
       <SubType>Designer</SubType>
+      <DependentUpon>CollectorsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConnectOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ConnectOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CollectorsForm2.resx">
-      <DependentUpon>CollectorsForm2.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SelectNormalizationPeakForm.resx">
-      <DependentUpon>SelectNormalizationPeakForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainForm2.resx">
-      <DependentUpon>MainForm2.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\MonitorBackgroundForm.resx">
+      <DependentUpon>MonitorBackgroundForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MonitorForm.resx">
@@ -456,6 +390,10 @@
       <DependentUpon>SetScalingCoeffForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\OptionsForm.resx">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DelaysOptionsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DelaysOptionsForm.cs</DependentUpon>
@@ -464,9 +402,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>GraphForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\OptionsForm2.resx">
-      <DependentUpon>OptionsForm2.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\mainForm.resx">
       <SubType>Designer</SubType>
+      <DependentUpon>mainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -490,7 +428,6 @@
     <Compile Include="Forms\PreciseOptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Service.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.xml">
@@ -504,11 +441,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>Профиль клиента .NET Framework</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
       <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
@@ -524,14 +456,9 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
-      <ProductName>Установщик Windows 3.1</ProductName>
+      <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>

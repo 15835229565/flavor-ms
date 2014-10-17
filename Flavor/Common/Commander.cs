@@ -1,439 +1,417 @@
-﻿using System;
-using Flavor.Common.Messaging;
-using Flavor.Common.Data.Measure;
-using Flavor.Common.Settings;
+using System;
 using System.Collections.Generic;
+using System.Timers;
+using Flavor.Common.Commands;
+using Flavor.Common.Messaging;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
-    abstract class Commander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IMeasureActions {
-        // TODO: use binding flags to bind proper controls (common and measure)
-        public virtual void Bind(IMSControl view) {
-            view.Connect += Connect;
-        }
-        readonly EventHandler undoProgramState;
-        // BAD!
-        public readonly IDevice device;
-        protected Commander(PortLevel port, IDevice device) {
-            this.port = port;
-            port.ErrorPort += (s, e) => {
-                // TODO: more accurate
-                OnErrorOccured(e.Message);
-            };
-            this.device = device;
-
-            undoProgramState = (s, e) => setProgramStateWithoutUndo(pStatePrev);
-            notRareModeRequested = false;
-            var r = GetRealizer(port, notRare);
-            ConsoleWriter.Subscribe(r);
-
-            // eliminate local events!
-            ProgramStateChanged += s => {
-                if (s == ProgramStates.Measure || s == ProgramStates.BackgroundMeasureReady || s == ProgramStates.WaitBackgroundMeasure) {
-                    r.Reset();
-                }
-            };
-            MeasureCancelled += s => r.Reset();
-
-            r.SystemReady += (s, e) => {
-                if (hBlock) {
-                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);
-                } else {
-                    setProgramStateWithoutUndo(ProgramStates.Ready);
-                }
-            };
-            r.UpdateDevice += (s, e) => {
-                // TODO: proper device
-                if (device != null)
-                    e.Value.UpdateDevice(device);
-            };
-            r.OperationBlock += (s, e) => {
-                hBlock = e.Value;
-                if (hBlock) {
-                    setProgramStateWithoutUndo(ProgramStates.WaitHighVoltage);//???
-                } else {
-                    if (pState == ProgramStates.WaitHighVoltage) {
-                        setProgramStateWithoutUndo(ProgramStates.Ready);
-                    }
-                }
-            };
-            r.MeasurePreconfigured += (s, e) => {
-                if (pState == ProgramStates.Measure ||
-                    pState == ProgramStates.WaitBackgroundMeasure) {
-                    if (!CurrentMeasureMode.Start()) {
-                        OnErrorOccured("Нет точек для измерения.");
-                    }
-                }
-            };
-            r.MeasureSend += (s, e) => {
-                if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                    CurrentMeasureMode.NextMeasure(e.Value);
-                }
-            };
-            r.MeasureDone += (s, e) => {
-                if (CurrentMeasureMode == null) {
-                    // fake reply caught here (in order to put device into proper state)
-                    hBlock = false;
-                    setProgramStateWithoutUndo(ProgramStates.Ready);
-                }
-            };
-            this.realizer = r;
-
-            hBlock = true;
-        }
-        protected abstract IRealizer GetRealizer(PortLevel port, Func<bool> notRare);
-        bool notRare() {
-            if (pState == ProgramStates.Measure || pState == ProgramStates.BackgroundMeasureReady || pState == ProgramStates.WaitBackgroundMeasure)
-                return notRareModeRequested;
-            return true;
-        }
-        #region ILog Members
-        public event MessageHandler Log;
-        protected virtual void OnLog(string msg) {
-            var temp = Log;
-            if (temp != null)
-                temp(msg);
-        }
-        #endregion
-
-        #region IErrorOccured Members
-        public event MessageHandler ErrorOccured;
-        protected virtual void OnErrorOccured(string msg) {
-            var temp = ErrorOccured;
-            if (temp != null)
-                temp(msg);
-            OnLog(msg);
-        }
-        #endregion
-
-        #region IAsyncReplyReceived Members
-        public event MessageHandler AsyncReplyReceived;
-        protected virtual void OnAsyncReplyReceived(string msg) {
-            var temp = AsyncReplyReceived;
-            if (temp != null)
-                temp(msg);
-            OnLog(msg);
-        }
-        #endregion
-
-        ProgramStates pStatePrev = ProgramStates.Start;
-        protected void setProgramStateWithoutUndo(ProgramStates state) {
-            pState = state;
-            pStatePrev = pState;
-        }
-        protected void setProgramState(ProgramStates state) {
-            pStatePrev = pState;
-            pState = state;
+    internal static class Commander {
+        internal enum programStates: byte {
+            Start,
+            Shutdown,
+            Init,
+            WaitHighVoltage,
+            Ready,
+            WaitBackgroundMeasure,
+            BackgroundMeasureReady,
+            Measure,
+            WaitInit,
+            WaitShutdown
         }
 
-        ProgramStates programState = ProgramStates.Start;
-        public ProgramStates pState {
+        internal delegate void ProgramEventHandler();
+        internal delegate void AsyncReplyHandler(string msg);
+        internal delegate void ErrorHandler(string msg);
+
+        internal static event ProgramEventHandler OnProgramStateChanged;
+        internal static event ProgramEventHandler OnScanCancelled;
+        internal static event ErrorHandler OnError;
+        private static Commander.programStates programState = programStates.Start;
+        private static Commander.programStates programStatePrev;
+        private static bool handleBlock = true;
+        private static bool cancelMeasure = false;
+        private static bool notRareMode = false;
+        private static bool isConnected = false;
+        private static bool onTheFly = true;
+
+        private static MeasureMode measureMode = null;
+        internal static MeasureMode CurrentMeasureMode {
+            get { return measureMode; }
+        }
+
+        internal static event AsyncReplyHandler OnAsyncReply;
+
+        internal static Commander.programStates pState {
             get {
                 return programState;
             }
             private set {
                 if (programState != value) {
                     programState = value;
-                    if (value == ProgramStates.Start)
+                    if (value == programStates.Start)
                         Disable();
-                    OnProgramStateChanged(value);
+                    OnProgramStateChanged();
                 };
             }
         }
-        public event BoolEventHandler RareModeChanged;
-        protected virtual void OnRareModeChanged(bool t) {
-            var temp = RareModeChanged;
-            if (temp != null)
-                temp(t);
+
+        internal static Commander.programStates pStatePrev {
+            get { return programStatePrev; }
+            private set { programStatePrev = value; }
         }
-        bool rare;
-        public bool notRareModeRequested {
+        // TODO: remove two remaining references to this method and make it private
+        internal static void setProgramStateWithoutUndo(Commander.programStates state) {
+            pState = state;
+            pStatePrev = pState;
+        }
+        private static void setProgramState(Commander.programStates state) {
+            pStatePrev = pState;
+            pState = state;
+        }
+
+        internal static bool hBlock {
             get {
-                return rare;
+                return handleBlock;
             }
             set {
-                if (rare == value)
+                if (handleBlock != value) {
+                    handleBlock = value;
+                    OnProgramStateChanged();
+                };
+            }
+        }
+
+        internal static bool measureCancelRequested {
+            get { return cancelMeasure; }
+            set { cancelMeasure = value; }
+        }
+
+        internal static bool notRareModeRequested {
+            get { return notRareMode; }
+            set { notRareMode = value; }
+        }
+
+        internal static bool DeviceIsConnected {
+            get {
+                return isConnected;
+            }
+            private set {
+                if (isConnected != value) {
+                    isConnected = value;
+                    OnProgramStateChanged();
+                }
+            }
+        }
+
+        private static MessageQueueWithAutomatedStatusChecks toSend;
+
+        internal static void AddToSend(UserRequest command) {
+            toSend.AddToSend(command);
+        }
+
+        internal static void Realize(ServicePacket Command) {
+            if (Command is AsyncErrorReply) {
+                CheckInterfaces(Command);
+                ConsoleWriter.WriteLine("Device says: {0}", ((AsyncErrorReply)Command).errorMessage);
+                Commander.OnAsyncReply(((AsyncErrorReply)Command).errorMessage);
+                if (Commander.pState != Commander.programStates.Start) {
+                    toSend.IsRareMode = false;
+                    setProgramStateWithoutUndo(Commander.programStates.Start);
+                    //Commander.hBlock = true;//!!!
+                    Commander.measureCancelRequested = false;
+                }
+                return;
+            }
+            if (Command is AsyncReply) {
+                CheckInterfaces(Command);
+                if (Command is AsyncReply.confirmShutdowned) {
+                    ConsoleWriter.WriteLine("System is shutdowned");
+                    setProgramStateWithoutUndo(Commander.programStates.Start);
+                    Commander.hBlock = true;
+                    ConsoleWriter.WriteLine(Commander.pState);
+                    Device.Init();
                     return;
-                rare = value;
-                OnRareModeChanged(value);
+                }
+                if (Command is AsyncReply.SystemReseted) {
+                    ConsoleWriter.WriteLine("System reseted");
+                    Commander.OnAsyncReply("Система переинициализировалась");
+                    if (Commander.pState != Commander.programStates.Start) {
+                        toSend.IsRareMode = false;
+                        setProgramStateWithoutUndo(Commander.programStates.Start);
+                        //Commander.hBlock = true;//!!!
+                        Commander.measureCancelRequested = false;
+                    }
+                    return;
+                }
+                if (Command is AsyncReply.confirmVacuumReady) {
+                    if (Commander.hBlock) {
+                        setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);
+                    } else {
+                        setProgramStateWithoutUndo(Commander.programStates.Ready);
+                    }
+                    return;
+                }
+                if (Command is AsyncReply.confirmHighVoltageOff) {
+                    Commander.hBlock = true;
+                    setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);//???
+                    return;
+                }
+                if (Command is AsyncReply.confirmHighVoltageOn) {
+                    Commander.hBlock = false;
+                    if (Commander.pState == Commander.programStates.WaitHighVoltage) {
+                        setProgramStateWithoutUndo(Commander.programStates.Ready);
+                    }
+                    toSend.AddToSend(new UserRequest.sendSVoltage(0));//Set ScanVoltage to low limit
+                    toSend.AddToSend(new UserRequest.sendIVoltage());// и остальные напряжения затем
+                    return;
+                }
+                return;
+            }
+            if (Command is SyncErrorReply) {
+                toSend.Dequeue();
+                CheckInterfaces(Command);
+                return;
+            }
+            if (Command is SyncReply) {
+                if (null == toSend.Peek((SyncReply)Command)) {
+                    return;
+                }
+                CheckInterfaces(Command);
+                if (Command is SyncReply.confirmInit) {
+                    ConsoleWriter.WriteLine("Init request confirmed");
+                    setProgramStateWithoutUndo(Commander.programStates.Init);
+                    ConsoleWriter.WriteLine(Commander.pState);
+                    return;
+                }
+                if (Command is SyncReply.confirmShutdown) {
+                    ConsoleWriter.WriteLine("Shutdown request confirmed");
+                    setProgramStateWithoutUndo(Commander.programStates.Shutdown);
+                    ConsoleWriter.WriteLine(Commander.pState);
+                    return;
+                }
+                if (onTheFly && (Commander.pState == Commander.programStates.Start) && (Command is SyncReply.updateStatus)) {
+                    switch (Device.sysState) {
+                        case Device.DeviceStates.Init:
+                        case Device.DeviceStates.VacuumInit:
+                            Commander.hBlock = true;
+                            setProgramStateWithoutUndo(Commander.programStates.Init);
+                            break;
+                        
+                        case Device.DeviceStates.ShutdownInit:
+                        case Device.DeviceStates.Shutdowning:
+                            Commander.hBlock = true;
+                            setProgramStateWithoutUndo(Commander.programStates.Shutdown);
+                            break;
+
+                        case Device.DeviceStates.Measured:
+                            toSend.AddToSend(new UserRequest.getCounts());
+                            // waiting for fake counts reply
+                            break;
+                        case Device.DeviceStates.Measuring:
+                            // async message here with auto send-back
+                            // and waiting for fake counts reply
+                            break;
+                        
+                        case Device.DeviceStates.Ready:
+                            Commander.hBlock = false;
+                            setProgramStateWithoutUndo(Commander.programStates.Ready);
+                            break;
+                        case Device.DeviceStates.WaitHighVoltage:
+                            Commander.hBlock = true;
+                            setProgramStateWithoutUndo(Commander.programStates.WaitHighVoltage);
+                            break;
+                    }
+                    ConsoleWriter.WriteLine(Commander.pState);
+                    onTheFly = false;
+                    return;
+                }
+                if (Command is SyncReply.updateCounts) {
+                    if (measureMode == null) {
+                        // fake reply caught here (in order to put device into proper state)
+                        Commander.hBlock = false;
+                        setProgramStateWithoutUndo(Commander.programStates.Ready);
+                        return;
+                    }
+                    if (!measureMode.onUpdateCounts()) {
+                        // error (out of limits), raise event here and notify in UI
+                        // TODO: lock here
+                        if (OnError != null) {
+                            OnError("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
+                        }
+                    }
+                    return;
+                }
+                if (Command is SyncReply.confirmF2Voltage) {
+                    if (Commander.pState == programStates.Measure ||
+                        Commander.pState == programStates.WaitBackgroundMeasure) {
+                        toSend.IsRareMode = !notRareMode;
+                        if (!measureMode.start()) {
+                            // error (no points)
+                            // TODO: lock here
+                            if (OnError != null) {
+                                OnError("Нет точек для измерения.");
+                            }
+                        }
+                    }
+                    return;
+                }
+                return;
             }
         }
-        #region IGlobalActions Members
-        public event ProgramEventHandler ProgramStateChanged;
-        protected virtual void OnProgramStateChanged(ProgramStates state) {
-            var temp = ProgramStateChanged;
-            if (temp != null)
-                temp(state);
-        }
-        public void SendSettings() {
-            realizer.SetSettings();
-        }
-        #endregion
 
-        readonly PortLevel port;
-        bool DeviceIsConnected = false;
-        protected void Connect(object sender, CallBackEventArgs<bool, string> e) {
-            if (DeviceIsConnected) {
-                Disconnect();
-            } else {
-                Connect();
+        private static void CheckInterfaces(ServicePacket Command) {
+            // TODO: make common auto-action
+            if (Command is IAutomatedReply) {
+                ((IAutomatedReply)Command).AutomatedReply();
             }
-            e.Value = DeviceIsConnected;
-            // TODO: own event
-            //e.Handler = this.RareModeChanged;
-        }
-        protected virtual PortLevel.PortStates Connect() {
-            PortLevel.PortStates res = port.Open(Config.Port, Config.BaudRate);
-            switch (res) {
-                case PortLevel.PortStates.Opening:
-                    realizer.Undo += undoProgramState;
-                    realizer.Connect();
-
-                    DeviceIsConnected = true;
-                    break;
-                case PortLevel.PortStates.Opened:
-                    DeviceIsConnected = true;
-                    break;
-                case PortLevel.PortStates.ErrorOpening:
-                    break;
-                default:
-                    // фигня
-                    break;
+            if (Command is ISend) {
+                ((ISend)Command).Send();
             }
-            return res;
-        }
-        protected virtual void Disconnect() {
-            realizer.Disconnect();
-            realizer.Undo -= undoProgramState;
-
-            PortLevel.PortStates res = port.Close();
-            switch (res) {
-                case PortLevel.PortStates.Closing:
-                    DeviceIsConnected = false;
-                    break;
-                case PortLevel.PortStates.Closed:
-                    DeviceIsConnected = false;
-                    break;
-                case PortLevel.PortStates.ErrorClosing:
-                    break;
-                default:
-                    // фигня
-                    break;
+            if (Command is IUpdateDevice) {
+                ((IUpdateDevice)Command).UpdateDevice();
+            }
+            if (Command is IUpdateGraph) {
+                ((IUpdateGraph)Command).UpdateGraph();
             }
         }
-        // Used in MainForm
-        public void Reconnect() {
-            if (DeviceIsConnected) {
-                Disconnect();
-                if (!DeviceIsConnected)
-                    port.Open(Config.Port, Config.BaudRate);
-            }
-        }
-        public string[] AvailablePorts {
-            get { return PortLevel.AvailablePorts; }
-        }
 
-        protected void Init(object sender, CallBackEventArgs<bool> e) {
-            OnLog(pState.ToString());
+        internal static void Init() {
+            ConsoleWriter.WriteLine(pState);
 
-            setProgramState(ProgramStates.WaitInit);
-            e.Value = true;
-            SubscribeToUndo(e.Handler);
-            realizer.SetOperationToggle(true);
+            setProgramState(Commander.programStates.WaitInit);
+            toSend.AddToSend(new UserRequest.sendInit());
 
-            OnLog(pState.ToString());
+            ConsoleWriter.WriteLine(pState);
         }
-        protected void Shutdown(object sender, CallBackEventArgs<bool> e) {
+        internal static void Shutdown() {
             Disable();
-            setProgramState(ProgramStates.WaitShutdown);
-            e.Value = true;
-            SubscribeToUndo(e.Handler);
-            realizer.SetOperationToggle(false);
+            toSend.AddToSend(new UserRequest.sendShutdown());
+            setProgramState(Commander.programStates.WaitShutdown);
             // TODO: добавить контрольное время ожидания выключения
         }
-        // TODO: private set!
-        protected bool hBlock { get; set; }
-        protected void Unblock(object sender, CallBackEventArgs<bool> e) {
-            if (pState == ProgramStates.Measure ||
-                pState == ProgramStates.WaitBackgroundMeasure ||
-                pState == ProgramStates.BackgroundMeasureReady)//strange..
-                MeasureCancelRequested = true;
-            // TODO: check!
-            e.Value = hBlock;
-            SubscribeToUndo(e.Handler);
-            realizer.SetOperationBlock(hBlock);
-        }
 
-        readonly IRealizer realizer;
-        public MeasureMode CurrentMeasureMode { get; protected set; }
-        bool measureCancelRequested = false;
-        public bool MeasureCancelRequested {
-            protected get { return measureCancelRequested; }
-            set {
-                measureCancelRequested = value;
-                if (value && CurrentMeasureMode != null)
-                    CurrentMeasureMode.CancelRequested = value;
+        internal static void Scan() {
+            if (pState == Commander.programStates.Ready) {
+                Graph.Reset();
+                measureMode = new MeasureMode.Scan(Config.autoSaveSpectrumFile);
+                initMeasure(Commander.programStates.Measure);
             }
         }
-        // TODO: other event class here!
-        public event ProgramEventHandler MeasureCancelled;
-        protected virtual void OnMeasureCancelled() {
-            var temp = MeasureCancelled;
-            if (temp != null)
-                temp(pState);
-        }
-        // TODO: protected
-        public void Scan() {
-            if (pState == ProgramStates.Ready) {
-                var g = Graph.MeasureGraph.Instance;
-                g.Reset();
-                var co = g.CommonOptions;
-                CurrentMeasureMode = new MeasureMode.Scan(co.befTimeReal, co.iTimeReal, co.eTimeReal, Config.sPoint, Config.ePoint);
-                CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
-                CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringScanMeasure(p, Counts);
-                initMeasure(ProgramStates.Measure);
-            }
-        }
-        protected abstract uint[] Counts { get; }
-        // TODO: protected
-        public bool Sense() {
-            if (pState == ProgramStates.Ready) {
+        internal static bool Sense() {
+            if (pState == Commander.programStates.Ready) {
                 if (SomePointsUsed) {
-                    var g = Graph.MeasureGraph.Instance;
-                    g.Reset();
-                    var temp = new MeasureMode.Precise(Config.PreciseData.GetUsed());
-                    temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile();
-                    temp.SuccessfulExit += (s, e) => {
-                        var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
-                        g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
-                    };
-                    temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
-                    CurrentMeasureMode = temp;
-                    initMeasure(ProgramStates.Measure);
+                    Graph.Reset();
+                    measureMode = new MeasureMode.Precise();
+                    initMeasure(Commander.programStates.Measure);
                     return true;
                 } else {
-                    OnLog("No points for precise mode measure.");
+                    ConsoleWriter.WriteLine("No points for precise mode measure.");
                     return false;
                 }
             }
             return false;
         }
-        public bool SomePointsUsed {
-            get {
-                return Config.PreciseData.Exists(ped => ped.Use);
-            }
-        }
+
         // TODO: use simple arrays
-        FixedSizeQueue<List<long>> background;
-        List<PreciseEditorData> peaksForMatrix;
-        Matrix matrix;
-        List<long> backgroundResult;
-        bool doBackgroundPremeasure;
-        // TODO: protected
-        int? LabelNumber { get; set; }
-        public bool? Monitor(params object[] data) {
-            // TODO: move partially up
+        private static FixedSizeQueue<List<long>> background;
+        private static Matrix matrix;
+        private static List<long> backgroundResult;
+        private static bool doBackgroundPremeasure;
+        internal static bool? Monitor() {
             byte backgroundCycles = Config.BackgroundCycles;
-            doBackgroundPremeasure = backgroundCycles != 0;
+            doBackgroundPremeasure = Config.BackgroundCycles != 0;
+            if (pState == programStates.Ready) {
+                if (SomePointsUsed) {
+                    //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
+                    Graph.ResetForMonitor();
 
-            Graph.MeasureGraph g;
-            switch (pState) {
-                case ProgramStates.Ready:
-                    if (SomePointsUsed) {
-                        //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
-                        g = Graph.MeasureGraph.Instance;
-                        g.ResetForMonitor();
-
-                        #warning matrix is formed too early
-                        // TODO: move matrix formation to manual operator actions
-                        // TODO: parallelize matrix formation, flag on completion
-                        // TODO: duplicates
-                        peaksForMatrix = g.PreciseData.GetUsed().GetWithId();
-                        if (peaksForMatrix.Count > 0) {
-                            // To comply with other processing order (and saved information)
-                            peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                            matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
-                            // What do with empty matrix?
-                            if (matrix != null)
-                                matrix.Init();
-                            else {
-                                OnLog("Error in peak data format or duplicate substance.");
-                                return null;
-                            }
-                        } else
-                            matrix = null;
-
-                        // TODO: feed measure mode with start shift value (really?)
-                        short? startShiftValue = 0;
-                        var temp = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
-                        temp.SaveResults += (s, e) => {
-                            Config.autoSaveMonitorSpectrumFile(LabelNumber);
-                            if (LabelNumber.HasValue)
-                                LabelNumber = null;    
-                        };
-                        temp.Finalize += (s, e) => Config.finalizeMonitorFile();
-                        temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
-                        temp.SuccessfulExit += (s, e) => {
-                            var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
-                            g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
-                        };
-                        CurrentMeasureMode = temp;
-
-                        if (doBackgroundPremeasure) {
-                            initMeasure(ProgramStates.WaitBackgroundMeasure);
-                            background = new FixedSizeQueue<List<long>>(backgroundCycles);
-                            // or maybe Enumerator realization: one item, always recounting (accumulate values)..
-                            g.GraphDataModified += NewBackgroundMeasureReady;
-                        } else {
-                            initMeasure(ProgramStates.Measure);
-                            g.GraphDataModified += NewMonitorMeasureReady;
+                    #warning matrix is formed too early
+                    // TODO: move matrix formation to manual operator actions
+                    // TODO: parallelize matrix formation, flag on completion
+                    // TODO: duplicates
+                    var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+                    if (peaksForMatrix.Count > 0) {
+                        // To comply with other processing order (and saved information)
+                        peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                        matrix = new Matrix(Config.LoadLibrary(peaksForMatrix));
+                        // What do with empty matrix?
+                        if (matrix != null)
+                            matrix.Init();
+                        else {
+                            ConsoleWriter.WriteLine("Error in peak data format or duplicate substance.");
+                            return null;
                         }
-                        return true;
+                    } else
+                        matrix = null;
+
+                    // TODO: feed measure mode with start shift value (really?)
+                    short? startShiftValue = 0;
+                    measureMode = new MeasureMode.Precise.Monitor(Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.TimeLimit);
+                    
+                    if (doBackgroundPremeasure) {
+                        initMeasure(programStates.WaitBackgroundMeasure);
+                        background = new FixedSizeQueue<List<long>>(backgroundCycles);
+                        // or maybe fake realization: one item, always recounting (accumulate values)..
+                        Graph.Instance.OnNewGraphData += NewBackgroundMeasureReady;
                     } else {
-                        OnLog("No points for monitor mode measure.");
-                        return null;
+                        initMeasure(programStates.Measure);
+                        Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
                     }
-                case ProgramStates.BackgroundMeasureReady:
-                    // set background end label
-                    LabelNumber = 0;
-
-                    g = Graph.MeasureGraph.Instance;
-                    g.GraphDataModified -= NewBackgroundMeasureReady;
-
-                    backgroundResult = background.Aggregate(Summarize);
-                    for (int i = 0; i < backgroundResult.Count; ++i) {
-                        // TODO: check integral operation behaviour here
-                        backgroundResult[i] /= backgroundCycles;
-                    }
-
-                    setProgramStateWithoutUndo(ProgramStates.Measure);
-                    g.GraphDataModified += NewMonitorMeasureReady;
-                    return false;
-                case ProgramStates.Measure:
-                    // set label
-                    LabelNumber = (int)data[0];
-                    return false;
-                default:
-                    // wrong state, strange!
+                    return true;
+                } else {
+                    ConsoleWriter.WriteLine("No points for monitor mode measure.");
                     return null;
+                }
+            } else if (pState == programStates.BackgroundMeasureReady) {
+                Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
+
+                backgroundResult = background.Aggregate(Summarize);
+                for (int i = 0; i < backgroundResult.Count; ++i) {
+                    // TODO: check integral operation behaviour here
+                    backgroundResult[i] /= backgroundCycles;
+                }
+
+                setProgramStateWithoutUndo(programStates.Measure);
+                Graph.Instance.OnNewGraphData += NewMonitorMeasureReady;
+                return false;
+            } else {
+                // wrong state, strange!
+                return null;
             }
         }
-        void NewBackgroundMeasureReady(object sender, EventArgs<int[]> e) {
-            var currentMeasure = new List<long>();
-            foreach (var ped in peaksForMatrix) {
-                //!!!!! null PLSreference! race condition?
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-            }
-            //maybe null if background premeasure is false!
-            background.Enqueue(currentMeasure);
-            if (pState == ProgramStates.WaitBackgroundMeasure && background.IsFull) {
-                setProgramStateWithoutUndo(ProgramStates.BackgroundMeasureReady);
+        private static void NewBackgroundMeasureReady(Graph.Recreate recreate) {
+            if (recreate == Graph.Recreate.Both) {
+                List<long> currentMeasure = new List<long>();
+                // ! temporary solution
+                var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+                if (peaksForMatrix.Count > 0) {
+                    // To comply with other processing order (and saved information)
+                    peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                    foreach (Utility.PreciseEditorData ped in peaksForMatrix) {
+                        //!!!!! null PLSreference! race condition?
+                        currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                    }
+                }
+                //maybe null if background premeasure is false!
+                background.Enqueue(currentMeasure);
+                if (pState == programStates.WaitBackgroundMeasure && background.IsFull) {
+                    setProgramStateWithoutUndo(programStates.BackgroundMeasureReady);
+                }
             }
         }
-        void NewMonitorMeasureReady(object sender, EventArgs<int[]> e) {
-            var currentMeasure = new List<long>();
-            foreach (var ped in peaksForMatrix) {
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+        private static void NewMonitorMeasureReady(Graph.Recreate recreate) {
+            if (recreate == Graph.Recreate.None)
+                return;
+            List<long> currentMeasure = new List<long>();
+            // ! temporary solution
+            var peaksForMatrix = Graph.Instance.PreciseData.getUsed().getWithId();
+            if (peaksForMatrix.Count > 0) {
+                // To comply with other processing order (and saved information)
+                peaksForMatrix.Sort(Utility.PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                foreach (Utility.PreciseEditorData ped in peaksForMatrix) {
+                    currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
+                }
             }
             if (doBackgroundPremeasure) {
                 if (currentMeasure.Count != backgroundResult.Count) {
@@ -455,7 +433,14 @@ namespace Flavor.Common {
                 // TODO: put here all automatic logic from measure modes
             }
         }
-        List<long> Summarize(List<long> workingValue, List<long> nextElem) {
+        private static List<Utility.PreciseEditorData> getWithId(this List<Utility.PreciseEditorData> peds) {
+            // ! temporary solution
+            #warning make this operation one time a cycle
+            return peds.FindAll(
+                        x => x.Comment.StartsWith(Config.ID_PREFIX_TEMPORARY)
+                    );
+        }
+        private static List<long> Summarize(List<long> workingValue, List<long> nextElem) {
             // TODO: move from Commander to Utility
             if (workingValue.Count != nextElem.Count)
                 // data length mismatch
@@ -465,72 +450,127 @@ namespace Flavor.Common {
             }
             return workingValue;
         }
-        void initMeasure(ProgramStates state) {
-            OnLog(pState.ToString());
-            if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                //error. something in operation
-                throw new Exception("Measure mode already in operation.");
-            }
-            CurrentMeasureMode.VoltageStepChangeRequested += measureMode_VoltageStepChangeRequested;
-            CurrentMeasureMode.Disable += CurrentMeasureMode_Disable;
-            // TODO: move inside MeasureMode
-            SubscribeToCountsUpdated(deviceCountsUpdated);
 
-            setProgramState(state);
-
-            MeasureCancelRequested = false;
-            SendSettings();
-        }
-        void deviceCountsUpdated(object sender, EventArgs<uint[]> countsData) {
-            CurrentMeasureMode.UpdateGraph();
-            //if (!CurrentMeasureMode.onUpdateCounts(device.Detectors)) {
-            if (!CurrentMeasureMode.onUpdateCounts(countsData.Value)) {
-                OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
-            }
-        } 
-        void CurrentMeasureMode_Disable(object sender, EventArgs e) {
-            if (CurrentMeasureMode is MeasureMode.Precise.Monitor) {
-                if (pState == ProgramStates.Measure) {
-                    Graph.MeasureGraph.Instance.GraphDataModified -= NewMonitorMeasureReady;
-                } else if (pState == ProgramStates.WaitBackgroundMeasure || pState == ProgramStates.BackgroundMeasureReady) {
-                    Graph.MeasureGraph.Instance.GraphDataModified -= NewBackgroundMeasureReady;
+        internal static void DisableMeasure() {
+            if (measureMode is MeasureMode.Precise.Monitor) {
+                if (pState == programStates.Measure) {
+                    Graph.Instance.OnNewGraphData -= NewMonitorMeasureReady;
+                } else if (pState == programStates.WaitBackgroundMeasure || pState == programStates.BackgroundMeasureReady) {
+                    Graph.Instance.OnNewGraphData -= NewBackgroundMeasureReady;
                 }
                 matrix = null;
             }
-            // TODO: move inside MeasureMode
-            UnsubscribeToCountsUpdated(deviceCountsUpdated);
-            CurrentMeasureMode.VoltageStepChangeRequested -= measureMode_VoltageStepChangeRequested;
-            CurrentMeasureMode.Disable -= CurrentMeasureMode_Disable;
-
-            setProgramStateWithoutUndo(ProgramStates.Ready);//really without undo?
             Disable();
+            Commander.setProgramStateWithoutUndo(Commander.programStates.Ready);//really without undo?
         }
-        protected abstract void SubscribeToCountsUpdated(EventHandler<EventArgs<uint[]>> handler);
-        protected abstract void UnsubscribeToCountsUpdated(EventHandler<EventArgs<uint[]>> handler);
-        void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
-            realizer.SetMeasureStep(e.Step);
-            // TODO: move to realizer ctor as extra action on measure step
-            if (notRareModeRequested) {
-                ExtraActionOnMeasureStep();
+        private static void Disable() {
+            Commander.measureCancelRequested = false;
+            toSend.IsRareMode = false;
+            // TODO: lock here
+            if (OnScanCancelled != null) {
+                OnScanCancelled();
+            }
+            measureMode = null;//?
+        }
+        internal static void sendSettings() {
+            toSend.AddToSend(new UserRequest.sendIVoltage());
+            /*
+            Commander.AddToSend(new sendCP());
+            Commander.AddToSend(new enableECurrent());
+            Commander.AddToSend(new enableHCurrent());
+            Commander.AddToSend(new sendECurrent());
+            Commander.AddToSend(new sendHCurrent());
+            Commander.AddToSend(new sendF1Voltage());
+            Commander.AddToSend(new sendF2Voltage());
+            */
+        }
+        private static void initMeasure(Commander.programStates state) {
+            ConsoleWriter.WriteLine(pState);
+            if (measureMode != null && measureMode.isOperating) {
+                //error. something in operation
+                throw new Exception("Measure mode already in operation.");
+            }
+            setProgramState(state);
+
+            toSend.IsRareMode = !Commander.notRareModeRequested;
+            Commander.measureCancelRequested = false;
+            sendSettings();
+        }
+        internal static bool SomePointsUsed {
+            get {
+                if (Config.PreciseData.Count > 0)
+                    foreach (Utility.PreciseEditorData ped in Config.PreciseData)
+                        if (ped.Use) return true;
+                return false;
             }
         }
-        protected virtual void ExtraActionOnMeasureStep() { }
-        protected void Disable() {
-            MeasureCancelRequested = false;
-            // TODO: lock here (request from ui may cause synchro errors)
-            // or use async action paradigm
-            OnMeasureCancelled();
-            CurrentMeasureMode = null;//?
+
+        internal static void Unblock() {
+            if (Commander.pState == programStates.Measure ||
+                Commander.pState == programStates.WaitBackgroundMeasure ||
+                Commander.pState == programStates.BackgroundMeasureReady)//strange..
+                Commander.measureCancelRequested = true;
+            toSend.AddToSend(new UserRequest.enableHighVoltage(Commander.hBlock));
         }
-        protected void SubscribeToUndo(EventHandler handler) {
-            ProgramEventHandler ph = s => realizer.Undo -= handler; ;
-            ph += s => this.ProgramStateChanged -= ph;
-            handler += (s, e) => {
-                realizer.Undo -= handler;
-                this.ProgramStateChanged -= ph;
-            };
-            realizer.Undo += handler;
-            this.ProgramStateChanged += ph;
+
+        internal static ModBus.PortStates Connect() {
+            ModBus.PortStates res = ModBus.Open();
+            switch (res) {
+                case ModBus.PortStates.Opening:
+                    toSend = new MessageQueueWithAutomatedStatusChecks();
+                    toSend.IsOperating = true;
+                    Commander.DeviceIsConnected = true;
+                    break;
+                case ModBus.PortStates.Opened:
+                    Commander.DeviceIsConnected = true;
+                    break;
+                case ModBus.PortStates.ErrorOpening:
+                    break;
+                default:
+                    // фигня
+                    break;
+            }
+            return res;
+        }
+        internal static ModBus.PortStates Disconnect() {
+            toSend.IsOperating = false;
+            toSend.Clear();
+            ModBus.PortStates res = ModBus.Close();
+            switch (res) {
+                case ModBus.PortStates.Closing:
+                    Commander.DeviceIsConnected = false;
+                    onTheFly = true;// надо ли здесь???
+                    break;
+                case ModBus.PortStates.Closed:
+                    Commander.DeviceIsConnected = false;
+                    break;
+                case ModBus.PortStates.ErrorClosing:
+                    break;
+                default:
+                    // фигня
+                    break;
+            }
+            return res;
+        }
+
+        internal static void reconnect() {
+            if (Commander.DeviceIsConnected) {
+                switch (Disconnect()) {
+                    case ModBus.PortStates.Closing:
+                        ModBus.Open();
+                        break;
+                    case ModBus.PortStates.Closed:
+                        break;
+                    case ModBus.PortStates.ErrorClosing:
+                        break;
+                    default:
+                        // фигня
+                        break;
+                }
+            }
+        }
+        internal static string[] AvailablePorts {
+            get { return ModBus.AvailablePorts; }
         }
     }
 }

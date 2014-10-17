@@ -127,7 +127,31 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;fV1NumericUpDown.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.Name" xml:space="preserve">
+    <value>hCurrentNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;hCurrentNumericUpDown.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Name" xml:space="preserve">
+    <value>eCurrentNumericUpDown</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.Parent" xml:space="preserve">
+    <value>params_groupBox</value>
+  </data>
+  <data name="&gt;&gt;eCurrentNumericUpDown.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="&gt;&gt;CPNumericUpDown.Name" xml:space="preserve">
     <value>CPNumericUpDown</value>
@@ -139,7 +163,7 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;CPNumericUpDown.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>4</value>
   </data>
   <data name="&gt;&gt;iVoltageNumericUpDown.Name" xml:space="preserve">
     <value>iVoltageNumericUpDown</value>
@@ -151,31 +175,31 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;iVoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>5</value>
   </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d2VoltageNumericUpDown</value>
+  <data name="&gt;&gt;idleTimeNumericUpDown.Name" xml:space="preserve">
+    <value>idleTimeNumericUpDown</value>
   </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Type" xml:space="preserve">
+  <data name="&gt;&gt;idleTimeNumericUpDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Parent" xml:space="preserve">
+  <data name="&gt;&gt;idleTimeNumericUpDown.Parent" xml:space="preserve">
     <value>params_groupBox</value>
   </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>15</value>
+  <data name="&gt;&gt;idleTimeNumericUpDown.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d1VoltageNumericUpDown</value>
+  <data name="&gt;&gt;expTimeNumericUpDown.Name" xml:space="preserve">
+    <value>expTimeNumericUpDown</value>
   </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Type" xml:space="preserve">
+  <data name="&gt;&gt;expTimeNumericUpDown.Type" xml:space="preserve">
     <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Parent" xml:space="preserve">
+  <data name="&gt;&gt;expTimeNumericUpDown.Parent" xml:space="preserve">
     <value>params_groupBox</value>
   </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>16</value>
+  <data name="&gt;&gt;expTimeNumericUpDown.ZOrder" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="&gt;&gt;fV2NumericUpDown.Name" xml:space="preserve">
     <value>fV2NumericUpDown</value>
@@ -187,7 +211,7 @@
     <value>params_groupBox</value>
   </data>
   <data name="&gt;&gt;fV2NumericUpDown.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>0</value>
   </data>
   <metadata name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>207, 17</value>
@@ -242,30 +266,6 @@
   </data>
   <data name="&gt;&gt;params_groupBox.ZOrder" xml:space="preserve">
     <value>4</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d3VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Name" xml:space="preserve">
-    <value>kNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="&gt;&gt;rareModeCheckBox.Name" xml:space="preserve">
     <value>rareModeCheckBox</value>
@@ -424,7 +424,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>292, 473</value>
+    <value>292, 432</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Настройки обзорного режима</value>
@@ -445,6 +445,6 @@
     <value>ScanOptionsForm</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>Flavor.Forms.OptionsForm2, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Flavor.Forms.OptionsForm, Flavor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
 </root>

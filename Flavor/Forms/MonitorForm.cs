@@ -1,488 +1,231 @@
 using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
 using System.Collections.Generic;
-using Flavor.Common.Data.Measure;
+using Graph = Flavor.Common.Graph;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
+using PointPairListPlus = Flavor.Common.PointPairListPlus;
 
-namespace Flavor.Forms {
-    partial class MonitorForm: GraphForm, IMeasured {
-        const string FORM_TITLE = "Режим мониторинга";
-        const string X_AXIS_TITLE = "Итерации";
-        const string X_AXIS_TIME_TITLE = "Время, мин.";
-        const string Y_AXIS_RELATIVE = " (отн.)";
-        const string Y_SCALE_ITEM_TEXT = "Выбрать Y-шкалу";
-        const string COUNTS_ITEM_TEXT = "Счёты";
-        const string NORM_ITEM_TEXT = "Нормировать";
-        const string PEAK_NORM_ITEM_TEXT = "Нормировать на пик № ";
-        const string TIME_ITEM_TEXT = "Шкала времени";
-        const string ITERATION_TOOLTIP_FORMAT = "итерация={0:G}, ";
-        const string TIME_TOOLTIP_FORMAT = "время={0:F2}, ";
-        const string POINT_TOOLTIP_FORMAT = "счеты={1:F0}";
-        const string NORMALIZED_POINT_TOOLTIP_FORMAT = "{1:G}";
+namespace Flavor.Forms
+{
+    internal partial class MonitorForm: GraphForm, IMeasured {
+        private const string FORM_TITLE = "Режим мониторинга";
+        private const string X_AXIS_TITLE = "Итерации";
+        private const string Y_AXIS_RELATIVE = " (отн.)";
+        private const string NORM_ITEM_TEXT = "Нормировать";
+        private const string POINT_TOOLTIP_FORMAT = "итерация={0:G},счеты={1:F0}";
 
-        class PointPairListPlusWithMaxCapacity: PointPairListPlus {
-            // TODO: mix with ZedGraph.RollingPointPairList
-            const int MAX_CAPACITY = int.MaxValue;
-            public PointPairListPlusWithMaxCapacity()
-                : base() { }
-            public PointPairListPlusWithMaxCapacity(PointPairListPlus other)
-                : base(other, other.PEDreference, other.PLSreference) { }
+        private double time = -1;
+        public class PointPairListPlusWithMaxCapacity: PointPairListPlus {
+            private const int MAX_CAPACITY = 1000;
+            public PointPairListPlusWithMaxCapacity() : base() { }
+            public PointPairListPlusWithMaxCapacity(PointPairListPlus other, PreciseEditorData ped, Graph.pListScaled pls) : base(other, ped, pls) { }
             public new void Add(PointPair pp) {
-                if (Count == MAX_CAPACITY) {
-                    RemoveAt(0);
-                }
                 base.Add(pp);
-            }
-        }
-        interface ISpecial {
-            double X { get; set; }
-            double Y { get; set; }
-            double[] Xs { get; }
-            double[] Ys { get; }
-        }
-        class PointPairSpecial: PointPair, ISpecial {
-            readonly double[] xs, ys;
-            readonly Func<int> xChooser, yChooser;
-            public PointPairSpecial(double x, double y, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser)
-                : base(x, y) {
-                xs = extraXs;
-                ys = extraYs;
-                this.xChooser = xChooser;
-                this.yChooser = yChooser;
-            }
-            PointPairSpecial(PointPairSpecial other)
-                : base(((ISpecial)other).X, ((ISpecial)other).Y) {
-                xs = other.xs == null ? null : (double[])other.xs.Clone();
-                ys = other.ys == null ? null : (double[])other.ys.Clone();
-                xChooser = other.xChooser;
-                yChooser = other.yChooser;
-            }
-            public override double X {
-                get {
-                    if (xChooser == null)
-                        return base.X;
-                    else {
-                        int index = xChooser();
-                        if (index == -1)
-                            return base.X;
-                        return xs[index];
-                    }
-                }
-                set {
-                    if (xChooser == null)
-                        base.X = value;
-                    else {
-                        int index = xChooser();
-                        if (index == -1)
-                            base.X = value;
-                        else
-                            xs[index] = value;
-                    }
-                }
-            }
-            public override double Y {
-                get {
-                    if (yChooser == null)
-                        return base.Y;
-                    else {
-                        int index = yChooser();
-                        if (index == -1)
-                            return base.Y;
-                        return ys[index];
-                    }
-                }
-                set {
-                    if (yChooser == null)
-                        base.Y = value;
-                    else {
-                        int index = yChooser();
-                        if (index == -1)
-                            base.Y = value;
-                        else
-                            ys[index] = value;
-                    }
-                }
-            }
-            public override PointPair Clone() {
-                return new PointPairSpecial(this);
-            }
-
-            #region ISpecial Members
-            double ISpecial.X {
-                get { return base.X; }
-                set { base.X = value; }
-            }
-            double ISpecial.Y {
-                get { return base.Y; }
-                set { base.Y = value; }
-            }
-            double[] ISpecial.Xs { get { return xs; } }
-            double[] ISpecial.Ys { get { return ys; } }
-            #endregion
-        }
-
-        long iteration = -1;
-        readonly object _locker = new object();
-        List<PointPairListPlusWithMaxCapacity> list;
-        List<PreciseEditorData> pspec;
-        int _normPeakNumber = -1;
-        int NormPeakNumber {
-            get { return _normPeakNumber; }
-            set {
-                if (_normPeakNumber != value) {
-                    _normPeakNumber = value;
-                    RecountNormalization(value);
+                if (base.Count > MAX_CAPACITY) {
+                    base.RemoveAt(0);
                 }
             }
         }
-        void RecountNormalization(int n) {
-            if (n == -1 || pspec.Count <= 1)
-                return;
-
-            var l = list[n];
-            int count;
-            lock (_locker) {
-                count = l.Count - 1;
-                // TODO: form here latest averaging data. lock may start earlier.
-            }
-            //old data is recounting here. any new data (if appeared) will use already new peak number
-            double normalization;
-            // may be problem if list rolls during operation
-            for (int i = count; i >= 0; --i) {
-                normalization = ((ISpecial)l[i]).Y;
-                foreach (var row in list) {
-                    var p = (ISpecial)row[i];
-                    // TODO: implement averaging
-                    p.Ys[1] = p.Y / normalization;
-                }
-            }
-        }
-        enum YAxisState {
-            None = 0,
-            Normalized = 1,
-            PeakNormalized
-        }
-        YAxisState _showNormalized = YAxisState.None;
-        YAxisState ShowNormalized {
-            get { return _showNormalized; }
-            set {
-                if (_showNormalized != value) {
-                    _showNormalized = value;
-                    graph.GraphPane.YAxis.Title.Text = value != YAxisState.None ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
-                    // TODO: extract method
-                    graph.AxisChange();
-                    graph.Refresh();
-                }
-            }
-        }
-        bool _useTimeScale = false;
-        bool UseTimeScale {
-            get { return _useTimeScale; }
-            set {
-                if (_useTimeScale != value) {
-                    _useTimeScale = value;
-                    var pane = graph.GraphPane;
-                    pane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
-                    // TODO: extract method
-                    graph.AxisChange();
-                    graph.Refresh();
-                }
-            }
-        }
-        DateTime start = DateTime.MaxValue;
+        private List<PointPairListPlusWithMaxCapacity> list;
+        private int rowsCount;
+        private List<long> sums;
+        private List<PointPairListPlusWithMaxCapacity> normalizedList = null;
 
         public MonitorForm() {
-            // Init panel before ApplyResources
-            Panel = new PreciseMeasureGraphPanel { Graph = Graph.MeasureGraph.Instance };
             InitializeComponent();
-            graph.GraphPane.AxisChangeEvent += p => RefreshLabels();
         }
-        readonly List<PointPairSpecial> labels = new List<PointPairSpecial>();
-        public void AddLabel(int n) {
-            double time = (DateTime.Now - start).TotalMinutes;
-            var pp = new PointPairSpecial(iteration - 0.5, n, new[] { time }, XScale, null, null);
-            labels.Add(pp);
-            AddLabel(pp.X, n);
-            graph.Refresh();
+        protected override GraphPanel newPanel() {
+            PreciseMeasureGraphPanel panel = new PreciseMeasureGraphPanel();
+            panel.Graph = Graph.Instance;
+            return panel;
         }
-        void AddLabel(double x, int n) {
-            var pane = graph.GraphPane;
-            var yScale = pane.YAxis.Scale;
-            double yMin = yScale.Min;
-            double yMax = yScale.Max;
 
-            var line = new LineObj(x, yMin, x, yMax);
-            line.Line.Style = System.Drawing.Drawing2D.DashStyle.Dash;
-            line.IsClippedToChartRect = true;
-            pane.GraphObjList.Add(line);
-            
-            if (n != 0) {
-                // TODO: how to set position in screen points?
-                var text = new TextObj(n.ToString(), x, yMax - 0.02 * (yMax - yMin));
-                text.IsClippedToChartRect = true;
-                var fontSpec = text.FontSpec;
-                fontSpec.Border.IsVisible = true;
-                pane.GraphObjList.Add(text);
-            }
-        }
-        void RefreshLabels() {
-            graph.GraphPane.GraphObjList.Clear();
-            foreach (var pp in labels) {
-                AddLabel(pp.X, (int)pp.Y);
-            }
-        }
-        [Obsolete]
         protected override sealed void CreateGraph() {
-            //ZedGraphRebirth(FORM_TITLE, 0);
-            //throw new NotSupportedException();
+            ZedGraphRebirth(list, FORM_TITLE);
         }
 
-        int XScale() {
-            return UseTimeScale ? 0 : -1;
-        }
-        int YScale() {
-            switch (ShowNormalized) {
-                case YAxisState.Normalized:
-                    return 0;
-                case YAxisState.PeakNormalized:
-                    return 1;
-                default:
-                    return -1;
-            }
-        }
         protected override sealed void RefreshGraph() {
-            if (iteration > -1) {
-                double time = (Graph.MeasureGraph.Instance.DateTime - start).TotalMinutes;
-                int rowsCount = pspec.Count;
-
-                if (rowsCount == 1) {
-                    // no normalization when displaying 1 row
-                    long peakSum = 0;
-                    // TODO: move PeakSum counting to PointPairListPlus
-                    foreach (var p in pspec[0].AssociatedPoints)
-                        peakSum += (long)p.Y;
-                    list[0].Add(new PointPairSpecial(iteration, peakSum, new[] { time }, XScale, null, null));
-                } else {
-                    var temp = new PointPairList();
-                    long sum = 0;
-                    for (int i = 0; i < rowsCount; ++i) {
-                        long peakSum = 0;
-                        // TODO: move PeakSum counting to PointPairListPlus
-                        foreach (var p in pspec[i].AssociatedPoints)
-                            peakSum += (long)p.Y;
-                        var pp = new PointPair(iteration, peakSum);
-                        temp.Add(pp);
-                        sum += peakSum;
-                    }
-
-                    lock (_locker) {
-                        int normPeakNumber = NormPeakNumber;
-                        double normalization = normPeakNumber == -1 ? 1 : temp[normPeakNumber].Y;
-                        for (int i = 0; i < rowsCount; ++i) {
-                            var pp = temp[i];
-                            double x = pp.X;
-                            double y = pp.Y;
-                            // TODO: implement averaging
-                            var pp2 = new PointPairSpecial(x, y, new[] { time }, XScale, new[] { y / sum, normPeakNumber != -1 ? y / normalization : 0 }, YScale);
-                            list[i].Add(pp2);
-                        }
-                    }
+            //BAD: every time
+            // TODO: use getUsed()
+            List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+            if (pspec.Count != rowsCount)
+                // very bad!
+                throw new NullReferenceException("Count mismatch");
+            
+            int j = 0;
+            long sum = 0;
+            for (int i = 0; i < rowsCount; ++i) {
+                PreciseEditorData ped = pspec[i];
+                // TODO: exceptions here, problem with backward lines also here?
+                long peakSum = ped.AssociatedPoints == null ? 0 :
+                    (ped.AssociatedPoints.PLSreference == null ? 0 :
+                    ped.AssociatedPoints.PLSreference.PeakSum);
+                sum += peakSum;
+                list[j].Add(new PointPair(time, peakSum));
+                if (normalizedList != null) {
+                    normalizedList[j].Add(new PointPair(time, peakSum));
                 }
-                //graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
-                // TODO: extract method?
-                graph.AxisChange();
+                ++j;
             }
+            sums.Add(sum);
+            if (normalizedList != null) {
+                int index = sums.Count - 1;
+                foreach (PointPairList ppl in normalizedList) {
+                    ppl[index].Y /= sums[index];
+                }
+            }
+            graph.GraphPane.XAxis.Scale.Min = list[0][0].X;
+            graph.AxisChange();
             graph.Refresh();
+        }
+
+        protected override bool saveData() {
+            return base.saveData();
         }
 
         protected override sealed void SetSize() {
             if (graph == null)
                 return;
             graph.Location = new Point(HORIZ_GRAPH_INDENT, VERT_GRAPH_INDENT);
-            graph.Size = new Size(ClientSize.Width - 2 * HORIZ_GRAPH_INDENT - (Panel.Visible ? Panel.Width : 0), ClientSize.Height - 2 * VERT_GRAPH_INDENT);
+            graph.Size = new Size(ClientSize.Width - (2 * HORIZ_GRAPH_INDENT) - (Panel.Visible ? Panel.Width : 0), (ClientSize.Height - (2 * VERT_GRAPH_INDENT)));
         }
 
-        void ZedGraphRebirth(string title, int xMax) {
-            var pane = graph.GraphPane;
+        protected void ZedGraphRebirth(List<PointPairListPlusWithMaxCapacity> dataPoints, string title) {
+            GraphPane myPane = graph.GraphPane;
+            
+            myPane.Title.Text = title;
+            myPane.YAxis.Title.Text = normalizedList == null ? Y_AXIS_TITLE : Y_AXIS_TITLE + Y_AXIS_RELATIVE;
+            myPane.XAxis.Title.Text = X_AXIS_TITLE;
+            myPane.CurveList.Clear();
 
-            pane.Title.Text = title;
-            pane.YAxis.Title.Text = ShowNormalized != YAxisState.None ? Y_AXIS_TITLE + Y_AXIS_RELATIVE : Y_AXIS_TITLE;
-            pane.XAxis.Title.Text = UseTimeScale ? X_AXIS_TIME_TITLE : X_AXIS_TITLE;
-            pane.CurveList.Clear();
-
-            for (int i = 0; i < list.Count; ++i) {
-                var l = list[i];
-                string comment = l.PEDreference.Comment;
-                var temp = pane.AddCurve(comment, l, rowsColors[i % rowsColors.Length], SymbolType.None);
+            for (int i = 0; i < dataPoints.Count; ++i) {
+                LineItem temp = myPane.AddCurve("My Curve", dataPoints[i], rowsColors[i % rowsColors.Length], SymbolType.None);
                 temp.Symbol.Fill = new Fill(Color.White);
             }
 
-            var yScale = pane.YAxis.Scale;
-            yScale.Min = 0;
-            yScale.Max = 10000;
-            yScale.MaxAuto = true;
-            var xScale = pane.XAxis.Scale;
-            if (xMax == 0) {
-                xScale.Min = 0;
-                xScale.Max = 10000;
-                xScale.MaxAuto = true;
-            } else if (xMax > 0) {
-                // iterations
-                xScale.Min = 0;
-                xScale.Max = xMax;
-                xScale.MaxAuto = false;
-            } else {
-                // time
-                UseTimeScale = true;
-                xScale.Min = 0;
-                xScale.Max = -xMax;
-                xScale.MaxAuto = false;
-            }
-            // TODO: extract method?
+            myPane.Legend.IsVisible = false;
+            myPane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
+            myPane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
+            myPane.YAxis.Scale.Min = 0;
+            myPane.YAxis.Scale.Max = 10000;
+            myPane.YAxis.Scale.MaxAuto = true;
+            myPane.XAxis.Scale.Min = 0;
+            myPane.XAxis.Scale.Max = 10000;
+            myPane.XAxis.Scale.MaxAuto = true;
             graph.AxisChange();
-            graph.Refresh();
         }
 
-        void NewIterationAsync(object sender, EventArgs<int[]> e) {
-            BeginInvoke(new Action(() => {
-                RefreshGraph();
-                ++iteration;
-            }));
+        // temporary?
+        private void InvokeRefreshGraph(Graph.Recreate recreate) {
+            if (this.InvokeRequired) {
+                // TODO: NullPointerException here..
+                this.Invoke(new Graph.GraphEventHandler(refreshGraph), recreate);
+                return;
+            }
+            refreshGraph(recreate);
         }
-        void InvokeRefreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
-            BeginInvoke(new Action(() => refreshGraphicsOnMeasureStep(pnt, counts)));
+        private void refreshGraph(Graph.Recreate recreate) {
+            if (recreate != Graph.Recreate.None) {
+                if (time == -1) {
+                    CreateGraph();
+                } else {
+                    RefreshGraph();
+                    time += 1;
+                }
+            }
+            refreshGraphicsOnMeasureStep();
         }
-        void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
-            var panel = (MeasureGraphPanel)Panel;
-            panel.performStep(pnt, counts);
+        private void refreshGraphicsOnMeasureStep() {
+            MeasureGraphPanel panel = Panel as MeasureGraphPanel;
+            panel.performStep();
         }
         #region IMeasured Members
-        public event EventHandler MeasureCancelRequested;
-        protected virtual void OnMeasureCancelRequested() {
-            MeasureCancelRequested.Raise(this, EventArgs.Empty);
-        }
-        public void initMeasure(int progressMaximum, bool isPrecise) {
-            labels.Clear();
+        //parameter here is obsolete
+        public void initMeasure(bool isPrecise) {
             list = new List<PointPairListPlusWithMaxCapacity>();
-            var g = Graph.MeasureGraph.Instance;
-            pspec = g.PreciseData.GetUsed();
-            foreach (var ped in pspec) {
+            sums = new List<long>();
+            //!!
+            // TODO: use extension method getUsed()
+            List<PreciseEditorData> pspec = Graph.Instance.PreciseData.FindAll(PreciseEditorData.PeakIsUsed);
+            rowsCount = pspec.Count;
+            for (int i = 0; i < rowsCount; ++i) {
+                //!!!!!! try to prevent nulls in PLS
                 var temp = new PointPairListPlusWithMaxCapacity();
-                temp.PEDreference = ped;
+                pspec[i].AssociatedPoints = temp;
                 list.Add(temp);
             }
-            
-            iteration = 0;
-
-            var panel = (MeasureGraphPanel)Panel;
-            panel.MeasureCancelRequested += MonitorForm_MeasureCancelRequested;
-
-            g.GraphDataModified += NewIterationAsync;
-            g.NewGraphData += InvokeRefreshGraph;
-            panel.ProgressMaximum = progressMaximum;
-            panel.Enable();
-
-            if (progressMaximum > 0) {
-                // only iterations limit
-                UseTimeScale = false;
-            } else if (progressMaximum < 0) {
-                // time limit or combined
-                UseTimeScale = true;
+            time = 0;
+            if (normalizedList == null) {
+                CreateGraph();
             } else {
-                // no limit
-                UseTimeScale = false;
+                normalizedList = new List<PointPairListPlusWithMaxCapacity>();
+                foreach (PointPairListPlus ppl in list) {
+                    normalizedList.Add(new PointPairListPlusWithMaxCapacity(ppl, ppl.PEDreference, null));
+                }
+                ZedGraphRebirth(normalizedList, FORM_TITLE);
             }
-            ZedGraphRebirth(FORM_TITLE, progressMaximum);
-            
+
+            // temporary?
+            Graph.Instance.OnNewGraphData += InvokeRefreshGraph;
             Show();
             Activate();
-
-            start = DateTime.Now;
+        }
+        public void prepareControlsOnMeasureStart() {
+            Panel.Enable();
         }
         public void deactivateOnMeasureStop() {
             Panel.Disable();
-            var g = Graph.MeasureGraph.Instance;
-            g.GraphDataModified -= NewIterationAsync;
-            g.NewGraphData -= InvokeRefreshGraph;
-            iteration = -1;
-            start = DateTime.MaxValue;
+            // temporary?
+            Graph.Instance.OnNewGraphData -= InvokeRefreshGraph;
+            time = -1;
         }
         #endregion
-        void MonitorForm_MeasureCancelRequested(object sender, EventArgs e) {
-            // do something local
-            ((MeasureGraphPanel)Panel).MeasureCancelRequested -= MonitorForm_MeasureCancelRequested;
-            OnMeasureCancelRequested();
-        }
-        void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
-            var items = args.MenuStrip.Items;
-            items.Add(new ToolStripSeparator());
-            if (pspec.Count > 1) {
-                // no normalization when displaying 1 row
-                var defaultViewItem = new ToolStripMenuItem(COUNTS_ITEM_TEXT, null,
-                    (s, e) => ShowNormalized = YAxisState.None);
-                var normViewItem = new ToolStripMenuItem(NORM_ITEM_TEXT, null,
-                    (s, e) => ShowNormalized = YAxisState.Normalized);
-                int n = NormPeakNumber;
-                var peakNormViewItem = new ToolStripMenuItem(PEAK_NORM_ITEM_TEXT + (n != -1 ? pspec[n].pNumber.ToString() : ""), null,
-                    (s, e) => {
-                        var form = new SetNormalizationPeakForm();
-                        form.Load += (ss, ee) => {
-                            var eee = ((SetNormalizationPeakForm.LoadEventArgs)ee);
-                            eee.NormPeakNumber = n;
-                            eee.PeakList = pspec.ConvertAll(ped => { return ped.pNumber.ToString() + " " + ped.Comment; }).ToArray();
-                        };
-                        form.FormClosing += (ss, ee) => {
-                            var result = ((SetNormalizationPeakForm)ss).DialogResult;
-                            if (result == DialogResult.OK) {
-                                var eee = (SetNormalizationPeakForm.ClosingEventArgs)ee;
-                                NormPeakNumber = eee.NormPeakNumber;
-                            }
-                        };
-                        if (form.ShowDialog() == DialogResult.OK) {
-                            ShowNormalized = YAxisState.PeakNormalized;
-                        }
-                    });
+        private void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
+            if (sender is ZedGraphControlMonitor) {
+                ToolStripItemCollection items = args.MenuStrip.Items;
+                ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Text = NORM_ITEM_TEXT;
+                item.Checked = (normalizedList != null);
+                item.CheckOnClick = true;
+                item.CheckedChanged += NormItemCheckStateChanged;
 
-                switch (ShowNormalized) {
-                    case YAxisState.None:
-                        defaultViewItem.Checked = true;
-                        break;
-                    case YAxisState.Normalized:
-                        normViewItem.Checked = true;
-                        break;
-                    case YAxisState.PeakNormalized:
-                        peakNormViewItem.Checked = true;
-                        break;
-                }
-
-                items.Add(new ToolStripMenuItem(Y_SCALE_ITEM_TEXT, null, defaultViewItem, normViewItem, peakNormViewItem));
+                items.Add(item);
             }
-            items.Add(new ToolStripMenuItem(TIME_ITEM_TEXT, null, (s, e) => {
-                UseTimeScale = ((ToolStripMenuItem)s).Checked;
-            }) { Checked = UseTimeScale, CheckOnClick = true });
+        }
+        private void NormItemCheckStateChanged(object sender, EventArgs e) {
+            // TODO: modify graph title
+            if (normalizedList != null) {
+                normalizedList = null;
+                CreateGraph();
+                graph.Refresh();
+                return;
+            }
+            normalizedList = new List<PointPairListPlusWithMaxCapacity>();
+            foreach (PointPairListPlus ppl in list) {
+                var temp = new PointPairListPlusWithMaxCapacity(ppl, ppl.PEDreference, null);//???references
+                for (int i = 0; i < sums.Count; ++i) {
+                    temp[i].Y /= sums[i];
+                }
+                normalizedList.Add(temp);
+            }
+            ZedGraphRebirth(normalizedList, FORM_TITLE);
+            graph.Refresh();
         }
 
-        string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
-            var pp = (PointPairSpecial)curve[iPt];
-            if (pp == null)
-                return "";
-            string tooltipData = string.Format((UseTimeScale ? TIME_TOOLTIP_FORMAT : ITERATION_TOOLTIP_FORMAT) +
-                (ShowNormalized == YAxisState.None ? POINT_TOOLTIP_FORMAT : NORMALIZED_POINT_TOOLTIP_FORMAT), pp.X, pp.Y);
-            string comment = ((PointPairListPlus)curve.Points).PEDreference.Comment;
+        private string ZedGraphControlMonitor_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
+            PointPair pp = curve[iPt];
+            string tooltipData = normalizedList == null ?
+                                 string.Format(POINT_TOOLTIP_FORMAT, pp.X, pp.Y) :
+                                 string.Format(POINT_TOOLTIP_FORMAT, pp.X, 0/*(curve.Points as PointPairListPlus).PEDreference.AssociatedPoints[iPt].Y*/);//smth strange
+            string comment = (curve.Points as PointPairListPlus).PEDreference.Comment;
             if (comment != null && comment != "") {
                 tooltipData += "\n";
                 tooltipData += comment;
             }
             return tooltipData;
-        }
-        void graph_ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState) {
-            if (sender != graph)
-                return;
-            // TODO: not for every event
-            RefreshLabels();
         }
     }
 }

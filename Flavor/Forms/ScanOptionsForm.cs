@@ -1,31 +1,44 @@
 ﻿using System;
 using System.Drawing;
-using Config = Flavor.Common.Settings.Config;
+using System.Windows.Forms;
+using Config = Flavor.Common.Config;
 
 namespace Flavor.Forms {
-    partial class ScanOptionsForm: OptionsForm2 {
+    internal partial class ScanOptionsForm: OptionsForm {
         public ScanOptionsForm()
             : base() {
             InitializeComponent();
             this.scan_groupBox.Text = string.Format("Интервал сканирования ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
-            setupNumericUpDown(startScanNumericUpDown, Config.MIN_STEP, Config.MAX_STEP, Config.sPoint);
-            setupNumericUpDown(endScanNumericUpDown, Config.MIN_STEP, Config.MAX_STEP, Config.ePoint);
+            this.endScanNumericUpDown.Minimum = new decimal(new int[] { Config.MIN_STEP, 0, 0, 0 });
+            this.endScanNumericUpDown.Maximum = new decimal(new int[] { Config.MAX_STEP, 0, 0, 0 });
+            this.startScanNumericUpDown.Minimum = new decimal(new int[] { Config.MIN_STEP, 0, 0, 0 });
+            this.startScanNumericUpDown.Maximum = new decimal(new int[] { Config.MAX_STEP, 0, 0, 0 });
+            loadStartEndData();
+        }
+
+        private void loadStartEndData() {
+            startScanNumericUpDown.Value = (decimal)Config.sPoint;
+            endScanNumericUpDown.Value = (decimal)Config.ePoint;
         }
 
         protected override void ok_butt_Click(object sender, EventArgs e) {
-            checkAndSave(base.ok_butt_Click, sender, e);
-        }
-        protected override void applyButton_Click(object sender, EventArgs e) {
-            checkAndSave(base.applyButton_Click, sender, e);
-        }
-        void checkAndSave(EventHandler action, object sender, EventArgs e) {
-            if (startScanNumericUpDown.Value > endScanNumericUpDown.Value) {
+            if ((ushort)startScanNumericUpDown.Value > (ushort)endScanNumericUpDown.Value) {
                 startScanNumericUpDown.BackColor = Color.Red;
                 endScanNumericUpDown.BackColor = Color.Red;
                 return;
             }
             Config.saveGlobalScanOptions((ushort)startScanNumericUpDown.Value, (ushort)endScanNumericUpDown.Value);
-            action(sender, e);
+            base.ok_butt_Click(sender, e);
+        }
+
+        protected override void applyButton_Click(object sender, EventArgs e) {
+            if ((ushort)startScanNumericUpDown.Value <= (ushort)endScanNumericUpDown.Value) {
+                Config.saveGlobalScanOptions((ushort)startScanNumericUpDown.Value, (ushort)endScanNumericUpDown.Value);
+                base.applyButton_Click(sender, e);
+            } else {
+                startScanNumericUpDown.BackColor = Color.Red;
+                endScanNumericUpDown.BackColor = Color.Red;
+            }
         }
     }
 }

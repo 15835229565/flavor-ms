@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Windows.Forms;
 using Flavor.Controls;
-using Config = Flavor.Common.Settings.Config;
+using Config = Flavor.Common.Config;
 
-using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
+using PreciseEditorData = Flavor.Common.Utility.PreciseEditorData;
 // remove this reference from here..
-using Graph = Flavor.Common.Data.Measure.Graph;
+using Graph = Flavor.Common.Graph;
 
 namespace Flavor.Forms {
-    partial class MonitorOptionsForm: PreciseOptionsForm {
+    internal partial class MonitorOptionsForm: PreciseOptionsForm {
         public MonitorOptionsForm() {
             InitializeComponent();
         }
@@ -27,11 +27,11 @@ namespace Flavor.Forms {
                                     (byte)backroundMeasureCycleCountNumericUpDown.Value);
         }
 
-        void Graph_OnPointAdded(bool notNull) {
+        private void Graph_OnPointAdded(bool notNull) {
             checkPeakInsertButton.Enabled = notNull;
         }
 
-        void checkPeakInsertButton_Click(object sender, EventArgs e) {
+        private void checkPeakInsertButton_Click(object sender, EventArgs e) {
             if (Graph.PointToAdd != null) {
                 checkPeakPreciseEditorRowMinus.setValues(Graph.PointToAdd);
             } else {
@@ -40,14 +40,14 @@ namespace Flavor.Forms {
         }
 
         protected sealed override void OnLoad(EventArgs e) {
-            iterationsNumericUpDown.Maximum = int.MaxValue;
-            iterationsNumericUpDown.Value = Config.Iterations;
-            timeLimitNumericUpDown.Maximum = int.MaxValue;
-            timeLimitNumericUpDown.Value = Config.TimeLimit;
-            allowedShiftNumericUpDown.Value = Config.AllowedShift;
-            checkPeakNumberNumericUpDown.Maximum = Config.PEAK_NUMBER;
-            checkPeakNumberNumericUpDown.Value = Config.CheckerPeakIndex;
-            backroundMeasureCycleCountNumericUpDown.Value = Config.BackgroundCycles;
+            iterationsNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            iterationsNumericUpDown.Value = (decimal)Config.Iterations;
+            timeLimitNumericUpDown.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            timeLimitNumericUpDown.Value = (decimal)Config.TimeLimit;
+            allowedShiftNumericUpDown.Value = (decimal)Config.AllowedShift;
+            checkPeakNumberNumericUpDown.Maximum = (decimal)Config.PEAK_NUMBER;
+            checkPeakNumberNumericUpDown.Value = (decimal)Config.CheckerPeakIndex;
+            backroundMeasureCycleCountNumericUpDown.Value = (decimal)Config.BackgroundCycles;
 
             PreciseEditorData peak = Config.CustomCheckerPeak;
             if (peak != null)

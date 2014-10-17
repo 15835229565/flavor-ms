@@ -4,24 +4,24 @@ using System.Windows.Forms;
 
 using ZedGraph;
 using Flavor.Common;
-using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 
-namespace Flavor.Controls {
-    partial class ZedGraphControlPlus: ZedGraphControl {
+namespace Flavor.Controls
+{
+    public partial class ZedGraphControlPlus: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
-            ContextMenuStrip menuStrip;
+            private ContextMenuStrip menuStrip;
             public ContextMenuStrip MenuStrip {
                 get {
                     return menuStrip;
                 }
             }
-            PointPairListPlus ppl;
+            private PointPairListPlus ppl;
             public PointPairListPlus Row {
                 get {
                     return ppl;
                 }
             }
-            int index;
+            private int index;
             public int Index {
                 get {
                     return index;
@@ -41,24 +41,17 @@ namespace Flavor.Controls {
         public ZedGraphControlPlus()
             : base() {
             InitializeComponent();
-            var pane = GraphPane;
-            pane.IsFontsScaled = false;
-            pane.Legend.IsVisible = false;
-            // Fill the axis background with a color gradient
-            pane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
-            // Fill the pane background with a color gradient
-            pane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             base.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
         }
 
         private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
             if (sender != this)
                 return;
-            var pane = MasterPane.FindChartRect(mousePt);
+            GraphPane pane = MasterPane.FindChartRect(mousePt);
             CurveItem nearestCurve;
             int pointIndex;
             if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex))
-                OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, (PointPairListPlus)nearestCurve.Points, pointIndex));
+                OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, nearestCurve.Points as PointPairListPlus, pointIndex));
             else
                 OnContextMenuBuilder(new ContextMenuBuilderEventArgs(menuStrip, null, -1));
         }
