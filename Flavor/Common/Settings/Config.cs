@@ -798,16 +798,7 @@ namespace Flavor.Common.Settings {
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
                             .Append(DATA_DELIMITER)
                             .Append(shift == null ? NO_SHIFT_PLACEHOLDER : shift.ToString());
-                        
-                        if (solution != null && swResolved != null) {
-                            swResolved.Write(sb);
-                            foreach (double d in solution) {
-                                swResolved.Write(DATA_DELIMITER);
-                                swResolved.Write(d);
-                            }
-                            swResolved.WriteLine();
-                        }
-                        
+
                         foreach (var ped in precData) {
                             sb
                                 .Append(DATA_DELIMITER)
@@ -815,7 +806,17 @@ namespace Flavor.Common.Settings {
                         }
                         sw.WriteLine(sb);
                         sw.Flush();
-                        swResolved.Flush();
+
+                        if (solution != null && swResolved != null) {
+                            // TODO: check only one is null
+                            swResolved.Write(sb);
+                            foreach (double d in solution) {
+                                swResolved.Write(DATA_DELIMITER);
+                                swResolved.Write(d);
+                            }
+                            swResolved.WriteLine();
+                            swResolved.Flush();
+                        }
                     }
                     #endregion
                     #region IShift Members
