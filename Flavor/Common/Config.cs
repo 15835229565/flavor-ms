@@ -720,7 +720,7 @@ namespace Flavor.Common {
                         swResolved = new StreamWriter(filename + RESOLVED_APPENDIX, true);
                         swResolved.WriteLine(header);
                         swResolved.WriteLine(string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT));
-                        sw.WriteLine(ExtraHeader(true));
+                        swResolved.WriteLine(ExtraHeader(true));
                     }
                     string ExtraHeader(bool resolved) {
                         var sb = new StringBuilder()
