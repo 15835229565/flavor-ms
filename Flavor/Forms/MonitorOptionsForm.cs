@@ -22,8 +22,10 @@ namespace Flavor.Forms {
                                     checkPeakPreciseEditorRowMinus.AllFilled?
                                     new PreciseEditorData(false, byte.MaxValue, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
-                                                                  Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
-                                    null, (int)checkPeakNumberNumericUpDown.Value, 
+                                                                  Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak")
+                                                                  : null,
+                                    (int)checkPeakNumberNumericUpDown.Value,
+                                    useCheckPeakCheckBox.Checked,
                                     (byte)backroundMeasureCycleCountNumericUpDown.Value);
         }
 
@@ -53,7 +55,7 @@ namespace Flavor.Forms {
             if (peak != null)
                 checkPeakPreciseEditorRowMinus.setValues(peak);
             // TODO: more accurate options...
-            useCheckPeakCheckBox.Checked = peak != null && Config.PEAK_NUMBER != 0;
+            useCheckPeakCheckBox.Checked = peak != null || Config.CheckerPeakIndex != 0;
             bool enable = Graph.PointToAdd != null;
             checkPeakInsertButton.Enabled = enable;
             if (!enable) {

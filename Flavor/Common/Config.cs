@@ -65,8 +65,11 @@ namespace Flavor.Common {
                     new Utility.PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(), reperPeak.Width, 0, "checker peak");
             }
         }
+        static bool _useChecker;
         internal static Utility.PreciseEditorData CheckerPeak {
             get {
+                if (!_useChecker)
+                    return null;
                 if (reperPeakIndex == -1)
                     return CustomCheckerPeak;
                 int index = preciseData.FindIndex(peak => peak.pNumber == reperPeakIndex);
@@ -92,6 +95,8 @@ namespace Flavor.Common {
                 if (res.Count == 0) {
                     return null;
                 }
+                if (!_useChecker)
+                    return res;
                 if (reperPeakIndex != -1) {
                     // TODO: move this costly operation to combined Predicate several lines before
                     // how to mark it?
@@ -179,12 +184,14 @@ namespace Flavor.Common {
             Config.BaudRate = baudrate;
             mainConfigWriter.write();
         }
-        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak, int index, byte backgroundCount) {
+        internal static void saveGlobalCheckOptions(int iter, int timeLim, ushort shift, Utility.PreciseEditorData peak, int index, bool useChecker, byte backgroundCount) {
             iterations = iter;
             timeLimit = timeLim;
             allowedShift = shift;
             reperPeak = peak;
             CheckerPeakIndex = index;
+            // TODO: save to config
+            _useChecker = useChecker;
             BackgroundCycles = backgroundCount;
             mainConfigWriter.write();
         }

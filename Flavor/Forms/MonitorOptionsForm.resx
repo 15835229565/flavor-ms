@@ -117,9 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="formToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="formToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>399, 17</value>
-  </metadata>
+  </data>
   <data name="&gt;&gt;fV1NumericUpDown.Name" xml:space="preserve">
     <value>fV1NumericUpDown</value>
   </data>
@@ -216,12 +217,12 @@
   <data name="&gt;&gt;fV2NumericUpDown.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <data name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>207, 17</value>
-  </metadata>
-  <metadata name="saveCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  </data>
+  <data name="saveCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing">
     <value>17, 17</value>
-  </metadata>
+  </data>
   <data name="&gt;&gt;cancel_butt.Name" xml:space="preserve">
     <value>cancel_butt</value>
   </data>
@@ -282,10 +283,10 @@
   <data name="&gt;&gt;rareModeCheckBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="backgroundMeasureCycleCountLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="backgroundMeasureCycleCountLabel.GenerateMember" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="backgroundMeasureCycleCountLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -293,7 +294,6 @@
   <data name="backgroundMeasureCycleCountLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="backgroundMeasureCycleCountLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>425, 44</value>
   </data>
@@ -318,9 +318,9 @@
   <data name="&gt;&gt;backgroundMeasureCycleCountLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label2.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -348,9 +348,9 @@
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <metadata name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="controlPeakLabelRow.Location" type="System.Drawing.Point, System.Drawing">
     <value>194, 16</value>
   </data>
@@ -372,9 +372,9 @@
   <data name="&gt;&gt;controlPeakLabelRow.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label8.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -402,9 +402,9 @@
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="label1.GenerateMember" type="System.Boolean, mscorlib">
     <value>False</value>
-  </metadata>
+  </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -508,7 +508,7 @@
     <value>True</value>
   </data>
   <data name="useCheckPeakCheckBox.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
+    <value>True</value>
   </data>
   <data name="useCheckPeakCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>324, 11</value>
@@ -652,9 +652,9 @@
   <data name="&gt;&gt;monitorOptionsGroupBox.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="$this.Localizable" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
+  </data>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>
