@@ -19,7 +19,10 @@ namespace Flavor.Controls {
             : base() {
             InitializeComponent();
             this.lapsTextBox.KeyPress += Utility.integralTextbox_TextChanged;
-            this.precTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
+            // temporarily disabled
+            precTextBox.Enabled = false;
+            precTextBox.Visible = false;
+            //this.precTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
         }
         internal override bool checkTextBoxes() {
             bool exitFlag = true;
