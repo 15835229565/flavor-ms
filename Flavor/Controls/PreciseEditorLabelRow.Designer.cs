@@ -1,4 +1,8 @@
-﻿namespace Flavor.Controls {
+﻿using System.Windows.Forms;
+using System.Drawing;
+using System.ComponentModel;
+
+namespace Flavor.Controls {
     partial class PreciseEditorLabelRow {
         #region Windows Form Designer generated code
 
@@ -7,13 +11,13 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseEditorLabelRow));
-            System.Windows.Forms.Label label9;
-            System.Windows.Forms.Label label11;
-            System.Windows.Forms.Label commentLabel;
-            label9 = new System.Windows.Forms.Label();
-            label11 = new System.Windows.Forms.Label();
-            commentLabel = new System.Windows.Forms.Label();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(PreciseEditorLabelRow));
+            Label label9;
+            Label label11;
+            Label commentLabel;
+            label9 = new Label();
+            label11 = new Label();
+            commentLabel = new Label();
             this.SuspendLayout();
             // 
             // peakCenterLabel
@@ -28,7 +32,7 @@
             label9.AccessibleDescription = null;
             label9.AccessibleName = null;
             resources.ApplyResources(label9, "label9");
-            label9.BackColor = System.Drawing.SystemColors.Control;
+            label9.BackColor = SystemColors.Control;
             label9.Font = null;
             label9.Name = "label9";
             // 
@@ -37,7 +41,7 @@
             label11.AccessibleDescription = null;
             label11.AccessibleName = null;
             resources.ApplyResources(label11, "label11");
-            label11.BackColor = System.Drawing.SystemColors.Control;
+            label11.BackColor = SystemColors.Control;
             label11.Font = null;
             label11.Name = "label11";
             // 
@@ -46,7 +50,7 @@
             commentLabel.AccessibleDescription = null;
             commentLabel.AccessibleName = null;
             resources.ApplyResources(commentLabel, "commentLabel");
-            commentLabel.BackColor = System.Drawing.SystemColors.Control;
+            commentLabel.BackColor = SystemColors.Control;
             commentLabel.Font = null;
             commentLabel.Name = "commentLabel";
             // 
@@ -67,9 +71,7 @@
             this.Controls.SetChildIndex(label9, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
-
         #endregion
     }
 }

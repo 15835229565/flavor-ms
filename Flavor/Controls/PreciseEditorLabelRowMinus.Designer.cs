@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Flavor.Controls {
     partial class PreciseEditorLabelRowMinus {
@@ -25,14 +26,14 @@ namespace Flavor.Controls {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.Label label10;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseEditorLabelRowMinus));
-            System.Windows.Forms.Label colNumLabel;
-            this.peakCenterLabel = new System.Windows.Forms.Label();
-            this.colToolTip = new System.Windows.Forms.ToolTip(this.components);
-            label10 = new System.Windows.Forms.Label();
-            colNumLabel = new System.Windows.Forms.Label();
+            this.components = new Container();
+            Label label10;
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(PreciseEditorLabelRowMinus));
+            Label colNumLabel;
+            this.peakCenterLabel = new Label();
+            this.colToolTip = new ToolTip(this.components);
+            label10 = new Label();
+            colNumLabel = new Label();
             this.SuspendLayout();
             // 
             // label10
@@ -60,12 +61,9 @@ namespace Flavor.Controls {
             resources.ApplyResources(this, "$this");
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
-
         #endregion
-
-        protected System.Windows.Forms.Label peakCenterLabel;
+        protected Label peakCenterLabel;
         private ToolTip colToolTip;
     }
 }

@@ -1,54 +1,54 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
 using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 
 namespace Flavor.Controls {
-    public partial class PreciseEditorRowPlus: PreciseEditorRow {
-        internal string PeakNumber {
+    partial class PreciseEditorRowPlus: PreciseEditorRow {
+        public string PeakNumber {
             set { peakNumberLabel.Text = value; }
         }
-        internal bool UseChecked {
+        public bool UseChecked {
             get { return usePeakCheckBox.Checked; }
         }
         public PreciseEditorRowPlus()
             : base() {
             InitializeComponent();
         }
-        internal void Clear() {
+        public void Clear() {
+            var color = SystemColors.ControlDark;
             stepTextBox.Text = "";
             colTextBox.Text = "";
-            stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            stepTextBox.BackColor = color;
+            colTextBox.BackColor = color;
 
             widthTextBox.Text = "";
-            widthTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            widthTextBox.BackColor = color;
 
             lapsTextBox.Text = "";
             precTextBox.Text = "";
             commentTextBox.Text = "";
-            lapsTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            precTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            commentTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            lapsTextBox.BackColor = color;
+            precTextBox.BackColor = color;
+            commentTextBox.BackColor = color;
 
             usePeakCheckBox.Checked = false;
         }
-        private void clearPeakButton_Click(object sender, EventArgs e) {
+        void clearPeakButton_Click(object sender, EventArgs e) {
             this.Clear();
         }
         
-        internal void setClearToolTip(ToolTip toolTip) {
+        public void setClearToolTip(ToolTip toolTip) {
             if (toolTip == null) {
                 return;
             }
             toolTip.SetToolTip(this.clearPeakButton, "Очистить строку");
         }
         
-        internal override bool checkTextBoxes() {
+        public override bool checkTextBoxes() {
             return base.checkTextBoxes();
         }
-        internal override void setValues(PreciseEditorData ped) {
+        public override void setValues(PreciseEditorData ped) {
             base.setValues(ped);
             usePeakCheckBox.Checked = ped.Use;
         }

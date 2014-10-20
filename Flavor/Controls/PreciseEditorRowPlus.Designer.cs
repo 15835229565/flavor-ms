@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
-using System;
+using System.ComponentModel;
+using System.Drawing;
+
 namespace Flavor.Controls {
     partial class PreciseEditorRowPlus {
 
@@ -10,10 +12,10 @@ namespace Flavor.Controls {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PreciseEditorRowPlus));
-            this.clearPeakButton = new System.Windows.Forms.Button();
-            this.peakNumberLabel = new System.Windows.Forms.Label();
-            this.usePeakCheckBox = new System.Windows.Forms.CheckBox();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(PreciseEditorRowPlus));
+            this.clearPeakButton = new Button();
+            this.peakNumberLabel = new Label();
+            this.usePeakCheckBox = new CheckBox();
             this.SuspendLayout();
             // 
             // lapsTextBox
@@ -30,13 +32,13 @@ namespace Flavor.Controls {
             // 
             // stepTextBox
             // 
-            this.stepTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.stepTextBox.BackColor = SystemColors.ControlDark;
             resources.ApplyResources(this.stepTextBox, "stepTextBox");
             this.stepTextBox.ReadOnly = false;
             // 
             // colTextBox
             // 
-            this.colTextBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.colTextBox.BackColor = SystemColors.ControlDark;
             resources.ApplyResources(this.colTextBox, "colTextBox");
             // 
             // widthTextBox
@@ -52,7 +54,7 @@ namespace Flavor.Controls {
             // peakNumberLabel
             // 
             resources.ApplyResources(this.peakNumberLabel, "peakNumberLabel");
-            this.peakNumberLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.peakNumberLabel.BackColor = SystemColors.Control;
             this.peakNumberLabel.Name = "peakNumberLabel";
             // 
             // usePeakCheckBox

@@ -6,7 +6,7 @@ namespace Flavor.Controls {
         public PreciseEditorLabelRowMinus()
             : base() {
             InitializeComponent();
-            this.peakCenterLabel.Text = string.Format(Resources.PreciseEditorLabelRowMinus_peakCenterLabel_Text_Format, Config.MAX_STEP);
+            peakCenterLabel.Text = string.Format(Resources.PreciseEditorLabelRowMinus_peakCenterLabel_Text_Format, Config.MAX_STEP);
         }
     }
 }
