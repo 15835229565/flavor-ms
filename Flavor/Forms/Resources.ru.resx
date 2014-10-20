@@ -142,6 +142,6 @@
     <value>Напряжение (В)</value>
   </data>
   <data name="GraphForm_YAxisTitle" xml:space="preserve">
-    <value>Интенсивность</value>
+    <value>Счеты</value>
   </data>
 </root>
