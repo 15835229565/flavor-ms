@@ -111,16 +111,21 @@ namespace Flavor.Common.Data.Measure {
         public class Scan: MeasureMode {
             readonly ushort sPoint;
             readonly ushort ePoint;
+            // is used to sparse data
+            readonly ushort _ratio;
 
-            public Scan(ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint)
+            public Scan(ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint, ushort ratio)
                 : base(befTime, iTime, eTime) {
+                _ratio = ratio;
                 this.sPoint = sPoint;
                 this.ePoint = ePoint;
             }
+            public Scan(ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint)
+                : this(befTime, iTime, eTime, sPoint, ePoint, 1) { }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(pointValue);
-                ++pointValue;
+                pointValue += _ratio;
                 return true;
             }
             protected override bool toContinue() {
@@ -137,10 +142,17 @@ namespace Flavor.Common.Data.Measure {
             }
             public override void UpdateGraph() {
                 ushort pnt = pointValue;
-                GraphUpdateDelegate(--pnt, null);
+                pnt -= _ratio;
+                for (int i = 0; i < _ratio; ++i) {
+                    // temporary solution. fake points to prevent spectrum save format
+                    GraphUpdateDelegate(pnt, null);
+                    ++pnt;
+                    if (pnt > ePoint)
+                        break;
+                }
             }
             public override int StepsCount {
-                get { return ePoint - sPoint + 1; }
+                get { return (ePoint - sPoint + 1) / _ratio; }
             }
         }
         public class Precise: MeasureMode {

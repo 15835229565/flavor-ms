@@ -289,6 +289,7 @@ namespace Flavor.Common {
                 g.Reset();
                 var co = g.CommonOptions;
                 CurrentMeasureMode = new MeasureMode.Scan(co.befTimeReal, co.iTimeReal, co.eTimeReal, Config.sPoint, Config.ePoint);
+                //CurrentMeasureMode = new MeasureMode.Scan(co.befTimeReal, co.iTimeReal, co.eTimeReal, Config.sPoint, Config.ePoint, 1);
                 CurrentMeasureMode.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
                 CurrentMeasureMode.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringScanMeasure(p, Counts);
                 initMeasure(ProgramStates.Measure);
