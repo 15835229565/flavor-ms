@@ -117,88 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="formToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="formToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>399, 17</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.Name" xml:space="preserve">
-    <value>fV1NumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;fV1NumericUpDown.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.Name" xml:space="preserve">
-    <value>CPNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;CPNumericUpDown.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.Name" xml:space="preserve">
-    <value>iVoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;iVoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>14</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d2VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d2VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d1VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d1VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>16</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.Name" xml:space="preserve">
-    <value>fV2NumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;fV2NumericUpDown.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <data name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  </metadata>
+  <metadata name="openCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>207, 17</value>
-  </data>
-  <data name="saveCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  </metadata>
+  <metadata name="saveCommonDataFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
-  </data>
+  </metadata>
   <data name="&gt;&gt;cancel_butt.Name" xml:space="preserve">
     <value>cancel_butt</value>
   </data>
@@ -209,18 +136,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;cancel_butt.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
-    <value>applyButton</value>
-  </data>
-  <data name="&gt;&gt;applyButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;applyButton.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="&gt;&gt;ok_butt.Name" xml:space="preserve">
@@ -233,7 +148,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ok_butt.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;params_groupBox.Name" xml:space="preserve">
     <value>params_groupBox</value>
@@ -245,34 +160,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;params_groupBox.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Name" xml:space="preserve">
-    <value>d3VoltageNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;d3VoltageNumericUpDown.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Name" xml:space="preserve">
-    <value>kNumericUpDown</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.Parent" xml:space="preserve">
-    <value>params_groupBox</value>
-  </data>
-  <data name="&gt;&gt;kNumericUpDown.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="rareModeCheckBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>432, 351</value>
+    <value>2</value>
   </data>
   <data name="&gt;&gt;rareModeCheckBox.Name" xml:space="preserve">
     <value>rareModeCheckBox</value>
@@ -284,12 +172,24 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;rareModeCheckBox.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="backgroundMeasureCycleCountLabel.GenerateMember" type="System.Boolean, mscorlib">
+  <data name="&gt;&gt;applyButton.Name" xml:space="preserve">
+    <value>applyButton</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;applyButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;applyButton.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <metadata name="backgroundMeasureCycleCountLabel.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="backgroundMeasureCycleCountLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -297,6 +197,7 @@
   <data name="backgroundMeasureCycleCountLabel.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="backgroundMeasureCycleCountLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>425, 44</value>
   </data>
@@ -321,9 +222,9 @@
   <data name="&gt;&gt;backgroundMeasureCycleCountLabel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="label2.GenerateMember" type="System.Boolean, mscorlib">
+  <metadata name="label2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
+  </metadata>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -351,9 +252,9 @@
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib">
+  <metadata name="controlPeakLabelRow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
+  </metadata>
   <data name="controlPeakLabelRow.Location" type="System.Drawing.Point, System.Drawing">
     <value>194, 16</value>
   </data>
@@ -375,9 +276,9 @@
   <data name="&gt;&gt;controlPeakLabelRow.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="label8.GenerateMember" type="System.Boolean, mscorlib">
+  <metadata name="label8.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
+  </metadata>
   <data name="label8.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -405,9 +306,9 @@
   <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
-  <data name="label1.GenerateMember" type="System.Boolean, mscorlib">
+  <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
+  </metadata>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -511,7 +412,7 @@
     <value>True</value>
   </data>
   <data name="useCheckPeakCheckBox.Enabled" type="System.Boolean, mscorlib">
-    <value>True</value>
+    <value>False</value>
   </data>
   <data name="useCheckPeakCheckBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>324, 11</value>
@@ -525,6 +426,9 @@
   <data name="useCheckPeakCheckBox.Text" xml:space="preserve">
     <value>Использовать
 контрольный пик</value>
+  </data>
+  <data name="useCheckPeakCheckBox.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;useCheckPeakCheckBox.Name" xml:space="preserve">
     <value>useCheckPeakCheckBox</value>
@@ -653,11 +557,11 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;monitorOptionsGroupBox.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
+  </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
     <value>6, 13</value>
   </data>

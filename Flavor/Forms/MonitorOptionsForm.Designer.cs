@@ -8,8 +8,8 @@ namespace Flavor.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
             System.Windows.Forms.Label backgroundMeasureCycleCountLabel;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitorOptionsForm));
             System.Windows.Forms.Label label2;
             Flavor.Controls.PreciseEditorLabelRowMinus controlPeakLabelRow;
             System.Windows.Forms.Label label8;
@@ -28,7 +28,6 @@ namespace Flavor.Forms {
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
-            this.params_groupBox.SuspendLayout();
             this.monitorOptionsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkPeakNumberNumericUpDown)).BeginInit();
@@ -36,10 +35,6 @@ namespace Flavor.Forms {
             ((System.ComponentModel.ISupportInitialize)(this.timeLimitNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iterationsNumericUpDown)).BeginInit();
             this.SuspendLayout();
-            // 
-            // rareModeCheckBox
-            // 
-            resources.ApplyResources(this.rareModeCheckBox, "rareModeCheckBox");
             // 
             // backgroundMeasureCycleCountLabel
             // 
@@ -131,8 +126,10 @@ namespace Flavor.Forms {
             // 
             // checkPeakPreciseEditorRowMinus
             // 
+            this.checkPeakPreciseEditorRowMinus.ColText = "";
             resources.ApplyResources(this.checkPeakPreciseEditorRowMinus, "checkPeakPreciseEditorRowMinus");
             this.checkPeakPreciseEditorRowMinus.Name = "checkPeakPreciseEditorRowMinus";
+            this.checkPeakPreciseEditorRowMinus.StepText = "";
             // 
             // iterationsNumericUpDown
             // 
@@ -144,13 +141,12 @@ namespace Flavor.Forms {
             resources.ApplyResources(this, "$this");
             this.Controls.Add(this.monitorOptionsGroupBox);
             this.Name = "MonitorOptionsForm";
+            this.Controls.SetChildIndex(this.applyButton, 0);
             this.Controls.SetChildIndex(this.rareModeCheckBox, 0);
             this.Controls.SetChildIndex(this.monitorOptionsGroupBox, 0);
             this.Controls.SetChildIndex(this.params_groupBox, 0);
             this.Controls.SetChildIndex(this.ok_butt, 0);
             this.Controls.SetChildIndex(this.cancel_butt, 0);
-            this.params_groupBox.ResumeLayout(false);
-            this.params_groupBox.PerformLayout();
             this.monitorOptionsGroupBox.ResumeLayout(false);
             this.monitorOptionsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.backroundMeasureCycleCountNumericUpDown)).EndInit();

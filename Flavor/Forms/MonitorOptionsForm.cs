@@ -22,10 +22,8 @@ namespace Flavor.Forms {
                                     checkPeakPreciseEditorRowMinus.AllFilled?
                                     new PreciseEditorData(false, byte.MaxValue, Convert.ToUInt16(checkPeakPreciseEditorRowMinus.StepText),
                                                                   Convert.ToByte(checkPeakPreciseEditorRowMinus.ColText), 0,
-                                                                  Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak")
-                                                                  : null,
-                                    (int)checkPeakNumberNumericUpDown.Value,
-                                    useCheckPeakCheckBox.Checked,
+                                                                  Convert.ToUInt16(checkPeakPreciseEditorRowMinus.WidthText), 0, "checker peak"):
+                                    null, (int)checkPeakNumberNumericUpDown.Value, 
                                     (byte)backroundMeasureCycleCountNumericUpDown.Value);
         }
 
