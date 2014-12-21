@@ -74,10 +74,8 @@ namespace Flavor.Forms {
         }
         void refreshGraph(ushort pnt, uint[] counts, params int[] recreate) {
             // TODO: use recreate to refresh only affected collectors
+            // TODO: avoid frequent refresh as point tooltips are invalidating too quickly
             base.RefreshGraph();
-            refreshGraphicsOnMeasureStep(pnt, counts);
-        }
-        void refreshGraphicsOnMeasureStep(ushort pnt, uint[] counts) {
             if (counts != null)
                 ((MeasureGraphPanel)Panel).performStep(pnt, counts);
             if (!PreciseSpectrumDisplayed)

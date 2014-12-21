@@ -153,6 +153,7 @@ namespace Flavor.Forms {
         }
 
         void InvokeAxisModeChange() {
+            // TODO: preserve axis scales (set to according recounted values)
             if (InvokeRequired) {
                 Invoke(new Action(CreateGraph));
                 return;
@@ -174,9 +175,6 @@ namespace Flavor.Forms {
         }
 
         protected override sealed void CreateGraph() {
-            CreateGraph(true);
-        }
-        void CreateGraph(bool recreate) {
             if (graph != null) {
                 specterSavingEnabled = false;
                 string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
@@ -185,7 +183,7 @@ namespace Flavor.Forms {
                         ZedGraphRebirth(i, graph.Collectors[i], prefix);
                 }
             }
-            RefreshGraph(recreate);
+            RefreshGraph(true);
         }
 
         protected void setXScaleLimits() {

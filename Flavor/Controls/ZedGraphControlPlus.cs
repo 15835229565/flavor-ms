@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using ZedGraph;
-using Flavor.Common;
 using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 
 namespace Flavor.Controls {
@@ -55,6 +54,8 @@ namespace Flavor.Controls {
             if (sender != this)
                 return;
             var pane = MasterPane.FindChartRect(mousePt);
+            // TODO: different menus for different objects (point, axis..)
+            //pane.FindNearestObject(mousePt, graphics, obj, index);
             CurveItem nearestCurve;
             int pointIndex;
             if ((pane != null) && pane.FindNearestPoint(mousePt, out nearestCurve, out pointIndex))
