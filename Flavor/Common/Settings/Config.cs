@@ -792,7 +792,8 @@ namespace Flavor.Common.Settings {
                         if (data.Length != 0) {
                             string label = LABEL + (int)data[0];
                             sw.WriteLine(label);
-                            swResolved.WriteLine(label);
+                            if (swResolved != null)
+                                swResolved.WriteLine(label);
                         }
                         var sb = new StringBuilder()
                             .AppendFormat(DateTimeFormatInfo.InvariantInfo, "{0:T}", currentDT)
