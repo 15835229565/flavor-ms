@@ -50,7 +50,7 @@ namespace Flavor.Controls {
             base.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
         }
 
-        private void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
+        void ZedGraphControlPlus_ContextMenuBuilder(ZedGraphControl sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
             if (sender != this)
                 return;
             var pane = MasterPane.FindChartRect(mousePt);

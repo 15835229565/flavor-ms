@@ -381,8 +381,24 @@ namespace Flavor.Forms {
             items.Add(new ToolStripMenuItem("Выбрать шкалу", null, stepViewItem, voltageViewItem, massViewItem));
         }
 
+        ZedGraphControl _cachedSender;
+        GraphPane _cachedPane;
+        CurveItem _cachedCurve;
+        int _cachedPnt;
+        string tooltipData;
         string ZedGraphControlPlus_PointValueEvent(ZedGraphControl sender, GraphPane pane, CurveItem curve, int iPt) {
-            string tooltipData = "";
+            if (iPt == _cachedPnt && curve == _cachedCurve && pane == _cachedPane && sender == _cachedSender) {
+                // fastens tooltip displaying. but can be mistake after curve data modification.
+                // ZedGraphControl logic concerning ToolTips needs revising
+                // less updates. Invoke/BeginInvoke
+                return tooltipData;
+            } else {
+                _cachedSender = sender;
+                _cachedPane = pane;
+                _cachedCurve = curve;
+                _cachedPnt = iPt;
+            }
+            tooltipData = "";
             var pp = curve[iPt];
             switch (graph.AxisDisplayMode) {
                 case ScalableDataList.DisplayValue.Step:
