@@ -112,17 +112,18 @@ namespace Flavor.Common.Data.Measure {
             public MeasureGraph(CommonOptions commonOpts, params double[] coeffs)
                 : base(commonOpts, coeffs) { }
 
-            public void Reset() {
+            void Init() {
                 ResetPointLists();
                 Collectors.CommonOptions = Config.CommonOptions;
-                PreciseData = Config.PreciseData;
                 DisplayingMode = Displaying.Measured;
             }
+            public void Reset() {
+                Init();
+                PreciseData = Config.PreciseData;
+            }
             public void ResetForMonitor() {
-                ResetPointLists();
-                Collectors.CommonOptions = Config.CommonOptions;
+                Init();
                 PreciseData = Config.PreciseDataWithChecker;
-                DisplayingMode = Displaying.Measured;
             }
             public void ResetPointListsWithEvent() {
                 Reset();

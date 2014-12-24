@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Timers;
-using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Common.Data.Measure {
-    // TODO: remove dependencies from Config
     abstract class MeasureMode {
         public class NoListenersException: Exception { }
         public class VoltageStepEventArgs: EventArgs {
@@ -46,6 +44,7 @@ namespace Flavor.Common.Data.Measure {
 
         public bool isOperating { get; private set; }
 
+        readonly ushort _min, _max;
         ushort pointValue = 0;
 
         SingleMeasureEventArgs customMeasureEventArgs = null;
@@ -54,8 +53,10 @@ namespace Flavor.Common.Data.Measure {
         readonly SingleMeasureEventArgs generalMeasureEventArgs;
 
         public bool CancelRequested { private get; set; }
-        MeasureMode(ushort befTime, ushort iTime, ushort eTime) {
+        MeasureMode(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime) {
             isOperating = false;
+            _min = min;
+            _max = max;
             firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
             generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
         }
@@ -114,14 +115,14 @@ namespace Flavor.Common.Data.Measure {
             // is used to sparse data
             readonly ushort _ratio;
 
-            public Scan(ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint, ushort ratio)
-                : base(befTime, iTime, eTime) {
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint, ushort ratio)
+                : base(min, max, befTime, iTime, eTime) {
                 _ratio = ratio;
                 this.sPoint = sPoint;
                 this.ePoint = ePoint;
             }
-            public Scan(ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint)
-                : this(befTime, iTime, eTime, sPoint, ePoint, 1) { }
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint)
+                : this(min, max, befTime, iTime, eTime, sPoint, ePoint, 1) { }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(pointValue);
@@ -180,13 +181,12 @@ namespace Flavor.Common.Data.Measure {
             readonly SingleMeasureEventArgs forwardMeasureEventArgs;
             readonly SingleMeasureEventArgs backwardMeasureEventArgs;
 
-            public Precise(List<PreciseEditorData> peaks)
-                : this(peaks, 0) { }
-            Precise(List<PreciseEditorData> peaks, short? shift)
-                : base(Config.CommonOptions.befTimeReal, Config.CommonOptions.iTimeReal, Config.CommonOptions.eTimeReal) {
-                // TODO: move references to Config up
-                forwardMeasureEventArgs = Config.CommonOptions.ForwardTimeEqualsBeforeTime ? firstMeasureEventArgs : new SingleMeasureEventArgs(Config.CommonOptions.fTimeReal, Config.CommonOptions.eTimeReal);
-                backwardMeasureEventArgs = new SingleMeasureEventArgs(Config.CommonOptions.bTimeReal, Config.CommonOptions.eTimeReal);
+            public Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay)
+                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, 0) { }
+            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, short? shift)
+                : base(min, max, startDelay, stepDelay, exposition) {
+                forwardMeasureEventArgs = new SingleMeasureEventArgs(forwardDelay, exposition);
+                backwardMeasureEventArgs = new SingleMeasureEventArgs(backwardDelay, exposition);
 
                 this.shift = shift;
                 senseModePoints = peaks;
@@ -233,8 +233,9 @@ namespace Flavor.Common.Data.Measure {
             }
 
             protected override bool onNextStep() {
-                int realValue = pointValue + (shift ?? 0);
-                if (realValue > Config.MAX_STEP || realValue < Config.MIN_STEP) {
+                int realValue = pointValue + shift ?? 0;
+                // TODO: move up
+                if (realValue > _max || realValue < _min) {
                     return false;
                 }
                 OnVoltageStepChangeRequested((ushort)realValue);
@@ -361,13 +362,12 @@ namespace Flavor.Common.Data.Measure {
                 readonly ushort allowedShift;
                 long[] prevIteration = null;
 
-                public Monitor(short? initialShift, ushort allowedShift, int timeLimit)
-                    : base(Graph.MeasureGraph.Instance.PreciseData.GetUsed(), initialShift) {
-                    // TODO: getWithId()
+                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift, int iterations, int timeLimit)
+                    : base(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, initialShift) {
                     this.allowedShift = allowedShift;
-                    stopper = new MeasureStopper(Config.Iterations, timeLimit);
+                    stopper = new MeasureStopper(iterations, timeLimit);
                     if (initialShift.HasValue) {
-                        peak = Config.CheckerPeak;
+                        peak = checkerPeak;
                         if (peak != null) {
                             checkerIndex = senseModePoints.FindIndex(peak.Equals);
                             if (checkerIndex != -1)
