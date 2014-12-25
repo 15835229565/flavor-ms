@@ -110,19 +110,15 @@ namespace Flavor.Common.Data.Measure {
         }
 
         public class Scan: MeasureMode {
-            readonly ushort sPoint;
-            readonly ushort ePoint;
             // is used to sparse data
             readonly ushort _ratio;
 
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint, ushort ratio)
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, ushort ratio)
                 : base(min, max, befTime, iTime, eTime) {
                 _ratio = ratio;
-                this.sPoint = sPoint;
-                this.ePoint = ePoint;
             }
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, ushort sPoint, ushort ePoint)
-                : this(min, max, befTime, iTime, eTime, sPoint, ePoint, 1) { }
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime)
+                : this(min, max, befTime, iTime, eTime, 1) { }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(pointValue);
@@ -130,7 +126,7 @@ namespace Flavor.Common.Data.Measure {
                 return true;
             }
             protected override bool toContinue() {
-                return pointValue <= ePoint;
+                return pointValue <= _max;
             }
 
             public override bool Start() {
@@ -138,7 +134,7 @@ namespace Flavor.Common.Data.Measure {
                     return false;
                 }
                 //lock here
-                pointValue = sPoint;
+                pointValue = _min;
                 return onNextStep();
             }
             public override void UpdateGraph() {
@@ -148,12 +144,12 @@ namespace Flavor.Common.Data.Measure {
                     // temporary solution. fake points to prevent spectrum save format
                     GraphUpdateDelegate(pnt, null);
                     ++pnt;
-                    if (pnt > ePoint)
+                    if (pnt > _max)
                         break;
                 }
             }
             public override int StepsCount {
-                get { return (ePoint - sPoint + 1) / _ratio; }
+                get { return (_max - _min + 1) / _ratio; }
             }
         }
         public class Precise: MeasureMode {
@@ -202,6 +198,7 @@ namespace Flavor.Common.Data.Measure {
                 senseModePeakIterationMax = new ushort[senseModePoints.Count];
                 smpiSumMax = 0;
                 senseModeCounts = new long[senseModePoints.Count][];
+                // TODO: count cycle time
                 for (int i = 0; i < senseModePeakIterationMax.Length; ++i) {
                     int dimension = 2 * senseModePoints[i].Width + 1;
                     senseModeCounts[i] = new long[dimension];
@@ -244,7 +241,7 @@ namespace Flavor.Common.Data.Measure {
             }
             protected override bool toContinue() {
                 var peak = SenseModePeak;
-                if ((pointValue > (peak.Step + peak.Width))) {
+                if (pointValue > peak.Step + peak.Width) {
                     if (!isSpectrumValid(peak)) {
                         // check spectrum validity after any iteration over checker peak
                         return false;
