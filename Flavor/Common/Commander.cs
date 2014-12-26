@@ -356,12 +356,15 @@ namespace Flavor.Common {
                         //Order is important here!!!! Underlying data update before both matrix formation and measure mode init.
                         g = Graph.MeasureGraph.Instance;
                         g.ResetForMonitor();
+                        //var peaks = g.PreciseData.GetUsed();
+                        //already filtered in ResetForMonitor()
+                        var peaks = g.PreciseData;
 
 #warning matrix is formed too early
                         // TODO: move matrix formation to manual operator actions
                         // TODO: parallelize matrix formation, flag on completion
                         // TODO: duplicates
-                        peaksForMatrix = g.PreciseData.GetUsed().GetWithId();
+                        peaksForMatrix = peaks.GetWithId();
                         if (peaksForMatrix.Count > 0) {
                             // To comply with other processing order (and saved information)
                             peaksForMatrix.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
@@ -379,10 +382,10 @@ namespace Flavor.Common {
                         // TODO: feed measure mode with start shift value (really?)
                         short? startShiftValue = 0;
                         {
-                            var co = Config.CommonOptions;
+                            var co = g.CommonOptions;
                             var temp = new MeasureMode.Precise.Monitor(Config.MIN_STEP, Config.MAX_STEP,
                                 // TODO: getWithId()
-                                g.PreciseData.GetUsed(),
+                                peaks,
                                 co.befTimeReal, co.iTimeReal, co.eTimeReal,
                                 co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal,
                                 // TODO: move extra data into checker

@@ -241,7 +241,7 @@ namespace Flavor.Common.Data.Measure {
             }
             protected override bool toContinue() {
                 var peak = SenseModePeak;
-                if (pointValue > peak.Step + peak.Width) {
+                if (pointValue > (peak.Step + peak.Width)) {
                     if (!isSpectrumValid(peak)) {
                         // check spectrum validity after any iteration over checker peak
                         return false;
@@ -364,9 +364,10 @@ namespace Flavor.Common.Data.Measure {
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(iterations, timeLimit);
                     if (initialShift.HasValue) {
+                        // TODO: move up to Commander. only index here
                         peak = checkerPeak;
                         if (peak != null) {
-                            checkerIndex = senseModePoints.FindIndex(peak.Equals);
+                            checkerIndex = peaks.FindIndex(peak.Equals);
                             if (checkerIndex != -1)
                                 prevIteration = new long[senseModeCounts[checkerIndex].Length];
                         }
