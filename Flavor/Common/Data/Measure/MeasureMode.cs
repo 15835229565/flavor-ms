@@ -230,7 +230,7 @@ namespace Flavor.Common.Data.Measure {
             }
 
             protected override bool onNextStep() {
-                int realValue = pointValue + shift ?? 0;
+                int realValue = pointValue + (shift ?? 0);
                 // TODO: move up
                 if (realValue > _max || realValue < _min) {
                     return false;
