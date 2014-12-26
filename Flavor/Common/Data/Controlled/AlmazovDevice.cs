@@ -111,7 +111,7 @@ namespace Flavor.Common {
                     5000.0 * (ushort)data[9] / 4096,//sV
                     5000.0 * (ushort)data[10] / 4096,//psV
                     1.25 * (ushort)data[11],//inV
-                    500.0 * (ushort)data[12] / 4096//hT
+                    500.0 * (ushort)data[12] / 4096 - 273.15//hT celtigrate
                 );
             }
         }

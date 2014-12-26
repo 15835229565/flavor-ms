@@ -149,7 +149,7 @@ namespace Flavor.Common.Data.Measure {
                 }
             }
             public override int StepsCount {
-                get { return (_max - _min + 1) / _ratio; }
+                get { return (_max - _min + 1)/* / _ratio*/; }
             }
         }
         public class Precise: MeasureMode {

@@ -275,7 +275,7 @@ namespace Flavor.Forms {
             highVacuumValueTreeNode = new TreeNodeLeaf();
             highVacuumTextTreeNode = new TreeNodePair("Напряжение на детекторе 3, В", highVacuumValueTreeNode);
             hCurrentValueTreeNode = new TreeNodeLeaf();
-            hCurrentTextTreeNode = new TreeNodePair("Температура нагрева, К", hCurrentValueTreeNode);//hT
+            hCurrentTextTreeNode = new TreeNodePair("Температура нагрева, C", hCurrentValueTreeNode);//hT
             turboSpeedValueTreeNode = new TreeNodeLeaf();
             turboSpeedTextTreeNode = new TreeNodePair("Напряжение натекателя, В", turboSpeedValueTreeNode);//inV
 
@@ -927,7 +927,8 @@ namespace Flavor.Forms {
         void InvokeRefreshDeviceStatus() {
             BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
         }
-        void RefreshDeviceStatus() {
+        void RefreshDeviceStatus()
+        {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             if (Device.fPumpOn) {
@@ -967,15 +968,18 @@ namespace Flavor.Forms {
                 vGate2ValueTreeNode.State = TreeNodePlus.States.Ok;
                 vGate2ValueTreeNode.Text = CLOSED_TEXT;
             }
-            f1VoltageValueTreeNode.Text = Device.DeviceCommonData.fV1Real.ToString("f2");
-            f2VoltageValueTreeNode.Text = Device.DeviceCommonData.fV2Real.ToString("f2");
-            iVoltageValueTreeNode.Text = Device.DeviceCommonData.iVoltageReal.ToString("f2");
-            detectorVoltageValueTreeNode.Text = Device.DeviceCommonData.dVoltageReal.ToString("f1");
-            condPlusValueTreeNode.Text = Device.DeviceCommonData.cVPlusReal.ToString("f2");
-            condMinusValueTreeNode.Text = Device.DeviceCommonData.cVMinReal.ToString("f2");
-            scanVoltageValueTreeNode.Text = Device.DeviceCommonData.sVoltageReal.ToString("f1");
-            eCurrentValueTreeNode.Text = Device.DeviceCommonData.eCurrentReal.ToString("f3");
-            hCurrentValueTreeNode.Text = Device.DeviceCommonData.hCurrentReal.ToString("f3");
+            {
+                var cd = Device.DeviceCommonData;
+                f1VoltageValueTreeNode.Text = cd.fV1Real.ToString("f2");
+                f2VoltageValueTreeNode.Text = cd.fV2Real.ToString("f2");
+                iVoltageValueTreeNode.Text = cd.iVoltageReal.ToString("f2");
+                detectorVoltageValueTreeNode.Text = cd.dVoltageReal.ToString("f1");
+                condPlusValueTreeNode.Text = cd.cVPlusReal.ToString("f2");
+                condMinusValueTreeNode.Text = cd.cVMinReal.ToString("f2");
+                scanVoltageValueTreeNode.Text = cd.sVoltageReal.ToString("f1");
+                eCurrentValueTreeNode.Text = cd.eCurrentReal.ToString("f3");
+                hCurrentValueTreeNode.Text = cd.hCurrentReal.ToString("f3");
+            }
             turboSpeedValueTreeNode.Text = Device.TurboPump.Speed.ToString("f0");
 
             statusTreeView.EndUpdate();
