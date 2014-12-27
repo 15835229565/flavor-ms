@@ -359,8 +359,9 @@ namespace Flavor.Common.Data.Measure {
                 readonly ushort allowedShift;
                 long[] prevIteration = null;
 
-                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift, int iterations, int timeLimit)
+                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift)
                     : base(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, initialShift) {
+                    // TODO: Precise field, checker peak received by index, after sort found by equality again
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(iterations, timeLimit);
                     if (initialShift.HasValue) {

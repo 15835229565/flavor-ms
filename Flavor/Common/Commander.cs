@@ -388,8 +388,9 @@ namespace Flavor.Common {
                                 peaks,
                                 co.befTimeReal, co.iTimeReal, co.eTimeReal,
                                 co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal,
+                                Config.Iterations, Config.TimeLimit,
                                 // TODO: move extra data into checker
-                                Config.CheckerPeak, Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift, Config.Iterations, Config.TimeLimit);
+                                Config.CheckerPeak, Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift);
                             temp.SaveResults += (s, e) => {
                                 Config.autoSaveMonitorSpectrumFile(LabelNumber);
                                 if (LabelNumber.HasValue)

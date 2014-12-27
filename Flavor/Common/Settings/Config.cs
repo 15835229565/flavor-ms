@@ -95,6 +95,7 @@ namespace Flavor.Common.Settings {
                     int index = res.FindIndex(peak => peak.pNumber == reperPeakIndex);
                     if (index == -1) {
                         // no peak
+                        // TODO: provide guarantee for checker position in list
                         res.Add(CheckerPeak);
                     } else {
                         // peak is also measured. error can be caused by this line (copying)
@@ -103,6 +104,7 @@ namespace Flavor.Common.Settings {
                     return res;
                 }
                 if (reperPeak != null) {
+                    // TODO: provide guarantee for checker position in list
                     res.Add(new PreciseEditorData(false, 255, reperPeak.Step, reperPeak.Collector, countMaxIteration(res), reperPeak.Width, 0, "checker peak"));
                 }
                 return res;
