@@ -3,64 +3,32 @@ using System.Collections.Generic;
 using System.Timers;
 
 namespace Flavor.Common.Data.Measure {
-    abstract class MeasureMode {
-        public class NoListenersException: Exception { }
-        public class VoltageStepEventArgs: EventArgs {
-            public ushort Step { get; private set; }
-            public VoltageStepEventArgs(ushort step) {
-                Step = step;
-            }
-        }
-        public event EventHandler<VoltageStepEventArgs> VoltageStepChangeRequested;
-        protected virtual void OnVoltageStepChangeRequested(ushort step) {
-            // TODO: lock here?
-            if (VoltageStepChangeRequested == null)
-                throw new NoListenersException();
-            VoltageStepChangeRequested(this, new VoltageStepEventArgs(step));
-        }
-        public class SingleMeasureEventArgs: EventArgs {
-            public ushort IdleTime { get; private set; }
-            public ushort ExpositionTime { get; private set; }
-            public SingleMeasureEventArgs(ushort idleTime, ushort expositionTime) {
-                IdleTime = idleTime;
-                ExpositionTime = expositionTime;
-            }
-        }
-
-        public event EventHandler SuccessfulExit;
-        protected virtual void OnSuccessfulExit(EventArgs args) {
-            SuccessfulExit.Raise(this, args);
-        }
-        public event EventHandler Disable;
-        protected virtual void OnDisable() {
-            Disable.Raise(this, EventArgs.Empty);
-        }
-        public event EventHandler Finalize;
-        protected virtual void OnFinalize() {
-            Finalize.Raise(this, EventArgs.Empty);
-        }
-
-        readonly object locker = new object();
-
-        public bool isOperating { get; private set; }
+    abstract class MeasureMode: MeasureModeBase {
+        //readonly object locker = new object();
+        ushort _step = 0;
 
         readonly ushort _min, _max;
-        ushort pointValue = 0;
-
         SingleMeasureEventArgs customMeasureEventArgs = null;
-
-        readonly SingleMeasureEventArgs firstMeasureEventArgs;
+        readonly SingleMeasureEventArgs instantMeasureEventArgs;
         readonly SingleMeasureEventArgs generalMeasureEventArgs;
-
-        public bool CancelRequested { private get; set; }
+        readonly SingleMeasureEventArgs firstMeasureEventArgs;
         MeasureMode(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime) {
-            isOperating = false;
             _min = min;
             _max = max;
-            firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
+            instantMeasureEventArgs = new SingleMeasureEventArgs(0, eTime);
             generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
+            firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
         }
-        public bool onUpdateCounts(uint[] counts) {
+        public override bool Start() {
+            //first measure point with increased idle time
+            customMeasureEventArgs = firstMeasureEventArgs;
+            return base.Start();
+        }
+        public sealed override void NextMeasure(Action<ushort, ushort> send) {
+            var args = customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs;
+            send(args.IdleTime, args.ExpositionTime);
+        }
+        public sealed override bool onUpdateCounts(uint[] counts) {
             customMeasureEventArgs = null;//ATTENTION! need to be modified if measure mode without waiting for count answer is applied
             //lock here?
             saveData(counts);
@@ -75,40 +43,24 @@ namespace Flavor.Common.Data.Measure {
                     OnDisable();
                     return false;
                 }
-            }
-            else {
+            } else {
                 OnSuccessfulExit(EventArgs.Empty);
                 stop();
             }
             return true;
         }
+        abstract protected void saveData(uint[] counts);
+        abstract protected bool onNextStep();
+        abstract protected bool toContinue();
         void stop() {
-            OnFinalize();
+            var e = new CancelEventArgs(false);
+            OnFinalize(e);
+            if (e.Cancel)
+                return;
             isOperating = false;
             OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
             OnDisable();
         }
-        // TODO: move to Commander!
-        // internal usage only
-        abstract protected void saveData(uint[] counts);
-        abstract protected bool onNextStep();
-        abstract protected bool toContinue();
-        public virtual bool Start() {
-            //first measure point with increased idle time
-            customMeasureEventArgs = firstMeasureEventArgs;
-            isOperating = true;
-            return true;
-        }
-        // external usage only
-        public Action<ushort, PreciseEditorData> GraphUpdateDelegate { get; set; }
-        abstract public void UpdateGraph();
-        // external usage only
-        abstract public int StepsCount { get; }
-        public void NextMeasure(Action<ushort, ushort> send) {
-            var args = customMeasureEventArgs == null ? generalMeasureEventArgs : customMeasureEventArgs;
-            send(args.IdleTime, args.ExpositionTime);
-        }
-
         public class Scan: MeasureMode {
             // is used to sparse data
             readonly ushort _ratio;
@@ -121,12 +73,12 @@ namespace Flavor.Common.Data.Measure {
                 : this(min, max, befTime, iTime, eTime, 1) { }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
-                OnVoltageStepChangeRequested(pointValue);
-                pointValue += _ratio;
+                OnVoltageStepChangeRequested(_step);
+                _step += _ratio;
                 return true;
             }
             protected override bool toContinue() {
-                return pointValue <= _max;
+                return _step <= _max;
             }
 
             public override bool Start() {
@@ -134,11 +86,11 @@ namespace Flavor.Common.Data.Measure {
                     return false;
                 }
                 //lock here
-                pointValue = _min;
+                _step = _min;
                 return onNextStep();
             }
             public override void UpdateGraph() {
-                ushort pnt = pointValue;
+                ushort pnt = _step;
                 pnt -= _ratio;
                 for (int i = 0; i < _ratio; ++i) {
                     // temporary solution. fake points to prevent spectrum save format
@@ -158,14 +110,14 @@ namespace Flavor.Common.Data.Measure {
                 SaveResults.Raise(this, EventArgs.Empty);
                 // send data here?
             }
-            List<PreciseEditorData> senseModePoints;
-            long[][] senseModeCounts;
-            byte senseModePeak = 0;
-            PreciseEditorData SenseModePeak {
-                get { return senseModePoints[senseModePeak]; }
+            readonly List<PreciseEditorData> _peaks;
+            long[][] _counts;
+            byte _peakIndex = 0;
+            PreciseEditorData Peak {
+                get { return _peaks[_peakIndex]; }
             }
-            ushort[] senseModePeakIterationMax;
-            ushort[] senseModePeakIteration;
+            readonly ushort[] _maxIterations;
+            ushort[] _iterations;
             ushort smpiSumMax;//ushort?
             ushort smpiSum;//ushort?
 
@@ -176,42 +128,43 @@ namespace Flavor.Common.Data.Measure {
 
             readonly SingleMeasureEventArgs forwardMeasureEventArgs;
             readonly SingleMeasureEventArgs backwardMeasureEventArgs;
-
+            readonly Action<PreciseEditorData> _checkOnPeakEnd;
             public Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay)
-                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, 0) { }
-            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, short? shift)
+                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, 0, p => { }) { }
+            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, short? shift, Action<PreciseEditorData> checkOnPeakEnd)
                 : base(min, max, startDelay, stepDelay, exposition) {
+                _checkOnPeakEnd = checkOnPeakEnd;
                 forwardMeasureEventArgs = new SingleMeasureEventArgs(forwardDelay, exposition);
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(backwardDelay, exposition);
 
                 this.shift = shift;
-                senseModePoints = peaks;
+                _peaks = peaks;
                 //Sort in increased order
-                if (senseModePoints.Count == 0) {
+                if (_peaks.Count == 0) {
                     // nothing to do... strange. throw smth?
                     return;
                 }
 
                 noPoints = false;
                 // only peak value?
-                senseModePoints.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                senseModePeakIterationMax = new ushort[senseModePoints.Count];
+                _peaks.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                _maxIterations = new ushort[_peaks.Count];
                 smpiSumMax = 0;
-                senseModeCounts = new long[senseModePoints.Count][];
+                _counts = new long[_peaks.Count][];
                 // TODO: count cycle time
-                for (int i = 0; i < senseModePeakIterationMax.Length; ++i) {
-                    int dimension = 2 * senseModePoints[i].Width + 1;
-                    senseModeCounts[i] = new long[dimension];
-                    ushort iterations = senseModePoints[i].Iterations;
-                    senseModePeakIterationMax[i] = iterations;
+                for (int i = 0; i < _maxIterations.Length; ++i) {
+                    int dimension = 2 * _peaks[i].Width + 1;
+                    _counts[i] = new long[dimension];
+                    ushort iterations = _peaks[i].Iterations;
+                    _maxIterations[i] = iterations;
                     smpiSumMax += iterations; ;
                     stepPoints += dimension * iterations;
                 }
             }
             protected override void saveData(uint[] counts) {
-                var peak = SenseModePeak;
+                var peak = Peak;
                 // be careful!
-                senseModeCounts[senseModePeak][pointValue - 1 - peak.Step + peak.Width] += counts[peak.Collector - 1];
+                _counts[_peakIndex][_step - 1 - peak.Step + peak.Width] += counts[peak.Collector - 1];
             }
             public class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }
@@ -225,55 +178,55 @@ namespace Flavor.Common.Data.Measure {
             }
             protected override void OnSuccessfulExit(EventArgs args) {
                 // order is important here: points are saved from graph..
-                base.OnSuccessfulExit(new SuccessfulExitEventArgs(senseModeCounts, senseModePoints, shift));
+                base.OnSuccessfulExit(new SuccessfulExitEventArgs(_counts, _peaks, shift));
                 OnSaveResults();
             }
 
             protected override bool onNextStep() {
-                int realValue = pointValue + (shift ?? 0);
+                int realValue = _step + (shift ?? 0);
                 // TODO: move up
                 if (realValue > _max || realValue < _min) {
                     return false;
                 }
                 OnVoltageStepChangeRequested((ushort)realValue);
-                ++pointValue;
+                ++_step;
                 return true;
             }
             protected override bool toContinue() {
-                var peak = SenseModePeak;
-                if (pointValue > (peak.Step + peak.Width)) {
-                    if (!isSpectrumValid(peak)) {
-                        // check spectrum validity after any iteration over checker peak
-                        return false;
-                    }
+                var peak = Peak;
+                if (_step > (peak.Step + peak.Width)) {
+                    _checkOnPeakEnd(peak);
                     // modify pointValue in case of finished iteration
-                    --(senseModePeakIteration[senseModePeak]);
+                    --(_iterations[_peakIndex]);
                     --smpiSum;
                     if (smpiSum <= 0) {
                         // all data acquired
                         return false;
                     }
-                    for (int i = 0; i < senseModePoints.Count; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
+                    for (int i = 0; i < _peaks.Count; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
                     {
                         // TODO: remove finished peaks from temp work list instead of search
-                        ++senseModePeak;
-                        if (senseModePeak >= senseModePoints.Count) senseModePeak = 0;
-                        if (senseModePeakIteration[senseModePeak] > 0) break;
+                        ++_peakIndex;
+                        if (_peakIndex >= _peaks.Count) _peakIndex = 0;
+                        if (_iterations[_peakIndex] > 0) break;
                     }
-                    peak = SenseModePeak;
+                    peak = Peak;
                     ushort nextPoint = (ushort)(peak.Step - peak.Width);
-                    int diff = pointValue - nextPoint;
+                    // _step is 1 more than current point
+                    int diff = _step - nextPoint;
                     if (diff <= 2 && diff >= 0) {
-                        // special case when next step is close to current
-                        customMeasureEventArgs = null;
+                        if (diff == 1) {
+                            // special case when next step is the same
+                            customMeasureEventArgs = instantMeasureEventArgs;
+                        } else {
+                            // special case when next step is close to current
+                            customMeasureEventArgs = null;
+                        }
                     } else {
                         customMeasureEventArgs = diff > 0 ? backwardMeasureEventArgs : forwardMeasureEventArgs;
                     }
-                    pointValue = nextPoint;
+                    _step = nextPoint;
                 }
-                return true;
-            }
-            protected virtual bool isSpectrumValid(PreciseEditorData curPeak) {
                 return true;
             }
 
@@ -289,25 +242,29 @@ namespace Flavor.Common.Data.Measure {
             }
             bool init(bool initCounts) {
                 smpiSum = smpiSumMax;
-                senseModePeak = 0;
-                senseModePeakIteration = (ushort[])senseModePeakIterationMax.Clone();
-                var peak = SenseModePeak;
-                pointValue = (ushort)(peak.Step - peak.Width);
+                _peakIndex = 0;
+                _iterations = (ushort[])_maxIterations.Clone();
+                var peak = Peak;
+                _step = (ushort)(peak.Step - peak.Width);
                 if (initCounts) {
-                    for (int i = 0; i < senseModeCounts.GetLength(0); ++i) {
-                        senseModeCounts[i] = new long[senseModeCounts[i].Length];
+                    for (int i = 0; i < _counts.GetLength(0); ++i) {
+                        _counts[i] = new long[_counts[i].Length];
                     }
                 }
                 return base.Start();
             }
             public override void UpdateGraph() {
-                ushort pnt = pointValue;
-                GraphUpdateDelegate(--pnt, SenseModePeak);
+                ushort pnt = _step;
+                GraphUpdateDelegate(--pnt, Peak);
             }
             public override int StepsCount {
                 get { return stepPoints; }
             }
-            public class Monitor: Precise {
+            public class Monitor: MeasureModeBase {
+                public event EventHandler SaveResults {
+                    add { cycle.SaveResults += value; }
+                    remove { cycle.SaveResults -= value; }
+                }
                 class MeasureStopper {
                     int counter;
                     readonly Timer timer;
@@ -349,71 +306,47 @@ namespace Flavor.Common.Data.Measure {
                         timer.Start();
                     }
                 }
+                class ShiftException: Exception { }
 
                 readonly MeasureStopper stopper;
-                
+                readonly Precise cycle;
                 readonly PreciseEditorData peak;
                 readonly int checkerIndex;
                 
-                bool spectrumIsValid = true;
+                readonly bool ignoreInvalidity = true;
                 readonly ushort allowedShift;
-                long[] prevIteration = null;
+                readonly long[] prevIteration;
 
-                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift)
-                    : base(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, initialShift) {
-                    // TODO: Precise field, checker peak received by index, after sort found by equality again
+                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift) {
+                    // TODO: checker peak received by index, after sort found by equality again
+                    cycle = new Precise(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, initialShift, CheckShift);
+                    cycle.VoltageStepChangeRequested += (s, e) => OnVoltageStepChangeRequested(e.Step);
+                    cycle.Finalize += (s, e) => OnFinalize(e);
+                    cycle.SuccessfulExit += (s, e) => OnSuccessfulExit(e);
+
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(iterations, timeLimit);
-                    if (initialShift.HasValue) {
+                    // redundant data
+                    if (initialShift.HasValue && checkerPeak != null) {
                         // TODO: move up to Commander. only index here
                         peak = checkerPeak;
-                        if (peak != null) {
-                            checkerIndex = peaks.FindIndex(peak.Equals);
-                            if (checkerIndex != -1)
-                                prevIteration = new long[senseModeCounts[checkerIndex].Length];
-                        }
-                    }
-                }
-                protected override void OnSuccessfulExit(EventArgs args) {
-                    //TODO: option-dependent behaviour: drop or save data on shift situation. See similar comment in toContinue()
-					if (true || spectrumIsValid) {
-                        base.OnSuccessfulExit(args);
+                        checkerIndex = peaks.FindIndex(peak.Equals);
+                        if (checkerIndex != -1)
+                            prevIteration = new long[cycle._counts[checkerIndex].Length];
                     }
                 }
 
-                protected override bool toContinue() {
-                    if (base.toContinue()) {
-                        return true;
-                    }
-                    //TODO: option-dependent behaviour: transition to next cycle on shift situation. See similar comment in onSuccessfulExit()
-                    if (true || spectrumIsValid) {
-                        stopper.next();
-                    }
-                    if (stopper.ready()) {
-                        return false;
-                    }
-                    // operations between iterations
-                    OnSuccessfulExit(EventArgs.Empty);
-                    init(true);
-                    prevIteration = prevIteration == null ? null : new long[senseModeCounts[checkerIndex].Length];
-                    return true;
-                }
-                protected override bool isSpectrumValid(PreciseEditorData curPeak) {
-                    // TODO: use options-specific delegate
-                    // specially do not stop cycle
-                    return isSpectrumValid2(curPeak, true);
-                }
-                bool isSpectrumValid2(PreciseEditorData curPeak, bool ignoreInvalidity) {
-                    if (!shift.HasValue || !curPeak.Equals(peak) || prevIteration == null) {
+                void CheckShift(PreciseEditorData curPeak) {
+                    if (!cycle.shift.HasValue || !curPeak.Equals(peak) || prevIteration == null) {
                         // if peak is null also exit here
                         // do not store value here!
-                        return true;
+                        return;
                     }
-                    long[] counts = senseModeCounts[checkerIndex];
+                    long[] counts = cycle._counts[checkerIndex];
                     ushort width = peak.Width;
                     if (counts.Length != 2 * width + 1) {
                         // data mismatch. strange.
-                        return spectrumIsValid = false;
+                        return;
                     }
                     long max = -1;
                     int index = -1;
@@ -429,19 +362,59 @@ namespace Flavor.Common.Data.Measure {
 
                     short delta = (short)(index - width);
                     if (delta > allowedShift || delta < -allowedShift) {
-                        // here shift must not be null!
-                        shift += delta;
-                        spectrumIsValid = false;
-                        return ignoreInvalidity && spectrumIsValid;
+                        cycle.shift += delta;
+                        if (ignoreInvalidity) {
+                            return;
+                        }
+                        throw new ShiftException();
                     }
-                    return spectrumIsValid = true;
+                }
+                public override bool onUpdateCounts(uint[] counts) {
+                    if (CancelRequested) {
+                        cycle.CancelRequested = true;
+                    }
+                    try {
+                        return cycle.onUpdateCounts(counts);
+                    } catch (ShiftException) {
+                        if (CancelRequested) {
+                            cycle.stop();
+                            return true;
+                        }
+                        // restart cycle
+                        cycle.init(true);
+                        return cycle.onNextStep();
+                    }
+                }
+                protected override void OnSuccessfulExit(EventArgs args) {
+                    base.OnSuccessfulExit(args);
+                    stopper.next();
+                }
+                protected override void OnFinalize(CancelEventArgs e) {
+                    if (CancelRequested || stopper.ready()) {
+                        // measure mode end
+                        stop();
+                    } else {
+                        e.Cancel = true;
+                        // next cycle
+                        cycle.init(true);
+                        cycle.onNextStep();
+                    }
                 }
                 public override bool Start() {
-                    if (!base.Start()) {
+                    if (!cycle.Start()) {
                         return false;
                     }
                     stopper.startTimer();
                     return true;
+                }
+                void stop() {
+                    var e = new CancelEventArgs(false);
+                    base.OnFinalize(e);
+                    if (e.Cancel)
+                        return;
+                    isOperating = false;
+                    //base.OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
+                    base.OnDisable();
                 }
                 public override int StepsCount {
                     get {
@@ -451,8 +424,16 @@ namespace Flavor.Common.Data.Measure {
                             // minutes
                             return stopperTurns;
                         }
-                        return base.StepsCount * stopperTurns;
+                        return cycle.StepsCount * stopperTurns;
                     }
+                }
+
+                public override void UpdateGraph() {
+                    cycle.UpdateGraph();
+                }
+
+                public sealed override void NextMeasure(Action<ushort, ushort> send) {
+                    cycle.NextMeasure(send);
                 }
             }
         }

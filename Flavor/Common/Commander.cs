@@ -66,8 +66,9 @@ namespace Flavor.Common {
                 }
             };
             r.MeasureSend += (s, e) => {
-                if (CurrentMeasureMode != null && CurrentMeasureMode.isOperating) {
-                    CurrentMeasureMode.NextMeasure(e.Value);
+                var temp = CurrentMeasureMode;
+                if (temp != null && temp.isOperating) {
+                    temp.NextMeasure(e.Value);
                 }
             };
             r.MeasureDone += (s, e) => {
@@ -265,7 +266,7 @@ namespace Flavor.Common {
         }
 
         readonly IRealizer realizer;
-        public MeasureMode CurrentMeasureMode { get; protected set; }
+        public IMeasureMode CurrentMeasureMode { get; protected set; }
         bool measureCancelRequested = false;
         public bool MeasureCancelRequested {
             protected get { return measureCancelRequested; }
@@ -508,9 +509,9 @@ namespace Flavor.Common {
             SendSettings();
         }
         void deviceCountsUpdated(object sender, EventArgs<uint[]> countsData) {
-            CurrentMeasureMode.UpdateGraph();
-            //if (!CurrentMeasureMode.onUpdateCounts(device.Detectors)) {
-            if (!CurrentMeasureMode.onUpdateCounts(countsData.Value)) {
+            var temp = CurrentMeasureMode;
+            temp.UpdateGraph();
+            if (!temp.onUpdateCounts(countsData.Value)) {
                 OnErrorOccured("Измеряемая точка вышла за пределы допустимого диапазона.\nРежим измерения прекращен.");
             }
         } 
@@ -533,7 +534,7 @@ namespace Flavor.Common {
         }
         protected abstract void SubscribeToCountsUpdated(EventHandler<EventArgs<uint[]>> handler);
         protected abstract void UnsubscribeToCountsUpdated(EventHandler<EventArgs<uint[]>> handler);
-        void measureMode_VoltageStepChangeRequested(object sender, MeasureMode.VoltageStepEventArgs e) {
+        void measureMode_VoltageStepChangeRequested(object sender, VoltageStepEventArgs e) {
             realizer.SetMeasureStep(e.Step);
             // TODO: move to realizer ctor as extra action on measure step
             if (notRareModeRequested) {

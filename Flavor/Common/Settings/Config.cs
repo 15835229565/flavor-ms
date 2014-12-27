@@ -2046,7 +2046,7 @@ namespace Flavor.Common.Settings {
                     }
                     [Obsolete]
                     public void saveCommonOptions(ushort eT, ushort iT, double iV, double cp, double eC, double hC, double fv1, double fv2) {
-                        CommonOptions opts = new CommonOptions();
+                        var opts = new CommonOptions();
                         opts.eTimeReal = eT;
                         opts.iTimeReal = iT;
                         opts.iVoltageReal = iV;
