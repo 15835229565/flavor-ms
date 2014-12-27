@@ -8,10 +8,12 @@ namespace Flavor.Forms {
         public DelaysOptionsForm() {
             InitializeComponent();
             // TODO: move to OnLoad
-            beforeTimeNumericUpDown.Value = Config.CommonOptions.befTimeReal;
-            forwardTimeNumericUpDown.Value = Config.CommonOptions.fTimeReal;
-            backwardTimeNumericUpDown.Value = Config.CommonOptions.bTimeReal;
-            forwardAsBeforeCheckBox.Checked = Config.CommonOptions.ForwardTimeEqualsBeforeTime;
+            var co = Config.CommonOptions;
+            standardDelayNumericUpDown.Value = co.iTimeReal;
+            beforeTimeNumericUpDown.Value = co.befTimeReal;
+            forwardTimeNumericUpDown.Value = co.fTimeReal;
+            backwardTimeNumericUpDown.Value = co.bTimeReal;
+            forwardAsBeforeCheckBox.Checked = co.ForwardTimeEqualsBeforeTime;
         }
 
         void forwardAsBeforeCheckBox_CheckedChanged(object sender, EventArgs e) {
@@ -19,10 +21,14 @@ namespace Flavor.Forms {
         }
 
         void ok_butt_Click(object sender, EventArgs e) {
-            Config.saveGlobalDelaysOptions(forwardAsBeforeCheckBox.Checked, (ushort)beforeTimeNumericUpDown.Value,
+            Config.saveGlobalDelaysOptions((ushort)standardDelayNumericUpDown.Value, forwardAsBeforeCheckBox.Checked, (ushort)beforeTimeNumericUpDown.Value,
                                      (ushort)forwardTimeNumericUpDown.Value, (ushort)backwardTimeNumericUpDown.Value);
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void label2_Click(object sender, EventArgs e) {
+
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Flavor.Common.Settings {
             bTime = 400;
             ForwardTimeEqualsBeforeTime = false;
             eTime = 200;
-            iTime = 10;
+            iTime = 2;
             CP = 3780;
         }
         // scan voltage modification law

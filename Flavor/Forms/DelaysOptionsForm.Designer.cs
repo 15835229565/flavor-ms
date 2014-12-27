@@ -13,24 +13,29 @@
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Button ok_butt;
             System.Windows.Forms.Button cancel_butt;
+            System.Windows.Forms.Label label4;
             this.beforeTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.forwardAsBeforeCheckBox = new System.Windows.Forms.CheckBox();
             this.forwardTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.backwardTimeNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.standardDelayNumericUpDown = new System.Windows.Forms.NumericUpDown();
             label2 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
             ok_butt = new System.Windows.Forms.Button();
             cancel_butt = new System.Windows.Forms.Button();
+            label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.beforeTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.forwardTimeNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.backwardTimeNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.standardDelayNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
             // 
             resources.ApplyResources(label2, "label2");
             label2.Name = "label2";
+            label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -59,15 +64,20 @@
             // 
             // beforeTimeNumericUpDown
             // 
+            this.beforeTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             resources.ApplyResources(this.beforeTimeNumericUpDown, "beforeTimeNumericUpDown");
             this.beforeTimeNumericUpDown.Maximum = new decimal(new int[] {
-            10000,
+            1000,
             0,
             0,
             0});
             this.beforeTimeNumericUpDown.Name = "beforeTimeNumericUpDown";
             this.beforeTimeNumericUpDown.Value = new decimal(new int[] {
-            5000,
+            100,
             0,
             0,
             0});
@@ -81,30 +91,60 @@
             // 
             // forwardTimeNumericUpDown
             // 
+            this.forwardTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             resources.ApplyResources(this.forwardTimeNumericUpDown, "forwardTimeNumericUpDown");
             this.forwardTimeNumericUpDown.Maximum = new decimal(new int[] {
-            10000,
+            1000,
             0,
             0,
             0});
             this.forwardTimeNumericUpDown.Name = "forwardTimeNumericUpDown";
             this.forwardTimeNumericUpDown.Value = new decimal(new int[] {
-            5000,
+            100,
             0,
             0,
             0});
             // 
             // backwardTimeNumericUpDown
             // 
+            this.backwardTimeNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             resources.ApplyResources(this.backwardTimeNumericUpDown, "backwardTimeNumericUpDown");
             this.backwardTimeNumericUpDown.Maximum = new decimal(new int[] {
-            10000,
+            1000,
             0,
             0,
             0});
             this.backwardTimeNumericUpDown.Name = "backwardTimeNumericUpDown";
             this.backwardTimeNumericUpDown.Value = new decimal(new int[] {
-            5000,
+            100,
+            0,
+            0,
+            0});
+            // 
+            // label4
+            // 
+            resources.ApplyResources(label4, "label4");
+            label4.Name = "label4";
+            // 
+            // standardDelayNumericUpDown
+            // 
+            this.standardDelayNumericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            resources.ApplyResources(this.standardDelayNumericUpDown, "standardDelayNumericUpDown");
+            this.standardDelayNumericUpDown.Name = "standardDelayNumericUpDown";
+            this.standardDelayNumericUpDown.Value = new decimal(new int[] {
+            10,
             0,
             0,
             0});
@@ -115,6 +155,8 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = cancel_butt;
+            this.Controls.Add(this.standardDelayNumericUpDown);
+            this.Controls.Add(label4);
             this.Controls.Add(cancel_butt);
             this.Controls.Add(ok_butt);
             this.Controls.Add(this.backwardTimeNumericUpDown);
@@ -131,6 +173,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.beforeTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.forwardTimeNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.backwardTimeNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.standardDelayNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -138,9 +181,10 @@
 
         #endregion
 
-        protected System.Windows.Forms.NumericUpDown beforeTimeNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown forwardTimeNumericUpDown;
-        protected System.Windows.Forms.NumericUpDown backwardTimeNumericUpDown;
-        protected System.Windows.Forms.CheckBox forwardAsBeforeCheckBox;
+        private System.Windows.Forms.NumericUpDown standardDelayNumericUpDown;
+        private System.Windows.Forms.NumericUpDown beforeTimeNumericUpDown;
+        private System.Windows.Forms.NumericUpDown forwardTimeNumericUpDown;
+        private System.Windows.Forms.NumericUpDown backwardTimeNumericUpDown;
+        private System.Windows.Forms.CheckBox forwardAsBeforeCheckBox;
     }
 }

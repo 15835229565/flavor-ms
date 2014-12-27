@@ -138,10 +138,11 @@ namespace Flavor.Common.Settings {
             ePoint = ePointReal;//!!!
             mainConfigWriter.write();
         }
-        public static void saveGlobalDelaysOptions(bool forwardAsBefore, ushort befTimeReal, ushort fTimeReal, ushort bTimeReal) {
-            CommonOptions.befTimeReal = befTimeReal;
-            CommonOptions.fTimeReal = fTimeReal;
-            CommonOptions.bTimeReal = bTimeReal;
+        public static void saveGlobalDelaysOptions(ushort standard, bool forwardAsBefore, ushort before, ushort forward, ushort backward) {
+            CommonOptions.iTimeReal = standard;
+            CommonOptions.befTimeReal = before;
+            CommonOptions.fTimeReal = forward;
+            CommonOptions.bTimeReal = backward;
             CommonOptions.ForwardTimeEqualsBeforeTime = forwardAsBefore;
             mainConfigWriter.write();
         }
@@ -1589,7 +1590,7 @@ namespace Flavor.Common.Settings {
                             ushort eT, iT, iV, eC, hC, fV1, fV2, CP;
                             double c, k;
                             eT = ushort.Parse(commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText);
-                            //iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
+                            iT = ushort.Parse(commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText);
                             iV = ushort.Parse(commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText);
 
                             c = double.Parse(commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText, CultureInfo.InvariantCulture);
@@ -1611,7 +1612,7 @@ namespace Flavor.Common.Settings {
                             {
                                 CommonOptions opts = new CommonOptions();
                                 opts.eTime = eT;
-                                //opts.iTime = iT;
+                                opts.iTime = iT;
                                 opts.iVoltage = iV;
                                 //opts.CP = CP;
                                 opts.C = c;
@@ -2059,7 +2060,7 @@ namespace Flavor.Common.Settings {
                     }
                     void saveCommonOptions(XmlNode commonNode, CommonOptions opts) {
                         commonNode.SelectSingleNode(EXPOSITURE_TIME_CONFIG_TAG).InnerText = opts.eTime.ToString();
-                        //commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
+                        commonNode.SelectSingleNode(TRANSITION_TIME_CONFIG_TAG).InnerText = opts.iTime.ToString();
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
 
                         var temp = commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG);
