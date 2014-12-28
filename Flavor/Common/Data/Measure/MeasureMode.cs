@@ -186,11 +186,13 @@ namespace Flavor.Common.Data.Measure {
 
             protected override bool onNextStep() {
                 int realValue = _step + (shift ?? 0);
-                // TODO: move up
                 if (realValue > _max || realValue < _min) {
                     return false;
                 }
-                OnVoltageStepChangeRequested((ushort)realValue);
+                //TODO: no voltage request if it is the same point (now measure cycle stucks if voltage request is missing)
+                //if (instantMeasureEventArgs != customMeasureEventArgs) {
+                    OnVoltageStepChangeRequested((ushort)realValue);
+                //}
                 ++_step;
                 return true;
             }
@@ -253,6 +255,7 @@ namespace Flavor.Common.Data.Measure {
                         _counts[i] = new long[_counts[i].Length];
                     }
                 }
+                //first measure settings are used inside! not good
                 return base.Start();
             }
             public override void UpdateGraph() {
