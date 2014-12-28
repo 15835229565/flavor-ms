@@ -6,7 +6,6 @@ namespace Flavor.Common.Data.Measure {
         event EventHandler Disable;
         event EventHandler SuccessfulExit;
         event EventHandler<CancelEventArgs> Finalize;
-        Action<ushort, PreciseEditorData> GraphUpdateDelegate { set; }
         bool isOperating { get; }
         void NextMeasure(Action<ushort, ushort> send);
         bool onUpdateCounts(uint[] counts);

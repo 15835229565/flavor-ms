@@ -8,13 +8,15 @@ namespace Flavor.Common.Data.Measure {
         ushort _step = 0;
 
         readonly ushort _min, _max;
+        readonly Action<ushort, PreciseEditorData> _graphUpdater;
         SingleMeasureEventArgs customMeasureEventArgs = null;
         readonly SingleMeasureEventArgs instantMeasureEventArgs;
         readonly SingleMeasureEventArgs generalMeasureEventArgs;
         readonly SingleMeasureEventArgs firstMeasureEventArgs;
-        MeasureMode(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime) {
+        MeasureMode(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort, PreciseEditorData> graphUpdater) {
             _min = min;
             _max = max;
+            _graphUpdater = graphUpdater;
             instantMeasureEventArgs = new SingleMeasureEventArgs(0, eTime);
             generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
             firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
@@ -65,12 +67,12 @@ namespace Flavor.Common.Data.Measure {
             // is used to sparse data
             readonly ushort _ratio;
 
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, ushort ratio)
-                : base(min, max, befTime, iTime, eTime) {
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort, PreciseEditorData> graphUpdater, ushort ratio)
+                : base(min, max, befTime, iTime, eTime, graphUpdater) {
                 _ratio = ratio;
             }
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime)
-                : this(min, max, befTime, iTime, eTime, 1) { }
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort, PreciseEditorData> graphUpdater)
+                : this(min, max, befTime, iTime, eTime, graphUpdater, 1) { }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(_step);
@@ -94,7 +96,7 @@ namespace Flavor.Common.Data.Measure {
                 pnt -= _ratio;
                 for (int i = 0; i < _ratio; ++i) {
                     // temporary solution. fake points to prevent spectrum save format
-                    GraphUpdateDelegate(pnt, null);
+                    _graphUpdater(pnt, null);
                     ++pnt;
                     if (pnt > _max)
                         break;
@@ -129,10 +131,10 @@ namespace Flavor.Common.Data.Measure {
             readonly SingleMeasureEventArgs forwardMeasureEventArgs;
             readonly SingleMeasureEventArgs backwardMeasureEventArgs;
             readonly Action<PreciseEditorData> _checkOnPeakEnd;
-            public Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay)
-                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, 0, p => { }) { }
-            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, short? shift, Action<PreciseEditorData> checkOnPeakEnd)
-                : base(min, max, startDelay, stepDelay, exposition) {
+            public Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater)
+                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, 0, p => { }) { }
+            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, short? shift, Action<PreciseEditorData> checkOnPeakEnd)
+                : base(min, max, startDelay, stepDelay, exposition, graphUpdater) {
                 _checkOnPeakEnd = checkOnPeakEnd;
                 forwardMeasureEventArgs = new SingleMeasureEventArgs(forwardDelay, exposition);
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(backwardDelay, exposition);
@@ -255,7 +257,7 @@ namespace Flavor.Common.Data.Measure {
             }
             public override void UpdateGraph() {
                 ushort pnt = _step;
-                GraphUpdateDelegate(--pnt, Peak);
+                _graphUpdater(--pnt, Peak);
             }
             public override int StepsCount {
                 get { return stepPoints; }
@@ -317,9 +319,9 @@ namespace Flavor.Common.Data.Measure {
                 readonly ushort allowedShift;
                 readonly long[] prevIteration;
 
-                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift) {
+                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift) {
                     // TODO: checker peak received by index, after sort found by equality again
-                    cycle = new Precise(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, initialShift, CheckShift);
+                    cycle = new Precise(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, initialShift, CheckShift);
                     cycle.VoltageStepChangeRequested += (s, e) => OnVoltageStepChangeRequested(e.Step);
                     cycle.Finalize += (s, e) => OnFinalize(e);
                     cycle.SuccessfulExit += (s, e) => OnSuccessfulExit(e);

@@ -28,7 +28,6 @@ namespace Flavor.Common.Data.Measure {
 
         public bool isOperating { get; protected set; }
         public bool CancelRequested { protected get; set; }
-        public Action<ushort, PreciseEditorData> GraphUpdateDelegate { protected get; set; }
         abstract public int StepsCount { get; }
         abstract public void UpdateGraph();
         abstract public void NextMeasure(Action<ushort, ushort> send);

@@ -291,12 +291,12 @@ namespace Flavor.Common {
                 {
                     var co = g.CommonOptions;
                     var temp = new MeasureMode.Scan(Config.sPoint, Config.ePoint,
-                        co.befTimeReal, co.iTimeReal, co.eTimeReal);
+                        co.befTimeReal, co.iTimeReal, co.eTimeReal,
+                        (p, peak) => g.updateGraphDuringScanMeasure(p, Counts));
                     //var temp = new MeasureMode.Scan(Config.sPoint, Config.ePoint,
                     //    co.befTimeReal, co.iTimeReal, co.eTimeReal,
                     //    2);
                     temp.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
-                    temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringScanMeasure(p, Counts);
                     CurrentMeasureMode = temp;
                 }
                 initMeasure(ProgramStates.Measure);
@@ -314,13 +314,13 @@ namespace Flavor.Common {
                         var temp = new MeasureMode.Precise(Config.MIN_STEP, Config.MAX_STEP,
                             g.PreciseData.GetUsed(),
                             co.befTimeReal, co.iTimeReal, co.eTimeReal,
-                            co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal);
+                            co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal,
+                            (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts));
                         temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile();
                         temp.SuccessfulExit += (s, e) => {
                             var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
                             g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
                         };
-                        temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
                         CurrentMeasureMode = temp;
                     }
                     initMeasure(ProgramStates.Measure);
@@ -389,6 +389,7 @@ namespace Flavor.Common {
                                 peaks,
                                 co.befTimeReal, co.iTimeReal, co.eTimeReal,
                                 co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal,
+                                (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts),
                                 Config.Iterations, Config.TimeLimit,
                                 // TODO: move extra data into checker
                                 Config.CheckerPeak, Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift);
@@ -398,7 +399,6 @@ namespace Flavor.Common {
                                     LabelNumber = null;
                             };
                             temp.Finalize += (s, e) => Config.finalizeMonitorFile();
-                            temp.GraphUpdateDelegate = (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts);
                             temp.SuccessfulExit += (s, e) => {
                                 var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
                                 g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
