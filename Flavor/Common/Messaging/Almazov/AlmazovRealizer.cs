@@ -22,21 +22,20 @@ namespace Flavor.Common.Messaging.Almazov {
             : base(protocol, queue) { }
         class StatusRequestGenerator: IStatusRequestGenerator<CommandCode> {
             int i = 0;
-            readonly int f;
-            readonly UserRequest<CommandCode>[] checkCommands;
+            readonly int _f;
+            readonly UserRequest<CommandCode>[] _checkCommands;
             public UserRequest<CommandCode> Next {
                 get {
-                    UserRequest<CommandCode> res;
-                    res = checkCommands[i];
+                    var res = _checkCommands[i];
                     ++i;
-                    i %= f;
+                    i %= _f;
                     return res;
                 }
             }
             public void Reset() { }
             public StatusRequestGenerator(params UserRequest<CommandCode>[] checkCommands) {
-                this.checkCommands = checkCommands;
-                this.f = checkCommands.Length;
+                _checkCommands = checkCommands;
+                _f = checkCommands.Length;
                 Reset();
             }
         }
@@ -72,20 +71,38 @@ namespace Flavor.Common.Messaging.Almazov {
             //Cannot autosend sequence
             throw new NotImplementedException();
         }
-
+        ushort _prevStep = ushort.MaxValue;
         public override void SetMeasureStep(ushort step) {
             // TODO: proper data from config
             var co = Config.CommonOptions;
-            toSend.Enqueue(new ParentScanVoltageSetRequest(co.parentScanVoltage(step)));
-            toSend.Enqueue(new MainScanVoltageSetRequest(co.scanVoltageNew(step)));
-            toSend.Enqueue(new CapacitorVoltageSetRequest(co.capVoltage(step)));
+            if (step != _prevStep) {
+                toSend.Enqueue(new ParentScanVoltageSetRequest(co.parentScanVoltage(step)));
+                toSend.Enqueue(new MainScanVoltageSetRequest(co.scanVoltageNew(step)));
+                toSend.Enqueue(new CapacitorVoltageSetRequest(co.capVoltage(step)));
+                _prevStep = step;
+            } else {
+                // measure request in case of the same step is sent instead of step packages
+                SendMeasure();
+            }
         }
         [Obsolete]
         protected override UserRequest<CommandCode> MeasureStep(ushort step) {
             //Cannot autosend sequence
             throw new NotImplementedException();
         }
-
+        void SendMeasure() {
+            OnMeasureSend((t1, t2) => {
+                // temporary solution for delayed measure request;
+                if (t1 > 0) {
+                    var delayed = new Timer(t1) { AutoReset = false };
+                    var request = SendMeasureRequest.Form(t2);
+                    delayed.Elapsed += (o, args) => toSend.Enqueue(request);
+                    delayed.Start();
+                } else {
+                    toSend.Enqueue(SendMeasureRequest.Form(t2));
+                }
+            });
+        }
         bool onTheFly = true;
         protected override void PopulateDictionary(PackageDictionary<CommandCode> d) {
             //async error
@@ -156,17 +173,7 @@ namespace Flavor.Common.Messaging.Almazov {
             Add<GetHeaterVoltageReply>(p => OnMeasurePreconfigured());
 
             Add<ScanVoltageSetReply>();
-            Add<CapacitorVoltageSetReply>(p => OnMeasureSend((t1, t2) => {
-                // temporary solution for delayed measure request;
-                if (t1 > 0) {
-                    var delayed = new Timer(t1){ AutoReset = false };
-                    var request = SendMeasureRequest.Form(t2);
-                    delayed.Elapsed += new ElapsedEventHandler((o, args) => toSend.Enqueue(request));
-                    delayed.Start();
-                } else {
-                    toSend.Enqueue(SendMeasureRequest.Form(t2));
-                }
-            }));
+            Add<CapacitorVoltageSetReply>(p => SendMeasure());
 
             Add<SendMeasureReply>();
             Add<DelayedMeasureReply>();

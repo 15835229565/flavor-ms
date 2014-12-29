@@ -140,28 +140,30 @@ namespace Flavor.Common.Data.Measure {
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(backwardDelay, exposition);
 
                 this.shift = shift;
-                _peaks = peaks;
                 //Sort in increased order
-                if (_peaks.Count == 0) {
+                int count = peaks.Count;
+                if (count == 0) {
                     // nothing to do... strange. throw smth?
                     return;
                 }
 
                 noPoints = false;
                 // only peak value?
-                _peaks.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
-                _maxIterations = new ushort[_peaks.Count];
+                peaks.Sort(PreciseEditorData.ComparePreciseEditorDataByPeakValue);
+                _maxIterations = new ushort[count];
                 smpiSumMax = 0;
-                _counts = new long[_peaks.Count][];
+                _counts = new long[count][];
                 // TODO: count cycle time
                 for (int i = 0; i < _maxIterations.Length; ++i) {
-                    int dimension = 2 * _peaks[i].Width + 1;
+                    var peak = peaks[i];
+                    int dimension = 2 * peak.Width + 1;
                     _counts[i] = new long[dimension];
-                    ushort iterations = _peaks[i].Iterations;
+                    ushort iterations = peak.Iterations;
                     _maxIterations[i] = iterations;
                     smpiSumMax += iterations; ;
                     stepPoints += dimension * iterations;
                 }
+                _peaks = peaks;
             }
             protected override void saveData(uint[] counts) {
                 var peak = Peak;
@@ -189,10 +191,7 @@ namespace Flavor.Common.Data.Measure {
                 if (realValue > _max || realValue < _min) {
                     return false;
                 }
-                //TODO: no voltage request if it is the same point (now measure cycle stucks if voltage request is missing)
-                //if (instantMeasureEventArgs != customMeasureEventArgs) {
-                    OnVoltageStepChangeRequested((ushort)realValue);
-                //}
+                OnVoltageStepChangeRequested((ushort)realValue);
                 ++_step;
                 return true;
             }
