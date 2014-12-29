@@ -72,8 +72,8 @@ namespace Flavor.Common.Messaging {
         protected abstract void PopulateDictionary(PackageDictionary<T> d);
 
         void SendUndoable(UserRequest<T> packet) {
-            EventHandler<EventArgs<UserRequest<T>>> undo = new EventHandler<EventArgs<UserRequest<T>>>(delegate { });
-            EventHandler<CommandReceivedEventArgs<T, Sync<T>>> discard = new EventHandler<CommandReceivedEventArgs<T, Sync<T>>>(delegate { });
+            var undo = new EventHandler<EventArgs<UserRequest<T>>>(delegate { });
+            var discard = new EventHandler<CommandReceivedEventArgs<T, Sync<T>>>(delegate { });
             undo += (s, e) => {
                 if (Equals(e.Value, packet)) {
                     toSend.NotAnsweringTo -= undo;

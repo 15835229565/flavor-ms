@@ -120,11 +120,14 @@ namespace Flavor.Common.Data.Measure {
             }
             readonly ushort[] _maxIterations;
             ushort[] _iterations;
-            ushort smpiSumMax;//ushort?
+            readonly ushort smpiSumMax;//ushort?
             ushort smpiSum;//ushort?
 
+            readonly int _overallSteps;
+            readonly int _overallExposition;
+            readonly int _overallDelay;
+
             bool noPoints = true;
-            int stepPoints = 0;
 
             short? shift = null;
 
@@ -153,7 +156,6 @@ namespace Flavor.Common.Data.Measure {
                 _maxIterations = new ushort[count];
                 smpiSumMax = 0;
                 _counts = new long[count][];
-                // TODO: count cycle time
                 for (int i = 0; i < _maxIterations.Length; ++i) {
                     var peak = peaks[i];
                     int dimension = 2 * peak.Width + 1;
@@ -161,9 +163,46 @@ namespace Flavor.Common.Data.Measure {
                     ushort iterations = peak.Iterations;
                     _maxIterations[i] = iterations;
                     smpiSumMax += iterations; ;
-                    stepPoints += dimension * iterations;
+                    _overallSteps += dimension * iterations;
                 }
                 _peaks = peaks;
+
+                _overallExposition = _overallSteps * exposition;
+                _iterations = (ushort[])_maxIterations.Clone();
+                ushort delay = startDelay;
+                int s = 0;
+                // TODO: unify with toContinue()
+                for (int i = smpiSumMax, j = 0; i > 0; --i) {
+                    for (int k = 0; k < count; ++k) {
+                        ++j;
+                        j %= count;
+                        if (_iterations[j] > 0)
+                            break;
+                    }
+                    var p = peaks[j];
+                    int start = p.Step - p.Width;
+                    int end = p.Step + p.Width;
+                    int diff = start - s;
+                    switch (diff) {
+                        case 0:
+                            delay = 0;
+                            break;
+                        case 1:
+                        case -1:
+                            delay = stepDelay;
+                            break;
+                        default:
+                            delay = diff > 0 ? forwardDelay : backwardDelay;
+                            break;
+                    }
+                    _overallDelay += delay;
+                    _overallDelay += (end - start) * stepDelay;
+                    s = end;
+                    --_iterations[j];
+                }
+            }
+            public int OverallTime() {
+                return _overallExposition + _overallDelay;
             }
             protected override void saveData(uint[] counts) {
                 var peak = Peak;
@@ -206,11 +245,11 @@ namespace Flavor.Common.Data.Measure {
                         // all data acquired
                         return false;
                     }
-                    for (int i = 0; i < _peaks.Count; ++i)//Поиск пика с оставшейся ненулевой итерацией. Но не более 1 цикла.
-                    {
+                    int count = _peaks.Count;
+                    for (int i = 0; i < count; ++i) {
                         // TODO: remove finished peaks from temp work list instead of search
                         ++_peakIndex;
-                        if (_peakIndex >= _peaks.Count) _peakIndex = 0;
+                        _peakIndex %= (byte)count;
                         if (_iterations[_peakIndex] > 0) break;
                     }
                     peak = Peak;
@@ -262,7 +301,7 @@ namespace Flavor.Common.Data.Measure {
                 _graphUpdater(--pnt, Peak);
             }
             public override int StepsCount {
-                get { return stepPoints; }
+                get { return _overallSteps; }
             }
             public class Monitor: MeasureModeBase {
                 public event EventHandler SaveResults {
@@ -453,6 +492,9 @@ namespace Flavor.Common.Data.Measure {
 
                 public sealed override void NextMeasure(Action<ushort, ushort> send) {
                     cycle.NextMeasure(send);
+                }
+                public int CycleTime() {
+                    return cycle.OverallTime();
                 }
             }
         }
