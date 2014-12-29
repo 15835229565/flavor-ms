@@ -325,8 +325,9 @@ namespace Flavor.Common.Data.Measure {
                 public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift) {
                     // TODO: checker peak received by index, after sort found by equality again
                     cycle = new Precise(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, initialShift, CheckShift);
-                    cycle.VoltageStepChangeRequested += (s, e) => OnVoltageStepChangeRequested(e.Step);
-                    cycle.Finalize += (s, e) => OnFinalize(e);
+                    cycle.VoltageStepChangeRequested += Cycle_VoltageStepRequested;
+                    cycle.Finalize += Cycle_Finalize;
+                    cycle.Disable += cycle_Disable;
                     cycle.SuccessfulExit += (s, e) => OnSuccessfulExit(e);
 
                     this.allowedShift = allowedShift;
@@ -339,6 +340,19 @@ namespace Flavor.Common.Data.Measure {
                         if (checkerIndex != -1)
                             prevIteration = new long[cycle._counts[checkerIndex].Length];
                     }
+                }
+
+                void cycle_Disable(object sender, EventArgs e) {
+                    cycle.Finalize -= Cycle_Finalize;
+                    cycle.VoltageStepChangeRequested -= Cycle_VoltageStepRequested;
+                    cycle.Disable -= cycle_Disable;
+                    stop();                
+                }
+                void Cycle_Finalize(object sender, CancelEventArgs e) {
+                    OnFinalize(e);
+                }
+                void Cycle_VoltageStepRequested(object sender, VoltageStepEventArgs e) {
+                    OnVoltageStepChangeRequested(e.Step);
                 }
 
                 void CheckShift(PreciseEditorData curPeak) {
@@ -383,6 +397,7 @@ namespace Flavor.Common.Data.Measure {
                     } catch (ShiftException) {
                         if (CancelRequested) {
                             cycle.stop();
+                            stop();
                             return true;
                         }
                         // restart cycle
@@ -397,7 +412,7 @@ namespace Flavor.Common.Data.Measure {
                 protected override void OnFinalize(CancelEventArgs e) {
                     if (CancelRequested || stopper.ready()) {
                         // measure mode end
-                        stop();
+                        //stop();
                     } else {
                         e.Cancel = true;
                         // next cycle
@@ -410,15 +425,15 @@ namespace Flavor.Common.Data.Measure {
                         return false;
                     }
                     stopper.startTimer();
-                    return true;
+                    return base.Start();
                 }
                 void stop() {
+                    // cycle is already stopped anyway.. cancellation is bad
                     var e = new CancelEventArgs(false);
                     base.OnFinalize(e);
                     if (e.Cancel)
                         return;
                     isOperating = false;
-                    //base.OnVoltageStepChangeRequested(0);//Set ScanVoltage to low limit
                     base.OnDisable();
                 }
                 public override int StepsCount {
