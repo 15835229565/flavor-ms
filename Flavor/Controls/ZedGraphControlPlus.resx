@@ -128,6 +128,6 @@
     <value>ZedGraphControlPlus</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>ZedGraph.ZedGraphControl, ZedGraph, Version=5.1.4.32313, Culture=neutral, PublicKeyToken=02a83cbd123fcd60</value>
+    <value>ZedGraph.ZedGraphControl, ZedGraph, Version=5.1.5.30240, Culture=neutral, PublicKeyToken=02a83cbd123fcd60</value>
   </data>
 </root>

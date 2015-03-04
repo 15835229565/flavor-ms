@@ -13,9 +13,11 @@
             // ZedGraphControlMonitor
             // 
             resources.ApplyResources(this, "$this");
+            this.DoubleBuffered = true;
             this.IsShowPointValues = true;
             this.Name = "ZedGraphControlMonitor";
             this.ResumeLayout(false);
+
         }
         #endregion
     }

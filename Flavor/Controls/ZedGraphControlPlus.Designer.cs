@@ -13,6 +13,7 @@
             // ZedGraphControlPlus
             // 
             resources.ApplyResources(this, "$this");
+            this.DoubleBuffered = true;
             this.EditButtons = System.Windows.Forms.MouseButtons.None;
             this.EditModifierKeys = System.Windows.Forms.Keys.None;
             this.IsEnableSelection = true;
