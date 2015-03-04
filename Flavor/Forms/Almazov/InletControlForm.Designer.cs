@@ -97,7 +97,7 @@
             this.temperatureNumericUpDown.Size = new System.Drawing.Size(120, 20);
             this.temperatureNumericUpDown.TabIndex = 3;
             this.temperatureNumericUpDown.Value = new decimal(new int[] {
-            40,
+            50,
             0,
             0,
             0});
@@ -119,7 +119,7 @@
             this.voltageТumericUpDown.Size = new System.Drawing.Size(120, 20);
             this.voltageТumericUpDown.TabIndex = 2;
             this.voltageТumericUpDown.Value = new decimal(new int[] {
-            2500,
+            2700,
             0,
             0,
             0});
