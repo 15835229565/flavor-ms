@@ -897,7 +897,16 @@ namespace Flavor.Forms {
                     //scanVoltageValueTreeNode.Text = ((double)data[13]).ToString("f1");
                     eCurrentValueTreeNode.Text = ((double)data[3]).ToString("f3");
                     // heat temperature atually
-                    hCurrentValueTreeNode.Text = ((double)data[15]).ToString("f1");
+                    // TODO: only when membrane inlet is used!
+                    // TODO: move comparison up, use 3-state flag instead
+                    double temp = (double)data[15];
+                    if (temp < (double)minTemp)
+                        hCurrentValueTreeNode.State = TreeNodePlus.States.Warning;
+                    else if (temp > (double)maxTemp)
+                        hCurrentValueTreeNode.State = TreeNodePlus.States.Error;
+                    else
+                        hCurrentValueTreeNode.State = TreeNodePlus.States.Ok;
+                    hCurrentValueTreeNode.Text = temp.ToString("f1");
                     // inlet voltage atually
                     turboSpeedValueTreeNode.Text = ((double)data[14]).ToString("f1");
                 } else {
@@ -914,6 +923,7 @@ namespace Flavor.Forms {
                     //scanVoltageValueTreeNode.Text = "---";
                     eCurrentValueTreeNode.Text = "---";
                     // heat temperature atually
+                    hCurrentValueTreeNode.State = TreeNodePlus.States.Ok;
                     hCurrentValueTreeNode.Text = "---";
                     // inlet voltage atually
                     turboSpeedValueTreeNode.Text = "---";
@@ -1281,29 +1291,40 @@ namespace Flavor.Forms {
                 childForm.Close();
             }
         }
-        // temporary solution
+        // temporary solution. move values from form to proper place
+        decimal minTemp = 40;
+        decimal maxTemp = 50;
         void inletToolStripButton_Click(object sender, EventArgs e) {
             var form = new Almazov.InletControlForm();
+            form.Load += (s, ee) => {
+                if (ee is Almazov.InletControlForm.LoadEventArgs) {
+                    var args = ee as Almazov.InletControlForm.LoadEventArgs;
+                    // temporary solution. move values from form to proper place
+                    args.Parameters = new decimal[] { 2500, 3000, 2700, minTemp, maxTemp, maxTemp };
+                }
+            };
             form.FormClosing += (s, ee) => {
                 if (form.DialogResult != DialogResult.OK)
                     return;
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
                     var args = ee as Almazov.InletControlForm.ClosingEventArgs;
+                    var cmd = commander as Flavor.Common.AlmazovCommander;
                     if (args.UseCapillary.HasValue) {
                         if (args.UseCapillary.Value) {
-                            (commander as Flavor.Common.AlmazovCommander).SendInletSettings(true);
+                            cmd.SendInletSettings(true);
                         } else {
                             var ps = args.Parameters;
                             if (ps == null)
                                 return;
+                            // temporary solution. move recount from form to proper place
                             ushort voltage = (ushort)(ps[0] / 3000 * 4096);
                             if (voltage > 4095) voltage = 4095;
                             ushort temperature = (ushort)((ps[1] + 273) / 500 * 4096);
                             if (temperature > 4095) temperature = 4095;
-                            (commander as Flavor.Common.AlmazovCommander).SendInletSettings(false, voltage, temperature);
+                            cmd.SendInletSettings(false, voltage, temperature);
                         }
                     } else {
-                        (commander as Flavor.Common.AlmazovCommander).SendInletSettings(null);
+                        cmd.SendInletSettings(null);
                     }
                 } 
             };
