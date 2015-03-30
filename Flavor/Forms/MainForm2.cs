@@ -717,6 +717,7 @@ namespace Flavor.Forms {
                 parameterPanel.SuspendLayout();
                 statusTreeView.BeginUpdate();
                 byte state = e.Value;
+                // TODO: store translatable items and parameter state in dictionary, not in form code
                 if (state > 128) {
                     systemStateValueTreeNode.Text = "Ошибка";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
@@ -725,7 +726,7 @@ namespace Flavor.Forms {
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
                 } else if (state > 32) {
                     systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
-                    systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
+                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
                 } else if (state > 1) {
                     systemStateValueTreeNode.Text = "Инициализация вакуума";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;

@@ -714,6 +714,7 @@ namespace Flavor.Common.Settings {
                     }
                     void initFile(DateTime dt, out string filename, out StreamWriter sw, out StreamWriter swResolved) {
                         filename = genAutoSaveFilename(MONITOR_SPECTRUM_EXT, dt);
+                        // TODO: another date format
                         string start = string.Format(DateTimeFormatInfo.InvariantInfo, "{0}{1}{2}{3:G}", HEADER_FOOTER_FIRST_SYMBOL, HEADER_START_TIME, HEADER_FOOTER_DELIMITER, initialDT);
                         sw = new StreamWriter(filename, true);
                         sw.WriteLine(header);
@@ -1483,13 +1484,14 @@ namespace Flavor.Common.Settings {
                         savePointRows(ppl2, colNode);
                     }
                     public void setTimeStamp(DateTime dt) {
-                        var attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
-                        attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-                        xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
+                        createHeaderAttribute(TIME_SPECTRUM_ATTRIBUTE, dt.ToString("G", DateTimeFormatInfo.InvariantInfo));
                     }
                     public void setShift(short? shift) {
-                        var attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
-                        attr.Value = shift == null ? "0" : shift.ToString();
+                        createHeaderAttribute(SHIFT_SPECTRUM_ATTRIBUTE, shift == null ? "0" : shift.ToString());
+                    }
+                    void createHeaderAttribute(string name, string value) {
+                        var attr = xmlData.CreateAttribute(name);
+                        attr.Value = value;
                         xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
                 }
@@ -1585,7 +1587,7 @@ namespace Flavor.Common.Settings {
                 #region Current Readers
                 public abstract class Reader: CurrentTagHolder {
                     public CommonOptions loadCommonOptions() {
-                        XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
+                        var commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         try {
                             ushort eT, iT, iV, eC, hC, fV1, fV2, CP;
                             double c, k;
@@ -1610,7 +1612,7 @@ namespace Flavor.Common.Settings {
                             }
 
                             {
-                                CommonOptions opts = new CommonOptions();
+                                var opts = new CommonOptions();
                                 opts.eTime = eT;
                                 opts.iTime = iT;
                                 opts.iVoltage = iV;
@@ -1690,7 +1692,7 @@ namespace Flavor.Common.Settings {
                     public double[] loadScalingCoeffs() {
                         // TODO: class-dependent messages
                         try {
-                            XmlNode interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
+                            var interfaceNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG));
 
                             double[] coeffs = { 2770 * 28, 896.5 * 18, 1 };
                             foreach (XmlNode node in interfaceNode.SelectNodes(COL_COEFF_CONFIG_TAG)) {
@@ -1952,7 +1954,7 @@ namespace Flavor.Common.Settings {
                     }
                     #endregion
                     bool OpenSpecterFile(out Graph graph) {
-                        PointPairListPlus[] points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
+                        var points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
                         for (int i = 0; i < points.Length; ++i) {
                             points[i] = new PointPairListPlus();
                         }
@@ -1975,7 +1977,7 @@ namespace Flavor.Common.Settings {
                     }
                     bool OpenPreciseSpecterFile(out Graph graph) {
                         Graph.Displaying res = spectrumType();
-                        PreciseSpectrum peds = new PreciseSpectrum();
+                        var peds = new PreciseSpectrum();
                         bool result = openPreciseSpectrumFile(peds);
                         if (result) {
                             graph = new Graph(peds.CommonOptions, loadScalingCoeffs());
@@ -2002,7 +2004,7 @@ namespace Flavor.Common.Settings {
                         return result;
                     }
                     Graph.Displaying spectrumType() {
-                        XmlNode headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
+                        var headerNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG));
                         return (headerNode != null && headerNode.InnerText == DIFF_SPECTRUM_HEADER) ? Graph.Displaying.Diff : Graph.Displaying.Measured;
                     }
                     DateTime loadTimeStamp() {
@@ -2012,9 +2014,9 @@ namespace Flavor.Common.Settings {
                         return short.Parse(getHeaderAttributeText(SHIFT_SPECTRUM_ATTRIBUTE));
                     }
                     protected sealed override PointPairListPlus readPeaks(XmlNode regionNode, ushort peakStart, ushort peakEnd) {
-                        PointPairListPlus tempPntLst = new PointPairListPlus();
+                        var tempPntLst = new PointPairListPlus();
                         try {
-                            XmlNode temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
+                            var temp = regionNode.SelectSingleNode(POINT_CONFIG_TAG);
                             if (temp == null)
                                 return null;
                             string text = temp.InnerText;
@@ -2042,7 +2044,7 @@ namespace Flavor.Common.Settings {
                         xmlData.Save(filename);
                     }
                     public void saveCommonOptions(CommonOptions opts) {
-                        XmlNode commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
+                        var commonNode = xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, COMMON_CONFIG_TAG));
                         saveCommonOptions(commonNode, opts);
                     }
                     [Obsolete]
@@ -2163,8 +2165,6 @@ namespace Flavor.Common.Settings {
                     public void saveScalingCoeffs(params double[] coeffs) {
                         clearInnerText(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
                         string prefix = combine(ROOT_CONFIG_TAG, INTERFACE_CONFIG_TAG);
-                        //fillInnerText(prefix, C1_CONFIG_TAG, coeff1.ToString("R", CultureInfo.InvariantCulture));
-                        //fillInnerText(prefix, C2_CONFIG_TAG, coeff2.ToString("R", CultureInfo.InvariantCulture));
 
                         var interfaceNode = xmlData.SelectSingleNode(prefix);
                         var nodes = interfaceNode.SelectNodes(COL_COEFF_CONFIG_TAG);
@@ -2222,7 +2222,7 @@ namespace Flavor.Common.Settings {
                     protected sealed override void savePointRows(PointPairListPlus row, XmlNode node) {
                         if (row.Count == 0)
                             return;
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
                         foreach (ZedGraph.PointPair pp in row) {
                             sb.Append(pp.Y);
                             sb.Append(COUNTS_SEPARATOR);
@@ -2232,19 +2232,15 @@ namespace Flavor.Common.Settings {
                         node.AppendChild(temp);
                     }
                     public void saveScanOptions(Graph graph) {
-                        XmlNode scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
-                        XmlElement temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
-                        //PointPairListPlus ppl1 = graph.Displayed1Steps[0];
-                        //PointPairListPlus ppl2 = graph.Displayed2Steps[0];
+                        var scanNode = xmlData.SelectSingleNode(ROOT_CONFIG_TAG).AppendChild(xmlData.CreateElement(OVERVIEW_CONFIG_TAG));
+                        var temp = xmlData.CreateElement(START_SCAN_CONFIG_TAG);
                         var steps = graph.Collectors[0][0].Step;
                         temp.InnerText = steps[0].X.ToString();// actually integral type
                         // TODO: check for data mismatch?
-                        //temp.InnerText = ppl1[0].X.ToString();
                         scanNode.AppendChild(temp);
                         temp = xmlData.CreateElement(END_SCAN_CONFIG_TAG);
                         // TODO: check for data mismatch?
                         temp.InnerText = steps[steps.Count - 1].X.ToString();// actually integral type
-                        //temp.InnerText = ppl2[ppl2.Count - 1].X.ToString();
                         scanNode.AppendChild(temp);
 
                         for (int i = 0; i < graph.Collectors.Count; ++i) {
@@ -2255,19 +2251,16 @@ namespace Flavor.Common.Settings {
                             colNode.Attributes.Append(numberAttribute);
                             savePointRows(collector[0].Step, colNode);
                         }
-                        //XmlNode colNode = scanNode.AppendChild(xmlData.CreateElement(COL1_CONFIG_TAG));
-                        //savePointRows(ppl1, colNode);
-                        //colNode = scanNode.AppendChild(xmlData.CreateElement(COL2_CONFIG_TAG));
-                        //savePointRows(ppl2, colNode);
                     }
                     public void setTimeStamp(DateTime dt) {
-                        XmlAttribute attr = xmlData.CreateAttribute(TIME_SPECTRUM_ATTRIBUTE);
-                        attr.Value = dt.ToString("G", DateTimeFormatInfo.InvariantInfo);
-                        xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
+                        createHeaderAttribute(TIME_SPECTRUM_ATTRIBUTE, dt.ToString("G", DateTimeFormatInfo.InvariantInfo));
                     }
                     public void setShift(short? shift) {
-                        XmlAttribute attr = xmlData.CreateAttribute(SHIFT_SPECTRUM_ATTRIBUTE);
-                        attr.Value = shift == null ? "0" : shift.ToString();
+                        createHeaderAttribute(SHIFT_SPECTRUM_ATTRIBUTE, shift == null ? "0" : shift.ToString());
+                    }
+                    void createHeaderAttribute(string name, string value) {
+                        var attr = xmlData.CreateAttribute(name);
+                        attr.Value = value;
                         xmlData.SelectSingleNode(combine(ROOT_CONFIG_TAG, HEADER_CONFIG_TAG)).Attributes.Append(attr);
                     }
                 }
@@ -2418,17 +2411,17 @@ namespace Flavor.Common.Settings {
                 where RETURN_INTERFACE: IAnyReader
                 where CURRENT_TYPE: TagHolder, RETURN_INTERFACE, new()
                 where TYPE0: TagHolder, RETURN_INTERFACE, new() {
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 try {
                     doc.Load(filename);
                 } catch (Exception Error) {
                     throw new ConfigLoadException(Error.Message, errorMessage, filename);
                 }
-                XmlNode rootNode = doc.SelectSingleNode(ROOT_CONFIG_TAG);
+                var rootNode = doc.SelectSingleNode(ROOT_CONFIG_TAG);
                 if (rootNode == null) {
                     throw new ConfigLoadException("Root node is absent", errorMessage, filename);
                 }
-                XmlNode version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
+                var version = rootNode.Attributes.GetNamedItem(VERSION_ATTRIBUTE);
                 if (version == null) {
                     throw new ConfigLoadException("No config version", errorMessage, filename);
                 }
