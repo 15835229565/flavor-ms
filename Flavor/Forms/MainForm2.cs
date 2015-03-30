@@ -719,23 +719,22 @@ namespace Flavor.Forms {
                 byte state = e.Value;
                 // TODO: store translatable items and parameter state in dictionary, not in form code
                 if (state > 128) {
-                    systemStateValueTreeNode.Text = "Ошибка";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Error;
+                    systemStateValueTreeNode.Text = "Ошибка";
                 } else if (state > 64) {
-                    systemStateValueTreeNode.Text = "Готова к измерению";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Ok;
-                } else if (state > 32) {
-                    systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
-                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
-                } else if (state > 1) {
-                    systemStateValueTreeNode.Text = "Инициализация вакуума";
-                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
-                } else if (state == 1) {
-                    systemStateValueTreeNode.Text = "Инициализация";
-                    systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                    systemStateValueTreeNode.Text = "Готова к измерению";
                 } else {
-                    systemStateValueTreeNode.Text = "Запуск";
                     systemStateValueTreeNode.State = TreeNodePlus.States.Warning;
+                    if (state > 32) {
+                        systemStateValueTreeNode.Text = "Ожидание высокого напряжения";
+                    } else if (state > 1) {
+                        systemStateValueTreeNode.Text = "Инициализация вакуума";
+                    } else if (state == 1) {
+                        systemStateValueTreeNode.Text = "Инициализация";
+                    } else {
+                        systemStateValueTreeNode.Text = "Запуск";
+                    }
                 }
                 state >>= 1;
                 //SEMV1
