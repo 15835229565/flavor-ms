@@ -65,6 +65,7 @@ namespace Flavor.Common {
                     }
                 }
             };
+            // TODO: move to measure mode
             r.MeasureSend += (s, e) => {
                 var temp = CurrentMeasureMode;
                 if (temp != null && temp.isOperating) {
@@ -292,11 +293,15 @@ namespace Flavor.Common {
                     var co = g.CommonOptions;
                     var temp = new MeasureMode.Scan(Config.sPoint, Config.ePoint,
                         co.befTimeReal, co.iTimeReal, co.eTimeReal,
-                        (p, peak) => g.updateGraphDuringScanMeasure(p, Counts));
+                        p => g.updateGraphDuringScanMeasure(p, Counts),
+                        Config.autoSaveSpectrumFile);
                     //var temp = new MeasureMode.Scan(Config.sPoint, Config.ePoint,
                     //    co.befTimeReal, co.iTimeReal, co.eTimeReal,
+                    //    Config.autoSaveSpectrumFile,
                     //    2);
-                    temp.SuccessfulExit += (s, e) => Config.autoSaveSpectrumFile();
+                    // how to unsubscribe?
+                    //realizer.MeasureSend += (s, e) => temp.NextMeasure(e.Value);
+                    
                     CurrentMeasureMode = temp;
                 }
                 initMeasure(ProgramStates.Measure);
@@ -315,12 +320,12 @@ namespace Flavor.Common {
                             g.PreciseData.GetUsed(),
                             co.befTimeReal, co.iTimeReal, co.eTimeReal,
                             co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal,
-                            (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts));
+                            (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts),
+                            g.updateGraphAfterPreciseMeasure);
                         temp.SaveResults += (s, e) => Config.autoSavePreciseSpectrumFile();
-                        temp.SuccessfulExit += (s, e) => {
-                            var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
-                            g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
-                        };
+                        // how to unsubscribe?
+                        //realizer.MeasureSend += (s, e) => temp.NextMeasure(e.Value);
+
                         CurrentMeasureMode = temp;
                     }
                     initMeasure(ProgramStates.Measure);
@@ -390,6 +395,7 @@ namespace Flavor.Common {
                                 co.befTimeReal, co.iTimeReal, co.eTimeReal,
                                 co.ForwardTimeEqualsBeforeTime ? co.befTimeReal : co.fTimeReal, co.bTimeReal,
                                 (p, peak) => g.updateGraphDuringPreciseMeasure(p, peak, Counts),
+                                g.updateGraphAfterPreciseMeasure,
                                 Config.Iterations, Config.TimeLimit,
                                 // TODO: move extra data into checker
                                 Config.CheckerPeak, Config.CheckerPeak == null ? null : startShiftValue, Config.AllowedShift);
@@ -399,10 +405,9 @@ namespace Flavor.Common {
                                     LabelNumber = null;
                             };
                             temp.Finalize += (s, e) => Config.finalizeMonitorFile();
-                            temp.SuccessfulExit += (s, e) => {
-                                var ee = (MeasureMode.Precise.SuccessfulExitEventArgs)e;
-                                g.updateGraphAfterPreciseMeasure(ee.Counts, ee.Points, ee.Shift);
-                            };
+                            // how to unsubscribe?
+                            //realizer.MeasureSend += (s, e) => temp.NextMeasure(e.Value);
+
                             CurrentMeasureMode = temp;
                         }
 

@@ -4,7 +4,7 @@ namespace Flavor.Common.Data.Measure {
         bool CancelRequested { set; }
         event EventHandler<VoltageStepEventArgs> VoltageStepChangeRequested;
         event EventHandler Disable;
-        event EventHandler SuccessfulExit;
+        //event EventHandler SuccessfulExit;
         event EventHandler<CancelEventArgs> Finalize;
         bool isOperating { get; }
         void NextMeasure(Action<ushort, ushort> send);

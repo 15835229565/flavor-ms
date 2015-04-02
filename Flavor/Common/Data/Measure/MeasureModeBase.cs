@@ -9,9 +9,11 @@ namespace Flavor.Common.Data.Measure {
             VoltageStepChangeRequested(this, new VoltageStepEventArgs(step));
         }
 
-        public event EventHandler SuccessfulExit;
+        EventHandler _successfulExit;
+        //public event EventHandler SuccessfulExit;
         protected virtual void OnSuccessfulExit(EventArgs args) {
-            SuccessfulExit.Raise(this, args);
+            _successfulExit(this, args);
+            //SuccessfulExit.Raise(this, args);
         }
         public event EventHandler Disable;
         protected virtual void OnDisable() {
@@ -22,7 +24,8 @@ namespace Flavor.Common.Data.Measure {
             Finalize.Raise(this, e);
         }
 
-        protected MeasureModeBase() {
+        protected MeasureModeBase(EventHandler successfulExit) {
+            _successfulExit = successfulExit;
             isOperating = false;
         }
 
@@ -33,8 +36,7 @@ namespace Flavor.Common.Data.Measure {
         abstract public void NextMeasure(Action<ushort, ushort> send);
         abstract public bool onUpdateCounts(uint[] counts);
         public virtual bool Start() {
-            isOperating = true;
-            return true;
+            return isOperating = true;
         }
     }
 }

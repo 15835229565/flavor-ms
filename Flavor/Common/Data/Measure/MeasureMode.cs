@@ -8,15 +8,14 @@ namespace Flavor.Common.Data.Measure {
         ushort _step = 0;
 
         readonly ushort _min, _max;
-        readonly Action<ushort, PreciseEditorData> _graphUpdater;
         SingleMeasureEventArgs customMeasureEventArgs = null;
         readonly SingleMeasureEventArgs instantMeasureEventArgs;
         readonly SingleMeasureEventArgs generalMeasureEventArgs;
         readonly SingleMeasureEventArgs firstMeasureEventArgs;
-        MeasureMode(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort, PreciseEditorData> graphUpdater) {
+        MeasureMode(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, EventHandler successfulExit)
+            : base(successfulExit) {
             _min = min;
             _max = max;
-            _graphUpdater = graphUpdater;
             instantMeasureEventArgs = new SingleMeasureEventArgs(0, eTime);
             generalMeasureEventArgs = new SingleMeasureEventArgs(iTime, eTime);
             firstMeasureEventArgs = new SingleMeasureEventArgs(befTime, eTime);
@@ -67,12 +66,14 @@ namespace Flavor.Common.Data.Measure {
             // is used to sparse data
             readonly ushort _ratio;
 
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort, PreciseEditorData> graphUpdater, ushort ratio)
-                : base(min, max, befTime, iTime, eTime, graphUpdater) {
+            readonly Action<ushort> _graphUpdater;
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort> graphUpdater, Action successfulExit, ushort ratio)
+                : base(min, max, befTime, iTime, eTime, (s, e) => successfulExit()) {
+                _graphUpdater = graphUpdater;
                 _ratio = ratio;
             }
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort, PreciseEditorData> graphUpdater)
-                : this(min, max, befTime, iTime, eTime, graphUpdater, 1) { }
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort> graphUpdater, Action successfulExit)
+                : this(min, max, befTime, iTime, eTime, graphUpdater, successfulExit, 1) { }
             protected override void saveData(uint[] counts) { }
             protected override bool onNextStep() {
                 OnVoltageStepChangeRequested(_step);
@@ -96,7 +97,7 @@ namespace Flavor.Common.Data.Measure {
                 pnt -= _ratio;
                 for (int i = 0; i < _ratio; ++i) {
                     // temporary solution. fake points to prevent spectrum save format
-                    _graphUpdater(pnt, null);
+                    _graphUpdater(pnt);
                     ++pnt;
                     if (pnt > _max)
                         break;
@@ -134,10 +135,15 @@ namespace Flavor.Common.Data.Measure {
             readonly SingleMeasureEventArgs forwardMeasureEventArgs;
             readonly SingleMeasureEventArgs backwardMeasureEventArgs;
             readonly Action<PreciseEditorData> _checkOnPeakEnd;
-            public Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater)
-                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, 0, p => { }) { }
-            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, short? shift, Action<PreciseEditorData> checkOnPeakEnd)
-                : base(min, max, startDelay, stepDelay, exposition, graphUpdater) {
+            readonly Action<ushort, PreciseEditorData> _graphUpdater;
+            public Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, Action<long[][], List<PreciseEditorData>, short?> successfulExit)
+                : this(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, successfulExit, 0, p => { }) { }
+            Precise(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, Action<long[][], List<PreciseEditorData>, short?> successfulExit, short? shift, Action<PreciseEditorData> checkOnPeakEnd)
+                : base(min, max, startDelay, stepDelay, exposition, (s, e) => {
+                    var ee = (SuccessfulExitEventArgs)e;
+                    successfulExit(ee.Counts, ee.Points, ee.Shift);
+                }) {
+                _graphUpdater = graphUpdater;
                 _checkOnPeakEnd = checkOnPeakEnd;
                 forwardMeasureEventArgs = new SingleMeasureEventArgs(forwardDelay, exposition);
                 backwardMeasureEventArgs = new SingleMeasureEventArgs(backwardDelay, exposition);
@@ -209,7 +215,7 @@ namespace Flavor.Common.Data.Measure {
                 // be careful!
                 _counts[_peakIndex][_step - 1 - peak.Step + peak.Width] += counts[peak.Collector - 1];
             }
-            public class SuccessfulExitEventArgs: EventArgs {
+            class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }
                 public List<PreciseEditorData> Points { get; private set; }
                 public short? Shift { get; private set; }
@@ -230,7 +236,12 @@ namespace Flavor.Common.Data.Measure {
                 if (realValue > _max || realValue < _min) {
                     return false;
                 }
-                OnVoltageStepChangeRequested((ushort)realValue);
+                // TODO: transform NextMeasure to event
+                //if (realValue == _step) {
+                //    NextMeasure();
+                //} else {
+                    OnVoltageStepChangeRequested((ushort)realValue);
+                //}
                 ++_step;
                 return true;
             }
@@ -360,13 +371,16 @@ namespace Flavor.Common.Data.Measure {
                 readonly ushort allowedShift;
                 readonly long[] prevIteration;
 
-                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift) {
+                public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, Action<long[][], List<PreciseEditorData>, short?> successfulExit, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift)
+                    : base((s, e) => {
+                        var ee = (SuccessfulExitEventArgs)e;
+                        successfulExit(ee.Counts, ee.Points, ee.Shift);
+                    }) {
                     // TODO: checker peak received by index, after sort found by equality again
-                    cycle = new Precise(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, initialShift, CheckShift);
+                    cycle = new Precise(min, max, peaks, startDelay, stepDelay, exposition, forwardDelay, backwardDelay, graphUpdater, (ps, peds, shift) => OnSuccessfulExit(new SuccessfulExitEventArgs(ps, peds, shift)), initialShift, CheckShift);
                     cycle.VoltageStepChangeRequested += Cycle_VoltageStepRequested;
                     cycle.Finalize += Cycle_Finalize;
                     cycle.Disable += cycle_Disable;
-                    cycle.SuccessfulExit += (s, e) => OnSuccessfulExit(e);
 
                     this.allowedShift = allowedShift;
                     stopper = new MeasureStopper(iterations, timeLimit);

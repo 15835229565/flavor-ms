@@ -75,6 +75,7 @@ namespace Flavor.Common.Messaging.Almazov {
         public override void SetMeasureStep(ushort step) {
             // TODO: proper data from config
             var co = Config.CommonOptions;
+            // TODO: move logic to measure mode
             if (step != _prevStep) {
                 toSend.Enqueue(new ParentScanVoltageSetRequest(co.parentScanVoltage(step)));
                 toSend.Enqueue(new MainScanVoltageSetRequest(co.scanVoltageNew(step)));
@@ -93,13 +94,13 @@ namespace Flavor.Common.Messaging.Almazov {
         void SendMeasure() {
             OnMeasureSend((t1, t2) => {
                 // temporary solution for delayed measure request;
+                var request = SendMeasureRequest.Form(t2);
                 if (t1 > 0) {
                     var delayed = new Timer(t1) { AutoReset = false };
-                    var request = SendMeasureRequest.Form(t2);
                     delayed.Elapsed += (o, args) => toSend.Enqueue(request);
                     delayed.Start();
                 } else {
-                    toSend.Enqueue(SendMeasureRequest.Form(t2));
+                    toSend.Enqueue(request);
                 }
             });
         }
