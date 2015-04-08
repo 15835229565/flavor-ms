@@ -26,6 +26,30 @@ namespace Flavor.Controls {
             pane.Legend.IsVisible = false;
             pane.Chart.Fill = new Fill(Color.White, Color.LightGoldenrodYellow, 45f);
             pane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
+            var xAxis = pane.XAxis;
+            var yAxis = pane.YAxis;
+            {
+                var grid = xAxis.MajorGrid;
+                grid.IsVisible = true;
+                grid.DashOn = 10;
+                grid.DashOff = 5;
+
+                grid = yAxis.MajorGrid;
+                grid.IsVisible = true;
+                grid.DashOn = 10;
+                grid.DashOff = 5;
+            }
+            {
+                var grid = xAxis.MinorGrid;
+                grid.IsVisible = true;
+                grid.DashOn = 1;
+                grid.DashOff = 2;
+
+                grid = yAxis.MinorGrid;
+                grid.IsVisible = true;
+                grid.DashOn = 1;
+                grid.DashOff = 2;
+            }
             base.ContextMenuBuilder += ZedGraphControlMonitor_ContextMenuBuilder;
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
