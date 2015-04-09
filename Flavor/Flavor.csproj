@@ -87,6 +87,7 @@
     <Compile Include="Common\Commander.cs" />
     <Compile Include="Common\Data\Controlled\IDevice.cs" />
     <Compile Include="Common\Data\Measure\Collector.cs" />
+    <Compile Include="Common\Data\Measure\CyclingMeasureMode.cs" />
     <Compile Include="Common\Data\Measure\IMeasureMode.cs" />
     <Compile Include="Common\Data\Measure\MeasureModeBase.cs" />
     <Compile Include="Common\Data\Measure\PointPairListPlus.cs" />

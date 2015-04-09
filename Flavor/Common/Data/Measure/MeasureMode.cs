@@ -215,7 +215,7 @@ namespace Flavor.Common.Data.Measure {
                 // be careful!
                 _counts[_peakIndex][_step - 1 - peak.Step + peak.Width] += counts[peak.Collector - 1];
             }
-            class SuccessfulExitEventArgs: EventArgs {
+            public class SuccessfulExitEventArgs: EventArgs {
                 public long[][] Counts { get; private set; }
                 public List<PreciseEditorData> Points { get; private set; }
                 public short? Shift { get; private set; }
@@ -282,6 +282,37 @@ namespace Flavor.Common.Data.Measure {
                 }
                 return true;
             }
+            //void CountDeltaOnPeakEnd(PreciseEditorData checkPeak) {
+            //    if (!shift.HasValue || checkPeak == null || !checkPeak.Equals(Peak)) {
+            //        return;
+            //    }
+            //    long[] counts = _counts[_peakIndex];
+            //    ushort width = checkPeak.Width;
+            //    if (counts.Length != 2 * width + 1) {
+            //        // data mismatch. strange.
+            //        return;
+            //    }
+            //    long max = -1;
+            //    int index = -1;
+            //    for (int i = 0; i < counts.Length; ++i) {
+            //        if (counts[i] > max) {
+            //            max = counts[i];
+            //            index = i;
+            //        }
+            //    }
+            //    if (max == counts[width]) {
+            //        index = width;
+            //    }
+            //    // delta from peak center
+            //    short delta = (short)(index - width);
+            //    if (delta > allowedShift || delta < -allowedShift) {
+            //        shift += delta;
+            //        if (ignoreInvalidity) {
+            //            return;
+            //        }
+            //        throw new ShiftException();
+            //    }
+            //}
 
             public override bool Start() {
                 if (noPoints) {
@@ -369,7 +400,6 @@ namespace Flavor.Common.Data.Measure {
                 
                 readonly bool ignoreInvalidity = true;
                 readonly ushort allowedShift;
-                readonly long[] prevIteration;
 
                 public Monitor(ushort min, ushort max, List<PreciseEditorData> peaks, ushort startDelay, ushort stepDelay, ushort exposition, ushort forwardDelay, ushort backwardDelay, Action<ushort, PreciseEditorData> graphUpdater, Action<long[][], List<PreciseEditorData>, short?> successfulExit, int iterations, int timeLimit, PreciseEditorData checkerPeak, short? initialShift, ushort allowedShift)
                     : base((s, e) => {
@@ -389,8 +419,6 @@ namespace Flavor.Common.Data.Measure {
                         // TODO: move up to Commander. only index here
                         peak = checkerPeak;
                         checkerIndex = peaks.FindIndex(peak.Equals);
-                        if (checkerIndex != -1)
-                            prevIteration = new long[cycle._counts[checkerIndex].Length];
                     }
                 }
 
@@ -408,8 +436,7 @@ namespace Flavor.Common.Data.Measure {
                 }
 
                 void CheckShift(PreciseEditorData curPeak) {
-                    if (!cycle.shift.HasValue || !curPeak.Equals(peak) || prevIteration == null) {
-                        // if peak is null also exit here
+                    if (!cycle.shift.HasValue || curPeak == null || !curPeak.Equals(peak)) {
                         // do not store value here!
                         return;
                     }
@@ -422,15 +449,15 @@ namespace Flavor.Common.Data.Measure {
                     long max = -1;
                     int index = -1;
                     for (int i = 0; i < counts.Length; ++i) {
-                        // TODO: better solution. now not optimal. reverse work.
-                        long temp = counts[i] - prevIteration[i];
-                        if (temp > max) {
-                            max = temp;
+                        if (counts[i] > max) {
+                            max = counts[i];
                             index = i;
                         }
-                        prevIteration[i] = counts[i];
                     }
-
+                    if (max == counts[width]) {
+                        index = width;
+                    }
+                    // delta from peak center
                     short delta = (short)(index - width);
                     if (delta > allowedShift || delta < -allowedShift) {
                         cycle.shift += delta;
