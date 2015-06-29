@@ -8,18 +8,18 @@ namespace Flavor.Common.Library {
     ///      Proxy to dnAnalytics matrix equation library.
     /// </summary>
     class Matrix: DenseMatrix {
-        private readonly LU decomposition;
+        readonly LU decomposition;
         public Matrix(double[,] array)
             : base(array) {
             decomposition = new LU(this);
         }
         public void Init() {
-            decomposition.Solve(new DenseVector(this.Columns, 0));
+            decomposition.Solve(new DenseVector(Columns, 0));
         }
         public double[] Solve(List<double> input) {
-            if (this.Columns != input.Count) {
+            if (Columns != input.Count) {
                 // length mismatch
-                // TODO: throw smth
+                throw new RankException(string.Format("Matrix rank is {0}, input vector length is {1}", Columns, input.Count));
             }
             return decomposition.Solve(new DenseVector(input)).ToArray();
         }
