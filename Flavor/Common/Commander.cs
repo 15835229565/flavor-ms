@@ -294,11 +294,8 @@ namespace Flavor.Common {
                     var temp = new MeasureMode.Scan(Config.sPoint, Config.ePoint,
                         co.befTimeReal, co.iTimeReal, co.eTimeReal,
                         p => g.updateGraphDuringScanMeasure(p, Counts),
-                        Config.autoSaveSpectrumFile);
-                    //var temp = new MeasureMode.Scan(Config.sPoint, Config.ePoint,
-                    //    co.befTimeReal, co.iTimeReal, co.eTimeReal,
-                    //    Config.autoSaveSpectrumFile,
-                    //    2);
+                        Config.autoSaveSpectrumFile,
+                        1);
                     // how to unsubscribe?
                     //realizer.MeasureSend += (s, e) => temp.NextMeasure(e.Value);
                     
