@@ -55,8 +55,8 @@ namespace Flavor.Common.Data.Measure {
         public override bool Equals(object other) {
             if (other is PreciseEditorData) {
                 var o = (PreciseEditorData)other;
-                return (this.pNumber == o.pNumber) && (this.Collector == o.Collector) && (this.Step == o.Step) &&
-                       (this.Iterations == o.Iterations) && (this.Width == o.Width) && (this.Comment == o.Comment);
+                return pNumber == o.pNumber && Collector == o.Collector && Step == o.Step &&
+                       Iterations == o.Iterations && Width == o.Width && Comment == o.Comment;
             }
             return false;
         }

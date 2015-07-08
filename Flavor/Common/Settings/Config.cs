@@ -32,7 +32,12 @@ namespace Flavor.Common.Settings {
         public static readonly string SPECTRUM_FILE_DIALOG_FILTER = string.Format("Specter data files (*.{0})|*.{0}", SPECTRUM_EXT);
         public static readonly string PRECISE_SPECTRUM_FILE_DIALOG_FILTER = string.Format("Precise specter files (*.{0})|*.{0}", PRECISE_SPECTRUM_EXT);
         #endregion
-
+        #region Error messages
+        const string SCAN_SPECTRUM_MESSAGE = "Ошибка чтения файла спектра";
+        const string PRECISE_SPECTRUM_MESSAGE = "Ошибка чтения файла прецизионного спектра";
+        const string DISTRACTION_ERROR = "Ошибка при вычитании спектров";
+        const string ROWS_MISMATCH = "Несовпадение рядов данных";
+        #endregion
         public const ushort MIN_STEP = 0;
         public const ushort MAX_STEP = 2112;
         //public const ushort MAX_STEP = 4095;
@@ -282,104 +287,105 @@ namespace Flavor.Common.Settings {
         }
         #region Spectra Distraction
         public static void distractSpectra(string what, ushort step, byte? collectorNumber, PreciseEditorData pedReference, Graph graph) {
+            if (graph.DisplayingMode == Graph.Displaying.Diff) {
+                throw new ConfigLoadException("Нельзя вычитать из разностного спектра", DISTRACTION_ERROR, "Текущий спектр");
+            }
             bool hint = !graph.isPreciseSpectrum;
             var reader = TagHolder.getSpectrumReader(what, hint);
             if (reader.Hint != hint) {
-                throw new ConfigLoadException("Несовпадение типов спектров", "Ошибка при вычитании спектров", what);
-            }
-            if (graph.DisplayingMode == Graph.Displaying.Diff) {
-                //diffs can't be distracted!
-                throw new ArgumentOutOfRangeException();
+                throw new ConfigLoadException("Несовпадение типов спектров", DISTRACTION_ERROR, what);
             }
             if (hint) {
-                var points = new PointPairListPlus[COLLECTOR_COEFFS.Length];
-                for (int i = 0; i < points.Length; ++i) {
+                int collectorsCount = COLLECTOR_COEFFS.Length;
+                if (collectorsCount != graph.Collectors.Count) {
+                    // BAD: how to proceed spectra with different collector number than current device has?
+                    throw new ConfigLoadException(ROWS_MISMATCH, DISTRACTION_ERROR, what);
+                }
+
+                var points = new PointPairListPlus[collectorsCount];
+                for (int i = 0; i < collectorsCount; ++i) {
                     points[i] = new PointPairListPlus();
                 }
                 CommonOptions commonOpts;
-                if (reader.openSpectrumFile(out commonOpts, points) == Graph.Displaying.Measured) {
-                    // TODO: check commonOpts for equality?
-                    if (points.Length != graph.Collectors.Count)
-                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
-                    // coeff counting
-                    double coeff = 1.0;
-                    if (collectorNumber.HasValue) {
-                        // TODO: proper rows for variable number
-                        var PL = graph.Collectors[collectorNumber.Value - 1][0].Step;
-                        var pl = points[collectorNumber.Value - 1];
-                        
-                        if (step != 0) {
-                            for (int i = 0; i < PL.Count; ++i) {
-                                if (step == PL[i].X) {
-                                    if (step != pl[i].X)
-                                        throw new ArgumentException();
-                                    if ((pl[i].Y != 0) && (PL[i].Y != 0))
-                                        coeff = PL[i].Y / pl[i].Y;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    try {
-                        var diffs = new PointPairListPlus[COLLECTOR_COEFFS.Length];
-                        for (int i = 0; i < diffs.Length; ++i) {
-                            diffs[i] = PointPairListDiff(graph.Collectors[i][0].Step, points[i], coeff);
-                        }
-                        graph.updateGraphAfterScanDiff(diffs);
-                    } catch (System.ArgumentException) {
-                        throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
-                    }
-                } else {
-                    //diffs can't be distracted!
-                    throw new ArgumentOutOfRangeException();
+                // BAD: can throw exception on collector number mismatch
+                if (reader.openSpectrumFile(out commonOpts, points) == Graph.Displaying.Diff) {
+                    throw new ConfigLoadException("Нельзя вычитать разностный спектр", DISTRACTION_ERROR, what);
                 }
-                return;
-            }
-            var peds = new PreciseSpectrum();
-            if (reader.openPreciseSpectrumFile(peds)) {
-                var temp = new List<PreciseEditorData>(graph.PreciseData);
-                temp.Sort();
+                // TODO: check commonOpts for equality or use exposition value to normalize data
+
+                double coeff = 1.0;
+                // TODO: combine collector number and step in one structure as they are used simultaneously!
+                if (collectorNumber.HasValue) {
+                    int number = collectorNumber.Value - 1;
+                    // TODO: proper rows for variable number
+                    var PL = graph.Collectors[number][0].Step;
+                    //var pl = points[number];
+
+                    // TODO: be careful here with sparse spectra!
+                    int index = (int)(step - PL[0].X);
+                    try {
+                        var P = PL[index];
+                        var p = points[number][index];
+                        if (P.X != step || p.X != step) {
+                            throw new ConfigLoadException(ROWS_MISMATCH, DISTRACTION_ERROR, what);
+                        }
+                        if (p.Y != 0 && P.Y != 0) {
+                            coeff = P.Y / p.Y;
+                        }
+                    } catch (ArgumentOutOfRangeException) {
+                        throw new ConfigLoadException(ROWS_MISMATCH, DISTRACTION_ERROR, what);
+                    }
+                    //for (int i = 0; i < PL.Count; ++i) {
+                    //    if (step == PL[i].X) {
+                    //        if (step != pl[i].X)
+                    //            throw new ConfigLoadException(ROWS_MISMATCH, DISTRACTION_ERROR, what);
+                    //        if (pl[i].Y != 0 && PL[i].Y != 0)
+                    //            coeff = PL[i].Y / pl[i].Y;
+                    //        break;
+                    //    }
+                    //}
+                }
                 try {
-                    temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
-                    graph.updateGraphAfterPreciseDiff(temp);
+                    var diffs = new PointPairListPlus[collectorsCount];
+                    for (int i = 0; i < collectorsCount; ++i) {
+                        diffs[i] = PointPairListDiff(graph.Collectors[i][0].Step, points[i], coeff);
+                    }
+                    graph.updateGraphAfterScanDiff(diffs);
                 } catch (ArgumentException) {
-                    throw new ConfigLoadException("Несовпадение рядов данных", "Ошибка при вычитании спектров", what);
+                    throw new ConfigLoadException(ROWS_MISMATCH, DISTRACTION_ERROR, what);
+                }
+            } else {
+                var peds = new PreciseSpectrum();
+                if (reader.openPreciseSpectrumFile(peds)) {
+                    var temp = new List<PreciseEditorData>(graph.PreciseData);
+                    temp.Sort();
+                    try {
+                        temp = PreciseEditorDataListDiff(temp, peds, step, pedReference);
+                        graph.updateGraphAfterPreciseDiff(temp);
+                    } catch (ArgumentException) {
+                        throw new ConfigLoadException(ROWS_MISMATCH, DISTRACTION_ERROR, what);
+                    }
                 }
             }
         }
+        // TODO: use it elsewhere
         static PointPairListPlus PointPairListDiff(PointPairListPlus from, PointPairListPlus what, double coeff) {
-            if (from.Count != what.Count)
-                throw new System.ArgumentOutOfRangeException();
-
+            int count = from.Count;
+            if (count != what.Count) {
+                throw new ArgumentOutOfRangeException();
+            }
+            //var res = new PointPairListPlus(from, from.PEDreference, from.PLSreference);
             var res = new PointPairListPlus(from, null, null);
-            for (int i = 0; i < res.Count; ++i) {
+            for (int i = 0; i < count; ++i) {
                 if (res[i].X != what[i].X)
                     throw new ArgumentException();
                 res[i].Y -= what[i].Y * coeff;
             }
             return res;
         }
-        static PreciseEditorData PreciseEditorDataDiff(PreciseEditorData target, PreciseEditorData what, double coeff) {
-            if (target.CompareTo(what) != 0)
-                throw new ArgumentException();
-            if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) ^ (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
-                throw new ArgumentException();
-            if (target.AssociatedPoints != null && what.AssociatedPoints != null && target.AssociatedPoints.Count != what.AssociatedPoints.Count)
-                throw new ArgumentException();
-            if ((target.AssociatedPoints == null || target.AssociatedPoints.Count == 0) && (what.AssociatedPoints == null || what.AssociatedPoints.Count == 0))
-                return new PreciseEditorData(target);
-            if (target.AssociatedPoints.Count != 2 * target.Width + 1)
-                throw new ArgumentException();
-            var res = new PreciseEditorData(target);
-            for (int i = 0; i < res.AssociatedPoints.Count; ++i) {
-                if (res.AssociatedPoints[i].X != what.AssociatedPoints[i].X)
-                    throw new ArgumentException();
-                res.AssociatedPoints[i].Y -= what.AssociatedPoints[i].Y * coeff;
-            }
-            return res;
-        }
         static List<PreciseEditorData> PreciseEditorDataListDiff(List<PreciseEditorData> from, List<PreciseEditorData> what, ushort step, PreciseEditorData pedReference) {
-            if (from.Count != what.Count)
+            int count = from.Count;
+            if (count != what.Count)
                 throw new ArgumentOutOfRangeException();
 
             // coeff counting
@@ -387,27 +393,31 @@ namespace Flavor.Common.Settings {
             if (pedReference != null) {
                 int fromIndex = from.IndexOf(pedReference);
                 int whatIndex = what.IndexOf(pedReference);
-                if ((fromIndex == -1) || (whatIndex == -1))
+                if (fromIndex == -1 || whatIndex == -1)
                     throw new ArgumentException();
-                if (System.Math.Abs(from[fromIndex].Step - step) > from[fromIndex].Width)
+                var fromPeak = from[fromIndex];
+                ThrowOnNotSuitable(fromPeak, what[whatIndex]);
+                if (System.Math.Abs(fromPeak.Step - step) > fromPeak.Width)
                     throw new ArgumentOutOfRangeException();
-                if (from[fromIndex].AssociatedPoints.Count != what[whatIndex].AssociatedPoints.Count)
-                    throw new ArgumentException();
-                if (from[fromIndex].AssociatedPoints.Count != 2 * from[fromIndex].Width + 1)
-                    throw new ArgumentException();
+                var fromPoints = fromPeak.AssociatedPoints;
+                var whatPoints = what[whatIndex].AssociatedPoints;
 
-                if ((step != ushort.MaxValue)) {
+                if (step != ushort.MaxValue) {
                     //diff on point
-                    if ((what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y != 0) &&
-                        (from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y != 0))
-                        coeff = from[fromIndex].AssociatedPoints[step - from[fromIndex].Step + from[fromIndex].Width].Y /
-                                what[whatIndex].AssociatedPoints[step - what[whatIndex].Step + what[whatIndex].Width].Y;
+                    int index = step - fromPeak.Step + fromPeak.Width;
+                    var fromPt = fromPoints[index];
+                    var whatPt = whatPoints[index];
+                    if (fromPt.X != whatPt.X) {
+                        throw new ArgumentException();
+                    }
+                    if (whatPt.Y != 0 && fromPt.Y != 0)
+                        coeff = fromPt.Y / whatPt.Y;
                 } else {
                     //diff on peak sum
-                    double sumFrom = from[fromIndex].AssociatedPoints.PLSreference.PeakSum;
+                    double sumFrom = fromPoints.PLSreference.PeakSum;
                     if (sumFrom != 0) {
                         double sumWhat = 0;
-                        foreach (var pp in what[whatIndex].AssociatedPoints) {
+                        foreach (var pp in whatPoints) {
                             sumWhat += pp.Y;
                         }
                         if (sumWhat != 0)
@@ -417,10 +427,33 @@ namespace Flavor.Common.Settings {
             }
 
             var res = new List<PreciseEditorData>(from);
-            for (int i = 0; i < res.Count; ++i) {
+            for (int i = 0; i < count; ++i) {
                 res[i] = PreciseEditorDataDiff(res[i], what[i], coeff);
             }
             return res;
+        }
+        static PreciseEditorData PreciseEditorDataDiff(PreciseEditorData target, PreciseEditorData what, double coeff) {
+            ThrowOnNotSuitable(target, what);
+            var targetPoints = target.AssociatedPoints;
+            var whatPoints = what.AssociatedPoints;
+            var res = new PreciseEditorData(target);
+            for (int i = 0; i < targetPoints.Count; ++i) {
+                if (targetPoints[i].X != whatPoints[i].X)
+                    throw new ArgumentException();
+                res.AssociatedPoints[i].Y -= whatPoints[i].Y * coeff;
+            }
+            return res;
+        }
+        static void ThrowOnNotSuitable(PreciseEditorData target, PreciseEditorData what) {
+            if (target.CompareTo(what) != 0)
+                throw new ArgumentException();
+            var targetPoints = target.AssociatedPoints;
+            var whatPoints = what.AssociatedPoints;
+            if (targetPoints == null || whatPoints == null)
+                throw new ArgumentException();
+            int count = targetPoints.Count;
+            if (count == 0 || count != whatPoints.Count || count != 2 * target.Width + 1)
+                throw new ArgumentException();
         }
         #endregion
         #endregion
@@ -1279,9 +1312,9 @@ namespace Flavor.Common.Settings {
                             pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
                             pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
                         } catch (NullReferenceException) {
-                            throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                            throw new ConfigLoadException("Ошибка структуры файла", SCAN_SPECTRUM_MESSAGE, filename);
                         } catch (FormatException) {
-                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла спектра", filename);
+                            throw new ConfigLoadException("Неверный формат данных", SCAN_SPECTRUM_MESSAGE, filename);
                         }
                         commonOpts = loadCommonOptions();
 
@@ -1292,7 +1325,7 @@ namespace Flavor.Common.Settings {
                     public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
                         peds.CommonOptions = loadCommonOptions();
                         try {
-                            peds.AddRange(LoadPED("Ошибка чтения файла прецизионного спектра"));
+                            peds.AddRange(LoadPED(PRECISE_SPECTRUM_MESSAGE));
                             return true;
                         } catch (ConfigLoadException) {
                             return false;
@@ -1373,10 +1406,10 @@ namespace Flavor.Common.Settings {
                             }
                         } catch (FormatException) {
                             // TODO: store exception messages
-                            throw new ConfigLoadException("Неверный формат данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException("Неверный формат данных", hint ? SCAN_SPECTRUM_MESSAGE : PRECISE_SPECTRUM_MESSAGE, filename);
                         }
                         if (--peakStart != peakEnd)
-                            throw new ConfigLoadException("Несовпадение рядов данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException(ROWS_MISMATCH, hint ? SCAN_SPECTRUM_MESSAGE : PRECISE_SPECTRUM_MESSAGE, filename);
 
                         return tempPntLst;
                     }
@@ -1409,13 +1442,8 @@ namespace Flavor.Common.Settings {
                         commonNode.SelectSingleNode(IONIZATION_VOLTAGE_CONFIG_TAG).InnerText = opts.iVoltage.ToString();
                         commonNode.SelectSingleNode(CAPACITOR_VOLTAGE_COEFF_CONFIG_TAG).InnerText = opts.CP.ToString();
                         commonNode.SelectSingleNode(EMISSION_CURRENT_CONFIG_TAG).InnerText = opts.eCurrent.ToString();
-                        //commonNode.SelectSingleNode(HEAT_CURRENT_CONFIG_TAG).InnerText = opts.hCurrent.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE1_CONFIG_TAG).InnerText = opts.fV1.ToString();
                         commonNode.SelectSingleNode(FOCUS_VOLTAGE2_CONFIG_TAG).InnerText = opts.fV2.ToString();
-                        /*commonNode.SelectSingleNode(DELAY_BEFORE_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.befTime.ToString();
-                        commonNode.SelectSingleNode(EQUAL_DELAYS_CONFIG_TAG).InnerText = Config.commonOpts.ForwardTimeEqualsBeforeTime.ToString();
-                        commonNode.SelectSingleNode(DELAY_FORWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.fTime.ToString();
-                        commonNode.SelectSingleNode(DELAY_BACKWARD_MEASURE_CONFIG_TAG).InnerText = Config.commonOpts.bTime.ToString();*/
                     }
                     public void savePreciseData(List<PreciseEditorData> peds, bool savePeakSum) {
                         clearOldValues();
@@ -1917,8 +1945,6 @@ namespace Flavor.Common.Settings {
                         throw resultException;
                     }
                     public Graph.Displaying openSpectrumFile(out CommonOptions commonOpts, params PointPairListPlus[] points) {
-                        //var pl1 = points[0];
-                        //var pl2 = points[1];
                         try {
                             string prefix = combine(ROOT_CONFIG_TAG, OVERVIEW_CONFIG_TAG);
                             ushort start = ushort.Parse(xmlData.SelectSingleNode(combine(prefix, START_SCAN_CONFIG_TAG)).InnerText);
@@ -1927,26 +1953,24 @@ namespace Flavor.Common.Settings {
                                 int i = int.Parse(node.Attributes[NUMBER_ATTRIBUTE].Value) - 1;
                                 points[i].AddRange(readPeaks(node, start, end));
                             }
-                            //pl1.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL1_CONFIG_TAG)), start, end));
-                            //pl2.AddRange(readPeaks(xmlData.SelectSingleNode(combine(prefix, COL2_CONFIG_TAG)), start, end));
                         } catch (NullReferenceException) {
-                            throw new ConfigLoadException("Ошибка структуры файла", "Ошибка чтения файла спектра", filename);
+                            throw new ConfigLoadException("Ошибка структуры файла", SCAN_SPECTRUM_MESSAGE, filename);
                         } catch (FormatException) {
-                            throw new ConfigLoadException("Неверный формат данных", "Ошибка чтения файла спектра", filename);
+                            throw new ConfigLoadException("Неверный формат данных", SCAN_SPECTRUM_MESSAGE, filename);
+                        } catch (ArgumentOutOfRangeException) {
+                            throw new ConfigLoadException("Несовпадение количества коллекторов", SCAN_SPECTRUM_MESSAGE, filename);
                         }
                         commonOpts = loadCommonOptions();
 
                         foreach (var list in points) {
                             list.Sort(ZedGraph.SortType.XValues);
                         }
-                        //pl1.Sort(ZedGraph.SortType.XValues);
-                        //pl2.Sort(ZedGraph.SortType.XValues);
                         return spectrumType();
                     }
                     public bool openPreciseSpectrumFile(PreciseSpectrum peds) {
                         peds.CommonOptions = loadCommonOptions();
                         try {
-                            peds.AddRange(LoadPED("Ошибка чтения файла прецизионного спектра"));
+                            peds.AddRange(LoadPED(PRECISE_SPECTRUM_MESSAGE));
                             return true;
                         } catch (ConfigLoadException) {
                             return false;
@@ -2029,10 +2053,10 @@ namespace Flavor.Common.Settings {
                             }
                         } catch (FormatException) {
                             // TODO: store exception messages
-                            throw new ConfigLoadException("Неверный формат данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException("Неверный формат данных", hint ? SCAN_SPECTRUM_MESSAGE : PRECISE_SPECTRUM_MESSAGE, filename);
                         }
                         if (--peakStart != peakEnd)
-                            throw new ConfigLoadException("Несовпадение рядов данных", hint ? "Ошибка чтения файла спектра" : "Ошибка чтения файла прецизионного спектра", filename);
+                            throw new ConfigLoadException(ROWS_MISMATCH, hint ? SCAN_SPECTRUM_MESSAGE : PRECISE_SPECTRUM_MESSAGE, filename);
 
                         return tempPntLst;
                     }
@@ -2346,7 +2370,7 @@ namespace Flavor.Common.Settings {
             public static ISpectrumReader getSpectrumReader(string confName, bool hint) {
                 ISpectrumReader reader = findCorrespondingReaderVersion<ISpectrumReader,
                     CurrentTagHolder.SpectrumReader,
-                    Version1_2TagHolder.SpectrumReader>(confName, "Ошибка чтения файла спектра");
+                    Version1_2TagHolder.SpectrumReader>(confName, SCAN_SPECTRUM_MESSAGE);
                 reader.Hint = hint;
                 return reader;
             }
