@@ -54,7 +54,6 @@ namespace Flavor.Forms {
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.measureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.initSys_butt = new System.Windows.Forms.ToolStripButton();
-            this.overview_button = new System.Windows.Forms.ToolStripButton();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.measure_StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.sensmeasure_button = new System.Windows.Forms.ToolStripButton();
@@ -63,6 +62,8 @@ namespace Flavor.Forms {
             this.controlToolStrip = new System.Windows.Forms.ToolStrip();
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.overview_button = new System.Windows.Forms.ToolStripDropDownButton();
+            this.sparseModeStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inletToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
@@ -411,17 +412,6 @@ namespace Flavor.Forms {
             this.initSys_butt.Name = "initSys_butt";
             this.initSys_butt.Click += new System.EventHandler(this.initSys_butt_Click);
             // 
-            // overview_button
-            // 
-            this.overview_button.AccessibleDescription = null;
-            this.overview_button.AccessibleName = null;
-            this.overview_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            resources.ApplyResources(this.overview_button, "overview_button");
-            this.overview_button.BackColor = System.Drawing.Color.White;
-            this.overview_button.BackgroundImage = null;
-            this.overview_button.Name = "overview_button";
-            this.overview_button.Click += new System.EventHandler(this.overview_button_Click);
-            // 
             // statusStrip
             // 
             this.statusStrip.AccessibleDescription = null;
@@ -519,6 +509,29 @@ namespace Flavor.Forms {
             this.monitorToolStripButton.Name = "monitorToolStripButton";
             this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
             // 
+            // overview_button
+            // 
+            this.overview_button.AccessibleDescription = null;
+            this.overview_button.AccessibleName = null;
+            this.overview_button.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            resources.ApplyResources(this.overview_button, "overview_button");
+            this.overview_button.BackColor = System.Drawing.Color.White;
+            this.overview_button.BackgroundImage = null;
+            this.overview_button.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sparseModeStripMenuItem});
+            this.overview_button.Name = "overview_button";
+            this.overview_button.Click += new System.EventHandler(this.overview_button_Click);
+            // 
+            // sparseModeStripMenuItem
+            // 
+            this.sparseModeStripMenuItem.AccessibleDescription = null;
+            this.sparseModeStripMenuItem.AccessibleName = null;
+            resources.ApplyResources(this.sparseModeStripMenuItem, "sparseModeStripMenuItem");
+            this.sparseModeStripMenuItem.BackgroundImage = null;
+            this.sparseModeStripMenuItem.Name = "sparseModeStripMenuItem";
+            this.sparseModeStripMenuItem.ShortcutKeyDisplayString = null;
+            this.sparseModeStripMenuItem.Click += new System.EventHandler(this.sparseModeToolStripMenuItem_Click);
+            // 
             // inletToolStripButton
             // 
             this.inletToolStripButton.AccessibleDescription = null;
@@ -600,7 +613,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStripButton initSys_butt;
         private System.Windows.Forms.ToolStripButton shutSys_butt;
         private System.Windows.Forms.ToolStripButton unblock_butt;
-        private System.Windows.Forms.ToolStripButton overview_button;
         private System.Windows.Forms.ToolStripButton sensmeasure_button;
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;
@@ -619,6 +631,8 @@ namespace Flavor.Forms {
         private System.Windows.Forms.OpenFileDialog openSpecterFileDialog;
         private System.Windows.Forms.ToolStripMenuItem openSpecterFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton inletToolStripButton;
+        private System.Windows.Forms.ToolStripDropDownButton overview_button;
+        private System.Windows.Forms.ToolStripMenuItem sparseModeStripMenuItem;
     }
 }
 

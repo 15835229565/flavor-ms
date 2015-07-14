@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Flavor.Common.Messaging;
 using Flavor.Common.Data.Measure;
 using Flavor.Common.Settings;
-using System.Collections.Generic;
 using Flavor.Common.Library;
 
 namespace Flavor.Common {
@@ -285,7 +285,7 @@ namespace Flavor.Common {
                 temp(pState);
         }
         // TODO: protected
-        public void Scan() {
+        public void Scan(byte ratio) {
             if (pState == ProgramStates.Ready) {
                 var g = Graph.MeasureGraph.Instance;
                 g.Reset();
@@ -295,7 +295,7 @@ namespace Flavor.Common {
                         co.befTimeReal, co.iTimeReal, co.eTimeReal,
                         p => g.updateGraphDuringScanMeasure(p, Counts),
                         Config.autoSaveSpectrumFile,
-                        1);
+                        ratio);
                     // how to unsubscribe?
                     //realizer.MeasureSend += (s, e) => temp.NextMeasure(e.Value);
                     

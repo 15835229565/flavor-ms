@@ -231,6 +231,9 @@
   <data name="ParameterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>236, 22</value>
   </data>
+  <data name="&gt;&gt;sparseModeStripMenuItem.Name" xml:space="preserve">
+    <value>sparseModeStripMenuItem</value>
+  </data>
   <data name="searchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>173, 22</value>
   </data>
@@ -287,7 +290,7 @@
     <value>searchToolStripMenuItem</value>
   </data>
   <data name="overview_button.Size" type="System.Drawing.Size, System.Drawing">
-    <value>97, 22</value>
+    <value>106, 22</value>
   </data>
   <data name="measureToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>261, 22</value>
@@ -361,8 +364,8 @@
   <data name="statusBarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>236, 22</value>
   </data>
-  <data name="&gt;&gt;delaysToolStripMenuItem.Name" xml:space="preserve">
-    <value>delaysToolStripMenuItem</value>
+  <data name="&gt;&gt;exitToolStripMenuItem.Name" xml:space="preserve">
+    <value>exitToolStripMenuItem</value>
   </data>
   <data name="contentsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+F1</value>
@@ -387,6 +390,9 @@
   </data>
   <data name="&gt;&gt;indexToolStripMenuItem.Name" xml:space="preserve">
     <value>indexToolStripMenuItem</value>
+  </data>
+  <data name="sparseModeStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
   </data>
   <data name="&gt;&gt;monitorToolStripButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -566,9 +572,6 @@
   <data name="&gt;&gt;parameterPanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;exitToolStripMenuItem.Name" xml:space="preserve">
-    <value>exitToolStripMenuItem</value>
-  </data>
   <data name="&gt;&gt;exitToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -729,6 +732,9 @@
   <data name="&gt;&gt;senseToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="sparseModeStripMenuItem.Text" xml:space="preserve">
+    <value>Прореженный режим</value>
+  </data>
   <data name="helpMenu.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -798,6 +804,9 @@
   <data name="&gt;&gt;statusTreeView.Parent" xml:space="preserve">
     <value>parameterPanel</value>
   </data>
+  <data name="&gt;&gt;delaysToolStripMenuItem.Name" xml:space="preserve">
+    <value>delaysToolStripMenuItem</value>
+  </data>
   <data name="&gt;&gt;statusStrip.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
@@ -812,6 +821,9 @@
   </data>
   <data name="&gt;&gt;ParameterToolStripMenuItem.Name" xml:space="preserve">
     <value>ParameterToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;sparseModeStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="indexToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Index</value>
@@ -881,7 +893,7 @@
     <value>inletToolStripButton</value>
   </data>
   <data name="&gt;&gt;overview_button.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ToolStripDropDownButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;viewMenu.Name" xml:space="preserve">
     <value>viewMenu</value>

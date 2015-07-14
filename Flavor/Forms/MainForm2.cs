@@ -627,7 +627,12 @@ namespace Flavor.Forms {
             BeginInvoke(new Action(() => MessageBox.Show(this, msg)));
         }
         void overview_button_Click(object sender, EventArgs e) {
-            commander.Scan();
+            commander.Scan(1);
+            ChildFormInit(CollectorsForm, false);
+        }
+        void sparseModeToolStripMenuItem_Click(object sender, EventArgs e) {
+            // TODO: select ratio in narrow limits
+            commander.Scan(2);
             ChildFormInit(CollectorsForm, false);
         }
         void sensmeasure_button_Click(object sender, EventArgs e) {

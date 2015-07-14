@@ -64,10 +64,10 @@ namespace Flavor.Common.Data.Measure {
         }
         public class Scan: MeasureMode {
             // is used to sparse data
-            readonly ushort _ratio;
+            readonly byte _ratio;
 
             readonly Action<ushort> _graphUpdater;
-            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort> graphUpdater, Action successfulExit, ushort ratio)
+            public Scan(ushort min, ushort max, ushort befTime, ushort iTime, ushort eTime, Action<ushort> graphUpdater, Action successfulExit, byte ratio)
                 : base(min, max, befTime, iTime, eTime, (s, e) => successfulExit()) {
                 _graphUpdater = graphUpdater;
                 _ratio = ratio;

@@ -32,7 +32,7 @@
     interface IMeasureActions {
         event ProgramEventHandler ProgramStateChanged;
         event ProgramEventHandler MeasureCancelled;
-        void Scan();
+        void Scan(byte ratio);
         bool Sense();
         bool? Monitor(params object[] data);
     }

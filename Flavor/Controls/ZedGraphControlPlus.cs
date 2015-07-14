@@ -8,28 +8,13 @@ using PointPairListPlus = Flavor.Common.Data.Measure.PointPairListPlus;
 namespace Flavor.Controls {
     partial class ZedGraphControlPlus: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
-            ContextMenuStrip menuStrip;
-            public ContextMenuStrip MenuStrip {
-                get {
-                    return menuStrip;
-                }
-            }
-            PointPairListPlus ppl;
-            public PointPairListPlus Row {
-                get {
-                    return ppl;
-                }
-            }
-            int index;
-            public int Index {
-                get {
-                    return index;
-                }
-            }
+            public ContextMenuStrip MenuStrip { get; private set; }
+            public PointPairListPlus Row { get; private set; }
+            public int Index { get; private set; }
             public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip, PointPairListPlus ppl, int index) {
-                this.menuStrip = menuStrip;
-                this.ppl = ppl;
-                this.index = index;
+                MenuStrip = menuStrip;
+                Row = ppl;
+                Index = index;
             }
         }
         public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;// = delegate { }; // cannot be null, important for thread safety;
