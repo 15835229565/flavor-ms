@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
-using System.Collections.Generic;
 using Flavor.Common.Data.Measure;
 
 namespace Flavor.Forms {
@@ -45,37 +45,37 @@ namespace Flavor.Forms {
         }
         class PointPairSpecial: PointPair, ISpecial {
             readonly double[] xs, ys;
-            readonly Func<int> xChooser, yChooser;
+            readonly Func<int> _XChooser, _YChooser;
             public PointPairSpecial(double x, double y, double[] extraXs, Func<int> xChooser, double[] extraYs, Func<int> yChooser)
                 : base(x, y) {
                 xs = extraXs;
                 ys = extraYs;
-                this.xChooser = xChooser;
-                this.yChooser = yChooser;
+                _XChooser = xChooser;
+                _YChooser = yChooser;
             }
             PointPairSpecial(PointPairSpecial other)
                 : base(((ISpecial)other).X, ((ISpecial)other).Y) {
                 xs = other.xs == null ? null : (double[])other.xs.Clone();
                 ys = other.ys == null ? null : (double[])other.ys.Clone();
-                xChooser = other.xChooser;
-                yChooser = other.yChooser;
+                _XChooser = other._XChooser;
+                _YChooser = other._YChooser;
             }
             public override double X {
                 get {
-                    if (xChooser == null)
+                    if (_XChooser == null)
                         return base.X;
                     else {
-                        int index = xChooser();
+                        int index = _XChooser();
                         if (index == -1)
                             return base.X;
                         return xs[index];
                     }
                 }
                 set {
-                    if (xChooser == null)
+                    if (_XChooser == null)
                         base.X = value;
                     else {
-                        int index = xChooser();
+                        int index = _XChooser();
                         if (index == -1)
                             base.X = value;
                         else
@@ -85,20 +85,20 @@ namespace Flavor.Forms {
             }
             public override double Y {
                 get {
-                    if (yChooser == null)
+                    if (_YChooser == null)
                         return base.Y;
                     else {
-                        int index = yChooser();
+                        int index = _YChooser();
                         if (index == -1)
                             return base.Y;
                         return ys[index];
                     }
                 }
                 set {
-                    if (yChooser == null)
+                    if (_YChooser == null)
                         base.Y = value;
                     else {
-                        int index = yChooser();
+                        int index = _YChooser();
                         if (index == -1)
                             base.Y = value;
                         else
@@ -215,7 +215,8 @@ namespace Flavor.Forms {
             double yMax = yScale.Max;
 
             var line = new LineObj(x, yMin, x, yMax);
-            line.Line.Style = System.Drawing.Drawing2D.DashStyle.Dash;
+            //line.Line.Style = System.Drawing.Drawing2D.DashStyle.Dash;
+            line.Line.Color = Color.DarkGreen;
             line.IsClippedToChartRect = true;
             pane.GraphObjList.Add(line);
             

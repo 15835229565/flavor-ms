@@ -615,6 +615,9 @@
   <data name="sparseModeStripMenuItem.Text" xml:space="preserve">
     <value>Прореженный режим</value>
   </data>
+  <data name="sparseModeStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Прореженный режим</value>
+  </data>
   <data name="overviewSplitButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
