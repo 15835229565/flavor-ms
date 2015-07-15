@@ -1196,7 +1196,7 @@ namespace Flavor.Forms {
             //test
             inletToolStripButton.Enabled = scan;
             
-            overview_button.Enabled = scan;
+            overviewSplitButton.Enabled = scan;
             sensmeasure_button.Enabled = precise;
             monitorToolStripButton.Enabled = monitor;
             if (!monitor)
