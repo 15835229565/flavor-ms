@@ -1,0 +1,2 @@
+Flavor project for MS. Uses [ZedGraph](http://zedgraph.org/wiki/index.php?title=Main_Page) C# graph plot library.
+[dnAnalytics](http://dnanalytics.codeplex.com/) math library is being tested for future use.
