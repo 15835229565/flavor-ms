@@ -296,7 +296,8 @@ namespace Flavor.Forms {
                 // TODO: extract method?
                 graph.AxisChange();
             }
-            graph.Refresh();
+            graph.Invalidate();
+            //graph.Refresh();
         }
 
         protected override sealed void SetSize() {
@@ -307,6 +308,8 @@ namespace Flavor.Forms {
         }
 
         void ZedGraphRebirth(string title, int xMax) {
+            // TODO: generate filename on measure start
+            //graph.SaveFileDialog.FileName = "";
             var pane = graph.GraphPane;
 
             pane.Title.Text = title;
@@ -344,7 +347,8 @@ namespace Flavor.Forms {
             }
             // TODO: extract method?
             graph.AxisChange();
-            graph.Refresh();
+            graph.Invalidate();
+            //graph.Refresh();
         }
 
         void NewIterationAsync(object sender, EventArgs<int[]> e) {
@@ -419,6 +423,7 @@ namespace Flavor.Forms {
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ZedGraphControlMonitor.ContextMenuBuilderEventArgs args) {
             var items = args.MenuStrip.Items;
+
             items.Add(new ToolStripSeparator());
             if (pspec.Count > 1) {
                 // no normalization when displaying 1 row
