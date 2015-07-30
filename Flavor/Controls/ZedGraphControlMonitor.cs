@@ -28,28 +28,30 @@ namespace Flavor.Controls {
             pane.Fill = new Fill(Color.White, Color.FromArgb(220, 220, 255), 45f);
             var xAxis = pane.XAxis;
             var yAxis = pane.YAxis;
-            {
-                var grid = xAxis.MajorGrid;
-                grid.IsVisible = true;
-                grid.DashOn = 10;
-                grid.DashOff = 5;
+            var grid = xAxis.MinorGrid;
+            grid.IsVisible = true;
+            grid.Color = Color.Gray;
+            grid.DashOn = 1;
+            grid.DashOff = 2;
 
-                grid = yAxis.MajorGrid;
-                grid.IsVisible = true;
-                grid.DashOn = 10;
-                grid.DashOff = 5;
-            }
-            {
-                var grid = xAxis.MinorGrid;
-                grid.IsVisible = true;
-                grid.DashOn = 1;
-                grid.DashOff = 2;
+            grid = yAxis.MinorGrid;
+            grid.Color = Color.Gray;
+            grid.IsVisible = true;
+            grid.DashOn = 1;
+            grid.DashOff = 2;
 
-                grid = yAxis.MinorGrid;
-                grid.IsVisible = true;
-                grid.DashOn = 1;
-                grid.DashOff = 2;
-            }
+            grid = xAxis.MajorGrid;
+            grid.IsVisible = true;
+            grid.Color = Color.Gray;
+            grid.DashOn = 10;
+            grid.DashOff = 5;
+
+            grid = yAxis.MajorGrid;
+            grid.IsVisible = true;
+            grid.Color = Color.Gray;
+            grid.DashOn = 10;
+            grid.DashOff = 5;
+            
             base.ContextMenuBuilder += ZedGraphControlMonitor_ContextMenuBuilder;
         }
         void ZedGraphControlMonitor_ContextMenuBuilder(object sender, ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState) {
