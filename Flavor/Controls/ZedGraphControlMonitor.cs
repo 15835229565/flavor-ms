@@ -81,12 +81,12 @@ namespace Flavor.Controls {
         protected new void MenuClick_SaveAs(object sender, EventArgs e) {
             if (MasterPane != null) {
                 SaveFileDialog.Filter =
-                    "Bmp Format (*.bmp)|*.bmp" +
+                    "Bmp Format (*.bmp)|*.bmp|" +
                     "PNG Format (*.png)|*.png|" +
                     "Gif Format (*.gif)|*.gif|" +
                     "Jpeg Format (*.jpg)|*.jpg|" +
                     "Tiff Format (*.tif)|*.tif|" +
-                    "Emf Format (*.emf)|*.emf|";
+                    "Emf Format (*.emf)|*.emf";
 
                 if (SaveFileDialog.FileName != null && SaveFileDialog.FileName.Length > 0) {
                     string ext = Path.GetExtension(SaveFileDialog.FileName).ToLower();
