@@ -73,8 +73,6 @@ namespace Flavor.Common.Messaging.Almazov.Commands {
         public VacuumStatusReply(bool turbo, bool relay1, bool relay2, bool relay3, int alert) {
             this.turbo = turbo;
             this.relay1 = relay1;
-            if (relay1 == false)
-                Console.WriteLine(relay1);
             this.relay2 = relay2;
             this.relay3 = relay3;
             this.alert = alert;

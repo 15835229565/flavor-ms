@@ -2,7 +2,7 @@ using System;
 
 namespace Flavor.Common {
     internal static class ConsoleWriter {
-        private static readonly object locker = new object();
+        static readonly object locker = new object();
 
         internal static void Subscribe(ILog o) {
             o.Log += Log;
@@ -10,10 +10,10 @@ namespace Flavor.Common {
         internal static void Unsubscribe(ILog o) {
             o.Log -= Log;
         }
-        private static void Log(string msg) {
+        static void Log(string msg) {
             WriteLine(msg);
         }
-        private static void Write(char c) {
+        static void Write(char c) {
             Console.Write(c);
         }
         // used in Config
@@ -22,10 +22,10 @@ namespace Flavor.Common {
                 Console.Write(s);
             }
         }
-        private static void WriteLine() {
+        static void WriteLine() {
             Console.WriteLine();
         }
-        private static void WriteLine(object value) {
+        static void WriteLine(object value) {
             Console.WriteLine(value);
         }
         // used in UI

@@ -124,7 +124,12 @@ namespace Flavor.Common {
                 var temp = State;
                 var temp2 = temp;
                 temp = SwitchState(temp, DeviceStates.Turbo, (bool)(data[0]));
-                temp = SwitchState(temp, DeviceStates.SEMV1, (bool)(data[1]));
+                bool relay1 = (bool)(data[1]);
+                temp = SwitchState(temp, DeviceStates.SEMV1, relay1);
+
+                // TODO: use ConsoleWriter logging
+                if (relay1 == false)
+                    Console.WriteLine("Vacuum unit (TIC) relay 1 is off. Check TIC settings if this message appears constantly.");
 
                 temp = SwitchState(temp, DeviceStates.Relay2, (bool)(data[2]));
                 temp = SwitchState(temp, DeviceStates.Relay3, (bool)(data[3]));
