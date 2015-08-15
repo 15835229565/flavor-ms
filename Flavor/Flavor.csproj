@@ -178,6 +178,12 @@
     <Compile Include="Controls\ScanMeasureGraphPanel.Designer.cs">
       <DependentUpon>ScanMeasureGraphPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ZedGraphControlMine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ZedGraphControlMine.Designer.cs">
+      <DependentUpon>ZedGraphControlMine.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ZedGraphControlMonitor.cs">
       <SubType>UserControl</SubType>
     </Compile>
