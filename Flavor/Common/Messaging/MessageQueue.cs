@@ -7,14 +7,14 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable {
         byte Try = 0;
 
+        // TODO: change to ConcurrenQueue if .NET 4.0
         Queue<UserRequest<T>> queue = new Queue<UserRequest<T>>();
         // TODO: configurable time interval
         readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
 
-        object syncObj = null;
         object SyncRoot {
             get {
-                return syncObj == null ? (syncObj = (queue as ICollection).SyncRoot) : syncObj; 
+                return (queue as ICollection).SyncRoot; 
             }
         }
         public event EventHandler Undo;
@@ -60,8 +60,7 @@ namespace Flavor.Common.Messaging {
                 queue.Clear();
             }
         }
-        public void Enqueue(UserRequest<T> command)
-        {
+        public void Enqueue(UserRequest<T> command) {
             lock (SyncRoot) {
                 queue.Enqueue(command);
                 trySend();
