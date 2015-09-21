@@ -186,7 +186,7 @@
     <value>9, 358</value>
   </data>
   <data name="scanRealTimeLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="scanRealTimeLabel.TabIndex" type="System.Int32, mscorlib">
     <value>38</value>
@@ -213,7 +213,7 @@
     <value>9, 330</value>
   </data>
   <data name="stepNumberLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="stepNumberLabel.TabIndex" type="System.Int32, mscorlib">
     <value>45</value>
@@ -270,7 +270,7 @@
     <value>9, 484</value>
   </data>
   <data name="peakNumberLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="peakNumberLabel.TabIndex" type="System.Int32, mscorlib">
     <value>47</value>
@@ -327,7 +327,7 @@
     <value>9, 520</value>
   </data>
   <data name="peakCenterLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="peakCenterLabel.TabIndex" type="System.Int32, mscorlib">
     <value>49</value>
@@ -384,7 +384,7 @@
     <value>9, 556</value>
   </data>
   <data name="peakWidthLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="peakWidthLabel.TabIndex" type="System.Int32, mscorlib">
     <value>51</value>
@@ -441,7 +441,7 @@
     <value>9, 388</value>
   </data>
   <data name="detector1CountsLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="detector1CountsLabel.TabIndex" type="System.Int32, mscorlib">
     <value>40</value>
@@ -498,7 +498,7 @@
     <value>9, 418</value>
   </data>
   <data name="detector2CountsLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="detector2CountsLabel.TabIndex" type="System.Int32, mscorlib">
     <value>42</value>
@@ -621,7 +621,7 @@
     <value>9, 448</value>
   </data>
   <data name="detector3CountsLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 13</value>
+    <value>180, 13</value>
   </data>
   <data name="detector3CountsLabel.TabIndex" type="System.Int32, mscorlib">
     <value>52</value>

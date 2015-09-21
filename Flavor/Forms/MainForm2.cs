@@ -160,27 +160,27 @@ namespace Flavor.Forms {
         #region Status TreeView population
         TreeNodePlus rootNode;
 
-        TreeNodeLeaf systemStateValueTreeNode;
-        TreeNodeLeaf vacuumStateValueTreeNode;
-        TreeNodeLeaf forPumpOnValueTreeNode;
-        TreeNodeLeaf turboPumpOnValueTreeNode;
-        TreeNodeLeaf forVacuumValueTreeNode;
-        TreeNodeLeaf highVacuumValueTreeNode;
-        TreeNodeLeaf hardwareBlockValueTreeNode;
-        TreeNodeLeaf vGate1ValueTreeNode;
-        TreeNodeLeaf vGate2ValueTreeNode;
+        readonly TreeNodeLeaf systemStateValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf vacuumStateValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf forPumpOnValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf turboPumpOnValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf forVacuumValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf highVacuumValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf hardwareBlockValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf vGate1ValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf vGate2ValueTreeNode = new TreeNodeLeaf();
 
-        TreeNodeLeaf f1VoltageValueTreeNode;
-        TreeNodeLeaf f2VoltageValueTreeNode;
-        TreeNodeLeaf scanVoltageValueTreeNode;
-        TreeNodeLeaf iVoltageValueTreeNode;
-        TreeNodeLeaf eCurrentValueTreeNode;
-        TreeNodeLeaf condPlusValueTreeNode;
-        TreeNodeLeaf condMinusValueTreeNode;
-        TreeNodeLeaf detectorVoltageValueTreeNode;
-        TreeNodeLeaf hCurrentValueTreeNode;
+        readonly TreeNodeLeaf f1VoltageValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf f2VoltageValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf scanVoltageValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf iVoltageValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf eCurrentValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf condPlusValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf condMinusValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf detectorVoltageValueTreeNode = new TreeNodeLeaf();
+        readonly TreeNodeLeaf hCurrentValueTreeNode = new TreeNodeLeaf();
 
-        TreeNodeLeaf turboSpeedValueTreeNode;
+        readonly TreeNodeLeaf turboSpeedValueTreeNode = new TreeNodeLeaf();
         TreeNodeLeaf turboCurrentValueTreeNode;
         TreeNodeLeaf pumpTemperatureValueTreeNode;
         TreeNodeLeaf driveTemperatureValueTreeNode;
@@ -188,137 +188,40 @@ namespace Flavor.Forms {
         TreeNodeLeaf operationTimeValueTreeNode;
 
         void populateStatusTreeViewNew() {
-            TreeNodePlus infoNode;
-
-            TreeNodePair systemStateTextTreeNode;
-            TreeNodePair vacuumStateTextTreeNode;
-            TreeNodePair forPumpOnTextTreeNode;
-            TreeNodePair turboPumpOnTextTreeNode;
-            TreeNodePair forVacuumTextTreeNode;
-            TreeNodePair highVacuumTextTreeNode;
-            TreeNodePair hardwareBlockTextTreeNode;
-            TreeNodePair vGate1TextTreeNode;
-            TreeNodePair vGate2TextTreeNode;
-
-            TreeNodePlus extraNode;
-
-            TreeNodePair f1VoltageTextTreeNode;
-            TreeNodePair f2VoltageTextTreeNode;
-            TreeNodePair scanVoltageTextTreeNode;
-            TreeNodePair iVoltageTextTreeNode;
-            TreeNodePair eCurrentTextTreeNode;
-            TreeNodePair condPlusTextTreeNode;
-            TreeNodePair condMinusTextTreeNode;
-            TreeNodePair detectorVoltageTextTreeNode;
-            TreeNodePair hCurrentTextTreeNode;
-
-            //TreeNodePlus turboPumpNode;
-
-            TreeNodePair turboSpeedTextTreeNode;
-            //TreeNodePair turboCurrentTextTreeNode;
-            //TreeNodePair pumpTemperatureTextTreeNode;
-            //TreeNodePair driveTemperatureTextTreeNode;
-            //TreeNodePair pwmTextTreeNode;
-            //TreeNodePair operationTimeTextTreeNode;
-
-            systemStateValueTreeNode = new TreeNodeLeaf();
-            systemStateTextTreeNode = new TreeNodePair("Состояние системы", systemStateValueTreeNode);
-            // actually SEMV1
-            vacuumStateValueTreeNode = new TreeNodeLeaf();
-            vacuumStateTextTreeNode = new TreeNodePair("Основной вентиль", vacuumStateValueTreeNode);
-            forPumpOnValueTreeNode = new TreeNodeLeaf();
-            forPumpOnTextTreeNode = new TreeNodePair("Прокачивающий насос", forPumpOnValueTreeNode);
-            turboPumpOnValueTreeNode = new TreeNodeLeaf();
-            turboPumpOnTextTreeNode = new TreeNodePair("Турбомолекулярный насос", turboPumpOnValueTreeNode);
-            //forVacuumValueTreeNode = new TreeNodeLeaf();
-            //forVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (фор)", forVacuumValueTreeNode);
-            //highVacuumValueTreeNode = new TreeNodeLeaf();
-            //highVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (высок)", highVacuumValueTreeNode);
-            hardwareBlockValueTreeNode = new TreeNodeLeaf();
-            hardwareBlockTextTreeNode = new TreeNodePair("Высокое напряжение", hardwareBlockValueTreeNode);
-            vGate1ValueTreeNode = new TreeNodeLeaf();
-            vGate1TextTreeNode = new TreeNodePair("Вентиль капилляра 2", vGate1ValueTreeNode);
-            vGate2ValueTreeNode = new TreeNodeLeaf();
-            vGate2TextTreeNode = new TreeNodePair("Вентиль капилляра 3", vGate2ValueTreeNode);
-
-            infoNode = new TreeNodePlus("Информация о системе",
-                new TreeNode[] { systemStateTextTreeNode,
-                    vacuumStateTextTreeNode,//SEMV1
-                    turboPumpOnTextTreeNode, 
-                    //forVacuumTextTreeNode,
-                    //highVacuumTextTreeNode,
-                    hardwareBlockTextTreeNode,
-                    forPumpOnTextTreeNode,
-                    vGate1TextTreeNode,
-                    vGate2TextTreeNode });
-
-            f1VoltageValueTreeNode = new TreeNodeLeaf();
-            f1VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (1) В", f1VoltageValueTreeNode);
-            f2VoltageValueTreeNode = new TreeNodeLeaf();
-            f2VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (2) В", f2VoltageValueTreeNode);
-            scanVoltageValueTreeNode = new TreeNodeLeaf();
-            scanVoltageTextTreeNode = new TreeNodePair("Напряжение развертки, В", scanVoltageValueTreeNode);
-            iVoltageValueTreeNode = new TreeNodeLeaf();
-            iVoltageTextTreeNode = new TreeNodePair("Напряжение ионизации, В", iVoltageValueTreeNode);
-            eCurrentValueTreeNode = new TreeNodeLeaf();
-            eCurrentTextTreeNode = new TreeNodePair("Ток эмиссии, мкА", eCurrentValueTreeNode);
-            condPlusValueTreeNode = new TreeNodeLeaf();
-            condPlusTextTreeNode = new TreeNodePair("Напряжение конденсатора (+), В", condPlusValueTreeNode);
-            condMinusValueTreeNode = new TreeNodeLeaf();
-            condMinusTextTreeNode = new TreeNodePair("Напряжение конденсатора (-), В", condMinusValueTreeNode);
-            detectorVoltageValueTreeNode = new TreeNodeLeaf();
-            detectorVoltageTextTreeNode = new TreeNodePair("Напряжение на детекторе 1, В", detectorVoltageValueTreeNode);
-            //actually d2V
-            forVacuumValueTreeNode = new TreeNodeLeaf();
-            forVacuumTextTreeNode = new TreeNodePair("Напряжение на детекторе 2, В", forVacuumValueTreeNode);
-            //actually d3V
-            highVacuumValueTreeNode = new TreeNodeLeaf();
-            highVacuumTextTreeNode = new TreeNodePair("Напряжение на детекторе 3, В", highVacuumValueTreeNode);
-            hCurrentValueTreeNode = new TreeNodeLeaf();
-            hCurrentTextTreeNode = new TreeNodePair("Температура нагрева, C", hCurrentValueTreeNode);//hT
-            turboSpeedValueTreeNode = new TreeNodeLeaf();
-            turboSpeedTextTreeNode = new TreeNodePair("Напряжение натекателя, В", turboSpeedValueTreeNode);//inV
-
-            extraNode = new TreeNodePlus("Модуль напряжений",
-                new TreeNode[] { f1VoltageTextTreeNode,
-                    f2VoltageTextTreeNode,
-                    scanVoltageTextTreeNode,
-                    iVoltageTextTreeNode,
-                    eCurrentTextTreeNode,
-                    condPlusTextTreeNode,
-                    condMinusTextTreeNode,
-                    detectorVoltageTextTreeNode,//d1V
-                    forVacuumTextTreeNode,//d2V
-                    highVacuumTextTreeNode,//d3V
-                    hCurrentTextTreeNode,//hT
-                    turboSpeedTextTreeNode//inV
-                });
-
-            //turboSpeedValueTreeNode = new TreeNodeLeaf();
-            //turboSpeedTextTreeNode = new TreeNodePair("Скорость вращения, об./мин.", turboSpeedValueTreeNode);
-            //turboCurrentValueTreeNode = new TreeNodeLeaf();
-            //turboCurrentTextTreeNode = new TreeNodePair("Ток, мА", turboCurrentValueTreeNode);
-            //pumpTemperatureValueTreeNode = new TreeNodeLeaf();
-            //pumpTemperatureTextTreeNode = new TreeNodePair("Температура насоса", pumpTemperatureValueTreeNode);
-            //driveTemperatureValueTreeNode = new TreeNodeLeaf();
-            //driveTemperatureTextTreeNode = new TreeNodePair("Температура привода", driveTemperatureValueTreeNode);
-            //pwmValueTreeNode = new TreeNodeLeaf();
-            //pwmTextTreeNode = new TreeNodePair("pwm", pwmValueTreeNode);
-            //operationTimeValueTreeNode = new TreeNodeLeaf();
-            //operationTimeTextTreeNode = new TreeNodePair("Время работы, ч.", operationTimeValueTreeNode);
-
-            //turboPumpNode = new TreeNodePlus("Турбонасос",
-            //    new TreeNode[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,
-            //        pwmTextTreeNode, operationTimeTextTreeNode });
-
-            rootNode = new TreeNodePlus("Состояние системы",
-                new TreeNode[] { infoNode,
-                    extraNode//,
-                    //turboPumpNode
+            rootNode = new TreeNodePlus("Информация о приборе",
+                new[] {
+                    new TreeNodePlus("Режим работы",
+                        new[] {
+                            new TreeNodePair("Состояние системы", systemStateValueTreeNode),
+                            new TreeNodePair("Основной вентиль", vacuumStateValueTreeNode),//SEMV1
+                            new TreeNodePair("Турбомолекулярный насос", turboPumpOnValueTreeNode), 
+                            new TreeNodePair("Высокое напряжение", hardwareBlockValueTreeNode),
+                            new TreeNodePair("Прокачивающий насос", forPumpOnValueTreeNode),
+                            new TreeNodePair("Вентиль капилляра 2", vGate1ValueTreeNode),
+                            new TreeNodePair("Вентиль капилляра 3", vGate2ValueTreeNode)
+                        }),
+                    new TreeNodePlus("Модуль напряжений",
+                        new[] {
+                            new TreeNodePair("Фокусирующее напр. (1) В", f1VoltageValueTreeNode),
+                            new TreeNodePair("Фокусирующее напр. (2) В", f2VoltageValueTreeNode),
+                            new TreeNodePair("Напряжение развертки, В", scanVoltageValueTreeNode),
+                            new TreeNodePair("Напряжение ионизации, В", iVoltageValueTreeNode),
+                            new TreeNodePair("Ток эмиссии, мкА", eCurrentValueTreeNode),
+                            new TreeNodePair("Напряжение конденсатора (+), В", condPlusValueTreeNode),
+                            new TreeNodePair("Напряжение конденсатора (-), В", condMinusValueTreeNode),
+                            new TreeNodePair("Напряжение на детекторе 1, В", detectorVoltageValueTreeNode),//d1V
+                            new TreeNodePair("Напряжение на детекторе 2, В", forVacuumValueTreeNode),//d2V
+                            new TreeNodePair("Напряжение на детекторе 3, В", highVacuumValueTreeNode),//d3V
+                            new TreeNodePlus("Система напуска",
+                                new[] {
+                                    new TreeNodePair("Температура нагрева, C", hCurrentValueTreeNode),//hT
+                                    new TreeNodePair("Напряжение натекателя, В", turboSpeedValueTreeNode)//inV
+                            })
+                        })
                 });
             rootNode.ExpandAll();
 
-            statusTreeView.Nodes.AddRange(new TreeNode[] { rootNode });
+            statusTreeView.Nodes.AddRange(new [] { rootNode });
         }
 
         void populateStatusTreeView() {
@@ -355,53 +258,34 @@ namespace Flavor.Forms {
             TreeNodePair pwmTextTreeNode;
             TreeNodePair operationTimeTextTreeNode;
 
-            systemStateValueTreeNode = new TreeNodeLeaf();
             systemStateTextTreeNode = new TreeNodePair("Состояние системы", systemStateValueTreeNode);
-            vacuumStateValueTreeNode = new TreeNodeLeaf();
             vacuumStateTextTreeNode = new TreeNodePair("Состояние вакуума", vacuumStateValueTreeNode);
-            forPumpOnValueTreeNode = new TreeNodeLeaf();
             forPumpOnTextTreeNode = new TreeNodePair("Форвакуумный насос", forPumpOnValueTreeNode);
-            turboPumpOnValueTreeNode = new TreeNodeLeaf();
             turboPumpOnTextTreeNode = new TreeNodePair("Турбомолекулярный насос", turboPumpOnValueTreeNode);
-            forVacuumValueTreeNode = new TreeNodeLeaf();
             forVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (фор)", forVacuumValueTreeNode);
-            highVacuumValueTreeNode = new TreeNodeLeaf();
             highVacuumTextTreeNode = new TreeNodePair("Уровень вакуума (высок)", highVacuumValueTreeNode);
-            hardwareBlockValueTreeNode = new TreeNodeLeaf();
             hardwareBlockTextTreeNode = new TreeNodePair("Высокое напряжение", hardwareBlockValueTreeNode);
-            vGate1ValueTreeNode = new TreeNodeLeaf();
             vGate1TextTreeNode = new TreeNodePair("Вакуумный вентиль 1", vGate1ValueTreeNode);
-            vGate2ValueTreeNode = new TreeNodeLeaf();
             vGate2TextTreeNode = new TreeNodePair("Вакуумный вентиль 2", vGate2ValueTreeNode);
 
             infoNode = new TreeNodePlus("Информация о системе",
-                new TreeNode[] { systemStateTextTreeNode, vacuumStateTextTreeNode, forPumpOnTextTreeNode, turboPumpOnTextTreeNode, 
+                new[] { systemStateTextTreeNode, vacuumStateTextTreeNode, forPumpOnTextTreeNode, turboPumpOnTextTreeNode, 
                     forVacuumTextTreeNode, highVacuumTextTreeNode, hardwareBlockTextTreeNode, vGate1TextTreeNode, vGate2TextTreeNode });
 
-            f1VoltageValueTreeNode = new TreeNodeLeaf();
             f1VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (1) В", f1VoltageValueTreeNode);
-            f2VoltageValueTreeNode = new TreeNodeLeaf();
             f2VoltageTextTreeNode = new TreeNodePair("Фокусирующее напр. (2) В", f2VoltageValueTreeNode);
-            scanVoltageValueTreeNode = new TreeNodeLeaf();
             scanVoltageTextTreeNode = new TreeNodePair("Напряжение развертки, В", scanVoltageValueTreeNode);
-            iVoltageValueTreeNode = new TreeNodeLeaf();
             iVoltageTextTreeNode = new TreeNodePair("Напряжение ионизации, В", iVoltageValueTreeNode);
-            eCurrentValueTreeNode = new TreeNodeLeaf();
             eCurrentTextTreeNode = new TreeNodePair("Ток эмиссии, мкА", eCurrentValueTreeNode);
-            condPlusValueTreeNode = new TreeNodeLeaf();
             condPlusTextTreeNode = new TreeNodePair("Напряжение конденсатора (+), В", condPlusValueTreeNode);
-            condMinusValueTreeNode = new TreeNodeLeaf();
             condMinusTextTreeNode = new TreeNodePair("Напряжение конденсатора (-), В", condMinusValueTreeNode);
-            detectorVoltageValueTreeNode = new TreeNodeLeaf();
             detectorVoltageTextTreeNode = new TreeNodePair("Напряжение на детекторе, В", detectorVoltageValueTreeNode);
-            hCurrentValueTreeNode = new TreeNodeLeaf();
             hCurrentTextTreeNode = new TreeNodePair("Ток нагрева, А", hCurrentValueTreeNode);
 
             extraNode = new TreeNodePlus("Дополнительно",
-                new TreeNode[] { f1VoltageTextTreeNode, f2VoltageTextTreeNode, scanVoltageTextTreeNode, iVoltageTextTreeNode, eCurrentTextTreeNode,
+                new[] { f1VoltageTextTreeNode, f2VoltageTextTreeNode, scanVoltageTextTreeNode, iVoltageTextTreeNode, eCurrentTextTreeNode,
                     condPlusTextTreeNode, condMinusTextTreeNode, detectorVoltageTextTreeNode,  hCurrentTextTreeNode });
 
-            turboSpeedValueTreeNode = new TreeNodeLeaf();
             turboSpeedTextTreeNode = new TreeNodePair("Скорость вращения, об./мин.", turboSpeedValueTreeNode);
             turboCurrentValueTreeNode = new TreeNodeLeaf();
             turboCurrentTextTreeNode = new TreeNodePair("Ток, мА", turboCurrentValueTreeNode);
@@ -415,14 +299,14 @@ namespace Flavor.Forms {
             operationTimeTextTreeNode = new TreeNodePair("Время работы, ч.", operationTimeValueTreeNode);
 
             turboPumpNode = new TreeNodePlus("Турбонасос",
-                new TreeNode[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,
+                new[] { turboSpeedTextTreeNode, turboCurrentTextTreeNode, pumpTemperatureTextTreeNode, driveTemperatureTextTreeNode,
                     pwmTextTreeNode, operationTimeTextTreeNode });
 
             rootNode = new TreeNodePlus("Состояние системы",
-                new TreeNode[] { infoNode, extraNode, turboPumpNode });
+                new[] { infoNode, extraNode, turboPumpNode });
             rootNode.ExpandAll();
 
-            statusTreeView.Nodes.AddRange(new TreeNode[] { rootNode });
+            statusTreeView.Nodes.AddRange(new[] { rootNode });
         }
         #endregion
         protected sealed override void OnLoad(EventArgs e) {

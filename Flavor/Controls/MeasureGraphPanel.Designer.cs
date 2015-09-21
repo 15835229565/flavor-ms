@@ -40,14 +40,12 @@ namespace Flavor.Controls {
             // 
             // scanRealTimeLabel
             // 
-            this.scanRealTimeLabel.BackColor = System.Drawing.SystemColors.Control;
             this.scanRealTimeLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.scanRealTimeLabel, "scanRealTimeLabel");
             this.scanRealTimeLabel.Name = "scanRealTimeLabel";
             // 
             // stepNumberLabel
             // 
-            this.stepNumberLabel.BackColor = System.Drawing.SystemColors.Control;
             this.stepNumberLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.stepNumberLabel, "stepNumberLabel");
             this.stepNumberLabel.Name = "stepNumberLabel";
@@ -59,7 +57,6 @@ namespace Flavor.Controls {
             // 
             // peakNumberLabel
             // 
-            this.peakNumberLabel.BackColor = System.Drawing.SystemColors.Control;
             this.peakNumberLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.peakNumberLabel, "peakNumberLabel");
             this.peakNumberLabel.Name = "peakNumberLabel";
@@ -71,7 +68,6 @@ namespace Flavor.Controls {
             // 
             // peakCenterLabel
             // 
-            this.peakCenterLabel.BackColor = System.Drawing.SystemColors.Control;
             this.peakCenterLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.peakCenterLabel, "peakCenterLabel");
             this.peakCenterLabel.Name = "peakCenterLabel";
@@ -83,7 +79,6 @@ namespace Flavor.Controls {
             // 
             // peakWidthLabel
             // 
-            this.peakWidthLabel.BackColor = System.Drawing.SystemColors.Control;
             this.peakWidthLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.peakWidthLabel, "peakWidthLabel");
             this.peakWidthLabel.Name = "peakWidthLabel";
@@ -95,7 +90,6 @@ namespace Flavor.Controls {
             // 
             // detector1CountsLabel
             // 
-            this.detector1CountsLabel.BackColor = System.Drawing.SystemColors.Control;
             this.detector1CountsLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.detector1CountsLabel, "detector1CountsLabel");
             this.detector1CountsLabel.Name = "detector1CountsLabel";
@@ -107,7 +101,6 @@ namespace Flavor.Controls {
             // 
             // detector2CountsLabel
             // 
-            this.detector2CountsLabel.BackColor = System.Drawing.SystemColors.Control;
             this.detector2CountsLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.detector2CountsLabel, "detector2CountsLabel");
             this.detector2CountsLabel.Name = "detector2CountsLabel";
@@ -119,7 +112,6 @@ namespace Flavor.Controls {
             // 
             // detector3CountsLabel
             // 
-            this.detector3CountsLabel.BackColor = System.Drawing.SystemColors.Control;
             this.detector3CountsLabel.ForeColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.detector3CountsLabel, "detector3CountsLabel");
             this.detector3CountsLabel.Name = "detector3CountsLabel";
