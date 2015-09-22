@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using Utility = Flavor.Common.Utility;
 using Config = Flavor.Common.Settings.Config;
 using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 

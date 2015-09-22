@@ -148,7 +148,6 @@
     <Compile Include="Common\Messaging\SyncAsyncCheckableProtocol.cs" />
     <Compile Include="Common\Messaging\SyncCheckableProtocol.cs" />
     <Compile Include="Common\PortLevel.cs" />
-    <Compile Include="Common\Utility.cs" />
     <Compile Include="Controls\PreciseMeasureGraphPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -178,6 +177,7 @@
     <Compile Include="Controls\ScanMeasureGraphPanel.Designer.cs">
       <DependentUpon>ScanMeasureGraphPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Service.cs" />
     <Compile Include="Controls\ZedGraphControlMine.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -338,6 +338,7 @@
     <Compile Include="Forms\OptionsForm2.Designer.cs">
       <DependentUpon>OptionsForm2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\StatusTreeNode.cs" />
     <Compile Include="IMSControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

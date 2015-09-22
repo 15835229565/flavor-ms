@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 // remove this reference
-using Utility = Flavor.Common.Utility;
+using Utility = Flavor.Controls.Utility;
 
 namespace Flavor.Forms {
     partial class SetNormalizationPeakForm: Form {
