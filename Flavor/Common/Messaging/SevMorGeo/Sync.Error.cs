@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
-using SyncError = Flavor.Common.Messaging.SyncError<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
+    using SyncError = SyncError<CommandCode>;
+
     class logInvalidCommand: SyncError {
         public logInvalidCommand(IList<byte> errorcommand) { }
         public logInvalidCommand() { }

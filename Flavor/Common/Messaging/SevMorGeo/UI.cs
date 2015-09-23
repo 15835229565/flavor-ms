@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Config = Flavor.Common.Settings.Config;
 using CommonOptions = Flavor.Common.Settings.CommonOptions;
-using CommandCode = Flavor.Common.Messaging.SevMorGeo.CommandCode;
-using UserRequest = Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
+    using UserRequest = UserRequest<CommandCode>;
+
     class requestState: UserRequest {
         public override CommandCode Id {
             get { return CommandCode.GetState; }

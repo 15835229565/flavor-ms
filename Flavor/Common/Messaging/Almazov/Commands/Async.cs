@@ -1,6 +1,6 @@
-﻿using AsyncReply = Flavor.Common.Messaging.Async<Flavor.Common.Messaging.Almazov.CommandCode>;
+﻿namespace Flavor.Common.Messaging.Almazov.Commands {
+    using AsyncReply = Async<CommandCode>;
 
-namespace Flavor.Common.Messaging.Almazov.Commands {
     abstract class LAMEvent: AsyncReply {
         enum LAM: byte {
             RTC_end = 20,      //RTC measure ended

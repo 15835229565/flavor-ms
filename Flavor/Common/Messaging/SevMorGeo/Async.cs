@@ -1,6 +1,6 @@
-﻿using AsyncReply = Flavor.Common.Messaging.Async<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
-
-namespace Flavor.Common.Messaging.SevMorGeo {
+﻿namespace Flavor.Common.Messaging.SevMorGeo {
+    using AsyncReply = Async<CommandCode>;
+    
     class requestCounts: AsyncReply {
     }
 

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using CommandCode = Flavor.Common.Messaging.Almazov.CommandCode;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Flavor.Common.Messaging.Almazov.Commands {
-    abstract class UserRequest: Flavor.Common.Messaging.UserRequest<Flavor.Common.Messaging.Almazov.CommandCode> {
+    abstract class UserRequest: UserRequest<CommandCode> {
         public sealed override IList<byte> Data {
             get { return AlexProtocol.collectData(Id, Parameters); }
         }

@@ -23,8 +23,8 @@ namespace Flavor.Forms {
         public static StatusTreeNode newLeaf() {
             return new Value() { Text = "---" };
         }
-        public static StatusTreeNode newNode(string text, params StatusTreeNode[] nodes) {
-            StatusTreeNode result;
+        public static TreeNode newNode(string text, params TreeNode[] nodes) {
+            TreeNode result;
             if (nodes.Length == 0)
                 result = new Value();
             else if (nodes.Length == 1 && nodes[0] is Value)

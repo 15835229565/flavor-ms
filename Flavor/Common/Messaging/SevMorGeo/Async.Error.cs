@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using AsyncErrorReply = Flavor.Common.Messaging.AsyncError<Flavor.Common.Messaging.SevMorGeo.CommandCode>;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
+    using AsyncErrorReply = AsyncError<CommandCode>;
+
     class logInternalError: AsyncErrorReply {
         public override string Message {
             get { return "Internal error " + internalError; }

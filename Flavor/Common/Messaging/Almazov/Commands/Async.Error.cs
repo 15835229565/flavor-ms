@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AsyncErrorReply = Flavor.Common.Messaging.AsyncError<Flavor.Common.Messaging.Almazov.CommandCode>;
 
 namespace Flavor.Common.Messaging.Almazov.Commands {
+    using AsyncErrorReply = AsyncError<CommandCode>;
+
     class LAMCriticalError: AsyncErrorReply {
         readonly byte error;
         public LAMCriticalError(byte error) {

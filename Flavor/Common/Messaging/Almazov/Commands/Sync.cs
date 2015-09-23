@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using CommandCode = Flavor.Common.Messaging.Almazov.CommandCode;
-using SyncReply = Flavor.Common.Messaging.SyncReply<Flavor.Common.Messaging.Almazov.CommandCode>;
 
 namespace Flavor.Common.Messaging.Almazov.Commands {
+    using SyncReply = SyncReply<CommandCode>;
+
     class CPUStatusReply: SyncReply {
         readonly byte incTIC, incMS;
         // experimental parameter order
