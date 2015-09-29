@@ -5,11 +5,12 @@ using System.Windows.Forms;
 namespace Flavor.Forms {
     abstract class StatusTreeNode: TreeNode {
         public enum States {
+            NA,
             Ok,
             Warning,
             Error
         }
-        States myState = States.Ok;
+        States myState = States.NA;
         public States State {
             protected get { return myState; }
             set {
@@ -38,6 +39,7 @@ namespace Flavor.Forms {
         class Category: StatusTreeNode {
             protected override void OnPreNewState(States state) {
                 switch (state) {
+                    case States.NA:
                     case States.Ok:
                         StateImageKey = "";
                         break;
@@ -55,7 +57,7 @@ namespace Flavor.Forms {
             void ChildNewState(States previous, States current) {
                 if (State < previous) {
                     // illegal state
-                    throw new InvalidOperationException();
+                    return;
                 }
                 if (State < current) {
                     State = current;
