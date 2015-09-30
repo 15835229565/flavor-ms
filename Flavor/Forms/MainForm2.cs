@@ -15,7 +15,7 @@ using Device = Flavor.Common.Device;
 using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
-    using State = StatusTreeNode.States;
+    using AlertLevel = StatusTreeNode.AlertLevel;
     partial class MainForm2: Form, IMSControl/*, IMeasured*/ {
         // TODO: move to resource file
         const string EXIT_CAPTION = "Предупреждение об отключении";
@@ -545,13 +545,13 @@ namespace Flavor.Forms {
                 byte state = e.Value;
                 // TODO: store translatable items and parameter state in dictionary, not in form code
                 if (state > 128) {
-                    systemStateTreeNode.State = State.Error;
+                    systemStateTreeNode.State = AlertLevel.Error;
                     systemStateTreeNode.Text = "Ошибка";
                 } else if (state > 64) {
-                    systemStateTreeNode.State = State.Ok;
+                    systemStateTreeNode.State = AlertLevel.Ok;
                     systemStateTreeNode.Text = "Готова к измерению";
                 } else {
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     if (state > 32) {
                         systemStateTreeNode.Text = "Ожидание высокого напряжения";
                     } else if (state > 1) {
@@ -565,26 +565,26 @@ namespace Flavor.Forms {
                 state >>= 1;
                 //SEMV1
                 if ((state & 0x1) == 1) {
-                    vacuumStateTreeNode.State = State.Ok;
+                    vacuumStateTreeNode.State = AlertLevel.Ok;
                     vacuumStateTreeNode.Text = ON_TEXT;
                 } else {
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     vacuumStateTreeNode.Text = OFF_TEXT;
                 }
                 state >>= 1;
                 if ((state & 0x1) == 1) {
-                    turboPumpOnTreeNode.State = State.Ok;
+                    turboPumpOnTreeNode.State = AlertLevel.Ok;
                     turboPumpOnTreeNode.Text = ON_TEXT;
                 } else {
-                    turboPumpOnTreeNode.State = State.Error;
+                    turboPumpOnTreeNode.State = AlertLevel.Error;
                     turboPumpOnTreeNode.Text = OFF_TEXT;
                 }
                 state >>= 4;
                 if ((state & 0x1) == 1) {
-                    highVOnTreeNode.State = State.Ok;
+                    highVOnTreeNode.State = AlertLevel.Ok;
                     highVOnTreeNode.Text = ON_TEXT1;
                 } else {
-                    highVOnTreeNode.State = State.Warning;
+                    highVOnTreeNode.State = AlertLevel.Warning;
                     highVOnTreeNode.Text = OFF_TEXT1;
                 }
                 statusTreeView.EndUpdate();
@@ -602,59 +602,59 @@ namespace Flavor.Forms {
             switch (Device.sysState) {
                 case Device.DeviceStates.Start:
                     systemStateTreeNode.Text = "Запуск";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.Init:
                     systemStateTreeNode.Text = "Инициализация";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.VacuumInit:
                     systemStateTreeNode.Text = "Инициализация вакуума";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.WaitHighVoltage:
                     systemStateTreeNode.Text = "Ожидание высокого напряжения";
-                    systemStateTreeNode.State = State.Ok;
+                    systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Ready:
                     systemStateTreeNode.Text = "Готова к измерению";
-                    systemStateTreeNode.State = State.Ok;
+                    systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Measuring:
                     systemStateTreeNode.Text = "Производятся измерения";
-                    systemStateTreeNode.State = State.Ok;
+                    systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Measured:
                     systemStateTreeNode.Text = "Измерения закончены";
-                    systemStateTreeNode.State = State.Ok;
+                    systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.ShutdownInit:
                     systemStateTreeNode.Text = "Инициализация выключения";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.Shutdowning:
                     systemStateTreeNode.Text = "Идет выключение";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.Shutdowned:
                     systemStateTreeNode.Text = "Выключено";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.TurboPumpFailure:
                     systemStateTreeNode.Text = "Отказ турбонасоса";
-                    systemStateTreeNode.State = State.Error;
+                    systemStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.DeviceStates.VacuumCrash:
                     systemStateTreeNode.Text = "Потеря вакуума";
-                    systemStateTreeNode.State = State.Error;
+                    systemStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.DeviceStates.ConstantsWrite:
                     systemStateTreeNode.Text = "Запись констант";
-                    systemStateTreeNode.State = State.Warning;
+                    systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 default:
                     systemStateTreeNode.Text = "Неизвестно";
-                    systemStateTreeNode.State = State.Error;
+                    systemStateTreeNode.State = AlertLevel.Error;
                     break;
             }
             statusTreeView.EndUpdate();
@@ -687,28 +687,19 @@ namespace Flavor.Forms {
                 var data = e.Value;
                 // micro-pump actually
                 if ((bool)data[2]) {
-                    forPumpOnTreeNode.State = State.Ok;
+                    forPumpOnTreeNode.State = AlertLevel.Ok;
                     forPumpOnTreeNode.Text = ON_TEXT;
                 } else {
-                    forPumpOnTreeNode.State = State.Warning;
+                    forPumpOnTreeNode.State = AlertLevel.Warning;
                     forPumpOnTreeNode.Text = OFF_TEXT;
                 }
-                // SEMV2 actually
-                if ((bool)data[0]) {
-                    vGate1TreeNode.State = State.Ok;
-                    vGate1TreeNode.Text = OPENED_TEXT;
-                } else {
-                    vGate1TreeNode.State = State.Ok;
-                    vGate1TreeNode.Text = CLOSED_TEXT;
-                }
-                // SEMV3 actually
-                if ((bool)data[1]) {
-                    vGate2TreeNode.State = State.Ok;
-                    vGate2TreeNode.Text = OPENED_TEXT;
-                } else {
-                    vGate2TreeNode.State = State.Ok;
-                    vGate2TreeNode.Text = CLOSED_TEXT;
-                }
+
+                bool SEMV2 = (bool)data[0];
+                vGate1TreeNode.Text = SEMV2 ? OPENED_TEXT : CLOSED_TEXT;
+
+                bool SEMV3 = (bool)data[1];
+                vGate2TreeNode.Text = SEMV3 ? OPENED_TEXT : CLOSED_TEXT;
+                
                 if (data.Length == 16) {
                     fV1TreeNode.Text = ((double)data[5]).ToString("f2");
                     fV2TreeNode.Text = ((double)data[6]).ToString("f2");
@@ -721,19 +712,56 @@ namespace Flavor.Forms {
                     capVMinusTreeNode.Text = ((double)data[11]).ToString("f2");
                     scanVoltageTreeNode.Text = ((double)data[12]).ToString("f1");
                     eCurrentTreeNode.Text = ((double)data[3]).ToString("f3");
-                    // heat temperature actually
-                    // TODO: only when membrane inlet is used!
-                    // TODO: move comparison up, use 3-state flag instead
+                    
+
+                    double inletV = (double)data[14];
+                    turboSpeedTreeNode.Text = inletV.ToString("f1");
+                    // TODO: move comparison up
+                    bool inletOpened = inletV > (double)minInletV;
                     double temp = (double)data[15];
-                    if (temp < (double)minTemp)
-                        hCurrentTreeNode.State = State.Warning;
-                    else if (temp > (double)maxTemp)
-                        hCurrentTreeNode.State = State.Error;
-                    else
-                        hCurrentTreeNode.State = State.Ok;
                     hCurrentTreeNode.Text = temp.ToString("f1");
-                    // inlet voltage atually
-                    turboSpeedTreeNode.Text = ((double)data[14]).ToString("f1");
+
+                    if (SEMV2 == SEMV3) {
+                        if (SEMV2) {
+                            // capillary in use
+                            vGate1TreeNode.State = AlertLevel.Ok;
+                            vGate2TreeNode.State = AlertLevel.Ok;
+                            // inlet must be closed in case of capillary use
+                            turboSpeedTreeNode.State = inletOpened ? AlertLevel.Error : AlertLevel.Ok;
+                            // heat temperature is not important
+                            hCurrentTreeNode.State = AlertLevel.NA;
+                        } else {
+                            if (inletOpened) {
+                                // membrane inlet in use
+                                vGate1TreeNode.State = AlertLevel.Ok;
+                                vGate2TreeNode.State = AlertLevel.Ok;
+                                turboSpeedTreeNode.State = AlertLevel.Ok;
+                                // heat temperature is important
+                                // TODO: move comparison up, use 3-state flag instead
+                                if (temp < (double)minTemp)
+                                    hCurrentTreeNode.State = AlertLevel.Warning;
+                                else if (temp > (double)maxTemp)
+                                    hCurrentTreeNode.State = AlertLevel.Error;
+                                else
+                                    hCurrentTreeNode.State = AlertLevel.Ok;
+                            } else {
+                                // all inputs are closed
+                                vGate1TreeNode.State = AlertLevel.Warning;
+                                vGate2TreeNode.State = AlertLevel.Warning;
+                                turboSpeedTreeNode.State = AlertLevel.Warning;
+                                // heat temperature is not important
+                                hCurrentTreeNode.State = AlertLevel.NA;
+                            }
+                        }
+                    } else {
+                        // capillary error
+                        vGate1TreeNode.State = inletOpened == SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
+                        vGate2TreeNode.State = inletOpened == SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
+                        // heat temperature and membrane inlet state are not important in case of capillary error
+                        turboSpeedTreeNode.State = AlertLevel.NA;
+                        hCurrentTreeNode.State = AlertLevel.NA;
+                    }
+
                 } else {
                     fV1TreeNode.Text = "---";
                     fV2TreeNode.Text = "---";
@@ -746,10 +774,19 @@ namespace Flavor.Forms {
                     capVMinusTreeNode.Text = "---";
                     scanVoltageTreeNode.Text = "---";
                     eCurrentTreeNode.Text = "---";
+
+                    if (SEMV2 == SEMV3) {
+                        vGate1TreeNode.State = SEMV2 ? AlertLevel.Warning : AlertLevel.Ok;
+                        vGate2TreeNode.State = SEMV3 ? AlertLevel.Warning : AlertLevel.Ok;
+                    } else {
+                        vGate1TreeNode.State = SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
+                        vGate2TreeNode.State = SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
+                    }
                     // heat temperature actually
-                    hCurrentTreeNode.State = State.Ok;
+                    hCurrentTreeNode.State = AlertLevel.NA;
                     hCurrentTreeNode.Text = "---";
                     // inlet voltage atually
+                    turboSpeedTreeNode.State = AlertLevel.NA;
                     turboSpeedTreeNode.Text = "---";
                 }
 
@@ -766,40 +803,40 @@ namespace Flavor.Forms {
             parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             if (Device.fPumpOn) {
-                forPumpOnTreeNode.State = State.Ok;
+                forPumpOnTreeNode.State = AlertLevel.Ok;
                 forPumpOnTreeNode.Text = ON_TEXT;
             } else {
-                forPumpOnTreeNode.State = State.Error;
+                forPumpOnTreeNode.State = AlertLevel.Error;
                 forPumpOnTreeNode.Text = OFF_TEXT;
             }
             if (Device.tPumpOn) {
-                turboPumpOnTreeNode.State = State.Ok;
+                turboPumpOnTreeNode.State = AlertLevel.Ok;
                 turboPumpOnTreeNode.Text = ON_TEXT;
             } else {
-                turboPumpOnTreeNode.State = State.Error;
+                turboPumpOnTreeNode.State = AlertLevel.Error;
                 turboPumpOnTreeNode.Text = OFF_TEXT;
             }
             forVacuumTreeNode.Text = Device.fVacuumReal.ToString("e3");
             highVacuumTreeNode.Text = Device.hVacuumReal.ToString("e3");
             if (Device.highVoltageOn) {
-                highVOnTreeNode.State = State.Ok;
+                highVOnTreeNode.State = AlertLevel.Ok;
                 highVOnTreeNode.Text = ON_TEXT1;
             } else {
-                highVOnTreeNode.State = State.Warning;
+                highVOnTreeNode.State = AlertLevel.Warning;
                 highVOnTreeNode.Text = OFF_TEXT1;
             }
             if (Device.highVacuumValve) {
-                vGate1TreeNode.State = State.Ok;
+                vGate1TreeNode.State = AlertLevel.Ok;
                 vGate1TreeNode.Text = OPENED_TEXT;
             } else {
-                vGate1TreeNode.State = State.Warning;
+                vGate1TreeNode.State = AlertLevel.Warning;
                 vGate1TreeNode.Text = CLOSED_TEXT;
             }
             if (Device.probeValve) {
-                vGate2TreeNode.State = State.Warning;
+                vGate2TreeNode.State = AlertLevel.Warning;
                 vGate2TreeNode.Text = OPENED_TEXT;
             } else {
-                vGate2TreeNode.State = State.Ok;
+                vGate2TreeNode.State = AlertLevel.Ok;
                 vGate2TreeNode.Text = CLOSED_TEXT;
             }
             {
@@ -835,91 +872,91 @@ namespace Flavor.Forms {
             switch (Device.vacState) {
                 case Device.VacuumStates.Idle:
                     vacuumStateTreeNode.Text = "Бездействие";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.Init:
                     vacuumStateTreeNode.Text = "Инициализация";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.StartingForvacuumPump:
                     vacuumStateTreeNode.Text = "Включение форнасоса";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.PumpingForvacuum:
                     vacuumStateTreeNode.Text = "Откачка форвакуума";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.DelayPumpingHighVacuumByForvac:
                     vacuumStateTreeNode.Text = "Задержка высокого вакуума из-за фор";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.PumpingHighVacuumByForvac:
                     vacuumStateTreeNode.Text = "Откачка высокого вакуума форнасосом";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.PumpingHighVacuumByTurbo:
                     vacuumStateTreeNode.Text = "Откачка турбо";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.Ready:
                     vacuumStateTreeNode.Text = "Готово";
-                    vacuumStateTreeNode.State = State.Ok;
+                    vacuumStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.VacuumStates.ShutdownInit:
                     vacuumStateTreeNode.Text = "Инициализация отключения";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.ShutdownDelay:
                     vacuumStateTreeNode.Text = "Задержка отключения";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.ShutdownPumpProbe:
                     vacuumStateTreeNode.Text = "Отключение датчика насоса";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.Shutdowned:
                     vacuumStateTreeNode.Text = "Отключено";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.ShutdownStartingTurboPump:
                     vacuumStateTreeNode.Text = "Откачка при выключении";
-                    vacuumStateTreeNode.State = State.Warning;
+                    vacuumStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.VacuumStates.BadHighVacuum:
                     vacuumStateTreeNode.Text = "Плохой высокий вакуум";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.BadForvacuum:
                     vacuumStateTreeNode.Text = "Плохой форвакуум";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.ForvacuumFailure:
                     vacuumStateTreeNode.Text = "Отказ форвакуума";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.LargeLeak:
                     vacuumStateTreeNode.Text = "Большая течь";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.SmallLeak:
                     vacuumStateTreeNode.Text = "Малая течь";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.ThermoCoupleFailure:
                     vacuumStateTreeNode.Text = "Отказ термопары";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.TurboPumpFailure:
                     vacuumStateTreeNode.Text = "Отказ турбонасоса";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 case Device.VacuumStates.VacuumShutdownProbeLeak:
                     vacuumStateTreeNode.Text = "Отключение датчика вакуума";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
                 default:
                     vacuumStateTreeNode.Text = "Неизвестное состояние";
-                    vacuumStateTreeNode.State = State.Error;
+                    vacuumStateTreeNode.State = AlertLevel.Error;
                     break;
             }
             statusTreeView.EndUpdate();
@@ -1115,9 +1152,10 @@ namespace Flavor.Forms {
                 childForm.Close();
             }
         }
-        // temporary solution. move values from form to proper place
+        // temporary solution. move values from form to proper place!
         decimal minTemp = 40;
         decimal maxTemp = 50;
+        decimal minInletV = 2400;
         void inletToolStripButton_Click(object sender, EventArgs e) {
             var form = new Almazov.InletControlForm();
             form.Load += (s, ee) => {
