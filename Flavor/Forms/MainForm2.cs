@@ -685,15 +685,10 @@ namespace Flavor.Forms {
                 parameterPanel.SuspendLayout();
                 statusTreeView.BeginUpdate();
                 var data = e.Value;
-                // micro-pump actually
-                if ((bool)data[2]) {
-                    forPumpOnTreeNode.State = AlertLevel.Ok;
-                    forPumpOnTreeNode.Text = ON_TEXT;
-                } else {
-                    forPumpOnTreeNode.State = AlertLevel.Warning;
-                    forPumpOnTreeNode.Text = OFF_TEXT;
-                }
-
+                
+                bool microPumpOn = (bool)data[2];
+                forPumpOnTreeNode.Text = microPumpOn ? ON_TEXT : OFF_TEXT;
+                
                 bool SEMV2 = (bool)data[0];
                 vGate1TreeNode.Text = SEMV2 ? OPENED_TEXT : CLOSED_TEXT;
 
@@ -712,7 +707,8 @@ namespace Flavor.Forms {
                     capVMinusTreeNode.Text = ((double)data[11]).ToString("f2");
                     scanVoltageTreeNode.Text = ((double)data[12]).ToString("f1");
                     eCurrentTreeNode.Text = ((double)data[3]).ToString("f3");
-                    
+
+                    forPumpOnTreeNode.State = microPumpOn ? AlertLevel.Ok : AlertLevel.Warning;
 
                     double inletV = (double)data[14];
                     turboSpeedTreeNode.Text = inletV.ToString("f1");
@@ -763,6 +759,8 @@ namespace Flavor.Forms {
                     }
 
                 } else {
+                    // high voltage off
+                    
                     fV1TreeNode.Text = "---";
                     fV2TreeNode.Text = "---";
                     iVoltageTreeNode.Text = "---";
@@ -774,6 +772,9 @@ namespace Flavor.Forms {
                     capVMinusTreeNode.Text = "---";
                     scanVoltageTreeNode.Text = "---";
                     eCurrentTreeNode.Text = "---";
+
+                    // micro pump is off when high voltage is off
+                    forPumpOnTreeNode.State = AlertLevel.NA;
 
                     if (SEMV2 == SEMV3) {
                         vGate1TreeNode.State = SEMV2 ? AlertLevel.Warning : AlertLevel.Ok;
