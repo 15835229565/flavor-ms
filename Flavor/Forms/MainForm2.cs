@@ -1065,8 +1065,8 @@ namespace Flavor.Forms {
 
         // TODO: another handler
         void InvokeCancelScan(ProgramStates state) {
-            if (this.InvokeRequired) {
-                this.BeginInvoke(new ProgramEventHandler(CancelScan), state);
+            if (InvokeRequired) {
+                BeginInvoke(new ProgramEventHandler(CancelScan), state);
                 return;
             }
             CancelScan(state);
@@ -1106,8 +1106,7 @@ namespace Flavor.Forms {
         }
 
         void delaysToolStripMenuItem_Click(object sender, EventArgs e) {
-            DelaysOptionsForm dForm = new DelaysOptionsForm();
-            dForm.ShowDialog();
+            new DelaysOptionsForm().ShowDialog();
         }
 
         void openSpecterFileToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -1146,11 +1145,8 @@ namespace Flavor.Forms {
 
         void closeAllToolStripMenuItem_Click(object sender, EventArgs e) {
             foreach (Form childForm in MdiChildren) {
-                if (childForm == collectorsForm)
-                    continue;
-                if (childForm == monitorForm)
-                    continue;
-                childForm.Close();
+                if (childForm != collectorsForm && childForm != monitorForm)
+                    childForm.Close();
             }
         }
         // temporary solution. move values from form to proper place!
@@ -1161,16 +1157,16 @@ namespace Flavor.Forms {
             var form = new Almazov.InletControlForm();
             form.Load += (s, ee) => {
                 if (ee is Almazov.InletControlForm.LoadEventArgs) {
-                    var args = ee as Almazov.InletControlForm.LoadEventArgs;
+                    var args = (Almazov.InletControlForm.LoadEventArgs)ee;
                     // temporary solution. move values from form to proper place
-                    args.Parameters = new decimal[] { 2500, 3000, 2700, minTemp, maxTemp, maxTemp };
+                    args.Parameters = new[] { 2500, 3000, 2700, minTemp, maxTemp, maxTemp };
                 }
             };
             form.FormClosing += (s, ee) => {
                 if (form.DialogResult != DialogResult.OK)
                     return;
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
-                    var args = ee as Almazov.InletControlForm.ClosingEventArgs;
+                    var args = (Almazov.InletControlForm.ClosingEventArgs)ee;
                     var cmd = commander as Flavor.Common.AlmazovCommander;
                     if (args.UseCapillary.HasValue) {
                         if (args.UseCapillary.Value) {
