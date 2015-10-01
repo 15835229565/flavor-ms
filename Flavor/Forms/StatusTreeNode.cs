@@ -94,6 +94,9 @@ namespace Flavor.Forms {
         class Value: StatusTreeNode {
             protected override void OnStateChanged(AlertLevel old, AlertLevel current) {
                 switch (current) {
+                    case AlertLevel.NA:
+                        ForeColor = Color.Black;
+                        break;
                     case AlertLevel.Ok:
                         ForeColor = Color.Green;
                         break;
