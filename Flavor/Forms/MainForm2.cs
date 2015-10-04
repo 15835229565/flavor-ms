@@ -2,17 +2,11 @@ using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Flavor.Common;
 // data model
 using Graph = Flavor.Common.Data.Measure.Graph;
 // divide into 2 parts
 using Config = Flavor.Common.Settings.Config;
-// controller
-using ICommander = Flavor.Common.Commander;
-using ProgramStates = Flavor.Common.ProgramStates;
-using ProgramEventHandler = Flavor.Common.ProgramEventHandler;
-using MessageHandler = Flavor.Common.MessageHandler;
-using Device = Flavor.Common.Device;
-using DeviceEventHandler = Flavor.Common.DeviceEventHandler;
 
 namespace Flavor.Forms {
     using AlertLevel = StatusTreeNode.AlertLevel;
@@ -131,8 +125,8 @@ namespace Flavor.Forms {
             }
         }
         OptionsForm2 oForm = null;
-        readonly ICommander commander;
-        public MainForm2(ICommander commander)
+        readonly Commander commander;
+        public MainForm2(Commander commander)
             : base() {
             this.commander = commander;
             InitializeComponent();
@@ -299,7 +293,7 @@ namespace Flavor.Forms {
             Close();
         }
         void connectToolStripMenuItem_Click(object sender, EventArgs e) {
-            if ((new ConnectOptionsForm(commander.AvailablePorts)).ShowDialog() == DialogResult.OK)
+            if (new ConnectOptionsForm(commander.AvailablePorts).ShowDialog() == DialogResult.OK)
                 commander.Reconnect();
         }
 
@@ -327,7 +321,7 @@ namespace Flavor.Forms {
                     tempMethod(enabled, canApply);
                 };
                 oForm.Load += (s, a) => {
-                    var args = a as OptionsForm2.LoadEventArgs;
+                    var args = (OptionsForm2.LoadEventArgs)a;
                     tempMethod += args.Method;
                     commander.ProgramStateChanged += method;
                     method(commander.pState);
@@ -342,7 +336,7 @@ namespace Flavor.Forms {
                     // TODO: unsubscribe
                 };
                 oForm.FormClosing += (s, a) => {
-                    var args = a as OptionsForm2.ClosingEventArgs;
+                    var args = (OptionsForm2.ClosingEventArgs)a;
                     commander.ProgramStateChanged -= method;
                     tempMethod -= args.Method;
                     var ps = args.Parameters;
@@ -1160,7 +1154,7 @@ namespace Flavor.Forms {
                     return;
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
                     var args = (Almazov.InletControlForm.ClosingEventArgs)ee;
-                    var cmd = (Flavor.Common.AlmazovCommander)commander;
+                    var cmd = (AlmazovCommander)commander;
 
                     var ps = args.Parameters;
                     ushort[] inletData;
