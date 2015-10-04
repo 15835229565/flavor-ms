@@ -24,6 +24,15 @@ namespace Flavor.Controls {
         public ZedGraphControlPlus()
             : base() {
             InitializeComponent();
+            Dock = DockStyle.Fill;
+            // TODO: move something to superclass?
+            var pane = GraphPane;
+            pane.Title.IsVisible = false;
+            pane.Margin.All = 0;
+            pane.Margin.Top = 10;
+            pane.XAxis.Title.FontSpec.Size = 12;
+            pane.YAxis.Title.FontSpec.Size = 12;
+
             base.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
         }
 

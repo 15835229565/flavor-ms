@@ -40,7 +40,7 @@ namespace Flavor.Forms {
         protected override bool DisableTabPage(Collector collector) {
             if (PreciseSpectrumDisplayed)
                 return collector.TrueForAll(pls => pls.isEmpty);
-            return base.DisableTabPage(collector);
+            return false;
         }
         protected sealed override void updateOnModification() {
             Text = DisplayedFileName + (Modified ? "*" : "");

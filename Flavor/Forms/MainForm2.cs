@@ -130,14 +130,6 @@ namespace Flavor.Forms {
                 return monitorForm;
             }
         }
-        GraphForm GForm {
-            get {
-                Form child = ActiveMdiChild;
-                if (child == null)
-                    return CollectorsForm;
-                return child as GraphForm;
-            }
-        }
         OptionsForm2 oForm = null;
         readonly ICommander commander;
         public MainForm2(ICommander commander)

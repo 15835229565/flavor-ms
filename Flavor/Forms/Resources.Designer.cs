@@ -61,24 +61,6 @@ namespace Flavor.Forms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to First collector.
-        /// </summary>
-        internal static string CollectorsForm_Col1Title {
-            get {
-                return ResourceManager.GetString("CollectorsForm_Col1Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Second collector.
-        /// </summary>
-        internal static string CollectorsForm_Col2Title {
-            get {
-                return ResourceManager.GetString("CollectorsForm_Col2Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Diff - .
         /// </summary>
         internal static string CollectorsForm_DiffTitle {

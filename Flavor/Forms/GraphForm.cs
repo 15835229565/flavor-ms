@@ -6,8 +6,7 @@ using Flavor.Controls;
 
 namespace Flavor.Forms {
     partial class GraphForm: Form {
-        protected const int HORIZ_GRAPH_INDENT = 12;
-        protected const int VERT_GRAPH_INDENT = 12;
+        const int PANEL_WIDTH = 280;
         protected readonly Color[] rowsColors = 
             { Color.Blue, Color.Red, Color.Green, Color.DarkOrange, Color.DarkViolet,
             Color.DeepPink, Color.Black, Color.Magenta, Color.Teal, Color.Tomato,
@@ -15,7 +14,6 @@ namespace Flavor.Forms {
             Color.Lime, Color.SaddleBrown, Color.Maroon, Color.DeepSkyBlue, Color.DimGray,};
         protected readonly string Y_AXIS_TITLE = Resources.GraphForm_YAxisTitle;
 
-        // TODO: use generic, where T: GraphPanel
         GraphPanel panel;
         protected GraphPanel Panel {
             get {
@@ -31,9 +29,9 @@ namespace Flavor.Forms {
                 
                 panel = value;
                 Controls.Add(panel);
-                panel.Width = 280;
-                panel.Dock = System.Windows.Forms.DockStyle.Right;
-                panel.Visible = panel.Enabled && this.measurePanelToolStripMenuItem.Checked;
+                panel.Width = PANEL_WIDTH;
+                panel.Dock = DockStyle.Right;
+                panel.Visible = panel.Enabled && measurePanelToolStripMenuItem.Checked;
                 panel.EnabledChanged += toggleMeasurePanel;
             }
         }

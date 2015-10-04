@@ -11,8 +11,6 @@ using Config = Flavor.Common.Settings.Config;
 
 namespace Flavor.Forms {
     partial class CollectorsForm2: GraphForm {
-        //readonly string COL1_TITLE = Resources.CollectorsForm_Col1Title;
-        //readonly string COL2_TITLE = Resources.CollectorsForm_Col2Title;
         readonly string DIFF_TITLE = Resources.CollectorsForm_DiffTitle;
         readonly string PREC_TITLE = Resources.CollectorsForm_PreciseTitle;
         readonly string SCAN_TITLE = Resources.CollectorsForm_ScanTitle;
@@ -21,8 +19,6 @@ namespace Flavor.Forms {
         readonly string X_AXIS_TITLE_MASS = Resources.CollectorsForm_XAxisTitleMass;
         readonly string X_AXIS_TITLE_VOLT = Resources.CollectorsForm_XAxisTitleVoltage;
 
-        //string col1Text;
-        //string col2Text;
         string modeText;
 
         readonly Graph graph;
@@ -102,34 +98,23 @@ namespace Flavor.Forms {
 
             tabControl.SuspendLayout();
             SuspendLayout();
-            int i = 0;
-            foreach (var collector in graph.Collectors) {
+            for (int i = 0; i < graph.Collectors.Count; ++i) {
+                var collector = graph.Collectors[i];
                 if (DisableTabPage(collector)) {
                     graphs[i] = null;
-                    ++i;
                     continue;
                 }
                 var tabPage = new TabPage(prefix + i + modeText) { UseVisualStyleBackColor = true };
                 tabPage.SuspendLayout();
                 tabControl.Controls.Add(tabPage);
                 {
-                    var zgc = new ZedGraphControlPlus() { Dock = DockStyle.Fill, ScrollMaxX = maxX[i], ScrollMinX = minX[i], Tag = (byte)(i + 1) };
-                    tabPage.Controls.Add(zgc);
+                    var zgc = new ZedGraphControlPlus() { ScrollMaxX = maxX[i], ScrollMinX = minX[i], Tag = (byte)(i + 1) };
                     zgc.PointValueEvent += ZedGraphControlPlus_PointValueEvent;
                     zgc.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
-
-                    // TODO: later move to control
-                    var pane = zgc.GraphPane;
-                    pane.Title.IsVisible = false;
-                    pane.Margin.All = 0;
-                    pane.Margin.Top = 10;
-                    pane.XAxis.Title.FontSpec.Size = 12;
-                    pane.YAxis.Title.FontSpec.Size = 12;
-
+                    tabPage.Controls.Add(zgc);
                     graphs[i] = zgc;
                 }
                 tabPage.ResumeLayout(false);
-                ++i;
             }
             tabControl.ResumeLayout(false);
             ResumeLayout(false);
@@ -139,10 +124,7 @@ namespace Flavor.Forms {
             graph.OnAxisModeChanged += InvokeAxisModeChange;
             graph.OnDisplayModeChanged += InvokeGraphModified;
         }
-        // TODO: abstract
-        protected virtual bool DisableTabPage(Collector collector) {
-            return false;
-        }
+        protected virtual bool DisableTabPage(Collector collector) { return false; }
 
         [Obsolete]
         void setTitles() {

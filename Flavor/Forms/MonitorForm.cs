@@ -23,6 +23,9 @@ namespace Flavor.Forms {
         const string POINT_TOOLTIP_FORMAT = "счеты={1:F0}";
         const string NORMALIZED_POINT_TOOLTIP_FORMAT = "{1:G}";
 
+        const int HORIZ_GRAPH_INDENT = 12;
+        const int VERT_GRAPH_INDENT = 12;
+
         class PointPairListPlusWithMaxCapacity: PointPairListPlus {
             // TODO: mix with ZedGraph.RollingPointPairList
             const int MAX_CAPACITY = int.MaxValue;

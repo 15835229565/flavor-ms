@@ -17,6 +17,10 @@ namespace Flavor.Forms {
             // strangely is inited on measure init
             InitializeComponent();
         }
+        protected override bool DisableTabPage(Collector collector) {
+            // temporary disable first collector with garbage counts
+            return Graph.MeasureGraph.Instance.Collectors[0] == collector;
+        }
 
         #region IMeasured Members
 
