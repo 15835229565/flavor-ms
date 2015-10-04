@@ -1,9 +1,9 @@
 ﻿using System;
-using Flavor.Common.Messaging.Almazov.Commands;
-using Flavor.Common.Settings;
 using System.Timers;
+using Flavor.Common.Settings;
 
 namespace Flavor.Common.Messaging.Almazov {
+    using Commands;
     class AlmazovRealizer: RealizerWithAutomatedStatusChecks<CommandCode> {
         public AlmazovRealizer(PortLevel port, byte attempts, Func<double> interval)
             : this(new AlexProtocol(port), attempts, interval) { }
@@ -185,26 +185,23 @@ namespace Flavor.Common.Messaging.Almazov {
             //toSend.Enqueue(new ParentScanVoltageGetRequest());
         }
         public void SendInletSettings(bool? useCapillary, params ushort[] ps) {
+            toSend.Enqueue(new SetHeaterVoltageRequest(ps.Length == 0 ? (ushort)0 : ps[0]));
             if (useCapillary.HasValue) {
+                toSend.Enqueue(new MicroPumpRequest(true));
                 if (useCapillary.Value) {
-                    toSend.Enqueue(new MicroPumpRequest(true));
                     toSend.Enqueue(new SetInletVoltageRequest(0));
-                    toSend.Enqueue(new SetHeaterVoltageRequest(0));
                     toSend.Enqueue(new Valve3Request(true));
                     toSend.Enqueue(new Valve2Request(true));
                 } else {
-                    toSend.Enqueue(new MicroPumpRequest(true));
                     toSend.Enqueue(new Valve2Request(false));
                     toSend.Enqueue(new Valve3Request(false));
-                    toSend.Enqueue(new SetInletVoltageRequest(ps[0]));
-                    toSend.Enqueue(new SetHeaterVoltageRequest(ps[1]));
+                    toSend.Enqueue(new SetInletVoltageRequest(ps[1]));
                     toSend.Enqueue(new GetInletVoltageRequest());
                 }
             } else {
                 toSend.Enqueue(new Valve2Request(false));
                 toSend.Enqueue(new Valve3Request(false));
                 toSend.Enqueue(new SetInletVoltageRequest(0));
-                toSend.Enqueue(new SetHeaterVoltageRequest(0));
                 toSend.Enqueue(new MicroPumpRequest(false));
             }
         }

@@ -1150,6 +1150,7 @@ namespace Flavor.Forms {
             form.Load += (s, ee) => {
                 if (ee is Almazov.InletControlForm.LoadEventArgs) {
                     var args = (Almazov.InletControlForm.LoadEventArgs)ee;
+                    // TODO: use some current values to feed form
                     // temporary solution. move values from form to proper place
                     args.Parameters = new[] { 2500, 3000, 2700, minTemp, maxTemp, maxTemp };
                 }
@@ -1159,24 +1160,27 @@ namespace Flavor.Forms {
                     return;
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
                     var args = (Almazov.InletControlForm.ClosingEventArgs)ee;
-                    var cmd = commander as Flavor.Common.AlmazovCommander;
-                    if (args.UseCapillary.HasValue) {
-                        if (args.UseCapillary.Value) {
-                            cmd.SendInletSettings(true);
+                    var cmd = (Flavor.Common.AlmazovCommander)commander;
+
+                    var ps = args.Parameters;
+                    ushort[] inletData;
+                    if (ps == null || ps.Length == 0)
+                        inletData = new ushort[0];
+                    else {
+                        // temporary solution. move recount from form to proper place
+                        ushort temperature = (ushort)((ps[0] + 273) / 500 * 4096);
+                        if (temperature > 4095)
+                            temperature = 4095;
+                        if (ps.Length == 2) {
+                            ushort voltage = (ushort)(ps[1] / 3000 * 4096);
+                            if (voltage > 4095)
+                                voltage = 4095;
+                            inletData = new[] { temperature, voltage };
                         } else {
-                            var ps = args.Parameters;
-                            if (ps == null)
-                                return;
-                            // temporary solution. move recount from form to proper place
-                            ushort voltage = (ushort)(ps[0] / 3000 * 4096);
-                            if (voltage > 4095) voltage = 4095;
-                            ushort temperature = (ushort)((ps[1] + 273) / 500 * 4096);
-                            if (temperature > 4095) temperature = 4095;
-                            cmd.SendInletSettings(false, voltage, temperature);
+                            inletData = new[] { temperature };
                         }
-                    } else {
-                        cmd.SendInletSettings(null);
                     }
+                    cmd.SendInletSettings(args.UseCapillary, inletData);
                 } 
             };
             form.ShowDialog();

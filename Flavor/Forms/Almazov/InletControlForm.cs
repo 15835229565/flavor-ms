@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace Flavor.Forms.Almazov {
     public partial class InletControlForm: Form {
@@ -22,20 +23,22 @@ namespace Flavor.Forms.Almazov {
         }
         protected override void OnLoad(EventArgs e) {
             inletRadioButton_CheckedChanged(this, e);
-            var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs(e);
+            temperatureCheckBox_CheckedChanged(this, e);
+
+            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs(e);
             base.OnLoad(args);
             var data = args.Parameters;
             if (data == null)
                 return;
-            voltageТumericUpDown.Minimum = data[0];
-            voltageТumericUpDown.Maximum = data[1];
+            voltageNumericUpDown.Minimum = data[0];
+            voltageNumericUpDown.Maximum = data[1];
             // TODO: move to traslatable resources
-            label1.Text = string.Format("Напряжение ({0:F0}-{1:F0}В)", data[0], data[1]);
-            voltageТumericUpDown.Value = data[2];
+            inletRadioButton.Text = string.Format("Напряжение ({0:F0}-{1:F0}В)", data[0], data[1]);
+            voltageNumericUpDown.Value = data[2];
             temperatureNumericUpDown.Minimum = data[3];
             temperatureNumericUpDown.Maximum = data[4];
             // TODO: move to traslatable resources
-            label2.Text = string.Format("Температура ({0:F0}-{1:F0}C)", data[3], data[4]);
+            temperatureCheckBox.Text = string.Format("Температура ({0:F0}-{1:F0}C)", data[3], data[4]);
             temperatureNumericUpDown.Value = data[5];
         }
         public class ClosingEventArgs: FormClosingEventArgs {
@@ -45,25 +48,31 @@ namespace Flavor.Forms.Almazov {
                 : base(args.CloseReason, args.Cancel) { }
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
+            var args = e is ClosingEventArgs ? (ClosingEventArgs)e : new ClosingEventArgs(e);
             if (DialogResult == DialogResult.OK) {
                 bool? useCapillary;
-                if (closeInletRadioButton.Checked) {
-                    useCapillary = null;
+                var ps = new List<decimal>(2);
+                if (temperatureCheckBox.Checked) {
+                    ps.Add(temperatureNumericUpDown.Value);
+                }
+                if (inletRadioButton.Checked) {
+                    ps.Add(voltageNumericUpDown.Value);
+                    useCapillary = false;
                 } else if (capillaryRadioButton.Checked) {
                     useCapillary = true;
                 } else {
-                    useCapillary = false;
-                    args.Parameters = new decimal[] { voltageТumericUpDown.Value, temperatureNumericUpDown.Value };
+                    useCapillary = null;
                 }
                 args.UseCapillary = useCapillary;
+                args.Parameters = ps.ToArray();
             }
             base.OnFormClosing(args);
         }
         void inletRadioButton_CheckedChanged(object sender, EventArgs e) {
-            // mandatory off
-            //inletGroupBox.Enabled = false;
-            inletGroupBox.Enabled = inletRadioButton.Checked;
+            temperatureCheckBox.Checked = inletRadioButton.Checked;
+        }
+        void temperatureCheckBox_CheckedChanged(object sender, EventArgs e) {
+            temperatureNumericUpDown.Enabled = temperatureCheckBox.Checked;
         }
     }
 }
