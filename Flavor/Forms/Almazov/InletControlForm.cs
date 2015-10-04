@@ -69,7 +69,9 @@ namespace Flavor.Forms.Almazov {
             base.OnFormClosing(args);
         }
         void inletRadioButton_CheckedChanged(object sender, EventArgs e) {
-            temperatureCheckBox.Checked = inletRadioButton.Checked;
+            bool chked = inletRadioButton.Checked;
+            voltageNumericUpDown.Enabled = chked;
+            temperatureCheckBox.Checked = chked;
         }
         void temperatureCheckBox_CheckedChanged(object sender, EventArgs e) {
             temperatureNumericUpDown.Enabled = temperatureCheckBox.Checked;
