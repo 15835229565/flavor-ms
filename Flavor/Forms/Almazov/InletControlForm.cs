@@ -52,9 +52,6 @@ namespace Flavor.Forms.Almazov {
             if (DialogResult == DialogResult.OK) {
                 bool? useCapillary;
                 var ps = new List<decimal>(2);
-                if (temperatureCheckBox.Checked) {
-                    ps.Add(temperatureNumericUpDown.Value);
-                }
                 if (inletRadioButton.Checked) {
                     ps.Add(voltageNumericUpDown.Value);
                     useCapillary = false;
@@ -62,6 +59,9 @@ namespace Flavor.Forms.Almazov {
                     useCapillary = true;
                 } else {
                     useCapillary = null;
+                }
+                if (temperatureCheckBox.Checked) {
+                    ps.Add(temperatureNumericUpDown.Value);
                 }
                 args.UseCapillary = useCapillary;
                 args.Parameters = ps.ToArray();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -1154,27 +1155,25 @@ namespace Flavor.Forms {
                     return;
                 if (ee is Almazov.InletControlForm.ClosingEventArgs) {
                     var args = (Almazov.InletControlForm.ClosingEventArgs)ee;
-                    var cmd = (AlmazovCommander)commander;
 
+                    bool? useCapillary = args.UseCapillary;
                     var ps = args.Parameters;
-                    ushort[] inletData;
-                    if (ps == null || ps.Length == 0)
-                        inletData = new ushort[0];
-                    else {
-                        // temporary solution. move recount from form to proper place
-                        ushort temperature = (ushort)((ps[0] + 273) / 500 * 4096);
+                    var inletData = new List<ushort>(2);
+                    int i = 0;
+                    if (useCapillary.HasValue && useCapillary.Value == false) {
+                        ushort voltage = (ushort)(ps[0] / 3000 * 4096);
+                        if (voltage > 4095)
+                            voltage = 4095;
+                        inletData.Add(voltage);
+                        ++i;
+                    }
+                    if (i < ps.Length) {
+                        ushort temperature = (ushort)((ps[i] + 273) / 500 * 4096);
                         if (temperature > 4095)
                             temperature = 4095;
-                        if (ps.Length == 2) {
-                            ushort voltage = (ushort)(ps[1] / 3000 * 4096);
-                            if (voltage > 4095)
-                                voltage = 4095;
-                            inletData = new[] { temperature, voltage };
-                        } else {
-                            inletData = new[] { temperature };
-                        }
+                        inletData.Add(temperature);
                     }
-                    cmd.SendInletSettings(args.UseCapillary, inletData);
+                    ((AlmazovCommander)commander).SendInletSettings(useCapillary, inletData.ToArray());
                 } 
             };
             form.ShowDialog();

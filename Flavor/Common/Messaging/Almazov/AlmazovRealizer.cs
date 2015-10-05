@@ -185,23 +185,25 @@ namespace Flavor.Common.Messaging.Almazov {
             //toSend.Enqueue(new ParentScanVoltageGetRequest());
         }
         public void SendInletSettings(bool? useCapillary, params ushort[] ps) {
-            toSend.Enqueue(new SetHeaterVoltageRequest(ps.Length == 0 ? (ushort)0 : ps[0]));
             if (useCapillary.HasValue) {
                 toSend.Enqueue(new MicroPumpRequest(true));
                 if (useCapillary.Value) {
                     toSend.Enqueue(new SetInletVoltageRequest(0));
+                    toSend.Enqueue(new SetHeaterVoltageRequest(ps.Length == 0 ? (ushort)0 : ps[0]));
                     toSend.Enqueue(new Valve3Request(true));
                     toSend.Enqueue(new Valve2Request(true));
                 } else {
                     toSend.Enqueue(new Valve2Request(false));
                     toSend.Enqueue(new Valve3Request(false));
-                    toSend.Enqueue(new SetInletVoltageRequest(ps[1]));
+                    toSend.Enqueue(new SetInletVoltageRequest(ps[0]));
+                    toSend.Enqueue(new SetHeaterVoltageRequest(ps.Length == 1 ? (ushort)0 : ps[1]));
                     toSend.Enqueue(new GetInletVoltageRequest());
                 }
             } else {
                 toSend.Enqueue(new Valve2Request(false));
                 toSend.Enqueue(new Valve3Request(false));
                 toSend.Enqueue(new SetInletVoltageRequest(0));
+                toSend.Enqueue(new SetHeaterVoltageRequest(ps.Length == 0 ? (ushort)0 : ps[0]));
                 toSend.Enqueue(new MicroPumpRequest(false));
             }
         }
