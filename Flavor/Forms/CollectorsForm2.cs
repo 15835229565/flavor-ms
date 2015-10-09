@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -96,8 +95,8 @@ namespace Flavor.Forms {
                 setXScaleLimits();
             }
 
-            tabControl.SuspendLayout();
             SuspendLayout();
+            tabControl.SuspendLayout();
             for (int i = 0; i < graph.Collectors.Count; ++i) {
                 var collector = graph.Collectors[i];
                 if (DisableTabPage(collector)) {
@@ -121,8 +120,8 @@ namespace Flavor.Forms {
             PerformLayout();
 
             graph.GraphDataModified += InvokeRefreshGraph;
-            graph.OnAxisModeChanged += InvokeAxisModeChange;
-            graph.OnDisplayModeChanged += InvokeGraphModified;
+            graph.AxisModeChanged += InvokeAxisModeChange;
+            graph.DisplayModeChanged += InvokeGraphModified;
         }
         protected virtual bool DisableTabPage(Collector collector) { return false; }
 
@@ -134,7 +133,7 @@ namespace Flavor.Forms {
             //col2Text = prefix + COL2_TITLE + modeText;
         }
 
-        void InvokeAxisModeChange() {
+        void InvokeAxisModeChange(object sender, EventArgs e) {
             // TODO: preserve axis scales (set to according recounted values)
             if (InvokeRequired) {
                 Invoke(new Action(CreateGraph));
@@ -142,12 +141,12 @@ namespace Flavor.Forms {
             }
             CreateGraph();
         }
-        void InvokeGraphModified(Graph.Displaying mode) {
+        void InvokeGraphModified(object sender, EventArgs<Graph.Displaying> e) {
             if (InvokeRequired) {
-                Invoke(new Action(() => GraphModified(mode)));
+                Invoke(new Action(() => GraphModified(e.Value)));
                 return;
             }
-            GraphModified(mode);
+            GraphModified(e.Value);
         }
         void GraphModified(Graph.Displaying mode) {
             if (mode == Graph.Displaying.Diff) {
@@ -159,7 +158,7 @@ namespace Flavor.Forms {
         protected override sealed void CreateGraph() {
             if (graph != null) {
                 specterSavingEnabled = false;
-                string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
+                string prefix = graph.DisplayingMode == Graph.Displaying.Diff ? DIFF_TITLE : "";
                 for (int i = 0; i < graphs.Length; ++i) {
                     if (graphs[i] != null)
                         ZedGraphRebirth(i, graph.Collectors[i], prefix);
@@ -324,13 +323,15 @@ namespace Flavor.Forms {
                     ushort step = (ushort)ppl.PLSreference.Step[index].X;
 
                     items.Add(new ToolStripMenuItem("Добавить точку в редактор", null,
-                        (s, e) => new AddPointForm(step, collectorNumber).ShowDialog()));
+                        (s, e) => {
+                            var form = new AddPointForm(step, collectorNumber);
+                            if (form.ShowDialog() == DialogResult.OK) {
+                                Graph.PointToAdd = form.PointToAdd;
+                            }
+                        }));
 
                     items.Add(new ToolStripMenuItem("Коэффициент коллектора " + collectorNumber, null,
-                        (s, e) => {
-                            if (new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes)
-                                Modified = true;
-                        }));
+                        (s, e) => Modified |= new SetScalingCoeffForm(step, collectorNumber, graph != Graph.MeasureGraph.Instance, graph.setScalingCoeff).ShowDialog() == DialogResult.Yes));
                     {
                         var ped = ppl.PEDreference;
                         items.Add(new ToolStripMenuItem("Вычесть из текущего с перенормировкой на точку", null,
@@ -430,11 +431,8 @@ namespace Flavor.Forms {
             }
         }
         protected override bool saveData() {
-            if (saveSpecterFileDialog.FileName != "") {
-                saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(saveSpecterFileDialog.FileName);
-                if (Graph.Displaying.Diff == graph.DisplayingMode)
-                    saveSpecterFileDialog.FileName += Config.DIFF_FILE_SUFFIX;
-            }
+            if (Graph.Displaying.Diff == graph.DisplayingMode)
+                saveSpecterFileDialog.FileName += Config.DIFF_FILE_SUFFIX;
             if (PreciseSpectrumDisplayed) {
                 saveSpecterFileDialog.Filter = Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER;
                 saveSpecterFileDialog.DefaultExt = Config.PRECISE_SPECTRUM_EXT;
@@ -457,8 +455,8 @@ namespace Flavor.Forms {
         
         protected override void OnFormClosing(FormClosingEventArgs e) {
             graph.GraphDataModified -= InvokeRefreshGraph;
-            graph.OnAxisModeChanged -= InvokeAxisModeChange;
-            graph.OnDisplayModeChanged -= InvokeGraphModified;
+            graph.AxisModeChanged -= InvokeAxisModeChange;
+            graph.DisplayModeChanged -= InvokeGraphModified;
             base.OnFormClosing(e);
         }
     }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using ZedGraph;
 using Flavor.Controls;
@@ -199,43 +198,22 @@ namespace Flavor.Forms {
 
         public MonitorForm() {
             // Init panel before ApplyResources
-            Panel = new PreciseMeasureGraphPanel { Graph = Graph.MeasureGraph.Instance };
+            Panel = new PreciseMeasureGraphPanel();
             InitializeComponent();
-            graph.GraphPane.AxisChangeEvent += p => RefreshLabels();
+            graph.GraphPane.AxisChangeEvent += p => RefreshLabels(p);
         }
         readonly List<PointPairSpecial> labels = new List<PointPairSpecial>();
         public void AddLabel(int n) {
             double time = (DateTime.Now - start).TotalMinutes;
             var pp = new PointPairSpecial(iteration - 0.5, n, new[] { time }, XScale, null, null);
             labels.Add(pp);
-            AddLabel(pp.X, n);
+            graph.GraphPane.AddLabel(pp.X, n);
             graph.Refresh();
         }
-        void AddLabel(double x, int n) {
-            var pane = graph.GraphPane;
-            var yScale = pane.YAxis.Scale;
-            double yMin = yScale.Min;
-            double yMax = yScale.Max;
-
-            var line = new LineObj(x, yMin, x, yMax);
-            //line.Line.Style = System.Drawing.Drawing2D.DashStyle.Dash;
-            line.Line.Color = Color.DarkGreen;
-            line.IsClippedToChartRect = true;
-            pane.GraphObjList.Add(line);
-            
-            if (n != 0) {
-                // TODO: how to set position in screen points?
-                var text = new TextObj(n.ToString(), x, yMax - 0.02 * (yMax - yMin));
-                text.IsClippedToChartRect = true;
-                var fontSpec = text.FontSpec;
-                fontSpec.Border.IsVisible = true;
-                pane.GraphObjList.Add(text);
-            }
-        }
-        void RefreshLabels() {
-            graph.GraphPane.GraphObjList.Clear();
+        void RefreshLabels(GraphPane pane) {
+            pane.GraphObjList.Clear();
             foreach (var pp in labels) {
-                AddLabel(pp.X, (int)pp.Y);
+                pane.AddLabel(pp.X, (int)pp.Y);
             }
         }
         [Obsolete]
@@ -391,7 +369,7 @@ namespace Flavor.Forms {
             g.GraphDataModified += NewIterationAsync;
             g.NewGraphData += InvokeRefreshGraph;
             panel.ProgressMaximum = progressMaximum;
-            panel.Enable();
+            panel.Init(g);
 
             if (progressMaximum > 0) {
                 // only iterations limit
@@ -491,7 +469,7 @@ namespace Flavor.Forms {
             if (sender != graph)
                 return;
             // TODO: not for every event
-            RefreshLabels();
+            RefreshLabels(graph.GraphPane);
         }
     }
 }

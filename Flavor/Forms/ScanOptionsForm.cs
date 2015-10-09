@@ -7,7 +7,7 @@ namespace Flavor.Forms {
         public ScanOptionsForm()
             : base() {
             InitializeComponent();
-            this.scan_groupBox.Text = string.Format("Интервал сканирования ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
+            scan_groupBox.Text = string.Format("Интервал сканирования ({0}..{1})", Config.MIN_STEP, Config.MAX_STEP);
             setupNumericUpDown(startScanNumericUpDown, Config.MIN_STEP, Config.MAX_STEP, Config.sPoint);
             setupNumericUpDown(endScanNumericUpDown, Config.MIN_STEP, Config.MAX_STEP, Config.ePoint);
         }

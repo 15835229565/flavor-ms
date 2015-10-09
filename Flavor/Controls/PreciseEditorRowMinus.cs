@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using Config = Flavor.Common.Settings.Config;
 using PreciseEditorData = Flavor.Common.Data.Measure.PreciseEditorData;
 
 namespace Flavor.Controls {
@@ -22,15 +21,22 @@ namespace Flavor.Controls {
         public bool AllFilled {
             get { return allFilled; }
         }
+        KeyPressEventHandler collectorNumberTextChanged = null;
+        public int MaxNumber {
+            set {
+                if (collectorNumberTextChanged != null)
+                    colTextBox.KeyPress -= collectorNumberTextChanged;
+                collectorNumberTextChanged = ExtensionMethods.OneDigitTextChanged(value);
+                colTextBox.KeyPress += collectorNumberTextChanged;
+            }
+        }
         public PreciseEditorRowMinus()
             : base() {
             InitializeComponent();
-
-            stepTextBox.KeyPress += Utility.integralTextbox_TextChanged;
-            colTextBox.KeyPress += Utility.oneDigitTextbox_TextChanged;
-            widthTextBox.KeyPress += Utility.integralTextbox_TextChanged;
+            stepTextBox.KeyPress += ExtensionMethods.IntegralTextChanged;
+            widthTextBox.KeyPress += ExtensionMethods.IntegralTextChanged;
         }
-        public virtual bool checkTextBoxes() {
+        public virtual bool checkTextBoxes(ushort minStep, ushort maxStep) {
             bool somethingFilled = (stepTextBox.Text != "") || (colTextBox.Text != "") || (widthTextBox.Text != "");
             allFilled = (stepTextBox.Text != "") && (colTextBox.Text != "") && (widthTextBox.Text != "");
             Color color;
@@ -46,13 +52,13 @@ namespace Flavor.Controls {
             colTextBox.BackColor = color;
             widthTextBox.BackColor = color;
             if (widthTextBox.Text != "" && stepTextBox.Text != "" &&
-                (Convert.ToUInt16(stepTextBox.Text) - Convert.ToUInt16(widthTextBox.Text) < Config.MIN_STEP ||
-                Convert.ToUInt16(stepTextBox.Text) + Convert.ToUInt16(widthTextBox.Text) > Config.MAX_STEP)) {
+                (Convert.ToUInt16(stepTextBox.Text) - Convert.ToUInt16(widthTextBox.Text) < minStep ||
+                Convert.ToUInt16(stepTextBox.Text) + Convert.ToUInt16(widthTextBox.Text) > maxStep)) {
                 stepTextBox.BackColor = Color.Green;
                 widthTextBox.BackColor = Color.Green;
                 exitFlag = false;
             }
-            if (stepTextBox.Text != "" && Convert.ToInt16(stepTextBox.Text) > Config.MAX_STEP) {
+            if (stepTextBox.Text != "" && Convert.ToInt16(stepTextBox.Text) > maxStep) {
                 stepTextBox.BackColor = Color.Red;
                 exitFlag = false;
             }

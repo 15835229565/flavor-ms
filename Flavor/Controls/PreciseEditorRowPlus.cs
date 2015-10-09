@@ -35,18 +35,14 @@ namespace Flavor.Controls {
             usePeakCheckBox.Checked = false;
         }
         void clearPeakButton_Click(object sender, EventArgs e) {
-            this.Clear();
+            Clear();
         }
-        
-        public void setClearToolTip(ToolTip toolTip) {
-            if (toolTip == null) {
-                return;
+        public ToolTip ToolTip {
+            set {
+                if (value == null)
+                    return;
+                value.SetToolTip(clearPeakButton, "Очистить строку");
             }
-            toolTip.SetToolTip(this.clearPeakButton, "Очистить строку");
-        }
-        
-        public override bool checkTextBoxes() {
-            return base.checkTextBoxes();
         }
         public override void setValues(PreciseEditorData ped) {
             base.setValues(ped);

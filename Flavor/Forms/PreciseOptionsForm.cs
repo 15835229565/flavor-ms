@@ -12,8 +12,8 @@ using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Forms {
     partial class PreciseOptionsForm: OptionsForm2 {
-        PreciseEditorRowPlus[] PErows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
-        PreciseSpectrum data = new PreciseSpectrum();
+        readonly PreciseEditorRowPlus[] _rows = new PreciseEditorRowPlus[Config.PEAK_NUMBER];
+        PreciseSpectrum data;
 
         public PreciseOptionsForm()
             : base() {
@@ -33,9 +33,8 @@ namespace Flavor.Forms {
 
         void loadPreciseEditorData(List<PreciseEditorData> ped) {
             if (ped != null) {
-                clearPreciseEditorData();
-                foreach (PreciseEditorData p in ped) {
-                    PErows[p.pNumber].setValues(p);
+                foreach (var p in ped) {
+                    _rows[p.pNumber].setValues(p);
                 }
             }
         }
@@ -50,15 +49,17 @@ namespace Flavor.Forms {
         protected virtual bool checkTextBoxes() {
             bool exitFlag = true;
             data = new PreciseSpectrum();
-            for (int i = 0; i < Config.PEAK_NUMBER; ++i) {
-                if (exitFlag &= PErows[i].checkTextBoxes())
-                    if (PErows[i].AllFilled)
-                        data.Add(new PreciseEditorData(PErows[i].UseChecked, (byte)i,
-                                                               Convert.ToUInt16(PErows[i].StepText),
-                                                               Convert.ToByte(PErows[i].ColText),
-                                                               Convert.ToUInt16(PErows[i].LapsText),
-                                                               Convert.ToUInt16(PErows[i].WidthText),
-                                                               (float)0, PErows[i].CommentText));
+            byte n = 0;
+            foreach (var row in _rows) {
+                if (exitFlag &= row.checkTextBoxes(Config.MIN_STEP, Config.MAX_STEP))
+                    if (row.AllFilled)
+                        data.Add(new PreciseEditorData(row.UseChecked, n,
+                            Convert.ToUInt16(row.StepText),
+                            Convert.ToByte(row.ColText),
+                            Convert.ToUInt16(row.LapsText),
+                            Convert.ToUInt16(row.WidthText),
+                            0f, row.CommentText));
+                ++n;
             }
             return exitFlag;
         }
@@ -84,7 +85,9 @@ namespace Flavor.Forms {
         void loadPreciseEditorFromFileButton_Click(object sender, EventArgs e) {
             if (loadPreciseEditorFromFileDialog.ShowDialog() == DialogResult.OK) {
                 try {
-                    loadPreciseEditorData(Config.loadPreciseOptions(loadPreciseEditorFromFileDialog.FileName));
+                    var data = Config.loadPreciseOptions(loadPreciseEditorFromFileDialog.FileName);
+                    clearPreciseEditorData();
+                    loadPreciseEditorData(data);
                 } catch (Config.ConfigLoadException cle) {
                     cle.visualise();
                 }
@@ -100,11 +103,13 @@ namespace Flavor.Forms {
         }
 
         void insertPointButton_Click(object sender, EventArgs e) {
-            if (Graph.PointToAdd != null) {
-                PlacePointForm ppForm = new PlacePointForm(Graph.PointToAdd);
-                if (ppForm.ShowDialog() == DialogResult.OK) {
-                    if (ppForm.PointNumber != -1)
-                        PErows[ppForm.PointNumber].setValues(Graph.PointToAdd);
+            var cachedPoint = Graph.PointToAdd;
+            if (cachedPoint != null) {
+                var form = new PlacePointForm(cachedPoint, Config.PEAK_NUMBER);
+                if (form.ShowDialog() == DialogResult.OK) {
+                    int i = form.PointNumber;
+                    if (i != -1)
+                        _rows[i].setValues(form.PointToAdd);
                 }
             } else {
                 MessageBox.Show("Выберите сначала точку на графике спектра", "Ошибка");
@@ -112,42 +117,45 @@ namespace Flavor.Forms {
         }
 
         void clearPreciseEditorData() {
-            for (int i = 0; i < Config.PEAK_NUMBER; ++i)
-                PErows[i].Clear();
+            foreach (var row in _rows) {
+                row.Clear();
+            }
         }
 
         protected override void OnLoad(EventArgs e) {
-            var args = e is LoadEventArgs ? e as LoadEventArgs : new LoadEventArgs();
+            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs();
             args.Method += InvokeEnableForm;
             base.OnLoad(args);
-            //Commander.ProgramStateChanged += InvokeEnableForm;
 
+            // TODO: transmit Config and Graph data in LoadEventArgs
             bool enable = Graph.PointToAdd != null;
 
-            this.SuspendLayout();
-            this.preciseEditorGroupBox.SuspendLayout();
-            this.insertPointButton.Enabled = enable;
+            SuspendLayout();
+            preciseEditorGroupBox.SuspendLayout();
+            insertPointButton.Enabled = enable;
 
-            for (int i = 0; i < Config.PEAK_NUMBER; ++i) {
-                this.PErows[i] = new PreciseEditorRowPlus();
-                this.PErows[i].Location = new Point(21, 42 + 15 * i);
-                this.PErows[i].PeakNumber = string.Format("{0}", i + 1);
-                this.PErows[i].setClearToolTip(this.formToolTip);
-                this.preciseEditorGroupBox.Controls.Add(PErows[i]);
+            int max = Config.COLLECTOR_COEFFS.Length;
+            for (int i = 0; i < _rows.Length; ++i) {
+                _rows[i] = new PreciseEditorRowPlus {
+                    MaxNumber = max,
+                    Location = new Point(21, 42 + 15 * i),
+                    PeakNumber = (i + 1).ToString(),
+                    ToolTip = formToolTip
+                };
+                preciseEditorGroupBox.Controls.Add(_rows[i]);
             }
-            // TODO: set form dimensions accordingly to number of peak lines..
             loadPreciseEditorData(Config.PreciseData);
-            this.preciseEditorGroupBox.ResumeLayout(false);
-            this.preciseEditorGroupBox.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            // TODO: set form dimensions accordingly to number of peak lines..
+            preciseEditorGroupBox.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
 
             if (!enable) {
                 Graph.OnPointAdded += Graph_OnPointAdded;
             }
         }
         protected override void OnFormClosing(FormClosingEventArgs e) {
-            var args = e is ClosingEventArgs ? e as ClosingEventArgs : new ClosingEventArgs(e);
+            var args = e is ClosingEventArgs ? (ClosingEventArgs)e : new ClosingEventArgs(e);
             args.Method += InvokeEnableForm;
             Graph.OnPointAdded -= Graph_OnPointAdded;
             base.OnFormClosing(args);

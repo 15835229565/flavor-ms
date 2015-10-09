@@ -297,7 +297,7 @@ namespace Flavor.Forms {
             if (new ConnectOptionsForm(commander.AvailablePorts).ShowDialog() == DialogResult.OK)
                 commander.Reconnect();
         }
-
+        // TODO: different callbacks for different forms as parameters
         void overviewToolStripMenuItem_Click(object sender, EventArgs e) {
             showOptionsForm<ScanOptionsForm>();
         }
@@ -370,9 +370,7 @@ namespace Flavor.Forms {
                     RefreshButtons(commander.pState);
                 };
                 oForm.Show();
-            } else if (oForm as T == null)
-                return;
-            else
+            } else
                 oForm.Activate();
             // TODO: disable other menu items or close already opened?
         }

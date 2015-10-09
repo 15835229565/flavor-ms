@@ -5,9 +5,9 @@ using Flavor.Common.Data.Measure;
 
 namespace Flavor.Forms {
     partial class LoadedCollectorsForm: CollectorsForm2, ILoaded {
-        string displayedFileName;
+        string _fileName;
         string DisplayedFileName {
-            get { return System.IO.Path.GetFileName(displayedFileName); }
+            get { return System.IO.Path.GetFileName(_fileName); }
         }
         [Obsolete]
         protected LoadedCollectorsForm(): base() {
@@ -19,12 +19,12 @@ namespace Flavor.Forms {
         public LoadedCollectorsForm(Graph graph, string fileName, bool hint)
             : base(graph, hint) {
             // Init panel before ApplyResources
-            Panel = new GraphPanel { Graph = graph };
+            Panel = new GraphPanel();
             InitializeComponent();
             // TODO: different for precise & scan
-            Panel.Enable();
+            Panel.Init(graph);
 
-            displayedFileName = fileName;
+            _fileName = fileName;
             Text = DisplayedFileName;
 
             if (PreciseSpectrumDisplayed) {
@@ -39,7 +39,7 @@ namespace Flavor.Forms {
         }
         protected override bool DisableTabPage(Collector collector) {
             if (PreciseSpectrumDisplayed)
-                return collector.TrueForAll(pls => pls.isEmpty);
+                return collector.TrueForAll(list => list.isEmpty);
             return false;
         }
         protected sealed override void updateOnModification() {
@@ -47,10 +47,11 @@ namespace Flavor.Forms {
             base.updateOnModification();
         }
         protected sealed override bool saveData() {
-			saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(displayedFileName);
+            saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(_fileName);
+            saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_fileName);
             bool res = base.saveData();
             if (res) {
-                displayedFileName = saveSpecterFileDialog.FileName;
+                _fileName = saveSpecterFileDialog.FileName;
                 Text = DisplayedFileName;
             }
             return res;
@@ -59,7 +60,7 @@ namespace Flavor.Forms {
         protected override void OnFormClosing(FormClosingEventArgs e) {
             if (Modified) {
                 Activate();
-                switch (MessageBox.Show(MdiParent, "Спектр изменен и не сохранен. Сохранить?", displayedFileName, MessageBoxButtons.YesNoCancel)) {
+                switch (MessageBox.Show(MdiParent, "Спектр изменен и не сохранен. Сохранить?", _fileName, MessageBoxButtons.YesNoCancel)) {
                     case DialogResult.Yes:
                         if (!saveData()) {
                             e.Cancel = true;
@@ -77,7 +78,7 @@ namespace Flavor.Forms {
         }
         #region ILoaded Members
         public string FileName {
-            get { return displayedFileName; }
+            get { return _fileName; }
         }
         #endregion
     }

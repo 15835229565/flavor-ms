@@ -10,21 +10,17 @@ namespace Flavor.Forms {
         PlacePointForm()
             : base() {
             InitializeComponent();
-            for (int i = 1; i <= 20; ++i)
-                pNumComboBox.Items.Add(i.ToString());
         }
-        public PlacePointForm(PreciseEditorData ped)
+        public PlacePointForm(PreciseEditorData ped, int rowsCount)
             : this() {
+            for (int i = 1; i <= rowsCount; ++i)
+                pNumComboBox.Items.Add(i.ToString());
             oneRow.setValues(ped);
         }
 
         void pNumComboBox_SelectedIndexChanged(object sender, EventArgs e) {
             pNum = pNumComboBox.SelectedIndex;
             okButton.Enabled = true;
-        }
-        new void okButton_Click(object sender, EventArgs e) {
-            pNum = pNumComboBox.SelectedIndex;
-            base.okButton_Click(sender, e);
         }
     }
 }

@@ -7,14 +7,11 @@ namespace Flavor.Controls {
         public PreciseMeasureGraphPanel() {
             InitializeComponent();
         }
-        long? carbonDioxideCounts = null;
-        long? oxygenCounts = null;
 
-        void refreshGraphicsOnPreciseStep() {
-            // TODO: peak as method parameter
-            var peak = ((Graph.MeasureGraph)Graph).CurrentPeak;
-
+        void refreshGraphicsOnPreciseStep(PreciseEditorData peak) {
             // TODO: move logic up
+            long? carbonDioxideCounts = null;
+            long? oxygenCounts = null;
             if (peak.IsCarbonDioxide()) {
                 // TODO: simplify
                 if (peak.AssociatedPoints != null && peak.AssociatedPoints.PLSreference != null) {
@@ -72,15 +69,14 @@ namespace Flavor.Controls {
             }
         }
         protected override void prepareControls() {
-            carbonDioxideCounts = null;
-            oxygenCounts = null;
             ratioTextLabel.Visible = false;
             ratioLabel.Visible = false;
             base.prepareControls();
         }
         public override void performStep(ushort pnt, uint[] counts) {
             base.performStep(pnt, counts);
-            refreshGraphicsOnPreciseStep();
+            var peak = ((Graph.MeasureGraph)Graph).CurrentPeak;
+            refreshGraphicsOnPreciseStep(peak);
         }
     }
 }

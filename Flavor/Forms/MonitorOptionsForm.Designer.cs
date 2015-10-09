@@ -21,11 +21,11 @@ namespace Flavor.Forms {
             this.useCheckPeakCheckBox = new System.Windows.Forms.CheckBox();
             this.allowedShiftNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.timeLimitNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.checkPeakPreciseEditorRowMinus = new Flavor.Controls.PreciseEditorRowMinus();
             this.iterationsNumericUpDown = new System.Windows.Forms.NumericUpDown();
             backgroundMeasureCycleCountLabel = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             controlPeakLabelRow = new Flavor.Controls.PreciseEditorLabelRowMinus();
+            checkPeakPreciseEditorRowMinus = new PreciseEditorRowMinus();
             label8 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             this.monitorOptionsGroupBox.SuspendLayout();
@@ -50,6 +50,11 @@ namespace Flavor.Forms {
             // 
             resources.ApplyResources(controlPeakLabelRow, "controlPeakLabelRow");
             controlPeakLabelRow.Name = "controlPeakLabelRow";
+
+            checkPeakPreciseEditorRowMinus.ColText = "";
+            resources.ApplyResources(checkPeakPreciseEditorRowMinus, "checkPeakPreciseEditorRowMinus");
+            checkPeakPreciseEditorRowMinus.Name = "checkPeakPreciseEditorRowMinus";
+            checkPeakPreciseEditorRowMinus.StepText = "";
             // 
             // label8
             // 
@@ -75,13 +80,13 @@ namespace Flavor.Forms {
             this.monitorOptionsGroupBox.Controls.Add(this.backroundMeasureCycleCountNumericUpDown);
             this.monitorOptionsGroupBox.Controls.Add(this.checkPeakInsertButton);
             this.monitorOptionsGroupBox.Controls.Add(this.checkPeakNumberNumericUpDown);
+            monitorOptionsGroupBox.Controls.Add(checkPeakPreciseEditorRowMinus);
             this.monitorOptionsGroupBox.Controls.Add(this.useCheckPeakCheckBox);
             this.monitorOptionsGroupBox.Controls.Add(this.allowedShiftNumericUpDown);
             this.monitorOptionsGroupBox.Controls.Add(label2);
             this.monitorOptionsGroupBox.Controls.Add(controlPeakLabelRow);
             this.monitorOptionsGroupBox.Controls.Add(this.timeLimitNumericUpDown);
             this.monitorOptionsGroupBox.Controls.Add(label8);
-            this.monitorOptionsGroupBox.Controls.Add(this.checkPeakPreciseEditorRowMinus);
             this.monitorOptionsGroupBox.Controls.Add(label1);
             this.monitorOptionsGroupBox.Controls.Add(this.iterationsNumericUpDown);
             resources.ApplyResources(this.monitorOptionsGroupBox, "monitorOptionsGroupBox");
@@ -124,13 +129,6 @@ namespace Flavor.Forms {
             resources.ApplyResources(this.timeLimitNumericUpDown, "timeLimitNumericUpDown");
             this.timeLimitNumericUpDown.Name = "timeLimitNumericUpDown";
             // 
-            // checkPeakPreciseEditorRowMinus
-            // 
-            this.checkPeakPreciseEditorRowMinus.ColText = "";
-            resources.ApplyResources(this.checkPeakPreciseEditorRowMinus, "checkPeakPreciseEditorRowMinus");
-            this.checkPeakPreciseEditorRowMinus.Name = "checkPeakPreciseEditorRowMinus";
-            this.checkPeakPreciseEditorRowMinus.StepText = "";
-            // 
             // iterationsNumericUpDown
             // 
             resources.ApplyResources(this.iterationsNumericUpDown, "iterationsNumericUpDown");
@@ -161,8 +159,8 @@ namespace Flavor.Forms {
 
         #endregion
 
+        PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
         private System.Windows.Forms.NumericUpDown iterationsNumericUpDown;
-        private Flavor.Controls.PreciseEditorRowMinus checkPeakPreciseEditorRowMinus;
         private System.Windows.Forms.Button checkPeakInsertButton;
         private System.Windows.Forms.NumericUpDown timeLimitNumericUpDown;
         private System.Windows.Forms.NumericUpDown allowedShiftNumericUpDown;

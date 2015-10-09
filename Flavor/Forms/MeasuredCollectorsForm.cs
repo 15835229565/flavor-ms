@@ -39,11 +39,10 @@ namespace Flavor.Forms {
                 setXScaleLimits();
             }
             panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
-            panel.Graph = g;
             panel.ProgressMaximum = progressMaximum;
 
             Panel = panel;
-            Panel.Enable();
+            panel.Init(g);
             // TODO: and set it visible together with menu item set checked!
 
             specterSavingEnabled = false;
@@ -62,11 +61,6 @@ namespace Flavor.Forms {
 
         #endregion
         
-        protected sealed override bool saveData() {
-            saveSpecterFileDialog.FileName = "";
-			return base.saveData();        
-		}
-
         void MeasuredCollectorsForm_MeasureCancelRequested(object sender, EventArgs e) {
             // do something local
             ((MeasureGraphPanel)Panel).MeasureCancelRequested -= MeasuredCollectorsForm_MeasureCancelRequested;

@@ -12,15 +12,19 @@ namespace Flavor.Common.Data.Measure {
             Loaded,
             Diff
         }
+
         public event EventHandler<EventArgs<int[]>> GraphDataModified;
         protected virtual void OnGraphDataModified(params int[] recreate) {
             GraphDataModified.Raise(this, new EventArgs<int[]>(recreate));
         }
-
-        public delegate void AxisModeEventHandler();
-        public delegate void DisplayModeEventHandler(Displaying mode);
-        public event AxisModeEventHandler OnAxisModeChanged;
-        public event DisplayModeEventHandler OnDisplayModeChanged;
+        public event EventHandler AxisModeChanged;
+        protected virtual void OnAxisModeChanged() {
+            AxisModeChanged.Raise(this, EventArgs.Empty);
+        }
+        public event EventHandler<EventArgs<Displaying>> DisplayModeChanged;
+        protected virtual void OnDisplayModeChanged(Displaying mode) {
+            DisplayModeChanged.Raise(this, new EventArgs<Displaying>(mode));
+        }
 
         ScalableDataList.DisplayValue axisMode = ScalableDataList.DisplayValue.Step;
         public ScalableDataList.DisplayValue AxisDisplayMode {
@@ -40,10 +44,7 @@ namespace Flavor.Common.Data.Measure {
             private set {
                 if (displayMode != value) {
                     displayMode = value;
-                    //lock here?
-                    if (OnDisplayModeChanged != null) {
-                        OnDisplayModeChanged(value);
-                    }
+                    OnDisplayModeChanged(value);
                 }
             }
         }

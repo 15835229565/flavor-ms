@@ -2,8 +2,8 @@ using System.Windows.Forms;
 using Graph = Flavor.Common.Data.Measure.Graph;
 
 namespace Flavor.Controls {
-    public partial class GraphPanel: Panel {
-        internal Graph Graph { get; set; }
+    partial class GraphPanel: Panel {
+        protected Graph Graph { get; private set; }
 
         public new bool Enabled {
             get { return base.Enabled; }
@@ -13,10 +13,9 @@ namespace Flavor.Controls {
         public GraphPanel() {
             InitializeComponent();
         }
-        public void Enable() {
-            if (Graph == null)
-                return;
-            var commonOpts = Graph.CommonOptions;
+        public void Init(Graph graph) {
+            Graph = graph;
+            var commonOpts = graph.CommonOptions;
             if (commonOpts == null)
                 return;
 

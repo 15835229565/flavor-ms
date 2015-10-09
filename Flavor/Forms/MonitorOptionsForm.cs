@@ -11,10 +11,11 @@ namespace Flavor.Forms {
     partial class MonitorOptionsForm: PreciseOptionsForm {
         public MonitorOptionsForm() {
             InitializeComponent();
+            checkPeakPreciseEditorRowMinus.MaxNumber = Config.COLLECTOR_COEFFS.Length;
         }
 
         protected override bool checkTextBoxes() {
-            return checkPeakPreciseEditorRowMinus.checkTextBoxes() & base.checkTextBoxes();
+            return checkPeakPreciseEditorRowMinus.checkTextBoxes(Config.MIN_STEP, Config.MAX_STEP) & base.checkTextBoxes();
         }
         protected override void saveData() {
             base.saveData();

@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-// remove this reference
-using Utility = Flavor.Controls.Utility;
+using Flavor.Controls;
 
 namespace Flavor.Forms {
     partial class SetScalingCoeffForm: Form {
-        readonly byte _col = 0;
-        readonly ushort _step = 0;
+        readonly byte _col;
+        readonly ushort _step;
         readonly bool _isLoaded;
         readonly Func<byte, ushort, double, bool> _setScalingCoeff;
-        public SetScalingCoeffForm()
+        SetScalingCoeffForm()
             : base() {
             InitializeComponent();
-            // TODO: better solution, make new CustomTextBoxClass or extension method
-            massTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
+            massTextBox.KeyPress += massTextBox.PositiveNumericTextChanged();
         }
 
         public SetScalingCoeffForm(ushort step, byte col, bool isLoaded, Func<byte, ushort, double, bool> setScalingCoeff)

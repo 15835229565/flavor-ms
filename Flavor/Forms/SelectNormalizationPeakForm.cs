@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
-// remove this reference
-using Utility = Flavor.Controls.Utility;
+using Flavor.Controls;
 
 namespace Flavor.Forms {
     partial class SetNormalizationPeakForm: Form {
         public SetNormalizationPeakForm()
             : base() {
             InitializeComponent();
-            // TODO: better solution, make new CustomTextBoxClass or extension method
-            coeffTextBox.KeyPress += Utility.positiveNumericTextbox_TextChanged;
+            coeffTextBox.KeyPress += coeffTextBox.PositiveNumericTextChanged();
         }
 
         public class LoadEventArgs: EventArgs {
