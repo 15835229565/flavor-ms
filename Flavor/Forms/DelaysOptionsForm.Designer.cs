@@ -35,7 +35,6 @@
             // 
             resources.ApplyResources(label2, "label2");
             label2.Name = "label2";
-            label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 

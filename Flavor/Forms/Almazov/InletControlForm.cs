@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 namespace Flavor.Forms.Almazov {
-    public partial class InletControlForm: Form {
+    partial class InletControlForm: Form {
         public InletControlForm() {
             InitializeComponent();
         }
@@ -15,17 +15,11 @@ namespace Flavor.Forms.Almazov {
             DialogResult = DialogResult.Cancel;
             Close();
         }
-        public class LoadEventArgs: EventArgs {
-            //public bool? UseCapillary { get; set; }
-            public decimal[] Parameters { get; set; }
-            public LoadEventArgs(EventArgs args)
-                : base() { }
-        }
         protected override void OnLoad(EventArgs e) {
             inletRadioButton_CheckedChanged(this, e);
             temperatureCheckBox_CheckedChanged(this, e);
 
-            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs(e);
+            var args = e.As<ParamsEventArgs<decimal>>();
             base.OnLoad(args);
             var data = args.Parameters;
             if (data == null)

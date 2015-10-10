@@ -111,7 +111,7 @@ namespace Flavor.Forms {
         MeasuredCollectorsForm CollectorsForm {
             get {
                 if (collectorsForm == null) {
-                    collectorsForm = new MeasuredCollectorsForm() { MdiParent = this };
+                    collectorsForm = new MeasuredCollectorsForm { MdiParent = this };
                 }
                 return collectorsForm;
             }
@@ -120,7 +120,7 @@ namespace Flavor.Forms {
         MonitorForm MonitorForm {
             get {
                 if (monitorForm == null) {
-                    monitorForm = new MonitorForm() { MdiParent = this };
+                    monitorForm = new MonitorForm { MdiParent = this };
                 }
                 return monitorForm;
             }
@@ -322,7 +322,7 @@ namespace Flavor.Forms {
                     tempMethod(enabled, canApply);
                 };
                 oForm.Load += (s, a) => {
-                    var args = (OptionsForm2.LoadEventArgs)a;
+                    var args = a.As<OptionsForm2.LoadEventArgs>();
                     tempMethod += args.Method;
                     commander.ProgramStateChanged += method;
                     method(commander.pState);
@@ -378,7 +378,7 @@ namespace Flavor.Forms {
         void connectToolStripButton_Click(object sender, EventArgs e) {
             connectToolStripButton.Enabled = false;
             bool old = (bool)connectToolStripButton.Tag;
-            var ee = new CallBackEventArgs<bool, string>(old, null);
+            var ee = new CallBackEventArgs<bool, string> { Value = old, Handler = null };
             OnConnect(ee);
             bool connected = ee.Value;
             if (old != connected) {
@@ -404,13 +404,15 @@ namespace Flavor.Forms {
         void ButtonClick(ToolStripButton button, Action<CallBackEventArgs<bool>> action) {
             button.Enabled = false;
             bool old = (bool)button.Tag;
-            var ee = new CallBackEventArgs<bool>(old, (s, eee) => Invoke(new Action(() => {
+            var e = new CallBackEventArgs<bool> {
+                Value = old,
+                Handler = (s, ee) => Invoke(new Action(() => {
                     button.Enabled = true;
                     button.Tag = old;
                 }))
-            );
-            action(ee);
-            bool res = ee.Value;
+            };
+            action(e);
+            bool res = e.Value;
             if (old != res) {
                 button.Tag = res;
             }
@@ -1098,11 +1100,9 @@ namespace Flavor.Forms {
             openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.SPECTRUM_FILE_DIALOG_FILTER, Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 foreach (Form childForm in MdiChildren) {
-                    if (childForm is ILoaded) {
-                        if ((childForm as ILoaded).FileName == openSpecterFileDialog.FileName) {
-                            childForm.Activate();
-                            return;
-                        }
+                    if (childForm is ILoaded && string.Equals((childForm as ILoaded).FileName, openSpecterFileDialog.FileName)) {
+                        childForm.Activate();
+                        return;
                     }
                 }
                 try {
@@ -1141,8 +1141,8 @@ namespace Flavor.Forms {
         void inletToolStripButton_Click(object sender, EventArgs e) {
             var form = new Almazov.InletControlForm();
             form.Load += (s, ee) => {
-                if (ee is Almazov.InletControlForm.LoadEventArgs) {
-                    var args = (Almazov.InletControlForm.LoadEventArgs)ee;
+                if (ee is ParamsEventArgs<decimal>) {
+                    var args = (ParamsEventArgs<decimal>)ee;
                     // TODO: use some current values to feed form
                     // temporary solution. move values from form to proper place
                     args.Parameters = new[] { 2500, 3000, 2700, minTemp, maxTemp, maxTemp };

@@ -159,7 +159,7 @@ namespace Flavor.Common {
 
         public static event EventHandler<EventArgs<uint[]>> CountsUpdated;
         static void OnCountsUpdated() {
-            CountsUpdated.Raise(null, new EventArgs<uint[]>(Detectors));
+            CountsUpdated.Raise(null, new EventArgs<uint[]> { Value = Detectors });
         }
         // TODO: configurable
         static uint[] detectors = new uint[2];

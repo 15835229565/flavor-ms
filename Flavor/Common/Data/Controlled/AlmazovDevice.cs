@@ -31,23 +31,23 @@ namespace Flavor.Common {
         #region IDevice Members
         public event EventHandler<EventArgs<byte>> DeviceStateChanged;
         protected void OnDeviceStateChanged(byte state) {
-            DeviceStateChanged.Raise(this, new EventArgs<byte>(state));
+            DeviceStateChanged.Raise(this, new EventArgs<byte> { Value = state });
         }
         // TODO: use!
         public event EventHandler<EventArgs<ValueType[]>> DeviceStatusChanged;
         protected void OnDeviceStatusChanged(params ValueType[] data) {
-            DeviceStatusChanged.Raise(this, new EventArgs<ValueType[]>(data));
+            DeviceStatusChanged.Raise(this, new EventArgs<ValueType[]> { Value = data });
         }
         // TODO: use!
         public event EventHandler<EventArgs<ValueType[]>> VacuumStateChanged;
         protected void OnVacuumStateChanged(params ValueType[] data) {
-            VacuumStateChanged.Raise(this, new EventArgs<ValueType[]>(data));
+            VacuumStateChanged.Raise(this, new EventArgs<ValueType[]> { Value = data });
         }
         public event EventHandler TurboPumpStatusChanged;
         public event TurboPumpAlertEventHandler TurboPumpAlert;
         public event EventHandler<EventArgs<uint[]>> CountsUpdated;
         protected void OnCountsUpdated() {
-            CountsUpdated.Raise(this, new EventArgs<uint[]>(Detectors));
+            CountsUpdated.Raise(this, new EventArgs<uint[]> { Value = Detectors });
         }
 
         public void RelaysState(byte value) {

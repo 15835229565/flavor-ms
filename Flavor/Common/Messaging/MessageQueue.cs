@@ -7,7 +7,7 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable {
         byte Try = 0;
 
-        // TODO: change to ConcurrenQueue if .NET 4.0
+        // TODO: change to ConcurrentQueue if .NET 4.0
         Queue<UserRequest<T>> queue = new Queue<UserRequest<T>>();
         // TODO: configurable time interval
         readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
@@ -23,7 +23,7 @@ namespace Flavor.Common.Messaging {
         }
         public event EventHandler<EventArgs<UserRequest<T>>> NotAnsweringTo;
         protected virtual void OnNotAnsweringTo(UserRequest<T> packet) {
-            NotAnsweringTo.Raise(this, new EventArgs<UserRequest<T>>(packet));
+            NotAnsweringTo.Raise(this, new EventArgs<UserRequest<T>> { Value = packet });
         }
         public event EventHandler<CommandReceivedEventArgs<T, Sync<T>>> CommandApproved;
         protected virtual void OnCommandApproved(byte code, Sync<T> command) {

@@ -15,7 +15,7 @@ namespace Flavor.Common.Data.Measure {
 
         public event EventHandler<EventArgs<int[]>> GraphDataModified;
         protected virtual void OnGraphDataModified(params int[] recreate) {
-            GraphDataModified.Raise(this, new EventArgs<int[]>(recreate));
+            GraphDataModified.Raise(this, new EventArgs<int[]> { Value = recreate });
         }
         public event EventHandler AxisModeChanged;
         protected virtual void OnAxisModeChanged() {
@@ -23,7 +23,7 @@ namespace Flavor.Common.Data.Measure {
         }
         public event EventHandler<EventArgs<Displaying>> DisplayModeChanged;
         protected virtual void OnDisplayModeChanged(Displaying mode) {
-            DisplayModeChanged.Raise(this, new EventArgs<Displaying>(mode));
+            DisplayModeChanged.Raise(this, new EventArgs<Displaying> { Value = mode });
         }
 
         ScalableDataList.DisplayValue axisMode = ScalableDataList.DisplayValue.Step;

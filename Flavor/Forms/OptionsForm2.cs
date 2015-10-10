@@ -124,7 +124,7 @@ namespace Flavor.Forms {
             public CommonOptions CommonOptions { get; set; }
         }
         protected override void OnLoad(EventArgs e) {
-            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs();
+            var args = e.As<LoadEventArgs>();
             args.Method += InvokeSetVisibility;
             base.OnLoad(args);
             rareModeCheckBox.Checked = args.NotRareModeRequested;

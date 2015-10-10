@@ -6,7 +6,7 @@ namespace Flavor.Common.Messaging {
         where T: struct, IConvertible, IComparable {
         public event EventHandler<EventArgs<bool>> SystemDown;
         protected virtual void OnSystemDown(bool error) {
-            SystemDown.Raise(this, new EventArgs<bool>(error));
+            SystemDown.Raise(this, new EventArgs<bool> { Value = error });
         }
         public event EventHandler<EventArgs> SystemReady;
         protected virtual void OnSystemReady() {
@@ -14,15 +14,15 @@ namespace Flavor.Common.Messaging {
         }
         public event EventHandler<EventArgs<IUpdateDevice>> UpdateDevice;
         protected virtual void OnUpdateDevice(IUpdateDevice packet) {
-            UpdateDevice.Raise(this, new EventArgs<IUpdateDevice>(packet));
+            UpdateDevice.Raise(this, new EventArgs<IUpdateDevice> { Value = packet });
         }
         public event EventHandler<EventArgs<bool>> OperationBlock;
         protected virtual void OnOperationBlock(bool on) {
-            OperationBlock.Raise(this, new EventArgs<bool>(on));
+            OperationBlock.Raise(this, new EventArgs<bool> { Value = on });
         }
         public event EventHandler<EventArgs<bool>> OperationToggle;
         protected virtual void OnOperationToggle(bool on) {
-            OperationToggle.Raise(this, new EventArgs<bool>(on));
+            OperationToggle.Raise(this, new EventArgs<bool> { Value = on });
         }
         public event EventHandler<EventArgs> MeasurePreconfigured;
         protected virtual void OnMeasurePreconfigured() {
@@ -30,7 +30,7 @@ namespace Flavor.Common.Messaging {
         }
         public event EventHandler<EventArgs<Action<ushort, ushort>>> MeasureSend;
         protected virtual void OnMeasureSend(Action<ushort, ushort> doMeasure) {
-            MeasureSend.Raise(this, new EventArgs<Action<ushort, ushort>>(doMeasure));
+            MeasureSend.Raise(this, new EventArgs<Action<ushort, ushort>> { Value = doMeasure });
         }
         public event EventHandler<EventArgs> MeasureDone;
         protected virtual void OnMeasureDone() {
@@ -38,7 +38,7 @@ namespace Flavor.Common.Messaging {
         }
         public event EventHandler<EventArgs<Action>> FirstStatus;
         protected virtual void OnFirstStatus(Action onTheFly) {
-            FirstStatus.Raise(this, new EventArgs<Action>(onTheFly));
+            FirstStatus.Raise(this, new EventArgs<Action> { Value = onTheFly });
         }
         public event EventHandler Undo;
         protected virtual void OnUndo() {

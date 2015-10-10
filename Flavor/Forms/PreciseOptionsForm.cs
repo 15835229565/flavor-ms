@@ -18,6 +18,22 @@ namespace Flavor.Forms {
         public PreciseOptionsForm()
             : base() {
             InitializeComponent();
+            SuspendLayout();
+            preciseEditorGroupBox.SuspendLayout();
+
+            int max = Config.COLLECTOR_COEFFS.Length;
+            for (int i = 0; i < _rows.Length; ++i) {
+                _rows[i] = new PreciseEditorRowPlus {
+                    MaxNumber = max,
+                    Location = new Point(21, 42 + 15 * i),
+                    PeakNumber = (i + 1).ToString(),
+                    ToolTip = formToolTip
+                };
+                preciseEditorGroupBox.Controls.Add(_rows[i]);
+            }
+            // TODO: set form dimensions accordingly to number of peak lines..
+            preciseEditorGroupBox.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         void InvokeEnableForm(bool enabled, bool canApply) {
@@ -123,33 +139,14 @@ namespace Flavor.Forms {
         }
 
         protected override void OnLoad(EventArgs e) {
-            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs();
+            var args = e.As<LoadEventArgs>();
             args.Method += InvokeEnableForm;
             base.OnLoad(args);
 
             // TODO: transmit Config and Graph data in LoadEventArgs
             bool enable = Graph.PointToAdd != null;
-
-            SuspendLayout();
-            preciseEditorGroupBox.SuspendLayout();
             insertPointButton.Enabled = enable;
-
-            int max = Config.COLLECTOR_COEFFS.Length;
-            for (int i = 0; i < _rows.Length; ++i) {
-                _rows[i] = new PreciseEditorRowPlus {
-                    MaxNumber = max,
-                    Location = new Point(21, 42 + 15 * i),
-                    PeakNumber = (i + 1).ToString(),
-                    ToolTip = formToolTip
-                };
-                preciseEditorGroupBox.Controls.Add(_rows[i]);
-            }
             loadPreciseEditorData(Config.PreciseData);
-            // TODO: set form dimensions accordingly to number of peak lines..
-            preciseEditorGroupBox.ResumeLayout(false);
-            ResumeLayout(false);
-            PerformLayout();
-
             if (!enable) {
                 Graph.OnPointAdded += Graph_OnPointAdded;
             }

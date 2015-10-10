@@ -6,23 +6,18 @@ namespace Flavor {
     delegate T Processor<T>(T obj);
     class EventArgs<T>: EventArgs {
         public T Value { get; set; }
-        public EventArgs(T value) {
-            Value = value;
-        }
     }
     class CallBackEventArgs<T>: EventArgs<T> {
         public EventHandler Handler { get; set; }
-        public CallBackEventArgs(T value, EventHandler handler)
-            : base(value) {
-            Handler = handler;
-        }
     }
     class CallBackEventArgs<T, T1>: EventArgs<T> {
         public EventHandler<EventArgs<T1>> Handler { get; set; }
-        public CallBackEventArgs(T value, EventHandler<EventArgs<T1>> handler)
-            : base(value)  {
-            Handler = handler;
-        }
+    }
+    class ParamsEventArgs<T1>: EventArgs {
+        public T1[] Parameters { get; set; }
+    }
+    class ParamsEventArgs<T, T1>: EventArgs<T> {
+        public T1[] Parameters { get; set; }
     }
     class FixedSizeQueue<T> {
         readonly Queue<T> queue;
@@ -97,6 +92,9 @@ namespace Flavor {
             // thread-safe as handler is cached as method argument
             if (handler != null)
                 handler(sender, args);
+        }
+        public static T As<T>(this EventArgs e) where T: EventArgs, new() {
+            return e is T ? (T)e : new T();
         }
     }
 }
