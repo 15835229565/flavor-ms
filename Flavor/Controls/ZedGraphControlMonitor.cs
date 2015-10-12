@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using ZedGraph;
 
 namespace Flavor.Controls {
-    public partial class ZedGraphControlMonitor: ZedGraphControlMine {
+    partial class ZedGraphControlMonitor: ZedGraphControlMine {
         public new event EventHandler<ContextMenuBuilderEventArgs> ContextMenuBuilder;
         protected virtual void OnContextMenuBuilder(ContextMenuBuilderEventArgs e) {
             ContextMenuBuilder.Raise(this, e);

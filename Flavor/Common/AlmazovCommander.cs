@@ -1,9 +1,9 @@
 ﻿using System;
-using Flavor.Common.Messaging;
-using Flavor.Common.Messaging.Almazov;
-using Flavor.Common.Settings;
 
 namespace Flavor.Common {
+    using Messaging;
+    using Messaging.Almazov;
+    using Settings;
     class AlmazovCommander: Commander {
         AlmazovRealizer realizer;
         //readonly EventHandler<EventArgs<Action>> onTheFlyAction;

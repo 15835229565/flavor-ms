@@ -20,13 +20,6 @@ namespace Flavor.Controls {
             commentLabel = new Label();
             this.SuspendLayout();
             // 
-            // peakCenterLabel
-            // 
-            this.peakCenterLabel.AccessibleDescription = null;
-            this.peakCenterLabel.AccessibleName = null;
-            resources.ApplyResources(this.peakCenterLabel, "peakCenterLabel");
-            this.peakCenterLabel.Font = null;
-            // 
             // label9
             // 
             label9.AccessibleDescription = null;
@@ -65,7 +58,6 @@ namespace Flavor.Controls {
             this.Controls.Add(commentLabel);
             this.Font = null;
             this.Name = "PreciseEditorLabelRow";
-            this.Controls.SetChildIndex(this.peakCenterLabel, 0);
             this.Controls.SetChildIndex(commentLabel, 0);
             this.Controls.SetChildIndex(label11, 0);
             this.Controls.SetChildIndex(label9, 0);

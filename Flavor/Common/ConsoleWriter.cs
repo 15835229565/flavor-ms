@@ -1,13 +1,13 @@
 using System;
 
 namespace Flavor.Common {
-    internal static class ConsoleWriter {
+    static class ConsoleWriter {
         static readonly object locker = new object();
 
-        internal static void Subscribe(ILog o) {
+        public static void Subscribe(ILog o) {
             o.Log += Log;
         }
-        internal static void Unsubscribe(ILog o) {
+        public static void Unsubscribe(ILog o) {
             o.Log -= Log;
         }
         static void Log(string msg) {
@@ -17,7 +17,7 @@ namespace Flavor.Common {
             Console.Write(c);
         }
         // used in Config
-        internal static void Write(string s) {
+        public static void Write(string s) {
             lock (locker) {
                 Console.Write(s);
             }
@@ -29,7 +29,7 @@ namespace Flavor.Common {
             Console.WriteLine(value);
         }
         // used in UI
-        internal static void WriteLine(string format, params object[] args) {
+        public static void WriteLine(string format, params object[] args) {
             lock (locker) {
                 Console.WriteLine(format, args);
             }

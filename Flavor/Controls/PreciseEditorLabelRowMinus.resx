@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label10.GenerateMember" type="System.Boolean, mscorlib">
+  <metadata name="label10.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
-  </data>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="label10.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -129,7 +129,7 @@
     <value>75, 13</value>
   </data>
   <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 13</value>
+    <value>35, 13</value>
   </data>
   <data name="label10.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -147,14 +147,11 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
-  <data name="colNumLabel.GenerateMember" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="colToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing">
+  <metadata name="colToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
-  </data>
+  </metadata>
   <data name="colNumLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -162,7 +159,7 @@
     <value>50, 13</value>
   </data>
   <data name="colNumLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 13</value>
+    <value>25, 13</value>
   </data>
   <data name="colNumLabel.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -183,7 +180,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;colNumLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="peakCenterLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -210,11 +207,14 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;peakCenterLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>0</value>
   </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
+  <metadata name="colToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
-  </data>
+  </metadata>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
     <value>124, 26</value>
   </data>

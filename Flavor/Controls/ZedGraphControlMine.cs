@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using ZedGraph;
 
 namespace Flavor.Controls {
-    public partial class ZedGraphControlMine: ZedGraphControl {
+    partial class ZedGraphControlMine: ZedGraphControl {
         public class ContextMenuBuilderEventArgs: EventArgs {
             public ContextMenuStrip MenuStrip { get; private set; }
             public ContextMenuBuilderEventArgs(ContextMenuStrip menuStrip) {

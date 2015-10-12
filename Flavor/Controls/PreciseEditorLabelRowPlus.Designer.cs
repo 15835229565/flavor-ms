@@ -33,7 +33,6 @@
             resources.ApplyResources(this, "$this");
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

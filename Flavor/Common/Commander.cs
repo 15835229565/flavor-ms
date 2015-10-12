@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Flavor.Common.Messaging;
-using Flavor.Common.Data.Measure;
-using Flavor.Common.Settings;
-using Flavor.Common.Library;
 
 namespace Flavor.Common {
-    abstract class Commander: IErrorOccured, IAsyncReplyReceived, IGlobalActions, IMeasureActions {
+    using Messaging;
+    using Data.Measure;
+    using Settings;
+    using Library;
+    abstract class Commander : IErrorOccured, IAsyncReplyReceived, IGlobalActions, IMeasureActions {
         // TODO: use binding flags to bind proper controls (common and measure)
         public virtual void Bind(IMSControl view) {
             view.Connect += Connect;
