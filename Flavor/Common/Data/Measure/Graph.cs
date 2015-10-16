@@ -99,7 +99,12 @@ namespace Flavor.Common.Data.Measure {
                     return instance;
                 }
             }
-            public override bool isPreciseSpectrum { get { return Collectors.Any(c => c.Count > 1); } }
+            public override bool isPreciseSpectrum {
+                get {
+                    // TODO: BAD: at monitor start (and precise?) there are no extra rows that leads to misdetection of spectrum type as scan
+                    return Collectors.Any(c => c.Count > 1);
+                }
+            }
             public delegate void GraphEventHandler(ushort pnt, uint[] counts, params int[] recreate);
             public event GraphEventHandler NewGraphData;
             protected virtual void OnNewGraphData(ushort pnt, uint[] counts, params int[] recreate) {
