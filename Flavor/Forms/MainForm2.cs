@@ -258,7 +258,6 @@ namespace Flavor.Forms {
                 device.DeviceStatusChanged += RefreshDeviceStatusAsync;
                 device.VacuumStateChanged += RefreshVacuumStateAsync;
             }
-
             commander.ProgramStateChanged += InvokeRefreshButtons;
         }
         protected sealed override void OnFormClosing(FormClosingEventArgs e) {
@@ -470,8 +469,7 @@ namespace Flavor.Forms {
             if (result.HasValue) {
                 if (result == true) {
                     ChildFormInit(MonitorForm, true);
-                }
-                else {
+                } else {
                     if (tag == null)
                         MonitorForm.AddLabel(0);
                 }
@@ -527,7 +525,6 @@ namespace Flavor.Forms {
 
         void RefreshDeviceStateAsync(object sender, EventArgs<byte> e) {
             BeginInvoke(new Action(() => {
-                parameterPanel.SuspendLayout();
                 statusTreeView.BeginUpdate();
                 byte state = e.Value;
                 // TODO: store translatable items and parameter state in dictionary, not in form code
@@ -575,7 +572,6 @@ namespace Flavor.Forms {
                     highVOnTreeNode.Text = OFF_TEXT1;
                 }
                 statusTreeView.EndUpdate();
-                parameterPanel.ResumeLayout();
             }));
         }
         // TODO: Device state as method parameter (avoid thread run)
@@ -584,7 +580,6 @@ namespace Flavor.Forms {
         }
         // Device.DeviceState state
         void RefreshDeviceState() {
-            parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             switch (Device.sysState) {
                 case Device.DeviceStates.Start:
@@ -645,7 +640,6 @@ namespace Flavor.Forms {
                     break;
             }
             statusTreeView.EndUpdate();
-            parameterPanel.ResumeLayout();
         }
 
         // TODO: turbo pump state as method parameter (avoid thread run)
@@ -653,7 +647,6 @@ namespace Flavor.Forms {
             BeginInvoke(new DeviceEventHandler(RefreshTurboPumpStatus));
         }
         void RefreshTurboPumpStatus() {
-            parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
 
             turboSpeedTreeNode.Text = Device.TurboPump.Speed.ToString("f0");
@@ -664,12 +657,10 @@ namespace Flavor.Forms {
             operationTimeTreeNode.Text = Device.TurboPump.OperationTime.ToString("f0");
 
             statusTreeView.EndUpdate();
-            parameterPanel.ResumeLayout();
         }
 
         void RefreshDeviceStatusAsync(object sender, EventArgs<ValueType[]> e) {
             BeginInvoke(new Action(() => {
-                parameterPanel.SuspendLayout();
                 statusTreeView.BeginUpdate();
                 var data = e.Value;
                 
@@ -779,16 +770,13 @@ namespace Flavor.Forms {
                 }
 
                 statusTreeView.EndUpdate();
-                parameterPanel.ResumeLayout();
             }));
         }
         // TODO: Device status as method parameter (avoid thread run)
         void InvokeRefreshDeviceStatus() {
             BeginInvoke(new DeviceEventHandler(RefreshDeviceStatus));
         }
-        void RefreshDeviceStatus()
-        {
-            parameterPanel.SuspendLayout();
+        void RefreshDeviceStatus() {
             statusTreeView.BeginUpdate();
             if (Device.fPumpOn) {
                 forPumpOnTreeNode.State = AlertLevel.Ok;
@@ -842,7 +830,6 @@ namespace Flavor.Forms {
             turboSpeedTreeNode.Text = Device.TurboPump.Speed.ToString("f0");
 
             statusTreeView.EndUpdate();
-            parameterPanel.ResumeLayout();
         }
 
         void RefreshVacuumStateAsync(object sender, EventArgs<ValueType[]> e) {
@@ -855,7 +842,6 @@ namespace Flavor.Forms {
         }
         // Device.VacuumStates state
         void RefreshVacuumState() {
-            parameterPanel.SuspendLayout();
             statusTreeView.BeginUpdate();
             switch (Device.vacState) {
                 case Device.VacuumStates.Idle:
@@ -948,7 +934,6 @@ namespace Flavor.Forms {
                     break;
             }
             statusTreeView.EndUpdate();
-            parameterPanel.ResumeLayout();
         }
 
         void InvokeRefreshButtons(ProgramStates state) {
@@ -1100,7 +1085,7 @@ namespace Flavor.Forms {
             openSpecterFileDialog.Filter = string.Format("{0}|{1}", Config.SPECTRUM_FILE_DIALOG_FILTER, Config.PRECISE_SPECTRUM_FILE_DIALOG_FILTER);
             if (openSpecterFileDialog.ShowDialog() == DialogResult.OK) {
                 foreach (Form childForm in MdiChildren) {
-                    if (childForm is ILoaded && string.Equals((childForm as ILoaded).FileName, openSpecterFileDialog.FileName)) {
+                    if (childForm is ILoaded && string.Equals(((ILoaded)childForm).FileName, openSpecterFileDialog.FileName)) {
                         childForm.Activate();
                         return;
                     }

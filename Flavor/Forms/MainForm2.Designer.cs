@@ -25,8 +25,8 @@ namespace Flavor.Forms {
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.MenuStrip menuStrip;
-            System.Windows.Forms.ToolStripMenuItem fileMenu;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm2));
+            System.Windows.Forms.ToolStripMenuItem fileMenu;
             System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
             System.Windows.Forms.ToolStripMenuItem viewMenu;
             System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
@@ -62,13 +62,13 @@ namespace Flavor.Forms {
             this.controlToolStrip = new System.Windows.Forms.ToolStrip();
             this.connectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.monitorToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.overviewSplitButton = new System.Windows.Forms.ToolStripSplitButton();
+            this.sparseModeStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inletToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.parameterPanel = new System.Windows.Forms.Panel();
             this.statusTreeView = new System.Windows.Forms.TreeView();
             this.statusTreeViewStateImageList = new System.Windows.Forms.ImageList(this.components);
             this.openSpecterFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.overviewSplitButton = new System.Windows.Forms.ToolStripSplitButton();
-            this.sparseModeStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip = new System.Windows.Forms.MenuStrip();
             fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -376,6 +376,22 @@ namespace Flavor.Forms {
             this.monitorToolStripButton.Name = "monitorToolStripButton";
             this.monitorToolStripButton.Click += new System.EventHandler(this.monitorToolStripButton_Click);
             // 
+            // overviewSplitButton
+            // 
+            this.overviewSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.overviewSplitButton.BackColor = System.Drawing.Color.White;
+            this.overviewSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sparseModeStripMenuItem});
+            resources.ApplyResources(this.overviewSplitButton, "overviewSplitButton");
+            this.overviewSplitButton.Name = "overviewSplitButton";
+            this.overviewSplitButton.ButtonClick += new System.EventHandler(this.overview_button_Click);
+            // 
+            // sparseModeStripMenuItem
+            // 
+            this.sparseModeStripMenuItem.Name = "sparseModeStripMenuItem";
+            resources.ApplyResources(this.sparseModeStripMenuItem, "sparseModeStripMenuItem");
+            this.sparseModeStripMenuItem.Click += new System.EventHandler(this.sparseModeToolStripMenuItem_Click);
+            // 
             // inletToolStripButton
             // 
             this.inletToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -410,22 +426,6 @@ namespace Flavor.Forms {
             // openSpecterFileDialog
             // 
             this.openSpecterFileDialog.InitialDirectory = ".";
-            // 
-            // overviewSplitButton
-            // 
-            this.overviewSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.overviewSplitButton.BackColor = System.Drawing.Color.White;
-            this.overviewSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sparseModeStripMenuItem});
-            resources.ApplyResources(this.overviewSplitButton, "overviewSplitButton");
-            this.overviewSplitButton.Name = "overviewSplitButton";
-            this.overviewSplitButton.ButtonClick += new System.EventHandler(this.overview_button_Click);
-            // 
-            // sparseModeStripMenuItem
-            // 
-            this.sparseModeStripMenuItem.Name = "sparseModeStripMenuItem";
-            resources.ApplyResources(this.sparseModeStripMenuItem, "sparseModeStripMenuItem");
-            this.sparseModeStripMenuItem.Click += new System.EventHandler(this.sparseModeToolStripMenuItem_Click);
             // 
             // MainForm2
             // 
@@ -462,7 +462,6 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStripStatusLabel measure_StatusLabel;
         private System.Windows.Forms.ToolStripMenuItem toolBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
-        private System.Windows.Forms.Panel parameterPanel;
         private System.Windows.Forms.ToolStripMenuItem ParameterToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton connectToolStripButton;
 
@@ -476,6 +475,7 @@ namespace Flavor.Forms {
         private System.Windows.Forms.ToolStripButton inletToolStripButton;
         private System.Windows.Forms.ToolStripSplitButton overviewSplitButton;
         private System.Windows.Forms.ToolStripMenuItem sparseModeStripMenuItem;
+        private System.Windows.Forms.Panel parameterPanel;
     }
 }
 
