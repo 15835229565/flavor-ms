@@ -12,7 +12,7 @@ namespace Flavor.Common.Settings {
         static IMainConfig mainConfig;
         static IMainConfigWriter mainConfigWriter;
         
-        static readonly string INITIAL_DIR = System.IO.Directory.GetCurrentDirectory();
+        static readonly string INITIAL_DIR = Directory.GetCurrentDirectory();
 
         const string CONFIG_NAME = "config.xml";
         const string CRASH_LOG_NAME = "MScrash.log";

@@ -33,17 +33,12 @@ namespace Flavor.Forms {
         EventHandler<CallBackEventArgs<bool, string>> _connect;
         public event EventHandler<CallBackEventArgs<bool, string>> Connect {
             add {
-                if (value == null)
-                    return;
                 _connect += value;
-                connectToolStripButton.Visible = true;
+                connectToolStripButton.Visible = _connect != null;
             }
             remove {
-                var evt = _connect;
-                evt -= value;
-                if (evt == null)
-                    return;
-                connectToolStripButton.Visible = false;
+                _connect -= value;
+                connectToolStripButton.Visible = _connect != null;
             }
         }
         protected virtual void OnConnect(CallBackEventArgs<bool, string> e) {
@@ -52,17 +47,12 @@ namespace Flavor.Forms {
         EventHandler<CallBackEventArgs<bool>> _init;
         public event EventHandler<CallBackEventArgs<bool>> Init {
             add {
-                if (value == null)
-                    return;
                 _init += value;
-                initSys_butt.Visible = true;
+                initSys_butt.Visible = _init != null;
             }
             remove {
-                var evt = _init;
-                evt -= value;
-                if (evt == null)
-                    return;
-                initSys_butt.Visible = false;
+                _init -= value;
+                initSys_butt.Visible = _init != null;
             }
         }
         protected virtual void OnInit(CallBackEventArgs<bool> e) {
@@ -71,17 +61,12 @@ namespace Flavor.Forms {
         EventHandler<CallBackEventArgs<bool>> _shutdown;
         public event EventHandler<CallBackEventArgs<bool>> Shutdown {
             add {
-                if (value == null)
-                    return;
                 _shutdown += value;
-                shutSys_butt.Visible = true;
+                shutSys_butt.Visible = _shutdown != null;
             }
             remove {
-                var evt = _shutdown;
-                evt -= value;
-                if (evt == null)
-                    return;
-                shutSys_butt.Visible = false;
+                _shutdown -= value;
+                shutSys_butt.Visible = _shutdown != null;
             }
         }
         protected virtual void OnShutdown(CallBackEventArgs<bool> e) {
@@ -90,17 +75,12 @@ namespace Flavor.Forms {
         EventHandler<CallBackEventArgs<bool>> _unblock;
         public event EventHandler<CallBackEventArgs<bool>> Unblock {
             add {
-                if (value == null)
-                    return;
                 _unblock += value;
-                unblock_butt.Visible = true;
+                unblock_butt.Visible = _unblock != null;
             }
             remove {
-                var evt = _unblock;
-                evt -= value;
-                if (evt == null)
-                    return;
-                unblock_butt.Visible = false;
+                _unblock -= value;
+                unblock_butt.Visible = _unblock != null;
             }
         }
         protected virtual void OnUnblock(CallBackEventArgs<bool> e) {
@@ -499,78 +479,86 @@ namespace Flavor.Forms {
                 CollectorsForm.Hide();
         }
         void ChildForm_MeasureCancelRequested(object sender, EventArgs e) {
-            (sender as IMeasured).MeasureCancelRequested -= ChildForm_MeasureCancelRequested;
+            ((IMeasured)sender).MeasureCancelRequested -= ChildForm_MeasureCancelRequested;
             commander.MeasureCancelRequested = true;
         }
         //TODO: make 2 subscribers. one for logging, another for displaying.
         void InvokeProcessTurboPumpAlert(bool isFault, byte bits) {
             string msg = new StringBuilder("Turbopump: ")
                 .Append(isFault ? "failure (" : "warning (")
-                .AppendFormat("{0:X2}", bits)
-                .Append(")").ToString();
+                .AppendFormat("{0:X2})", bits)
+                .ToString();
             InvokeRefreshUserMessage(msg);
             Config.logTurboPumpAlert(msg);
         }
 
         void InvokeRefreshUserMessage(string msg) {
-            if (InvokeRequired) {
-                BeginInvoke(new MessageHandler(RefreshUserMessage), msg);
-                return;
-            }
-            RefreshUserMessage(msg);
+            BeginInvoke(new MessageHandler(RefreshUserMessage), msg);
         }
         void RefreshUserMessage(string msg) {
             measure_StatusLabel.Text = msg;
         }
 
         void RefreshDeviceStateAsync(object sender, EventArgs<byte> e) {
+            byte state = e.Value;
+            AlertLevel system, vacuum, turbo, voltage;
+            string systemText, vacuumText, turboText, voltageText;
+            // TODO: store translatable items and parameter state in dictionary, not in form code
+            if (state > 128) {
+                system = AlertLevel.Error;
+                systemText = "Ошибка";
+            } else if (state > 64) {
+                system = AlertLevel.Ok;
+                systemText = "Готова к измерению";
+            } else {
+                system = AlertLevel.Warning;
+                if (state > 32) {
+                    systemText = "Ожидание высокого напряжения";
+                } else if (state > 1) {
+                    systemText = "Инициализация вакуума";
+                } else if (state == 1) {
+                    systemText = "Инициализация";
+                } else {
+                    systemText = "Запуск";
+                }
+            }
+            state >>= 1;
+            //SEMV1
+            if ((state & 0x1) == 1) {
+                vacuum = AlertLevel.Ok;
+                vacuumText = ON_TEXT;
+            } else {
+                vacuum = AlertLevel.Error;
+                vacuumText = OFF_TEXT;
+            }
+            state >>= 1;
+            if ((state & 0x1) == 1) {
+                turbo = AlertLevel.Ok;
+                turboText = ON_TEXT;
+            } else {
+                turbo = AlertLevel.Error;
+                turboText = OFF_TEXT;
+            }
+            state >>= 4;
+            if ((state & 0x1) == 1) {
+                voltage = AlertLevel.Ok;
+                voltageText = ON_TEXT1;
+            } else {
+                voltage = AlertLevel.Warning;
+                voltageText = OFF_TEXT1;
+            }
+
+            // TODO: make separate method to avoid closure
             BeginInvoke(new Action(() => {
                 statusTreeView.BeginUpdate();
-                byte state = e.Value;
-                // TODO: store translatable items and parameter state in dictionary, not in form code
-                if (state > 128) {
-                    systemStateTreeNode.State = AlertLevel.Error;
-                    systemStateTreeNode.Text = "Ошибка";
-                } else if (state > 64) {
-                    systemStateTreeNode.State = AlertLevel.Ok;
-                    systemStateTreeNode.Text = "Готова к измерению";
-                } else {
-                    systemStateTreeNode.State = AlertLevel.Warning;
-                    if (state > 32) {
-                        systemStateTreeNode.Text = "Ожидание высокого напряжения";
-                    } else if (state > 1) {
-                        systemStateTreeNode.Text = "Инициализация вакуума";
-                    } else if (state == 1) {
-                        systemStateTreeNode.Text = "Инициализация";
-                    } else {
-                        systemStateTreeNode.Text = "Запуск";
-                    }
-                }
-                state >>= 1;
-                //SEMV1
-                if ((state & 0x1) == 1) {
-                    vacuumStateTreeNode.State = AlertLevel.Ok;
-                    vacuumStateTreeNode.Text = ON_TEXT;
-                } else {
-                    vacuumStateTreeNode.State = AlertLevel.Error;
-                    vacuumStateTreeNode.Text = OFF_TEXT;
-                }
-                state >>= 1;
-                if ((state & 0x1) == 1) {
-                    turboPumpOnTreeNode.State = AlertLevel.Ok;
-                    turboPumpOnTreeNode.Text = ON_TEXT;
-                } else {
-                    turboPumpOnTreeNode.State = AlertLevel.Error;
-                    turboPumpOnTreeNode.Text = OFF_TEXT;
-                }
-                state >>= 4;
-                if ((state & 0x1) == 1) {
-                    highVOnTreeNode.State = AlertLevel.Ok;
-                    highVOnTreeNode.Text = ON_TEXT1;
-                } else {
-                    highVOnTreeNode.State = AlertLevel.Warning;
-                    highVOnTreeNode.Text = OFF_TEXT1;
-                }
+                systemStateTreeNode.State = system;
+                systemStateTreeNode.Text = systemText;
+                vacuumStateTreeNode.State = vacuum;
+                vacuumStateTreeNode.Text = vacuumText;
+                turboPumpOnTreeNode.State = turbo;
+                turboPumpOnTreeNode.Text = turboText;
+                highVOnTreeNode.State = voltage;
+                highVOnTreeNode.Text = voltageText;
                 statusTreeView.EndUpdate();
             }));
         }
@@ -660,114 +648,138 @@ namespace Flavor.Forms {
         }
 
         void RefreshDeviceStatusAsync(object sender, EventArgs<ValueType[]> e) {
+            var data = e.Value;
+            bool microPumpOn = (bool)data[2];
+            string pumpText = microPumpOn ? ON_TEXT : OFF_TEXT;
+            bool SEMV2 = (bool)data[0];
+            string vGate2Text = SEMV2 ? OPENED_TEXT : CLOSED_TEXT;
+            bool SEMV3 = (bool)data[1];
+            string vGate3Text = SEMV3 ? OPENED_TEXT : CLOSED_TEXT;
+
+            string fV1Text, fV2Text, iVText, d1VText, d2VText, d3VText, cPText, cMText, sVText, eIText, inVText, hTText;
+            AlertLevel pump, vGate2, vGate3, inV, hT;
+            if (data.Length == 16) {
+                fV1Text = ((double)data[5]).ToString("f2");
+                fV2Text = ((double)data[6]).ToString("f2");
+                iVText = ((double)data[4]).ToString("f2");
+                d1VText = ((double)data[7]).ToString("f1");
+                d2VText = ((double)data[8]).ToString("f1");
+                d3VText = ((double)data[9]).ToString("f1");
+                cPText = ((double)data[10]).ToString("f2");
+                cMText = ((double)data[11]).ToString("f2");
+                sVText = ((double)data[12]).ToString("f1");
+                eIText = ((double)data[3]).ToString("f3");
+
+                pump = microPumpOn ? AlertLevel.Ok : AlertLevel.Warning;
+
+                double inletV = (double)data[14];
+                inVText = inletV.ToString("f1");
+                // TODO: move comparison up
+                bool inletOpened = inletV > (double)minInletV;
+                double temp = (double)data[15];
+                hTText = temp.ToString("f1");
+
+                if (SEMV2 == SEMV3) {
+                    if (SEMV2) {
+                        // capillary in use
+                        vGate2 = AlertLevel.Ok;
+                        vGate3 = AlertLevel.Ok;
+                        // inlet must be closed in case of capillary use
+                        inV = inletOpened ? AlertLevel.Error : AlertLevel.Ok;
+                        // heat temperature is not important
+                        hT = AlertLevel.NA;
+                    } else {
+                        if (inletOpened) {
+                            // membrane inlet in use
+                            vGate2 = AlertLevel.Ok;
+                            vGate3 = AlertLevel.Ok;
+                            inV = AlertLevel.Ok;
+                            // heat temperature is important
+                            // TODO: move comparison up, use 3-state flag instead
+                            if (temp < (double)minTemp)
+                                hT = AlertLevel.Warning;
+                            else if (temp > (double)maxTemp)
+                                hT = AlertLevel.Error;
+                            else
+                                hT = AlertLevel.Ok;
+                        } else {
+                            // all inputs are closed
+                            vGate2 = AlertLevel.Warning;
+                            vGate3 = AlertLevel.Warning;
+                            inV = AlertLevel.Warning;
+                            // heat temperature is not important
+                            hT = AlertLevel.NA;
+                        }
+                    }
+                } else {
+                    // capillary error
+                    vGate2 = inletOpened == SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
+                    vGate3 = inletOpened == SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
+                    // heat temperature and membrane inlet state are not important in case of capillary error
+                    inV = AlertLevel.NA;
+                    hT = AlertLevel.NA;
+                }
+
+            } else {
+                // high voltage off
+                const string NA = "---";
+
+                fV1Text = NA;
+                fV2Text = NA;
+                iVText = NA;
+                d1VText = NA;
+                d2VText = NA;
+                d3VText = NA;
+                cPText = NA;
+                cMText = NA;
+                sVText = NA;
+                eIText = NA;
+
+                // micro pump is off when high voltage is off
+                pump = AlertLevel.NA;
+
+                if (SEMV2 == SEMV3) {
+                    vGate2 = SEMV2 ? AlertLevel.Warning : AlertLevel.Ok;
+                    vGate3 = SEMV3 ? AlertLevel.Warning : AlertLevel.Ok;
+                } else {
+                    vGate2 = SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
+                    vGate3 = SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
+                }
+                hT = AlertLevel.NA;
+                hTText = NA;
+                inV = AlertLevel.NA;
+                inVText = NA;
+            }
+
+            // TODO: make separate method to avoid closure
             BeginInvoke(new Action(() => {
                 statusTreeView.BeginUpdate();
-                var data = e.Value;
-                
-                bool microPumpOn = (bool)data[2];
-                forPumpOnTreeNode.Text = microPumpOn ? ON_TEXT : OFF_TEXT;
-                
-                bool SEMV2 = (bool)data[0];
-                vGate1TreeNode.Text = SEMV2 ? OPENED_TEXT : CLOSED_TEXT;
 
-                bool SEMV3 = (bool)data[1];
-                vGate2TreeNode.Text = SEMV3 ? OPENED_TEXT : CLOSED_TEXT;
-                
-                if (data.Length == 16) {
-                    fV1TreeNode.Text = ((double)data[5]).ToString("f2");
-                    fV2TreeNode.Text = ((double)data[6]).ToString("f2");
-                    iVoltageTreeNode.Text = ((double)data[4]).ToString("f2");
-                    // d1V actually
-                    detectorVTreeNode.Text = ((double)data[7]).ToString("f1");
-                    forVacuumTreeNode.Text = ((double)data[8]).ToString("f1");//d2V
-                    highVacuumTreeNode.Text = ((double)data[9]).ToString("f1");//d3V
-                    capVPlusTreeNode.Text = ((double)data[10]).ToString("f2");
-                    capVMinusTreeNode.Text = ((double)data[11]).ToString("f2");
-                    scanVoltageTreeNode.Text = ((double)data[12]).ToString("f1");
-                    eCurrentTreeNode.Text = ((double)data[3]).ToString("f3");
+                forPumpOnTreeNode.State = pump;
+                forPumpOnTreeNode.Text = pumpText;
 
-                    forPumpOnTreeNode.State = microPumpOn ? AlertLevel.Ok : AlertLevel.Warning;
+                vGate1TreeNode.State = vGate2;
+                vGate1TreeNode.Text = vGate2Text;
+                vGate2TreeNode.State = vGate3;
+                vGate2TreeNode.Text = vGate3Text;
 
-                    double inletV = (double)data[14];
-                    turboSpeedTreeNode.Text = inletV.ToString("f1");
-                    // TODO: move comparison up
-                    bool inletOpened = inletV > (double)minInletV;
-                    double temp = (double)data[15];
-                    hCurrentTreeNode.Text = temp.ToString("f1");
-
-                    if (SEMV2 == SEMV3) {
-                        if (SEMV2) {
-                            // capillary in use
-                            vGate1TreeNode.State = AlertLevel.Ok;
-                            vGate2TreeNode.State = AlertLevel.Ok;
-                            // inlet must be closed in case of capillary use
-                            turboSpeedTreeNode.State = inletOpened ? AlertLevel.Error : AlertLevel.Ok;
-                            // heat temperature is not important
-                            hCurrentTreeNode.State = AlertLevel.NA;
-                        } else {
-                            if (inletOpened) {
-                                // membrane inlet in use
-                                vGate1TreeNode.State = AlertLevel.Ok;
-                                vGate2TreeNode.State = AlertLevel.Ok;
-                                turboSpeedTreeNode.State = AlertLevel.Ok;
-                                // heat temperature is important
-                                // TODO: move comparison up, use 3-state flag instead
-                                if (temp < (double)minTemp)
-                                    hCurrentTreeNode.State = AlertLevel.Warning;
-                                else if (temp > (double)maxTemp)
-                                    hCurrentTreeNode.State = AlertLevel.Error;
-                                else
-                                    hCurrentTreeNode.State = AlertLevel.Ok;
-                            } else {
-                                // all inputs are closed
-                                vGate1TreeNode.State = AlertLevel.Warning;
-                                vGate2TreeNode.State = AlertLevel.Warning;
-                                turboSpeedTreeNode.State = AlertLevel.Warning;
-                                // heat temperature is not important
-                                hCurrentTreeNode.State = AlertLevel.NA;
-                            }
-                        }
-                    } else {
-                        // capillary error
-                        vGate1TreeNode.State = inletOpened == SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
-                        vGate2TreeNode.State = inletOpened == SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
-                        // heat temperature and membrane inlet state are not important in case of capillary error
-                        turboSpeedTreeNode.State = AlertLevel.NA;
-                        hCurrentTreeNode.State = AlertLevel.NA;
-                    }
-
-                } else {
-                    // high voltage off
-                    
-                    fV1TreeNode.Text = "---";
-                    fV2TreeNode.Text = "---";
-                    iVoltageTreeNode.Text = "---";
-                    // d1V actually
-                    detectorVTreeNode.Text = "---";
-                    forVacuumTreeNode.Text = "---";//d2V
-                    highVacuumTreeNode.Text = "---";//d3V
-                    capVPlusTreeNode.Text = "---";
-                    capVMinusTreeNode.Text = "---";
-                    scanVoltageTreeNode.Text = "---";
-                    eCurrentTreeNode.Text = "---";
-
-                    // micro pump is off when high voltage is off
-                    forPumpOnTreeNode.State = AlertLevel.NA;
-
-                    if (SEMV2 == SEMV3) {
-                        vGate1TreeNode.State = SEMV2 ? AlertLevel.Warning : AlertLevel.Ok;
-                        vGate2TreeNode.State = SEMV3 ? AlertLevel.Warning : AlertLevel.Ok;
-                    } else {
-                        vGate1TreeNode.State = SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
-                        vGate2TreeNode.State = SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
-                    }
-                    // heat temperature actually
-                    hCurrentTreeNode.State = AlertLevel.NA;
-                    hCurrentTreeNode.Text = "---";
-                    // inlet voltage atually
-                    turboSpeedTreeNode.State = AlertLevel.NA;
-                    turboSpeedTreeNode.Text = "---";
-                }
+                fV1TreeNode.Text = fV1Text;
+                fV2TreeNode.Text = fV2Text;
+                iVoltageTreeNode.Text = iVText;
+                capVPlusTreeNode.Text = cPText;
+                capVMinusTreeNode.Text = cMText;
+                scanVoltageTreeNode.Text = sVText;
+                eCurrentTreeNode.Text = eIText;
+                // detectors actually
+                detectorVTreeNode.Text = d1VText;
+                forVacuumTreeNode.Text = d2VText;
+                highVacuumTreeNode.Text = d3VText;
+                // inlet voltage atually
+                turboSpeedTreeNode.State = inV;
+                turboSpeedTreeNode.Text = inVText;
+                // heat temperature actually
+                hCurrentTreeNode.State = hT;
+                hCurrentTreeNode.Text = hTText;
 
                 statusTreeView.EndUpdate();
             }));

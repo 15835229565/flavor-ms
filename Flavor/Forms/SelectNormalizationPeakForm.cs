@@ -16,7 +16,7 @@ namespace Flavor.Forms {
             public double Coeff { get; set; }
         }
         protected override void OnLoad(EventArgs e) {
-            var args = e is LoadEventArgs ? (LoadEventArgs)e : new LoadEventArgs();
+            var args = e.As<LoadEventArgs>();
             base.OnLoad(args);
             peakComboBox.Items.AddRange(args.PeakList);
             peakComboBox.SelectedIndex = args.NormPeakNumber;
