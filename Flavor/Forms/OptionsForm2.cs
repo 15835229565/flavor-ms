@@ -17,12 +17,12 @@ namespace Flavor.Forms {
             setupNumericUpDown(d1VoltageNumericUpDown, 0, 3000, co.d1VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
             setupNumericUpDown(d2VoltageNumericUpDown, 0, 3000, co.d2VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
             setupNumericUpDown(d3VoltageNumericUpDown, 0, 3000, co.d3VReal, CommonOptions.dVConvert, CommonOptions.dVConvert);
-            setupNumericUpDown(CPNumericUpDown, (decimal)0.01, (decimal)0.09, co.C);
-            setupNumericUpDown(kNumericUpDown, (decimal)0.6, (decimal)0.9, co.K);
             setupNumericUpDown(iVoltageNumericUpDown, 50, 100, co.iVoltageReal, CommonOptions.iVoltageConvert, CommonOptions.iVoltageConvert);
             setupNumericUpDown(eCurrentNumericUpDown, 0, 20, co.eCurrentReal, CommonOptions.eCurrentConvert, CommonOptions.eCurrentConvert);
             setupNumericUpDown(fV1NumericUpDown, 50, 100, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
             setupNumericUpDown(fV2NumericUpDown, 50, 100, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
+            setupNumericUpDown(CPNumericUpDown, (decimal)0.01, (decimal)0.09, co.C);
+            setupNumericUpDown(kNumericUpDown, (decimal)0.6, (decimal)0.9, co.K);
         }
         protected void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, decimal value) {
             updown.Minimum = min;
@@ -67,13 +67,8 @@ namespace Flavor.Forms {
             }
         }
         public event EventHandler<SaveFileButtonClickEventArgs> SaveFileButtonClick;
-        void OnSaveFileButtonClick(string filename, params decimal[] parameters)        {
-            var args = new SaveFileButtonClickEventArgs(filename, parameters);
-            SaveFileButtonClick.Raise(this, args);
-        }
-        void saveFileButton_Click(object sender, EventArgs e) {
-            if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
-                OnSaveFileButtonClick(saveCommonDataFileDialog.FileName,
+        decimal[] GetControlsData() {
+            return new[] {
                 d1VoltageNumericUpDown.Value,
                 d2VoltageNumericUpDown.Value,
                 d3VoltageNumericUpDown.Value,
@@ -83,7 +78,12 @@ namespace Flavor.Forms {
                 fV2NumericUpDown.Value,
                 CPNumericUpDown.Value,
                 kNumericUpDown.Value,
-                expTimeNumericUpDown.Value);
+                expTimeNumericUpDown.Value,
+            };
+        }
+        void saveFileButton_Click(object sender, EventArgs e) {
+            if (saveCommonDataFileDialog.ShowDialog() == DialogResult.OK) {
+                SaveFileButtonClick.Raise(this, new SaveFileButtonClickEventArgs(saveCommonDataFileDialog.FileName, GetControlsData()));
             }
         }
 
@@ -100,13 +100,14 @@ namespace Flavor.Forms {
         void adjustSettingsCheckBox_CheckedChanged(object sender, EventArgs e) {
             // TODO: enumerate collection and modify only proper controls
             bool ro = !adjustSettingsCheckBox.Checked;
-            CPNumericUpDown.ReadOnly = ro;
-            kNumericUpDown.ReadOnly = ro;
-            fV1NumericUpDown.ReadOnly = ro;
-            fV2NumericUpDown.ReadOnly = ro;
             d1VoltageNumericUpDown.ReadOnly = ro;
             d2VoltageNumericUpDown.ReadOnly = ro;
             d3VoltageNumericUpDown.ReadOnly = ro;
+            iVoltageNumericUpDown.ReadOnly = ro;
+            fV1NumericUpDown.ReadOnly = ro;
+            fV2NumericUpDown.ReadOnly = ro;
+            CPNumericUpDown.ReadOnly = ro;
+            kNumericUpDown.ReadOnly = ro;
         }
         void InvokeSetVisibility(bool enabled, bool canApply) {
             Invoke(new Action(() => {
@@ -144,17 +145,7 @@ namespace Flavor.Forms {
             args.Method += InvokeSetVisibility;
             if (DialogResult == DialogResult.OK || DialogResult == DialogResult.Yes) {
                 args.NotRareModeRequested = rareModeCheckBox.Checked;
-                args.Parameters = new[] { d1VoltageNumericUpDown.Value,
-                    d2VoltageNumericUpDown.Value,
-                    d3VoltageNumericUpDown.Value,
-                    iVoltageNumericUpDown.Value,
-                    eCurrentNumericUpDown.Value,
-                    fV1NumericUpDown.Value,
-                    fV2NumericUpDown.Value,
-                    CPNumericUpDown.Value,
-                    kNumericUpDown.Value,
-                    expTimeNumericUpDown.Value,
-                };
+                args.Parameters = GetControlsData();
             }
             base.OnFormClosing(args);
         }

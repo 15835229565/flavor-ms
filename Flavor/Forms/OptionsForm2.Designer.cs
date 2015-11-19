@@ -307,6 +307,7 @@
             0,
             0});
             this.iVoltageNumericUpDown.Name = "iVoltageNumericUpDown";
+            this.iVoltageNumericUpDown.ReadOnly = true;
             this.iVoltageNumericUpDown.Value = new decimal(new int[] {
             80,
             0,
