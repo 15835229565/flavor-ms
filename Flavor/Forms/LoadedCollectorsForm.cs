@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Windows.Forms;
 using Flavor.Controls;
 using Flavor.Common.Data.Measure;
@@ -7,7 +8,7 @@ namespace Flavor.Forms {
     partial class LoadedCollectorsForm: CollectorsForm2, ILoaded {
         string _fileName;
         string DisplayedFileName {
-            get { return System.IO.Path.GetFileName(_fileName); }
+            get { return Path.GetFileName(_fileName); }
         }
         [Obsolete]
         protected LoadedCollectorsForm(): base() {
@@ -26,16 +27,6 @@ namespace Flavor.Forms {
 
             _fileName = fileName;
             Text = DisplayedFileName;
-
-            if (PreciseSpectrumDisplayed) {
-                // search temporary here
-                setXScaleLimits(graph.PreciseData.GetUsed());
-            } else {
-                var data = graph.Collectors[0][0].Step;
-                ushort minX = (ushort)data[0].X;
-                ushort maxX = (ushort)(minX - 1 + data.Count);
-                setXScaleLimits(minX, maxX);
-            }
         }
         protected override bool DisableTabPage(Collector collector) {
             if (PreciseSpectrumDisplayed)
@@ -47,8 +38,8 @@ namespace Flavor.Forms {
             base.updateOnModification();
         }
         protected sealed override bool saveData() {
-            saveSpecterFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(_fileName);
-            saveSpecterFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_fileName);
+            saveSpecterFileDialog.InitialDirectory = Path.GetDirectoryName(_fileName);
+            saveSpecterFileDialog.FileName = Path.GetFileNameWithoutExtension(_fileName);
             bool res = base.saveData();
             if (res) {
                 _fileName = saveSpecterFileDialog.FileName;

@@ -168,9 +168,21 @@ namespace Flavor.Forms {
         }
 
         protected void setXScaleLimits() {
-            setXScaleLimits(Config.sPoint, Config.ePoint);
+            if (PreciseSpectrumDisplayed) {
+                // search temporary here
+                setXScaleLimits(graph.PreciseData.GetUsed());
+            } else {
+                if (graph == Graph.MeasureGraph.Instance) {
+                    setXScaleLimits(Config.sPoint, Config.ePoint);
+                } else {
+                    var data = graph.Collectors[0][0].Step;
+                    ushort minX = (ushort)data[0].X;
+                    ushort maxX = (ushort)(minX - 1 + data.Count);
+                    setXScaleLimits(minX, maxX);
+                }
+            }
         }
-        protected void setXScaleLimits(ushort min, ushort max) {
+        void setXScaleLimits(ushort min, ushort max) {
             if (min > max) {
                 min = Config.MIN_STEP;
                 max = Config.MAX_STEP;
@@ -180,7 +192,7 @@ namespace Flavor.Forms {
                 maxX[i] = max;
             }
         }
-        protected void setXScaleLimits(List<PreciseEditorData> peds) {
+        void setXScaleLimits(List<PreciseEditorData> peds) {
             int count = graphs.Length;
             ushort[] maxX = new ushort[count], minX = new ushort[count];
             for (int i = 0; i < minX.Length; ++i) {
@@ -226,11 +238,11 @@ namespace Flavor.Forms {
             }
         }
 
-        protected void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string prefix) {
+        void ZedGraphRebirth(int zgcIndex, Collector dataPoints, string prefix) {
             var zgc = graphs[zgcIndex];
             var myPane = zgc.GraphPane;
 
-            graphs[zgcIndex].Parent.Text = prefix + zgc.Tag + modeText;
+            zgc.Parent.Text = prefix + zgc.Tag + modeText;
             myPane.YAxis.Title.Text = Y_AXIS_TITLE;
 
             {
@@ -258,6 +270,7 @@ namespace Flavor.Forms {
                         scale.Max = col.pointToMass(min);
                         break;
                 }
+                myPane.ZoomStack.Clear();
                 if (min == max) {
                     //TODO: autoscale
                 }

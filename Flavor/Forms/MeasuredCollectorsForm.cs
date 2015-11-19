@@ -30,14 +30,13 @@ namespace Flavor.Forms {
 
             var g = Graph.MeasureGraph.Instance;
             MeasureGraphPanel panel;
-            if (isPrecise) {
+            setXScaleLimits();
+            if (isPrecise)
                 panel = new PreciseMeasureGraphPanel();
-                // search temporary here
-                setXScaleLimits(g.PreciseData.GetUsed());
-            } else {
+            else
                 panel = new ScanMeasureGraphPanel(Config.sPoint, Config.ePoint);
-                setXScaleLimits();
-            }
+            // clear zoom stack
+            CreateGraph();
             panel.MeasureCancelRequested += MeasuredCollectorsForm_MeasureCancelRequested;
             panel.ProgressMaximum = progressMaximum;
 
