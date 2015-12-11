@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Timers;
 
 namespace Flavor.Common.Messaging {
     class MessageQueue<T>: ILog
@@ -10,11 +11,11 @@ namespace Flavor.Common.Messaging {
         // TODO: change to ConcurrentQueue if .NET 4.0
         Queue<UserRequest<T>> queue = new Queue<UserRequest<T>>();
         // TODO: configurable time interval
-        readonly System.Timers.Timer sendTimer = new System.Timers.Timer(1000);
+        readonly Timer sendTimer = new Timer(1000);
 
         object SyncRoot {
             get {
-                return (queue as ICollection).SyncRoot; 
+                return ((ICollection)queue).SyncRoot; 
             }
         }
         public event EventHandler Undo;
@@ -124,7 +125,7 @@ namespace Flavor.Common.Messaging {
             }
         }
 
-        void SendTime_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
+        void SendTime_Elapsed(object sender, ElapsedEventArgs e) {
             lock (SyncRoot) {
                 lock (sendTimer) {
                     ++Try;

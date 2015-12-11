@@ -5,7 +5,7 @@ namespace Flavor.Common.Messaging {
     abstract class Protocol<T>: IProtocol<T>
         where T: struct, IConvertible, IComparable {
         protected Protocol() {
-            this.dictionary = GetDictionary();
+            dictionary = GetDictionary();
         }
         readonly CommandDictionary<T> dictionary;
         protected delegate Predicate<int> PredicateGenerator(int value);

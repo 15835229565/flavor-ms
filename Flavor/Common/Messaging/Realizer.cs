@@ -54,7 +54,7 @@ namespace Flavor.Common.Messaging {
             realizeSync = (s, e) => Realize<Sync<T>>(s, e);
             realizeAsync = (s, e) => Realize<Async<T>>(s, e);
 
-            this.dictionary = new PackageDictionary<T>();
+            dictionary = new PackageDictionary<T>();
             PopulateDictionary(dictionary);
         }
         protected void updateDevice(ServicePacket<T> p) {
@@ -62,7 +62,7 @@ namespace Flavor.Common.Messaging {
         }
         protected void Add<T1>(params Action<ServicePacket<T>>[] actions)
             where T1: ServicePacket<T>, new() {
-            this.dictionary[new T1()] = new PackageRecord<T>(actions);
+            dictionary[new T1()] = new PackageRecord<T>(actions);
         }
         protected void AutoSend<T1>(ServicePacket<T> p)
             where T1: UserRequest<T>, new() {

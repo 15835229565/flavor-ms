@@ -4,8 +4,8 @@ using System.Linq;
 
 namespace Flavor.Common.Messaging {
     abstract class ByteDispatcher: IByteDispatcher {
-        private readonly PortLevel port;
-        private readonly bool singleByteDispatching;
+        readonly PortLevel port;
+        readonly bool singleByteDispatching;
         protected ByteDispatcher(PortLevel port, bool singleByteDispatching) {
             this.port = port;
             this.singleByteDispatching = singleByteDispatching;
@@ -14,23 +14,22 @@ namespace Flavor.Common.Messaging {
             else
                 port.BytesReceived += PortBytesReceived;
         }
-        private void PortBytesReceived(object sender, PortLevel.BytesReceivedEventArgs e) {
+        void PortBytesReceived(object sender, PortLevel.BytesReceivedEventArgs e) {
             DispatchBytes(e.Bytes, e.Count);
         }
-        private void DispatchBytes(byte[] bytes, int count) {
+        void DispatchBytes(byte[] bytes, int count) {
             for (int i = 0; i < count; ++i) {
                 DispatchByte(bytes[i]);
             }
         }
-        private void PortByteReceived(object sender, PortLevel.ByteReceivedEventArgs e) {
+        void PortByteReceived(object sender, PortLevel.ByteReceivedEventArgs e) {
             DispatchByte(e.Byte);
         }
         protected abstract void DispatchByte(byte data);
         #region IByteDispatcher Members
         public event EventHandler<ByteArrayEventArgs> PackageReceived;
         protected virtual void OnPackageReceived(IList<byte> data) {
-            if (PackageReceived != null)
-                PackageReceived(this, new ByteArrayEventArgs(data));
+            PackageReceived.Raise(this, new ByteArrayEventArgs(data));
         }
         public virtual void Transmit(ICollection<byte> pack) {
             port.Send(pack.ToArray());

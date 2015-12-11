@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Flavor.Common.Messaging {
     abstract class SyncCheckableProtocol<T>: CheckableProtocol<T>, ISyncProtocol<T>
@@ -29,7 +28,7 @@ namespace Flavor.Common.Messaging {
             SyncErrorReceived.Raise(this, new CommandReceivedEventArgs<T, SyncError<T>>(code, command));
         }
         public virtual void Send(IList<byte> message) {
-            byteDispatcher.Transmit(BuildPackBody(message, ComputeCS(message)).ToList());
+            byteDispatcher.Transmit(BuildPackBody(message, ComputeCS(message)));
         }
         protected abstract IList<byte> BuildPackBody(IList<byte> data, byte checksum);
         #region IDisposable Members

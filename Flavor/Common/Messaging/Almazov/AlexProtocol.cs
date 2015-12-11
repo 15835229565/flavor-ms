@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Flavor.Common.Messaging.Almazov.Commands;
 
 namespace Flavor.Common.Messaging.Almazov {
+    using Commands;
     class AlexProtocol: SyncAsyncCheckableProtocol<CommandCode> {
         public AlexProtocol(PortLevel port)
             : base(new AlexProtocolByteDispatcher(port, false)) { }

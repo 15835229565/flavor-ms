@@ -15,15 +15,12 @@ namespace Flavor.Common.Messaging {
         }
         protected readonly new Processor<IList<byte>> trim;
         protected override bool CheckPassed(IList<byte> rawCommand) {
-            if (!CheckCS(rawCommand)) {
+            if (ComputeCS(rawCommand) != 0) {
                 OnErrorCommand(rawCommand, "Неверная контрольная сумма");
                 return false;
             }
             return true;
         }
         protected abstract byte ComputeCS(IList<byte> data);
-        bool CheckCS(IList<byte> data) {
-            return true ^ Convert.ToBoolean(ComputeCS(data));
-        }
     }
 }
