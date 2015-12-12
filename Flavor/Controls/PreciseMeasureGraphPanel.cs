@@ -40,9 +40,9 @@ namespace Flavor.Controls {
             peakWidthLabel.Text = peak.Width.ToString();
             peakWidthLabel.Visible = true;
 
-            scanRealTimeLabel.Visible = true;
+            //scanRealTimeLabel.Visible = true;
             stepNumberLabel.Visible = true;
-            label35.Visible = true;
+            //label35.Visible = true;
             label36.Visible = true;
             // TODO: modify to display any collector counts!
             if (peak.Collector == 1) {

@@ -13,9 +13,9 @@
             detector3CountsLabel.Visible = true;
             label0.Visible = true;
 
-            scanRealTimeLabel.Visible = true;
+            //scanRealTimeLabel.Visible = true;
             stepNumberLabel.Visible = true;
-            label35.Visible = true;
+            //label35.Visible = true;
             label36.Visible = true;
         }
         public override void performStep(ushort pnt, uint[] counts) {
