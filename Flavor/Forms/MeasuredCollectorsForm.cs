@@ -19,7 +19,8 @@ namespace Flavor.Forms {
         }
         protected override bool DisableTabPage(Collector collector) {
             // temporary disable first collector with garbage counts
-            return Graph.MeasureGraph.Instance.Collectors[0] == collector;
+            //return Graph.MeasureGraph.Instance.Collectors[0] == collector;
+            return false;
         }
 
         #region IMeasured Members
