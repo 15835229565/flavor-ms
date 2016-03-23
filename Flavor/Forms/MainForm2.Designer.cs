@@ -394,7 +394,6 @@ namespace Flavor.Forms {
             // 
             // inletToolStripButton
             // 
-            this.inletToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             resources.ApplyResources(this.inletToolStripButton, "inletToolStripButton");
             this.inletToolStripButton.Name = "inletToolStripButton";
             this.inletToolStripButton.Click += new System.EventHandler(this.inletToolStripButton_Click);
