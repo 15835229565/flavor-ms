@@ -1,10 +1,11 @@
 using System;
-using Flavor.Common.Messaging;
-using Flavor.Common.Messaging.SevMorGeo;
-using Flavor.Common.Settings;
 
 namespace Flavor.Common {
-    class SevMorGeoCommader: Commander {
+    using Data.Controlled;
+    using Messaging;
+    using Messaging.SevMorGeo;
+    using Settings;
+    class SevMorGeoCommader : Commander {
         SevMorGeoRealizer realizer;
         readonly EventHandler<EventArgs<Action>> onTheFlyAction;
         public SevMorGeoCommader()

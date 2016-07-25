@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Flavor.Common {
     using Messaging;
+    using Data.Controlled;
     using Data.Measure;
     using Settings;
     using Library;
