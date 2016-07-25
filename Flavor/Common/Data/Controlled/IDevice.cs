@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Data.Controlled {
     interface IDevice {
         event EventHandler<EventArgs<byte>> DeviceStateChanged;
         event EventHandler<EventArgs<ValueType[]>> DeviceStatusChanged;

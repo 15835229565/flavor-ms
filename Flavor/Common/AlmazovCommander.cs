@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace Flavor.Common {
+    using Data.Controlled;
     using Messaging;
     using Messaging.Almazov;
     using Settings;

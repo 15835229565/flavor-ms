@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Flavor.Common.Data.Controlled;
 
 namespace Flavor.Common.Messaging {
     interface IId<T> where T

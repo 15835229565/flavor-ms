@@ -1,4 +1,6 @@
-﻿namespace Flavor.Common.Messaging.SevMorGeo {
+﻿using Flavor.Common.Data.Controlled;
+
+namespace Flavor.Common.Messaging.SevMorGeo {
     using SyncReply = SyncReply<CommandCode>;
 
     class updateState: SyncReply, IUpdateDevice {
