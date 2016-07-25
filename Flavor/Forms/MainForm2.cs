@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Flavor.Common;
+using Flavor.Common.Data.Controlled;
 // data model
 using Graph = Flavor.Common.Data.Measure.Graph;
 // divide into 2 parts

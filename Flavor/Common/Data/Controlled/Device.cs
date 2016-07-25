@@ -1,7 +1,7 @@
 ﻿using System;
 using CommonData = Flavor.Common.Settings.CommonData;
 
-namespace Flavor.Common {
+namespace Flavor.Common.Data.Controlled {
     delegate void DeviceEventHandler();
     delegate void TurboPumpAlertEventHandler(bool isFault, byte bits);
 

@@ -1,4 +1,6 @@
-﻿namespace Flavor.Common.Messaging.Almazov.Commands {
+﻿using Flavor.Common.Data.Controlled;
+
+namespace Flavor.Common.Messaging.Almazov.Commands {
     using AsyncReply = Async<CommandCode>;
 
     abstract class LAMEvent: AsyncReply {

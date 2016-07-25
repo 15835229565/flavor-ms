@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Flavor.Common.Data.Controlled;
 
 namespace Flavor.Common.Messaging.SevMorGeo {
     using AsyncErrorReply = AsyncError<CommandCode>;
