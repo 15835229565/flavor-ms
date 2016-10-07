@@ -24,6 +24,13 @@ namespace Flavor.Forms {
                                                 "Проверьте герметизацию системы ввода перед отключением прибора (установку заглушки).\n" +
                                                 "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Отмена.";
 
+        const string SYSTEM_START_TEXT = "Запуск";
+        const string SYSTEM_INIT_TEXT = "Инициализация системы";
+        const string VACUUM_INIT_TEXT = "Инициализация вакуума";
+        const string WAIT_HVOLTAGE_TEXT = "Ожидание высокого напряжения";
+        const string SYSTEM_READY_TEXT = "Готова к измерению";
+        const string SYSTEM_ERROR_TEXT = "Ошибка";
+
         const string ON_TEXT = "Включен";
         const string ON_TEXT1 = "Включено";
         const string OFF_TEXT = "Выключен";
@@ -502,35 +509,34 @@ namespace Flavor.Forms {
 
         void RefreshDeviceStateAsync(object sender, EventArgs<byte> e) {
             byte state = e.Value;
-            AlertLevel system, vacuum, turbo, voltage;
-            string systemText, vacuumText, turboText, voltageText;
-            // TODO: store translatable items and parameter state in dictionary, not in form code
-            if (state > 128) {
+            AlertLevel system, vGate1, turbo, hV;
+            string systemText, vGate1Text, turboText, hVText;
+            if (state >= 128) {
                 system = AlertLevel.Error;
-                systemText = "Ошибка";
-            } else if (state > 64) {
+                systemText = SYSTEM_ERROR_TEXT;
+                // TODO: log alert
+            } else if (state >= 64) {
                 system = AlertLevel.Ok;
-                systemText = "Готова к измерению";
+                systemText = SYSTEM_READY_TEXT;
             } else {
                 system = AlertLevel.Warning;
                 if (state > 32) {
-                    systemText = "Ожидание высокого напряжения";
+                    systemText = WAIT_HVOLTAGE_TEXT;
                 } else if (state > 1) {
-                    systemText = "Инициализация вакуума";
+                    systemText = VACUUM_INIT_TEXT;
                 } else if (state == 1) {
-                    systemText = "Инициализация";
+                    systemText = SYSTEM_INIT_TEXT;
                 } else {
-                    systemText = "Запуск";
+                    systemText = SYSTEM_START_TEXT;
                 }
             }
             state >>= 1;
-            //SEMV1
             if ((state & 0x1) == 1) {
-                vacuum = AlertLevel.Ok;
-                vacuumText = ON_TEXT;
+                vGate1 = AlertLevel.Ok;
+                vGate1Text = OPENED_TEXT;
             } else {
-                vacuum = AlertLevel.Error;
-                vacuumText = OFF_TEXT;
+                vGate1 = AlertLevel.Error;
+                vGate1Text = CLOSED_TEXT;
             }
             state >>= 1;
             if ((state & 0x1) == 1) {
@@ -542,11 +548,11 @@ namespace Flavor.Forms {
             }
             state >>= 4;
             if ((state & 0x1) == 1) {
-                voltage = AlertLevel.Ok;
-                voltageText = ON_TEXT1;
+                hV = AlertLevel.Ok;
+                hVText = ON_TEXT1;
             } else {
-                voltage = AlertLevel.Warning;
-                voltageText = OFF_TEXT1;
+                hV = AlertLevel.Warning;
+                hVText = OFF_TEXT1;
             }
 
             // TODO: make separate method to avoid closure
@@ -554,12 +560,12 @@ namespace Flavor.Forms {
                 statusTreeView.BeginUpdate();
                 systemStateTreeNode.State = system;
                 systemStateTreeNode.Text = systemText;
-                vacuumStateTreeNode.State = vacuum;
-                vacuumStateTreeNode.Text = vacuumText;
+                vacuumStateTreeNode.State = vGate1;
+                vacuumStateTreeNode.Text = vGate1Text;
                 turboPumpOnTreeNode.State = turbo;
                 turboPumpOnTreeNode.Text = turboText;
-                highVOnTreeNode.State = voltage;
-                highVOnTreeNode.Text = voltageText;
+                highVOnTreeNode.State = hV;
+                highVOnTreeNode.Text = hVText;
                 statusTreeView.EndUpdate();
             }));
         }
@@ -572,23 +578,23 @@ namespace Flavor.Forms {
             statusTreeView.BeginUpdate();
             switch (Device.sysState) {
                 case Device.DeviceStates.Start:
-                    systemStateTreeNode.Text = "Запуск";
+                    systemStateTreeNode.Text = SYSTEM_START_TEXT;
                     systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.Init:
-                    systemStateTreeNode.Text = "Инициализация";
+                    systemStateTreeNode.Text = SYSTEM_INIT_TEXT;
                     systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.VacuumInit:
-                    systemStateTreeNode.Text = "Инициализация вакуума";
+                    systemStateTreeNode.Text = VACUUM_INIT_TEXT;
                     systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.WaitHighVoltage:
-                    systemStateTreeNode.Text = "Ожидание высокого напряжения";
+                    systemStateTreeNode.Text = WAIT_HVOLTAGE_TEXT;
                     systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Ready:
-                    systemStateTreeNode.Text = "Готова к измерению";
+                    systemStateTreeNode.Text = SYSTEM_READY_TEXT;
                     systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Measuring:
@@ -741,7 +747,7 @@ namespace Flavor.Forms {
 
                 if (SEMV2 == SEMV3) {
                     vGate2 = SEMV2 ? AlertLevel.Warning : AlertLevel.Ok;
-                    vGate3 = SEMV3 ? AlertLevel.Warning : AlertLevel.Ok;
+                    vGate3 = vGate2;
                 } else {
                     vGate2 = SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
                     vGate3 = SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
