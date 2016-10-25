@@ -73,5 +73,8 @@ namespace Flavor.Common {
         public void SendInletSettings(bool? useCapillary, params ushort[] ps) {
             realizer.SendInletSettings(useCapillary, ps);
         }
+        public void SendInletSettings(bool open, params ushort[] ps) {
+            realizer.SendInletSettings(open, ps);
+        }
     }
 }
