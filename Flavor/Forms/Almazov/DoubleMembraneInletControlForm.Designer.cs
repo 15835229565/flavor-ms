@@ -43,6 +43,7 @@
             this.inletRadioButton.TabIndex = 0;
             this.inletRadioButton.Text = "Открыть";
             this.inletRadioButton.UseVisualStyleBackColor = true;
+            this.inletRadioButton.CheckedChanged += new System.EventHandler(this.inletRadioButton_CheckedChanged);
             // 
             // inletGroupBox
             // 

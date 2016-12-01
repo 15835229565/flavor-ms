@@ -3,7 +3,8 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 namespace Flavor.Forms.Almazov {
-    partial class DoubleMembraneInletControlForm: Form {
+    // TODO: unify with InletControlForm, extract common code
+    partial class DoubleMembraneInletControlForm : Form {
         public DoubleMembraneInletControlForm() {
             InitializeComponent();
         }
