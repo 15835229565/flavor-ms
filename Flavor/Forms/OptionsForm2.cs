@@ -21,7 +21,7 @@ namespace Flavor.Forms {
             setupNumericUpDown(eCurrentNumericUpDown, 0, 20, co.eCurrentReal, CommonOptions.eCurrentConvert, CommonOptions.eCurrentConvert);
             setupNumericUpDown(fV1NumericUpDown, 50, 100, co.fV1Real, CommonOptions.fV1Convert, CommonOptions.fV1Convert);
             setupNumericUpDown(fV2NumericUpDown, 50, 100, co.fV2Real, CommonOptions.fV2Convert, CommonOptions.fV2Convert);
-            setupNumericUpDown(CPNumericUpDown, (decimal)0.01, (decimal)0.09, co.C);
+            setupNumericUpDown(CPNumericUpDown, (decimal)0.01, (decimal)0.2, co.C);
             setupNumericUpDown(kNumericUpDown, (decimal)0.6, (decimal)0.9, co.K);
         }
         protected void setupNumericUpDown(NumericUpDown updown, decimal min, decimal max, decimal value) {

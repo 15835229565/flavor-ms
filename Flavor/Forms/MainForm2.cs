@@ -1176,6 +1176,7 @@ namespace Flavor.Forms {
         decimal minTemp = 40;
         decimal maxTemp = 50;
         decimal minInletV = 2400;
+        // TODO: use form polymorphism. move most of code below inside forms.
         void inletToolStripButton_Click(object sender, EventArgs e) {
             if (USING_COMPLEX_INLET)
                 complexInletSettings(e);
