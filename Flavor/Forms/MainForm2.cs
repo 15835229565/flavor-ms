@@ -13,7 +13,7 @@ using Config = Flavor.Common.Settings.Config;
 namespace Flavor.Forms {
     using AlertLevel = StatusTreeNode.AlertLevel;
     partial class MainForm2: Form, IMSControl/*, IMeasured*/ {
-        const bool USING_COMPLEX_INLET = false;
+        const bool USING_COMPLEX_INLET = true;
 
         // TODO: move to resource file
         const string EXIT_CAPTION = "Предупреждение об отключении";
