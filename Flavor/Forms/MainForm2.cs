@@ -998,7 +998,8 @@ namespace Flavor.Forms {
         }
         string LabelTextGen {
             get {
-                string LABEL_TEXT = "Метка №";
+                // TODO: move to resource file
+                const string LABEL_TEXT = "Метка №";
                 var tag = monitorToolStripButton.Tag;
                 return tag == null ? LABEL_TEXT : LABEL_TEXT + (int)tag;
             }
@@ -1006,11 +1007,12 @@ namespace Flavor.Forms {
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
         void RefreshButtons(ProgramStates state) {
-            string MONITOR_BUTTON_TEXT = "Режим мониторинга";
-            string BACKGROUND_TEXT = "Измерение фона";
-            string START_MONITOR = "Начать мониторинг";
-            string HBLOCK_ON = "Включить блокировку";
-            string HBLOCK_OFF = "Снять блокировку";
+            // TODO: move to resource file
+            const string MONITOR_BUTTON_TEXT = "Режим мониторинга";
+            const string BACKGROUND_TEXT = "Измерение фона";
+            const string START_MONITOR = "Начать мониторинг";
+            const string HBLOCK_ON = "Включить блокировку";
+            const string HBLOCK_OFF = "Снять блокировку";
             switch (state) {
                 case ProgramStates.Start:
                     bool connected = (bool)connectToolStripButton.Tag;
