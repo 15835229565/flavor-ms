@@ -128,7 +128,7 @@ namespace Flavor.Forms {
         [Obsolete]
         void setTitles() {
             modeText = PreciseSpectrumDisplayed ? PREC_TITLE : SCAN_TITLE;
-            string prefix = (graph.DisplayingMode == Graph.Displaying.Diff) ? DIFF_TITLE : "";
+            string prefix = graph.DisplayingMode == Graph.Displaying.Diff ? DIFF_TITLE : "";
             //col1Text = prefix + COL1_TITLE + modeText;
             //col2Text = prefix + COL2_TITLE + modeText;
         }
