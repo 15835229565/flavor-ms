@@ -207,5 +207,21 @@ namespace Flavor.Common.Messaging.Almazov {
                 toSend.Enqueue(new MicroPumpRequest(false));
             }
         }
+        public void SendInletSettings(bool open, params ushort[] ps) {
+            ushort hT = ps.Length == 0 ? (ushort)0 : ps[0];
+            if (open) {
+                toSend.Enqueue(new MicroPumpRequest(true));
+                //toSend.Enqueue(new SetInletVoltageRequest(0));
+                toSend.Enqueue(new SetHeaterVoltageRequest(hT));
+                toSend.Enqueue(new Valve3Request(true));
+                toSend.Enqueue(new Valve2Request(true));
+            } else {
+                toSend.Enqueue(new Valve2Request(false));
+                toSend.Enqueue(new Valve3Request(false));
+                //toSend.Enqueue(new SetInletVoltageRequest(0));
+                toSend.Enqueue(new SetHeaterVoltageRequest(hT));
+                toSend.Enqueue(new MicroPumpRequest(false));
+            }
+        }
     }
 }
