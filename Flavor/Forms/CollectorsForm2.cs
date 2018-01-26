@@ -66,10 +66,9 @@ namespace Flavor.Forms {
             get { return distractFromCurrentToolStripMenuItem.Enabled; }
             //set { distractFromCurrentToolStripMenuItem.Enabled = saveToolStripMenuItem.Enabled && value && (graph.DisplayingMode != Graph.Displaying.Diff); }
         }
-        [Obsolete]
+        [Obsolete("Do not use! For designer only!")]
         protected CollectorsForm2()
             : base() {
-            // do not use! for designer only!
             // Init panel before ApplyResources
             Panel = new GraphPanel();
             InitializeComponent();
