@@ -106,7 +106,7 @@ namespace Flavor.Forms {
                 tabPage.SuspendLayout();
                 tabControl.Controls.Add(tabPage);
                 {
-                    var zgc = new ZedGraphControlPlus() { ScrollMaxX = maxX[i], ScrollMinX = minX[i], Tag = (byte)(i + 1) };
+                    var zgc = new ZedGraphControlPlus { ScrollMaxX = maxX[i], ScrollMinX = minX[i], Tag = (byte)(i + 1) };
                     zgc.PointValueEvent += ZedGraphControlPlus_PointValueEvent;
                     zgc.ContextMenuBuilder += ZedGraphControlPlus_ContextMenuBuilder;
                     tabPage.Controls.Add(zgc);
