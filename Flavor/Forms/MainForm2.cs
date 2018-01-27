@@ -13,6 +13,8 @@ using Config = Flavor.Common.Settings.Config;
 namespace Flavor.Forms {
     using AlertLevel = StatusTreeNode.AlertLevel;
     partial class MainForm2: Form, IMSControl/*, IMeasured*/ {
+        const bool USING_COMPLEX_INLET = true;
+
         // TODO: move to resource file
         const string EXIT_CAPTION = "Предупреждение об отключении";
         const string EXIT_MESSAGE = "Следует дождаться отключения системы.\nОтключить программу, несмотря на предупреждение?";
@@ -23,6 +25,13 @@ namespace Flavor.Forms {
         const string SHUTDOWN_MESSAGE = "Внимание!\n" +
                                                 "Проверьте герметизацию системы ввода перед отключением прибора (установку заглушки).\n" +
                                                 "При успешном окончании проверки нажмите OK. Для отмены отключения прибора нажмите Отмена.";
+
+        const string SYSTEM_START_TEXT = "Запуск";
+        const string SYSTEM_INIT_TEXT = "Инициализация системы";
+        const string VACUUM_INIT_TEXT = "Инициализация вакуума";
+        const string WAIT_HVOLTAGE_TEXT = "Ожидание высокого напряжения";
+        const string SYSTEM_READY_TEXT = "Готова к измерению";
+        const string SYSTEM_ERROR_TEXT = "Ошибка";
 
         const string ON_TEXT = "Включен";
         const string ON_TEXT1 = "Включено";
@@ -502,35 +511,34 @@ namespace Flavor.Forms {
 
         void RefreshDeviceStateAsync(object sender, EventArgs<byte> e) {
             byte state = e.Value;
-            AlertLevel system, vacuum, turbo, voltage;
-            string systemText, vacuumText, turboText, voltageText;
-            // TODO: store translatable items and parameter state in dictionary, not in form code
-            if (state > 128) {
+            AlertLevel system, vGate1, turbo, hV;
+            string systemText, vGate1Text, turboText, hVText;
+            if (state >= 128) {
                 system = AlertLevel.Error;
-                systemText = "Ошибка";
-            } else if (state > 64) {
+                systemText = SYSTEM_ERROR_TEXT;
+                // TODO: log alert
+            } else if (state >= 64) {
                 system = AlertLevel.Ok;
-                systemText = "Готова к измерению";
+                systemText = SYSTEM_READY_TEXT;
             } else {
                 system = AlertLevel.Warning;
                 if (state > 32) {
-                    systemText = "Ожидание высокого напряжения";
+                    systemText = WAIT_HVOLTAGE_TEXT;
                 } else if (state > 1) {
-                    systemText = "Инициализация вакуума";
+                    systemText = VACUUM_INIT_TEXT;
                 } else if (state == 1) {
-                    systemText = "Инициализация";
+                    systemText = SYSTEM_INIT_TEXT;
                 } else {
-                    systemText = "Запуск";
+                    systemText = SYSTEM_START_TEXT;
                 }
             }
             state >>= 1;
-            //SEMV1
             if ((state & 0x1) == 1) {
-                vacuum = AlertLevel.Ok;
-                vacuumText = ON_TEXT;
+                vGate1 = AlertLevel.Ok;
+                vGate1Text = OPENED_TEXT;
             } else {
-                vacuum = AlertLevel.Error;
-                vacuumText = OFF_TEXT;
+                vGate1 = AlertLevel.Error;
+                vGate1Text = CLOSED_TEXT;
             }
             state >>= 1;
             if ((state & 0x1) == 1) {
@@ -542,11 +550,11 @@ namespace Flavor.Forms {
             }
             state >>= 4;
             if ((state & 0x1) == 1) {
-                voltage = AlertLevel.Ok;
-                voltageText = ON_TEXT1;
+                hV = AlertLevel.Ok;
+                hVText = ON_TEXT1;
             } else {
-                voltage = AlertLevel.Warning;
-                voltageText = OFF_TEXT1;
+                hV = AlertLevel.Warning;
+                hVText = OFF_TEXT1;
             }
 
             // TODO: make separate method to avoid closure
@@ -554,12 +562,12 @@ namespace Flavor.Forms {
                 statusTreeView.BeginUpdate();
                 systemStateTreeNode.State = system;
                 systemStateTreeNode.Text = systemText;
-                vacuumStateTreeNode.State = vacuum;
-                vacuumStateTreeNode.Text = vacuumText;
+                vacuumStateTreeNode.State = vGate1;
+                vacuumStateTreeNode.Text = vGate1Text;
                 turboPumpOnTreeNode.State = turbo;
                 turboPumpOnTreeNode.Text = turboText;
-                highVOnTreeNode.State = voltage;
-                highVOnTreeNode.Text = voltageText;
+                highVOnTreeNode.State = hV;
+                highVOnTreeNode.Text = hVText;
                 statusTreeView.EndUpdate();
             }));
         }
@@ -572,23 +580,23 @@ namespace Flavor.Forms {
             statusTreeView.BeginUpdate();
             switch (Device.sysState) {
                 case Device.DeviceStates.Start:
-                    systemStateTreeNode.Text = "Запуск";
+                    systemStateTreeNode.Text = SYSTEM_START_TEXT;
                     systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.Init:
-                    systemStateTreeNode.Text = "Инициализация";
+                    systemStateTreeNode.Text = SYSTEM_INIT_TEXT;
                     systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.VacuumInit:
-                    systemStateTreeNode.Text = "Инициализация вакуума";
+                    systemStateTreeNode.Text = VACUUM_INIT_TEXT;
                     systemStateTreeNode.State = AlertLevel.Warning;
                     break;
                 case Device.DeviceStates.WaitHighVoltage:
-                    systemStateTreeNode.Text = "Ожидание высокого напряжения";
+                    systemStateTreeNode.Text = WAIT_HVOLTAGE_TEXT;
                     systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Ready:
-                    systemStateTreeNode.Text = "Готова к измерению";
+                    systemStateTreeNode.Text = SYSTEM_READY_TEXT;
                     systemStateTreeNode.State = AlertLevel.Ok;
                     break;
                 case Device.DeviceStates.Measuring:
@@ -673,28 +681,63 @@ namespace Flavor.Forms {
 
                 pump = microPumpOn ? AlertLevel.Ok : AlertLevel.Warning;
 
-                double inletV = (double)data[14];
-                inVText = inletV.ToString("f1");
-                // TODO: move comparison up
-                bool inletOpened = inletV > (double)minInletV;
                 double temp = (double)data[15];
                 hTText = temp.ToString("f1");
 
-                if (SEMV2 == SEMV3) {
-                    if (SEMV2) {
-                        // capillary in use
-                        vGate2 = AlertLevel.Ok;
-                        vGate3 = AlertLevel.Ok;
-                        // inlet must be closed in case of capillary use
-                        inV = inletOpened ? AlertLevel.Error : AlertLevel.Ok;
-                        // heat temperature is not important
-                        hT = AlertLevel.NA;
-                    } else {
-                        if (inletOpened) {
-                            // membrane inlet in use
+                double inletV = (double)data[14];
+                inVText = inletV.ToString("f1");
+
+                if (USING_COMPLEX_INLET) {
+                    // TODO: move comparison up
+                    bool inletOpened = inletV > (double)minInletV;
+                    
+                    if (SEMV2 == SEMV3) {
+                        if (SEMV2) {
+                            // capillary in use
                             vGate2 = AlertLevel.Ok;
                             vGate3 = AlertLevel.Ok;
-                            inV = AlertLevel.Ok;
+                            // inlet must be closed in case of capillary use
+                            inV = inletOpened ? AlertLevel.Error : AlertLevel.Ok;
+                            // heat temperature is not important
+                            hT = AlertLevel.NA;
+                        } else {
+                            if (inletOpened) {
+                                // membrane inlet in use
+                                vGate2 = AlertLevel.Ok;
+                                vGate3 = AlertLevel.Ok;
+                                inV = AlertLevel.Ok;
+                                // heat temperature is important
+                                // TODO: move comparison up, use 3-state flag instead
+                                if (temp < (double)minTemp)
+                                    hT = AlertLevel.Warning;
+                                else if (temp > (double)maxTemp)
+                                    hT = AlertLevel.Error;
+                                else
+                                    hT = AlertLevel.Ok;
+                            } else {
+                                // all inputs are closed
+                                vGate2 = AlertLevel.Warning;
+                                vGate3 = AlertLevel.Warning;
+                                inV = AlertLevel.Warning;
+                                // heat temperature is not important
+                                hT = AlertLevel.NA;
+                            }
+                        }
+                    } else {
+                        // capillary error
+                        vGate2 = inletOpened == SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
+                        vGate3 = inletOpened == SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
+                        // heat temperature and membrane inlet state are not important in case of capillary error
+                        inV = AlertLevel.NA;
+                        hT = AlertLevel.NA;
+                    }
+                } else {
+                    inV = AlertLevel.NA;
+                    if (SEMV2 == SEMV3) {
+                        if (SEMV2) {
+                            // inlet is opened
+                            vGate2 = AlertLevel.Ok;
+                            vGate3 = AlertLevel.Ok;
                             // heat temperature is important
                             // TODO: move comparison up, use 3-state flag instead
                             if (temp < (double)minTemp)
@@ -704,21 +747,18 @@ namespace Flavor.Forms {
                             else
                                 hT = AlertLevel.Ok;
                         } else {
-                            // all inputs are closed
+                            // inlet is closed
                             vGate2 = AlertLevel.Warning;
                             vGate3 = AlertLevel.Warning;
-                            inV = AlertLevel.Warning;
                             // heat temperature is not important
                             hT = AlertLevel.NA;
                         }
+                    } else {
+                        // error: only one gauge is opened
+                        vGate2 = SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
+                        vGate3 = SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
+                        hT = AlertLevel.NA;
                     }
-                } else {
-                    // capillary error
-                    vGate2 = inletOpened == SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
-                    vGate3 = inletOpened == SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
-                    // heat temperature and membrane inlet state are not important in case of capillary error
-                    inV = AlertLevel.NA;
-                    hT = AlertLevel.NA;
                 }
 
             } else {
@@ -741,7 +781,7 @@ namespace Flavor.Forms {
 
                 if (SEMV2 == SEMV3) {
                     vGate2 = SEMV2 ? AlertLevel.Warning : AlertLevel.Ok;
-                    vGate3 = SEMV3 ? AlertLevel.Warning : AlertLevel.Ok;
+                    vGate3 = vGate2;
                 } else {
                     vGate2 = SEMV2 ? AlertLevel.Error : AlertLevel.Ok;
                     vGate3 = SEMV3 ? AlertLevel.Error : AlertLevel.Ok;
@@ -958,7 +998,8 @@ namespace Flavor.Forms {
         }
         string LabelTextGen {
             get {
-                string LABEL_TEXT = "Метка №";
+                // TODO: move to resource file
+                const string LABEL_TEXT = "Метка №";
                 var tag = monitorToolStripButton.Tag;
                 return tag == null ? LABEL_TEXT : LABEL_TEXT + (int)tag;
             }
@@ -966,11 +1007,12 @@ namespace Flavor.Forms {
         // bool block, ProgramStates state, bool connected, bool canDoPrecise
         // use setButtons signature..
         void RefreshButtons(ProgramStates state) {
-            string MONITOR_BUTTON_TEXT = "Режим мониторинга";
-            string BACKGROUND_TEXT = "Измерение фона";
-            string START_MONITOR = "Начать мониторинг";
-            string HBLOCK_ON = "Включить блокировку";
-            string HBLOCK_OFF = "Снять блокировку";
+            // TODO: move to resource file
+            const string MONITOR_BUTTON_TEXT = "Режим мониторинга";
+            const string BACKGROUND_TEXT = "Измерение фона";
+            const string START_MONITOR = "Начать мониторинг";
+            const string HBLOCK_ON = "Включить блокировку";
+            const string HBLOCK_OFF = "Снять блокировку";
             switch (state) {
                 case ProgramStates.Start:
                     bool connected = (bool)connectToolStripButton.Tag;
@@ -1136,7 +1178,14 @@ namespace Flavor.Forms {
         decimal minTemp = 40;
         decimal maxTemp = 50;
         decimal minInletV = 2400;
+        // TODO: use form polymorphism. move most of code below inside forms.
         void inletToolStripButton_Click(object sender, EventArgs e) {
+            if (USING_COMPLEX_INLET)
+                complexInletSettings(e);
+            else
+                doubleMembraneInletSettings(e);
+        }
+        void complexInletSettings(EventArgs e) {
             var form = new Almazov.InletControlForm();
             form.Load += (s, ee) => {
                 if (ee is ParamsEventArgs<decimal>) {
@@ -1155,24 +1204,49 @@ namespace Flavor.Forms {
                     bool? useCapillary = args.UseCapillary;
                     var ps = args.Parameters;
                     var inletData = new List<ushort>(2);
-                    int i = 0;
                     if (useCapillary.HasValue && useCapillary.Value == false) {
-                        ushort voltage = (ushort)(ps[0] / 3000 * 4096);
-                        if (voltage > 4095)
-                            voltage = 4095;
-                        inletData.Add(voltage);
-                        ++i;
+                        inletData.Add(limitBy12Bits(ps[0] / 3000));
                     }
-                    if (i < ps.Length) {
-                        ushort temperature = (ushort)((ps[i] + 273) / 500 * 4096);
-                        if (temperature > 4095)
-                            temperature = 4095;
-                        inletData.Add(temperature);
+                    if (ps.Length > 1) {
+                        inletData.Add(limitBy12Bits((ps[1] + 273) / 500));
                     }
                     ((AlmazovCommander)commander).SendInletSettings(useCapillary, inletData.ToArray());
                 } 
             };
             form.ShowDialog();
+        }
+        void doubleMembraneInletSettings(EventArgs e) {
+            var form = new Almazov.DoubleMembraneInletControlForm();
+            form.Load += (s, ee) => {
+                if (ee is ParamsEventArgs<decimal>) {
+                    var args = (ParamsEventArgs<decimal>)ee;
+                    // TODO: use some current values to feed form
+                    // temporary solution. move values from form to proper place
+                    args.Parameters = new[] { minTemp, maxTemp, maxTemp };
+                }
+            };
+            form.FormClosing += (s, ee) => {
+                if (form.DialogResult != DialogResult.OK)
+                    return;
+                if (ee is Almazov.DoubleMembraneInletControlForm.ClosingEventArgs) {
+                    var args = (Almazov.DoubleMembraneInletControlForm.ClosingEventArgs)ee;
+
+                    var ps = args.Parameters;
+                    var inletData = new List<ushort>(1);
+                    if (ps.Length > 0) {
+                        inletData.Add(limitBy12Bits((ps[0] + 273) / 500));
+                    }
+                    ((AlmazovCommander)commander).SendInletSettings(args.Open, inletData.ToArray());
+                }
+            };
+            form.ShowDialog();
+        }
+        // TODO: move to device section
+        ushort limitBy12Bits(decimal value) {
+            ushort res = (ushort)(value * 4096);
+            if (res > 4095)
+                res = 4095;
+            return res;
         }
     }
 }

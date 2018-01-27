@@ -448,23 +448,27 @@ namespace Flavor.Common {
                     return null;
             }
         }
-        void NewBackgroundMeasureReady(object sender, EventArgs<int[]> e) {
-            var currentMeasure = new List<long>();
+
+        List<long> GetMeasuredPeaks() {
+            /*var currentMeasure = new List<long>();
             foreach (var ped in peaksForMatrix) {
                 //!!!!! null PLSreference! race condition?
                 currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
             }
+            return currentMeasure;*/
+            //!!!!! null PLSreference! race condition?
+            return peaksForMatrix.ConvertAll<long>(ped => ped.AssociatedPoints.PLSreference.PeakSum);
+        }
+        void NewBackgroundMeasureReady(object sender, EventArgs<int[]> e) {
             //maybe null if background premeasure is false!
-            background.Enqueue(currentMeasure);
+            background.Enqueue(GetMeasuredPeaks());
             if (pState == ProgramStates.WaitBackgroundMeasure && background.IsFull) {
                 setProgramStateWithoutUndo(ProgramStates.BackgroundMeasureReady);
             }
         }
+
         void NewMonitorMeasureReady(object sender, EventArgs<int[]> e) {
-            var currentMeasure = new List<long>();
-            foreach (var ped in peaksForMatrix) {
-                currentMeasure.Add(ped.AssociatedPoints.PLSreference.PeakSum);
-            }
+            var currentMeasure = GetMeasuredPeaks();
             if (doBackgroundPremeasure) {
                 if (currentMeasure.Count != backgroundResult.Count) {
                     // length mismatch
@@ -553,7 +557,7 @@ namespace Flavor.Common {
             CurrentMeasureMode = null;//?
         }
         protected void SubscribeToUndo(EventHandler handler) {
-            ProgramEventHandler ph = s => realizer.Undo -= handler; ;
+            ProgramEventHandler ph = s => realizer.Undo -= handler;
             ph += s => this.ProgramStateChanged -= ph;
             handler += (s, e) => {
                 realizer.Undo -= handler;

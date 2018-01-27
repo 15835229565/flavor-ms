@@ -7,6 +7,8 @@ namespace Flavor.Common {
     using Settings;
     class AlmazovCommander: Commander {
         AlmazovRealizer realizer;
+        const int FREQUENT_INTERVAL_MS = 500;
+        const int RARE_INTERVAL_MS = 10000;
         //readonly EventHandler<EventArgs<Action>> onTheFlyAction;
         public AlmazovCommander()
             : base(new PortLevel(), new AlmazovDevice()) {
@@ -32,20 +34,6 @@ namespace Flavor.Common {
             device.VacuumStateChanged += (s, e) => {
                 //TODO: update user view
             };
-                /*realizer.SystemDown += (s, e) => {
-                    if (e.Value) {
-                        if (pState != ProgramStates.Start) {
-                            setProgramStateWithoutUndo(ProgramStates.Start);
-                            MeasureCancelRequested = false;
-                        }
-                    } else {
-                        OnLog("System is shutdowned");
-                        setProgramStateWithoutUndo(ProgramStates.Start);
-                        hBlock = true;
-                        OnLog(pState.ToString());
-                        //Device.Init();
-                    }
-                };*/
             
             /*onTheFlyAction = (s, e) => {
                 (s as IRealizer).FirstStatus -= onTheFlyAction;
@@ -54,7 +42,7 @@ namespace Flavor.Common {
             realizer.FirstStatus += onTheFlyAction;*/
         }
         protected override IRealizer GetRealizer(PortLevel port, Func<bool> notRare) {
-            return realizer = new AlmazovRealizer(port, Config.Try, () => notRare() ? 500 : 10000);
+            return realizer = new AlmazovRealizer(port, Config.Try, () => notRare() ? FREQUENT_INTERVAL_MS : RARE_INTERVAL_MS);
         }
         public override void Bind(IMSControl view) {
             base.Bind(view);
@@ -72,6 +60,9 @@ namespace Flavor.Common {
         }
         public void SendInletSettings(bool? useCapillary, params ushort[] ps) {
             realizer.SendInletSettings(useCapillary, ps);
+        }
+        public void SendInletSettings(bool open, params ushort[] ps) {
+            realizer.SendInletSettings(open, ps);
         }
     }
 }
