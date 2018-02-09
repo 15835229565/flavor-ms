@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.Ports;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Flavor.Common {
     class PortLevel {
@@ -126,8 +127,8 @@ namespace Flavor.Common {
             serialPort.PortName = name;
             serialPort.BaudRate = baudrate;
             serialPort.DataBits = 8;
-            serialPort.Parity = System.IO.Ports.Parity.None;
-            serialPort.StopBits = System.IO.Ports.StopBits.One;
+            serialPort.Parity = Parity.None;
+            serialPort.StopBits = StopBits.One;
             serialPort.ReadTimeout = 1000;
             serialPort.WriteTimeout = 1000;
 
@@ -135,7 +136,7 @@ namespace Flavor.Common {
                 serialPort.Open();
             } catch (Exception Error) {
                 OnErrorPort(true, Error.Message);
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
                 return PortStates.ErrorOpening;
             }
             Receiving();
@@ -144,7 +145,7 @@ namespace Flavor.Common {
         public PortStates Close() {
             if (serialPort == null) {
                 OnErrorPort(true, "Порт не инициализирован");
-                System.Windows.Forms.MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
+                MessageBox.Show("Порт не инициализирован", "Ошибка обращения к последовательному порту");
                 return PortStates.ErrorClosing;
             }
             if (!serialPort.IsOpen) {
@@ -158,7 +159,7 @@ namespace Flavor.Common {
                 serialPort = null;
             } catch (Exception Error) {
                 OnErrorPort(true, Error.Message);
-                System.Windows.Forms.MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
+                MessageBox.Show(Error.Message, "Ошибка обращения к последовательному порту");
                 return PortStates.ErrorClosing;
             }
             return PortStates.Closing;
